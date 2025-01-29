@@ -1,12 +1,13 @@
 // src/components/StepperForm/EducationalDetailsForm.tsx
 
 import { useForm } from 'react-hook-form';
-import { Button } from '@mui/material';
+import { Button, FormHelperText } from '@mui/material';
 import { educationalDetailsSchema } from '../../validation/validationSchema';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Col, Row, Form } from 'react-bootstrap';
 import { Select, MenuItem, FormControl, Checkbox, ListItemText } from '@mui/material';
-import { SetStateAction, useState } from 'react';
+import { SetStateAction, useEffect, useState } from 'react';
+
 
 interface EducationalDetailsFormProps {
   onNext: (data: any) => void;
@@ -15,49 +16,72 @@ interface EducationalDetailsFormProps {
 }
 
 const EducationalDetailsForm: React.FC<EducationalDetailsFormProps> = ({ onNext, onBack, initialValues }) => {
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const { register, handleSubmit, formState: { errors }, setValue } = useForm({
     resolver: yupResolver(educationalDetailsSchema),
     defaultValues: initialValues,
   });
-
-  const onSubmit = (data: any) => {
-    console.log("Educational Details Submitted:", data);
-    onNext(data);
-  };
-
-
-
-  const [qualification, setQualification] = useState('');
-  const [passingYear, setPassingYear] = useState('');
-  const [appliedSkills, setAppliedSkills] = useState([]);
-
-  const handleQualificationChange = (event: { target: { value: SetStateAction<string>; }; }) => {
-    setQualification(event.target.value);
-  };
-
-  const handlePassingYearChange = (event: { target: { value: SetStateAction<string>; }; }) => {
-    setPassingYear(event.target.value);
-  };
-
-  const handleAppliedSkillsChange = (event: { target: { value: SetStateAction<never[]>; }; }) => {
-    setAppliedSkills(event.target.value);
-  };
 
   const qualificationOptions = ['Bachelors', 'Masters', 'PhD', 'Diploma'];
   const passingYearOptions = ['2021', '2022', '2023', '2024'];
 
   const appliedSkillsOptions = ['JavaScript', 'Python', 'Java', 'C++', 'React', 'Node.js'];
 
+  const onSubmit = (data: any) => {
+    console.log("Educational Details Submitted:", data);
+
+
+    onNext(data);
+  };
+
+  const [qualification, setQualification] = useState('');
+  const [passingYear, setPassingYear] = useState('');
+  const [appliedSkills, setAppliedSkills] = useState([]);
+
+  const handleQualificationChange = (event: { target: { value: SetStateAction<string>; }; }) => {
+    const qualification = event.target.value;
+    setQualification(qualification);
+    setValue("qualification", qualification);
+  };
+
+  const handlePassingYearChange = (event: { target: { value: SetStateAction<string>; }; }) => {
+    const passingYear = event.target.value;
+    setPassingYear(passingYear);
+    setValue("passingYear", passingYear);
+  };
+
+
+  const handleAppliedSkillsChange = (event: { target: { value: SetStateAction<never[]>; }; }) => {
+    const appliedSkills = event.target.value;
+    setAppliedSkills(appliedSkills);
+    setValue("appliedSkills", appliedSkills);
+  };
+
+  // if (!data) {
+  //   return <div>Loading...</div>;
+  // }
+
+  useEffect(() => {
+    if (initialValues) {
+      setQualification(initialValues.qualification || '');
+      setPassingYear(initialValues.passingYear || '');
+      setAppliedSkills(initialValues.appliedSkills || []);
+
+      setValue("qualification", initialValues.qualification || '');
+      setValue("passingYear", initialValues.passingYear || '');
+      setValue("appliedSkills", initialValues.appliedSkills || []);
+    }
+  }, [initialValues, setValue]);
+
   return (
     <Form onSubmit={handleSubmit(onSubmit)} className="p-3">
       <Row className="mb-3">
         <Col sm={6}>
-          <FormControl fullWidth variant="outlined">
+          <FormControl fullWidth variant="outlined" error={!!errors.qualification}>
             <Form.Label>Qualification</Form.Label>
             <Select
-              value={qualification} className='h-10'
+              {...register("qualification")} className="h-10 my-1"
+              value={qualification}
               onChange={handleQualificationChange}
-              // label="Qualification"
               displayEmpty
             >
               <MenuItem value="" disabled>
@@ -69,8 +93,10 @@ const EducationalDetailsForm: React.FC<EducationalDetailsFormProps> = ({ onNext,
                 </MenuItem>
               ))}
             </Select>
+            {errors.qualification && (
+              <FormHelperText>{errors.qualification.message}</FormHelperText>
+            )}
           </FormControl>
-
         </Col>
         <Col sm={6}>
           <Form.Group controlId="degree">
@@ -93,8 +119,9 @@ const EducationalDetailsForm: React.FC<EducationalDetailsFormProps> = ({ onNext,
           <FormControl fullWidth variant="outlined">
             <Form.Label>Passing Year</Form.Label>
             <Select
+              {...register("passingYear")}
               value={passingYear}
-              className='h-10'
+              className="h-10 my-1"
               onChange={handlePassingYearChange}
               // label="Passing Year"
               displayEmpty
@@ -115,11 +142,12 @@ const EducationalDetailsForm: React.FC<EducationalDetailsFormProps> = ({ onNext,
             <Form.Label>Applied Skills</Form.Label>
             <Select
               multiple
+              {...register("appliedSkills")}
               value={appliedSkills}
-              className='h-10'
+              className="h-10 my-1"
               onChange={handleAppliedSkillsChange}
-             
-              renderValue={(selected) => selected.join(', ')}
+
+              renderValue={(selected) => selected.join(',')}
             >
               <MenuItem value="" disabled>
                 Select Relevant Skills
@@ -236,4 +264,5 @@ const EducationalDetailsForm: React.FC<EducationalDetailsFormProps> = ({ onNext,
 };
 
 export default EducationalDetailsForm;
+
 

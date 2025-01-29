@@ -21,6 +21,7 @@ export const personalDetailsSchema = yup.object().shape({
     .matches(/^[0-9]{6}$/, 'Pincode must be 6 digits')
     .required('Pincode is required'),
   fullAddress: yup.string().required('Full Address is required'),
+ 
 });
 
 export const educationalDetailsSchema = yup.object().shape({

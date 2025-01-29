@@ -1,5 +1,5 @@
 // src/components/StepperForm/JobDetailsForm.tsx
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from '@mui/material';
 import { jobDetailsSchema } from '../../validation/validationSchema';
@@ -28,10 +28,11 @@ const workPreferenceOptions = [
 ];
 
 const JobDetailsForm: React.FC<JobDetailsFormProps> = ({ onNext, onBack, initialValues }) => {
-  const { register, handleSubmit, control, formState: { errors }, trigger } = useForm({
+  const { register, handleSubmit, control, setValue ,formState: { errors }, trigger } = useForm({
     resolver: yupResolver(jobDetailsSchema),
     defaultValues: initialValues,
   });
+  
 
   const onSubmit = (data: any) => {
     console.log("Job Details Submitted:", data);
@@ -43,22 +44,33 @@ const JobDetailsForm: React.FC<JobDetailsFormProps> = ({ onNext, onBack, initial
 
 
   const handleWorkStatusChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setReadyForWork(event.target.value as string);
+    const readyForWork = event.target.value as string;
+    setReadyForWork(readyForWork);
+    setValue("readyForWork",readyForWork);
   };
 
 
   const handleWorkPreferenceChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setWorkPreference(event.target.value as string);
+    const workPreference = event.target.value as string;
+    setWorkPreference(workPreference);
+    setValue("workPreference",workPreference);
   };
 
-
+  useEffect(() => {
+    if (initialValues) {
+      setValue("readyForWork", initialValues.readyForWork || '');
+      setValue("workPreference", initialValues.workPreference || '');
+      setValue("aboutus", initialValues.aboutus || '');
+      // Set other fields like qualification, passingYear, etc., in a similar way
+    }
+  }, [initialValues, setValue]);
 
 
 
   return (
     <Form onSubmit={handleSubmit(onSubmit)} className="p-3">
       <Row className="mb-3">
-        <Col sm={6}>
+        <Col sm={6} className="mb-3">
           <Form.Group controlId="expectedpkg">
             <Form.Label>Expected Package(LPA)</Form.Label>
             <Form.Control
@@ -72,7 +84,7 @@ const JobDetailsForm: React.FC<JobDetailsFormProps> = ({ onNext, onBack, initial
             </Form.Control.Feedback>
           </Form.Group>
         </Col>
-        <Col sm={6}>
+        <Col sm={6} className="">
           <Form.Group controlId="currentpkg">
             <Form.Label>Current Package(LPA)</Form.Label>
             <Form.Control
@@ -88,7 +100,7 @@ const JobDetailsForm: React.FC<JobDetailsFormProps> = ({ onNext, onBack, initial
         </Col>
       </Row>
       <Row className="mb-3">
-        <Col sm={6}>
+        <Col sm={6} className="mb-3">
           <Form.Group controlId="negotiation">
             <Form.Label>Negotiation</Form.Label>
             <Form.Control
@@ -102,7 +114,7 @@ const JobDetailsForm: React.FC<JobDetailsFormProps> = ({ onNext, onBack, initial
             </Form.Control.Feedback>
           </Form.Group>
         </Col>
-        <Col sm={6}>
+        <Col sm={6} className="">
           <Form.Group controlId="noticePeriod">
             <Form.Label>Notice Period</Form.Label>
             <Form.Control
@@ -118,32 +130,44 @@ const JobDetailsForm: React.FC<JobDetailsFormProps> = ({ onNext, onBack, initial
         </Col>
       </Row>
       <Row className="mb-3">
-        <Col sm={3}>
-
-          <FormControl fullWidth variant="outlined">
+        <Col sm={3} className="mb-3">
+          <FormControl fullWidth variant="outlined" error={!!errors.readyForWork}>
             <Form.Label>Ready for work</Form.Label>
-            <Select value={readyForWork} onChange={handleWorkStatusChange} className='h-10' >
+            <Select
+              {...register("readyForWork", { required: "This field is required" })} // Ensure this is registered with validation
+              value={readyForWork}
+              onChange={handleWorkStatusChange}
+              className='h-10'
+            >
               {workStatusOptions.map((option) => (
                 <MenuItem key={option.value} value={option.value}>
                   {option.label}
                 </MenuItem>
               ))}
             </Select>
+            {errors.readyForWork && <FormHelperText>{errors.readyForWork.message}</FormHelperText>}
           </FormControl>
         </Col>
-        <Col sm={3}>
 
-          <FormControl fullWidth variant="outlined">
+        <Col sm={3} className="mb-3">
+          <FormControl fullWidth variant="outlined" error={!!errors.workPreference}>
             <Form.Label>Work preference</Form.Label>
-            <Select value={workPreference} onChange={handleWorkPreferenceChange} className='h-10' >
+            <Select
+              {...register("workPreference", { required: "This field is required" })} // Ensure this is registered with validation
+              value={workPreference}
+              onChange={handleWorkPreferenceChange}
+              className='h-10'
+            >
               {workPreferenceOptions.map((option) => (
                 <MenuItem key={option.value} value={option.value}>
                   {option.label}
                 </MenuItem>
               ))}
             </Select>
+            {errors.workPreference && <FormHelperText>{errors.workPreference.message}</FormHelperText>}
           </FormControl>
         </Col>
+
         <Col sm={6}>
 
           <FormControl fullWidth error={!!errors.aboutus}>
@@ -164,10 +188,11 @@ const JobDetailsForm: React.FC<JobDetailsFormProps> = ({ onNext, onBack, initial
             )}
           </FormControl>
         </Col>
+
       </Row>
       <div className="flex justify-end space-x-4">
-      <Button type="button"  className="!bg-red-500  text-white hover:bg-red-600 focus:ring-2 focus:ring-red-500 px-4 py-2 rounded" onClick={onBack}>Back</Button>
-      <Button type="submit"className="!bg-purple-600 font-bold text-white hover:bg-purple-700  focus:ring-2 focus:ring-purple-500 px-4 py-2 rounded" >Next</Button>
+        <Button type="button" className="!bg-red-500  text-white hover:bg-red-600 focus:ring-2 focus:ring-red-500 px-4 py-2 rounded" onClick={onBack}>Previous</Button>
+        <Button type="submit" className="!bg-purple-600 font-bold text-white hover:bg-purple-700  focus:ring-2 focus:ring-purple-500 px-4 py-2 rounded" >Next</Button>
       </div>
     </Form>
   );
