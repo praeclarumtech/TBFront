@@ -69,10 +69,10 @@ const JobDetailsForm: React.FC<JobDetailsFormProps> = ({ onNext, onBack, initial
 
   return (
     <Form onSubmit={handleSubmit(onSubmit)} className="p-3">
-      <Row className="mb-3">
-        <Col sm={6} className="mb-3">
+      <Row className="md:mb-3 xs:mb-3">
+        <Col sm={6} xs={12} md={6} className="sm:mb-3">
           <Form.Group controlId="expectedpkg">
-            <Form.Label>Expected Package(LPA)</Form.Label>
+            <Form.Label className='font-bold'>Expected Package(LPA)</Form.Label>
             <Form.Control
               type="text"
               {...register("expectedpkg")}
@@ -84,9 +84,9 @@ const JobDetailsForm: React.FC<JobDetailsFormProps> = ({ onNext, onBack, initial
             </Form.Control.Feedback>
           </Form.Group>
         </Col>
-        <Col sm={6} className="">
+        <Col sm={6} xs={12} md={6} className="sm:mb-3">
           <Form.Group controlId="currentpkg">
-            <Form.Label>Current Package(LPA)</Form.Label>
+            <Form.Label className='font-bold'>Current Package(LPA)</Form.Label>
             <Form.Control
               type="text"
               {...register("currentpkg")}
@@ -99,10 +99,10 @@ const JobDetailsForm: React.FC<JobDetailsFormProps> = ({ onNext, onBack, initial
           </Form.Group>
         </Col>
       </Row>
-      <Row className="mb-3">
-        <Col sm={6} className="mb-3">
+      <Row className="xs:mb-3 md:mb-3">
+        <Col sm={6} xs={12} md={6} className="sm:mb-3">
           <Form.Group controlId="negotiation">
-            <Form.Label>Negotiation</Form.Label>
+            <Form.Label className='font-bold'>Negotiation</Form.Label>
             <Form.Control
               type="number"
               {...register("negotiation")}
@@ -114,9 +114,9 @@ const JobDetailsForm: React.FC<JobDetailsFormProps> = ({ onNext, onBack, initial
             </Form.Control.Feedback>
           </Form.Group>
         </Col>
-        <Col sm={6} className="">
+        <Col sm={6} xs={12} md={6} className="sm:mb-3">
           <Form.Group controlId="noticePeriod">
-            <Form.Label>Notice Period</Form.Label>
+            <Form.Label className='font-bold'>Notice Period</Form.Label>
             <Form.Control
               type="number"
               {...register("noticePeriod")}
@@ -129,10 +129,10 @@ const JobDetailsForm: React.FC<JobDetailsFormProps> = ({ onNext, onBack, initial
           </Form.Group>
         </Col>
       </Row>
-      <Row className="mb-3">
-        <Col sm={3} className="mb-3">
+      <Row className="xs:mb-3 md:mb-3">
+        <Col sm={6}  xs={12} md={3} className="sm:mb-3">
           <FormControl fullWidth variant="outlined" error={!!errors.readyForWork}>
-            <Form.Label>Ready for work</Form.Label>
+            <Form.Label className='font-bold'>Ready for work</Form.Label>
             <Select
               {...register("readyForWork", { required: "This field is required" })} // Ensure this is registered with validation
               value={readyForWork}
@@ -149,9 +149,9 @@ const JobDetailsForm: React.FC<JobDetailsFormProps> = ({ onNext, onBack, initial
           </FormControl>
         </Col>
 
-        <Col sm={3} className="mb-3">
+        <Col sm={6} xs={12} md={3} className="sm:mb-3">
           <FormControl fullWidth variant="outlined" error={!!errors.workPreference}>
-            <Form.Label>Work preference</Form.Label>
+            <Form.Label className='font-bold'>Work preference</Form.Label>
             <Select
               {...register("workPreference", { required: "This field is required" })} // Ensure this is registered with validation
               value={workPreference}
@@ -168,10 +168,10 @@ const JobDetailsForm: React.FC<JobDetailsFormProps> = ({ onNext, onBack, initial
           </FormControl>
         </Col>
 
-        <Col sm={6}>
+        <Col md={6} sm={12} xs={12} className='sm:mb-3'>
 
           <FormControl fullWidth error={!!errors.aboutus}>
-            <Form.Label>About Us</Form.Label>
+            <Form.Label className='font-bold'>About Us</Form.Label>
             <TextField
 
               multiline

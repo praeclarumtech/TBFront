@@ -43,7 +43,7 @@ const StepperForm: React.FC = () => {
 
   return (
     <Card>
-      <h4 className="m-2 p-1 text-dark justify-center content-start text-2xl text-center font-bold">Applicant Form</h4>
+      <h4 className="m-2 p-1 text-dark justify-center content-start text-2xl text-center font-bold text-blue-900">Applicant Form</h4>
       <Card.Body>
         <Box sx={{ width: '100%' }}>
           <Stepper activeStep={activeStep}>

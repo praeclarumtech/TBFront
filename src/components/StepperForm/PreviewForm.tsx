@@ -2,7 +2,12 @@
 import React from 'react';
 import { Button, Typography } from '@mui/material';
 import { Col, Row } from 'react-bootstrap';
+// import { useNavigate, Navigate } from 'react-router';
+// import { useNavigate } from 'react-router';
+// import EditApplicant from './EditApplicant';
 
+
+// const Navigate = useNavigate();
 
 interface PreviewFormProps {
   data: {
@@ -14,17 +19,25 @@ interface PreviewFormProps {
   onSubmit: () => void;
 }
 
+
+
 const PreviewForm: React.FC<PreviewFormProps> = ({ data, onEdit, onSubmit }) => {
   const formattedDate = new Date(data.personal.dateOfBirth).toLocaleDateString("en-IN");
 
 
-  console.log({ data });
-  console.log({ t: data?.education?.resume });
-
-
-
+  // console.log({ data });
+  // console.log({ t: data?.education?.resume });
   const resumeFile = data.education.resume[0].name;
-  console.log({ resumeFile });
+  // console.log({ resumeFile });
+
+  // const handleEdit()={
+  //   data: {
+  //     personal: any;
+  //     education: any;
+  //     job: any;
+  //   };
+  //   Navigate("./EditApplicant");
+  // }
 
   return (
     <div>
@@ -97,9 +110,9 @@ const PreviewForm: React.FC<PreviewFormProps> = ({ data, onEdit, onSubmit }) => 
         </Row>
       </div>
 
-      <div className="mb-3">
+      <div className="mb-3 ">
         <div className="mb-3 flex flex-col sm:flex-row justify-end space-y-4 sm:space-y-0 sm:space-x-4">
-          <Button
+          {/* <Button
             onClick={() => onEdit(0)}
             className="!bg-red-500 text-white hover:bg-red-600 focus:ring-2 focus:ring-red-500 px-4 rounded"
           >
@@ -110,7 +123,7 @@ const PreviewForm: React.FC<PreviewFormProps> = ({ data, onEdit, onSubmit }) => 
             className="!bg-red-500 text-white hover:bg-red-600 focus:ring-2 focus:ring-red-500 px-4 rounded"
           >
             Edit Educational Details
-          </Button>
+          </Button> */}
           <Button
             onClick={() => onEdit(2)}
             className="!bg-red-500 text-white hover:bg-red-600 focus:ring-2 focus:ring-red-500 px-4 rounded"

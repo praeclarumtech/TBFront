@@ -14,3 +14,4 @@ const SuccessToast = (message: string) => {
 };
 
 export default SuccessToast;
+

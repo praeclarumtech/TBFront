@@ -73,13 +73,15 @@ const EducationalDetailsForm: React.FC<EducationalDetailsFormProps> = ({ onNext,
   }, [initialValues, setValue]);
 
   return (
+   
     <Form onSubmit={handleSubmit(onSubmit)} className="p-3">
-      <Row className="mb-3">
-        <Col sm={6}>
+      <Row className="md:mb-3">
+        <Col xs={12} sm={6} md={6} className=''>
           <FormControl fullWidth variant="outlined" error={!!errors.qualification}>
-            <Form.Label>Qualification</Form.Label>
+            <Form.Label className='font-bold'>Qualification</Form.Label>
             <Select
-              {...register("qualification")} className="h-10 my-1"
+              {...register("qualification")}
+              className="h-10 my-1"
               value={qualification}
               onChange={handleQualificationChange}
               displayEmpty
@@ -98,9 +100,9 @@ const EducationalDetailsForm: React.FC<EducationalDetailsFormProps> = ({ onNext,
             )}
           </FormControl>
         </Col>
-        <Col sm={6}>
+        <Col xs={12} sm={6} md={6} className='sm:mb-3'>
           <Form.Group controlId="degree">
-            <Form.Label>Degree Name</Form.Label>
+            <Form.Label className='font-bold'>Degree Name</Form.Label>
             <Form.Control
               type="text"
               {...register("degree")}
@@ -112,18 +114,16 @@ const EducationalDetailsForm: React.FC<EducationalDetailsFormProps> = ({ onNext,
             </Form.Control.Feedback>
           </Form.Group>
         </Col>
-
       </Row>
-      <Row className="mb-3">
-        <Col sm={6}>
+      <Row className="md:mb-3">
+        <Col xs={12} sm={6} md={6} className="sm:mb-3">
           <FormControl fullWidth variant="outlined">
-            <Form.Label>Passing Year</Form.Label>
+            <Form.Label className='font-bold'>Passing Year</Form.Label>
             <Select
               {...register("passingYear")}
               value={passingYear}
               className="h-10 my-1"
               onChange={handlePassingYearChange}
-              // label="Passing Year"
               displayEmpty
             >
               <MenuItem value="" disabled>
@@ -137,16 +137,15 @@ const EducationalDetailsForm: React.FC<EducationalDetailsFormProps> = ({ onNext,
             </Select>
           </FormControl>
         </Col>
-        <Col sm={6} >
+        <Col xs={12} sm={6} md={6} className="sm:mb-3">
           <FormControl fullWidth variant="outlined">
-            <Form.Label>Applied Skills</Form.Label>
+            <Form.Label className='font-bold' >Applied Skills</Form.Label>
             <Select
               multiple
               {...register("appliedSkills")}
               value={appliedSkills}
               className="h-10 my-1"
               onChange={handleAppliedSkillsChange}
-
               renderValue={(selected) => selected.join(',')}
             >
               <MenuItem value="" disabled>
@@ -161,13 +160,11 @@ const EducationalDetailsForm: React.FC<EducationalDetailsFormProps> = ({ onNext,
             </Select>
           </FormControl>
         </Col>
-
       </Row>
-
-      <Row className="mb-3">
-        <Col sm={3}>
+      <Row className="md:mb-3 ">
+        <Col xs={12} sm={6} md={3} className='sm:mb-3'>
           <Form.Group controlId="totalExperience">
-            <Form.Label>Total Experience</Form.Label>
+            <Form.Label className='font-bold'>Total Experience</Form.Label>
             <Form.Control
               type="number"
               {...register("totalExperience")}
@@ -179,9 +176,9 @@ const EducationalDetailsForm: React.FC<EducationalDetailsFormProps> = ({ onNext,
             </Form.Control.Feedback>
           </Form.Group>
         </Col>
-        <Col sm={3}>
+        <Col xs={12} sm={6} md={3} className="sm:mb-3">
           <Form.Group controlId="relevantSkillExperience">
-            <Form.Label>Relevant Skill Experience</Form.Label>
+            <Form.Label className='font-bold'>Relevant Skill Experience</Form.Label>
             <Form.Control
               type="number"
               {...register("relevantSkillExperience")}
@@ -193,9 +190,9 @@ const EducationalDetailsForm: React.FC<EducationalDetailsFormProps> = ({ onNext,
             </Form.Control.Feedback>
           </Form.Group>
         </Col>
-        <Col sm={6}>
+        <Col xs={12} sm={12} md={6} className='sm:mb-3'>
           <Form.Group controlId="otherSkills">
-            <Form.Label>Other Skills</Form.Label>
+            <Form.Label className='font-bold'>Other Skills</Form.Label>
             <Form.Control
               type="text"
               {...register("otherSkills")}
@@ -208,10 +205,10 @@ const EducationalDetailsForm: React.FC<EducationalDetailsFormProps> = ({ onNext,
           </Form.Group>
         </Col>
       </Row>
-      <Row className="mb-3">
-        <Col sm={6}>
+      <Row className="md:mb-3">
+        <Col xs={12} sm={6} md={5} className='sm:mb-3'>
           <Form.Group controlId="resume">
-            <Form.Label>Resume (PDF)</Form.Label>
+            <Form.Label className='font-bold'>Resume (PDF)</Form.Label>
             <Form.Control
               type="file"
               {...register("resume")}
@@ -222,9 +219,9 @@ const EducationalDetailsForm: React.FC<EducationalDetailsFormProps> = ({ onNext,
             </Form.Control.Feedback>
           </Form.Group>
         </Col>
-        <Col sm={4}>
+        <Col xs={12} sm={6} md={4} className="sm:mb-3">
           <Form.Group controlId="resume">
-            <Form.Label>Url</Form.Label>
+            <Form.Label className='font-bold'>Url</Form.Label>
             <Form.Control
               type="url"
               {...register("url")}
@@ -236,9 +233,9 @@ const EducationalDetailsForm: React.FC<EducationalDetailsFormProps> = ({ onNext,
             </Form.Control.Feedback>
           </Form.Group>
         </Col>
-        <Col sm={2}>
+        <Col xs={12} sm={12} md={3} className="sm:mb-3">
           <Form.Group controlId="rating">
-            <Form.Label>Rating (1-10)</Form.Label>
+            <Form.Label className='font-bold'>Rating Javascript Skills (1-10)</Form.Label>
             <Form.Control
               type="number"
               {...register("rating")}
@@ -250,14 +247,14 @@ const EducationalDetailsForm: React.FC<EducationalDetailsFormProps> = ({ onNext,
             </Form.Control.Feedback>
           </Form.Group>
         </Col>
-
       </Row>
-      <Row className="mb-3">
-
-      </Row>
-      <div className="flex justify-end space-x-4">
-        <Button type="button" onClick={onBack} className="!bg-red-500  text-white hover:bg-red-600 focus:ring-2 focus:ring-red-500 px-4 py-2 rounded" >Previous</Button>
-        <Button type="submit" className="!bg-purple-600 font-bold text-white hover:bg-purple-700  focus:ring-2 focus:ring-purple-500 px-4 py-2 rounded" >Next</Button>
+      <div className="d-flex justify-content-end gap-3">
+        <Button type="button" onClick={onBack} className="bg-danger text-white">
+          Previous
+        </Button>
+        <Button type="submit" className="bg-primary text-white">
+          Next
+        </Button>
       </div>
     </Form>
   );
