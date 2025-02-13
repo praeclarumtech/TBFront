@@ -8,9 +8,9 @@ import { Button } from '@mui/material';
 
 interface PreviewFormProps {
     data: {
-      personal: any;
-      education: any;
-      job: any;
+      personal: unknown;
+      education: unknown;
+      job: unknown;
     };
     // onEdit: (step: number) => void;
     onSubmit: () => void;

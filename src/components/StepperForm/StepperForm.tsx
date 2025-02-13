@@ -1,3 +1,4 @@
+
 // src/components/StepperForm/StepperForm.tsx
 import React, { useState } from 'react';
 import { Box, Stepper, Step, StepLabel, Button, Typography } from '@mui/material';
@@ -9,13 +10,88 @@ import { Card } from 'react-bootstrap';
 
 const steps = ['Personal Details', 'Educational Details', 'Job Details', 'Preview'];
 
+interface FormData {
+  personal: {
+    firstName: string;
+    middleName: string;
+    lastName: string;
+    whatsappNumber: string;
+    phoneNumber: string;
+    email: string;
+    gender: string;
+    dateOfBirth: string;
+    fullAddress: string;
+    state: string;
+    country: string;
+    pincode: number;
+    city: string;
+  };
+  education: {
+    qualification: string;
+    degree: string;
+    passingYear: number;
+    appliedSkills: string[]; 
+    resume: { name: string; url: string }[]; 
+    totalExperience: number;
+    relevantSkillExperience: number;
+    otherSkills: string;
+    rating: number;
+  };
+  job: {
+    currentpkg: string;
+    expectedpkg: string;
+    noticePeriod: string;
+    negotiation: string;
+    readyForWork: string;
+    workPreference: string;
+    aboutus: string;
+    referal?: string;
+  };
+}
+
+
 const StepperForm: React.FC = () => {
   const [activeStep, setActiveStep] = useState(0);
-  const [formData, setFormData] = useState({
-    personal: {},
-    education: {},
-    job: {},
+  const [formData, setFormData] = useState<FormData>({
+    personal: {
+      firstName: '',
+      middleName: '',
+      lastName: '',
+      whatsappNumber: '',
+      phoneNumber: '',
+      email: '',
+      gender: '',
+      dateOfBirth: '',
+      fullAddress: '',
+      state: '',
+      country: '',
+      pincode: 0,
+      city: '',
+    },
+    education: {
+      qualification: '',
+      degree: '',
+      passingYear: 0,
+      appliedSkills: [], 
+      resume: [], 
+      totalExperience: 0,
+      relevantSkillExperience: 0,
+      otherSkills: '',
+      rating: 0,
+    },
+    job: {
+      currentpkg: '',
+      expectedpkg: '',
+      noticePeriod: '',
+      negotiation: '',
+      readyForWork: '',
+      workPreference: '',
+      aboutus: '',
+      referal: '',
+    },
   });
+
+ 
 
   const handleNext = (data: any) => {
     if (activeStep === 0) {
@@ -36,9 +112,63 @@ const StepperForm: React.FC = () => {
     setActiveStep(step);
   };
 
-  const handleSubmit = () => {
-    console.log("Final Submission Data:", formData);
-    //  sending data to an API
+ 
+
+  const handleSubmit = async () => {
+    const apiData = {
+      name: {
+        firstName: formData.personal.firstName,
+        middleName: formData.personal.middleName,
+        lastName: formData.personal.lastName,
+      },
+      phone: {
+        whatsappNumber: formData.personal.whatsappNumber,
+        phoneNumber: formData.personal.phoneNumber,
+      },
+      email: formData.personal.email,
+      gender: formData.personal.gender,
+      dateOfBirth: formData.personal.dateOfBirth,
+      qualification: formData.education.qualification,
+      degree: formData.education.degree,
+      passing_Year: formData.education.passingYear,
+      current_Location: formData.personal.fullAddress,
+      state: formData.personal.state,
+      country: formData.personal.country,
+      pincode: formData.personal.pincode,
+      city: formData.personal.city,
+      applied_Skills: formData.education.appliedSkills || [], 
+      resume: formData.education.resume.length > 0 ? formData.education.resume[0].url : '', 
+      total_Exp: formData.education.totalExperience,
+      relevant_Exp: formData.education.relevantSkillExperience,
+      other_Skills: formData.education.otherSkills,
+      javascript_Rate: formData.education.rating,
+      current_Pkg: formData.job.currentpkg,
+      expected_Pkg: formData.job.expectedpkg,
+      notice_Period: formData.job.noticePeriod,
+      negotiationable: formData.job.negotiation,
+      ready_Wfo: formData.job.readyForWork,
+      work_Preference: formData.job.workPreference,
+      about_Us: formData.job.aboutus,
+      referal: formData.job.referal || '', 
+    };
+
+    try {
+      const response = await fetch('http://192.168.1.13:5000/api/applicant/add', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(apiData),
+      });
+  
+      const result = await response.json();
+      console.log('Success:', result);
+      alert('Application submitted successfully!');
+      
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Failed to submit application.');
+    }
   };
 
   return (
@@ -62,31 +192,31 @@ const StepperForm: React.FC = () => {
             ) : (
               <div>
                 {activeStep === 0 && (
-                  <PersonalDetailsForm 
-                    onNext={handleNext} 
-                    onCancel={() => setActiveStep(0)} 
-                    initialValues={formData.personal} 
+                  <PersonalDetailsForm
+                    onNext={handleNext}
+                    onCancel={() => setActiveStep(0)}
+                    initialValues={formData.personal}
                   />
                 )}
                 {activeStep === 1 && (
-                  <EducationalDetailsForm 
-                    onNext={handleNext} 
-                    onBack={handleBack} 
-                    initialValues={formData.education} 
+                  <EducationalDetailsForm
+                    onNext={handleNext}
+                    onBack={handleBack}
+                    initialValues={formData.education}
                   />
                 )}
                 {activeStep === 2 && (
-                  <JobDetailsForm 
-                    onNext={handleNext} 
-                    onBack={handleBack} 
-                    initialValues={formData.job} 
+                  <JobDetailsForm
+                    onNext={handleNext}
+                    onBack={handleBack}
+                    initialValues={formData.job}
                   />
                 )}
                 {activeStep === 3 && (
-                  <PreviewForm 
-                    data={formData} 
-                    onEdit={handleEdit} 
-                    onSubmit={handleSubmit} 
+                  <PreviewForm
+                    data={formData}
+                    onEdit={handleEdit}
+                    onSubmit={handleSubmit}
                   />
                 )}
               </div>

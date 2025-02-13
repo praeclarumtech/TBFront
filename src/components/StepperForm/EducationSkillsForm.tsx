@@ -1,3 +1,5 @@
+
+
 // src/components/StepperForm/EducationalDetailsForm.tsx
 
 import { useForm } from 'react-hook-form';
@@ -13,9 +15,10 @@ interface EducationalDetailsFormProps {
   onNext: (data: any) => void;
   onBack: () => void;
   initialValues: any;
+  showNext
 }
 
-const EducationalDetailsForm: React.FC<EducationalDetailsFormProps> = ({ onNext, onBack, initialValues }) => {
+const EducationalDetailsForm: React.FC<EducationalDetailsFormProps> = ({ onNext, onBack, initialValues, showNext }) => {
   const { register, handleSubmit, formState: { errors }, setValue } = useForm({
     resolver: yupResolver(educationalDetailsSchema),
     defaultValues: initialValues,
@@ -73,7 +76,7 @@ const EducationalDetailsForm: React.FC<EducationalDetailsFormProps> = ({ onNext,
   }, [initialValues, setValue]);
 
   return (
-   
+
     <Form onSubmit={handleSubmit(onSubmit)} className="p-3">
       <Row className="md:mb-3">
         <Col xs={12} sm={6} md={6} className=''>
@@ -191,16 +194,16 @@ const EducationalDetailsForm: React.FC<EducationalDetailsFormProps> = ({ onNext,
           </Form.Group>
         </Col>
         <Col xs={12} sm={12} md={6} className='sm:mb-3'>
-          <Form.Group controlId="otherSkills">
+          <Form.Group controlId="otherskills">
             <Form.Label className='font-bold'>Other Skills</Form.Label>
             <Form.Control
               type="text"
-              {...register("otherSkills")}
+              {...register("otherskills")}
               isInvalid={!!errors.otherskills}
               placeholder="Enter other skills Name"
             />
             <Form.Control.Feedback type="invalid">
-              {errors.otherSkills?.message}
+              {errors.otherskills?.message}
             </Form.Control.Feedback>
           </Form.Group>
         </Col>
@@ -248,14 +251,16 @@ const EducationalDetailsForm: React.FC<EducationalDetailsFormProps> = ({ onNext,
           </Form.Group>
         </Col>
       </Row>
-      <div className="d-flex justify-content-end gap-3">
-        <Button type="button" onClick={onBack} className="bg-danger text-white">
-          Previous
-        </Button>
-        <Button type="submit" className="bg-primary text-white">
-          Next
-        </Button>
-      </div>
+      {!showNext && (
+
+        <div className="d-flex justify-content-end gap-3">
+          <Button type="button" onClick={onBack} className="bg-danger text-white">
+            Previous
+          </Button>
+          <Button type="submit" className="bg-primary text-white">
+            Next
+          </Button>
+        </div>)}
     </Form>
   );
 };

@@ -1,4 +1,5 @@
 
+
 // src/components/StepperForm/PersonalDetailsForm.tsx
 import React from 'react';
 import { useForm } from 'react-hook-form';
@@ -38,9 +39,12 @@ interface PersonalDetailsFormProps {
   onNext: (data: any) => void;
   onCancel: () => void;
   initialValues: any;
+  showNext
 }
 
-const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({ onNext, onCancel, initialValues }) => {
+
+
+const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({ onNext, onCancel, initialValues,showNext }) => {
   const { register, handleSubmit, formState: { errors }, setValue } = useForm({
     resolver: yupResolver(personalDetailsSchema),
     defaultValues: initialValues,
@@ -85,7 +89,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({ onNext, onCan
   };
 
   useEffect(() => {
-    // Simulate API call
+    
     setTimeout(() => {
       setData(mockData);
     }, 1000);
@@ -102,21 +106,21 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({ onNext, onCan
   const handleCountryChange = (event: SelectChangeEvent) => {
     const country = event.target.value;
     setSelectedCountry(country);
-    setSelectedState(''); // Reset state when country changes
-    setValue("country", country); // Update form value with react-hook-form
+    setSelectedState('');
+    setValue("country", country);
   };
 
 
   const handleStateChange = (event: SelectChangeEvent) => {
     const state = event.target.value;
     setSelectedState(state);
-    setValue("state", state); // Update form value with react-hook-form
+    setValue("state", state);
   };
 
   const handleGenderChange = (event: SelectChangeEvent) => {
     const gender = event.target.value;
     setSelectedGender(gender);
-    setValue("gender", gender); // Update form value with react-hook-form
+    setValue("gender", gender);
   };
 
   if (!data) {
@@ -128,18 +132,8 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({ onNext, onCan
   return (
     <Form onSubmit={handleSubmit(onSubmit)} className="p-3">
       <Row className="mb-3">
-        <Col  xs={12} sm={6} md={3} className="mb-3 mb-lg-0">
-          <Form.Group  controlId="applicationNo">
-            <Form.Label className='font-bold'>Application No.</Form.Label>
-            <Form.Control
-              type="text"
-              value={'ERT2024'}
-              disabled
-              placeholder=""
-            />
-          </Form.Group>
-        </Col>
-        <Col  xs={12} sm={6} md={3} className="mb-3 mb-lg-0">
+
+        <Col xs={12} sm={6} md={3} className="mb-3 mb-lg-0">
           <Form.Group controlId="firstName">
             <Form.Label className='font-bold'>First Name</Form.Label>
             <Form.Control
@@ -153,8 +147,8 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({ onNext, onCan
             </Form.Control.Feedback>
           </Form.Group>
         </Col>
-        <Col  xs={12} sm={6} md={3} className="mb-3 mb-lg-0">
-          <Form.Group  controlId="middleName">
+        <Col xs={12} sm={6} md={3} className="mb-3 mb-lg-0">
+          <Form.Group controlId="middleName">
             <Form.Label className='font-bold'>Middle Name</Form.Label>
             <Form.Control
               type="text"
@@ -166,7 +160,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({ onNext, onCan
             </Form.Control.Feedback>
           </Form.Group>
         </Col>
-        <Col  xs={12} sm={6} md={3} className=" mb-lg-0">
+        <Col xs={12} sm={6} md={3} className=" mb-lg-0">
           <Form.Group controlId="lastName">
             <Form.Label className='font-bold'>Last Name</Form.Label>
             <Form.Control
@@ -180,9 +174,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({ onNext, onCan
             </Form.Control.Feedback>
           </Form.Group>
         </Col>
-      </Row>
-      <Row className="mb-3">
-        <Col  xs={12} sm={6} md={3} className="mb-3 mb-lg-0">
+        <Col xs={12} sm={6} md={3} className="mb-3 mb-lg-0">
           <Form.Group controlId="dateOfBirth">
             <Form.Label className='font-bold'>Date of Birth</Form.Label>
             <Form.Control
@@ -195,7 +187,10 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({ onNext, onCan
             </Form.Control.Feedback>
           </Form.Group>
         </Col>
-        <Col  xs={12} sm={6} md={3} className="mb-3 mb-lg-0">
+      </Row>
+      <Row className="mb-3">
+        
+        <Col xs={12} sm={6} md={3} className="mb-3 mb-lg-0">
           <Form.Group controlId="email">
             <Form.Label className='font-bold'>Email</Form.Label>
             <Form.Control
@@ -209,7 +204,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({ onNext, onCan
             </Form.Control.Feedback>
           </Form.Group>
         </Col>
-        <Col  xs={12} sm={6} md={3} className="mb-3 mb-lg-0">
+        <Col xs={12} sm={6} md={3} className="mb-3 mb-lg-0">
           <Form.Group controlId="phoneNumber">
             <Form.Label className='font-bold'>Phone Number</Form.Label>
             <Form.Control
@@ -223,8 +218,8 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({ onNext, onCan
             </Form.Control.Feedback>
           </Form.Group>
         </Col>
-        <Col  xs={12} sm={6} md={3} className=" mb-lg-0">
-          <Form.Group  controlId="whatsappNumber">
+        <Col xs={12} sm={6} md={3} className=" mb-lg-0">
+          <Form.Group controlId="whatsappNumber">
             <Form.Label className='font-bold'>WhatsApp Number</Form.Label>
             <Form.Control
               type="text"
@@ -237,27 +232,28 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({ onNext, onCan
             </Form.Control.Feedback>
           </Form.Group>
         </Col>
-
-      </Row>
-      <Row className="mb-3">
-        <Col  xs={12} sm={6} md={3} className='mb-3'  >
+        <Col xs={12} sm={6} md={3} className='mb-3'  >
           <FormControl fullWidth>
             <Form.Label className='font-bold'>Gender</Form.Label>
             <Select
               {...register("gender")}
               value={selectedGender}
               onChange={handleGenderChange}
+              
               className="h-10 my-1"
             >
               {genders.map((gender) => (
-                <MenuItem key={gender.value} value={gender.value}>
+                <MenuItem key={gender.value} value={gender.value} >
                   {gender.label}
                 </MenuItem>
               ))}
             </Select>
           </FormControl>
         </Col>
-        <Col  xs={12} sm={6} md={3} className="mb-3 mb-lg-0">
+      </Row>
+      <Row className="mb-3">
+       
+        <Col xs={12} sm={6} md={3} className="mb-3 mb-lg-0">
           <FormControl fullWidth>
             <Form.Label className='font-bold'>Country</Form.Label>
             <Select
@@ -275,7 +271,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({ onNext, onCan
           </FormControl>
 
         </Col>
-        <Col  xs={12} sm={6} md={3} className="mb-3 mb-lg-0">
+        <Col xs={12} sm={6} md={3} className="mb-3 mb-lg-0">
           <FormControl fullWidth>
             <Form.Label className='font-bold'>State</Form.Label>
             <Select
@@ -299,8 +295,20 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({ onNext, onCan
             </Select>
           </FormControl>
         </Col>
-
-        <Col  xs={12} sm={6} md={3} >
+        <Col xs={12} sm={6} md={3} className="mb-3 mb-lg-0">
+          <Form.Group controlId="city">
+            <Form.Label className='font-bold'>City</Form.Label>
+            <Form.Control
+              type="text"
+              {...register("city")}
+              isInvalid={!!errors.city}
+              placeholder="City"
+            /><Form.Control.Feedback type="invalid">
+              {errors.city?.message}
+            </Form.Control.Feedback>
+          </Form.Group>
+        </Col>
+        <Col xs={12} sm={6} md={3} >
           <Form.Group controlId="pincode">
             <Form.Label className='font-bold'>Pincode</Form.Label>
             <Form.Control
@@ -316,7 +324,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({ onNext, onCan
         </Col>
       </Row>
       <Row className="mb-3">
-        <Col  xs={12}>
+        <Col xs={12}>
           <Form.Group controlId="fullAddress">
             <Form.Label className='font-bold'>Full Address</Form.Label>
             <Form.Control
@@ -331,6 +339,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({ onNext, onCan
           </Form.Group>
         </Col>
       </Row>
+      {!showNext && (
       <div className="flex justify-end space-x-4">
         <Button
           type="button"
@@ -345,11 +354,9 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({ onNext, onCan
         >
           Next
         </Button>
-      </div>
+      </div>)}
     </Form>
   );
 };
 
 export default PersonalDetailsForm;
-
-

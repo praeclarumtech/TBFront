@@ -13,7 +13,7 @@ import Dashboard from "pages/dashboard/Index";
 import Billing from "pages/dashboard/pages/Billing";
 import Pricing from "pages/dashboard/pages/Pricing";
 import Settings from "pages/dashboard/pages/Settings";
-import AddForm from "pages/dashboard/pages/AddForm";
+// import AddForm from "pages/dashboard/pages/AddForm";
 import Profile from "pages/dashboard/pages/Profile";
 import NotFound from "pages/dashboard/pages/NotFound";
 import LayoutVertical from "pages/dashboard/LayoutVertical";

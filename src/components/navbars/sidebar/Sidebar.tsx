@@ -1,7 +1,7 @@
 
 
 // import node module libraries
-import { Fragment } from "react";
+import { Fragment, JSXElementConstructor, Key, ReactElement, ReactNode, ReactPortal } from "react";
 import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { useMediaQuery } from "react-responsive";
@@ -15,7 +15,7 @@ import SimpleBar from "simplebar-react";
 
 // import routes file
 import { DashboardMenu } from "routes/DashboardRoutes";
-import { DashboardMenuProps } from "types";
+import { DashboardMenuProps } from "typ3es";
 
 interface SidebarProps {
   showMenu: boolean;
@@ -102,8 +102,8 @@ const Sidebar: React.FC<SidebarProps> = ({ showMenu, toggleMenu }) => {
                         className="nav flex-column"
                       >
                         {menu.children.map(function (
-                          menuLevel1Item,
-                          menuLevel1Index
+                          menuLevel1Item: { children: { children: never[]; title: string | number | boolean | ReactElement<unknown, string | JSXElementConstructor<unknown>> | Iterable<ReactNode> | ReactPortal | null | undefined; badge: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; badgecolor: string | undefined; }[]; id: Key | null | undefined; title: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; badge: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; badgecolor: string | undefined; },
+                          menuLevel1Index: Key | null | undefined
                         ) {
                           const childKey = `${menu.id}-${menuLevel1Index}`;
                           if (menuLevel1Item.children) {
@@ -146,8 +146,8 @@ const Sidebar: React.FC<SidebarProps> = ({ showMenu, toggleMenu }) => {
                                     >
                                       {/* second level menu started  */}
                                       {menuLevel1Item.children.map(function (
-                                        menuLevel2Item,
-                                        menuLevel2Index
+                                        menuLevel2Item: { children: any[]; title: string | number | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; badge: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; badgecolor: string | undefined; },
+                                        menuLevel2Index: Key | null | undefined
                                       ) {
                                         const childKey = `${menuLevel1Index}-${menuLevel2Index}`;
                                         if (menuLevel2Item.children) {

@@ -1,3 +1,5 @@
+
+
 // src/components/StepperForm/PreviewForm.tsx
 import React from 'react';
 import { Button, Typography } from '@mui/material';
@@ -5,10 +7,6 @@ import { Col, Row } from 'react-bootstrap';
 // import { useNavigate, Navigate } from 'react-router';
 // import { useNavigate } from 'react-router';
 // import EditApplicant from './EditApplicant';
-
-
-// const Navigate = useNavigate();
-
 interface PreviewFormProps {
   data: {
     personal: any;
@@ -27,7 +25,7 @@ const PreviewForm: React.FC<PreviewFormProps> = ({ data, onEdit, onSubmit }) => 
 
   // console.log({ data });
   // console.log({ t: data?.education?.resume });
-  const resumeFile = data.education.resume[0].name;
+  const resume = data.education.resume[0].name;
   // console.log({ resumeFile });
 
   // const handleEdit()={
@@ -75,7 +73,7 @@ const PreviewForm: React.FC<PreviewFormProps> = ({ data, onEdit, onSubmit }) => 
             <Typography variant="body1" className='text-gray-600'><span className='font-extrabold text-base !text-black pt-3'>Degree: </span><span className=''>{data.education.degree}</span></Typography>
             <Typography><span className='font-extrabold text-base !text-black pt-3'>Total Experience: </span> <span>{data.education.totalExperience}</span></Typography>
             <Typography><span className='font-extrabold text-base !text-black pt-3'>Qualification :</span> <span>{data.education.qualification}</span></Typography>
-            <Typography><span className='font-extrabold text-base !text-black pt-3'>Other Skills:</span> <span>{data.education.otherSkills}</span></Typography>
+            <Typography><span className='font-extrabold text-base !text-black pt-3'>Other Skills:</span> <span>{data.education.otherskills}</span></Typography>
             <Typography><span className='font-extrabold text-base !text-black pt-3'>Url:</span> <span>{data.education.url}</span></Typography>
           </Col>
           <Col xs={12} md={6}>
@@ -84,7 +82,7 @@ const PreviewForm: React.FC<PreviewFormProps> = ({ data, onEdit, onSubmit }) => 
             <Typography><span className='font-extrabold text-base !text-black pt-3'>Passing Year:</span> <span>{data.education.passingYear}</span></Typography>
             <Typography><span className='font-extrabold text-base !text-black pt-3'>Relevant Skill Experience: </span> <span>{data.education.relevantSkillExperience}</span></Typography>
             <Typography><span className='font-extrabold text-base !text-black pt-3'>Applied Skills :</span> <span>{data.education.appliedSkills}</span></Typography>
-            <Typography><span className='font-extrabold text-base !text-black pt-3'>Resume :</span> <span>{resumeFile}</span></Typography>
+            <Typography><span className='font-extrabold text-base !text-black pt-3'>Resume :</span> <span>{resume}</span></Typography>
             <Typography><span className='font-extrabold text-base !text-black pt-3'>Rating:</span> <span>{data.education.rating}</span></Typography>
           </Col>
         </Row>

@@ -119,3 +119,49 @@ export interface DashboardMenuProps {
   badge?: string;
   badgecolor?: string;
 }
+
+export interface Applicant {
+  _id: string;
+  application_No: number;
+  name: {
+    firstName: string;
+    middleName: string;
+    lastName: string;
+  };
+  phone: {
+    whatsappNumber: string;
+    phoneNumber: string;
+  };
+  email: string;
+  gender: string;
+  dateOfBirth: Date;
+  qualification: string;
+  degree: string;
+  passing_Year: number;
+  current_Location: string;
+  state: string;
+  country: string;
+  pincode: number;
+  fullAddress: string;
+  city: string;
+  appliedSkills: [string];
+  resume: string;
+  totalExperience: number;
+  relevantSkillExperience: number;
+  otherskills: string;
+  rating: number;
+  url: string;
+  current_Pkg: string;
+  expectedpkg: string;
+  noticePeriod: string;
+  negotiation: string;
+  ready_Wfo: string;
+  work_Preference: string;
+  about_Us: string;
+  feedback: string;
+  status: string;
+  interview_Stage: string;
+  referal: string;
+  created_At: Date;
+  modified_At: Date;
+}
