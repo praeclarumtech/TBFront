@@ -1,2 +1,0 @@
-# TBAPI
-Talent Box - API
