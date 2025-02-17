@@ -62,7 +62,7 @@ const ApplicantTable = () => {
   ) => {
     try {
       const response = await axios.get(
-        "https://tbapi-jtu7.onrender.com/api/applicants/viewAllApplicant",
+        "https://localhost:3000/api/applicants/viewAllApplicant",
         {
           params: { ...filters, page, limit },
         }
@@ -76,7 +76,7 @@ const ApplicantTable = () => {
   const handleDelete = async (_id: string) => {
     try {
       await axios.delete(
-        `https://tbapi-jtu7.onrender.com/api/applicants/deleteApplicant/${_id}`
+        `https://localhost:3000/api/applicants/deleteApplicant/${_id}`
       );
       fetchApplicants();
     } catch (error) {
@@ -87,7 +87,7 @@ const ApplicantTable = () => {
   const handleView = async (id: string) => {
     try {
       const response = await axios.get(
-        `https://tbapi-jtu7.onrender.com/api/applicants/viewApplicant/${id}`
+        `https://localhost:3000/api/applicants/viewApplicant/${id}`
       );
       console.log("Applicant Data:", response.data); // Check if data is received
 
@@ -113,7 +113,7 @@ const ApplicantTable = () => {
     
     try {
       const response = await axios.get(
-        `https://tbapi-jtu7.onrender.com/api/applicants/viewApplicant/${_id}`
+        `https://localhost:3000/api/applicants/viewApplicant/${_id}`
       );
     
       const applicantfeedback = {
@@ -135,7 +135,7 @@ const ApplicantTable = () => {
   const handleStatusChange = async (applicantId: string, status: string) => {
     try {
       const response = await axios.put(
-        `https://tbapi-jtu7.onrender.com/api/applicants/updateApplicant/${applicantId}`,
+        `https://localhost:3000/api/applicants/updateApplicant/${applicantId}`,
         { status }
       );
       console.log("Status Update Response:", response.data);
@@ -151,7 +151,7 @@ const ApplicantTable = () => {
   ) => {
     try {
       await axios.put(
-        `https://tbapi-jtu7.onrender.com/api/applicants/updateApplicant/${applicantId}`,
+        `https://localhost:3000/api/applicants/updateApplicant/${applicantId}`,
         { interviewStage }
       );
       // Refetch applicants to update the UI

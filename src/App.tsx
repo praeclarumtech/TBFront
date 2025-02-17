@@ -21,10 +21,11 @@ import LayoutVertical from "pages/dashboard/LayoutVertical";
 // import ChangeLog from "pages/dashboard/Changelog";
 import ApiDemo from "./pages/dashboard/pages/ApiDemo";
 import ApplicantsTables from "./pages/Tables/ApplicantsTables";
-import Applicant from "./components/StepperForm/index"
+// import Applicant from "./components/StepperForm/index"
 import { ToastContainer } from 'react-toastify';  // Import ToastContainer
 import 'react-toastify/dist/ReactToastify.css';
 // import EmailForm from "pages/Tables/EmailForm";
+import  PassingYear  from './components/masters/passingYear/PassingYear';
 
 
 const App = () => {
@@ -90,7 +91,7 @@ const App = () => {
           id: "add_applicants",
           path: "/add_applicants",
           // Component: AddForm,
-          Component: Applicant,
+          Component: PassingYear,
         },
         {
           id: "applicants",

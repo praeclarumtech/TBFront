@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect } from "react";
 import { Modal } from "react-bootstrap";
 import axios from "axios";
@@ -48,7 +46,7 @@ const UpdateModal: React.FC<UpdateModalProps> = ({
   const personalDetails = useSelector((state: any) => state.personalDetails);
 
   console.log("=----------->0", fetchApplicants);
-  
+
   useEffect(() => {
     if (fetchApplicants && Object.keys(fetchApplicants).length > 0) {
       const initialData: any = {
@@ -78,7 +76,6 @@ const UpdateModal: React.FC<UpdateModalProps> = ({
       dispatch(setPersonalDetails(initialData)); // Update Redux store
     }
   }, [fetchApplicants, setValue, dispatch]);
-
 
 const handleSave = async (data: any) => {
   try {
@@ -123,7 +120,7 @@ const handleSave = async (data: any) => {
     <Modal show={show} onHide={onHide} size="xl">
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(handleSave)}>
-          
+
           <PersonalDetailsForm
             onNext={() => {}}
             onCancel={onHide}
