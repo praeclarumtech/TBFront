@@ -21,7 +21,7 @@ export const DashboardMenu: DashboardMenuProps[] = [
     title: "Applicants",
     icon: "layers",
 
-    link: '/applicants-table'
+    link: '/applicants'
   },
 
   {

@@ -320,7 +320,7 @@ const JobDetailsForm: React.FC<JobDetailsFormProps> = ({
           color="primary"
           sx={{ px: 4, py: 1, textTransform: "none" }}
         >
-          {showNext ? "Next" : "Update"}
+          {showNext ? "Next" : "Next"}
         </Button>
       </div>
       )}

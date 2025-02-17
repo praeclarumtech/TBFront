@@ -166,7 +166,7 @@ const StepperForm: React.FC = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:3000/api/applicants/addApplicant",
+        "https://tbapi-jtu7.onrender.com/api/applicants/addApplicant",
         {
           method: "POST",
           headers: {
@@ -187,7 +187,7 @@ const StepperForm: React.FC = () => {
         autoClose: 5000,
       });
 
-      navigate("/applicants-table"); 
+      navigate("/applicant"); 
     } catch (error) {
       console.error("Error:", error);
 

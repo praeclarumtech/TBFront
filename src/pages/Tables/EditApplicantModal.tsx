@@ -15,7 +15,7 @@ interface UpdateModalProps {
   show: boolean;
   onHide: () => void;
   editingApplicant: Applicant | null;
-  fetchApplicants: () => void;
+  fetchApplicants: any;
 }
 
 const UpdateModal: React.FC<UpdateModalProps> = ({
@@ -42,36 +42,42 @@ const UpdateModal: React.FC<UpdateModalProps> = ({
     },
   });
 
-  const { setValue, getValues, reset } = methods;
+  const { setValue, reset } = methods;
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const personalDetails = useSelector((state: any) => state.personalDetails);
 
+  console.log("=----------->0", fetchApplicants);
+  
   useEffect(() => {
-    if (editingApplicant && Object.keys(editingApplicant).length > 0) {
-      const initialData = {
-        firstName: editingApplicant.name?.firstName || "",
-        middleName: editingApplicant.name?.middleName || "",
-        lastName: editingApplicant.name?.lastName || "",
-        dateOfBirth: editingApplicant.dateOfBirth || "",
-        phoneNumber: editingApplicant.phone?.phoneNumber || "",
-        whatsappNumber: editingApplicant.phone?.whatsappNumber || "",
-        gender: editingApplicant.gender || "",
-        email: editingApplicant.email || "",
-        country: editingApplicant.country || "",
-        state: editingApplicant.state || "",
-        city: editingApplicant.city || "",
-        pincode: editingApplicant.pincode || "",
-        fullAddress: editingApplicant.fullAddress || "",
+    if (fetchApplicants && Object.keys(fetchApplicants).length > 0) {
+      const initialData: any = {
+        firstName: fetchApplicants?.name?.firstName || "",
+        middleName: fetchApplicants.name?.middleName || "",
+        lastName: fetchApplicants.name?.lastName || "",
+        dateOfBirth: fetchApplicants?.dateOfBirth || "",
+        phoneNumber: fetchApplicants?.phone?.phoneNumber || "",
+        whatsappNumber: fetchApplicants?.phone?.whatsappNumber || "",
+        gender: fetchApplicants?.gender || "",
+        email: fetchApplicants?.email || "",
+        country: fetchApplicants?.country || "",
+        state: fetchApplicants?.state || "",
+        city: fetchApplicants?.city || "",
+        pincode: fetchApplicants?.pincode || "",
+        fullAddress: fetchApplicants?.fullAddress || "",
       };
 
-      Object.entries(initialData).forEach(([key, value]) => {
-        setValue(key as keyof typeof initialData, value);
-      });
+      // Object.entries(initialData).forEach(([key, value]) => {
+      //   setValue(key as keyof typeof initialData, value);
+      // });
+
+      console.log("====================================");
+      console.log("initialData", initialData);
+      console.log("====================================");
 
       dispatch(setPersonalDetails(initialData)); // Update Redux store
     }
-  }, [editingApplicant, setValue, dispatch]);
+  }, [fetchApplicants, setValue, dispatch]);
 
 
 const handleSave = async (data: any) => {
@@ -98,11 +104,11 @@ const handleSave = async (data: any) => {
     };
 
     const response = await axios.put(
-      `http://localhost:3000/api/applicants/updateApplicant/${editingApplicant?._id}`,
+      `https://tbapi-jtu7.onrender.com/api/applicants/updateApplicant/${editingApplicant?._id}`,
       transformedData
     );
 
-    fetchApplicants();
+    // fetchApplicants();
     onHide();
     toast.success("Applicant updated successfully!");
   } catch (error) {
@@ -117,11 +123,11 @@ const handleSave = async (data: any) => {
     <Modal show={show} onHide={onHide} size="xl">
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(handleSave)}>
+          
           <PersonalDetailsForm
             onNext={() => {}}
             onCancel={onHide}
-            initialValues={getValues()}
-            showNext={false}
+            initialValues={fetchApplicants}
           />
           <div className="flex justify-end gap-4 p-4">
             <Button variant="outlined" onClick={onHide} disabled={isLoading}>

@@ -1,7 +1,3 @@
-
-
-
-
 import React, { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Button } from "@mui/material";
@@ -14,6 +10,8 @@ import FormControl from "@mui/material/FormControl";
 import { useDispatch, useSelector } from "react-redux";
 import { setPersonalDetails } from "store/slices/personalDetailsSlice";
 import { RootState } from "../../store/store";
+import { useNavigate } from "react-router";
+import { Link } from "react-router-dom";
 interface Gender {
   label: string;
   value: string;
@@ -38,7 +36,7 @@ interface DropdownData {
 interface PersonalDetailsFormProps {
   onNext: (data: any) => void;
   onCancel: () => void;
-  initialValues: any;
+    initialValues: any;
   showNext: boolean;
 }
 
@@ -46,10 +44,10 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
   onNext,
   onCancel,
   initialValues,
-  showNext ,
+  showNext,
 }) => {
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
   const personalDetails = useSelector(
     (state: RootState) => state.personalDetails
   );
@@ -64,7 +62,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
     watch,
   } = useForm({
     resolver: yupResolver(personalDetailsSchema),
-    defaultValues: initialValues ||personalDetails  , 
+    defaultValues: initialValues || personalDetails,
   });
 
   const countryValue = watch("country");
@@ -99,11 +97,8 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
   };
 
   useEffect(() => {
-
     reset(personalDetails || initialValues);
   }, [personalDetails, initialValues, reset]);
-
-
 
   const handleFieldChange = (
     field: keyof typeof personalDetails,
@@ -113,18 +108,16 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
     dispatch(setPersonalDetails({ [field]: value }));
   };
 
- 
-
   const handleGenderChange = (event: any) => {
     const gender = event.target.value;
-    setValue("gender", gender); 
+    setValue("gender", gender);
     dispatch(setPersonalDetails({ gender }));
   };
 
   const handleCountryChange = (event: any) => {
     const country = event.target.value;
     setValue("country", country);
-    setValue("state", ""); 
+    setValue("state", "");
     dispatch(setPersonalDetails({ country }));
   };
 
@@ -134,9 +127,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
     dispatch(setPersonalDetails({ state }));
   };
 
-
   const onSubmit = (data: any) => {
-   
     dispatch(setPersonalDetails(data));
     onNext(data);
   };
@@ -478,22 +469,21 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
         </Col>
       </Row>
 
-      
-     
       <div className="d-flex flex-column flex-md-row justify-content-end gap-3 mt-4">
-        <Button
+        {/* <Button
           variant="contained"
           color="error"
-          onClick={onCancel}
+          onClick={() => navigate("./")}
           className="mb-2 mb-md-0"
         >
           Cancel
-        </Button>
+        </Button> */}
+        <Link to ="/applicant">Cancel</Link>
+
         <Button variant="contained" color="primary" type="submit">
           Next
         </Button>
-    </div>
-    
+      </div>
     </Form>
   );
 };

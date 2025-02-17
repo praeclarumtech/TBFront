@@ -1642,7 +1642,7 @@ const EducationalDetailsForm: React.FC<EducationalDetailsFormProps> = ({
             color="primary"
             className="order-0 order-md-1"
           >
-            {showNext ? "Next" : "Update"}
+            {showNext ? "Next" : "Next"}
           </Button>
         </div>
       )}

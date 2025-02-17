@@ -30,7 +30,6 @@ import 'react-toastify/dist/ReactToastify.css';
 const App = () => {
   
   const router = createBrowserRouter([
-
     {
       id: "root",
       path: "/",
@@ -94,11 +93,10 @@ const App = () => {
           Component: Applicant,
         },
         {
-          id: "applicants-table",
-          path: "/applicants-table",
+          id: "applicants",
+          path: "/applicants",
           Component: ApplicantsTables,
         },
-        
       ],
     },
     {
