@@ -26,6 +26,7 @@ import { ToastContainer } from 'react-toastify';  // Import ToastContainer
 import 'react-toastify/dist/ReactToastify.css';
 // import EmailForm from "pages/Tables/EmailForm";
 import  PassingYear  from './components/masters/passingYear/PassingYear';
+import Applicant from "components/StepperForm";
 
 
 const App = () => {
@@ -90,8 +91,7 @@ const App = () => {
         {
           id: "add_applicants",
           path: "/add_applicants",
-          // Component: AddForm,
-          Component: PassingYear,
+          Component: Applicant,
         },
         {
           id: "applicants",
