@@ -31,10 +31,10 @@ const Model = () => {
   const [year, setYear] = useState("");
   const [yearList, setYearList] = useState([]);
 
-  const viewYearApi = "http://localhost:3000/api/year/listOfYears/";
-  const createYearApi = "http://localhost:3000/api/year";
+  const viewYearApi = "https://tbapi-jtu7.onrender.com/api/year/listOfYears/";
+  const createYearApi = "https://tbapi-jtu7.onrender.com/api/year";
   const deleteYearApi = (_id) =>
-    `http://localhost:3000/api/year/deleteYear/${_id}`;
+    `https://tbapi-jtu7.onrender.com/api/year/deleteYear/${_id}`;
   
 
   useEffect(() => {

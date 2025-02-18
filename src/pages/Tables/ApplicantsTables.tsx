@@ -62,7 +62,7 @@ const ApplicantTable = () => {
   ) => {
     try {
       const response = await axios.get(
-        "http://localhost:3000/api/applicants/viewAllApplicant",
+        "https://tbapi-jtu7.onrender.com/api/applicants/viewAllApplicant",
         {
           params: { ...filters, page, limit },
         }
@@ -76,7 +76,7 @@ const ApplicantTable = () => {
   const handleDelete = async (_id: string) => {
     try {
       await axios.delete(
-        `http://localhost:3000/api/applicants/deleteApplicant/${_id}`
+        `https://tbapi-jtu7.onrender.com/api/applicants/deleteApplicant/${_id}`
       );
       fetchApplicants();
     } catch (error) {
@@ -87,7 +87,7 @@ const ApplicantTable = () => {
   const handleView = async (id: string) => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/applicants/viewApplicant/${id}`
+        `https://tbapi-jtu7.onrender.com/api/applicants/viewApplicant/${id}`
       );
       console.log("Applicant Data:", response.data); // Check if data is received
  
@@ -111,7 +111,7 @@ const ApplicantTable = () => {
   // const handleFeedback = async (_id: string) => {
   //   try {
   //     const response = await axios.get(
-  //       `http://localhost:3000/api/applicants/viewApplicant/${_id}`
+  //       `https://tbapi-jtu7.onrender.com/api/applicants/viewApplicant/${_id}`
   //     );
    
   //     const applicantfeedback = {
@@ -133,7 +133,7 @@ const ApplicantTable = () => {
   const handleStatusChange = async (applicantId: string, status: string) => {
     try {
       const response = await axios.put(
-        `http://localhost:3000/api/applicants/update/status/${applicantId}`,
+        `https://tbapi-jtu7.onrender.com/api/applicants/update/status/${applicantId}`,
         { status }
       );
       console.log("Status Update Response:", response.data);
@@ -149,7 +149,7 @@ const ApplicantTable = () => {
   ) => {
     try {
       await axios.put(
-        `http://localhost:3000/api/applicants/update/status/${applicantId}`,
+        `https://tbapi-jtu7.onrender.com/api/applicants/update/status/${applicantId}`,
         { interviewStage }
       );
       // Refetch applicants to update the UI

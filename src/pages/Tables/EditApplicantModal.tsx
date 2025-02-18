@@ -102,7 +102,7 @@ const handleSave = async () => {
     // };
  
     // const response = await axios.put(
-    //   `http://localhost:3000/api/applicants/updateApplicant/${editingApplicant?._id}`,
+    //   `https://tbapi-jtu7.onrender.com/api/applicants/updateApplicant/${editingApplicant?._id}`,
     //   transformedData
     // );
  

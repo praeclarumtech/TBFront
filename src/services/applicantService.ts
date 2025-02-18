@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:3000/api/applicants';
+const API_URL = 'https://tbapi-jtu7.onrender.com/api/applicants';
 
 export const fetchApplicants = async (params = {}) => {
   const response = await axios.get(`${API_URL}/viewAllApplicant`, { params });

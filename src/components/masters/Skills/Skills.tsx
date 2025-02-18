@@ -37,7 +37,7 @@ const ModelAddSkill = () => {
     Persons.map((item, index) => ({ id: index + 1, name: item.name }))
   );
 
-  const listOfYearsApi = "http://localhost:3000/listOfYears";
+  const listOfYearsApi = "https://tbapi-jtu7.onrender.com/listOfYears";
 
   const [user, setUser] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
