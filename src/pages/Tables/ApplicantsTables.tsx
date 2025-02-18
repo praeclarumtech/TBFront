@@ -22,7 +22,7 @@ import { useNavigate } from "react-router-dom";
 import ViewModal from "./ViewModal";
 import { Applicant } from "../../types";
 import FeedbackForm from "./FeedbackForm";
-
+ 
 const statusOptions = ["Hold", "Processing", "Selected", "Rejected", "Pending"];
 const interviewStageOptions = [
   "1st Interview",
@@ -31,7 +31,7 @@ const interviewStageOptions = [
   "Technical",
   "Final",
 ];
-
+ 
 const ApplicantTable = () => {
   const [applicants, setApplicants] = useState<Applicant[]>([]);
   const [selectedApplicant, setSelectedApplicant] = useState<Applicant | null>(
@@ -50,11 +50,11 @@ const ApplicantTable = () => {
   const [showModal, setShowModal] = useState(false);
   const [applicantDetails, setApplicantDetails] = useState({});
   const navigate = useNavigate();
-
+ 
   useEffect(() => {
     fetchApplicants();
   }, []);
-
+ 
   const fetchApplicants = async (
     filters = {},
     page = 1,
@@ -62,7 +62,7 @@ const ApplicantTable = () => {
   ) => {
     try {
       const response = await axios.get(
-        "https://localhost:3000/api/applicants/viewAllApplicant",
+        "http://localhost:3000/api/applicants/viewAllApplicant",
         {
           params: { ...filters, page, limit },
         }
@@ -72,25 +72,25 @@ const ApplicantTable = () => {
       console.error("Error fetching applicants:", error);
     }
   };
-
+ 
   const handleDelete = async (_id: string) => {
     try {
       await axios.delete(
-        `https://localhost:3000/api/applicants/deleteApplicant/${_id}`
+        `http://localhost:3000/api/applicants/deleteApplicant/${_id}`
       );
       fetchApplicants();
     } catch (error) {
       console.error("Error deleting applicant:", error);
     }
   };
-
+ 
   const handleView = async (id: string) => {
     try {
       const response = await axios.get(
-        `https://localhost:3000/api/applicants/viewApplicant/${id}`
+        `http://localhost:3000/api/applicants/viewApplicant/${id}`
       );
       console.log("Applicant Data:", response.data); // Check if data is received
-
+ 
       // Ensure the response data matches the expected structure
       const applicantData = {
         ...response.data,
@@ -101,41 +101,39 @@ const ApplicantTable = () => {
         },
         phone: response.data.phone || { phoneNumber: "", whatsappNumber: "" },
       };
-
+ 
       setSelectedApplicant(applicantData);
     } catch (error) {
       console.error("Error fetching applicant details:", error);
     }
   };
-
-  const handleFeedback = async (_id: string) => {
-    // console.log("handles feedback", { _id });
-    
-    try {
-      const response = await axios.get(
-        `https://localhost:3000/api/applicants/viewApplicant/${_id}`
-      );
-    
-      const applicantfeedback = {
-        ...response.data,
-        feedback: {
-          ...response.data.feedback || '',
-          date: new Date().toISOString(),
-        },
-      };
-      fetchApplicants();
-      setSelectedApplicant(applicantfeedback);
+ 
+  // const handleFeedback = async (_id: string) => {
+  //   try {
+  //     const response = await axios.get(
+  //       `http://localhost:3000/api/applicants/viewApplicant/${_id}`
+  //     );
+   
+  //     const applicantfeedback = {
+  //       ...response.data,
+  //       feedback: {
+  //         ...response.data.feedback || '',
+  //         date: new Date().toISOString(),
+  //       },
+  //     };
+  //     fetchApplicants();
+  //     setSelectedApplicant(applicantfeedback);
      
-      console.log("feedback",applicantfeedback.data.feedback);
-    } catch (error) {
-      console.error("Error sending feedback:", error);
-    }
-  }
-
+  //     console.log("feedback",applicantfeedback.data.feedback);
+  //   } catch (error) {
+  //     console.error("Error sending feedback:", error);
+  //   }
+  // }
+ 
   const handleStatusChange = async (applicantId: string, status: string) => {
     try {
       const response = await axios.put(
-        `https://localhost:3000/api/applicants/updateApplicant/${applicantId}`,
+        `http://localhost:3000/api/applicants/update/status/${applicantId}`,
         { status }
       );
       console.log("Status Update Response:", response.data);
@@ -144,14 +142,14 @@ const ApplicantTable = () => {
       console.error("Error updating status:", error);
     }
   };
-
+ 
   const handleInterviewStageChange = async (
     applicantId: string,
     interviewStage: string
   ) => {
     try {
       await axios.put(
-        `https://localhost:3000/api/applicants/updateApplicant/${applicantId}`,
+        `http://localhost:3000/api/applicants/update/status/${applicantId}`,
         { interviewStage }
       );
       // Refetch applicants to update the UI
@@ -160,7 +158,7 @@ const ApplicantTable = () => {
       console.error("Error updating interview stage:", error);
     }
   };
-
+ 
   const filteredApplicants = applicants.filter((applicant) => {
     const searchMatch =
       (applicant.name.firstName || "")
@@ -170,29 +168,28 @@ const ApplicantTable = () => {
         .toLowerCase()
         .includes(searchTerm.toLowerCase()) ||
       (applicant.email || "").toLowerCase().includes(searchTerm.toLowerCase());
-
+ 
     const technologyMatch = technologyFilter
       ? applicant.appliedSkills.includes(technologyFilter)
       : true;
-
+ 
     const experienceMatch = experienceFilter
       ? applicant.totalExperience >= experienceFilter
       : true;
-
+ 
     const dateMatch =
       (!dateFilterStart ||
         new Date(applicant.created_At) >= new Date(dateFilterStart)) &&
       (!dateFilterEnd ||
         new Date(applicant.created_At) <= new Date(dateFilterEnd));
-
+ 
     return searchMatch && technologyMatch && experienceMatch && dateMatch;
   });
-
   const currentApplicants = filteredApplicants.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
-
+ 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
     fetchApplicants(
@@ -207,12 +204,12 @@ const ApplicantTable = () => {
       itemsPerPage
     );
   };
-
+ 
   const highlightText = (text: string) => {
     if (!searchTerm) return text;
     const regex = new RegExp(`(${searchTerm})`, "gi");
     const parts = text.split(regex);
-
+ 
     return parts.map((part, index) =>
       part.toLowerCase() === searchTerm.toLowerCase() ? (
         <span key={index} style={{ backgroundColor: "yellow" }}>
@@ -223,15 +220,13 @@ const ApplicantTable = () => {
       )
     );
   };
-
+ 
   const hndleEditable = (data: object) => {
     setShowModal(true)
     setApplicantDetails(data);
   };
-
-  console.log("applicantDetails--------", applicantDetails);
-  
-
+ 
+ 
   return (
     <Container fluid>
       <Card className="mb-3 my-3">
@@ -254,7 +249,7 @@ const ApplicantTable = () => {
                 </Dropdown.Menu>
               </Dropdown>
             </Col>
-
+ 
             <Col xs={12} sm={6} md={4} lg={2} className="px-2 ">
               <Form.Select
                 value={experienceFilter}
@@ -271,7 +266,7 @@ const ApplicantTable = () => {
                 ))}
               </Form.Select>
             </Col>
-
+ 
             <Col xs={12} sm={6} md={4} lg={3} className="px-2">
               <InputGroup className="w-100">
                 <Form.Control
@@ -288,7 +283,7 @@ const ApplicantTable = () => {
                 />
               </InputGroup>
             </Col>
-
+ 
             <Col
               xs={12}
               sm={6}
@@ -324,7 +319,7 @@ const ApplicantTable = () => {
           </Row>
         </Card.Header>
       </Card>
-
+ 
       <Card>
         <Card.Header className="bg-white py-4">
           <Row>
@@ -340,7 +335,7 @@ const ApplicantTable = () => {
               </div>
             </Col>
           </Row>
-
+ 
           <Table responsive className="text-nowrap mb-0">
             <thead className="table-light">
               <tr>
@@ -366,7 +361,7 @@ const ApplicantTable = () => {
                     <br />
                     <strong
                       className="text-primary"
-                      onClick={() => handleFeedback(applicant._id)}
+                      // onClick={() => handleFeedback(applicant._id)}
                     >
                       Feedback
                     </strong>
@@ -425,26 +420,26 @@ const ApplicantTable = () => {
               ))}
             </tbody>
           </Table>
-
+ 
           <ViewModal
-            show={!!selectedApplicant} 
+            show={!!selectedApplicant}
             onHide={() => setSelectedApplicant(null)}
             selectedApplicant={selectedApplicant}
           />
-
+ 
           <UpdateModal
             show={showModal}
             onHide={() => setShowModal(false)}
             editingApplicant={editingApplicant}
             fetchApplicants={applicantDetails}
           />
-          <FeedbackForm
+          {/* <FeedbackForm
             show={!!selectedApplicant}
             onHide={() => setSelectedApplicant(null)}
            
             selectedApplicant={selectedApplicant}
-          />
-
+          /> */}
+ 
           <Pagination className="justify-end text-end m-2">
             <Pagination.Prev
               onClick={() => handlePageChange(currentPage - 1)}
@@ -470,5 +465,7 @@ const ApplicantTable = () => {
     </Container>
   );
 };
-
+ 
 export default ApplicantTable;
+ 
+ 

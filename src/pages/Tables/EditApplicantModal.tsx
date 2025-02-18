@@ -1,25 +1,26 @@
+
+
+ 
 import React, { useState, useEffect } from "react";
 import { Modal } from "react-bootstrap";
-import axios from "axios";
 import { FormProvider, useForm } from "react-hook-form";
 import PersonalDetailsForm from "../../components/StepperForm/PersonalDetailsForm";
 import { Button } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { setPersonalDetails } from "../../store/slices/personalDetailsSlice";
 import { Applicant } from "../../types";
-
+ 
 interface UpdateModalProps {
   show: boolean;
   onHide: () => void;
   editingApplicant: Applicant | null;
-  fetchApplicants: any;
+  fetchApplicants: object | null | undefined | any;
 }
-
+ 
 const UpdateModal: React.FC<UpdateModalProps> = ({
   show,
   onHide,
-  editingApplicant,
   fetchApplicants,
 }) => {
   const methods = useForm({
@@ -39,17 +40,16 @@ const UpdateModal: React.FC<UpdateModalProps> = ({
       fullAddress: "",
     },
   });
-
-  const { setValue, reset } = methods;
+ 
+  const { setValue } = methods;
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
-  const personalDetails = useSelector((state: any) => state.personalDetails);
-
-  console.log("=----------->0", fetchApplicants);
-
+  // const personalDetails = useSelector((state: any) => state.personalDetails);
+ 
+ 
   useEffect(() => {
     if (fetchApplicants && Object.keys(fetchApplicants).length > 0) {
-      const initialData: any = {
+      const initialData = {
         firstName: fetchApplicants?.name?.firstName || "",
         middleName: fetchApplicants.name?.middleName || "",
         lastName: fetchApplicants.name?.lastName || "",
@@ -64,47 +64,48 @@ const UpdateModal: React.FC<UpdateModalProps> = ({
         pincode: fetchApplicants?.pincode || "",
         fullAddress: fetchApplicants?.fullAddress || "",
       };
-
+ 
       // Object.entries(initialData).forEach(([key, value]) => {
       //   setValue(key as keyof typeof initialData, value);
       // });
-
+ 
       console.log("====================================");
       console.log("initialData", initialData);
       console.log("====================================");
-
+ 
       dispatch(setPersonalDetails(initialData)); // Update Redux store
     }
   }, [fetchApplicants, setValue, dispatch]);
-
-const handleSave = async (data: any) => {
+ 
+ 
+const handleSave = async () => {
   try {
     setIsLoading(true);
-    const transformedData = {
-      name: {
-        firstName: data.firstName,
-        middleName: data.middleName,
-        lastName: data.lastName,
-      },
-      dateOfBirth: data.dateOfBirth,
-      phone: {
-        phoneNumber: data.phoneNumber,
-        whatsappNumber: data.whatsappNumber,
-      },
-      gender: data.gender,
-      email: data.email,
-      country: data.country,
-      state: data.state,
-      city: data.city,
-      pincode: data.pincode,
-      fullAddress: data.fullAddress,
-    };
-
-    const response = await axios.put(
-      `https://tbapi-jtu7.onrender.com/api/applicants/updateApplicant/${editingApplicant?._id}`,
-      transformedData
-    );
-
+    // const transformedData = {
+    //   name: {
+    //     firstName: data.firstName,
+    //     middleName: data.middleName,
+    //     lastName: data.lastName,
+    //   },
+    //   dateOfBirth: data.dateOfBirth,
+    //   phone: {
+    //     phoneNumber: data.phoneNumber,
+    //     whatsappNumber: data.whatsappNumber,
+    //   },
+    //   gender: data.gender,
+    //   email: data.email,
+    //   country: data.country,
+    //   state: data.state,
+    //   city: data.city,
+    //   pincode: data.pincode,
+    //   fullAddress: data.fullAddress,
+    // };
+ 
+    // const response = await axios.put(
+    //   `http://localhost:3000/api/applicants/updateApplicant/${editingApplicant?._id}`,
+    //   transformedData
+    // );
+ 
     // fetchApplicants();
     onHide();
     toast.success("Applicant updated successfully!");
@@ -115,12 +116,12 @@ const handleSave = async (data: any) => {
     setIsLoading(false);
   }
 };
-
+ 
   return (
     <Modal show={show} onHide={onHide} size="xl">
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(handleSave)}>
-
+         
           <PersonalDetailsForm
             onNext={() => {}}
             onCancel={onHide}
@@ -139,5 +140,7 @@ const handleSave = async (data: any) => {
     </Modal>
   );
 };
-
+ 
 export default UpdateModal;
+ 
+ 

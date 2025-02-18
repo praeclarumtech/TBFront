@@ -16,30 +16,30 @@ interface Gender {
   label: string;
   value: string;
 }
-
+ 
 interface Country {
   label: string;
   value: string;
 }
-
+ 
 interface State {
   label: string;
   value: string;
 }
-
+ 
 interface DropdownData {
   countries: Country[];
   states: Record<string, State[]>;
   genders: Gender[];
 }
-
+ 
 interface PersonalDetailsFormProps {
   onNext: (data: any) => void;
   onCancel: () => void;
     initialValues: any;
   showNext: boolean;
 }
-
+ 
 const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
   onNext,
   onCancel,
@@ -51,7 +51,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
   const personalDetails = useSelector(
     (state: RootState) => state.personalDetails
   );
-
+ 
   const {
     control,
     register,
@@ -64,11 +64,11 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
     resolver: yupResolver(personalDetailsSchema),
     defaultValues: initialValues || personalDetails,
   });
-
+ 
   const countryValue = watch("country");
   const stateValue = watch("state");
   const genderValue = watch("gender");
-
+ 
   const mockData: DropdownData = {
     countries: [
       { label: "USA", value: "usa" },
@@ -95,11 +95,11 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
       { label: "Other", value: "other" },
     ],
   };
-
+ 
   useEffect(() => {
     reset(personalDetails || initialValues);
   }, [personalDetails, initialValues, reset]);
-
+ 
   const handleFieldChange = (
     field: keyof typeof personalDetails,
     value: string
@@ -107,26 +107,26 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
     setValue(field, value);
     dispatch(setPersonalDetails({ [field]: value }));
   };
-
+ 
   const handleGenderChange = (event: any) => {
     const gender = event.target.value;
     setValue("gender", gender);
     dispatch(setPersonalDetails({ gender }));
   };
-
+ 
   const handleCountryChange = (event: any) => {
     const country = event.target.value;
     setValue("country", country);
     setValue("state", "");
     dispatch(setPersonalDetails({ country }));
   };
-
+ 
   const handleStateChange = (event: any) => {
     const state = event.target.value;
     setValue("state", state);
     dispatch(setPersonalDetails({ state }));
   };
-
+ 
   const onSubmit = (data: any) => {
     dispatch(setPersonalDetails(data));
     onNext(data);
@@ -160,7 +160,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
             </Form.Control.Feedback>
           </Form.Group>
         </Col>
-
+ 
         {/* Middle Name */}
         <Col xs={12} md={6} lg={3}>
           <Form.Group controlId="middleName">
@@ -186,7 +186,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
             </Form.Control.Feedback>
           </Form.Group>
         </Col>
-
+ 
         {/* Last Name */}
         <Col xs={12} md={6} lg={3}>
           <Form.Group controlId="lastName">
@@ -213,7 +213,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
             </Form.Control.Feedback>
           </Form.Group>
         </Col>
-
+ 
         {/* Date of Birth */}
         <Col xs={12} md={6} lg={3}>
           <Form.Group controlId="dateOfBirth">
@@ -242,9 +242,8 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
             </Form.Control.Feedback>
           </Form.Group>
         </Col>
-
-        {/* Email */}
-        <Col xs={12} md={6} lg={3}>
+  {/* Email */}
+  <Col xs={12} md={6} lg={3}>
           <Form.Group controlId="email">
             <Form.Label className="fw-medium">Email</Form.Label>
             <Controller
@@ -266,7 +265,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
             </Form.Control.Feedback>
           </Form.Group>
         </Col>
-
+ 
         {/* Phone Number */}
         <Col xs={12} md={6} lg={3}>
           <Form.Group controlId="phoneNumber">
@@ -292,7 +291,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
             </Form.Control.Feedback>
           </Form.Group>
         </Col>
-
+ 
         {/* WhatsApp Number */}
         <Col xs={12} md={6} lg={3}>
           <Form.Group controlId="whatsappNumber">
@@ -318,7 +317,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
             </Form.Control.Feedback>
           </Form.Group>
         </Col>
-
+ 
         <Col xs={12} md={6} lg={3}>
           <Form.Group controlId="gender">
             <Form.Label className="fw-medium">Gender</Form.Label>
@@ -364,7 +363,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
             </FormControl>
           </Form.Group>
         </Col>
-
+ 
         <Col xs={12} md={6} lg={3}>
           <Form.Group controlId="state">
             <Form.Label className="fw-medium">State</Form.Label>
@@ -389,7 +388,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
             </FormControl>
           </Form.Group>
         </Col>
-
+ 
         {/* City */}
         <Col xs={12} md={6} lg={3}>
           <Form.Group controlId="city">
@@ -413,7 +412,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
             </Form.Control.Feedback>
           </Form.Group>
         </Col>
-
+ 
         {/* Pincode */}
         <Col xs={12} md={6} lg={3}>
           <Form.Group controlId="pincode">
@@ -438,9 +437,9 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
             </Form.Control.Feedback>
           </Form.Group>
         </Col>
-
+ 
         {/* Gender */}
-
+ 
         {/* Full Address */}
         <Col xs={12}>
           <Form.Group controlId="fullAddress">
@@ -468,7 +467,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
           </Form.Group>
         </Col>
       </Row>
-
+ 
       <div className="d-flex flex-column flex-md-row justify-content-end gap-3 mt-4">
         {/* <Button
           variant="contained"
@@ -478,8 +477,8 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
         >
           Cancel
         </Button> */}
-        <Link to ="/applicant">Cancel</Link>
-
+        <Link to ="/applicants">Cancel</Link>
+ 
         <Button variant="contained" color="primary" type="submit">
           Next
         </Button>
@@ -487,5 +486,5 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
     </Form>
   );
 };
-
+ 
 export default PersonalDetailsForm;

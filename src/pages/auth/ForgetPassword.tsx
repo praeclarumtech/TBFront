@@ -1,5 +1,5 @@
 // import node module libraries
-import { Row, Col, Card, Form, Button, Image } from "react-bootstrap";
+import { Row, Col, Card, Form, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";

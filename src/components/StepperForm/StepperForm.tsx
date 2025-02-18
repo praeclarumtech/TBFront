@@ -16,14 +16,14 @@ import { Card } from "react-bootstrap";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 // import Applicant from "../../components/StepperForm/index"
-
+ 
 const steps = [
   "Personal Details",
   "Educational Details",
   "Job Details",
   "Preview",
 ];
-
+ 
 interface FormData {
   personal: {
     firstName: string;
@@ -63,7 +63,7 @@ interface FormData {
     aboutUs: string;
   };
 }
-
+ 
 const StepperForm: React.FC = () => {
   const navigate = useNavigate();
   const [activeStep, setActiveStep] = useState(0);
@@ -106,7 +106,7 @@ const StepperForm: React.FC = () => {
       aboutUs: "",
     },
   });
-
+ 
   const handleNext = (data: any) => {
     if (activeStep === 0) {
       setFormData((prev) => ({ ...prev, personal: data }));
@@ -117,15 +117,15 @@ const StepperForm: React.FC = () => {
     }
     setActiveStep((prev) => prev + 1);
   };
-
+ 
   const handleBack = () => {
     setActiveStep((prev) => prev - 1);
   };
-
+ 
   const handleEdit = (step: number) => {
     setActiveStep(step);
   };
-
+ 
   const handleSubmit = async () => {
     const apiData = {
       name: {
@@ -163,10 +163,10 @@ const StepperForm: React.FC = () => {
       referral: formData.education.referral || "",
       url: formData.education.url,
     };
-
+ 
     try {
       const response = await fetch(
-        "https://tbapi-jtu7.onrender.com/api/applicants/addApplicant",
+        "http://localhost:3000/api/applicants/addApplicant",
         {
           method: "POST",
           headers: {
@@ -175,29 +175,29 @@ const StepperForm: React.FC = () => {
           body: JSON.stringify(apiData),
         }
       );
-
+ 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
-      const result = await response.json();
-      console.log("Success:", result);
+ 
+       await response.json();
+ 
       toast.success("Application submitted successfully!", {
         position: "top-right",
         autoClose: 5000,
       });
-
-      navigate("/applicant"); 
+ 
+      navigate("/applicants");
     } catch (error) {
       console.error("Error:", error);
-
+ 
       toast.error("Application submission failed. Please try again.", {
         position: "top-right",
         autoClose: 5000,
       });
     }
   };
-
+ 
   return (
     <Card>
       <h4 className="m-2 p-1 text-dark justify-center content-start text-2xl text-center font-bold text-blue-900">
@@ -258,5 +258,5 @@ const StepperForm: React.FC = () => {
     </Card>
   );
 };
-
+ 
 export default StepperForm;
