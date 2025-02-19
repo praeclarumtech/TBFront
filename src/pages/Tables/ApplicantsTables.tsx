@@ -152,7 +152,7 @@ const ApplicantTable = () => {
   const handleStatusChange = async (applicantId: string, status: string) => {
     try {
       const response = await axios.put(
-        `${BASE_URL}/api/applicants/updateApplicant/${applicantId}`,
+        `${BASE_URL}/api/applicants/update/status/${applicantId}`,
         { status }
       );
       console.log("Status Update Response:", response.data);
@@ -176,7 +176,7 @@ const ApplicantTable = () => {
   ) => {
     try {
       await axios.put(
-        `${BASE_URL}/api/applicants/interviewStage/${applicantId}`,
+        `${BASE_URL}/api/applicants/update/status/${applicantId}`,
         { interviewStage }
       );
       // Refetch applicants to update the UI
