@@ -477,7 +477,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
         >
           Cancel
         </Button> */}
-        <Link to ="/applicants">Cancel</Link>
+        <Link to ="/applicants" className="p-2 bg-red-600 outline-none rounded text-white">Cancel</Link>
  
         <Button variant="contained" color="primary" type="submit">
           Next

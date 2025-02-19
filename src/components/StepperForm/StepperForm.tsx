@@ -17,6 +17,9 @@ import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 // import Applicant from "../../components/StepperForm/index"
  
+
+// const BASE_URL = "http://localhost:3000";
+const BASE_URL = import.meta.env.VITE_API_URL;
 const steps = [
   "Personal Details",
   "Educational Details",
@@ -165,16 +168,13 @@ const StepperForm: React.FC = () => {
     };
  
     try {
-      const response = await fetch(
-        "https://tbapi-jtu7.onrender.com/api/applicants/addApplicant",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(apiData),
-        }
-      );
+      const response = await fetch(`${BASE_URL}/api/applicants/addApplicant`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(apiData),
+      });
  
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);

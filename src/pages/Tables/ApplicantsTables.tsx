@@ -21,8 +21,13 @@ import UpdateModal from "./EditApplicantModal";
 import { useNavigate } from "react-router-dom";
 import ViewModal from "./ViewModal";
 import { Applicant } from "../../types";
-import FeedbackForm from "./FeedbackForm";
- 
+// import FeedbackForm from "./FeedbackForm";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+// const BASE_URL = "http://localhost:3000";
+const BASE_URL = import.meta.env.VITE_API_URL;
+
 const statusOptions = ["Hold", "Processing", "Selected", "Rejected", "Pending"];
 const interviewStageOptions = [
   "1st Interview",
@@ -31,7 +36,7 @@ const interviewStageOptions = [
   "Technical",
   "Final",
 ];
- 
+
 const ApplicantTable = () => {
   const [applicants, setApplicants] = useState<Applicant[]>([]);
   const [selectedApplicant, setSelectedApplicant] = useState<Applicant | null>(
@@ -50,11 +55,11 @@ const ApplicantTable = () => {
   const [showModal, setShowModal] = useState(false);
   const [applicantDetails, setApplicantDetails] = useState({});
   const navigate = useNavigate();
- 
+
   useEffect(() => {
     fetchApplicants();
   }, []);
- 
+
   const fetchApplicants = async (
     filters = {},
     page = 1,
@@ -62,35 +67,45 @@ const ApplicantTable = () => {
   ) => {
     try {
       const response = await axios.get(
-        "https://tbapi-jtu7.onrender.com/api/applicants/viewAllApplicant",
+        `${BASE_URL}/api/applicants/viewAllApplicant`,
         {
           params: { ...filters, page, limit },
         }
       );
       setApplicants(response.data.data.item);
     } catch (error) {
-      console.error("Error fetching applicants:", error);
+      // console.error("Error fetching applicants:", error);
+      toast.error("Error fetching applicants!", {
+        position: "top-right",
+        autoClose: 5000,
+      });
     }
   };
- 
+
   const handleDelete = async (_id: string) => {
     try {
-      await axios.delete(
-        `https://tbapi-jtu7.onrender.com/api/applicants/deleteApplicant/${_id}`
-      );
+      await axios.delete(`${BASE_URL}/api/applicants/deleteApplicant/${_id}`);
       fetchApplicants();
+      toast.success("Applicant deleted successfully!", {
+        position: "top-right",
+        autoClose: 5000,
+      });
     } catch (error) {
-      console.error("Error deleting applicant:", error);
+      // console.error("Error deleting applicant:", error);
+      toast.error("Error deleting applicant!", {
+        position: "top-right",
+        autoClose: 5000,
+      });
     }
   };
- 
+
   const handleView = async (id: string) => {
     try {
       const response = await axios.get(
-        `https://tbapi-jtu7.onrender.com/api/applicants/viewApplicant/${id}`
+        `${BASE_URL}/api/applicants/viewApplicant/${id}`
       );
       console.log("Applicant Data:", response.data); // Check if data is received
- 
+
       // Ensure the response data matches the expected structure
       const applicantData = {
         ...response.data,
@@ -101,19 +116,23 @@ const ApplicantTable = () => {
         },
         phone: response.data.phone || { phoneNumber: "", whatsappNumber: "" },
       };
- 
+
       setSelectedApplicant(applicantData);
     } catch (error) {
-      console.error("Error fetching applicant details:", error);
+      // console.error("Error fetching applicant details:", error);
+      toast.error("Error fetching applicant details!", {
+        position: "top-right",
+        autoClose: 5000,
+      });
     }
   };
- 
+
   // const handleFeedback = async (_id: string) => {
   //   try {
   //     const response = await axios.get(
-  //       `https://tbapi-jtu7.onrender.com/api/applicants/viewApplicant/${_id}`
+  //       `${BASE_URL}/api/applicants/viewApplicant/${_id}`
   //     );
-   
+
   //     const applicantfeedback = {
   //       ...response.data,
   //       feedback: {
@@ -123,42 +142,59 @@ const ApplicantTable = () => {
   //     };
   //     fetchApplicants();
   //     setSelectedApplicant(applicantfeedback);
-     
+
   //     console.log("feedback",applicantfeedback.data.feedback);
   //   } catch (error) {
   //     console.error("Error sending feedback:", error);
   //   }
   // }
- 
+
   const handleStatusChange = async (applicantId: string, status: string) => {
     try {
       const response = await axios.put(
-        `https://tbapi-jtu7.onrender.com/api/applicants/update/status/${applicantId}`,
+        `${BASE_URL}/api/applicants/updateApplicant/${applicantId}`,
         { status }
       );
       console.log("Status Update Response:", response.data);
       fetchApplicants();
+      toast.success("Status updated successfully!", {
+        position: "top-right",
+        autoClose: 5000,
+      });
     } catch (error) {
       console.error("Error updating status:", error);
+      toast.error("Error updating status!", {
+        position: "top-right",
+        autoClose: 5000,
+      });
     }
   };
- 
+
   const handleInterviewStageChange = async (
     applicantId: string,
     interviewStage: string
   ) => {
     try {
       await axios.put(
-        `https://tbapi-jtu7.onrender.com/api/applicants/update/status/${applicantId}`,
+        `${BASE_URL}/api/applicants/interviewStage/${applicantId}`,
         { interviewStage }
       );
       // Refetch applicants to update the UI
       fetchApplicants();
+
+      toast.success("Interview stage updated successfully!", {
+        position: "top-right",
+        autoClose: 5000,
+      });
     } catch (error) {
       console.error("Error updating interview stage:", error);
+      toast.error("Error updating interview stage!", {
+        position: "top-right",
+        autoClose: 5000,
+      });
     }
   };
- 
+
   const filteredApplicants = applicants.filter((applicant) => {
     const searchMatch =
       (applicant.name.firstName || "")
@@ -168,28 +204,28 @@ const ApplicantTable = () => {
         .toLowerCase()
         .includes(searchTerm.toLowerCase()) ||
       (applicant.email || "").toLowerCase().includes(searchTerm.toLowerCase());
- 
+
     const technologyMatch = technologyFilter
       ? applicant.appliedSkills.includes(technologyFilter)
       : true;
- 
+
     const experienceMatch = experienceFilter
       ? applicant.totalExperience >= experienceFilter
       : true;
- 
+
     const dateMatch =
       (!dateFilterStart ||
         new Date(applicant.created_At) >= new Date(dateFilterStart)) &&
       (!dateFilterEnd ||
         new Date(applicant.created_At) <= new Date(dateFilterEnd));
- 
+
     return searchMatch && technologyMatch && experienceMatch && dateMatch;
   });
   const currentApplicants = filteredApplicants.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
- 
+
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
     fetchApplicants(
@@ -204,12 +240,12 @@ const ApplicantTable = () => {
       itemsPerPage
     );
   };
- 
+
   const highlightText = (text: string) => {
     if (!searchTerm) return text;
     const regex = new RegExp(`(${searchTerm})`, "gi");
     const parts = text.split(regex);
- 
+
     return parts.map((part, index) =>
       part.toLowerCase() === searchTerm.toLowerCase() ? (
         <span key={index} style={{ backgroundColor: "yellow" }}>
@@ -220,21 +256,20 @@ const ApplicantTable = () => {
       )
     );
   };
- 
+
   const hndleEditable = (data: object) => {
-    setShowModal(true)
+    setShowModal(true);
     setApplicantDetails(data);
   };
- 
- 
+
   return (
     <Container fluid>
       <Card className="mb-3 my-3">
         <Card.Header className="bg-white py-4">
-          <Row className="">
-            <Col xs={12} sm={6} md={4} lg={2} className="">
-              <Dropdown className="">
-                <Dropdown.Toggle variant="outline-secondary" className="">
+          <Row className="flex">
+            <Col xs={12} sm={12} md={4} lg={2} className="!mb-2 ">
+              <Dropdown>
+                <Dropdown.Toggle variant="outline-secondary" className="w-100">
                   {technologyFilter || "Technology"}
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
@@ -249,8 +284,8 @@ const ApplicantTable = () => {
                 </Dropdown.Menu>
               </Dropdown>
             </Col>
- 
-            <Col xs={12} sm={6} md={4} lg={2} className="px-2 ">
+
+            <Col xs={12} sm={6} md={4} lg={2} className="px-2 mb-2">
               <Form.Select
                 value={experienceFilter}
                 onChange={(e) =>
@@ -266,9 +301,9 @@ const ApplicantTable = () => {
                 ))}
               </Form.Select>
             </Col>
- 
-            <Col xs={12} sm={6} md={4} lg={3} className="px-2">
-              <InputGroup className="w-100">
+
+            <Col xs={12} sm={6} md={4} lg={3} className="px-2 mb-2">
+              <InputGroup className="sm:w-100">
                 <Form.Control
                   type="date"
                   value={dateFilterStart}
@@ -283,13 +318,13 @@ const ApplicantTable = () => {
                 />
               </InputGroup>
             </Col>
- 
+
             <Col
               xs={12}
               sm={6}
-              md={2}
+              md={6}
               lg={2}
-              className="d-flex justify-content-end align-items-center px-1"
+              className="!d-flex !justify-content-end !align-items-center !px-1 mb-2"
             >
               <Button
                 variant="link1"
@@ -301,12 +336,13 @@ const ApplicantTable = () => {
                   setDateFilterEnd("");
                   fetchApplicants({});
                 }}
-                className="text-decoration-none py-2 text-primary bg-danger text-white"
+                className="text-decoration-none py-2 text-primary bg-danger text-white  w-100"
               >
                 Reset Filters
               </Button>
             </Col>
-            <Col xs={12} sm={6} md={3} lg={3} className="px-1">
+
+            <Col xs={12} sm={6} md={6} lg={3} className="px-1">
               <div className="d-flex justify-content-end">
                 <Button
                   onClick={() => navigate("/add_applicants")}
@@ -319,9 +355,9 @@ const ApplicantTable = () => {
           </Row>
         </Card.Header>
       </Card>
- 
-      <Card>
-        <Card.Header className="bg-white py-4">
+
+      <Card className="min-h-full">
+        <Card.Header className="bg-white py-4 ">
           <Row>
             <Col md={3} sm={6} xs={12}>
               <div className="m-3">
@@ -335,7 +371,7 @@ const ApplicantTable = () => {
               </div>
             </Col>
           </Row>
- 
+
           <Table responsive className="text-nowrap mb-0">
             <thead className="table-light">
               <tr>
@@ -420,13 +456,13 @@ const ApplicantTable = () => {
               ))}
             </tbody>
           </Table>
- 
+
           <ViewModal
             show={!!selectedApplicant}
             onHide={() => setSelectedApplicant(null)}
             selectedApplicant={selectedApplicant}
           />
- 
+
           <UpdateModal
             show={showModal}
             onHide={() => setShowModal(false)}
@@ -439,7 +475,7 @@ const ApplicantTable = () => {
            
             selectedApplicant={selectedApplicant}
           /> */}
- 
+
           <Pagination className="justify-end text-end m-2">
             <Pagination.Prev
               onClick={() => handlePageChange(currentPage - 1)}
@@ -465,7 +501,5 @@ const ApplicantTable = () => {
     </Container>
   );
 };
- 
+
 export default ApplicantTable;
- 
- 

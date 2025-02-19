@@ -13,7 +13,7 @@ interface ViewModalProps {
 }
 
 const ViewModal: React.FC<ViewModalProps> = ({ show, onHide, selectedApplicant }) => {
-    console.log("Selected Applicant in ViewModal:", selectedApplicant);
+    // console.log("Selected Applicant in ViewModal:", selectedApplicant);
 
     if (!selectedApplicant || !selectedApplicant.name || !selectedApplicant.phone) {
         return null;
