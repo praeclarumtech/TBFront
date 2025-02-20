@@ -24,12 +24,12 @@ export const DashboardMenu: DashboardMenuProps[] = [
     link: '/applicants'
   },
 
-  {
-    id: uuid(),
-    title: "Add Applicant",
-    icon: "layout",
-    link: "/add_applicants",
-  },
+  // {
+  //   id: uuid(),
+  //   title: "Add Applicant",
+  //   icon: "layout",
+  //   link: "/add_applicants",
+  // },
   {
     id: uuid(),
     title: "Analysis",
@@ -46,7 +46,6 @@ export const DashboardMenu: DashboardMenuProps[] = [
     id: uuid(),
     title: "Reports",
     icon: "corner-left-down",
-
     link: '/reports',
   },
   {
@@ -54,18 +53,19 @@ export const DashboardMenu: DashboardMenuProps[] = [
     title: "Masters",
     grouptitle: true,
   },
+{
+    id: uuid(),
+    title: "Years",
+    icon: "monitor",
+    link: '/passingYear',
+  },
+
   {
     id: uuid(),
-    title: "Master",
-    icon: "clipboard",
-    link: "/documentation",
-    children: [
-      { id: uuid(), link: "/pages/profile", name: "Add Passing Year" },
-      { id: uuid(), link: "/pages/settings", name: "Add Skills" },
-      { id: uuid(), link: "/pages/billing", name: "Billing" },
-      { id: uuid(), link: "/pages/pricing", name: "Pricing" },
-      { id: uuid(), link: "/not-found", name: "404 Error" },
-    ],
+    title: "Skills",
+    icon: "corner-left-down",
+    link: '/skills',
   },
+  
 
 ];

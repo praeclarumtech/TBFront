@@ -18,10 +18,14 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 }) => {
   return (
     <Modal open={open} onClose={onClose}>
-      <div className="rounded bg-white max-w-sm p-2 mt-5 mx-auto border-none justify-center text-center ">
+      <div
+        className="rounded bg-white max-w-sm p-2 mt-5 mx-auto border-none justify-center text-center "
+        
+      >
+       
         <Typography
-          style={{ marginBottom: "20px" }}
-          className="text-red-600 text-base text-left flex items-center"
+          style={{ marginBottom: "0px" }}
+          className="text-red-600 text-base text-left flex items-center  font-bold"
         >
           <i
             className="fa fa-regular fa fa-triangle-exclamation"
