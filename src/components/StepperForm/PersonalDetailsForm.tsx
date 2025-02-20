@@ -10,7 +10,7 @@ import FormControl from "@mui/material/FormControl";
 import { useDispatch, useSelector } from "react-redux";
 import { setPersonalDetails } from "store/slices/personalDetailsSlice";
 import { RootState } from "../../store/store";
-import { useNavigate } from "react-router";
+
 import { Link } from "react-router-dom";
 interface Gender {
   label: string;
@@ -47,7 +47,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
   showNext,
 }) => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+ 
   const personalDetails = useSelector(
     (state: RootState) => state.personalDetails
   );

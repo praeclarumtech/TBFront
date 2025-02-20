@@ -24,6 +24,7 @@ import { Applicant } from "../../types";
 // import FeedbackForm from "./FeedbackForm";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import ConfirmationModal from "../../components/ConfirmationDialog";
 
 // const BASE_URL = "http://localhost:3000";
 const BASE_URL = import.meta.env.VITE_API_URL;
@@ -38,6 +39,9 @@ const interviewStageOptions = [
 ];
 
 const ApplicantTable = () => {
+  const [applicantToDelete, setApplicantToDelete] = useState<string | null>(
+    null
+  );
   const [applicants, setApplicants] = useState<Applicant[]>([]);
   const [selectedApplicant, setSelectedApplicant] = useState<Applicant | null>(
     null
@@ -52,6 +56,7 @@ const ApplicantTable = () => {
   const [dateFilterEnd, setDateFilterEnd] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+   const [showModalDel, setShowModalDel] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [applicantDetails, setApplicantDetails] = useState({});
   const navigate = useNavigate();
@@ -82,6 +87,23 @@ const ApplicantTable = () => {
     }
   };
 
+  // const handleDelete = async (_id: string) => {
+  //   try {
+  //     await axios.delete(`${BASE_URL}/api/applicants/deleteApplicant/${_id}`);
+  //     fetchApplicants();
+  //     toast.success("Applicant deleted successfully!", {
+  //       position: "top-right",
+  //       autoClose: 5000,
+  //     });
+  //   } catch (error) {
+  //     // console.error("Error deleting applicant:", error);
+  //     toast.error("Error deleting applicant!", {
+  //       position: "top-right",
+  //       autoClose: 5000,
+  //     });
+  //   }
+  // };
+
   const handleDelete = async (_id: string) => {
     try {
       await axios.delete(`${BASE_URL}/api/applicants/deleteApplicant/${_id}`);
@@ -91,11 +113,29 @@ const ApplicantTable = () => {
         autoClose: 5000,
       });
     } catch (error) {
-      // console.error("Error deleting applicant:", error);
       toast.error("Error deleting applicant!", {
         position: "top-right",
         autoClose: 5000,
       });
+    }
+  };
+
+  const openDeleteModal = (applicantId: string) => {
+    console.log("click modal");
+    
+    setApplicantToDelete(applicantId);
+    setShowModalDel(true);
+  };
+
+  const closeDeleteModal = () => {
+    setApplicantToDelete(null);
+    setShowModalDel(false);
+  };
+
+  const confirmDelete = () => {
+    if (applicantToDelete) {
+      handleDelete(applicantToDelete);
+      closeDeleteModal();
     }
   };
 
@@ -104,7 +144,7 @@ const ApplicantTable = () => {
       const response = await axios.get(
         `${BASE_URL}/api/applicants/viewApplicant/${id}`
       );
-      console.log("Applicant Data:", response.data); // Check if data is received
+      // console.log("Applicant Data:", response.data);
 
       // Ensure the response data matches the expected structure
       const applicantData = {
@@ -152,7 +192,7 @@ const ApplicantTable = () => {
   const handleStatusChange = async (applicantId: string, status: string) => {
     try {
       const response = await axios.put(
-        `${BASE_URL}/api/applicants/updateApplicant/${applicantId}`,
+        `${BASE_URL}/api/applicants/update/status/${applicantId}`,
         { status }
       );
       console.log("Status Update Response:", response.data);
@@ -176,7 +216,7 @@ const ApplicantTable = () => {
   ) => {
     try {
       await axios.put(
-        `${BASE_URL}/api/applicants/interviewStage/${applicantId}`,
+        `${BASE_URL}/api/applicants/update/status/${applicantId}`,
         { interviewStage }
       );
       // Refetch applicants to update the UI
@@ -403,8 +443,20 @@ const ApplicantTable = () => {
                     </strong>
                   </td>
                   <td>
+                    <style>
+                      {`
+    .custom-select {
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+
+  background-image: none !important;
+
+}
+        `}
+                    </style>
                     <Form.Select
-                      className="p-1 m-0 bg-warning text-white"
+                      className="p-1 m-0 bg-warning text-white custom-select  "
                       value={applicant.interviewStage}
                       onChange={(e) =>
                         handleInterviewStageChange(
@@ -414,7 +466,7 @@ const ApplicantTable = () => {
                       }
                     >
                       {interviewStageOptions.map((stage) => (
-                        <option key={stage} value={stage}>
+                        <option key={stage} value={stage} className=" ">
                           {stage}
                         </option>
                       ))}
@@ -423,7 +475,7 @@ const ApplicantTable = () => {
                   <td>
                     <Form.Select
                       value={applicant.status}
-                      className="p-1 m-0 outline-none bg-success text-white"
+                      className="p-1 m-0 bg-success  custom-select text-white "
                       onChange={(e) =>
                         handleStatusChange(applicant._id, e.target.value)
                       }
@@ -441,15 +493,31 @@ const ApplicantTable = () => {
                       style={{ cursor: "pointer" }}
                       onClick={() => hndleEditable(applicant)}
                     />
+                  
                     <ViewIcon
                       color="info"
                       style={{ cursor: "pointer", marginLeft: 8 }}
                       onClick={() => handleView(applicant._id)}
                     />
-                    <DeleteIcon
+                    {/* <DeleteIcon
                       color="error"
                       style={{ cursor: "pointer", marginLeft: 8 }}
                       onClick={() => handleDelete(applicant._id)}
+                    /> */}
+
+                    <DeleteIcon
+                      color="error"
+                      style={{ cursor: "pointer", marginLeft: 8 }}
+                      onClick={() => openDeleteModal(applicant._id)} // Pass the applicant's ID to the modal
+                    />
+
+                    {/* Reusable Confirmation Modal */}
+                    <ConfirmationModal
+                      open={showModalDel}
+                      alert="Alert"
+                      message="Are you sure you want to delete this applicant?"
+                      onClose={closeDeleteModal}
+                      onConfirm={confirmDelete}
                     />
                   </td>
                 </tr>
