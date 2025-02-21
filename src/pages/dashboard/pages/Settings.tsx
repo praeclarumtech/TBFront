@@ -5,13 +5,13 @@ import { Container } from "react-bootstrap";
 import { PageHeading } from "widgets";
 
 // import sub components
-import {  GeneralSetting } from "sub-components";
+import {  Profile } from "sub-components";
 
 const Settings = () => {
   return (
     <Container fluid className="p-6 ">
       <PageHeading heading="General" />
-      <GeneralSetting />
+      <Profile />
       {/* <DeleteAccount /> */}
     </Container>
   );

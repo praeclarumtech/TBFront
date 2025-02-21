@@ -23,7 +23,7 @@ import Teams from "./dashboard/Teams";
 // sub components for /pages/settings
 // import DeleteAccount from "./settings/DeleteAccount";
 import EmailSetting from "./settings/EmailSetting";
-import GeneralSetting from "./settings/GeneralSetting";
+import Profile from "./settings/Profile";
 import Notifications from "./settings/Notifications";
 import Preferences from "./settings/Preferences";
 
@@ -41,7 +41,7 @@ export {
   // BillingAddress,
   // DeleteAccount,
   EmailSetting,
-  GeneralSetting,
+  Profile,
   Notifications,
   Preferences,
 };

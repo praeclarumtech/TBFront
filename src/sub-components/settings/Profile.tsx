@@ -7,7 +7,7 @@ import { FormSelect } from "widgets";
 // import hooks
 import { useMounted } from "hooks/useMounted";
 
-const GeneralSetting = () => {
+const Profile = () => {
   const hasMounted = useMounted();
   const countryOptions = [
     { value: "India", label: "India" },
@@ -180,4 +180,4 @@ const GeneralSetting = () => {
   );
 };
 
-export default GeneralSetting;
+export default Profile;

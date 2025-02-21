@@ -24,12 +24,12 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
       >
        
         <Typography
-          style={{ marginBottom: "0px" }}
-          className="text-red-600 text-base text-left flex items-center  font-bold"
+          style={{ }}
+          className="text-left !font-bold !text-lg !px-2 !text-red-600 "
         >
           <i
             className="fa fa-regular fa fa-triangle-exclamation"
-            style={{ marginRight: "8px" }}
+            style={{ }}
           ></i>
           {alert}
         </Typography>
