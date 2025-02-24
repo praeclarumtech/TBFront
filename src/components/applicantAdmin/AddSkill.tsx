@@ -11,7 +11,6 @@ function Add_skill() {
     setModal(false);
   };
 
-  console.log("modal", modal);
 
   return (
     <>

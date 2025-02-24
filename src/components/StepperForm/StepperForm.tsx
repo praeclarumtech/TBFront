@@ -16,19 +16,20 @@ import { Card } from "react-bootstrap";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 // import Applicant from "../../components/StepperForm/index"
- 
 
 // const BASE_URL = "http://localhost:3000";
-const BASE_URL = import.meta.env.VITE_API_URL;
+const BASE_URL = import.meta.env.TB_API_ENDPOINT;
 const steps = [
   "Personal Details",
   "Educational Details",
   "Job Details",
   "Preview",
 ];
- 
+
 interface FormData {
   personal: {
+    phone: any;
+    name: any;
     firstName: string;
     middleName: string;
     lastName: string;
@@ -66,7 +67,7 @@ interface FormData {
     aboutUs: string;
   };
 }
- 
+
 const StepperForm: React.FC = () => {
   const navigate = useNavigate();
   const [activeStep, setActiveStep] = useState(0);
@@ -85,6 +86,15 @@ const StepperForm: React.FC = () => {
       country: "",
       pincode: 0,
       city: "",
+      name: {
+        firstName: "",
+        middleName: "",
+        lastName: "",
+      },
+      phone: {
+        whatsappNumber: "",
+        phoneNumber: "",
+      },
     },
     education: {
       qualification: "",
@@ -109,7 +119,7 @@ const StepperForm: React.FC = () => {
       aboutUs: "",
     },
   });
- 
+
   const handleNext = (data: any) => {
     if (activeStep === 0) {
       setFormData((prev) => ({ ...prev, personal: data }));
@@ -120,25 +130,25 @@ const StepperForm: React.FC = () => {
     }
     setActiveStep((prev) => prev + 1);
   };
- 
+
   const handleBack = () => {
     setActiveStep((prev) => prev - 1);
   };
- 
+
   const handleEdit = (step: number) => {
     setActiveStep(step);
   };
- 
+
   const handleSubmit = async () => {
     const apiData = {
       name: {
-        firstName: formData.personal.firstName,
-        middleName: formData.personal.middleName,
-        lastName: formData.personal.lastName,
+        firstName: formData.personal.name.firstName || "",
+        middleName: formData.personal.name.middleName || "",
+        lastName: formData.personal.name.lastName || "",
       },
       phone: {
-        whatsappNumber: formData.personal.whatsappNumber,
-        phoneNumber: formData.personal.phoneNumber,
+        whatsappNumber: formData.personal.phone.whatsappNumber,
+        phoneNumber: formData.personal.phone.phoneNumber,
       },
       email: formData.personal.email,
       gender: formData.personal.gender,
@@ -166,7 +176,16 @@ const StepperForm: React.FC = () => {
       referral: formData.education.referral || "",
       url: formData.education.url,
     };
- 
+
+    // Validate required fields before submission
+    if (!apiData.phone.whatsappNumber || !apiData.phone.phoneNumber) {
+      toast.error("Please fill in all required phone numbers", {
+        position: "top-right",
+        autoClose: 5000,
+      });
+      return;
+    }
+
     try {
       const response = await fetch(`${BASE_URL}/api/applicants/addApplicant`, {
         method: "POST",
@@ -175,29 +194,29 @@ const StepperForm: React.FC = () => {
         },
         body: JSON.stringify(apiData),
       });
- 
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
- 
-       await response.json();
- 
+
+      await response.json();
+
       toast.success("Application submitted successfully!", {
         position: "top-right",
         autoClose: 5000,
       });
- 
+
       navigate("/applicants");
     } catch (error) {
       console.error("Error:", error);
- 
+
       toast.error("Application submission failed. Please try again.", {
         position: "top-right",
         autoClose: 5000,
       });
     }
   };
- 
+
   return (
     <Card>
       <h4 className="m-2 p-1 text-dark justify-center content-start text-2xl text-center font-bold text-blue-900">
@@ -258,5 +277,5 @@ const StepperForm: React.FC = () => {
     </Card>
   );
 };
- 
+
 export default StepperForm;

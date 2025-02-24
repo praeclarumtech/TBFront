@@ -1,28 +1,27 @@
-
 import { Briefcase, ListTask, People, Bullseye } from "react-bootstrap-icons";
 import { ProjectsStatsProps } from "types";
 
 export const ProjectsStats: ProjectsStatsProps[] = [
   {
     id: 1,
-    title: "Total Applicants",
+    title: "Projects",
     value: 18,
     icon: <Briefcase size={18} />,
-    statInfo: '<span className="text-dark me-2">2</span> applicants today',
+    statInfo: '<span className="text-dark me-2">2</span> Completed',
   },
   {
     id: 2,
-    title: "Applicants on Hold",
+    title: "Active Task",
     value: 132,
     icon: <ListTask size={18} />,
-    statInfo: '<span className="text-dark me-2">28</span> from last week',
+    statInfo: '<span className="text-dark me-2">28</span> Completed',
   },
   {
     id: 3,
-    title: "Applicant on Interview",
+    title: "Teams",
     value: 12,
     icon: <People size={18} />,
-    statInfo: '<span className="text-dark me-2">1</span> Completed today',
+    statInfo: '<span className="text-dark me-2">1</span> Completed',
   },
   {
     id: 4,

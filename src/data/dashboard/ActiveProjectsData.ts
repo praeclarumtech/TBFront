@@ -93,4 +93,3 @@ export const ActiveProjectsData: ActiveProjectsDataProps[] = [
   },
 ];
 export default ActiveProjectsData;
-

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface NotificationProps {
   id: string;
   sender: string;
@@ -8,7 +9,7 @@ export interface ChildrenItemProps {
   id: string;
   title?: string;
   name?: string;
-  link: string;
+  link?: string | null;
   children?: ChildrenItemProps[];
   icon?: string;
   badge?: string;
@@ -24,6 +25,7 @@ export interface DashboardMenuProps {
   icon?: string;
   badge?: string;
   badgecolor?: string;
+  name?: string;
 }
 
 export interface CustomToggleProps {
@@ -97,29 +99,6 @@ export interface FeaturesDataProps {
   title: string;
   description: string;
 }
-
-export interface ChildrenItemProps {
-  id: string;
-  title?: string;
-  name?: string;
-  link: string;
-  children?: ChildrenItemProps[];
-  icon?: string;
-  badge?: string;
-  badgecolor?: string;
-}
-
-export interface DashboardMenuProps {
-  id: string;
-  title: string;
-  link?: string;
-  grouptitle?: boolean;
-  children?: ChildrenItemProps[];
-  icon?: string;
-  badge?: string;
-  badgecolor?: string;
-}
-
 
 export interface Applicant {
   data: any;

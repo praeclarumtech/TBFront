@@ -1,12 +1,6 @@
-
-
-// src/components/StepperForm/PreviewForm.tsx
 import React from 'react';
 import { Button, Typography } from '@mui/material';
 import { Col, Row } from 'react-bootstrap';
-// import { useNavigate, Navigate } from 'react-router';
-// import { useNavigate } from 'react-router';
-// import EditApplicant from './EditApplicant';
 interface PreviewFormProps {
   data: {
     personal: any;
@@ -23,20 +17,6 @@ const PreviewForm: React.FC<PreviewFormProps> = ({ data, onEdit, onSubmit }) => 
   const formattedDate = new Date(data.personal.dateOfBirth).toLocaleDateString("en-IN");
 
 
-  // console.log({ data });
-  // console.log({ t: data?.education?.resume });
-  // const resume = data.education.resume[0];
-  // console.log({ resumeFile });
-
-  // const handleEdit()={
-  //   data: {
-  //     personal: any;
-  //     education: any;
-  //     job: any;
-  //   };
-  //   Navigate("./EditApplicant");
-  // }
-
   return (
     <div>
       <Typography variant="h6" className='justify-center text-center font-extrabold '>Preview Your Details</Typography>
@@ -47,8 +27,8 @@ const PreviewForm: React.FC<PreviewFormProps> = ({ data, onEdit, onSubmit }) => 
       <div className='mx-2 p-3'>
         <Row>
           <Col xs={12} md={6} className="mb-3">
-            <Typography variant="body1" className='text-gray-600'><span className='font-extrabold text-base !text-black pt-3'>Name: </span><span className=''>{data.personal.firstName} {data.personal.middleName} {data.personal.lastName}</span></Typography>
-            <Typography><span className='font-extrabold text-base !text-black pt-3'>Phone Number:</span> <span>{data.personal.phoneNumber}</span></Typography>
+            <Typography variant="body1" className='text-gray-600'><span className='font-extrabold text-base !text-black pt-3'>Name: </span><span className=''>{data.personal.name.firstName} {data.personal.name.middleName} {data.personal.name.lastName}</span></Typography>
+            <Typography><span className='font-extrabold text-base !text-black pt-3'>Phone Number:</span> <span>{data.personal.phone.phoneNumber}</span></Typography>
             <Typography><span className='font-extrabold text-base !text-black pt-3'>Date of Birth:</span> <span>{formattedDate}</span></Typography>
             <Typography><span className='font-extrabold text-base !text-black pt-3'>Country:</span> <span>{data.personal.country}</span></Typography>
             <Typography><span className='font-extrabold text-base !text-black pt-3'>Pincode:</span> <span>{data.personal.pincode}</span></Typography>
@@ -56,7 +36,7 @@ const PreviewForm: React.FC<PreviewFormProps> = ({ data, onEdit, onSubmit }) => 
           </Col>
           <div className="col-md-6">
             <Typography><span className='font-extrabold text-base !text-black pt-3'>Email:</span> <span>{data.personal.email}</span></Typography>
-            <Typography><span className='font-extrabold text-base !text-black pt-3'>WhatsApp Number:</span> <span>{data.personal.whatsappNumber}</span></Typography>
+            <Typography><span className='font-extrabold text-base !text-black pt-3'>WhatsApp Number:</span> <span>{data.personal.phone.whatsappNumber}</span></Typography>
             <Typography><span className='font-extrabold text-base !text-black pt-3'>Gender :</span> <span>{data.personal.gender}</span></Typography>
             <Typography><span className='font-extrabold text-base !text-black pt-3'>State :</span> <span>{data.personal.state}</span></Typography>
             <Typography><span className='font-extrabold text-base !text-black pt-3'>Full Address:</span> <span>{data.personal.fullAddress}</span></Typography>
@@ -108,18 +88,6 @@ const PreviewForm: React.FC<PreviewFormProps> = ({ data, onEdit, onSubmit }) => 
 
       <div className="mb-3 ">
         <div className="mb-3 flex flex-col sm:flex-row justify-end space-y-4 sm:space-y-0 sm:space-x-4">
-          {/* <Button
-            onClick={() => onEdit(0)}
-            className="!bg-red-500 text-white hover:bg-red-600 focus:ring-2 focus:ring-red-500 px-4 rounded"
-          >
-            Edit Personal Details
-          </Button>
-          <Button
-            onClick={() => onEdit(1)}
-            className="!bg-red-500 text-white hover:bg-red-600 focus:ring-2 focus:ring-red-500 px-4 rounded"
-          >
-            Edit Educational Details
-          </Button> */}
           <Button
             onClick={() => onEdit(2)}
             className="!bg-red-500 text-white hover:bg-red-600 focus:ring-2 focus:ring-red-500 px-4 rounded"

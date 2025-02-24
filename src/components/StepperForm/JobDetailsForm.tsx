@@ -1,7 +1,5 @@
-
-
 import React, { useEffect } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, Resolver, useForm } from "react-hook-form";
 import { Button } from "@mui/material";
 import { jobDetailsSchema } from "../../validation/validationSchema";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -14,8 +12,26 @@ import { RootState } from "../../store/store";
 interface JobDetailsFormProps {
   onNext: (data: any) => void;
   onBack: () => void;
-  initialValues: any;
-  showNext: boolean;
+  initialValues: {
+    expectedPkg: string;
+    currentPkg: string;
+    negotiation: string;
+    noticePeriod: string;
+    readyForWork: string;
+    workPreference: string;
+    aboutUs: string;
+  };
+  showNext?: boolean;
+}
+
+interface FormFields {
+  expectedPkg: string;
+  currentPkg: string;
+  negotiation: string;
+  noticePeriod: string;
+  readyForWork: string;
+  workPreference: string;
+  aboutUs: string;
 }
 
 const workStatusOptions = [
@@ -44,26 +60,38 @@ const JobDetailsForm: React.FC<JobDetailsFormProps> = ({
     formState: { errors },
     setValue,
     reset,
-    watch,
-  } = useForm({
-    resolver: yupResolver(jobDetailsSchema),
-    defaultValues: jobDetails || initialValues,
+  } = useForm<FormFields>({
+    resolver: yupResolver(jobDetailsSchema) as unknown as Resolver<FormFields>,
+    defaultValues: initialValues,
   });
 
   useEffect(() => {
-    reset(jobDetails || initialValues);
+    if (initialValues || jobDetails) {
+      const mergedValues = {
+        expectedPkg: jobDetails?.expectedPkg || initialValues.expectedPkg || "",
+        currentPkg: jobDetails?.currentPkg || initialValues.currentPkg || "",
+        negotiation: jobDetails?.negotiation || initialValues.negotiation || "",
+        noticePeriod:
+          jobDetails?.noticePeriod || initialValues.noticePeriod || "",
+        readyForWork:
+          jobDetails?.readyForWork || initialValues.readyForWork || "",
+        workPreference:
+          jobDetails?.workPreference || initialValues.workPreference || "",
+        aboutUs: jobDetails?.aboutUs || initialValues.aboutUs || "",
+      };
+      reset(mergedValues);
+    }
   }, [jobDetails, initialValues, reset]);
 
   const handleFieldChange = (field: keyof typeof jobDetails, value: any) => {
     setValue(field, value);
-    dispatch(setJobDetails({ [field]: value }));
+    dispatch(setJobDetails({ ...jobDetails, [field]: value }));
   };
 
   const onSubmit = (data: typeof jobDetails) => {
     dispatch(setJobDetails(data));
     onNext(data);
   };
-
 
   return (
     <Form onSubmit={handleSubmit(onSubmit)} className="p-3">
@@ -76,16 +104,18 @@ const JobDetailsForm: React.FC<JobDetailsFormProps> = ({
             <Controller
               name="expectedPkg"
               control={control}
-              render={({ field }) => (
+              render={({ field: { value, onChange, ...rest } }) => (
                 <Form.Control
                   type="text"
-                  {...field}
+                  {...rest}
+                  value={value || ""}
                   isInvalid={!!errors.expectedPkg}
                   placeholder="Enter expected package"
                   className="rounded-lg py-2"
-                  onChange={(e) =>
-                    handleFieldChange("expectedPkg", e.target.value)
-                  }
+                  onChange={(e) => {
+                    onChange(e.target.value);
+                    handleFieldChange("expectedPkg", e.target.value);
+                  }}
                 />
               )}
             />
@@ -103,16 +133,18 @@ const JobDetailsForm: React.FC<JobDetailsFormProps> = ({
             <Controller
               name="currentPkg"
               control={control}
-              render={({ field }) => (
+              render={({ field: { value, onChange, ...rest } }) => (
                 <Form.Control
                   type="text"
-                  {...field}
+                  {...rest}
+                  value={value || ""}
                   isInvalid={!!errors.currentPkg}
                   placeholder="Enter current package"
                   className="rounded-lg py-2"
-                  onChange={(e) =>
-                    handleFieldChange("currentPkg", e.target.value)
-                  }
+                  onChange={(e) => {
+                    onChange(e.target.value);
+                    handleFieldChange("currentPkg", e.target.value);
+                  }}
                 />
               )}
             />
@@ -132,16 +164,18 @@ const JobDetailsForm: React.FC<JobDetailsFormProps> = ({
             <Controller
               name="negotiation"
               control={control}
-              render={({ field }) => (
+              render={({ field: { value, onChange, ...rest } }) => (
                 <Form.Control
                   type="number"
-                  {...field}
+                  {...rest}
+                  value={value || ""}
                   isInvalid={!!errors.negotiation}
                   placeholder="Enter negotiation amount"
                   className="rounded-lg py-2"
-                  onChange={(e) =>
-                    handleFieldChange("negotiation", e.target.value)
-                  }
+                  onChange={(e) => {
+                    onChange(e.target.value);
+                    handleFieldChange("negotiation", e.target.value);
+                  }}
                 />
               )}
             />
@@ -159,16 +193,18 @@ const JobDetailsForm: React.FC<JobDetailsFormProps> = ({
             <Controller
               name="noticePeriod"
               control={control}
-              render={({ field }) => (
+              render={({ field: { value, onChange, ...rest } }) => (
                 <Form.Control
                   type="number"
-                  {...field}
+                  {...rest}
+                  value={value || ""}
                   isInvalid={!!errors.noticePeriod}
                   placeholder="Enter notice period"
                   className="rounded-lg py-2"
-                  onChange={(e) =>
-                    handleFieldChange("noticePeriod", e.target.value)
-                  }
+                  onChange={(e) => {
+                    onChange(e.target.value);
+                    handleFieldChange("noticePeriod", e.target.value);
+                  }}
                 />
               )}
             />
@@ -189,9 +225,10 @@ const JobDetailsForm: React.FC<JobDetailsFormProps> = ({
               <Controller
                 name="readyForWork"
                 control={control}
-                render={({ field }) => (
+                render={({ field: { value, onChange, ...rest } }) => (
                   <Select
-                    {...field}
+                    {...rest}
+                    value={value || ""}
                     displayEmpty
                     className="rounded-lg bg-white"
                     sx={{
@@ -200,9 +237,10 @@ const JobDetailsForm: React.FC<JobDetailsFormProps> = ({
                         borderRadius: "8px",
                       },
                     }}
-                    onChange={(e) =>
-                      handleFieldChange("readyForWork", e.target.value)
-                    }
+                    onChange={(e) => {
+                      onChange(e.target.value);
+                      handleFieldChange("readyForWork", e.target.value);
+                    }}
                   >
                     <MenuItem disabled value="">
                       <span className="text-muted">Select availability</span>
@@ -233,9 +271,10 @@ const JobDetailsForm: React.FC<JobDetailsFormProps> = ({
               <Controller
                 name="workPreference"
                 control={control}
-                render={({ field }) => (
+                render={({ field: { value, onChange, ...rest } }) => (
                   <Select
-                    {...field}
+                    {...rest}
+                    value={value || ""}
                     displayEmpty
                     className="rounded-lg bg-white"
                     sx={{
@@ -244,9 +283,10 @@ const JobDetailsForm: React.FC<JobDetailsFormProps> = ({
                         borderRadius: "8px",
                       },
                     }}
-                    onChange={(e) =>
-                      handleFieldChange("workPreference", e.target.value)
-                    }
+                    onChange={(e) => {
+                      onChange(e.target.value);
+                      handleFieldChange("workPreference", e.target.value);
+                    }}
                   >
                     <MenuItem disabled value="">
                       <span className="text-muted">Select preference</span>
@@ -278,9 +318,10 @@ const JobDetailsForm: React.FC<JobDetailsFormProps> = ({
             <Controller
               name="aboutUs"
               control={control}
-              render={({ field }) => (
+              render={({ field: { value, onChange, ...rest } }) => (
                 <TextField
-                  {...field}
+                  {...rest}
+                  value={value || ""}
                   multiline
                   rows={3}
                   fullWidth
@@ -296,7 +337,10 @@ const JobDetailsForm: React.FC<JobDetailsFormProps> = ({
                       },
                     },
                   }}
-                  onChange={(e) => handleFieldChange("aboutUs", e.target.value)}
+                  onChange={(e) => {
+                    onChange(e.target.value);
+                    handleFieldChange("aboutUs", e.target.value);
+                  }}
                 />
               )}
             />
@@ -304,7 +348,6 @@ const JobDetailsForm: React.FC<JobDetailsFormProps> = ({
         </Col>
       </Row>
 
-      {!showNext && (
       <div className="d-flex justify-content-end gap-3 mt-4">
         <Button
           variant="contained"
@@ -323,7 +366,6 @@ const JobDetailsForm: React.FC<JobDetailsFormProps> = ({
           {showNext ? "Next" : "Next"}
         </Button>
       </div>
-      )}
     </Form>
   );
 };

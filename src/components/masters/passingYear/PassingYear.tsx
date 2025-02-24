@@ -46,7 +46,6 @@ const Model = () => {
       const response = await axios.get(viewYearApi);
       if (response.data.data.item && Array.isArray(response.data.data.item)) {
         setYearList(response.data.data.item);
-        console.log("my response", response.data.data.item);
       } 
     } catch (err) {
       console.error("Error fetching data:", err);
@@ -79,8 +78,6 @@ const Model = () => {
  };
 
   const handleDeleteYear = async (_id: any) => {
-    console.log(deleteYearApi(_id)); 
-    
     try {
       await axios.delete(deleteYearApi(_id));
       getYears(); 

@@ -1,7 +1,6 @@
-
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // import node module libraries
-import { Fragment, JSXElementConstructor, Key, ReactElement, ReactNode, ReactPortal } from "react";
+import { Fragment } from "react";
 import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { useMediaQuery } from "react-responsive";
@@ -15,7 +14,10 @@ import SimpleBar from "simplebar-react";
 
 // import routes file
 import { DashboardMenu } from "routes/DashboardRoutes";
-import { DashboardMenuProps } from "typ3es";
+import { DashboardMenuProps } from "types";
+
+console.log('---.', DashboardMenu);
+
 
 interface SidebarProps {
   showMenu: boolean;
@@ -24,19 +26,16 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ showMenu, toggleMenu }) => {
   const location = useLocation();
-  const generateLink = (item: any) => {
-    const location = useLocation();
+  const isMobile = useMediaQuery({ maxWidth: 767 });
 
-    const isMobile = useMediaQuery({ maxWidth: 767 });
+  const generateLink = (item: any) => {
     return (
       <Link
-        to={item.link}
-        className={`nav-link ${
-          location.pathname === item.link ? "active" : ""
-        }`}
+        to={item.link || '#'}
+        className={`nav-link ${location.pathname === item.link ? "active" : ""}`}
         onClick={() => (isMobile ? toggleMenu() : showMenu)}
       >
-        {item.name}
+        {item.name || item.title}
         {item.badge && (
           <Badge className="ms-1" bg={item.badgecolor || "primary"}>
             {item.badge}
@@ -51,8 +50,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showMenu, toggleMenu }) => {
       <SimpleBar style={{ maxHeight: "100vh" }}>
         <div className="nav-scroller">
           <Link to="/" className="navbar-brand">
-            {/* <Image src="/images/brand/logo/talentbox-logo.png" alt="" /> */}
-            <h4 className="text-white text-3xl font-bold ">Talent<span className="text-primary ">Box</span> </h4>
+            <Image src="/images/brand/logo/logo.svg" alt="" />
           </Link>
         </div>
         {/* Dashboard Menu */}
@@ -62,37 +60,37 @@ const Sidebar: React.FC<SidebarProps> = ({ showMenu, toggleMenu }) => {
           className="navbar-nav flex-column"
         >
           {DashboardMenu.map(function (
-            menu: DashboardMenuProps,
+            menu: any,
             index: number
           ) {
-            if (menu.grouptitle) {
+            if (menu?.grouptitle) {
               return (
-                <Card bsPrefix="nav-item" key={menu.id}>
+                <Card bsPrefix="nav-item" key={menu?.id}>
                   {/* group title item */}
-                  <div className="navbar-heading">{menu.title}</div>
+                  <div className="navbar-heading">{menu?.title}</div>
                   {/* end of group title item */}
                 </Card>
               );
             } else {
-              if (menu.children) {
+              if (menu?.children) {
                 return (
-                  <Fragment key={menu.id}>
-                    {/* main menu / root menu level / root items */}
-                    <CustomToggle eventKey={menu.id} icon={menu.icon}>
-                      {menu.title}
-                      {menu.badge ? (
+                  <Fragment key={menu?.id}>
+                    {/* main menu? / root menu? level / root items */}
+                    <CustomToggle eventKey={menu?.id} icon={menu?.icon}>
+                      {menu?.title}
+                      {menu?.badge ? (
                         <Badge
                           className="ms-1"
-                          bg={menu.badgecolor ? menu.badgecolor : "primary"}
+                          bg={menu?.badgecolor ? menu?.badgecolor : "primary"}
                         >
-                          {menu.badge}
+                          {menu?.badge}
                         </Badge>
                       ) : (
                         ""
                       )}
                     </CustomToggle>
                     <Accordion.Collapse
-                      eventKey={menu.id}
+                      eventKey={menu?.id}
                       as="li"
                       bsPrefix="nav-item"
                     >
@@ -101,11 +99,11 @@ const Sidebar: React.FC<SidebarProps> = ({ showMenu, toggleMenu }) => {
                         bsPrefix=""
                         className="nav flex-column"
                       >
-                        {menu.children.map(function (
-                          menuLevel1Item: { children: { children: never[]; title: string | number | boolean | ReactElement<unknown, string | JSXElementConstructor<unknown>> | Iterable<ReactNode> | ReactPortal | null | undefined; badge: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; badgecolor: string | undefined; }[]; id: Key | null | undefined; title: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; badge: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; badgecolor: string | undefined; },
-                          menuLevel1Index: Key | null | undefined
+                        {menu?.children?.map(function (
+                          menuLevel1Item: DashboardMenuProps,
+                          menuLevel1Index: number
                         ) {
-                          const childKey = `${menu.id}-${menuLevel1Index}`;
+                          const childKey = `${menu?.id}-${menuLevel1Index}`;
                           if (menuLevel1Item.children) {
                             return (
                               <ListGroup.Item
@@ -113,7 +111,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showMenu, toggleMenu }) => {
                                 bsPrefix="nav-item"
                                 key={menuLevel1Item.id}
                               >
-                                {/* first level menu started  */}
+                                {/* first level menu? started  */}
                                 <Accordion
                                   // defaultActiveKey="0"
                                   className="navbar-nav flex-column"
@@ -144,10 +142,10 @@ const Sidebar: React.FC<SidebarProps> = ({ showMenu, toggleMenu }) => {
                                       bsPrefix=""
                                       className="nav flex-column"
                                     >
-                                      {/* second level menu started  */}
+                                      {/* second level menu? started  */}
                                       {menuLevel1Item.children.map(function (
-                                        menuLevel2Item: { children: any[]; title: string | number | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; badge: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; badgecolor: string | undefined; },
-                                        menuLevel2Index: Key | null | undefined
+                                        menuLevel2Item: any,
+                                        menuLevel2Index: number
                                       ) {
                                         const childKey = `${menuLevel1Index}-${menuLevel2Index}`;
                                         if (menuLevel2Item.children) {
@@ -157,7 +155,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showMenu, toggleMenu }) => {
                                               bsPrefix="nav-item"
                                               key={menuLevel2Index}
                                             >
-                                              {/* second level accordion menu started  */}
+                                              {/* second level accordion menu? started  */}
                                               <Accordion
                                                 // defaultActiveKey="0"
                                                 className="navbar-nav flex-column"
@@ -190,11 +188,11 @@ const Sidebar: React.FC<SidebarProps> = ({ showMenu, toggleMenu }) => {
                                                     bsPrefix=""
                                                     className="nav flex-column"
                                                   >
-                                                    {/* third level menu started  */}
+                                                    {/* third level menu? started  */}
                                                     {menuLevel2Item.children.map(
                                                       function (
-                                                        menuLevel3Item,
-                                                        menuLevel3Index
+                                                        menuLevel3Item: any,
+                                                        menuLevel3Index: number
                                                       ) {
                                                         return (
                                                           <ListGroup.Item
@@ -211,7 +209,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showMenu, toggleMenu }) => {
                                                         );
                                                       }
                                                     )}
-                                                    {/* end of third level menu  */}
+                                                    {/* end of third level menu?  */}
                                                   </ListGroup>
                                                 </Accordion.Collapse>
                                               </Accordion>
@@ -230,11 +228,11 @@ const Sidebar: React.FC<SidebarProps> = ({ showMenu, toggleMenu }) => {
                                           );
                                         }
                                       })}
-                                      {/* end of second level menu  */}
+                                      {/* end of second level menu?  */}
                                     </ListGroup>
                                   </Accordion.Collapse>
                                 </Accordion>
-                                {/* end of first level menu */}
+                                {/* end of first level menu? */}
                               </ListGroup.Item>
                             );
                           } else {
@@ -244,50 +242,46 @@ const Sidebar: React.FC<SidebarProps> = ({ showMenu, toggleMenu }) => {
                                 bsPrefix="nav-item"
                                 key={menuLevel1Index}
                               >
-                                {/* first level menu items */}
+                                {/* first level menu? items */}
                                 {generateLink(menuLevel1Item)}
-                                {/* end of first level menu items */}
+                                {/* end of first level menu? items */}
                               </ListGroup.Item>
                             );
                           }
                         })}
                       </ListGroup>
                     </Accordion.Collapse>
-                    {/* end of main menu / menu level 1 / root items */}
+                    {/* end of main menu? / menu? level 1 / root items */}
                   </Fragment>
                 );
               } else {
                 return (
                   <Card bsPrefix="nav-item" key={index}>
-                    {/* menu item without any childern items like Documentation and Changelog items*/}
+                    {/* menu? item without any childern items like Documentation and Changelog items*/}
                     <Link
-                      to={menu.link ?? "#"}
+                      to={menu?.link ?? "#"}
                       className={`nav-link ${
-                        location.pathname === menu.link ? "active" : ""
-                      } ${
-                        menu.title === "Free Download"
-                          ? "bg-primary text-white"
-                          : ""
+                        location.pathname === menu?.link ? "active" : ""
                       }`}
                     >
-                      {typeof menu.icon === "string" ? (
-                        <i className={`nav-icon fe fe-${menu.icon} me-2`}></i>
+                      {typeof menu?.icon === "string" ? (
+                        <i className={`nav-icon fe fe-${menu?.icon} me-2`}></i>
                       ) : (
-                        menu.icon
+                        menu?.icon
                       )}
-                      {menu.title}
-                      {menu.badge ? (
+                      {menu?.title}
+                      {menu?.badge ? (
                         <Badge
                           className="ms-1"
-                          bg={menu.badgecolor ? menu.badgecolor : "primary"}
+                          bg={menu?.badgecolor ? menu?.badgecolor : "primary"}
                         >
-                          {menu.badge}
+                          {menu?.badge}
                         </Badge>
                       ) : (
                         ""
                       )}
                     </Link>
-                    {/* end of menu item without any childern items */}
+                    {/* end of menu? item without any childern items */}
                   </Card>
                 );
               }
@@ -301,4 +295,3 @@ const Sidebar: React.FC<SidebarProps> = ({ showMenu, toggleMenu }) => {
 };
 
 export default Sidebar;
-

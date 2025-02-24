@@ -44,7 +44,6 @@ const ModelAddSkill = () => {
   const [error, setError] = useState(null);
 
   const handelDelete = async (id) => {
-    console.log("id : -", id);
     setIsLoading(true);
     try {
       const response = await fetch(listOfYearsApi.concat("/") + id, {
@@ -83,7 +82,6 @@ const ModelAddSkill = () => {
     ) {
       setSkillList([...skillList, { id: skillList.length + 1, name: skill }]);
     }
-    console.log("Skill Added:", skill);
     setSkill("");
     setOpen(false);
   };

@@ -21,12 +21,11 @@ import UpdateModal from "./EditApplicantModal";
 import { useNavigate } from "react-router-dom";
 import ViewModal from "./ViewModal";
 import { Applicant } from "../../types";
-// import FeedbackForm from "./FeedbackForm";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-// const BASE_URL = "http://localhost:3000";
-const BASE_URL = import.meta.env.VITE_API_URL;
+const BASE_URL = import.meta.env.TB_API_ENDPOINT;
+console.log(BASE_URL);
 
 const statusOptions = ["Hold", "Processing", "Selected", "Rejected", "Pending"];
 const interviewStageOptions = [
@@ -37,7 +36,7 @@ const interviewStageOptions = [
   "Final",
 ];
 
-const ApplicantTable = () => {
+const ApplicantTables = () => {
   const [applicants, setApplicants] = useState<Applicant[]>([]);
   const [selectedApplicant, setSelectedApplicant] = useState<Applicant | null>(
     null
@@ -53,7 +52,6 @@ const ApplicantTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
   const [showModal, setShowModal] = useState(false);
-  const [applicantDetails, setApplicantDetails] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -104,7 +102,6 @@ const ApplicantTable = () => {
       const response = await axios.get(
         `${BASE_URL}/api/applicants/viewApplicant/${id}`
       );
-      console.log("Applicant Data:", response.data); // Check if data is received
 
       // Ensure the response data matches the expected structure
       const applicantData = {
@@ -127,35 +124,12 @@ const ApplicantTable = () => {
     }
   };
 
-  // const handleFeedback = async (_id: string) => {
-  //   try {
-  //     const response = await axios.get(
-  //       `${BASE_URL}/api/applicants/viewApplicant/${_id}`
-  //     );
-
-  //     const applicantfeedback = {
-  //       ...response.data,
-  //       feedback: {
-  //         ...response.data.feedback || '',
-  //         date: new Date().toISOString(),
-  //       },
-  //     };
-  //     fetchApplicants();
-  //     setSelectedApplicant(applicantfeedback);
-
-  //     console.log("feedback",applicantfeedback.data.feedback);
-  //   } catch (error) {
-  //     console.error("Error sending feedback:", error);
-  //   }
-  // }
-
   const handleStatusChange = async (applicantId: string, status: string) => {
     try {
       const response = await axios.put(
         `${BASE_URL}/api/applicants/update/status/${applicantId}`,
         { status }
       );
-      console.log("Status Update Response:", response.data);
       fetchApplicants();
       toast.success("Status updated successfully!", {
         position: "top-right",
@@ -197,10 +171,10 @@ const ApplicantTable = () => {
 
   const filteredApplicants = applicants.filter((applicant) => {
     const searchMatch =
-      (applicant.name.firstName || "")
+      (applicant?.name?.firstName || "")
         .toLowerCase()
         .includes(searchTerm.toLowerCase()) ||
-      (applicant.appliedSkills.join(", ") || "")
+      (applicant?.appliedSkills?.join(", ") || "")
         .toLowerCase()
         .includes(searchTerm.toLowerCase()) ||
       (applicant.email || "").toLowerCase().includes(searchTerm.toLowerCase());
@@ -257,9 +231,9 @@ const ApplicantTable = () => {
     );
   };
 
-  const hndleEditable = (data: object) => {
+  const handleEditable = (applicant: Applicant) => {
+    setEditingApplicant(applicant);
     setShowModal(true);
-    setApplicantDetails(data);
   };
 
   return (
@@ -285,7 +259,7 @@ const ApplicantTable = () => {
               </Dropdown>
             </Col>
 
-            <Col xs={12} sm={6} md={4} lg={2} className="px-2 mb-2">
+            <Col xs={12} sm={6} md={4} lg={2} className="px-2 ">
               <Form.Select
                 value={experienceFilter}
                 onChange={(e) =>
@@ -327,7 +301,7 @@ const ApplicantTable = () => {
               className="!d-flex !justify-content-end !align-items-center !px-1 mb-2"
             >
               <Button
-                variant="link1"
+                variant="contained"
                 onClick={() => {
                   setSearchTerm("");
                   setTechnologyFilter("");
@@ -388,10 +362,10 @@ const ApplicantTable = () => {
               {currentApplicants.map((applicant) => (
                 <tr key={applicant._id}>
                   <td>{`${highlightText(
-                    applicant.name.firstName
-                  )} ${highlightText(applicant.name.lastName)}`}</td>
-                  <td>{highlightText(applicant.appliedSkills.join(", "))}</td>
-                  <td>{applicant.totalExperience}</td>
+                    applicant?.name?.firstName
+                  )} ${highlightText(applicant?.name?.lastName)}`}</td>
+                  <td>{highlightText(applicant?.appliedSkills?.join(", "))}</td>
+                  <td>{applicant?.totalExperience}</td>
                   <td>
                     <strong className="text-primary">Email</strong>
                     <br />
@@ -404,7 +378,7 @@ const ApplicantTable = () => {
                   </td>
                   <td>
                     <Form.Select
-                      className="p-1 m-0 bg-warning text-white"
+                      className="p-1 m-0 bg-warning text-white "
                       value={applicant.interviewStage}
                       onChange={(e) =>
                         handleInterviewStageChange(
@@ -439,7 +413,7 @@ const ApplicantTable = () => {
                     <EditIcon
                       color="primary"
                       style={{ cursor: "pointer" }}
-                      onClick={() => hndleEditable(applicant)}
+                      onClick={() => handleEditable(applicant)}
                     />
                     <ViewIcon
                       color="info"
@@ -465,16 +439,13 @@ const ApplicantTable = () => {
 
           <UpdateModal
             show={showModal}
-            onHide={() => setShowModal(false)}
+            onHide={() => {
+              setShowModal(false);
+              setEditingApplicant(null);
+            }}
             editingApplicant={editingApplicant}
-            fetchApplicants={applicantDetails}
+            fetchApplicants={fetchApplicants}
           />
-          {/* <FeedbackForm
-            show={!!selectedApplicant}
-            onHide={() => setSelectedApplicant(null)}
-           
-            selectedApplicant={selectedApplicant}
-          /> */}
 
           <Pagination className="justify-end text-end m-2">
             <Pagination.Prev
@@ -502,4 +473,4 @@ const ApplicantTable = () => {
   );
 };
 
-export default ApplicantTable;
+export default ApplicantTables;
