@@ -29,9 +29,10 @@ export const ButtonEnums = {
   ChangePassword : 'Change Password',
 };
 
-export const Modules =   {
-  Login : 'Login',
-  Register : 'Register'
+export const Modules = {
+  Login: "Login",
+  Register: "Register",
+  Applicant: "Applicant",
 };
 
 const getItem = (key:any) => {
