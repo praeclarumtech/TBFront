@@ -155,7 +155,7 @@ export const educationalDetailsSchema = yup.object().shape({
     
     .test('is-less-than-or-equal-total', 'Relevant Skill Experience must be less than or equal to Total Experience', function (value) {
       const totalExperience = this.parent.totalExperience;
-      return value <= totalExperience;
+      return (value ?? 0) <= totalExperience;
     }),
  
 

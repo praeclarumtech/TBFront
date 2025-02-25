@@ -5,7 +5,7 @@ import { Container } from "react-bootstrap";
 import { PageHeading } from "widgets";
 
 // import sub components
-import {  GeneralSetting } from "sub-components";
+import GeneralSetting from "../../../sub-components/settings/GeneralSetting";
 
 const Settings = () => {
   return (

@@ -2,7 +2,7 @@
 import { Col, Row, Form, Card, Button, Image } from "react-bootstrap";
 
 // import widget as custom components
-import { FormSelect } from "widgets";
+import {FormSelect} from "../../widgets/form-select/FormSelect"; // Update the path to the correct location of FormSelect
 
 // import hooks
 import { useMounted } from "hooks/useMounted";
@@ -54,7 +54,7 @@ const GeneralSetting = () => {
               </Col>
             </Row>
             {/* col */}
-            
+
             <div>
               <div className="mb-6">
                 <h4 className="mb-1">Basic information</h4>
@@ -134,7 +134,7 @@ const GeneralSetting = () => {
                   {/* Address Line One */}
                   <Row className="mb-3">
                     <Form.Label className="col-sm-4" htmlFor="addressLine">
-                      Address line 
+                      Address line
                     </Form.Label>
                     <Col md={8} xs={12}>
                       <Form.Control
@@ -147,7 +147,6 @@ const GeneralSetting = () => {
                   </Row>
 
                   {/* Address Line Two */}
-                 
 
                   {/* Zip code */}
                   <Row className="align-items-center">
