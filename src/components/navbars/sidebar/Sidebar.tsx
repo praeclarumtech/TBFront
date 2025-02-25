@@ -16,8 +16,7 @@ import SimpleBar from "simplebar-react";
 import { DashboardMenu } from "routes/DashboardRoutes";
 import { DashboardMenuProps } from "types";
 
-console.log('---.', DashboardMenu);
-
+console.log("---.", DashboardMenu);
 
 interface SidebarProps {
   showMenu: boolean;
@@ -31,8 +30,10 @@ const Sidebar: React.FC<SidebarProps> = ({ showMenu, toggleMenu }) => {
   const generateLink = (item: any) => {
     return (
       <Link
-        to={item.link || '#'}
-        className={`nav-link ${location.pathname === item.link ? "active" : ""}`}
+        to={item.link || "#"}
+        className={`nav-link ${
+          location.pathname === item.link ? "active" : ""
+        }`}
         onClick={() => (isMobile ? toggleMenu() : showMenu)}
       >
         {item.name || item.title}
@@ -59,10 +60,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showMenu, toggleMenu }) => {
           as="ul"
           className="navbar-nav flex-column"
         >
-          {DashboardMenu.map(function (
-            menu: any,
-            index: number
-          ) {
+          {DashboardMenu.map(function (menu: any, index: number) {
             if (menu?.grouptitle) {
               return (
                 <Card bsPrefix="nav-item" key={menu?.id}>

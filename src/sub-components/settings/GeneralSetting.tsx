@@ -54,7 +54,6 @@ const GeneralSetting = () => {
               </Col>
             </Row>
             {/* col */}
-
             <div>
               <div className="mb-6">
                 <h4 className="mb-1">Basic information</h4>
