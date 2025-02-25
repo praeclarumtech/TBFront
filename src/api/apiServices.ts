@@ -15,7 +15,7 @@ export const authInstanceMultipart = axios.create({
   baseURL: api.API_URL,
   headers: {
     "Content-Type": "multipart/form-data",
-  }
+  },
 });
 
 authServices.interceptors.request.use(async (config) => {

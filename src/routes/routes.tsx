@@ -1,4 +1,5 @@
-import Applicant from "components/StepperForm";
+
+import Applicant from "pages/applicant/Index";
 import SignUp from "pages/auth/SignUp";
 import Dashboard from "pages/dashboard/Index";
 import LayoutVertical from "pages/dashboard/LayoutVertical";

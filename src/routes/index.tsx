@@ -15,8 +15,6 @@ import Dashboard from "pages/dashboard/Index";
 import RootLayout from "layouts/RootLayout";
 import ApplicantTables from "pages/Tables/ApplicantsTables";
 import Applicant from "components/StepperForm";
-import EmailForm from "pages/dashboard/pages/email/EmailForm";
-import Report from "pages/dashboard/pages/report/Report";
 
 const RenderRouter: React.FC = () => {
   const {

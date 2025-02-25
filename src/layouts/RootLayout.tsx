@@ -25,8 +25,8 @@ const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
             <Header toggleMenu={ToggleMenu} />
           </div>
           <Outlet />
+          {children}
         </div>
-        {children}
       </div>
     </section>
   );
