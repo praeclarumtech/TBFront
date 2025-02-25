@@ -6,7 +6,7 @@ export const TeamsData: TeamsDataProps[] = [
     name: "Anita Parmar",
     email: "anita@example.com",
     role: "Front End Developer",
-    lastActivity: "3",
+    lastActivity: "3 May, 2023",
     image: "/images/avatar/avatar-2.jpg",
   },
   {
@@ -14,7 +14,7 @@ export const TeamsData: TeamsDataProps[] = [
     name: "Jitu Chauhan",
     email: "jituchauhan@example.com",
     role: "Project Director",
-    lastActivity: "0",
+    lastActivity: "Today",
     image: "/images/avatar/avatar-1.jpg",
   },
   {
@@ -22,7 +22,7 @@ export const TeamsData: TeamsDataProps[] = [
     name: "Sandeep Chauhan",
     email: "sandeepchauhan@example.com",
     role: "Full- Stack Developer",
-    lastActivity: "1",
+    lastActivity: "Yesterday",
     image: "/images/avatar/avatar-3.jpg",
   },
   {
@@ -30,7 +30,7 @@ export const TeamsData: TeamsDataProps[] = [
     name: "Amanda Darnell",
     email: "amandadarnell@example.com",
     role: "Account Manager",
-    lastActivity: "3",
+    lastActivity: "3 May, 2023",
     image: "/images/avatar/avatar-4.jpg",
   },
   {
@@ -38,7 +38,7 @@ export const TeamsData: TeamsDataProps[] = [
     name: "Patricia Murrill",
     email: "patriciamurrill@example.com",
     role: "Digital Marketer",
-    lastActivity: "6",
+    lastActivity: "3 May, 2023",
     image: "/images/avatar/avatar-5.jpg",
   },
   {
@@ -46,7 +46,7 @@ export const TeamsData: TeamsDataProps[] = [
     name: "Darshini Nair",
     email: "darshininair@example.com",
     role: "Front End Developer",
-    lastActivity: "5",
+    lastActivity: "3 May, 2023",
     image: "/images/avatar/avatar-6.jpg",
   },
 ];

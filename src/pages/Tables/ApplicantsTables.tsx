@@ -1,801 +1,222 @@
+import { useState, useEffect } from "react";
+import {
+  Table,
+  Form,
+  Container,
+  Row,
+  Col,
+  Card,
+  InputGroup,
+  Dropdown,
+  Pagination,
+} from "react-bootstrap";
+import {
+  Edit as EditIcon,
+  Visibility as ViewIcon,
+  Delete as DeleteIcon,
+} from "@mui/icons-material";
+import axios from "axios";
+import { Button } from "@mui/material";
+import UpdateModal from "./EditApplicantModal";
+import { useNavigate } from "react-router-dom";
+import ViewModal from "./ViewModal";
+import { Applicant } from "../../types";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
+const BASE_URL = import.meta.env.TB_API_ENDPOINT;
+console.log(BASE_URL);
 
+const statusOptions = ["Hold", "Processing", "Selected", "Rejected", "Pending"];
+const interviewStageOptions = [
+  "1st Interview",
+  "2nd Interview",
+  "HR",
+  "Technical",
+  "Final",
+];
 
-
-// import React, { useState, useEffect } from "react";
-// import { Table, Button, Form, Container, Row, Col, Card, InputGroup, FormControl, Dropdown } from "react-bootstrap";
-
-// // Dummy data with added experience and date
-// interface Applicant {
-//   id: number;
-//   applicantsName: string;
-//   technology: string;
-//   priority: string;
-//   priorityBadgeBg: string;
-//   experience: number;
-//   dateApplied: string;
-//   operation: {
-//     edit: string;
-//     view: string;
-//     delete: string;
-//   };
-//   comments: {
-//     email: string;
-//     feedback: string;
-//   };
-//   status: string;
-// }
-
-// const ApplicantTable = () => {
-//   const [applicants, setApplicants] = useState<Applicant[]>([
-//     {
-//       id: 1,
-//       applicantsName: "John Doe",
-//       technology: "React.js",
-//       priority: "Medium",
-//       priorityBadgeBg: "warning",
-//       experience: 3,
-//       dateApplied: "2025-01-15",
-//       operation: { edit: "Edit", view: "View", delete: "Delete" },
-//       comments: { email: "johndoe@example.com", feedback: "Good front-end skills." },
-//       status: "Pending",
-//     },
-//     {
-//       id: 2,
-//       applicantsName: "Jane Smith",
-//       technology: "Node.js",
-//       priority: "High",
-//       priorityBadgeBg: "danger",
-//       experience: 5,
-//       dateApplied: "2025-01-10",
-//       operation: { edit: "Edit", view: "View", delete: "Delete" },
-//       comments: { email: "janesmith@example.com", feedback: "Strong back-end experience." },
-//       status: "Interview Scheduled",
-//     },
-//     {
-//       id: 3,
-//       applicantsName: "Alice Johnson",
-//       technology: "Angular",
-//       priority: "Low",
-//       priorityBadgeBg: "secondary",
-//       experience: 2,
-//       dateApplied: "2025-01-20",
-//       operation: { edit: "Edit", view: "View", delete: "Delete" },
-//       comments: { email: "alicej@example.com", feedback: "Good Angular knowledge." },
-//       status: "Reviewed",
-//     },
-//   ]);
-
-//   const [searchTerm, setSearchTerm] = useState("");
-//   const [technologyFilter, setTechnologyFilter] = useState("");
-//   const [experienceFilter, setExperienceFilter] = useState<number | "">("");
-//   const [dateFilterStart, setDateFilterStart] = useState("");
-//   const [dateFilterEnd, setDateFilterEnd] = useState("");
-//   const [sortColumn, setSortColumn] = useState<keyof Applicant | null>(null);
-//   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-
-//   // Pagination states
-//   const [currentPage, setCurrentPage] = useState(1);
-//   const itemsPerPage = 5;
-
-//   const technologies = ["React.js", "Node.js", "Angular", "Vue.js"];
-
-//   // Function to handle search
-//   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-//     setSearchTerm(event.target.value);
-//   };
-
-//   // Function to handle sorting
-//   const handleSort = (column: keyof Applicant) => {
-//     const order = sortColumn === column && sortOrder === "asc" ? "desc" : "asc";
-//     setSortColumn(column);
-//     setSortOrder(order);
-
-//     const sortedApplicants = [...applicants].sort((a, b) => {
-//       if (a[column] < b[column]) return order === "asc" ? -1 : 1;
-//       if (a[column] > b[column]) return order === "asc" ? 1 : -1;
-//       return 0;
-//     });
-//     setApplicants(sortedApplicants);
-//   };
-
-//   // Filter applicants based on the search term, technology, experience, and date
-//   const filteredApplicants = applicants
-//     .filter((applicant) => {
-//       const searchInApplicant =
-//         applicant.applicantsName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-//         applicant.technology.toLowerCase().includes(searchTerm.toLowerCase()) ||
-//         applicant.status.toLowerCase().includes(searchTerm.toLowerCase()) ||
-//         applicant.experience.toString().includes(searchTerm.toLowerCase()) ||
-//         applicant.dateApplied.includes(searchTerm.toLowerCase());
-
-//       return searchInApplicant;
-//     })
-//     .filter((applicant) =>
-//       technologyFilter ? applicant.technology.toLowerCase().includes(technologyFilter.toLowerCase()) : true
-//     )
-//     .filter((applicant) =>
-//       experienceFilter ? applicant.experience >= experienceFilter : true
-//     )
-//     .filter((applicant) =>
-//       dateFilterStart && dateFilterEnd
-//         ? applicant.dateApplied >= dateFilterStart && applicant.dateApplied <= dateFilterEnd
-//         : true
-//     );
-
-//   // Pagination logic
-//   const indexOfLast = currentPage * itemsPerPage;
-//   const indexOfFirst = indexOfLast - itemsPerPage;
-//   const currentApplicants = filteredApplicants.slice(indexOfFirst, indexOfLast);
-
-//   const handlePageChange = (pageNumber: number) => {
-//     setCurrentPage(pageNumber);
-//   };
-
-//   // Reset filters
-//   const resetFilters = () => {
-//     setSearchTerm("");
-//     setTechnologyFilter("");
-//     setExperienceFilter("");
-//     setDateFilterStart("");
-//     setDateFilterEnd("");
-//   };
-
-//   return (
-//     <Container fluid>
-//       <Row className="mt-4 mb-3">
-//         <Col md={8}>
-//           <h4 className="mb-0">Applicants</h4>
-//         </Col>
-//         <Col md={4} className="text-end">
-//           <Button variant="primary" onClick={() => alert("Add New Applicant")}>
-//             Add New Applicant
-//           </Button>
-//         </Col>
-//       </Row>
-
-//       {/* Filter Section */}
-//       <Card className="mb-3">
-//         <Card.Header className="bg-white py-4">
-//           <Row>
-//             <Col md={3}>
-//               <Form.Control
-//                 type="search"
-//                 placeholder="Search by Anything"
-//                 value={searchTerm}
-//                 onChange={handleSearch}
-//               />
-//             </Col>
-//             <Col md={2}>
-//               <Dropdown>
-//                 <Dropdown.Toggle variant="outline-secondary" id="dropdown-basic">
-//                   {technologyFilter || "Technology"}
-//                 </Dropdown.Toggle>
-//                 <Dropdown.Menu>
-//                   {technologies.map((tech) => (
-//                     <Dropdown.Item key={tech} onClick={() => setTechnologyFilter(tech)}>
-//                       {tech}
-//                     </Dropdown.Item>
-//                   ))}
-//                 </Dropdown.Menu>
-//               </Dropdown>
-//             </Col>
-//             <Col md={2}>
-//               <Form.Control
-//                 as="select"
-//                 value={experienceFilter}
-//                 onChange={(e) => setExperienceFilter(Number(e.target.value) || "")}
-//               >
-//                 <option value="">Experience</option>
-//                 <option value="0">0+</option>
-//                 <option value="1">1+</option>
-//                 <option value="2">2+</option>
-//                 <option value="3">3+</option>
-//               </Form.Control>
-//             </Col>
-//             <Col md={2}>
-//               <InputGroup>
-//                 <Form.Control
-//                   type="date"
-//                   value={dateFilterStart}
-//                   onChange={(e) => setDateFilterStart(e.target.value)}
-//                 />
-//                 <Form.Control
-//                   type="date"
-//                   value={dateFilterEnd}
-//                   onChange={(e) => setDateFilterEnd(e.target.value)}
-//                 />
-//               </InputGroup>
-//             </Col>
-//             <Col md={3} className="d-flex justify-content-end">
-//               <Button variant="link" onClick={resetFilters}>
-//                 Reset Filters
-//               </Button>
-//             </Col>
-//           </Row>
-//         </Card.Header>
-//       </Card>
-
-//       <Card>
-//         <Card.Header className="bg-white py-4">
-//           <Table responsive className="text-nowrap mb-0">
-//             <thead className="table-light">
-//               <tr>
-//                 <th onClick={() => handleSort("id")} style={{ cursor: "pointer" }}>
-//                   Sno.
-//                 </th>
-//                 <th
-//                   onClick={() => handleSort("applicantsName")}
-//                   style={{ cursor: "pointer" }}
-//                 >
-//                   Applicant Name
-//                 </th>
-//                 <th
-//                   onClick={() => handleSort("technology")}
-//                   style={{ cursor: "pointer" }}
-//                 >
-//                   Technology
-//                 </th>
-//                 <th>Operation</th>
-//                 <th>Comments</th>
-//                 <th
-//                   onClick={() => handleSort("status")}
-//                   style={{ cursor: "pointer" }}
-//                 >
-//                   Status
-//                 </th>
-//                 <th
-//                   onClick={() => handleSort("priority")}
-//                   style={{ cursor: "pointer" }}
-//                 >
-//                   Priority
-//                 </th>
-//               </tr>
-//             </thead>
-//             <tbody>
-//               {currentApplicants.map((applicant) => (
-//                 <tr key={applicant.id}>
-//                   <td>{applicant.id}</td>
-//                   <td>{applicant.applicantsName}</td>
-//                   <td>{applicant.technology}</td>
-//                   <td>
-//                     <Button variant="link" size="sm">
-//                       {applicant.operation.edit}
-//                     </Button>
-//                     <Button variant="link" size="sm">
-//                       {applicant.operation.view}
-//                     </Button>
-//                     <Button variant="link" size="sm">
-//                       {applicant.operation.delete}
-//                     </Button>
-//                   </td>
-//                   <td>
-//                     <strong>Email:</strong> {applicant.comments.email}
-//                     <br />
-//                     <strong>Feedback:</strong> {applicant.comments.feedback}
-//                   </td>
-//                   <td>{applicant.status}</td>
-//                   <td>
-//                     <span className={`badge bg-${applicant.priorityBadgeBg}`}>
-//                       {applicant.priority}
-//                     </span>
-//                   </td>
-//                 </tr>
-//               ))}
-//             </tbody>
-//           </Table>
-//         </Card.Header>
-//         <Card.Footer className="bg-white text-center">
-//           <Button
-//             variant="link"
-//             disabled={currentPage === 1}
-//             onClick={() => handlePageChange(currentPage - 1)}
-//           >
-//             Previous
-//           </Button>
-//           <Button
-//             variant="link"
-//             disabled={currentPage === Math.ceil(filteredApplicants.length / itemsPerPage)}
-//             onClick={() => handlePageChange(currentPage + 1)}
-//           >
-//             Next
-//           </Button>
-//         </Card.Footer>
-//       </Card>
-//     </Container>
-//   );
-// };
-
-// export default ApplicantTable;
-
-
-// import React, { useState } from "react";
-// import { Table, Button, Form, Container, Row, Col, Card, InputGroup, FormControl, Dropdown } from "react-bootstrap";
-// import jsPDF from "jspdf";
-// import * as XLSX from "xlsx";
-// import { Menu, MenuItem, Button as MuiButton } from "@mui/material";
-// import { MoreVert as MoreVertIcon } from "@mui/icons-material";
-
-// // Dummy data with added experience and date
-// interface Applicant {
-//   id: number;
-//   applicantsName: string;
-//   technology: string;
-//   priority: string;
-//   priorityBadgeBg: string;
-//   experience: number;
-//   dateApplied: string;
-//   operation: {
-//     edit: string;
-//     view: string;
-//     delete: string;
-//   };
-//   comments: {
-//     email: string;
-//     feedback: string;
-//   };
-//   status: string;
-// }
-
-// const ApplicantTable = () => {
-//   const [applicants, setApplicants] = useState<Applicant[]>([
-//     {
-//       id: 1,
-//       applicantsName: "John Doe",
-//       technology: "React.js",
-//       priority: "Medium",
-//       priorityBadgeBg: "warning",
-//       experience: 3,
-//       dateApplied: "2025-01-15",
-//       operation: { edit: "Edit", view: "View", delete: "Delete" },
-//       comments: { email: "johndoe@example.com", feedback: "Good front-end skills." },
-//       status: "Pending",
-//     },
-//     {
-//       id: 2,
-//       applicantsName: "Jane Smith",
-//       technology: "Node.js",
-//       priority: "High",
-//       priorityBadgeBg: "danger",
-//       experience: 5,
-//       dateApplied: "2025-01-10",
-//       operation: { edit: "Edit", view: "View", delete: "Delete" },
-//       comments: { email: "janesmith@example.com", feedback: "Strong back-end experience." },
-//       status: "Interview Scheduled",
-//     },
-//     {
-//       id: 3,
-//       applicantsName: "Alice Johnson",
-//       technology: "Angular",
-//       priority: "Low",
-//       priorityBadgeBg: "secondary",
-//       experience: 2,
-//       dateApplied: "2025-01-20",
-//       operation: { edit: "Edit", view: "View", delete: "Delete" },
-//       comments: { email: "alicej@example.com", feedback: "Good Angular knowledge." },
-//       status: "Reviewed",
-//     },
-//   ]);
-
-//   const [searchTerm, setSearchTerm] = useState("");
-//   const [technologyFilter, setTechnologyFilter] = useState("");
-//   const [experienceFilter, setExperienceFilter] = useState<number | "">("");
-//   const [dateFilterStart, setDateFilterStart] = useState("");
-//   const [dateFilterEnd, setDateFilterEnd] = useState("");
-
-//   // Pagination states
-//   const [currentPage, setCurrentPage] = useState(1);
-//   const itemsPerPage = 5;
-
-//   const technologies = ["React.js", "Node.js", "Angular", "Vue.js"];
-
-//   // Function to handle search
-//   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-//     setSearchTerm(event.target.value);
-//   };
-
-//   // Filter applicants based on the search term, technology, experience, and date
-//   const filteredApplicants = applicants
-//     .filter((applicant) => {
-//       const searchInApplicant =
-//         applicant.applicantsName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-//         applicant.technology.toLowerCase().includes(searchTerm.toLowerCase()) ||
-//         applicant.status.toLowerCase().includes(searchTerm.toLowerCase()) ||
-//         applicant.experience.toString().includes(searchTerm.toLowerCase()) ||
-//         applicant.dateApplied.includes(searchTerm.toLowerCase());
-
-//       return searchInApplicant;
-//     })
-//     .filter((applicant) =>
-//       technologyFilter ? applicant.technology.toLowerCase().includes(technologyFilter.toLowerCase()) : true
-//     )
-//     .filter((applicant) =>
-//       experienceFilter ? applicant.experience >= experienceFilter : true
-//     )
-//     .filter((applicant) =>
-//       dateFilterStart && dateFilterEnd
-//         ? applicant.dateApplied >= dateFilterStart && applicant.dateApplied <= dateFilterEnd
-//         : true
-//     );
-
-//   // Pagination logic
-//   const indexOfLast = currentPage * itemsPerPage;
-//   const indexOfFirst = indexOfLast - itemsPerPage;
-//   const currentApplicants = filteredApplicants.slice(indexOfFirst, indexOfLast);
-
-//   const handlePageChange = (pageNumber: number) => {
-//     setCurrentPage(pageNumber);
-//   };
-
-//   // Reset filters
-//   const resetFilters = () => {
-//     setSearchTerm("");
-//     setTechnologyFilter("");
-//     setExperienceFilter("");
-//     setDateFilterStart("");
-//     setDateFilterEnd("");
-//   };
-
-//   // Highlight the search term
-//   const highlightText = (text: string) => {
-//     if (!searchTerm) return text;
-
-//     const regex = new RegExp(`(${searchTerm})`, "gi");
-//     const parts = text.split(regex);
-
-//     return parts.map((part, index) =>
-//       part.toLowerCase() === searchTerm.toLowerCase() ? (
-//         <span key={index} style={{ backgroundColor: "yellow" }}>
-//           {part}
-//         </span>
-//       ) : (
-//         part
-//       )
-//     );
-//   };
-
-//   // Export to PDF
-//   const exportToPDF = () => {
-//     const doc = new jsPDF();
-//     doc.text("Applicant List", 20, 20);
-//     currentApplicants.forEach((applicant, index) => {
-//       doc.text(`${applicant.id}. ${applicant.applicantsName} - ${applicant.technology}`, 20, 30 + index * 10);
-//     });
-//     doc.save("applicants.pdf");
-//   };
-
-//   // Export to Excel
-//   const exportToExcel = () => {
-//     const ws = XLSX.utils.json_to_sheet(currentApplicants);
-//     const wb = XLSX.utils.book_new();
-//     XLSX.utils.book_append_sheet(wb, ws, "Applicants");
-//     XLSX.writeFile(wb, "applicants.xlsx");
-//   };
-
-//   return (
-//     <Container fluid>
-//       <Row className="mt-4 mb-3">
-//         <Col md={8}>
-//           <h4 className="mb-0">Applicants</h4>
-//         </Col>
-//         <Col md={4} className="text-end">
-//           <Button variant="primary" onClick={() => alert("Add New Applicant")}>
-//             Add New Applicant
-//           </Button>
-//         </Col>
-//       </Row>
-
-//       {/* Filter Section */}
-//       <Card className="mb-3">
-//         <Card.Header className="bg-white py-4">
-//           <Row>
-//             <Col md={3}>
-//               <Form.Control
-//                 type="search"
-//                 placeholder="Search by Anything"
-//                 value={searchTerm}
-//                 onChange={handleSearch}
-//               />
-//             </Col>
-//             <Col md={2}>
-//               <Dropdown>
-//                 <Dropdown.Toggle variant="outline-secondary" id="dropdown-basic">
-//                   {technologyFilter || "Technology"}
-//                 </Dropdown.Toggle>
-//                 <Dropdown.Menu>
-//                   {technologies.map((tech) => (
-//                     <Dropdown.Item key={tech} onClick={() => setTechnologyFilter(tech)}>
-//                       {tech}
-//                     </Dropdown.Item>
-//                   ))}
-//                 </Dropdown.Menu>
-//               </Dropdown>
-//             </Col>
-//             <Col md={2}>
-//               <Form.Control
-//                 as="select"
-//                 value={experienceFilter}
-//                 onChange={(e) => setExperienceFilter(Number(e.target.value) || "")}
-//               >
-//                 <option value="">Experience</option>
-//                 <option value="0">0+</option>
-//                 <option value="1">1+</option>
-//                 <option value="2">2+</option>
-//                 <option value="3">3+</option>
-//               </Form.Control>
-//             </Col>
-//             <Col md={2}>
-//               <InputGroup>
-//                 <Form.Control
-//                   type="date"
-//                   value={dateFilterStart}
-//                   onChange={(e) => setDateFilterStart(e.target.value)}
-//                 />
-//                 <Form.Control
-//                   type="date"
-//                   value={dateFilterEnd}
-//                   onChange={(e) => setDateFilterEnd(e.target.value)}
-//                 />
-//               </InputGroup>
-//             </Col>
-//             <Col md={3} className="d-flex justify-content-end">
-//               <Button variant="link" onClick={resetFilters}>
-//                 Reset Filters
-//               </Button>
-//             </Col>
-//           </Row>
-//         </Card.Header>
-//       </Card>
-
-//       <Card>
-//         <Card.Header className="bg-white py-4">
-//           <Table responsive className="text-nowrap mb-0">
-//             <thead className="table-light">
-//               <tr>
-//                 <th>Sno.</th>
-//                 <th>Applicant Name</th>
-//                 <th>Technology</th>
-//                 <th>Operation</th>
-//                 <th>Comments</th>
-//                 <th>Status</th>
-//                 <th>Priority</th>
-//               </tr>
-//             </thead>
-//             <tbody>
-//               {currentApplicants.map((applicant) => (
-//                 <tr key={applicant.id}>
-//                   <td>{applicant.id}</td>
-//                   <td>{highlightText(applicant.applicantsName)}</td>
-//                   <td>{highlightText(applicant.technology)}</td>
-//                   <td>
-//                     <Button variant="link" size="sm">{applicant.operation.edit}</Button>
-//                     <Button variant="link" size="sm">{applicant.operation.view}</Button>
-//                     <Button variant="link" size="sm">{applicant.operation.delete}</Button>
-//                   </td>
-//                   <td>
-//                     <strong>Email:</strong> {applicant.comments.email}<br />
-//                     <strong>Feedback:</strong> {applicant.comments.feedback}
-//                   </td>
-//                   <td>{applicant.status}</td>
-//                   <td>
-//                     <span className={`badge bg-${applicant.priorityBadgeBg}`}>
-//                       {applicant.priority}
-//                     </span>
-//                   </td>
-//                 </tr>
-//               ))}
-//             </tbody>
-//           </Table>
-//         </Card.Header>
-//         <Card.Footer className="bg-white text-center">
-//           <Button variant="link" disabled={currentPage === 1} onClick={() => handlePageChange(currentPage - 1)}>
-//             Previous
-//           </Button>
-//           <Button variant="link" disabled={currentPage === Math.ceil(filteredApplicants.length / itemsPerPage)} onClick={() => handlePageChange(currentPage + 1)}>
-//             Next
-//           </Button>
-//         </Card.Footer>
-//       </Card>
-
-//       {/* Export buttons */}
-//       {/* <div className="d-flex justify-content-end mt-4">
-//         <Button variant="success" onClick={exportToPDF} className="me-2">
-//           Export to PDF
-//         </Button>
-//         <Button variant="success" onClick={exportToExcel}>
-//           Export to Excel
-//         </Button>
-//       </div> */}
-//         {/* Export Dropdown */}
-//         <div className="d-flex justify-content-end mt-4">
-//         <MuiButton
-//           variant="outlined"
-//           color="primary"
-//           endIcon={<MoreVertIcon />}
-//           onClick={handleClick}
-//         >
-//           Export
-//         </MuiButton>
-//         <Menu
-//           anchorEl={anchorEl}
-//           open={Boolean(anchorEl)}
-//           onClose={handleClose}
-//         >
-//           <MenuItem onClick={() => { exportToPDF(); handleClose(); }}>
-//             Export to PDF
-//           </MenuItem>
-//           <MenuItem onClick={() => { exportToExcel(); handleClose(); }}>
-//             Export to Excel
-//           </MenuItem>
-//         </Menu>
-//       </div>
-//     </Container>
-//   );
-// };
-
-// export default ApplicantTable;
-
-
-import React, { useState } from "react";
-import { Table, Button, Form, Container, Row, Col, Card, InputGroup, FormControl, Dropdown } from "react-bootstrap";
-import jsPDF from "jspdf";
-import * as XLSX from "xlsx";
-import { Menu, MenuItem, Button as MuiButton } from "@mui/material";
-import { MoreVert as MoreVertIcon } from "@mui/icons-material";
-
-// Dummy data with added experience and date
-interface Applicant {
-  id: number;
-  applicantsName: string;
-  technology: string;
-  priority: string;
-  priorityBadgeBg: string;
-  experience: number;
-  dateApplied: string;
-  operation: {
-    edit: string;
-    view: string;
-    delete: string;
-  };
-  comments: {
-    email: string;
-    feedback: string;
-  };
-  status: string;
-}
-
-const ApplicantTable = () => {
-  const [applicants, setApplicants] = useState<Applicant[]>([
-    {
-      id: 1,
-      applicantsName: "John Doe",
-      technology: "React.js",
-      priority: "Medium",
-      priorityBadgeBg: "warning",
-      experience: 3,
-      dateApplied: "2025-01-15",
-      operation: { edit: "Edit", view: "View", delete: "Delete" },
-      comments: { email: "johndoe@example.com", feedback: "Good front-end skills." },
-      status: "Pending",
-    },
-    {
-      id: 2,
-      applicantsName: "Jane Smith",
-      technology: "Node.js",
-      priority: "High",
-      priorityBadgeBg: "danger",
-      experience: 5,
-      dateApplied: "2025-01-10",
-      operation: { edit: "Edit", view: "View", delete: "Delete" },
-      comments: { email: "janesmith@example.com", feedback: "Strong back-end experience." },
-      status: "Interview Scheduled",
-    },
-    {
-      id: 3,
-      applicantsName: "Alice Johnson",
-      technology: "Angular",
-      priority: "Low",
-      priorityBadgeBg: "secondary",
-      experience: 2,
-      dateApplied: "2025-01-20",
-      operation: { edit: "Edit", view: "View", delete: "Delete" },
-      comments: { email: "alicej@example.com", feedback: "Good Angular knowledge." },
-      status: "Reviewed",
-    },
-  ]);
-
+const ApplicantTables = () => {
+  const [applicants, setApplicants] = useState<Applicant[]>([]);
+  const [selectedApplicant, setSelectedApplicant] = useState<Applicant | null>(
+    null
+  );
+  const [editingApplicant, setEditingApplicant] = useState<Applicant | null>(
+    null
+  );
   const [searchTerm, setSearchTerm] = useState("");
   const [technologyFilter, setTechnologyFilter] = useState("");
   const [experienceFilter, setExperienceFilter] = useState<number | "">("");
   const [dateFilterStart, setDateFilterStart] = useState("");
   const [dateFilterEnd, setDateFilterEnd] = useState("");
-
-  // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+  const [showModal, setShowModal] = useState(false);
+  const navigate = useNavigate();
 
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  useEffect(() => {
+    fetchApplicants();
+  }, []);
 
-  const technologies = ["React.js", "Node.js", "Angular", "Vue.js"];
-
-  // Handle open/close of dropdown
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
+  const fetchApplicants = async (
+    filters = {},
+    page = 1,
+    limit = itemsPerPage
+  ) => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/api/applicants/viewAllApplicant`,
+        {
+          params: { ...filters, page, limit },
+        }
+      );
+      setApplicants(response.data.data.item);
+    } catch (error) {
+      // console.error("Error fetching applicants:", error);
+      toast.error("Error fetching applicants!", {
+        position: "top-right",
+        autoClose: 5000,
+      });
+    }
   };
 
-  const handleClose = () => {
-    setAnchorEl(null);
+  const handleDelete = async (_id: string) => {
+    try {
+      await axios.delete(`${BASE_URL}/api/applicants/deleteApplicant/${_id}`);
+      fetchApplicants();
+      toast.success("Applicant deleted successfully!", {
+        position: "top-right",
+        autoClose: 5000,
+      });
+    } catch (error) {
+      // console.error("Error deleting applicant:", error);
+      toast.error("Error deleting applicant!", {
+        position: "top-right",
+        autoClose: 5000,
+      });
+    }
   };
 
-  // Function to handle search
-  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(event.target.value);
+  const handleView = async (id: string) => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/api/applicants/viewApplicant/${id}`
+      );
+
+      // Ensure the response data matches the expected structure
+      const applicantData = {
+        ...response.data,
+        name: response.data.name || {
+          firstName: "",
+          middleName: "",
+          lastName: "",
+        },
+        phone: response.data.phone || { phoneNumber: "", whatsappNumber: "" },
+      };
+
+      setSelectedApplicant(applicantData);
+    } catch (error) {
+      // console.error("Error fetching applicant details:", error);
+      toast.error("Error fetching applicant details!", {
+        position: "top-right",
+        autoClose: 5000,
+      });
+    }
   };
 
-  // Filter applicants based on the search term, technology, experience, and date
-  const filteredApplicants = applicants
-    .filter((applicant) => {
-      const searchInApplicant =
-        applicant.applicantsName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        applicant.technology.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        applicant.status.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        applicant.experience.toString().includes(searchTerm.toLowerCase()) ||
-        applicant.dateApplied.includes(searchTerm.toLowerCase());
+  const handleStatusChange = async (applicantId: string, status: string) => {
+    try {
+      const response = await axios.put(
+        `${BASE_URL}/api/applicants/update/status/${applicantId}`,
+        { status }
+      );
+      fetchApplicants();
+      toast.success("Status updated successfully!", {
+        position: "top-right",
+        autoClose: 5000,
+      });
+    } catch (error) {
+      console.error("Error updating status:", error);
+      toast.error("Error updating status!", {
+        position: "top-right",
+        autoClose: 5000,
+      });
+    }
+  };
 
-      return searchInApplicant;
-    })
-    .filter((applicant) =>
-      technologyFilter ? applicant.technology.toLowerCase().includes(technologyFilter.toLowerCase()) : true
-    )
-    .filter((applicant) =>
-      experienceFilter ? applicant.experience >= experienceFilter : true
-    )
-    .filter((applicant) =>
-      dateFilterStart && dateFilterEnd
-        ? applicant.dateApplied >= dateFilterStart && applicant.dateApplied <= dateFilterEnd
-        : true
+  const handleInterviewStageChange = async (
+    applicantId: string,
+    interviewStage: string
+  ) => {
+    try {
+      await axios.put(
+        `${BASE_URL}/api/applicants/update/status/${applicantId}`,
+        { interviewStage }
+      );
+      // Refetch applicants to update the UI
+      fetchApplicants();
+
+      toast.success("Interview stage updated successfully!", {
+        position: "top-right",
+        autoClose: 5000,
+      });
+    } catch (error) {
+      console.error("Error updating interview stage:", error);
+      toast.error("Error updating interview stage!", {
+        position: "top-right",
+        autoClose: 5000,
+      });
+    }
+  };
+
+  const filteredApplicants = applicants.filter((applicant) => {
+    const searchMatch =
+      (applicant?.name?.firstName || "")
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      (applicant?.appliedSkills?.join(", ") || "")
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      (applicant.email || "").toLowerCase().includes(searchTerm.toLowerCase());
+
+    const technologyMatch = technologyFilter
+      ? applicant.appliedSkills.includes(technologyFilter)
+      : true;
+
+    const experienceMatch = experienceFilter
+      ? applicant.totalExperience >= experienceFilter
+      : true;
+
+    const dateMatch =
+      (!dateFilterStart ||
+        new Date(applicant.created_At) >= new Date(dateFilterStart)) &&
+      (!dateFilterEnd ||
+        new Date(applicant.created_At) <= new Date(dateFilterEnd));
+
+    return searchMatch && technologyMatch && experienceMatch && dateMatch;
+  });
+  const currentApplicants = filteredApplicants.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+    fetchApplicants(
+      {
+        searchTerm,
+        technology: technologyFilter,
+        experience: experienceFilter,
+        dateFilterStart,
+        dateFilterEnd,
+      },
+      newPage,
+      itemsPerPage
     );
-
-  // Pagination logic
-  const indexOfLast = currentPage * itemsPerPage;
-  const indexOfFirst = indexOfLast - itemsPerPage;
-  const currentApplicants = filteredApplicants.slice(indexOfFirst, indexOfLast);
-
-  const handlePageChange = (pageNumber: number) => {
-    setCurrentPage(pageNumber);
   };
 
-  // Reset filters
-  const resetFilters = () => {
-    setSearchTerm("");
-    setTechnologyFilter("");
-    setExperienceFilter("");
-    setDateFilterStart("");
-    setDateFilterEnd("");
-  };
-
-  // Export to PDF
-  const exportToPDF = () => {
-    const doc = new jsPDF();
-    doc.text("Applicant List", 20, 20);
-    currentApplicants.forEach((applicant, index) => {
-      doc.text(`${applicant.id}. ${applicant.applicantsName} - ${applicant.technology}`, 20, 30 + index * 10);
-    });
-    doc.save("applicants.pdf");
-  };
-
-  // Export to Excel
-  const exportToExcel = () => {
-    const ws = XLSX.utils.json_to_sheet(currentApplicants);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Applicants");
-    XLSX.writeFile(wb, "applicants.xlsx");
-  };
-
-  // Highlight the search term
   const highlightText = (text: string) => {
     if (!searchTerm) return text;
-
     const regex = new RegExp(`(${searchTerm})`, "gi");
     const parts = text.split(regex);
 
@@ -810,156 +231,246 @@ const ApplicantTable = () => {
     );
   };
 
+  const handleEditable = (applicant: Applicant) => {
+    setEditingApplicant(applicant);
+    setShowModal(true);
+  };
+
   return (
     <Container fluid>
-      <Row className="mt-4 mb-3">
-        <Col md={8}>
-          <h4 className="mb-0">Applicants</h4>
-        </Col>
-        <Col md={4} className="text-end">
-          <Button variant="primary" onClick={() => alert("Add New Applicant")}>
-            Add New Applicant
-          </Button>
-        </Col>
-      </Row>
-
-      {/* Filter Section */}
-      <Card className="mb-3">
+      <Card className="mb-3 my-3">
         <Card.Header className="bg-white py-4">
-          <Row>
-            <Col md={3}>
-              <Form.Control
-                type="search"
-                placeholder="Search by Anything"
-                value={searchTerm}
-                onChange={handleSearch}
-              />
-            </Col>
-            <Col md={2}>
+          <Row className="flex">
+            <Col xs={12} sm={12} md={4} lg={2} className="!mb-2 ">
               <Dropdown>
-                <Dropdown.Toggle variant="outline-secondary" id="dropdown-basic">
+                <Dropdown.Toggle variant="outline-secondary" className="w-100">
                   {technologyFilter || "Technology"}
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
-                  {technologies.map((tech) => (
-                    <Dropdown.Item key={tech} onClick={() => setTechnologyFilter(tech)}>
+                  {["React.js", "Node.js", "Angular", "Vue.js"].map((tech) => (
+                    <Dropdown.Item
+                      key={tech}
+                      onClick={() => setTechnologyFilter(tech)}
+                    >
                       {tech}
                     </Dropdown.Item>
                   ))}
                 </Dropdown.Menu>
               </Dropdown>
             </Col>
-            <Col md={2}>
-              <Form.Control
-                as="select"
+
+            <Col xs={12} sm={6} md={4} lg={2} className="px-2 ">
+              <Form.Select
                 value={experienceFilter}
-                onChange={(e) => setExperienceFilter(Number(e.target.value) || "")}
+                onChange={(e) =>
+                  setExperienceFilter(Number(e.target.value) || "")
+                }
+                className="w-100 py-2"
               >
                 <option value="">Experience</option>
-                <option value="0">0+</option>
-                <option value="1">1+</option>
-                <option value="2">2+</option>
-                <option value="3">3+</option>
-              </Form.Control>
+                {[0, 1, 2, 3].map((exp) => (
+                  <option key={exp} value={exp}>
+                    {exp}+
+                  </option>
+                ))}
+              </Form.Select>
             </Col>
-            <Col md={2}>
-              <InputGroup>
+
+            <Col xs={12} sm={6} md={4} lg={3} className="px-2 mb-2">
+              <InputGroup className="sm:w-100">
                 <Form.Control
                   type="date"
                   value={dateFilterStart}
                   onChange={(e) => setDateFilterStart(e.target.value)}
+                  className="py-2"
                 />
                 <Form.Control
                   type="date"
                   value={dateFilterEnd}
                   onChange={(e) => setDateFilterEnd(e.target.value)}
+                  className="py-2"
                 />
               </InputGroup>
             </Col>
-            <Col md={3} className="d-flex justify-content-end">
-              <Button variant="link" onClick={resetFilters}>
+
+            <Col
+              xs={12}
+              sm={6}
+              md={6}
+              lg={2}
+              className="!d-flex !justify-content-end !align-items-center !px-1 mb-2"
+            >
+              <Button
+                variant="contained"
+                onClick={() => {
+                  setSearchTerm("");
+                  setTechnologyFilter("");
+                  setExperienceFilter("");
+                  setDateFilterStart("");
+                  setDateFilterEnd("");
+                  fetchApplicants({});
+                }}
+                className="text-decoration-none py-2 text-primary bg-danger text-white  w-100"
+              >
                 Reset Filters
               </Button>
+            </Col>
+
+            <Col xs={12} sm={6} md={6} lg={3} className="px-1">
+              <div className="d-flex justify-content-end">
+                <Button
+                  onClick={() => navigate("/add_applicants")}
+                  className="bg-primary text-white py-2 w-100"
+                >
+                  Add New Applicant
+                </Button>
+              </div>
             </Col>
           </Row>
         </Card.Header>
       </Card>
 
-      <Card>
-        <Card.Header className="bg-white py-4">
+      <Card className="min-h-full">
+        <Card.Header className="bg-white py-4 ">
+          <Row>
+            <Col md={3} sm={6} xs={12}>
+              <div className="m-3">
+                <Form.Control
+                  className="!rounded-full"
+                  type="search"
+                  placeholder="Search by Anything"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+            </Col>
+          </Row>
+
           <Table responsive className="text-nowrap mb-0">
             <thead className="table-light">
               <tr>
-                <th>Sno.</th>
                 <th>Applicant Name</th>
                 <th>Technology</th>
-                <th>Operation</th>
+                <th>Experience</th>
                 <th>Comments</th>
+                <th>Interview Stage</th>
                 <th>Status</th>
-                <th>Priority</th>
+                <th>Operation</th>
               </tr>
             </thead>
             <tbody>
               {currentApplicants.map((applicant) => (
-                <tr key={applicant.id}>
-                  <td>{applicant.id}</td>
-                  <td>{highlightText(applicant.applicantsName)}</td>
-                  <td>{highlightText(applicant.technology)}</td>
+                <tr key={applicant._id}>
+                  <td>{`${highlightText(
+                    applicant?.name?.firstName
+                  )} ${highlightText(applicant?.name?.lastName)}`}</td>
+                  <td>{highlightText(applicant?.appliedSkills?.join(", "))}</td>
+                  <td>{applicant?.totalExperience}</td>
                   <td>
-                    <Button variant="link" size="sm">{applicant.operation.edit}</Button>
-                    <Button variant="link" size="sm">{applicant.operation.view}</Button>
-                    <Button variant="link" size="sm">{applicant.operation.delete}</Button>
+                    <strong className="text-primary">Email</strong>
+                    <br />
+                    <strong
+                      className="text-primary"
+                      // onClick={() => handleFeedback(applicant._id)}
+                    >
+                      Feedback
+                    </strong>
                   </td>
                   <td>
-                    <strong>Email:</strong> {applicant.comments.email}<br />
-                    <strong>Feedback:</strong> {applicant.comments.feedback}
+                    <Form.Select
+                      className="p-1 m-0 bg-warning text-white "
+                      value={applicant.interviewStage}
+                      onChange={(e) =>
+                        handleInterviewStageChange(
+                          applicant._id,
+                          e.target.value
+                        )
+                      }
+                    >
+                      {interviewStageOptions.map((stage) => (
+                        <option key={stage} value={stage}>
+                          {stage}
+                        </option>
+                      ))}
+                    </Form.Select>
                   </td>
-                  <td>{applicant.status}</td>
                   <td>
-                    <span className={`badge bg-${applicant.priorityBadgeBg}`}>
-                      {applicant.priority}
-                    </span>
+                    <Form.Select
+                      value={applicant.status}
+                      className="p-1 m-0 outline-none bg-success text-white"
+                      onChange={(e) =>
+                        handleStatusChange(applicant._id, e.target.value)
+                      }
+                    >
+                      {statusOptions.map((status) => (
+                        <option key={status} value={status}>
+                          {status}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </td>
+                  <td>
+                    <EditIcon
+                      color="primary"
+                      style={{ cursor: "pointer" }}
+                      onClick={() => handleEditable(applicant)}
+                    />
+                    <ViewIcon
+                      color="info"
+                      style={{ cursor: "pointer", marginLeft: 8 }}
+                      onClick={() => handleView(applicant._id)}
+                    />
+                    <DeleteIcon
+                      color="error"
+                      style={{ cursor: "pointer", marginLeft: 8 }}
+                      onClick={() => handleDelete(applicant._id)}
+                    />
                   </td>
                 </tr>
               ))}
             </tbody>
           </Table>
-        </Card.Header>
-        <Card.Footer className="bg-white text-center">
-          <Button variant="link" disabled={currentPage === 1} onClick={() => handlePageChange(currentPage - 1)}>
-            Previous
-          </Button>
-          <Button variant="link" disabled={currentPage === Math.ceil(filteredApplicants.length / itemsPerPage)} onClick={() => handlePageChange(currentPage + 1)}>
-            Next
-          </Button>
-        </Card.Footer>
-      </Card>
 
-      {/* Export Dropdown */}
-      <div className="d-flex justify-content-end mt-4">
-        <MuiButton
-          variant="outlined"
-          color="primary"
-          endIcon={<MoreVertIcon />}
-          onClick={handleClick}
-        >
-          Export
-        </MuiButton>
-        <Menu
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={handleClose}
-        >
-          <MenuItem onClick={() => { exportToPDF(); handleClose(); }}>
-            Export to PDF
-          </MenuItem>
-          <MenuItem onClick={() => { exportToExcel(); handleClose(); }}>
-            Export to Excel
-          </MenuItem>
-        </Menu>
-      </div>
+          <ViewModal
+            show={!!selectedApplicant}
+            onHide={() => setSelectedApplicant(null)}
+            selectedApplicant={selectedApplicant}
+          />
+
+          <UpdateModal
+            show={showModal}
+            onHide={() => {
+              setShowModal(false);
+              setEditingApplicant(null);
+            }}
+            editingApplicant={editingApplicant}
+            fetchApplicants={fetchApplicants}
+          />
+
+          <Pagination className="justify-end text-end m-2">
+            <Pagination.Prev
+              onClick={() => handlePageChange(currentPage - 1)}
+            />
+            {Array.from(
+              { length: Math.ceil(filteredApplicants.length / itemsPerPage) },
+              (_, i) => (
+                <Pagination.Item
+                  key={i + 1}
+                  active={i + 1 === currentPage}
+                  onClick={() => handlePageChange(i + 1)}
+                >
+                  {i + 1}
+                </Pagination.Item>
+              )
+            )}
+            <Pagination.Next
+              onClick={() => handlePageChange(currentPage + 1)}
+            />
+          </Pagination>
+        </Card.Header>
+      </Card>
     </Container>
   );
 };
 
-export default ApplicantTable;
+export default ApplicantTables;

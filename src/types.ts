@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface NotificationProps {
   id: string;
   sender: string;
@@ -8,7 +9,7 @@ export interface ChildrenItemProps {
   id: string;
   title?: string;
   name?: string;
-  link: string;
+  link?: string | null;
   children?: ChildrenItemProps[];
   icon?: string;
   badge?: string;
@@ -24,6 +25,7 @@ export interface DashboardMenuProps {
   icon?: string;
   badge?: string;
   badgecolor?: string;
+  name?: string;
 }
 
 export interface CustomToggleProps {
@@ -98,24 +100,79 @@ export interface FeaturesDataProps {
   description: string;
 }
 
-export interface ChildrenItemProps {
-  id: string;
-  title?: string;
-  name?: string;
-  link: string;
-  children?: ChildrenItemProps[];
-  icon?: string;
-  badge?: string;
-  badgecolor?: string;
-}
+export interface Applicant {
+  data: any;
+  currentPkg: string;
+  expectedPkg: string;
+  otherSkills: string;
+  referral: string;
+  _id: string;
+  application_No: number;
+  name: {
+    firstName: string;
+    middleName: string;
+    lastName: string;
+  };
+  phone: {
+    whatsappNumber: string;
+    phoneNumber: string;
+  };
+  email: string;
+  gender: string;
+  dateOfBirth: Date;
+  qualification: string;
+  degree: string;
+  passing_Year: number;
+  current_Location: string;
+  state: string;
+  country: string;
+  pincode: number;
+  fullAddress: string;
+  city: string;
+  appliedSkills: [string];
+  resume: string;
+  totalExperience: number;
+  relevantSkillExperience: number;
+  
+  rating: number;
+  url: string;
+  current_Pkg: string;
+  expectedpkg: string;
+  noticePeriod: string;
+  negotiation: string;
+  ready_Wfo: string;
+  work_Preference: string;
+  about_Us: string;
+  feedback: string;
+  status: string;
+  interview_Stage: string;
+  referal: string;
+  created_At: Date;
+  modified_At: Date;
+  applicantsName: string;
+  technology: string;
+  priority: string;
+  priorityBadgeBg: string;
+  experience: number;
+  dateApplied: string;
+  operation: {
+    edit: string;
+    view: string;
+    delete: string;
+  };
+  readyForWork: string;
+  workPreference: string;
+  
 
-export interface DashboardMenuProps {
-  id: string;
-  title: string;
-  link?: string;
-  grouptitle?: boolean;
-  children?: ChildrenItemProps[];
-  icon?: string;
-  badge?: string;
-  badgecolor?: string;
+  applicationNo: number; // Updated to match API
+
+
+  passingYear: number; // Updated to match API
+
+
+  aboutUs: string; // Updated to match API
+
+  interviewStage: string; // Updated to match API
+
+ 
 }

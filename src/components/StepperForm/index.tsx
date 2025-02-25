@@ -11,7 +11,7 @@ function Applicant() {
     <Container fluid className="p-6 ">
       
       <StepperForm />
-      <ToastContainer />console.log("Applicant component rendered");
+      <ToastContainer />
       </Container>
   
   );

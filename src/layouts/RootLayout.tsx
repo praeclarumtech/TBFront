@@ -1,12 +1,14 @@
 //import node module libraries
 import { Outlet } from "react-router";
-// import { Link } from "react-router-dom";
 import Sidebar from "components/navbars/sidebar/Sidebar";
 import Header from "components/navbars/topbar/Header";
-// import { Image } from "react-bootstrap";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 
-const RootLayout = () => {
+interface RootLayoutProps {
+  children: ReactNode;
+}
+
+const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
   const [showMenu, setShowMenu] = useState(true);
   const ToggleMenu = () => {
     return setShowMenu(!showMenu);
@@ -24,16 +26,8 @@ const RootLayout = () => {
           </div>
           <Outlet />
         </div>
+        {children}
       </div>
-
-      {/* <Link
-        to="https://dashui.codescandy.com/free-reactjs-admin-dashboard-template.html"
-        target="_blank"
-        className="btn btn-dark btn-float-button m-5 fs-4 d-inline-flex gap-1 align-items-center text-white"
-      >
-        <Image src="/images/shopping-icon.svg" className="text-white" />
-        Free Download
-      </Link> */}
     </section>
   );
 };

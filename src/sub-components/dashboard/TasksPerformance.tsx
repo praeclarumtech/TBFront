@@ -14,7 +14,6 @@ const Charts = () => {
     colors: ["#28a745", "#ffc107", "#dc3545"],
     plotOptions: {
       radialBar: {
-     
         startAngle: -168,
         endAngle: -450,
         hollow: {
@@ -68,29 +67,29 @@ const Charts = () => {
 
   CustomToggle.displayName = "CustomToggle";
 
-  // const ActionMenu = () => {
-  //   return (
-  //     <Dropdown>
-  //       <Dropdown.Toggle as={CustomToggle}>
-  //         <MoreVertical size="15px" className="text-muted" />
-  //       </Dropdown.Toggle>
-  //       <Dropdown.Menu align={"end"}>
-  //         <Dropdown.Item eventKey="1">Action</Dropdown.Item>
-  //         <Dropdown.Item eventKey="2">Another action</Dropdown.Item>
-  //         <Dropdown.Item eventKey="3">Something else here</Dropdown.Item>
-  //       </Dropdown.Menu>
-  //     </Dropdown>
-  //   );
-  // };
+  const ActionMenu = () => {
+    return (
+      <Dropdown>
+        <Dropdown.Toggle as={CustomToggle}>
+          <MoreVertical size="15px" className="text-muted" />
+        </Dropdown.Toggle>
+        <Dropdown.Menu align={"end"}>
+          <Dropdown.Item eventKey="1">Action</Dropdown.Item>
+          <Dropdown.Item eventKey="2">Another action</Dropdown.Item>
+          <Dropdown.Item eventKey="3">Something else here</Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown>
+    );
+  };
 
   return (
     <Card className="h-100">
       <Card.Body>
         <div className="d-flex align-items-center justify-content-between">
           <div>
-            <h4 className="mb-0">Interview Process </h4>
+            <h4 className="mb-0">Tasks Performance </h4>
           </div>
-          {/* <ActionMenu /> */}
+          <ActionMenu />
         </div>
         <div className="mb-8">
           <Chart
@@ -104,18 +103,18 @@ const Charts = () => {
         <div className="d-flex align-items-center justify-content-around">
           <div className="text-center">
             <i className="fe fe-check-circle text-success fs-3"></i>
-            <h1 className="mt-3  mb-1 fw-bold">76</h1>
+            <h1 className="mt-3  mb-1 fw-bold">76%</h1>
             <p>Completed</p>
           </div>
           <div className="text-center">
             <i className="fe fe-trending-up text-warning fs-3"></i>
-            <h1 className="mt-3  mb-1 fw-bold">32</h1>
-            <p>2nd Interview</p>
+            <h1 className="mt-3  mb-1 fw-bold">32%</h1>
+            <p>In-Progress</p>
           </div>
           <div className="text-center">
-            <i className="fe fe-trending-up text-danger fs-3"></i>
-            <h1 className="mt-3  mb-1 fw-bold">13</h1>
-            <p>Screened</p>
+            <i className="fe fe-trending-down text-danger fs-3"></i>
+            <h1 className="mt-3  mb-1 fw-bold">13%</h1>
+            <p>Behind</p>
           </div>
         </div>
       </Card.Body>
