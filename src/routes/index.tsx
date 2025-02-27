@@ -18,6 +18,7 @@ import EmailForm from "pages/email/EmailForm";
 import Report from "pages/report/Report";
 import PassingYear from "pages/master/PassingYear";
 import AddSkill from "pages/master/Skills";
+import StepperForm from "pages/applicant/Stepper";
 import Applicant from "pages/applicant/Index";
 
 const RenderRouter: React.FC = () => {
@@ -52,7 +53,24 @@ const RenderRouter: React.FC = () => {
             </RootLayout>
           }
         />
-
+        <Route path={APPLICANTS.path}>
+          <Route
+            path={"add-applicant"}
+            element={
+              <RootLayout>
+                <StepperForm />
+              </RootLayout>
+            }
+          />
+          <Route
+            path={"edit-applicant/:id"}
+            element={
+              <RootLayout>
+                <StepperForm />
+              </RootLayout>
+            }
+          />
+        </Route>
         <Route path={EMAIL.path}>
           <Route
             index

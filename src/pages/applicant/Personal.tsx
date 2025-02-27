@@ -367,7 +367,7 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
 
               <div className="d-flex flex-column flex-md-row justify-content-end gap-3 mt-4">
                 <Link
-                  to="/applicant"
+                  to="/applicants"
                   style={styleButton}
                   className="!Text-center !justify-content-center "
                 >
