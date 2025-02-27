@@ -14,7 +14,7 @@ import {
 import { ShoppingBag } from "react-feather";
 
 // import widget/custom components
-import { HighlightCode } from "widgets";
+import HighlightCode from "../widgets/highlight-code/HighlightCode";
 
 // import react code data file
 import {

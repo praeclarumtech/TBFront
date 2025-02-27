@@ -7,10 +7,21 @@ export const VIEWPROFILE = "user/viewProfile";
 export const CHANGEPASSWORD = "user/changePassword";
 
 //Applicant module
-export const LIST_APPLICANT = 'applicants/viewAllApplicant';
-export const CREATE_APPLICANT = 'applicants/addApplicant';
+export const LIST_APPLICANT = "applicants/viewAllApplicant";
+export const CREATE_APPLICANT = "applicants/addApplicant";
 export const UPDATE_APPLICANT = "applicants/updateApplicant";
 export const VIEW_APPLICANT = "applicants/viewApplicant";
 export const DELETE_APPLICANT = "applicants/deleteApplicant";
 export const UPDATE_APPLICANT_STATUS = "applicants/update/status";
 export const UPDATE_APPLICANT_STAGE = "applicants/update/status";
+//Email module
+export const SEND_EMAIL = "email/applicant/sendEmail";
+export const VIEW_ALL_EMAIL = "email/applicant/getAllEmails";
+export const DELETE_EMAIL = "email/applicant/deleteManyEmails";
+
+//Passing Year module
+export const ADD_PASSING_YEAR = "year";
+export const VIEW_PASSING_YEAR_BY_ID = "year/getYearById";
+export const DELETE_PASSING_YEAR = "year/deleteYear";
+export const EDIT_PASSING_YEAR = "year/updateYear";
+export const VIEW_ALL_PASSING_YEAR = "year/listOfYears";

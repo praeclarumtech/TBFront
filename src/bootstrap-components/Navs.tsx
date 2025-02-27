@@ -3,7 +3,7 @@ import { Col, Row, Card, Nav, Tabs, Tab, Container } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 // import widget/custom components
-import { HighlightCode } from "widgets";
+import HighlightCode from "../widgets/highlight-code/HighlightCode";
 
 // import react code data file
 import {

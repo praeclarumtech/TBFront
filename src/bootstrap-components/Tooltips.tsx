@@ -13,7 +13,7 @@ import {
 import { Placement } from "react-bootstrap/esm/types";
 
 // import widget/custom components
-import { HighlightCode } from "widgets";
+import HighlightCode from "../widgets/highlight-code/HighlightCode";
 
 // import react code data file
 import { BasicTooltip } from "data/code/TooltipsCode";

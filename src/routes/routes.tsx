@@ -1,15 +1,15 @@
-
-
 import SignUp from "pages/auth/SignUp";
 import Dashboard from "pages/dashboard/Index";
 import LayoutVertical from "pages/dashboard/LayoutVertical";
 import ApiDemo from "pages/dashboard/pages/ApiDemo";
-import email from "pages/dashboard/pages/email/EmailForm";
-import Report from "pages/dashboard/pages/report/Report";
 import Settings from "pages/dashboard/pages/Settings";
 import ApplicantTables from "pages/applicant/Index";
 import StepperForm from "pages/applicant/Stepper";
-
+import EmailTable from "pages/email/EmailTable";
+import EmailForm from "pages/email/EmailForm";
+import PassingYear from "pages/master/PassingYear";
+import AddSkill from "pages/master/Skills";
+import Report from "pages/report/Report";
 
 const routes = {
   ROOT: {
@@ -43,7 +43,6 @@ const routes = {
     path: "/applicants",
     element: ApplicantTables,
     children: [
-     
       {
         id: "applicant2",
         path: "/applicants/add-applicant",
@@ -54,7 +53,50 @@ const routes = {
         path: "/applicants/edit-applicant/:id",
         Component: StepperForm,
       },
-     
+    ],
+  },
+
+  EMAIL: {
+    title: "Email",
+    path: "/email",
+    children: [
+      {
+        title: "Email List",
+        path: "/email",
+        element: EmailTable,
+      },
+      {
+        title: "Compose Email",
+        path: "/email/compose",
+        element: EmailForm,
+      },
+    ],
+  },
+  REPORT: {
+    title: "Report",
+    path: "/report",
+    children: [
+      {
+        title: "report",
+        path: "/report",
+        element: Report,
+      },
+    ],
+  },
+  MASTER: {
+    title: "Master",
+    path: "/master",
+    children: [
+      {
+        title: "Passing Year",
+        path: "/master/passing-year",
+        element: PassingYear,
+      },
+      {
+        title: "Skills",
+        path: "/master/skills",
+        element: AddSkill,
+      },
     ],
   },
   LAYOUT_VERTICAL: {
@@ -73,16 +115,6 @@ const routes = {
       {
         path: "api-demo",
         element: ApiDemo,
-      },
-      {
-        title: "Email",
-        path: "/email",
-        element: email,
-      },
-      {
-        title: "Report",
-        path: "/report",
-        element: Report,
       },
     ],
   },

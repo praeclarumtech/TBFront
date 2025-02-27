@@ -19,7 +19,7 @@ import BaseInput from "components/BaseComponents/BaseInput";
 import { InputPlaceHolder } from "components/constants/common";
 import Loader from "components/BaseComponents/Loader";
 
-type SelectedOption = { label: string; value: string };
+import { SelectedOption } from "interfaces/applicant.interface";
 
 const Applicant = () => {
   document.title = "Applicant | Project Title";
@@ -80,8 +80,8 @@ const Applicant = () => {
   };
 
   const handleView = (id: string) => {
-    setSelectedApplicantId(id); 
-    setShowModal(true); 
+    setSelectedApplicantId(id);
+    setShowModal(true);
   };
 
   const handleCloseModal = () => {
@@ -128,9 +128,7 @@ const Applicant = () => {
                   { interviewStage: selectedOption.value },
                   cell.row.original._id
                 )
-                  .then(() => {
-                   
-                  })
+                  .then(() => {})
                   .catch((error: any) => {
                     errorHandle(error);
                   });
@@ -160,9 +158,7 @@ const Applicant = () => {
                   { status: selectedOption.value },
                   cell.row.original._id
                 )
-                  .then(() => {
-                    
-                  })
+                  .then(() => {})
                   .catch((error: any) => {
                     errorHandle(error);
                   });

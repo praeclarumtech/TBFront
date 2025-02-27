@@ -13,7 +13,7 @@ import { Form, Link } from "react-router-dom";
 import BaseInput from "components/BaseComponents/BaseInput";
 import moment from "moment";
 
-type SelectedOption = { label: string; value: string };
+import { SelectedOption } from "interfaces/applicant.interface";
 
 const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
   document.title = Modules.Applicant + " | " + projectTitle;

@@ -17,7 +17,8 @@ export const DashboardMenu: DashboardMenuProps[] = [
     id: uuid(),
     title: "Applicants",
     icon: "layers",
-    link: "/applicants",
+
+    link: "/add_applicants",
   },
 
   {
@@ -29,13 +30,13 @@ export const DashboardMenu: DashboardMenuProps[] = [
     id: uuid(),
     title: "Email",
     icon: "monitor",
-    link: "/pages/email",
+    link: "/email",
   },
   {
     id: uuid(),
     title: "Reports",
     icon: "corner-left-down",
-    link: "/pages/reports",
+    link: "/report",
   },
   {
     id: uuid(),
@@ -46,12 +47,12 @@ export const DashboardMenu: DashboardMenuProps[] = [
     id: uuid(),
     title: "Add Passing Year",
     icon: "monitor",
-    link: "/email",
+    link: "/master/passing-year",
   },
   {
     id: uuid(),
     title: "Add Skills",
     icon: "corner-left-down",
-    link: "/reports",
+    link: "/master/skills",
   },
 ];

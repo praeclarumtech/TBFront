@@ -22,7 +22,11 @@ const ForgetPassword = () => {
   } = useForm({
     resolver: yupResolver(schema),
   });
-  const onSubmitHandler = (data: any) => {
+  interface FormData {
+    email: string;
+  }
+
+  const onSubmitHandler = (data: FormData) => {
     console.log({ data });
     reset();
   };
