@@ -14,11 +14,14 @@ import {
   editPassingYear,
 } from "api/paasingYearApi";
 import { PassingYearData } from "interfaces/passingYear.interface";
+import DeleteModal from "components/BaseComponents/DeleteModal";
 
 const PassingYear = () => {
   const [passingYears, setPassingYears] = useState([]);
   const [loader, setLoader] = useState(false);
   const [editingYear, setEditingYear] = useState<PassingYearData | null>(null);
+  const [deleteModal, setDeleteModal] = useState(false);
+  const [selectedYear, setSelectedYear] = useState<string | null>(null);
 
   const fetchPassingYears = async () => {
     setLoader(true);
@@ -45,8 +48,6 @@ const PassingYear = () => {
       setLoader(true);
       try {
         if (editingYear) {
-          console.log(editingYear);
-
           await editPassingYear({
             _id: editingYear?._id,
             year: values.addYear,
@@ -65,18 +66,20 @@ const PassingYear = () => {
     },
   });
 
-  const handleDelete = async (id: string) => {
+  const handleDeleteConfirm = async () => {
+    if (!selectedYear) return;
     setLoader(true);
     try {
-      await deletePassingYear({ _id: id });
+      await deletePassingYear({ _id: selectedYear });
       fetchPassingYears();
+      setDeleteModal(false);
+      setSelectedYear(null);
     } catch (error) {
       console.error("Error deleting passing year", error);
     } finally {
       setLoader(false);
     }
   };
-
 
   const handleEdit = (yearData: PassingYearData) => {
     validation.setValues({ addYear: yearData.year });
@@ -106,7 +109,10 @@ const PassingYear = () => {
             <BaseButton
               id={`delete-${cell.row.original._id}`}
               className="btn btn-sm btn-soft-danger"
-              onClick={() => handleDelete(cell.row.original._id)}
+              onClick={() => {
+                setDeleteModal(true);
+                setSelectedYear(cell.row.original._id);
+              }}
             >
               <i className="ri-delete-bin-6-fill align-bottom" />
               <ReactTooltip
@@ -158,7 +164,7 @@ const PassingYear = () => {
                       className="d-flex justify-content-end px-1"
                     >
                       <BaseButton
-                        className="btn btn-outline-dark"
+                        className="btn btn-outline-dark font-white"
                         type="button"
                         onClick={() => {
                           validation.resetForm();
@@ -209,6 +215,13 @@ const PassingYear = () => {
           </Col>
         </Row>
       </Container>
+      <DeleteModal
+        show={deleteModal}
+        onDeleteClick={handleDeleteConfirm}
+        onCloseClick={() => setDeleteModal(false)}
+        recordId={selectedYear || undefined}
+        loader={loader}
+      />
     </Fragment>
   );
 };
