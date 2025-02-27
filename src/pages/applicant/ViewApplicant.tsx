@@ -1,47 +1,50 @@
-import React from "react";
-import { Modal, Row, Col } from "react-bootstrap";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+import { useEffect, useState } from "react";
+import { Col, Modal, Row } from "react-bootstrap";
+import { getApplicantDetails } from "api/applicantApi";
+import { errorHandle } from "components/helpers/service";
 import { Typography } from "@mui/material";
-import { Applicant } from "../../types";
 
-interface ViewModalProps {
-  show: boolean;
-  onHide: () => void;
-  selectedApplicant: Applicant | null;
-}
+const ViewModal = ({ show, onHide, applicantId }: any) => {
+  const [formData, setFormData] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
-const ViewModal: React.FC<ViewModalProps> = ({
-  show,
-  onHide,
-  selectedApplicant,
-}) => {
-  if (
-    !selectedApplicant ||
-    !selectedApplicant.name ||
-    !selectedApplicant.phone
-  ) {
-    return null;
-  }
+  useEffect(() => {
+    if (!applicantId) return;
 
+    setLoading(true);
+
+    getApplicantDetails(applicantId)
+      .then((res) => {
+        if (res.success) {
+          setFormData(res.data);
+        }
+      })
+      .catch((error) => {
+        errorHandle(error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [applicantId]);
+
+  if (!show) return null;
   return (
-    <Modal
-      show={show}
-      onHide={onHide}
-      size="lg"
-      centered
-      style={{ backgroundColor: "rgba(0, 0, 0, 0.3)" }}
-    >
-      {/* <div className="bg-white rounded-lg shadow-lg max-w-lg w-full overflow-auto"> */}
+    <Modal show={show} onHide={onHide} size="lg" centered>
       <Modal.Header closeButton>
         <Modal.Title>Applicant Details</Modal.Title>
       </Modal.Header>
-
-      <Modal.Body className="p-4">
-        {selectedApplicant && (
-          <>
-            <div className="mx-2 p-3 ">
+      <Modal.Body>
+        {loading ? (
+          <p>Loading...</p>
+        ) : (
+          formData && (
+            <div className="mx-2 p-3">
+              {/* Personal Details */}
               <Typography
                 variant="h6"
-                className="mx-5 font-bold text-2xl text-blue-600"
+                className="font-bold text-2xl text-blue-600"
               >
                 <i className="fa fa-user m-2" />
                 Personal Details:
@@ -54,108 +57,107 @@ const ViewModal: React.FC<ViewModalProps> = ({
                       Name:
                     </span>
                     <span>
-                      {" "}
-                      {selectedApplicant.data.name.firstName}{" "}
-                      {selectedApplicant.data.name.middleName}{" "}
-                      {selectedApplicant.data.name.lastName}
+                      {formData.name?.firstName} {formData.name?.middleName}{" "}
+                      {formData.name?.lastName}
                     </span>
                   </Typography>
                   <Typography className="mt-2">
                     <span className="font-extrabold text-base text-black">
                       Phone Number:
                     </span>
-                    <span> {selectedApplicant.data.phone.phoneNumber}</span>
+                    <span> {formData.phone.phoneNumber}</span>
                   </Typography>
                   <Typography className="mt-2">
                     <span className="font-extrabold text-base text-black">
                       WhatsApp Number:
                     </span>
-                    <span> {selectedApplicant.data.phone.whatsappNumber}</span>
+                    <span> {formData.phone.whatsappNumber}</span>
                   </Typography>
                   <Typography className="mt-2">
                     <span className="font-extrabold text-base text-black">
                       Date of Birth:
                     </span>
                     <span>
-                      {" "}
-                      {new Date(
-                        selectedApplicant.data.dateOfBirth
-                      ).toLocaleDateString()}
+                      {new Date(formData.dateOfBirth).toLocaleDateString()}
                     </span>
                   </Typography>
                   <Typography className="mt-2">
                     <span className="font-extrabold text-base text-black">
                       Gender:
                     </span>
-                    <span> {selectedApplicant.data.gender}</span>
+                    <span> {formData.gender}</span>
                   </Typography>
                   <Typography className="mt-2">
                     <span className="font-extrabold text-base text-black">
                       Full Address:
                     </span>
-                    <span> {selectedApplicant.data.fullAddress}</span>
+                    <span> {formData.fullAddress}</span>
                   </Typography>
                 </Col>
+
                 <Col xs={12} md={6} className="mb-3">
                   <Typography className="mt-2">
                     <span className="font-extrabold text-base text-black">
                       Email:
                     </span>
-                    <span> {selectedApplicant.data.email}</span>
+                    <span> {formData.email}</span>
                   </Typography>
 
                   <Typography className="mt-2">
                     <span className="font-extrabold text-base text-black">
                       State:
                     </span>
-                    <span> {selectedApplicant.data.state}</span>
+                    <span> {formData.state}</span>
                   </Typography>
                   <Typography className="mt-2">
                     <span className="font-extrabold text-base text-black">
                       Country:
                     </span>
-                    <span> {selectedApplicant.data.country}</span>
+                    <span> {formData.country}</span>
                   </Typography>
                   <Typography className="mt-2">
                     <span className="font-extrabold text-base text-black">
                       City:
                     </span>
-                    <span> {selectedApplicant.data.city}</span>
+                    <span> {formData.city}</span>
                   </Typography>
                   <Typography className="mt-2">
                     <span className="font-extrabold text-base text-black">
                       Pincode:
                     </span>
-                    <span> {selectedApplicant.data.pincode}</span>
+                    <span> {formData.pincode}</span>
                   </Typography>
                 </Col>
-                <Typography
-                  variant="h6"
-                  className="mx-5 font-bold text-2xl text-blue-600"
-                >
-                  <i className="fa fa-graduation-cap m-2" />
-                  Educational Details:
-                </Typography>
-                <hr className="text-blue-900 font-extrabold " />
+              </Row>
 
+              {/* Educational Details */}
+              <Typography
+                variant="h6"
+                className="font-bold text-2xl text-blue-600"
+              >
+                <i className="fa fa-graduation-cap m-2" />
+                Educational Details:
+              </Typography>
+              <hr className="text-blue-900 font-extrabold" />
+              <Row>
                 <Col xs={12} md={6} className="mb-3">
                   <Typography className="mt-2">
                     <span className="font-extrabold text-base text-black">
                       Qualification:
                     </span>
-                    <span> {selectedApplicant.data.qualification}</span>
+                    <span> {formData.qualification}</span>
                   </Typography>
                   <Typography className="mt-2">
                     <span className="font-extrabold text-base text-black">
                       Degree:
                     </span>
-                    <span> {selectedApplicant.data.degree}</span>
+                    <span> {formData.degree}</span>
                   </Typography>
                   <Typography className="mt-2">
                     <span className="font-extrabold text-base text-black">
                       Passing Year:
                     </span>
-                    <span> {selectedApplicant.data.passingYear}</span>
+                    <span> {formData.passingYear}</span>
                   </Typography>
 
                   <Typography className="mt-2">
@@ -163,124 +165,128 @@ const ViewModal: React.FC<ViewModalProps> = ({
                       Applied Skills:
                     </span>
                     <span>
-                      {" "}
-                      {selectedApplicant.data.appliedSkills?.length > 0
-                        ? selectedApplicant.data.appliedSkills.join(", ")
+                      {formData.appliedSkills?.length > 0
+                        ? formData.appliedSkills.join(", ")
                         : "No skills listed"}
                     </span>
                   </Typography>
                 </Col>
+
                 <Col xs={12} md={6} className="mb-3">
                   <Typography className="mt-2">
                     <span className="font-extrabold text-base text-black">
                       Total Experience (in months):
                     </span>
-                    <span> {selectedApplicant.data.totalExperience}</span>
+                    <span> {formData.totalExperience}</span>
                   </Typography>
                   <Typography className="mt-2">
                     <span className="font-extrabold text-base text-black">
                       Relevant Skill Experience:
                     </span>
-                    <span>
-                      {" "}
-                      {selectedApplicant.data.relevantSkillExperience}
-                    </span>
+                    <span> {formData.relevantSkillExperience}</span>
                   </Typography>
                   <Typography className="mt-2">
                     <span className="font-extrabold text-base text-black">
                       Other Skills:
                     </span>
-                    <span> {selectedApplicant.data.otherSkills}</span>
+                    <span> {formData.otherSkills}</span>
                   </Typography>
                 </Col>
-                <Typography
-                  variant="h6"
-                  className="mx-5 font-bold text-2xl text-blue-600"
-                >
-                  <i className="fa fa-briefcase m-2" />
-                  Job Details
-                </Typography>
-                <hr className="text-blue-900 font-extrabold " />
+              </Row>
+
+              {/* Job Details */}
+              <Typography
+                variant="h6"
+                className="font-bold text-2xl text-blue-600"
+              >
+                <i className="fa fa-briefcase m-2" />
+                Job Details:
+              </Typography>
+              <hr className="text-blue-900 font-extrabold" />
+              <Row>
                 <Col xs={12} md={6} className="mb-3">
                   <Typography className="mt-2">
                     <span className="font-extrabold text-base text-black">
                       Current Package:
                     </span>
-                    <span> {selectedApplicant.data.currentPkg}</span>
+                    <span> {formData.currentPkg}</span>
                   </Typography>
                   <Typography className="mt-2">
                     <span className="font-extrabold text-base text-black">
                       Expected Package:
                     </span>
-                    <span> {selectedApplicant.data.expectedPkg}</span>
+                    <span> {formData.expectedPkg}</span>
                   </Typography>
                   <Typography className="mt-2">
                     <span className="font-extrabold text-base text-black">
                       Notice Period:
                     </span>
-                    <span> {selectedApplicant.data.noticePeriod}</span>
+                    <span> {formData.noticePeriod}</span>
                   </Typography>
                   <Typography className="mt-2">
                     <span className="font-extrabold text-base text-black">
                       Negotiation:
                     </span>
-                    <span> {selectedApplicant.data.negotiation}</span>
+                    <span> {formData.negotiation}</span>
                   </Typography>
                   <Typography className="mt-2">
                     <span className="font-extrabold text-base text-black">
                       Ready for Work (WFO):
                     </span>
-                    <span> {selectedApplicant.data.readyForWork}</span>
+                    <span> {formData.readyForWork}</span>
                   </Typography>
                 </Col>
+
                 <Col xs={12} md={6} className="mb-3">
                   <Typography className="mt-2">
                     <span className="font-extrabold text-base text-black">
                       Work Preference:
                     </span>
-                    <span> {selectedApplicant.data.workPreference}</span>
+                    <span> {formData.workPreference}</span>
                   </Typography>
                   <Typography className="mt-2">
                     <span className="font-extrabold text-base text-black">
                       Referral:
                     </span>
-                    <span> {selectedApplicant.data.referral}</span>
+                    <span> {formData.referral}</span>
                   </Typography>
                   <Typography className="mt-2">
                     <span className="font-extrabold text-base text-black">
                       Interview Stage:
                     </span>
-                    <span> {selectedApplicant.data.interviewStage}</span>
+                    <span> {formData.interviewStage}</span>
                   </Typography>
                   <Typography className="mt-2">
                     <span className="font-extrabold text-base text-black">
                       Status:
                     </span>
-                    <span> {selectedApplicant.data.status}</span>
+                    <span> {formData.status}</span>
                   </Typography>
                   <Typography className="mt-2">
                     <span className="font-extrabold text-base text-black">
                       About Us:
                     </span>
-                    <span> {selectedApplicant.data.aboutUs}</span>
+                    <span> {formData.aboutUs}</span>
                   </Typography>
                 </Col>
-                <Typography className="mt-2">
-                  <span className="font-extrabold text-base text-black">
-                    Portfolio URL:{" "}
-                  </span>
-                  <a
-                    href={selectedApplicant.data.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 underline"
-                  >
-                    {selectedApplicant.data.url}
-                  </a>
-                </Typography>
               </Row>
+
+              {/* Portfolio URL */}
+              <Typography className="mt-2">
+                <span className="font-extrabold text-base text-black">
+                  Portfolio URL:
+                </span>
+                <a
+                  href={formData.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 underline"
+                >
+                  {formData.url}
+                </a>
+              </Typography>
             </div>
-          </>
+          )
         )}
       </Modal.Body>
     </Modal>

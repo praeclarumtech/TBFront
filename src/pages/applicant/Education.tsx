@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { Row, Col, Container } from "react-bootstrap";
 import * as Yup from "yup";
-//import custom hook
 import { InputPlaceHolder, projectTitle } from "components/constants/common";
 import { Modules } from "components/constants/enum";
 import { useFormik } from "formik";
@@ -10,33 +8,63 @@ import { Fragment, useState } from "react";
 import { dynamicFind } from "components/helpers/service";
 import BaseButton from "components/BaseComponents/BaseButton";
 import { BaseSelect, MultiSelect } from "components/BaseComponents/BaseSelect";
-// import TableContainer from "components/BaseComponents/TableContainer";
-// import { Loader } from "react-feather";
 import { Form } from "react-router-dom";
 import BaseInput from "components/BaseComponents/BaseInput";
-
 type SelectedOption = { label: string; value: string };
-
-const EducationalDetailsForm = ({ onNext, onBack }: any) => {
+const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
   document.title = Modules.Applicant + " | " + projectTitle;
-
   const validation: any = useFormik({
     enableReinitialize: true,
     initialValues: {
-      appliedSkills: "",
-      totalExperience: "",
+      qualification: initialValues?.qualification || "",
+      degree: initialValues?.degree || "",
+      passingYear: initialValues?.passingYear || "",
+      totalExperience: initialValues?.totalExperience || "",
+      relevantSkillExperience: initialValues?.relevantSkillExperience || "",
+      otherSkills: initialValues?.otherSkills || "",
+      referral: initialValues?.referral || "",
+      url: initialValues?.url || "",
+      rating: initialValues?.rating || "",
     },
     validationSchema: Yup.object({
-      appliedSkills: Yup.string(),
-      totalExperience: Yup.string(),
+      qualification: Yup.string().required("Qualification is required"),
+      degree: Yup.string().required("Degree Name is required"),
+      passingYear: Yup.string().required("Passing Year is required"),
+      appliedSkills: Yup.array()
+        .required("Passing Skill is required")
+        .min(1, "At least one skill must be selected"),
+      otherSkills: Yup.string(),
+      totalExperience: Yup.number()
+        .positive("Total Experience must be a positive number")
+        .required("Total Experience is required"),
+      relevantSkillExperience: Yup.number()
+        .min(0, "Relevant Skill Experience cannot be negative")
+        .required("Relevant Skill Experience is required")
+        .test(
+          "is-less-than-or-equal-total",
+          "Relevant Skill Experience must be less than or equal to Total Experience",
+          function (value) {
+            const totalExperience = this.parent.totalExperience;
+            return value <= totalExperience;
+          }
+        ),
+      referral: Yup.string(),
+      url: Yup.string()
+        .url("Please enter a valid URL")
+        .required("Resume URL is required"),
+      rating: Yup.number()
+        .required("Rating is required")
+        .min(1, "Rating must be between 1 and 10")
+        .max(10, "Rating must be between 1 and 10"),
     }),
-    onSubmit: (value: any) => {
-      onNext(value);
+
+    onSubmit: (data) => {
+      onNext(data);
     },
   });
 
   const qualification = [
-    { label: "Bachelors", value: "bachelors" },
+    { label: "Bachelors", value: "Bachelors" },
     { label: "Masters", value: "masters" },
     { label: "PhD", value: "phd" },
     { label: "Diploma", value: "diploma" },
@@ -48,35 +76,36 @@ const EducationalDetailsForm = ({ onNext, onBack }: any) => {
   ];
 
   const passingYeatType = [
-    { label: "2005", value: "2005" },
-    { label: "2006", value: "2006" },
-    { label: "2007", value: "2007" },
-    { label: "2008", value: "2008" },
-    { label: "2009", value: "2009" },
-    { label: "2010", value: "2010" },
-    { label: "2011", value: "2011" },
-    { label: "2012", value: "2012" },
-    { label: "2013", value: "2013" },
-    { label: "2014", value: "2014" },
-    { label: "2015", value: "2015" },
-    { label: "2016", value: "2016" },
-    { label: "2017", value: "2017" },
-    { label: "2018", value: "2018" },
-    { label: "2019", value: "2019" },
-    { label: "2020", value: "2020" },
-    { label: "2021", value: "2021" },
-    { label: "2022", value: "2022" },
-    { label: "2023", value: "2023" },
-    { label: "2024", value: "2024" },
-    { label: "2025", value: "2025" },
-    { label: "2026", value: "2026" },
-    { label: "2027", value: "2027" },
-    { label: "2028", value: "2028" },
-    { label: "2029", value: "2029" },
+    { label: "2005", value: 2005 },
+    { label: "2006", value: 2006 },
+    { label: "2007", value: 2007 },
+    { label: "2008", value: 2008 },
+    { label: "2009", value: 2009 },
+    { label: "2010", value: 2010 },
+    { label: "2011", value: 2011 },
+    { label: "2012", value: 2012 },
+    { label: "2013", value: 2013 },
+    { label: "2014", value: 2014 },
+    { label: "2015", value: 2015 },
+    { label: "2016", value: 2016 },
+    { label: "2017", value: 2017 },
+    { label: "2018", value: 2018 },
+    { label: "2019", value: 2019 },
+    { label: "2020", value: 2020 },
+    { label: "2021", value: 2021 },
+    { label: "2022", value: 2022 },
+    { label: "2023", value: 2023 },
+    { label: "2024", value: 2024 },
+    { label: "2025", value: 2025 },
+    { label: "2026", value: 2026 },
+    { label: "2027", value: 2027 },
+    { label: "2028", value: 2028 },
+    { label: "2029", value: 2029 },
   ];
 
   const appliedSkillsType = [
     { label: "JavaScript", value: "JavaScript" },
+    { label: "Node Js", value: "Node.js" },
     { label: "Python", value: "Python" },
     { label: "Java", value: "Java" },
     { label: "C++", value: "C++" },
@@ -91,19 +120,16 @@ const EducationalDetailsForm = ({ onNext, onBack }: any) => {
     { label: "Redux", value: "Redux" },
   ];
 
-  const [selectedMulti, setSelectedMulti] = useState<any>("");
+  const [selectedMulti, setSelectedMulti] = useState<any>(
+    initialValues.appliedSkills || []
+  );
 
   const handleMulti = (selectedMulti: any) => {
-    const ids =
-      selectedMulti?.length > 0
-        ? selectedMulti?.map((item: any) => {
-            return item.value;
-          })
-        : null;
-    validation.setFieldValue("serviceType", ids);
+    const ids = selectedMulti?.map((item: any) => item.value) || [];
+    validation.setFieldValue("appliedSkills", ids);
+
     setSelectedMulti(selectedMulti);
   };
-
   return (
     <Fragment>
       <div className="pt-3 page-content"></div>
@@ -119,7 +145,6 @@ const EducationalDetailsForm = ({ onNext, onBack }: any) => {
               className="p-3"
             >
               <Row className="g-3 mb-4">
-                {/* Qualification & Degree */}
                 <Col xs={12} md={6}>
                   <BaseSelect
                     label="Qualification"
@@ -162,7 +187,6 @@ const EducationalDetailsForm = ({ onNext, onBack }: any) => {
               </Row>
 
               <Row className="g-3 mb-4">
-                {/* Passing Year & Skills */}
                 <Col xs={12} md={6}>
                   <BaseSelect
                     label="Passing Year"
@@ -197,7 +221,6 @@ const EducationalDetailsForm = ({ onNext, onBack }: any) => {
                     isMulti={true}
                     onChange={handleMulti}
                     options={appliedSkillsType}
-                    // styles={customStyles}
                     touched={validation.touched.serviceType}
                     error={validation.errors.serviceType}
                     handleBlur={validation.handleBlur}
@@ -206,13 +229,12 @@ const EducationalDetailsForm = ({ onNext, onBack }: any) => {
               </Row>
 
               <Row className="g-3 mb-4">
-                {/* Experience Fields */}
                 <Col xs={12} md={6} lg={3}>
                   <BaseInput
                     label="Total Experience"
                     name="totalExperience"
                     type="text"
-                    placeholder={InputPlaceHolder("Degree")}
+                    placeholder={InputPlaceHolder("Total Experience")}
                     handleChange={validation.handleChange}
                     handleBlur={validation.handleBlur}
                     value={validation.values.totalExperience}
@@ -251,10 +273,6 @@ const EducationalDetailsForm = ({ onNext, onBack }: any) => {
                     passwordToggle={false}
                   />
                 </Col>
-              </Row>
-
-              <Row className="g-3 mb-4">
-                {/* Referral & Resume */}
                 <Col xs={12} md={6} lg={4}>
                   <BaseInput
                     label="Referral"
@@ -272,24 +290,25 @@ const EducationalDetailsForm = ({ onNext, onBack }: any) => {
 
                 <Col xs={12} md={6} lg={4}>
                   <BaseInput
-                    label="URL"
+                    label="Resume Url"
                     name="url"
                     type="url"
-                    placeholder={InputPlaceHolder("Other Skill")}
+                    placeholder={InputPlaceHolder("URL")}
                     handleChange={validation.handleChange}
                     handleBlur={validation.handleBlur}
                     value={validation.values.url}
                     touched={validation.touched.url}
                     error={validation.errors.url}
                     passwordToggle={false}
+                    title="Please Upload Resume on Google Drive and share pulic url (Only PDF files allowed)"
                   />
                 </Col>
 
                 <Col xs={12} md={6} lg={4}>
                   <BaseInput
-                    label="Rating"
+                    label="Javascript Rating"
                     name="rating"
-                    type="url"
+                    type="number"
                     placeholder={InputPlaceHolder("Rating")}
                     handleChange={validation.handleChange}
                     handleBlur={validation.handleBlur}
@@ -305,7 +324,9 @@ const EducationalDetailsForm = ({ onNext, onBack }: any) => {
                 <BaseButton
                   className="order-1 order-md-0"
                   type="submit"
-                  onClick={onBack}
+                  onClick={() => {
+                    onBack(validation.values);
+                  }}
                 >
                   Previous
                 </BaseButton>
@@ -320,7 +341,6 @@ const EducationalDetailsForm = ({ onNext, onBack }: any) => {
             </Form>
           </div>
         </Row>
-        {/* <BreadCrumb title='applicant' pageTitle={projectTitle} /> */}
       </Container>
     </Fragment>
   );

@@ -2,7 +2,6 @@
 
 import { Row, Col, Container } from "react-bootstrap";
 import * as Yup from "yup";
-//import custom hook
 import { InputPlaceHolder, projectTitle } from "components/constants/common";
 import { Modules } from "components/constants/enum";
 import { useFormik } from "formik";
@@ -10,77 +9,73 @@ import { Fragment } from "react";
 import { dynamicFind } from "components/helpers/service";
 import BaseButton from "components/BaseComponents/BaseButton";
 import { BaseSelect } from "components/BaseComponents/BaseSelect";
-// import TableContainer from "components/BaseComponents/TableContainer";
-// import { Loader } from "react-feather";
 import { Form } from "react-router-dom";
-// import { Tooltip as ReactTooltip } from "react-tooltip";
-// import { listOfApplicants } from "api/applicantApi";
 import BaseInput from "components/BaseComponents/BaseInput";
-
 type SelectedOption = { label: string; value: string };
 
-const JobDetailsForm = ({ onNext, onBack }: any) => {
+const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
   document.title = Modules.Applicant + " | " + projectTitle;
-
-  // const navigate = useNavigate();
-  //   const [loader, setLoader] = useState(false);
-
-  //   const listOfApplicant = () => {
-  //     setLoader(true);
-  //     listOfApplicants()
-  //       .then((res) => {
-  //         setApplicant(res?.data?.item);
-  //       })
-  //       .catch(() => {})
-  //       .finally(() => {
-  //         setLoader(false);
-  //       });
-  //   };
-
-  //   useEffect(() => {
-  //     listOfApplicant();
-  //   }, []);
 
   const validation: any = useFormik({
     enableReinitialize: true,
     initialValues: {
-      appliedSkills: "",
-      totalExperience: "",
+      currentPkg: initialValues?.currentPkg || "",
+      expectedPkg: initialValues?.expectedPkg || "",
+      negotiation: initialValues?.negotiation || "",
+      noticePeriod: initialValues?.noticePeriod || "",
+      readyForWork: initialValues?.readyForWork || "",
+      workPreference: initialValues?.workPreference || "",
+      practicalUrl: initialValues?.practicalUrl || "",
+      practicalFeedback: initialValues?.practicalFeedback || "",
+      aboutUs: initialValues?.aboutUs || "",
     },
     validationSchema: Yup.object({
-      appliedSkills: Yup.string(),
-      // .required(validationMessages.required("Email"))
-      // .email(validationMessages.format("Email"))
-      // .matches(emailRegex, validationMessages.format("Email")),
-      totalExperience: Yup.string(),
+      currentPkg: Yup.string().matches(
+        /^\d+$/,
+        "Current package must be a valid number."
+      ),
+
+      expectedPkg: Yup.string().matches(
+        /^\d+$/,
+        "Expected package must be a valid number."
+      ),
+
+      negotiation: Yup.string().matches(
+        /^\d+$/,
+        "Negotiation amount must be a valid number."
+      ),
+
+      noticePeriod: Yup.string()
+
+        .min(0, "Notice period cannot be negative.")
+        .matches(/^\d+$/, "Notice period must be a valid number."),
+
+      readyForWork: Yup.string()
+        .required("Ready for work is required.")
+        .oneOf(["yes", "no"], "Ready for work must be either 'Yes' or 'No'."),
+
+      workPreference: Yup.string()
+        .required("Work preference is required.")
+        .oneOf(
+          ["remote", "onsite", "hybrid"],
+          "Work preference must be one of 'remote', 'onsite', or 'hybrid'."
+        ),
+
+      practicalUrl: Yup.string().url("Please enter a valid URL."),
+
+      practicalFeedback: Yup.string().min(
+        10,
+        "Feedback must be at least 10 characters long."
+      ),
+
+      aboutUs: Yup.string()
+        .required("About Us is required.")
+        .min(10, "About Us description must be at least 10 characters long."),
     }),
-    onSubmit: (value: any) => {
-      onNext(value);
-      // const payload = {
-      //   email: String(value.email),
-      //   password: value.password,
-      // };
-      // setLoader(true);
-      // login(payload)
-      //   .then((res) => {
-      //     if (res?.statusCode === OK && res?.success === SUCCESS) {
-      //       setItem("authUser", res?.data?.token);
-      //       const decode = jwtDecode<any>(res?.data);
-      //       const role = decode.role;
-      //       const id = decode.id;
-      //       setItem("role", role);
-      //       setItem("id", id);
-      //       navigate("/");
-      //       toast.success(res?.message);
-      //     } else {
-      //       toast.error(res?.message);
-      //     }
-      //   })
-      //   .catch((error) => {
-      //     errorHandle(error);
-      //     setLoader(false);
-      //   })
-      //   .finally(() => setLoader(false));
+
+    onSubmit: (data: any) => {
+      console.log("Combined Form Data:", data);
+      onNext(data);
     },
   });
 
@@ -99,79 +94,8 @@ const JobDetailsForm = ({ onNext, onBack }: any) => {
     <Fragment>
       <div className="pt-3 page-content"></div>
       <Container fluid>
-        <Row>
+        <Row className="mb-4">
           <div>
-            {/* <Card className="mb-3 my-3">
-              <CardBody>
-                <Row className="flex">
-                  <Col xl={5} sm={12} md={4} lg={2} className="!mb-2 ">
-                    <BaseSelect
-                      name="appliedSkills"
-                      className="select-border"
-                      options={technologyType}
-                      placeholder={InputPlaceHolder("Technology")}
-                      handleChange={(selectedOption: SelectedOption) => {
-                        validation.setFieldValue(
-                          "appliedSkills",
-                          selectedOption?.value || ""
-                        );
-                      }}
-                      handleBlur={validation.handleBlur}
-                      value={
-                        dynamicFind(
-                          technologyType,
-                          validation.values.appliedSkills
-                        ) || ""
-                      }
-                      touched={validation.touched.appliedSkills}
-                      error={validation.errors.appliedSkills}
-                    />
-                  </Col>
-
-                  <Col xl={5} sm={6} md={4} lg={2} className="px-2 mb-2">
-                    <BaseSelect
-                      name="appliedSkills"
-                      className="select-border"
-                      options={experinceType}
-                      placeholder={InputPlaceHolder("Experience")}
-                      handleChange={(selectedOption: SelectedOption) => {
-                        validation.setFieldValue(
-                          "appliedSkills",
-                          selectedOption?.value || ""
-                        );
-                      }}
-                      handleBlur={validation.handleBlur}
-                      value={
-                        dynamicFind(
-                          experinceType,
-                          validation.values.appliedSkills
-                        ) || ""
-                      }
-                      touched={validation.touched.appliedSkills}
-                      error={validation.errors.appliedSkills}
-                    />
-                  </Col>
-                  <Col
-                    xl={2}
-                    sm={6}
-                    md={6}
-                    lg={2}
-                    className="!d-flex !justify-content-end !align-items-center !px-1 mb-2"
-                  >
-                    <BaseButton
-                      color="primary"
-                      disabled={loader}
-                      className="w-100"
-                      type="submit"
-                      loader={loader}
-                    >
-                      Reset Filters
-                    </BaseButton>
-                  </Col>
-                </Row>
-              </CardBody>
-            </Card> */}
-
             <Form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -288,29 +212,15 @@ const JobDetailsForm = ({ onNext, onBack }: any) => {
                     touched={validation.touched.workPreference}
                     error={validation.errors.workPreference}
                   />
-
-                  {/* <BaseSelect
-              label="Work Preference"
-              name="workPreference"
-              className=""
-              placeholder={InputPlaceHolder(" Work Preference")}
-              value={validation.values.workPreference}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              error={validation.errors.workPreference}
-              options={workPreferenceOptions}
-              isClearable
-            /> */}
                 </Col>
               </Row>
 
               <Row className="mb-4">
-                <Col xs={12} sm={6} className="mb-3 mb-sm-0"></Col>
                 <Col xs={12} sm={4} className="mb-3 mb-sm-0">
                   <BaseInput
                     label="   Practical Url"
                     name="practicalUrl"
-                    type="text"
+                    type="url"
                     placeholder={InputPlaceHolder("Enter Practical Url")}
                     handleChange={validation.handleChange}
                     handleBlur={validation.handleBlur}
@@ -359,7 +269,9 @@ const JobDetailsForm = ({ onNext, onBack }: any) => {
                 <BaseButton
                   className="order-1 order-md-0"
                   type="submit"
-                  onClick={onBack}
+                  onClick={() => {
+                    onBack(validation.values);
+                  }}
                 >
                   Previous
                 </BaseButton>
@@ -367,7 +279,6 @@ const JobDetailsForm = ({ onNext, onBack }: any) => {
                   color="primary"
                   className="order-0 order-md-1"
                   type="submit"
-                  onClick={onBack}
                 >
                   Next
                 </BaseButton>
@@ -375,7 +286,6 @@ const JobDetailsForm = ({ onNext, onBack }: any) => {
             </Form>
           </div>
         </Row>
-        {/* <BreadCrumb title='applicant' pageTitle={projectTitle} /> */}
       </Container>
     </Fragment>
   );

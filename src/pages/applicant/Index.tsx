@@ -1,33 +1,53 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-
-import { Row, Col, Card, Container, CardBody } from "react-bootstrap";
-import * as Yup from "yup";
-//import custom hook
-import {
-  handleResponse,
-  InputPlaceHolder,
-  projectTitle,
-} from "components/constants/common";
-import { Modules } from "components/constants/enum";
-import { useFormik } from "formik";
-import { Fragment, useEffect, useMemo, useState } from "react";
-import { dynamicFind } from "components/helpers/service";
+import { Row, Col, Card, Container, CardBody, Collapse } from "react-bootstrap";
+import { Fragment, useEffect, useState, useMemo } from "react";
+import { dynamicFind, errorHandle } from "components/helpers/service";
 import BaseButton from "components/BaseComponents/BaseButton";
 import { BaseSelect } from "components/BaseComponents/BaseSelect";
 import TableContainer from "components/BaseComponents/TableContainer";
-import { Loader } from "react-feather";
 import { Link, useNavigate } from "react-router-dom";
 import { Tooltip as ReactTooltip } from "react-tooltip";
-import { listOfApplicants } from "api/applicantApi";
+import {
+  deleteApplicant,
+  listOfApplicants,
+  updateStage,
+  updateStatus,
+} from "api/applicantApi";
+import { FaWhatsapp, FaEnvelope, FaCommentDots } from "react-icons/fa";
+import ViewModal from "./ViewApplicant";
+import BaseInput from "components/BaseComponents/BaseInput";
+import { InputPlaceHolder } from "components/constants/common";
+import Loader from "components/BaseComponents/Loader";
 
 type SelectedOption = { label: string; value: string };
 
 const Applicant = () => {
-  document.title = Modules.Login + " | " + projectTitle;
+  document.title = "Applicant | Project Title";
 
   const navigate = useNavigate();
   const [loader, setLoader] = useState(false);
-  const [applicant, setApplicant] = useState([]);
+  const [applicant, setApplicant] = useState<any[]>([]);
+  const [selectedApplicantId, setSelectedApplicantId] = useState<string | null>(
+    null
+  );
+  const [showModal, setShowModal] = useState(false);
+  const [filtersVisible, setFiltersVisible] = useState(false);
+
+  const statusOptions = [
+    { label: "Hold", value: "Hold" },
+    { label: "Processing", value: "Processing" },
+    { label: "Selected", value: "Selected" },
+    { label: "Rejected", value: "Rejected" },
+    { label: "Pending", value: "Pending" },
+  ];
+
+  const interviewStageOptions = [
+    { label: "1st Interview", value: "1st Interview" },
+    { label: "2nd Interview", value: "2nd Interview" },
+    { label: "HR", value: "HR" },
+    { label: "Technical", value: "Technical" },
+    { label: "Final", value: "Final" },
+  ];
 
   const listOfApplicant = () => {
     setLoader(true);
@@ -35,7 +55,7 @@ const Applicant = () => {
       .then((res) => {
         setApplicant(res?.data?.item);
       })
-      .catch(() => {})
+      .catch((error) => errorHandle(error))
       .finally(() => {
         setLoader(false);
       });
@@ -45,65 +65,32 @@ const Applicant = () => {
     listOfApplicant();
   }, []);
 
-  const validation: any = useFormik({
-    enableReinitialize: true,
-    initialValues: {
-      appliedSkills: "",
-      totalExperience: "",
-    },
-    validationSchema: Yup.object({
-      appliedSkills: Yup.string(),
-      // .required(validationMessages.required("Email"))
-      // .email(validationMessages.format("Email"))
-      // .matches(emailRegex, validationMessages.format("Email")),
-      totalExperience: Yup.string(),
-    }),
-    onSubmit: () => {
-      // const payload = {
-      //   email: String(value.email),
-      //   password: value.password,
-      // };
-      // setLoader(true);
-      // login(payload)
-      //   .then((res) => {
-      //     if (res?.statusCode === OK && res?.success === SUCCESS) {
-      //       setItem("authUser", res?.data?.token);
-      //       const decode = jwtDecode<any>(res?.data);
-      //       const role = decode.role;
-      //       const id = decode.id;
-      //       setItem("role", role);
-      //       setItem("id", id);
-      //       navigate("/");
-      //       toast.success(res?.message);
-      //     } else {
-      //       toast.error(res?.message);
-      //     }
-      //   })
-      //   .catch((error) => {
-      //     errorHandle(error);
-      //     setLoader(false);
-      //   })
-      //   .finally(() => setLoader(false));
-    },
-  });
+  const deleteApplicantDetails = (_id: string | undefined | null) => {
+    setLoader(true);
+    deleteApplicant(_id)
+      .then(() => {
+        listOfApplicant();
+      })
+      .catch((error: any) => {
+        errorHandle(error);
+      })
+      .finally(() => {
+        setLoader(false);
+      });
+  };
 
-  const technologyType = [
-    { label: "JavaScript", value: "javascript" },
-    { label: "Python", value: "python" },
-    { label: "Java", value: "java" },
-    { label: "C++", value: "c++" },
-    { label: "Express Js", value: "express_js" },
-    { label: "DotNet", value: "dotnet" },
-    { label: "Testing", value: "testing" },
-  ];
+  const handleView = (id: string) => {
+    setSelectedApplicantId(id); 
+    setShowModal(true); 
+  };
 
-  const experinceType = [
-    { label: "0+", value: "0" },
-    { label: "1+", value: "1" },
-    { label: "2+", value: "1" },
-    { label: "3+", value: "2" },
-    { label: "4+", value: "4" },
-  ];
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
+  const handleEdit = (applicantId: string) => {
+    navigate(`/applicants/edit-applicant/${applicantId}`);
+  };
 
   const columns = useMemo(
     () => [
@@ -120,151 +107,260 @@ const Applicant = () => {
       {
         header: "Interview Stage",
         accessorKey: "interviewStage",
-        enableColumnFilter: false,
-      },
-      {
-        header: "Comments",
-        accessorKey: "comments",
+        cell: (cell: any) => (
+          <BaseSelect
+            name="interviewStage"
+            options={interviewStageOptions}
+            value={dynamicFind(
+              interviewStageOptions,
+              cell.row.original.interviewStage
+            )}
+            handleChange={(selectedOption: SelectedOption) => {
+              const updatedApplicant = [...applicant];
+              const applicantIndex = updatedApplicant.findIndex(
+                (item) => item._id === cell.row.original._id
+              );
+              if (applicantIndex > -1) {
+                updatedApplicant[applicantIndex].interviewStage =
+                  selectedOption.value;
+                setApplicant(updatedApplicant);
+                updateStage(
+                  { interviewStage: selectedOption.value },
+                  cell.row.original._id
+                )
+                  .then(() => {
+                   
+                  })
+                  .catch((error: any) => {
+                    errorHandle(error);
+                  });
+              }
+            }}
+          />
+        ),
         enableColumnFilter: false,
       },
       {
         header: "Status",
         accessorKey: "status",
+        cell: (cell: any) => (
+          <BaseSelect
+            name="status"
+            options={statusOptions}
+            value={dynamicFind(statusOptions, cell.row.original.status)}
+            handleChange={(selectedOption: SelectedOption) => {
+              const updatedApplicant = [...applicant];
+              const applicantIndex = updatedApplicant.findIndex(
+                (item) => item._id === cell.row.original._id
+              );
+              if (applicantIndex > -1) {
+                updatedApplicant[applicantIndex].status = selectedOption.value;
+                setApplicant(updatedApplicant);
+                updateStatus(
+                  { status: selectedOption.value },
+                  cell.row.original._id
+                )
+                  .then(() => {
+                    
+                  })
+                  .catch((error: any) => {
+                    errorHandle(error);
+                  });
+              }
+            }}
+          />
+        ),
         enableColumnFilter: false,
       },
       {
-        header: "Action",
-        cell: (cell: { row: { original: { id: any } } }) => (
-          <div className="hstack gap-2">
+        header: "Comments",
+        cell: () => (
+          <div className="d-flex align-items-center hstack gap-2">
+            <Link to="" className="btn btn-sm btn-soft-primary">
+              <FaCommentDots />
+            </Link>
             <Link
-              to={`/stock-detail/${cell?.row?.original?.id}`}
-              id={`view-${cell?.row?.original?.id}`}
-              className="btn btn-sm btn-soft-info view-list"
+              to=""
+              className=""
+              // onClick={() =>
+              //   window.open(
+              //     `/applicant`
+              //   )
+              // }
+              // aria-disabled
+            >
+              <FaWhatsapp />
+            </Link>
+            <Link
+              to=""
+              className="btn btn-sm btn-soft-info"
+              // onClick={() =>
+              //   window.open(
+              //     `/applicant`
+              //   )}
+            >
+              <FaEnvelope />
+            </Link>
+          </div>
+        ),
+      },
+      {
+        header: "Action",
+        cell: (cell: any) => (
+          <div className="hstack gap-2">
+            <BaseButton
+              id={`usage-${cell?.row?.original?.id}`}
+              color="primary"
+              className="btn btn-sm btn-soft-success usage-list"
+              onClick={() => handleView(cell.row.original._id)}
             >
               <i className="ri-eye-fill align-bottom" />
               <ReactTooltip
                 place="bottom"
-                variant="info"
+                variant="success"
                 content="View"
-                anchorId={`view-${cell?.row?.original?.id}`}
+                anchorId={`usage-${cell?.row?.original?.id}`}
               />
-            </Link>
+            </BaseButton>
             <BaseButton
-              id={`usage-${cell?.row?.original?.id}`}
-              className="btn btn-sm btn-soft-success usage-list"
-              // onClick={() => toggleUsageModal(cell?.row?.original)}
+              id={`editMode-${cell?.row?.original?.id}`}
+              className="btn btn-sm btn-soft-secondary edit-list"
+              onClick={() => handleEdit(cell?.row?.original._id)}
             >
-              <i className="ri-survey-fill align-bottom" />
+              <i className="ri-pencil-fill align-bottom" />
               <ReactTooltip
                 place="bottom"
-                variant="success"
-                content="Used Stock"
-                anchorId={`usage-${cell?.row?.original?.id}`}
+                variant="info"
+                content="Edit"
+                anchorId={`editMode-${cell.row.original._id}`}
+              />
+            </BaseButton>
+            <BaseButton
+              id={`delete-${cell?.row?.original?.id}`}
+              className="btn btn-sm btn-soft-danger remove-list"
+              color="danger"
+              onClick={() => deleteApplicantDetails(cell.row.original._id)}
+            >
+              <i className="ri-delete-bin-5-fill align-bottom" />
+              <ReactTooltip
+                place="bottom"
+                variant="error"
+                content="Delete"
+                anchorId={`delete-${cell?.row?.original?.id}`}
               />
             </BaseButton>
           </div>
         ),
       },
     ],
-    []
+    [applicant]
   );
 
   const handleNavigate = () => {
-    navigate("/add-applicant");
-  }
+    navigate("/applicants/add-applicant");
+  };
 
   return (
     <Fragment>
-      <div className="pt-3 page-content"></div>
+      {showModal && selectedApplicantId && (
+        <ViewModal
+          show={showModal}
+          onHide={handleCloseModal}
+          applicantId={selectedApplicantId}
+        />
+      )}
       <Container fluid>
-        <div className="d-flex justify-content-end">
-          <BaseButton
-            color="success"
-            disabled={loader}
-            className="w-100"
-            loader={loader}
-            onClick={handleNavigate}
-          >
-            Add New Applicant
-          </BaseButton>
-        </div>
         <Row>
           <div>
             <Card className="mb-3 my-3">
               <CardBody>
-                <Row className="flex">
-                  <Col xl={5} sm={12} md={4} lg={2} className="!mb-2 ">
-                    <BaseSelect
-                      name="appliedSkills"
-                      className="select-border"
-                      options={technologyType}
-                      placeholder={InputPlaceHolder("Technology")}
-                      handleChange={(selectedOption: SelectedOption) => {
-                        validation.setFieldValue(
-                          "appliedSkills",
-                          selectedOption?.value || ""
-                        );
-                      }}
-                      handleBlur={validation.handleBlur}
-                      value={
-                        dynamicFind(
-                          technologyType,
-                          validation.values.appliedSkills
-                        ) || ""
-                      }
-                      touched={validation.touched.appliedSkills}
-                      error={validation.errors.appliedSkills}
-                    />
-                  </Col>
+                <div className="container">
+                  <div className="row justify-content-between">
+                    <div className="col-auto d-flex justify-content-start">
+                      <BaseButton
+                        onClick={() => setFiltersVisible(!filtersVisible)}
+                        color="primary"
+                      >
+                        {filtersVisible ? "Hide Filters" : "Show Filters"}
+                      </BaseButton>
+                    </div>
 
-                  <Col xl={5} sm={6} md={4} lg={2} className="px-2 mb-2">
-                    <BaseSelect
-                      name="appliedSkills"
-                      className="select-border"
-                      options={experinceType}
-                      placeholder={InputPlaceHolder("Experience")}
-                      handleChange={(selectedOption: SelectedOption) => {
-                        validation.setFieldValue(
-                          "appliedSkills",
-                          selectedOption?.value || ""
-                        );
-                      }}
-                      handleBlur={validation.handleBlur}
-                      value={
-                        dynamicFind(
-                          experinceType,
-                          validation.values.appliedSkills
-                        ) || ""
-                      }
-                      touched={validation.touched.appliedSkills}
-                      error={validation.errors.appliedSkills}
-                    />
-                  </Col>
-                  <Col
-                    xl={2}
-                    sm={6}
-                    md={6}
-                    lg={2}
-                    className="!d-flex !justify-content-end !align-items-center !px-1 mb-2"
-                  >
-                    <BaseButton
-                      color="primary"
-                      disabled={loader}
-                      className="w-100"
-                      type="submit"
-                      loader={loader}
-                    >
-                      Reset Filters
-                    </BaseButton>
-                  </Col>
-                </Row>
+                    <div className="col-auto d-flex justify-content-end gap-2">
+                      <BaseButton
+                        color="success"
+                        disabled={loader}
+                        onClick={handleNavigate}
+                        loader={loader}
+                      >
+                        Add New Applicant
+                      </BaseButton>
+                    </div>
+                  </div>
+                </div>
+                <Collapse in={filtersVisible} className="mt-3">
+                  <div>
+                    <Row className="flex">
+                      <Col xl={3} sm={6} md={4} lg={2}>
+                        <BaseSelect
+                          name="appliedSkills"
+                          options={statusOptions}
+                          placeholder="Technology"
+                        />
+                      </Col>
+                      <Col xl={3} sm={6} md={4} lg={2}>
+                        <BaseSelect
+                          name="interviewStage"
+                          options={interviewStageOptions}
+                          placeholder="Experience"
+                        />
+                      </Col>
+                      <Col xl={2} sm={6} md={4} lg={2}>
+                        <BaseInput
+                          name="startDate"
+                          type="date"
+                          placeholder={InputPlaceHolder("Start Date")}
+                          // handleChange={validation.handleChange}
+                          // handleBlur={validation.handleBlur}
+                          // value={validation.values.dateOfBirth}
+                          // touched={validation.touched.dateOfBirth}
+                          // error={validation.errors.dateOfBirth}
+                          passwordToggle={false}
+                        />
+                      </Col>
+                      <Col xl={2} sm={6} md={4} lg={2}>
+                        <BaseInput
+                          name="endDate"
+                          type="date"
+                          placeholder={InputPlaceHolder("End Date")}
+                          // handleChange={validation.handleChange}
+                          // handleBlur={validation.handleBlur}
+                          // value={validation.values.dateOfBirth}
+                          // touched={validation.touched.dateOfBirth}
+                          // error={validation.errors.dateOfBirth}
+                          passwordToggle={false}
+                        />
+                      </Col>
+                      <Col xl={2} sm={6} md={6} lg={2}>
+                        <BaseButton
+                          color="primary"
+                          disabled={loader}
+                          type="submit"
+                          loader={loader}
+                        >
+                          Reset Filters
+                        </BaseButton>
+                      </Col>
+                    </Row>
+                  </div>
+                </Collapse>
               </CardBody>
             </Card>
           </div>
         </Row>
+
         <Row>
           <Col lg={12}>
-            <Card id="customerList">
+            <Card>
               {loader ? (
                 <Loader />
               ) : (
@@ -274,8 +370,8 @@ const Applicant = () => {
                       <TableContainer
                         isHeaderTitle="Applicants"
                         columns={columns}
-                        data={applicant ? applicant : []}
-                        isGlobalFilter={true}
+                        data={applicant || []}
+                        isGlobalFilter
                         customPageSize={5}
                         theadClass="table-light text-muted"
                         SearchPlaceholder="Search..."
@@ -283,7 +379,7 @@ const Applicant = () => {
                     ) : (
                       <div className="py-4 text-center">
                         <i className="ri-search-line d-block fs-1 text-success"></i>
-                        {handleResponse?.dataNotFound}
+                        No applicants found.
                       </div>
                     )}
                   </div>
@@ -292,7 +388,6 @@ const Applicant = () => {
             </Card>
           </Col>
         </Row>
-        {/* <BreadCrumb title='applicant' pageTitle={projectTitle} /> */}
       </Container>
     </Fragment>
   );

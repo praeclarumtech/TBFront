@@ -13,8 +13,9 @@ import ChangePassword from "pages/auth/ChangePassword";
 import SignUp from "pages/auth/SignUp";
 import Dashboard from "pages/dashboard/Index";
 import RootLayout from "layouts/RootLayout";
-import ApplicantTables from "pages/Tables/ApplicantsTables";
-import Applicant from "components/StepperForm";
+import StepperForm from "pages/applicant/Stepper";
+import Applicant from "pages/applicant/Index";
+
 
 const RenderRouter: React.FC = () => {
   const {
@@ -24,7 +25,6 @@ const RenderRouter: React.FC = () => {
     SIGN_UP,
     DASHBOARD,
     APPLICANTS,
-    ADD_APPLICANTS,
   } = routes;
 
   const router = createBrowserRouter(
@@ -46,27 +46,30 @@ const RenderRouter: React.FC = () => {
           path={APPLICANTS.path}
           element={
             <RootLayout>
-              <ApplicantTables />
-            </RootLayout>
-          }
-        />
-        <Route
-          path={ADD_APPLICANTS.path}
-          element={
-            <RootLayout>
               <Applicant />
             </RootLayout>
           }
         />
-    
-        <Route
-          path={ADD_APPLICANTS.path}
-          element={
-            <RootLayout>
-              <Applicant />
-            </RootLayout>
-          }
-        />
+        <Route path={APPLICANTS.path}>
+          <Route
+            path={"add-applicant"}
+            element={
+              <RootLayout>
+                <StepperForm />
+              </RootLayout>
+            }
+          />
+          <Route
+            path={"edit-applicant/:id"}
+            element={
+              <RootLayout>
+                <StepperForm />
+              </RootLayout>
+            }
+          />
+         
+      
+        </Route>
       </Route>
     )
   );
