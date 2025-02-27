@@ -26,8 +26,8 @@ import BaseInput from "components/BaseComponents/BaseInput";
 import BaseButton from "components/BaseComponents/BaseButton";
 import { BaseSelect } from "components/BaseComponents/BaseSelect";
 import { dynamicFind } from "components/helpers/service";
+import { SelectedOption } from "interfaces/applicant.interface";
 
-type SelectedOption = { label: string; value: string };
 
 const SignUp = () => {
   document.title = Modules.Register + " | " + projectTitle;

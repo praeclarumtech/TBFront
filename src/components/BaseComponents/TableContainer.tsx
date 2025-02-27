@@ -150,7 +150,7 @@ const TableContainer = ({
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
 
-  const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
+  const fuzzyFilter: FilterFn<any> = (row: any, columnId, value, addMeta) => {
     const itemRank = rankItem(row?.getValue(columnId), value);
     addMeta({
       itemRank,

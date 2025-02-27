@@ -1,6 +1,5 @@
-// src/components/Dropdown.tsx
-import React, { ReactNode } from 'react';
-import { FormControl, Select, MenuItem, FormHelperText } from '@mui/material';
+import React from 'react';
+import { FormControl, Select, MenuItem, FormHelperText, SelectChangeEvent } from '@mui/material';
 import { useFormContext } from 'react-hook-form';
 import { Form } from 'react-bootstrap';
 
@@ -15,7 +14,7 @@ interface DropdownProps {
   label: string;
   options: { value: string; label: string }[];
   value: string; // Ensure this is defined
-  onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+  onChange: (event: SelectChangeEvent<string>, child: React.ReactNode) => void;
   colProps?: { xs: number; sm: number; lg: number;md:number};
   // children: ReactNode;
 }
@@ -40,7 +39,7 @@ const Dropdown: React.FC<DropdownProps> = ({
       <Select
         {...register(name)}
         value={value}
-        onChange={onChange}
+        onChange={(event, child) => onChange(event, child)}
         multiple={multiple}
       >
         {options.map((option) => (

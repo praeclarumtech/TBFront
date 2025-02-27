@@ -8,7 +8,6 @@ import {
   Button,
   Typography,
 } from "@mui/material";
-
 import { Fragment, useEffect, useState } from "react";
 import PersonalDetailsForm from "./Personal";
 import EducationalDetailsForm from "./Education";

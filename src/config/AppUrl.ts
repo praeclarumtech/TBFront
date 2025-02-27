@@ -43,11 +43,11 @@ export const baseQuery = async (
   args: string | FetchArgs,
   api: BaseQueryApi,
   extraOptions: any
-) => {
+): Promise<{ data?: any; error?: ApiResponseError }> => {
   try {
     const response = (await reqHeaders(args, api, extraOptions)) as {
-      data: any;
-      error: ApiResponseError;
+      data?: any;
+      error?: ApiResponseError;
     };
     const errorCode = response?.error?.data?.statusCode;
     if (
@@ -63,7 +63,7 @@ export const baseQuery = async (
     return response;
   } catch (error) {
     console.log("baseQuery error", error);
-    return { error };
+    return { error: error as ApiResponseError };
   }
 };
 

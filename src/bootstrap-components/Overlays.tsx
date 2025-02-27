@@ -15,7 +15,7 @@ import {
 } from "react-bootstrap";
 
 // import widget/custom components
-import { HighlightCode } from "widgets";
+import HighlightCode from "../widgets/highlight-code/HighlightCode";
 
 // import react code data file
 import {
@@ -27,7 +27,10 @@ import {
 const Overlays = () => {
   const [show, setShow] = useState(false);
   const target = useRef(null);
-  const renderTooltip = (props: any) => (
+  const renderTooltip = (
+    props: JSX.IntrinsicAttributes &
+      import("react-bootstrap/esm/Tooltip").TooltipProps
+  ) => (
     <Tooltip id="button-tooltip" {...props}>
       Simple tooltip
     </Tooltip>
@@ -95,14 +98,7 @@ const Overlays = () => {
                       show={show}
                       placement="right"
                     >
-                      {({
-                        placement: _placement,
-                        arrowProps: _arrowProps,
-                        show: _show,
-                        popper: _popper,
-                        hasDoneInitialMeasure: _hasDoneInitialMeasure,
-                        ...props
-                      }) => (
+                      {({ ...props }) => (
                         <div
                           {...props}
                           style={{

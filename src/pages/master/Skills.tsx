@@ -1,405 +1,247 @@
-
-
-import { useState, useEffect } from "react";
+import React from "react";
+import { Row, Col, Card, Container, CardBody } from "react-bootstrap";
+import { Fragment, useEffect, useMemo, useState } from "react";
+import { Modules } from "components/constants/enum";
 import {
-  Box,
-  Button,
-  Modal,
-  Typography,
-  TextField,
-  Input,
-} from "@mui/material";
-import axios from "axios";
-import "./index.css";
-import { Card, Col, Row } from "react-bootstrap";
-import { Edit as EditIcon, Delete as DeleteIcon } from "@mui/icons-material";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+  handleResponse,
+  InputPlaceHolder,
+  projectTitle,
+} from "components/constants/common";
+import BaseButton from "components/BaseComponents/BaseButton";
+import { BaseSelect } from "components/BaseComponents/BaseSelect";
+import TableContainer from "components/BaseComponents/TableContainer";
+import { Link, useNavigate } from "react-router-dom";
+import { Tooltip as ReactTooltip } from "react-tooltip";
+import { dynamicFind } from "components/helpers/service";
+import * as Yup from "yup";
+import { useFormik } from "formik";
+import { Loader } from "react-feather";
+import BaseInput from "components/BaseComponents/BaseInput";
 
-const marginLeft = {
-  position: "bottom",
-  marginLeft: "20px",
-};
-
-const modalStyle = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  boxShadow: 24,
-  p: 4,
-  borderRadius: "8px",
-};
-
-const BASE_URL = import.meta.env.VITE_API_URL;
-
-const viewSkillApi = `${BASE_URL}/api/skill/viewSkills/`;
-const createSkillApi = `${BASE_URL}/api/skill/addSkills/`;
-// const viewSkillById = (_id) => `${BASE_URL}/api/skill/viewById`;
+type SelectedOption = { label: string; value: string };
 
 const AddSkill = () => {
-  const [open, setOpen] = useState(false);
-  const [skills, setSkills] = useState("");
-  const [search, setSearch] = useState("");
-  const [skillList, setSkillList] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [editingSkill, setEditingSkill] = useState<{ _id: string; skills: string } | null>(null);
-  const [pagination, setPagination] = useState({
-    currentPage: 1,
-    totalPages: 1,
-    totalSkills: 0,
+  document.title = Modules.Login + " | " + projectTitle;
+
+  const columns = useMemo(
+    () => [
+      {
+        header: "Sr.no",
+        accessorKey: "id",
+        enableColumnFilter: false,
+      },
+      {
+        header: "Skill",
+        accessorKey: "skill",
+        enableColumnFilter: false,
+      },
+      {
+        header: "Action",
+        cell: (cell: { row: { original: { id: any } } }) => (
+          <div className="hstack gap-2">
+            <Link
+              to={`/stock-detail/${cell?.row?.original?.id}`}
+              id={`view-${cell?.row?.original?.id}`}
+              className="btn btn-sm btn-soft-info view-list"
+            >
+              <i className="ri-eye-fill align-bottom" />
+              <ReactTooltip
+                place="bottom"
+                variant="info"
+                content="View"
+                anchorId={`view-${cell?.row?.original?.id}`}
+              />
+            </Link>
+            <BaseButton
+              id={`usage-${cell?.row?.original?.id}`}
+              className="btn btn-sm btn-soft-success usage-list"
+              // onClick={() => toggleUsageModal(cell?.row?.original)}
+            >
+              <i className="ri-survey-fill align-bottom" />
+              <ReactTooltip
+                place="bottom"
+                variant="success"
+                content="Used Stock"
+                anchorId={`usage-${cell?.row?.original?.id}`}
+              />
+            </BaseButton>
+          </div>
+        ),
+      },
+    ],
+    []
+  );
+
+  const testEmails = [
+    {
+      id: 1,
+      skill: "React JS",
+    },
+    {
+      id: 2,
+      skill: "Node JS",
+    },
+  ];
+
+  const [loader, setLoader] = useState(false);
+
+  const validation: any = useFormik({
+    enableReinitialize: true,
+    initialValues: {
+      appliedSkills: "",
+      totalExperience: "",
+    },
+    validationSchema: Yup.object({
+      appliedSkills: Yup.string(),
+      // .required(validationMessages.required("Email"))
+      // .email(validationMessages.format("Email"))
+      // .matches(emailRegex, validationMessages.format("Email")),
+      totalExperience: Yup.string(),
+    }),
+    onSubmit: () => {
+      // const payload = {
+      //   email: String(value.email),
+      //   password: value.password,
+      // };
+      // setLoader(true);
+      // login(payload)
+      //   .then((res) => {
+      //     if (res?.statusCode === OK && res?.success === SUCCESS) {
+      //       setItem("authUser", res?.data?.token);
+      //       const decode = jwtDecode<any>(res?.data);
+      //       const role = decode.role;
+      //       const id = decode.id;
+      //       setItem("role", role);
+      //       setItem("id", id);
+      //       navigate("/");
+      //       toast.success(res?.message);
+      //     } else {
+      //       toast.error(res?.message);
+      //     }
+      //   })
+      //   .catch((error) => {
+      //     errorHandle(error);
+      //     setLoader(false);
+      //   })
+      //   .finally(() => setLoader(false));
+    },
   });
 
-  useEffect(() => {
-    fetchSkills();
-  }, [search, pagination.currentPage]);
+  const [filteredEmails, setFilteredEmails] = useState(testEmails);
+  const [selectedFilter, setSelectedFilter] = useState("");
 
-  const fetchSkills = () => {
-    setIsLoading(true);
-    const { currentPage } = pagination;
-    axios
-      .get(viewSkillApi, {
-        params: {
-          page: currentPage,
-          limit: 10, // You can adjust the limit here
-          searchQuery: search,
-        },
-      })
-      .then((res) => {
-        if (res.data && Array.isArray(res.data.data)) {
-          setSkillList(res.data.data);
-          setPagination((prevState) => ({
-            ...prevState,
-            totalPages: res.data.totalPages,
-            totalSkills: res.data.totalSkills,
-          }));
-        } else {
-          console.error("Invalid response format", res.data);
-          setError("Failed to fetch skills.");
-          toast.error("Failed to fetch skills.!", {
-            position: "top-right",
-            autoClose: 3000,
-          });
-        }
-      })
-      .catch((err) => {
-        console.error("Error fetching skills:", err);
-        setError("Failed to fetch skills.");
-        toast.error("Failed to fetch skills.!", {
-          position: "top-right",
-          autoClose: 3000,
-        });
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  };
+  // useEffect(() => {
+  //     let sortedEmails = [...testEmails];
 
-  const handleAddSkill = () => {
-    if (skills.trim()) {
-      axios
-        .post(createSkillApi, { skills })
-        .then((res) => {
-          if (res.data && res.data._id) {
-            setSkillList([...skillList, res.data]);
-            setSkills("");
-            setOpen(false);
-            toast.success("Skill added successfully!", {
-              position: "top-right",
-              autoClose: 3000,
-            });
-            fetchSkills();
-          } else {
-            console.error("Invalid response after adding skill:", res.data);
-            setError("Failed to add skill.");
-            toast.error("Failed to add skill.!", {
-              position: "top-right",
-              autoClose: 3000,
-            });
-          }
-        })
-        .catch((err) => {
-          console.error("Error adding skill:", err);
-          setError("Failed to add skill.");
-          toast.error("Failed to add skill.!", {
-            position: "top-right",
-            autoClose: 3000,
-          });
-        });
-    }
-  };
+  //     if (selectedFilter === "date") {
+  //         sortedEmails.sort(
+  //             (a, b) =>
+  //                 new Date(a.date).getTime() - new Date(b.date).getTime()
+  //         );
+  //     } else if (selectedFilter === "id") {
+  //         sortedEmails.sort((a, b) => a.id - b.id);
+  //     }
 
-  const handleUpdateSkill = () => {
-    if (skills.trim() && editingSkill) {
-      axios
-        .put(`${BASE_URL}/api/skill/update/${editingSkill._id}`, { skills })
-        .then((res) => {
-          const updatedList = skillList.map((item) =>
-            item._id === editingSkill._id ? res.data : item
-          );
-          setSkillList(updatedList);
-          setSkills("");
-          setEditingSkill(null);
-          setOpen(false);
-          toast.success("Skill updated successfully!", {
-            position: "top-right",
-            autoClose: 3000,
-          });
-          fetchSkills();
-        })
-        .catch((err) => {
-          console.error("Error updating skill:", err);
-          setError("Failed to update skill.");
-          toast.error("Failed to update skill.!", {
-            position: "top-right",
-            autoClose: 3000,
-          });
-        });
-    }
-  };
-
-  const handleDeleteSkill = (_id: any) => {
-    setIsLoading(true);
-    axios
-      .delete(`${BASE_URL}/api/skill/delete/${_id}`)
-      .then(() => {
-        setSkillList(skillList.filter((item) => item._id !== _id));
-        toast.success("Skill deleted successfully!", {
-          position: "top-right",
-          autoClose: 3000,
-        });
-        fetchSkills();
-      })
-      .catch((err) => {
-        console.error("Error deleting skill:", err);
-        setError("Failed to delete skill.");
-        toast.error("Failed to delete skill.!", {
-          position: "top-right",
-          autoClose: 3000,
-        });
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  };
-
-  const handleSearchChange = (e: { target: { value: string; }; }) => {
-    setSearch(e.target.value.toLowerCase());
-  };
-
-  const handlePageChange = (newPage: number) => {
-    setPagination((prevState) => ({
-      ...prevState,
-      currentPage: newPage,
-    }));
-  };
-
-  const highlightText = (text: string) => {
-    if (!search) return text;
-    const parts = text.split(new RegExp(`(${search})`, "gi"));
-    return parts.map((part, index) =>
-      part.toLowerCase() === search.toLowerCase() ? (
-        <span key={index} style={{ backgroundColor: "#ffff00" }}>
-          {part}
-        </span>
-      ) : (
-        part
-      )
-    );
-  };
-
-  function openEditModal(item: any): void {
-    throw new Error("Function not implemented.");
-  }
+  //     setFilteredEmails(sortedEmails);
+  // }, [selectedFilter]);
 
   return (
-    <Row className="m-5">
-      <Col xl={12} lg={12} md={12} xs={12}>
-        <Card className="">
-          <Card.Body>
-            <Box sx={{ textAlign: "center", mt: 0 }} className="frm-container">
-              <Typography
-                sx={{
-                  fontSize: "20px",
-                  float: "left",
-                  marginLeft: "20px",
-                  fontWeight: "bold",
-                }}
-                className="lbl-tlt"
-              >
-                Add DropDown Items of Skill
-              </Typography>
-              <Box className="" sx={{ textAlign: "center", mt: 4 }}>
-                <div className="justify-end text-end mx-5">
-                  <Button
-                    variant="contained"
-                    onClick={() => setOpen(true)}
-                    className="px-5 !py-2 !bg-blue-600 !hover:bg-primary mx-5 !outline-none !text-white"
-                  >
-                    <i className="fa fa-solid fa-plus text-white py-2"> Add</i>
-                  </Button>
-                </div>
-
-                <Modal open={open} onClose={() => setOpen(false)}>
-                  <Box sx={modalStyle} className="modal-content">
-                    <Typography variant="h6" gutterBottom>
-                      Skill Name
-                    </Typography>
-                    <TextField
-                      fullWidth
-                      placeholder="Write down skill"
-                      value={skills}
-                      onChange={(e) => setSkills(e.target.value)}
-                      className="inp-pasy outline-none"
-                    />
-                    <Box
-                      sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        mt: 2,
-                      }}
+    <Fragment>
+      <div className="pt-1 page-content"></div>
+      <Container fluid>
+        <Row>
+          <div>
+            <Card className="mb-3 my-3">
+              <CardBody>
+                <Row className="flex">
+                  <Row className="fw-bold text-dark ms-2 mt-1 h4">
+                    <Col xl={5} sm={12} md={4} lg={2} className="!mb-2">
+                      Add DropDown Items of Skills
+                    </Col>
+                  </Row>
+                  <Row className="ms-2">
+                    <Col xs={9} md={5} lg={5}>
+                      <BaseInput
+                        label="Skill Name"
+                        name="addSkills"
+                        className="bg-gray-100"
+                        type="text"
+                        placeholder={InputPlaceHolder("Skill to be Added")}
+                        handleChange={validation.handleChange}
+                        handleBlur={validation.handleBlur}
+                        value={validation.values.emailTo}
+                        touched={validation.touched.emailTo}
+                        error={validation.errors.emailTo}
+                        passwordToggle={false}
+                      />
+                    </Col>
+                  </Row>
+                  <Row className="mt-3 ms-2">
+                    <Col
+                      xs={9}
+                      md={5}
+                      lg={5}
+                      // className="!d-flex !justify-content-end !px-1 mb-2"
+                      className="d-flex justify-content-end px-1"
                     >
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={
-                          editingSkill ? handleUpdateSkill : handleAddSkill
-                        }
-                        className="btn-Add px-4 py-2 !bg-red-600 !hover:bg-denger !outline-none !text-white"
+                      <BaseButton
+                        color=" "
+                        disabled={loader}
+                        className="btn btn-outline-dark border-1 rounded-5"
+                        type="submit"
+                        loader={loader}
                       >
-                        {editingSkill ? "Update" : "Add"}
-                      </Button>
-                      <Button
-                        variant="contained"
-                        color="secondary"
-                        onClick={() => setOpen(false)}
-                        className="btn-cancle px-4 py-1 !bg-blue-600 !hover:bg-primary !outline-none !text-white"
+                        Cancle
+                      </BaseButton>
+                      <BaseButton
+                        color="success"
+                        disabled={loader}
+                        // className="w-100"
+                        type="submit"
+                        loader={loader}
+                        className="ms-3 px-5 border rounded-5"
                       >
-                        Close
-                      </Button>
-                    </Box>
-                  </Box>
-                </Modal>
-
-                <Box sx={{ mt: 2 }} className="">
-                  <div className="mx-5 justify-end text-end">
-                    <TextField
-                      sx={{ marginRight: "" }}
-                      id="standard-basic"
-                      label="Quick Search"
-                      variant="standard"
-                      onChange={handleSearchChange}
-                      className="!quick-search"
-                    />
-                  </div>
-                  <Typography
-                    className="justify-start text-left"
-                    sx={{
-                      fontSize: "25px",
-                      marginLeft: "20px",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Skills
-                  </Typography>
-
-                  {error && <Typography color="error">{error}</Typography>}
-
-                  <div className="overflow-hidden">
-                    <table
-                      className="tbl-container custom-table"
-                      style={{
-                        marginTop: "20px",
-                        width: "100%",
-                        borderCollapse: "collapse",
-                      }}
-                    >
-                      <thead>
-                        <tr>
-                          <th>Sr.no</th>
-                          <th>Skill</th>
-                          <th>Action</th>
-                        </tr>
-                      </thead>
-
-                      <tbody>
-                        {skillList.map((item, index) => (
-                          <tr key={item._id}>
-                            <td>{index + 1}</td>
-                            <td>{highlightText(item.skills)}</td>
-                            <td className="flex justify-center space-x-2 text-center">
-                              <EditIcon
-                                style={{ cursor: "pointer" }}
-                                color="primary"
-                                onClick={() => openEditModal(item)}
-                                className="mx-2"
-                              >
-                                Edit
-                              </EditIcon>
-                              <DeleteIcon
-                                color="error"
-                                style={{ cursor: "pointer", marginLeft: 8 }}
-                                onClick={() => handleDeleteSkill(item._id)}
-                              />
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </Box>
-
-                <Box
-                  sx={{ inline: "true", textAlign: "center", mt: 2 }}
-                  className="div-tlt"
-                >
-                  <Typography>
-                    Totals:-{" "}
-                    <Input
-                      sx={marginLeft}
-                      placeholder="Number of Fields"
-                      value={pagination.totalSkills}
-                      readOnly
-                      className="inp-tlt"
-                    />
-                  </Typography>
-
-                  {/* Pagination Controls */}
-                  <Box
-                    sx={{ display: "flex", justifyContent: "center", mt: 3 }}
-                  >
-                    <Button
-                      disabled={pagination.currentPage === 1}
-                      onClick={() =>
-                        handlePageChange(pagination.currentPage - 1)
-                      }
-                    >
-                      Previous
-                    </Button>
-                    <Typography sx={{ margin: "0 20px" }}>
-                      Page {pagination.currentPage} of {pagination.totalPages}
-                    </Typography>
-                    <Button
-                      disabled={
-                        pagination.currentPage === pagination.totalPages
-                      }
-                      onClick={() =>
-                        handlePageChange(pagination.currentPage + 1)
-                      }
-                    >
-                      Next
-                    </Button>
-                  </Box>
-                </Box>
-              </Box>
-            </Box>
-          </Card.Body>
-        </Card>
-      </Col>
-    </Row>
+                        Add
+                      </BaseButton>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col lg={12}>
+                      <Card id="addedSkillList">
+                        {loader ? (
+                          <Loader />
+                        ) : (
+                          <div className="card-body pt-0">
+                            <div>
+                              {testEmails?.length > 0 ? (
+                                <TableContainer
+                                  isHeaderTitle="Skills"
+                                  columns={columns}
+                                  data={testEmails ? testEmails : []}
+                                  isGlobalFilter={true}
+                                  customPageSize={5}
+                                  theadClass="table-light text-muted"
+                                  SearchPlaceholder="Search..."
+                                />
+                              ) : (
+                                <div className="py-4 text-center">
+                                  <i className="ri-search-line d-block fs-1 text-success"></i>
+                                  {handleResponse?.dataNotFound}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </Card>
+                    </Col>
+                  </Row>
+                </Row>
+              </CardBody>
+            </Card>
+          </div>
+        </Row>
+      </Container>
+    </Fragment>
   );
 };
 

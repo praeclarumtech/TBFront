@@ -11,7 +11,8 @@ import BaseButton from "components/BaseComponents/BaseButton";
 import { BaseSelect } from "components/BaseComponents/BaseSelect";
 import { Form } from "react-router-dom";
 import BaseInput from "components/BaseComponents/BaseInput";
-type SelectedOption = { label: string; value: string };
+import { SelectedOption } from "interfaces/applicant.interface";
+
 
 const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
   document.title = Modules.Applicant + " | " + projectTitle;
