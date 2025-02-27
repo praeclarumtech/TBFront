@@ -11,7 +11,9 @@ export const viewAllEmail = async (data?: object) => {
   return response?.data;
 };
 
-export const deleteEmail = async (data?: object) => {
-  const response = await authServices.delete(`${DELETE_EMAIL}`, data);
+export const deleteEmail = async (ids: string[]) => {
+  const response = await authServices.delete(`${DELETE_EMAIL}`, {
+    data: { ids }
+  });
   return response?.data;
 };

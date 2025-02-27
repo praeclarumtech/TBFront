@@ -32,7 +32,7 @@ const EmailTable = () => {
 
   // Update the initial state to explicitly be an empty array
   interface Email {
-    id: number;
+    _id: string;
     email_to: string;
     subject: string;
     createdAt: string;
@@ -67,7 +67,7 @@ const EmailTable = () => {
     fetchEmails();
   }, []);
 
-  const [selectedEmails, setSelectedEmails] = useState<number[]>([]);
+  const [selectedEmails, setSelectedEmails] = useState<string[]>([]);
 
   // Add pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -94,7 +94,7 @@ const EmailTable = () => {
         sortedEmails.sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt));
         break;
       case "ID":
-        sortedEmails.sort((a, b) => a.id - b.id);
+        sortedEmails.sort((a, b) => a._id.localeCompare(b._id));
         break;
       default:
         break;
@@ -125,10 +125,10 @@ const EmailTable = () => {
   //     console.log("Searching for:", searchTerm);
   //   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: string) => {
     try {
-      await deleteEmail({ id });
-      setEmails(emails.filter((email) => email.id !== id));
+      await deleteEmail([id]);
+      setEmails(emails.filter((email) => email._id !== id));
       setError(null);
     } catch (err) {
       console.error("Error deleting email:", err);
@@ -136,14 +136,14 @@ const EmailTable = () => {
     }
   };
 
-  // Add bulk delete handler
+  // Update bulk delete handler
   const handleBulkDelete = async () => {
     try {
       // Delete all selected emails
-      await Promise.all(selectedEmails.map((id) => deleteEmail({ id })));
+      await deleteEmail(selectedEmails);
 
       // Update local state
-      setEmails(emails.filter((email) => !selectedEmails.includes(email.id)));
+      setEmails(emails.filter((email) => !selectedEmails.includes(email._id)));
       setSelectedEmails([]);
       setError(null);
     } catch (err) {
@@ -153,7 +153,7 @@ const EmailTable = () => {
   };
 
   // Add handler for row click
-  const handleRowClick = (emailId: number) => {
+  const handleRowClick = (emailId: string) => {
     if (selectedEmails.includes(emailId)) {
       handleDelete(emailId);
     }
@@ -251,9 +251,9 @@ const EmailTable = () => {
                 <tbody className="bg-white divide-y divide-gray-200">
                   {currentEmails.map((email) => (
                     <tr
-                      key={email.id}
+                      key={email._id}
                       className="hover:bg-gray-50 cursor-pointer"
-                      onClick={() => handleRowClick(email.id)}
+                      onClick={() => handleRowClick(email._id)}
                     >
                       <td
                         className="px-6 py-4"
@@ -261,13 +261,13 @@ const EmailTable = () => {
                       >
                         <input
                           type="checkbox"
-                          checked={selectedEmails.includes(email.id)}
+                          checked={selectedEmails.includes(email._id)}
                           onChange={(e) => {
                             if (e.target.checked) {
-                              setSelectedEmails([...selectedEmails, email.id]);
+                              setSelectedEmails([...selectedEmails, email._id]);
                             } else {
                               setSelectedEmails(
-                                selectedEmails.filter((id) => id !== email.id)
+                                selectedEmails.filter((id) => id !== email._id)
                               );
                             }
                           }}
