@@ -1,8 +1,5 @@
-
-
 import { DashboardMenuProps } from "types";
 import { v4 as uuid } from "uuid";
-
 
 export const DashboardMenu: DashboardMenuProps[] = [
   {
@@ -20,16 +17,9 @@ export const DashboardMenu: DashboardMenuProps[] = [
     id: uuid(),
     title: "Applicants",
     icon: "layers",
-
     link: "/applicants",
   },
 
-  {
-    id: uuid(),
-    title: "Add Applicant",
-    icon: "layout",
-    link: "/add_applicants",
-  },
   {
     id: uuid(),
     title: "Analysis",

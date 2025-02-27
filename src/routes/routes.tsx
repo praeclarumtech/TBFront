@@ -1,5 +1,5 @@
 
-import Applicant from "pages/applicant/Index";
+
 import SignUp from "pages/auth/SignUp";
 import Dashboard from "pages/dashboard/Index";
 import LayoutVertical from "pages/dashboard/LayoutVertical";
@@ -7,7 +7,9 @@ import ApiDemo from "pages/dashboard/pages/ApiDemo";
 import email from "pages/dashboard/pages/email/EmailForm";
 import Report from "pages/dashboard/pages/report/Report";
 import Settings from "pages/dashboard/pages/Settings";
-import ApplicantTables from "pages/Tables/ApplicantsTables";
+import ApplicantTables from "pages/applicant/Index";
+import StepperForm from "pages/applicant/Stepper";
+
 
 const routes = {
   ROOT: {
@@ -40,13 +42,21 @@ const routes = {
     title: "Applicants",
     path: "/applicants",
     element: ApplicantTables,
+    children: [
+     
+      {
+        id: "applicant2",
+        path: "/applicants/add-applicant",
+        Component: StepperForm,
+      },
+      {
+        id: "applicant3",
+        path: "/applicants/edit-applicant/:id",
+        Component: StepperForm,
+      },
+     
+    ],
   },
-  ADD_APPLICANTS: {
-    title: "Add Applicants",
-    path: "/add_applicants",
-    element: Applicant,
-  },
-
   LAYOUT_VERTICAL: {
     title: "Layout Vertical",
     path: "/layout_vertical",

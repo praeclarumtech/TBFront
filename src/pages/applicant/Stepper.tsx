@@ -1,36 +1,77 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { Card, Container } from "react-bootstrap";
+import {
+  Box,
+  Stepper,
+  Step,
+  StepLabel,
+  Button,
+  Typography,
+} from "@mui/material";
 
-import { Row, Col, Card, Container, CardBody } from "react-bootstrap";
-import {
-    Box,
-    Stepper,
-    Step,
-    StepLabel,
-    Button,
-    Typography,
-  } from "@mui/material";
-import * as Yup from "yup";
-//import custom hook
-import {
-  handleResponse,
-  InputPlaceHolder,
-  projectTitle,
-} from "components/constants/common";
-import { Modules } from "components/constants/enum";
-import { useFormik } from "formik";
-import { Fragment,  useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import PersonalDetailsForm from "./Personal";
 import EducationalDetailsForm from "./Education";
 import JobDetailsForm from "./Job";
-
-type SelectedOption = { label: string; value: string };
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import PreviewForm from "./PreviewForm";
+import {
+  createApplicant,
+  getApplicantDetails,
+  updateApplicant,
+} from "api/applicantApi";
+import { errorHandle } from "components/helpers/service";
+import { useParams } from "react-router-dom";
+import { projectTitle } from "components/constants/common";
+import { Modules } from "components/constants/enum";
 
 const StepperForm = () => {
+  const { id } = useParams();
+
   document.title = Modules.Login + " | " + projectTitle;
 
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const [activeStep, setActiveStep] = useState(0);
-
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    name: {
+      firstName: "",
+      middleName: "",
+      lastName: "",
+    },
+    phone: {
+      whatsappNumber: "",
+      phoneNumber: "",
+    },
+    email: "",
+    gender: "",
+    dateOfBirth: "",
+    fullAddress: "",
+    state: "",
+    country: "",
+    pincode: "",
+    city: "",
+    qualification: "",
+    degree: "",
+    passingYear: "",
+    appliedSkills: [],
+    totalExperience: "",
+    relevantSkillExperience: "",
+    otherSkills: "",
+    referral: "",
+    url: "",
+    rating: "",
+    currentPkg: "",
+    expectedPkg: "",
+    negotiation: "",
+    noticePeriod: "",
+    readyForWork: "",
+    workPreference: "",
+    practicalUrl: "",
+    practicalFeedback: "",
+    aboutUs: "",
+  });
   const steps = [
     "Personal Details",
     "Educational Details",
@@ -38,165 +79,191 @@ const StepperForm = () => {
     "Preview",
   ];
 
-  const [formData, setFormData] = useState<any>({
-    personal: {
-      firstName: "",
-      middleName: "",
-      lastName: "",
-      whatsappNumber: "",
-      phoneNumber: "",
-      email: "",
-      gender: "",
-      dateOfBirth: "",
-      fullAddress: "",
-      state: "",
-      country: "",
-      pincode: 0,
-      city: "",
-    },
-    education: {
-      qualification: "",
-      degree: "",
-      passingYear: 0,
-      appliedSkills: [],
-      // resume: [],
-      totalExperience: 0,
-      relevantSkillExperience: 0,
-      otherSkills: "",
-      rating: 0,
-      referral: "",
-      url: "",
-    },
-    job: {
-      currentPkg: "",
-      expectedPkg: "",
-      noticePeriod: "",
-      negotiation: "",
-      readyForWork: "",
-      workPreference: "",
-      aboutUs: "",
-      practicalUrl: "",
-      practicalFeedback: "",
-    },
-  });
-   
   const handleNext = (data: any) => {
+    setFormData((prev) => ({
+      ...prev,
+      ...data,
+    }));
+
     if (activeStep === 0) {
-      setFormData((prev: any) => ({ ...prev, personal: data }));
+      setActiveStep(1);
     } else if (activeStep === 1) {
-      setFormData((prev: any) => ({ ...prev, education: data }));
+      setActiveStep(2);
     } else if (activeStep === 2) {
-      setFormData((prev: any) => ({ ...prev, job: data }));
+      setActiveStep(3);
     }
-    setActiveStep((prev) => prev + 1);
   };
 
-  const handleBack = () => {
-    setActiveStep((prev) => prev - 1);
+  const handleBack = (data: any) => {
+    setFormData((prev) => ({
+      ...prev,
+      ...data,
+    }));
+    setActiveStep((prev) => Math.max(0, prev - 1));
   };
 
-//   const validation: any = useFormik({
-//     enableReinitialize: true,
-//     initialValues: {
-//       appliedSkills: "",
-//       totalExperience: "",
-//     },
-//     validationSchema: Yup.object({
-//       appliedSkills: Yup.string(),
-//       // .required(validationMessages.required("Email"))
-//       // .email(validationMessages.format("Email"))
-//       // .matches(emailRegex, validationMessages.format("Email")),
-//       totalExperience: Yup.string(),
-//     }),
-//     onSubmit: () => {
-//       // const payload = {
-//       //   email: String(value.email),
-//       //   password: value.password,
-//       // };
-//       // setLoader(true);
-//       // login(payload)
-//       //   .then((res) => {
-//       //     if (res?.statusCode === OK && res?.success === SUCCESS) {
-//       //       setItem("authUser", res?.data?.token);
-//       //       const decode = jwtDecode<any>(res?.data);
-//       //       const role = decode.role;
-//       //       const id = decode.id;
-//       //       setItem("role", role);
-//       //       setItem("id", id);
-//       //       navigate("/");
-//       //       toast.success(res?.message);
-//       //     } else {
-//       //       toast.error(res?.message);
-//       //     }
-//       //   })
-//       //   .catch((error) => {
-//       //     errorHandle(error);
-//       //     setLoader(false);
-//       //   })
-//       //   .finally(() => setLoader(false));
-//     },
-//   });
+  const handleEdit = (stepIndex: number) => {
+    setActiveStep(stepIndex);
+  };
+
+  const formatApiData = () => {
+    return {
+      name: {
+        firstName: formData.name.firstName,
+        middleName: formData.name.middleName,
+        lastName: formData.name.lastName,
+      },
+      phone: {
+        whatsappNumber: formData.phone.whatsappNumber,
+        phoneNumber: formData.phone.phoneNumber,
+      },
+      email: formData.email,
+      gender: formData.gender,
+      dateOfBirth: formData.dateOfBirth,
+      fullAddress: formData.fullAddress,
+      state: formData.state,
+      country: formData.country,
+      pincode: formData.pincode,
+      city: formData.city,
+      qualification: formData.qualification,
+      degree: formData.degree,
+      passingYear: formData.passingYear,
+      appliedSkills: formData.appliedSkills,
+      totalExperience: formData.totalExperience,
+      relevantSkillExperience: formData.relevantSkillExperience,
+      otherSkills: formData.otherSkills,
+      referral: formData.referral,
+      url: formData.url,
+      rating: formData.rating,
+      currentPkg: formData.currentPkg,
+      expectedPkg: formData.expectedPkg,
+      negotiation: formData.negotiation,
+      noticePeriod: formData.noticePeriod,
+      readyForWork: formData.readyForWork,
+      workPreference: formData.workPreference,
+      // practicalUrl: formData.practicalUrl,
+      // feedback: formData.practicalFeedback,
+      aboutUs: formData.aboutUs,
+    };
+  };
+
+  const handleSubmit = async () => {
+    setLoading(true);
+    const apiData = formatApiData();
+
+    if (!id) {
+      createApplicant(apiData)
+        .then((res: any) => {
+          if (res.success) {
+            toast.success(res.message);
+            navigate("/applicants");
+          }
+        })
+        .catch((error) => {
+          errorHandle(error);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } else {
+      updateApplicant(apiData, id)
+        .then((res: any) => {
+          if (res.success) {
+            toast.success(res.message);
+            navigate("/applicants");
+          }
+        })
+        .catch((error) => {
+          errorHandle(error);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  };
+
+  const getApplicant = (id: string | undefined | null) => {
+    if (id !== undefined) {
+      getApplicantDetails(id)
+        .then((res: any) => {
+          if (res.success) {
+            setFormData(res.data);
+          }
+        })
+        .catch((error) => {
+          errorHandle(error);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  };
+
+  useEffect(() => {
+    getApplicant(id);
+  }, [id]);
 
   return (
     <Fragment>
       <div className="pt-3 page-content"></div>
       <Container fluid>
-
-      <Card>
-      <h4 className="m-2 p-1 text-dark justify-center content-start text-2xl text-center font-bold text-blue-900">
-        Applicant Form
-      </h4>
-      <Card.Body>
-        <Box sx={{ width: "100%" }}>
-          <Stepper activeStep={activeStep}>
-            {steps.map((label) => (
-              <Step key={label}>
-                <StepLabel>{label}</StepLabel>
-              </Step>
-            ))}
-          </Stepper>
-          <Box sx={{ mt: 2 }}>
-            {activeStep === steps.length ? (
-              <div>
-                <Typography sx={{ mt: 2, mb: 1 }}>
-                  All steps completed - you&apos;re finished{" "}
-                </Typography>
-                <Button onClick={() => setActiveStep(0)}>Reset</Button>
-              </div>
-            ) : (
-              <div>
-                {activeStep === 0 && (
-                  <PersonalDetailsForm
-                    onNext={handleNext}
-                  />
+        <Card>
+          <h4 className="m-2 p-1 text-dark justify-center content-start text-2xl text-center font-bold text-blue-900">
+            Applicant Form
+          </h4>
+          <Card.Body>
+            <Box sx={{ width: "100%" }}>
+              <Stepper activeStep={activeStep}>
+                {steps.map((label) => (
+                  <Step key={label}>
+                    <StepLabel>{label}</StepLabel>
+                  </Step>
+                ))}
+              </Stepper>
+              <Box sx={{ mt: 2 }}>
+                {activeStep === steps.length ? (
+                  <div>
+                    <Typography sx={{ mt: 2, mb: 1 }}>
+                      All steps completed - you&apos;re finished{" "}
+                    </Typography>
+                    <Button onClick={() => setActiveStep(0)}>Reset</Button>
+                  </div>
+                ) : (
+                  <div>
+                    {activeStep === 0 && (
+                      <PersonalDetailsForm
+                        onNext={handleNext}
+                        initialValues={formData}
+                      />
+                    )}
+                    {activeStep === 1 && (
+                      <EducationalDetailsForm
+                        onNext={handleNext}
+                        onBack={handleBack}
+                        initialValues={formData}
+                      />
+                    )}
+                    {activeStep === 2 && (
+                      <JobDetailsForm
+                        onNext={handleNext}
+                        onBack={handleBack}
+                        initialValues={formData}
+                      />
+                    )}
+                    {activeStep === 3 && (
+                      <PreviewForm
+                        data={formData}
+                        onEdit={handleEdit}
+                        onSubmit={handleSubmit}
+                        loading={loading}
+                      />
+                    )}
+                  </div>
                 )}
-                {activeStep === 1 && (
-                  <EducationalDetailsForm
-                    onNext={handleNext}
-                    onBack={handleBack}
-                    // initialValues={formData.education}
-                  />
-                )}
-                {activeStep === 2 && (
-                  <JobDetailsForm
-                    onNext={handleNext}
-                    onBack={handleBack}
-                    // initialValues={formData.job}
-                  />
-                )}
-                {/* {activeStep === 3 && (
-                  <PreviewForm
-                    data={formData}
-                    onEdit={handleEdit}
-                    onSubmit={handleSubmit}
-                  />
-                )} */}
-              </div>
-            )}
-          </Box>
-        </Box>
-      </Card.Body>
-    </Card>
+              </Box>
+            </Box>
+          </Card.Body>
+        </Card>
       </Container>
     </Fragment>
   );
