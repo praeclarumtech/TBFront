@@ -55,7 +55,6 @@ const EmailTable = () => {
         setEmails(emailData);
         setError(null);
       } catch (err) {
-        console.log("error===>>>", err);
         setError("Failed to fetch emails");
         console.error("Error fetching emails:", err);
         setEmails([]); // Reset to empty array on error
@@ -214,7 +213,7 @@ const EmailTable = () => {
                     onClick={handleBulkDelete}
                     className="flex items-center gap-2 px-3 py-1 text-sm border border-blue-400 text-blue-500 hover:bg-blue-50 rounded"
                   >
-                    <Trash size={16} />({selectedEmails.length})
+                    <Trash size={16} />
                   </button>
                 )}
               </div>
