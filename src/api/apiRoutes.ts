@@ -25,3 +25,10 @@ export const VIEW_PASSING_YEAR_BY_ID = "year/getYearById";
 export const DELETE_PASSING_YEAR = "year/deleteYear";
 export const EDIT_PASSING_YEAR = "year/updateYear";
 export const VIEW_ALL_PASSING_YEAR = "year/listOfYears";
+
+//Skill module
+export const CREATE_SKILL = "skill/addSkills";
+export const VIEW_SKILL = "skill/viewById";
+export const VIEW_ALL_SKILL = "skill/viewSkills";
+export const UPDATE_SKILL = "skill/update";
+export const DELETE_SKILL = "skill/delete";

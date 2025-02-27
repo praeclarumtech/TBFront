@@ -17,8 +17,7 @@ export const DashboardMenu: DashboardMenuProps[] = [
     id: uuid(),
     title: "Applicants",
     icon: "layers",
-
-    link: "/add_applicants",
+    link: "/applicants",
   },
 
   {
