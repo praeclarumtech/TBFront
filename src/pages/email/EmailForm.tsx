@@ -113,7 +113,6 @@ const EmailForm = () => {
                           type="email"
                           placeholder="Enter Your email"
                           id="email_bcc"
-                          required
                           value={formData.email_bcc}
                           onChange={handleChange}
                           className="w-full p-2 bg-gray-100 rounded-md"
@@ -148,10 +147,18 @@ const EmailForm = () => {
                     </div>
 
                     <div className="flex justify-end items-center gap-4">
-                      <button className="p-2 hover:bg-gray-100 rounded-full">
+                      <button 
+                        type="button"
+                        disabled
+                        className="p-2 hover:bg-gray-100 rounded-full opacity-50 cursor-not-allowed"
+                      >
                         <i className="fa fa-paperclip"></i>
                       </button>
-                      <button className="p-2 hover:bg-gray-100 rounded-full">
+                      <button 
+                        type="button"
+                        disabled
+                        className="p-2 hover:bg-gray-100 rounded-full opacity-50 cursor-not-allowed"
+                      >
                         <i className="fa fa-file-image"></i>
                       </button>
                       <button
