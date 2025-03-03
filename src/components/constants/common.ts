@@ -56,7 +56,7 @@ export const validationMessages = {
   }
 
   export const InputPlaceHolder = (fieldName: string) => {
-    return `Enter ${fieldName.toLowerCase()}`;
+    return `Enter ${fieldName}`;
   };
   
   export const handleEditClick = () => {

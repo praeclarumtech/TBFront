@@ -199,11 +199,14 @@ const Navbars = () => {
                       <Container>
                         <Navbar.Brand href="#home">
                           {" "}
-                          <Image
+                          {/* <Image
                             src="/images/brand/logo/logo.svg"
                             alt=""
                             loading="lazy"
-                          />
+                          /> */}
+                          <h4 className="text-white text-3xl font-bold ">
+                            Talent<span className="text-primary ">Box</span>{" "}
+                          </h4>
                         </Navbar.Brand>
                         <Nav className="me-auto">
                           <Nav.Link href="#home">Home</Nav.Link>
@@ -217,11 +220,14 @@ const Navbars = () => {
                       <Container>
                         <Navbar.Brand href="#home">
                           {" "}
-                          <Image
+                          {/* <Image
                             src="/images/brand/logo/logo.svg"
                             alt=""
                             loading="lazy"
-                          />
+                          /> */}
+                          <h4 className="text-white text-3xl font-bold ">
+                            Talent<span className="text-primary ">Box</span>{" "}
+                          </h4>
                         </Navbar.Brand>
                         <Nav className="me-auto">
                           <Nav.Link href="#home">Home</Nav.Link>
