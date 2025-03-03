@@ -254,7 +254,7 @@ const SignUp = () => {
                     </div>
                     <div>
                       <div
-                        onClick={() => navigate("/forget-password")}
+                        onClick={() => navigate("/forgot-password")}
                         className="text-inherit fs-5"
                       >
                         Forgot your password?

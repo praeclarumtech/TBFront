@@ -35,9 +35,9 @@ const AddSkill = () => {
 
   const fetchSkills = () => {
     viewAllSkill()
-      .then((res: { success: any; data: { getskills: any }; message: any }) => {
+      .then((res: { success: any; data: { data: any }; message: any }) => {
         if (res?.success) {
-          setSkills(res.data.getskills || []);
+          setSkills(res.data.data || []);
         } else {
           toast.error(res?.message || "Failed to fetch skills");
         }
@@ -87,7 +87,7 @@ const AddSkill = () => {
   const columns = useMemo(
     () => [
       {
-        header: "Sr.no",
+        header: "Id.no",
         accessorKey: "_id",
         enableColumnFilter: false,
       },
@@ -102,6 +102,7 @@ const AddSkill = () => {
           <div className="hstack gap-2">
             <BaseButton
               id={`edit-${cell?.row?.original?._id}`}
+              color="primary"
               className="btn btn-sm btn-soft-warning edit-list"
               onClick={() => handleEdit(cell?.row?.original)}
             >
@@ -115,6 +116,7 @@ const AddSkill = () => {
             </BaseButton>
             <BaseButton
               id={`delete-${cell?.row?.original?._id}`}
+              color="danger"
               className="btn btn-sm btn-soft-danger delete-list"
               onClick={() => handleDelete(cell?.row?.original)}
             >
@@ -201,11 +203,10 @@ const AddSkill = () => {
             <Card className="mb-3 my-3">
               <CardBody>
                 <Row className="flex">
-                  <Row className="fw-bold text-dark ms-2 mt-1 h4">
-                    <Col xl={5} sm={12} md={4} lg={2} className="!mb-2">
-                      {formTitle}
-                    </Col>
-                  </Row>
+                  <Row className="fw-bold text-dark ms-2 mt-1 h4"></Row>
+                  <Col xl={5} sm={12} md={4} lg={2} className="!mb-2">
+                    <h4 className="font-bold"> {formTitle} </h4>
+                  </Col>
                   <Row className="ms-2">
                     <Col xs={9} md={5} lg={5}>
                       <BaseInput
@@ -231,58 +232,58 @@ const AddSkill = () => {
                       className="d-flex justify-content-end px-1"
                     >
                       <BaseButton
-                        color=" "
-                        className="btn btn-outline-dark border-1 rounded-5"
+                        color="secondary"
+                        className="btn btn-outline-dark border-1 text-white"
                         type="button"
                         onClick={() => validation.resetForm()}
                       >
                         Cancel
                       </BaseButton>
                       <BaseButton
-                        color="success"
+                        color="primary"
                         disabled={loader}
                         type="submit"
                         loader={loader}
-                        className="ms-3 px-5 border rounded-5"
+                        className="ms-3 px-5 border"
                         onClick={() => validation.handleSubmit()}
                       >
                         {submitButtonText}
                       </BaseButton>
                     </Col>
                   </Row>
-                  <Row>
-                    <Col lg={12}>
-                      <Card id="addedSkillList">
-                        {loader ? (
-                          <Loader />
-                        ) : (
-                          <div className="card-body pt-0">
-                            <div>
-                              {skills?.length > 0 ? (
-                                <TableContainer
-                                  isHeaderTitle="Skills"
-                                  columns={columns}
-                                  data={skills}
-                                  isGlobalFilter={true}
-                                  customPageSize={5}
-                                  theadClass="table-light text-muted"
-                                  SearchPlaceholder="Search..."
-                                />
-                              ) : (
-                                <div className="py-4 text-center">
-                                  <i className="ri-search-line d-block fs-1 text-success"></i>
-                                  {handleResponse?.dataNotFound}
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        )}
-                      </Card>
-                    </Col>
-                  </Row>
                 </Row>
               </CardBody>
             </Card>
+            <Row>
+              <Col lg={12}>
+                <Card id="addedSkillList">
+                  {loader ? (
+                    <Loader />
+                  ) : (
+                    <div className="card-body pt-0">
+                      <div>
+                        {skills?.length > 0 ? (
+                          <TableContainer
+                            isHeaderTitle="Skills"
+                            columns={columns}
+                            data={skills}
+                            isGlobalFilter={true}
+                            customPageSize={5}
+                            theadClass="table-light text-muted"
+                            SearchPlaceholder="Search..."
+                          />
+                        ) : (
+                          <div className="py-4 text-center">
+                            <i className="ri-search-line d-block fs-1 text-success"></i>
+                            {handleResponse?.dataNotFound}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </Card>
+              </Col>
+            </Row>
           </div>
         </Row>
       </Container>

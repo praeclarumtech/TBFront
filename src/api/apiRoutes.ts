@@ -1,10 +1,12 @@
 //User module
 export const LOGIN = "user/login";
 export const REGISTER = "user/register";
-export const FORGOT_PASSWORD = "user/forgotPassword";
 export const UPDATEPROFILE = "user/updateProfile";
 export const VIEWPROFILE = "user/viewProfile";
 export const CHANGEPASSWORD = "user/changePassword";
+export const VERIFY_OTP = "user/sendEmail/verifyOtp";
+export const SEND_OTP = "user/sendEmail"
+export const FORGOT_PASSWORD = "user/forgotPassword";
 
 //Applicant module
 export const LIST_APPLICANT = "applicants/viewAllApplicant";
