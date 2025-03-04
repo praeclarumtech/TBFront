@@ -42,12 +42,12 @@ export const DashboardMenu: DashboardMenuProps[] = [
     title: "Masters",
     grouptitle: true,
   },
-  {
-    id: uuid(),
-    title: "Add Passing Year",
-    icon: "monitor",
-    link: "/master/passing-year",
-  },
+  // {
+  //   id: uuid(),
+  //   title: "Add Passing Year",
+  //   icon: "monitor",
+  //   link: "/master/passing-year",
+  // },
   {
     id: uuid(),
     title: "Add Skills",

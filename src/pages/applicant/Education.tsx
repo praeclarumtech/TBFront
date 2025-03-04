@@ -24,8 +24,9 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
       relevantSkillExperience: initialValues?.relevantSkillExperience || "",
       otherSkills: initialValues?.otherSkills || "",
       referral: initialValues?.referral || "",
-      url: initialValues?.url || "",
+      resumeUrl: initialValues?.resumeUrl || "",
       rating: initialValues?.rating || "",
+      portfolioUrl: initialValues?.portfolioUrl || "",
     },
     validationSchema: Yup.object({
       qualification: Yup.string().required("Qualification is required"),
@@ -50,7 +51,8 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
           }
         ),
       referral: Yup.string(),
-      url: Yup.string()
+      portfolioUrl: Yup.string().url("Invalid URL"),
+      resumeUrl: Yup.string()
         .url("Please enter a valid URL")
         .required("Resume URL is required"),
       rating: Yup.number()
@@ -247,7 +249,7 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
 
                 <Col xs={12} md={6} lg={3}>
                   <BaseInput
-                    label="Relevant Skill Experience"
+                    label="Relevant Experience"
                     name="relevantSkillExperience"
                     type="text"
                     placeholder={InputPlaceHolder("Relevant skill experience")}
@@ -292,14 +294,14 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                 <Col xs={12} md={6} lg={4}>
                   <BaseInput
                     label="Resume Url"
-                    name="url"
+                    name="resumeUrl"
                     type="url"
                     placeholder={InputPlaceHolder("URL")}
                     handleChange={validation.handleChange}
                     handleBlur={validation.handleBlur}
-                    value={validation.values.url}
-                    touched={validation.touched.url}
-                    error={validation.errors.url}
+                    value={validation.values.resumeUrl}
+                    touched={validation.touched.resumeUrl}
+                    error={validation.errors.resumeUrl}
                     passwordToggle={false}
                     title="Please Upload Resume on Google Drive and share pulic url (Only PDF files allowed)"
                   />
@@ -316,6 +318,20 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     value={validation.values.rating}
                     touched={validation.touched.rating}
                     error={validation.errors.rating}
+                    passwordToggle={false}
+                  />
+                </Col>
+                <Col xs={12} md={6} lg={6} className="mb-3">
+                  <BaseInput
+                    label="Portfolio Url"
+                    name="portfolioUrl"
+                    type="url"
+                    placeholder={InputPlaceHolder("Portfolio Url")}
+                    handleChange={validation.handleChange}
+                    handleBlur={validation.handleBlur}
+                    value={validation.values.portfolioUrl}
+                    touched={validation.touched.portfolioUrl}
+                    error={validation.errors.portfolioUrl}
                     passwordToggle={false}
                   />
                 </Col>

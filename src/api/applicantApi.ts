@@ -9,8 +9,16 @@ import {
 } from "./apiRoutes";
 import { authServices } from "./apiServices";
 
-export const listOfApplicants = async (data?: object) => {
-  const response = await authServices.get(`${LIST_APPLICANT}`, data);
+export const listOfApplicants = async (params: {
+  page: number;
+  pageSize: number;
+  totalExperience?: number;
+  city?: string;
+  appliedSkills?: string;
+  startDate?: string;
+  endDate?: string;
+}) => {
+  const response = await authServices.get(`${LIST_APPLICANT}`, { params });
   return response?.data;
 };
 

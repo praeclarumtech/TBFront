@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { Fragment, useEffect, useState } from "react";
 import { CardBody, Col, Row, Table } from "reactstrap";
 import { Link } from "react-router-dom";
@@ -32,6 +31,7 @@ import {
   TaskListGlobalFilter,
 } from "./GlobalSearchFilter";
 import { handleResponse, tableButtons } from "components/constants/common";
+import Loader from "./Loader";
 
 // Column Filter
 const Filter = ({
@@ -121,6 +121,10 @@ interface TableContainerProps {
   handleContactClick?: any;
   handleTicketClick?: any;
   isHeaderTitle?: any;
+  totalRecords?: any;
+  pagination?: any;
+  setPagination?: any;
+  loader?: any;
 }
 
 const TableContainer = ({
@@ -146,6 +150,10 @@ const TableContainer = ({
   divClass,
   SearchPlaceholder,
   isHeaderTitle,
+  totalRecords,
+  pagination,
+  setPagination,
+  loader,
 }: TableContainerProps) => {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
@@ -161,13 +169,17 @@ const TableContainer = ({
   const table = useReactTable({
     columns,
     data,
+    manualPagination: true,
+    pageCount: Math.ceil(totalRecords / pagination?.pageSize),
     filterFns: {
       fuzzy: fuzzyFilter,
     },
     state: {
       columnFilters,
       globalFilter,
+      pagination,
     },
+    onPaginationChange: setPagination,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
     globalFilterFn: fuzzyFilter,
@@ -184,8 +196,6 @@ const TableContainer = ({
     getCanNextPage,
     getPageOptions,
     setPageIndex,
-    nextPage,
-    previousPage,
     setPageSize,
     getState,
   } = table;
@@ -251,8 +261,8 @@ const TableContainer = ({
         </Row>
       )}
 
-      <div className={divClass}>
-        <Table hover className={tableClass}>
+      <div className={`h-[400px] overflow-auto ${divClass}`}>
+        <Table hover className={tableClass} style={{ height: "50%" }}>
           <thead className={theadClass}>
             {getHeaderGroups()?.map((headerGroup: any) => (
               <tr className={trClass} key={headerGroup.id}>
@@ -288,7 +298,18 @@ const TableContainer = ({
           </thead>
 
           <tbody>
-            {getRowModel()?.rows?.length ? (
+            {loader ? (
+              <tr>
+                <td
+                  colSpan={getHeaderGroups()[0]?.headers?.length}
+                  className="text-center"
+                >
+                  <div className="flex justify-center items-center py-4">
+                    <Loader />
+                  </div>
+                </td>
+              </tr>
+            ) : getRowModel()?.rows?.length ? (
               getRowModel()?.rows?.map((row: any) => {
                 return (
                   <tr key={row.id}>
@@ -324,12 +345,17 @@ const TableContainer = ({
           <div className="text-muted">
             Showing
             <span className="fw-semibold ms-1">
+              {getState()?.pagination?.pageSize *
+                getState()?.pagination?.pageIndex +
+                1}
+              -
               {Math.min(
-                getState()?.pagination?.pageSize,
-                getRowModel()?.rows?.length
+                (getState()?.pagination?.pageIndex + 1) *
+                  getState()?.pagination?.pageSize,
+                totalRecords
               )}
             </span>{" "}
-            of <span className="fw-semibold">{data?.length}</span> Results
+            of <span className="fw-semibold">{totalRecords}</span> Results
           </div>
         </div>
         <div className="col-sm-auto">
@@ -339,7 +365,17 @@ const TableContainer = ({
                 !getCanPreviousPage() ? "page-item disabled" : "page-item"
               }
             >
-              <Link to="#" className="page-link" onClick={previousPage}>
+              <Link
+                to="#"
+                className="page-link"
+                aria-disabled={pagination?.pageIndex === 0}
+                onClick={() =>
+                  setPagination((prev: { pageIndex: number }) => ({
+                    ...prev,
+                    pageIndex: prev?.pageIndex - 1,
+                  }))
+                }
+              >
                 {tableButtons.Previous}
               </Link>
             </li>
@@ -363,7 +399,17 @@ const TableContainer = ({
             <li
               className={!getCanNextPage() ? "page-item disabled" : "page-item"}
             >
-              <Link to="#" className="page-link" onClick={nextPage}>
+              <Link
+                to="#"
+                className="page-link"
+                aria-disabled={pagination.pageIndex + 1 >= table.getPageCount()}
+                onClick={() =>
+                  setPagination((prev: { pageIndex: number }) => ({
+                    ...prev,
+                    pageIndex: prev.pageIndex + 1,
+                  }))
+                }
+              >
                 {tableButtons.Next}
               </Link>
             </li>

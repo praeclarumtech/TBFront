@@ -12,8 +12,10 @@ export const createSkill = async (data?: object) => {
   return response?.data;
 };
 
-export const viewAllSkill = async (data?: object) => {
-  const response = await authServices.get(`${VIEW_ALL_SKILL}`, data);
+export const viewAllSkill = async (
+  params: { page?: number; pageSize?: number } = {}
+) => {
+  const response = await authServices.get(`${VIEW_ALL_SKILL}`, { params });
   return response?.data;
 };
 

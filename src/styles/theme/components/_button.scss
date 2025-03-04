@@ -60,3 +60,19 @@
   bottom: 0;
   right: 0;
 }
+.btn-danger {
+  background-color: $red;
+  border-color: $red;
+  color: $white;
+  &:hover,
+  &:focus {
+    background-color: $red;
+    border-color: $red;
+    color: $white;
+  }
+  &.active {
+    background-color: $red;
+    border-color: $red;
+    color: $white;
+  }
+}
