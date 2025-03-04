@@ -25,8 +25,8 @@ export const ButtonEnums = {
   Submit: "Submit",
   Edit: "Edit",
   Updates: "Update",
-  Cancel: 'Cancel',
-  ChangePassword : 'Change Password',
+  Cancel: "Cancel",
+  ChangePassword: "Change Password",
 };
 
 export const Modules = {
@@ -35,13 +35,13 @@ export const Modules = {
   Applicant: "Applicant",
 };
 
-const getItem = (key:any) => {
+const getItem = (key: any) => {
   return sessionStorage.getItem(key);
 };
-const setItem = (key:any, value: any) => {
+const setItem = (key: any, value: any) => {
   return sessionStorage.setItem(key, value);
 };
 const clearSessionStorage = () => {
   sessionStorage.clear();
 };
-export {getItem, clearSessionStorage, setItem};
+export { getItem, clearSessionStorage, setItem };

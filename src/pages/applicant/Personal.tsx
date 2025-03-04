@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { Row, Col, Container } from "react-bootstrap";
 import * as Yup from "yup";
 import { InputPlaceHolder, projectTitle } from "components/constants/common";
@@ -17,7 +16,7 @@ import { SelectedOption } from "interfaces/applicant.interface";
 
 const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
   document.title = Modules.Applicant + " | " + projectTitle;
-
+  // const minDateOfBirth = moment().subtract(15, "years").format("YYYY-MM-DD");
   const validation: any = useFormik({
     enableReinitialize: true,
     initialValues: {
@@ -29,6 +28,7 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
       email: initialValues.email || "",
       gender: initialValues.gender || "",
       dateOfBirth: moment().format("YYYY-MM-DD") || "",
+      // dateOfBirth: "",
       fullAddress: initialValues.fullAddress || "",
       state: initialValues.state || "",
       country: initialValues.country || "",
@@ -94,43 +94,32 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
 
   const stateType = [
     { label: "Delhi", value: "delhi" },
-    { label: "Mumbai", value: "mumbai" },
-    { label: "Kolkata", value: "kolkata" },
-    { label: "Chennai", value: "chennai" },
-    { label: "Bangalore", value: "bangalore" },
-    { label: "Hyderabad", value: "hyderabad" },
-    { label: "Ahmedabad", value: "ahmedabad" },
-    { label: "Pune", value: "pune" },
-    { label: "Jaipur", value: "jaipur" },
-    { label: "Lucknow", value: "lucknow" },
-    { label: "Kochi", value: "kochi" },
+    { label: "West Bengal", value: "west_bengal" },
+    { label: "Tamil Nadu", value: "tamil_nadu" },
+    { label: "Karnataka", value: "karnataka" },
+    { label: "Telangana", value: "telangana" },
+    { label: "Gujarat", value: "gujarat" },
+    { label: "Maharashtra", value: "maharashtra" },
+    { label: "Rajasthan", value: "rajasthan" },
+    { label: "Uttar Pradesh", value: "uttar_pradesh" },
+    { label: "Kerala", value: "kerala" },
     { label: "Chandigarh", value: "chandigarh" },
-    { label: "Surat", value: "surat" },
-    { label: "Indore", value: "indore" },
-    { label: "Vadodara", value: "vadodara" },
-    { label: "Nagpur", value: "nagpur" },
-    { label: "Bhopal", value: "bhopal" },
-    { label: "Patna", value: "patna" },
-    { label: "Visakhapatnam", value: "visakhapatnam" },
-    { label: "Bhubaneswar", value: "bhubaneswar" },
+    { label: "Madhya Pradesh", value: "madhya_pradesh" },
+    { label: "Bihar", value: "bihar" },
+    { label: "Andhra Pradesh", value: "andhra_pradesh" },
+    { label: "Odisha", value: "odisha" },
     { label: "Goa", value: "goa" },
-    { label: "Madurai", value: "madurai" },
-    { label: "Varanasi", value: "varanasi" },
-    { label: "Coimbatore", value: "coimbatore" },
-    { label: "Ranchi", value: "ranchi" },
-    { label: "Agra", value: "agra" },
-    { label: "Amritsar", value: "amritsar" },
-    { label: "Guwahati", value: "guwahati" },
-    { label: "Nashik", value: "nashik" },
-    { label: "Shillong", value: "shillong" },
-    { label: "Mysuru", value: "mysuru" },
+    { label: "Jharkhand", value: "jharkhand" },
+    { label: "Punjab", value: "punjab" },
+    { label: "Assam", value: "assam" },
+    { label: "Manipur", value: "manipur" },
+    { label: "Sikkim", value: "sikkim" },
+    { label: "Arunachal Pradesh", value: "arunachal_pradesh" },
+    { label: "Nagaland", value: "nagaland" },
+    { label: "Meghalaya", value: "meghalaya" },
+    { label: "Karnataka", value: "karnataka" },
   ];
-
-  const countriesType = [
-    { label: "USA", value: "usa" },
-    { label: "India", value: "india" },
-    { label: "Canada", value: "canada" },
-  ];
+  const countriesType = [{ label: "India", value: "india" }];
 
   return (
     <Fragment>
@@ -200,7 +189,7 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
                     placeholder={InputPlaceHolder("Date Of Birth")}
                     handleChange={validation.handleChange}
                     handleBlur={validation.handleBlur}
-                    value={validation.values.dateOfBirth}
+                    value={validation.values.dateOfBirth || ""}
                     touched={validation.touched.dateOfBirth}
                     error={validation.errors.dateOfBirth}
                     passwordToggle={false}
@@ -353,14 +342,16 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
                   <BaseInput
                     label="Full Address"
                     name="fullAddress"
-                    type="text"
-                    placeholder={InputPlaceHolder("Full address")}
+                    placeholder={InputPlaceHolder("Full Address")}
                     handleChange={validation.handleChange}
                     handleBlur={validation.handleBlur}
                     value={validation.values.fullAddress}
                     touched={validation.touched.fullAddress}
                     error={validation.errors.fullAddress}
                     passwordToggle={false}
+                    multiline
+                    rows={2}
+                    cols={50}
                   />
                 </Col>
               </Row>
@@ -369,12 +360,16 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
                 <Link
                   to="/applicants"
                   style={styleButton}
-                  className="!Text-center !justify-content-center "
+                  className="d-flex align-items-center justify-content-center"
                 >
                   Cancel
                 </Link>
 
-                <BaseButton color="primary" type="submit">
+                <BaseButton
+                  color="primary"
+                  type="submit"
+                  className="d-flex align-items-center justify-content-center"
+                >
                   Next
                 </BaseButton>
               </div>
@@ -390,7 +385,7 @@ const styleButton = {
   backgroundColor: "red",
   color: "white",
   borderRadius: "5px",
-  padding: "10px 20px",
+  padding: "8px 20px",
   fontSize: "16px",
   cursor: "pointer",
   alignItems: "center",

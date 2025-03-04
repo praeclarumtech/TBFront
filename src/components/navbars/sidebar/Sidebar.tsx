@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// import node module libraries
 import { Fragment } from "react";
 import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { useMediaQuery } from "react-responsive";
-import { ListGroup, Card, Image, Badge } from "react-bootstrap";
+import { ListGroup, Card, Badge } from "react-bootstrap";
 import { Accordion } from "react-bootstrap";
 import { CustomToggle } from "./CustomToggle";
 import { CustomToggleLevelTwo } from "./CustomToggleLevelTwo";
@@ -15,8 +14,6 @@ import SimpleBar from "simplebar-react";
 // import routes file
 import { DashboardMenu } from "routes/DashboardRoutes";
 import { DashboardMenuProps } from "types";
-
-console.log("---.", DashboardMenu);
 
 interface SidebarProps {
   showMenu: boolean;
@@ -50,8 +47,11 @@ const Sidebar: React.FC<SidebarProps> = ({ showMenu, toggleMenu }) => {
     <Fragment>
       <SimpleBar style={{ maxHeight: "100vh" }}>
         <div className="nav-scroller">
-          <Link to="/" className="navbar-brand">
-            <Image src="/images/brand/logo/logo.svg" alt="" />
+          <Link to="/dashboard" className="navbar-brand">
+            {/* <Image src="/images/brand/logo/logo.svg" alt="" /> */}
+            <h4 className="text-white text-3xl font-bold ">
+              Talent<span className="text-primary ">Box</span>
+            </h4>
           </Link>
         </div>
         {/* Dashboard Menu */}
