@@ -71,7 +71,8 @@ const StepperForm = () => {
     practicalUrl: "",
     practicalFeedback: "",
     aboutUs: "",
-    communicationSkill:"",
+    communicationSkill: "",
+    designation:"",
   });
   const steps = [
     "Personal Details",
@@ -147,6 +148,7 @@ const StepperForm = () => {
       feedback: formData.practicalFeedback,
       aboutUs: formData.aboutUs,
       communicationSkill: formData.communicationSkill,
+      designation:formData.designation,
     };
   };
 
