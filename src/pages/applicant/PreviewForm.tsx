@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { Card, Col, Row } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
 
 import BaseButton from "components/BaseComponents/BaseButton";
 import { Typography } from "@mui/material";
@@ -18,7 +18,9 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
   };
 
   return (
-    <Card>
+  
+      <>
+      
       <div>
         <Typography
           variant="h6"
@@ -31,12 +33,13 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
           variant="h6"
           className="mx-5 font-bold text-2xl !text-blue-600"
         >
-          Personal Details:
+          <i className="fa fa-user mr-1 "> </i>
+          <span>Personal Details:</span>
         </Typography>
 
         <hr className="!text-blue-900 font-extrabold " />
         <div className="mx-2 p-3">
-          <Row>
+          <Row className="mx-2">
             <Col xs={12} md={6} className="mb-3">
               <Typography variant="body1" className="text-gray-600">
                 <span className="font-extrabold text-base !text-black pt-3">
@@ -112,12 +115,13 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
           variant="h6"
           className="mx-5 font-bold text-2xl !text-blue-600"
         >
+          <i className="fa fa-book  mr-1 "> </i>
           Educational Details:
         </Typography>
         <hr className="text-blue-900 font-extrabold " />
         <div className="mx-2 p-2">
-          <Row>
-            <Col xs={12} md={6} className="mb-3">
+          <Row className="mx-2">
+            <Col xs={12} md={6} className="mb-3  ">
               <Typography variant="body1" className="text-gray-600">
                 <span className="font-extrabold text-base !text-black pt-3">
                   Degree:
@@ -147,6 +151,12 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
                   Javascript Rating:
                 </span>
                 <span>{" " + data.rating}</span>
+              </Typography>
+              <Typography>
+                <span className="font-extrabold text-base !text-black pt-3">
+                  Designation :
+                </span>
+                <span>{" " + data.designation}</span>
               </Typography>
             </Col>
 
@@ -193,11 +203,12 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
           variant="h6"
           className="mx-5 font-bold text-2xl !text-blue-600"
         >
+          <i className="fa fa-suitcase  mr-1 "> </i>
           Job Details:
         </Typography>
         <hr className="text-blue-900 font-extrabold " />
         <div className="mx-2 p-3">
-          <Row>
+          <Row className="mx-2">
             <Col xs={12} md={6} className="mb-3">
               <Typography variant="body1" className="text-gray-600">
                 <span className="font-extrabold text-base !text-black pt-3">
@@ -298,8 +309,7 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
             </Col>
           </Row>
         </div>
-      </div>
-      <div className="d-flex justify-content-between m-3">
+      </div><div className="d-flex justify-content-between m-3">
         <BaseButton variant="contained" onClick={() => onEdit(2)}>
           Back
         </BaseButton>
@@ -307,12 +317,12 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
           variant="contained"
           color="primary"
           onClick={onSubmit}
-          // disabled={loading}
         >
           {loading ? "Submitting..." : "Submit Application"}
         </BaseButton>
-      </div>
-    </Card>
+        </div>
+      </>
+  
   );
 };
 

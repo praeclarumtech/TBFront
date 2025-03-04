@@ -22,12 +22,13 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
       passingYear: initialValues?.passingYear || "",
       totalExperience: initialValues?.totalExperience || "",
       relevantSkillExperience: initialValues?.relevantSkillExperience || "",
-      appliedSkills:initialValues?.appliedSkills || "",
+      appliedSkills: initialValues?.appliedSkills || "",
       otherSkills: initialValues?.otherSkills || "",
       referral: initialValues?.referral || "",
       resumeUrl: initialValues?.resumeUrl || "",
       rating: initialValues?.rating || "",
       portfolioUrl: initialValues?.portfolioUrl || "",
+      designation: initialValues?.designation || "",
     },
     validationSchema: Yup.object({
       qualification: Yup.array()
@@ -35,7 +36,7 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
         .min(1, "At least one skill must be selected"),
       degree: Yup.string().required("Degree Name is required"),
       passingYear: Yup.string().required("Passing Year is required"),
-      appliedSkills:Yup.array()
+      appliedSkills: Yup.array()
         .required("Passing Skill is required")
         .min(1, "At least one skill must be selected"),
       otherSkills: Yup.string(),
@@ -53,6 +54,7 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
             return value <= totalExperience;
           }
         ),
+      designation: Yup.string().required("Designation is required"),
       referral: Yup.string(),
       portfolioUrl: Yup.string().url("Invalid URL"),
       resumeUrl: Yup.string()
@@ -114,7 +116,6 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
     { label: "Node Js", value: "Node.js" },
     { label: "Python", value: "Python" },
     { label: "Java", value: "Java" },
-    { label: "C++", value: "C++" },
     { label: "Express Js", value: "Express Js" },
     { label: "DotNet", value: "DotNet" },
     { label: "Testing", value: "Testing" },
@@ -124,7 +125,96 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
     { label: "Tailwind Css", value: "Tailwind Css" },
     { label: "React", value: "React" },
     { label: "Redux", value: "Redux" },
+    { value: "JavaScript", label: "JavaScript" },
+    { value: "Node.js", label: "Node.js" },
+    { value: "Python", label: "Python" },
+    { value: "MongoDB", label: "MongoDB" },
+    { value: "C", label: "C" },
+    { value: "C++", label: "C++" },
+    { value: "C#", label: "C#" },
+    { value: "SQL", label: "SQL" },
+    { value: "HTML", label: "HTML" },
+    { value: "CSS", label: "CSS" },
+    { value: "React", label: "React" },
+    { value: "Angular", label: "Angular" },
+    { value: "Vue.js", label: "Vue.js" },
+    { value: "Ruby", label: "Ruby" },
+    { value: "Ruby on Rails", label: "Ruby on Rails" },
+    { value: "PHP", label: "PHP" },
+    { value: "Swift", label: "Swift" },
+    { value: "Kotlin", label: "Kotlin" },
+    { value: "Go", label: "Go" },
+    { value: "R", label: "R" },
+    { value: "TypeScript", label: "TypeScript" },
+    { value: "Django", label: "Django" },
+    { value: "Flask", label: "Flask" },
+    { value: "Laravel", label: "Laravel" },
+    { value: "Spring Boot", label: "Spring Boot" },
+    { value: "ASP.NET", label: "ASP.NET" },
+    { value: "AWS", label: "AWS" },
+    { value: "Azure", label: "Azure" },
+    { value: "Google Cloud", label: "Google Cloud" },
+    { value: "Docker", label: "Docker" },
+    { value: "Kubernetes", label: "Kubernetes" },
+    { value: "TensorFlow", label: "TensorFlow" },
+    { value: "PyTorch", label: "PyTorch" },
+    { value: "Machine Learning", label: "Machine Learning" },
+    { value: "Deep Learning", label: "Deep Learning" },
+    { value: "Data Science", label: "Data Science" },
+    { value: "Blockchain", label: "Blockchain" },
+    { value: "Git", label: "Git" },
+    { value: "GitHub", label: "GitHub" },
+    { value: "Jenkins", label: "Jenkins" },
+    { value: "GraphQL", label: "GraphQL" },
+    { value: "RESTful APIs", label: "RESTful APIs" },
+    { value: "Firebase", label: "Firebase" },
+    { value: "SQLite", label: "SQLite" },
+    { value: "PostgreSQL", label: "PostgreSQL" },
+    { value: "MySQL", label: "MySQL" },
+    { value: "Redis", label: "Redis" },
+    { value: "Elasticsearch", label: "Elasticsearch" },
+    { value: "Apache Kafka", label: "Apache Kafka" },
+    { value: "Apache Hadoop", label: "Apache Hadoop" },
+    { value: "Unity", label: "Unity" },
+    { value: "Unreal Engine", label: "Unreal Engine" },
+    { value: "Arduino", label: "Arduino" },
+    { value: "Raspberry Pi", label: "Raspberry Pi" },
+    { value: "VMware", label: "VMware" },
+    { value: "Linux", label: "Linux" },
+    { value: "Shell Scripting", label: "Shell Scripting" },
+    { value: "Data Structures", label: "Data Structures" },
+    { value: "Algorithms", label: "Algorithms" },
+    { value: "Operating Systems", label: "Operating Systems" },
+    { value: "Computer Networks", label: "Computer Networks" },
+    { value: "Artificial Intelligence", label: "Artificial Intelligence" },
+    { value: "Cybersecurity", label: "Cybersecurity" },
+    { value: "DevOps", label: "DevOps" },
+    { value: "Agile", label: "Agile" },
+    { value: "Scrum", label: "Scrum" },
+    { value: "UI/UX Design", label: "UI/UX Design" },
+    { value: "Design Patterns", label: "Design Patterns" },
+    { value: "Test Automation", label: "Test Automation" },
+    { value: "Manual Testing", label: "Manual Testing" },
+    { value: "Business Intelligence", label: "Business Intelligence" },
+    { value: "Tableau", label: "Tableau" },
+    { value: "Power BI", label: "Power BI" },
   ];
+
+  const designationType = [
+    { value: "SOFTWARE_ENGINEER", label: "Software Engineer" },
+    { value: "FRONTED_DEVLOPER", label: "Frontend Developer" },
+    { value: "BACKEND_DEVLOPER", label: "Backend Developer" },
+    { value: "FULL_STACK_DEVLOPER", label: "Full Stack Developer" },
+    { value: "DATA_ANALYST", label: "Data Analyst" },
+    { value: "DATA_SCIENTIST", label: "Data Scientist" },
+    { value: "PRODUCT_MANAGER", label: "Product Manager" },
+    { value: "UI_UX", label: "UX/UI Designer" },
+    { value: "QA", label: "QA Engineer" },
+    { value: "DEVOPS", label: "DevOps Engineer" },
+    { value: "BUSNESS_ANALYST", label: "Business Analyst" },
+    { value: "TECHNICSL_SUPPORT", label: "Technical Support Engineer" },
+  ];
+
 
   const [selectedMulti, setSelectedMulti] = useState<any>(
     initialValues.appliedSkills || []
@@ -175,7 +265,6 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                       );
                     }}
                     handleBlur={validation.handleBlur}
-                   
                     value={selectedQualification || ""}
                     touched={validation.touched.qualification}
                     error={validation.errors.qualification}
@@ -286,33 +375,27 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                   />
                 </Col>
                 <Col xs={12} md={6} lg={4}>
-                  <BaseInput
-                    label="Referral"
-                    name="referral"
-                    type="text"
-                    placeholder={InputPlaceHolder("Referral")}
-                    handleChange={validation.handleChange}
-                    handleBlur={validation.handleBlur}
-                    value={validation.values.referral}
-                    touched={validation.touched.referral}
-                    error={validation.errors.referral}
-                    passwordToggle={false}
-                  />
-                </Col>
-
-                <Col xs={12} md={6} lg={4}>
-                  <BaseInput
-                    label="Resume Url"
-                    name="resumeUrl"
-                    type="url"
-                    placeholder={InputPlaceHolder("URL")}
-                    handleChange={validation.handleChange}
-                    handleBlur={validation.handleBlur}
-                    value={validation.values.resumeUrl}
-                    touched={validation.touched.resumeUrl}
-                    error={validation.errors.resumeUrl}
-                    passwordToggle={false}
-                    title="Please Upload Resume on Google Drive and share pulic url (Only PDF files allowed)"
+                  <BaseSelect
+                    label="Designation"
+                    name="designation"
+                    className="select-border"
+                    options={designationType}
+                    placeholder={InputPlaceHolder("Degination")}
+                    handleChange={(selectedOption: SelectedOption) => {
+                      validation.setFieldValue(
+                        "designation",
+                        selectedOption?.value || ""
+                      );
+                    }}
+                    handleBlur={validation.designation}
+                    value={
+                      dynamicFind(
+                        designationType,
+                        validation.values.designation
+                      ) || ""
+                    }
+                    touched={validation.touched.designation}
+                    error={validation.errors.designation}
                   />
                 </Col>
 
@@ -328,6 +411,35 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     touched={validation.touched.rating}
                     error={validation.errors.rating}
                     passwordToggle={false}
+                  />
+                </Col>
+                <Col xs={12} md={6} lg={4}>
+                  <BaseInput
+                    label="Referral"
+                    name="referral"
+                    type="text"
+                    placeholder={InputPlaceHolder("Referral")}
+                    handleChange={validation.handleChange}
+                    handleBlur={validation.handleBlur}
+                    value={validation.values.referral}
+                    touched={validation.touched.referral}
+                    error={validation.errors.referral}
+                    passwordToggle={false}
+                  />
+                </Col>
+                <Col xs={12} md={6} lg={6}>
+                  <BaseInput
+                    label="Resume Url"
+                    name="resumeUrl"
+                    type="url"
+                    placeholder={InputPlaceHolder("Resume URL")}
+                    handleChange={validation.handleChange}
+                    handleBlur={validation.handleBlur}
+                    value={validation.values.resumeUrl}
+                    touched={validation.touched.resumeUrl}
+                    error={validation.errors.resumeUrl}
+                    passwordToggle={false}
+                    title="Please Upload Resume on Google Drive and share pulic url (Only PDF files allowed)"
                   />
                 </Col>
                 <Col xs={12} md={6} lg={6} className="mb-3">

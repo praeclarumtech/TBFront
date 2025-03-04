@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Row, Col, Card, Container, CardBody } from "react-bootstrap";
-import { Fragment, useEffect, useState, useMemo } from "react";
+import { Fragment, useEffect, useState, useMemo, SetStateAction } from "react";
 import { dynamicFind, errorHandle } from "components/helpers/service";
 import BaseButton from "components/BaseComponents/BaseButton";
 import { BaseSelect, MultiSelect } from "components/BaseComponents/BaseSelect";
@@ -18,17 +18,11 @@ import ViewModal from "./ViewApplicant";
 import BaseInput from "components/BaseComponents/BaseInput";
 import DeleteModal from "components/BaseComponents/DeleteModal";
 import { InputPlaceHolder, projectTitle } from "components/constants/common";
-import * as React from "react";
-import Box from "@mui/material/Box";
-import Drawer from "@mui/material/Drawer";
-import Button from "@mui/material/Button";
-import List from "@mui/material/List";
-import Divider from "@mui/material/Divider";
+// import { FILTER_APPLICANT } from "api/apiRoutes";
 
 import { SelectedOption } from "interfaces/applicant.interface";
 import { Modules } from "components/constants/enum";
 
-type Anchor = "top" | "right" | "bottom";
 const Applicant = () => {
   document.title = Modules.Applicant + " | " + projectTitle;
   const navigate = useNavigate();
@@ -38,7 +32,7 @@ const Applicant = () => {
     null
   );
   const [showModal, setShowModal] = useState(false);
-
+  const [filtersVisible, setFiltersVisible] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [recordIdToDelete, setRecordIdToDelete] = useState<string | undefined>(
     undefined
@@ -65,24 +59,6 @@ const Applicant = () => {
     pageSize: 10,
   });
   const [tableLoader, setTableLoader] = useState(false);
-
-  const [state, setState] = React.useState({
-    right: false,
-  });
-
-  const toggleDrawer =
-    (anchor: Anchor, open: boolean) =>
-    (event: React.KeyboardEvent | React.MouseEvent) => {
-      if (
-        event.type === "keydown" &&
-        ((event as React.KeyboardEvent).key === "Tab" ||
-          (event as React.KeyboardEvent).key === "Shift")
-      ) {
-        return;
-      }
-
-      setState({ ...state, [anchor]: open });
-    };
 
   const statusOptions = [
     { label: "Hold", value: "Hold" },
@@ -147,75 +123,6 @@ const Applicant = () => {
     { value: "Python", label: "Python" },
     { value: "MongoDB", label: "MongoDB" },
     { value: "Java", label: "Java" },
-    { value: "C", label: "C" },
-    { value: "C++", label: "C++" },
-    { value: "C#", label: "C#" },
-    { value: "SQL", label: "SQL" },
-    { value: "HTML", label: "HTML" },
-    { value: "CSS", label: "CSS" },
-    { value: "React", label: "React" },
-    { value: "Angular", label: "Angular" },
-    { value: "Vue.js", label: "Vue.js" },
-    { value: "Ruby", label: "Ruby" },
-    { value: "Ruby on Rails", label: "Ruby on Rails" },
-    { value: "PHP", label: "PHP" },
-    { value: "Swift", label: "Swift" },
-    { value: "Kotlin", label: "Kotlin" },
-    { value: "Go", label: "Go" },
-    { value: "R", label: "R" },
-    { value: "TypeScript", label: "TypeScript" },
-    { value: "Django", label: "Django" },
-    { value: "Flask", label: "Flask" },
-    { value: "Laravel", label: "Laravel" },
-    { value: "Spring Boot", label: "Spring Boot" },
-    { value: "ASP.NET", label: "ASP.NET" },
-    { value: "AWS", label: "AWS" },
-    { value: "Azure", label: "Azure" },
-    { value: "Google Cloud", label: "Google Cloud" },
-    { value: "Docker", label: "Docker" },
-    { value: "Kubernetes", label: "Kubernetes" },
-    { value: "TensorFlow", label: "TensorFlow" },
-    { value: "PyTorch", label: "PyTorch" },
-    { value: "Machine Learning", label: "Machine Learning" },
-    { value: "Deep Learning", label: "Deep Learning" },
-    { value: "Data Science", label: "Data Science" },
-    { value: "Blockchain", label: "Blockchain" },
-    { value: "Git", label: "Git" },
-    { value: "GitHub", label: "GitHub" },
-    { value: "Jenkins", label: "Jenkins" },
-    { value: "GraphQL", label: "GraphQL" },
-    { value: "RESTful APIs", label: "RESTful APIs" },
-    { value: "Firebase", label: "Firebase" },
-    { value: "SQLite", label: "SQLite" },
-    { value: "PostgreSQL", label: "PostgreSQL" },
-    { value: "MySQL", label: "MySQL" },
-    { value: "Redis", label: "Redis" },
-    { value: "Elasticsearch", label: "Elasticsearch" },
-    { value: "Apache Kafka", label: "Apache Kafka" },
-    { value: "Apache Hadoop", label: "Apache Hadoop" },
-    { value: "Unity", label: "Unity" },
-    { value: "Unreal Engine", label: "Unreal Engine" },
-    { value: "Arduino", label: "Arduino" },
-    { value: "Raspberry Pi", label: "Raspberry Pi" },
-    { value: "VMware", label: "VMware" },
-    { value: "Linux", label: "Linux" },
-    { value: "Shell Scripting", label: "Shell Scripting" },
-    { value: "Data Structures", label: "Data Structures" },
-    { value: "Algorithms", label: "Algorithms" },
-    { value: "Operating Systems", label: "Operating Systems" },
-    { value: "Computer Networks", label: "Computer Networks" },
-    { value: "Artificial Intelligence", label: "Artificial Intelligence" },
-    { value: "Cybersecurity", label: "Cybersecurity" },
-    { value: "DevOps", label: "DevOps" },
-    { value: "Agile", label: "Agile" },
-    { value: "Scrum", label: "Scrum" },
-    { value: "UI/UX Design", label: "UI/UX Design" },
-    { value: "Design Patterns", label: "Design Patterns" },
-    { value: "Test Automation", label: "Test Automation" },
-    { value: "Manual Testing", label: "Manual Testing" },
-    { value: "Business Intelligence", label: "Business Intelligence" },
-    { value: "Tableau", label: "Tableau" },
-    { value: "Power BI", label: "Power BI" },
   ];
 
   const designationType = [
@@ -321,11 +228,6 @@ const Applicant = () => {
     filterExpectedPkg,
     filterDesignation,
   ]);
-
-  const handleAppliedSkillsChange = (selectedOptions: SelectedOption[]) => {
-    setAppliedSkills(selectedOptions);
-  };
-
   const handleExperienceChange = (selectedOption: SelectedOption) => {
     setFilterExperience(selectedOption);
   };
@@ -356,16 +258,6 @@ const Applicant = () => {
   };
   const handleDesignationChange = (selectedOption: SelectedOption) => {
     SetFilterDesignation(selectedOption);
-  };
-  const handleDateChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    isStartDate: boolean
-  ) => {
-    if (isStartDate) {
-      setStartDate(e.target.value);
-    } else {
-      setEndDate(e.target.value);
-    }
   };
 
   const resetFilters = () => {
@@ -426,151 +318,6 @@ const Applicant = () => {
   const handleEdit = (applicantId: string) => {
     navigate(`/applicants/edit-applicant/${applicantId}`);
   };
-
-  const drawerList = (anchor: Anchor) => (
-    <Box
-      sx={{
-        width: anchor === "top" || anchor === "bottom" ? "auto" : 400,
-        padding: "16px",
-        marginTop: anchor === "top" ? "64px" : 0,
-      }}
-      role="presentation"
-    >
-      <List>
-        <Row>
-          <Col>
-            <h4 className="mb-3">Filters </h4>
-          </Col>
-          <Col>
-            <BaseButton
-              className="mt-2"
-              color="primary"
-              onClick={resetFilters}
-              variant="outlined"
-              sx={{ width: "100%" }}
-            >
-              Reset Filters
-            </BaseButton>
-          </Col>
-        </Row>
-        <MultiSelect
-          label="Applied Skills"
-          name="appliedSkills"
-          className="select-border mb-1 "
-          placeholder="Applied Skills"
-          value={appliedSkills || null}
-          isMulti={true}
-          onChange={handleAppliedSkillsChange}
-          options={skillOptions}
-        />
-
-        <BaseSelect
-          label="Experience"
-          name="Experience"
-          className="select-border mb-1"
-          options={experienceOptions}
-          placeholder="Experience"
-          handleChange={handleExperienceChange}
-          value={filterExperience}
-        />
-        <BaseSelect
-          label="City"
-          name="city"
-          className="select-border mb-1 "
-          options={cityOptions}
-          placeholder="City"
-          handleChange={handleCityChange}
-          value={filterCity}
-        />
-        <BaseSelect
-          label="Interview Stage"
-          name="interviewStage"
-          className="select-border mb-1"
-          options={interviewStageOptions}
-          placeholder="Interview Stage"
-          handleChange={handleInterviewStageChange}
-          value={filterInterviewStage}
-        />
-        <BaseSelect
-          isDisabled={true}
-          label="Status"
-          name="status"
-          className="select-border mb-1"
-          options={statusOptions}
-          placeholder="Status"
-          handleChange={handleStatusChange}
-          value={filterStatus}
-        />
-
-        <BaseSelect
-          isDisabled={true}
-          label="Gender"
-          name="gender"
-          className="select-border mb-1"
-          options={gendersType}
-          placeholder="Gender"
-          handleChange={handleGenderChange}
-          value={filterGender}
-        />
-
-        <BaseSelect
-          isDisabled={true}
-          label="Expected Pkg"
-          name="expectedPkg"
-          className="select-border mb-1 "
-          options={expectedPkgOptions}
-          placeholder="Expected Package"
-          handleChange={handleExpectedPkgChange}
-          value={filterExpectedPkg}
-        />
-        <BaseSelect
-          isDisabled={true}
-          label="Designation"
-          name="designation"
-          className="select-border mb-1"
-          options={designationType}
-          placeholder="Expected Package"
-          handleChange={handleDesignationChange}
-          value={filterDesignation}
-        />
-        <BaseSelect
-          isDisabled={true}
-          label="Notice Period"
-          name="noticePeriod"
-          className="select-border mb-1"
-          options={noticePeriodOptions}
-          placeholder="Notice Period"
-          handleChange={handleNoticePeriodChange}
-          value={filterNoticePeriod}
-        />
-
-        <BaseInput
-          label="Start Date"
-          name="startDate"
-          className="select-border mb-1"
-          type="date"
-          placeholder={InputPlaceHolder("Start Date")}
-          handleChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            handleDateChange(e, true)
-          }
-          value={startDate || ""}
-        />
-
-        <BaseInput
-          label="End Date"
-          name="endDate"
-          type="date"
-          placeholder={InputPlaceHolder("End Date")}
-          handleChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            handleDateChange(e, false)
-          }
-          value={endDate || ""}
-        />
-      </List>
-
-      <Divider />
-    </Box>
-  );
 
   const columns = useMemo(
     () => [
@@ -744,20 +491,12 @@ const Applicant = () => {
                 <div className="container">
                   <div className="row flex justify-content-between">
                     <div className="col-auto !d-flex !justify-content-start !mx-0 ">
-                      <Button
-                        onClick={toggleDrawer("right", true)}
+                      <BaseButton
+                        onClick={() => setFiltersVisible(!filtersVisible)}
                         color="primary"
                       >
-                        <i className="fa fa-filter mx-1"></i> Show Filters
-                      </Button>
-                      <Drawer
-                        className="!mt-16 "
-                        anchor="right"
-                        open={state["right"]}
-                        onClose={toggleDrawer("right", false)}
-                      >
-                        {drawerList("right")}
-                      </Drawer>
+                        {filtersVisible ? "Hide Filters" : "Show Filters"}
+                      </BaseButton>
                     </div>
 
                     <div className="col-auto !d-flex !justify-content-end mx-0 ">
@@ -772,6 +511,145 @@ const Applicant = () => {
                     </div>
                   </div>
                 </div>
+
+                {filtersVisible && (
+                  <Row className="flex mt-3">
+                    <Col xl={2} sm={6} md={4} lg={2}>
+                      <MultiSelect
+                        label="Applied Skills"
+                        name="appliedSkills"
+                        className="select-border"
+                        placeholder="Applied Skills"
+                        value={appliedSkills || null}
+                        isMulti={true}
+                        onChange={setAppliedSkills}
+                        options={skillOptions}
+                      />
+                    </Col>
+                    <Col xl={2} sm={6} md={4} lg={2}>
+                      <BaseSelect
+                        label="Experience"
+                        name="Experience"
+                        className="select-border"
+                        options={experienceOptions}
+                        placeholder="Experience"
+                        handleChange={handleExperienceChange}
+                        value={filterExperience}
+                      />
+                    </Col>
+                    <Col xl={2} sm={6} md={4} lg={2}>
+                      <BaseSelect
+                        label="Gender"
+                        name="gender"
+                        className="select-border"
+                        options={gendersType}
+                        placeholder="Gender"
+                        handleChange={handleGenderChange}
+                        value={filterGender}
+                      />
+                    </Col>
+                    <Col xl={2} sm={6} md={4} lg={2}>
+                      <BaseSelect
+                        label="Notice Period"
+                        name="noticePeriod"
+                        className="select-border"
+                        options={noticePeriodOptions}
+                        placeholder="Notice Period"
+                        handleChange={handleNoticePeriodChange}
+                        value={filterNoticePeriod}
+                      />
+                    </Col>
+                    <Col xl={2} sm={6} md={4} lg={2}>
+                      <BaseSelect
+                        label="Interview stage"
+                        name="interviewStage"
+                        className="select-border"
+                        options={interviewStageOptions}
+                        placeholder="Interview Stage"
+                        handleChange={handleInterviewStageChange}
+                        value={filterInterviewStage}
+                      />
+                    </Col>
+                    <Col xl={2} sm={6} md={4} lg={2}>
+                      <BaseSelect
+                        label="Status"
+                        name="status"
+                        className="select-border"
+                        options={statusOptions}
+                        placeholder="status"
+                        handleChange={handleStatusChange}
+                        value={filterStatus}
+                      />
+                    </Col>
+                    <Col xl={2} sm={6} md={4} lg={2}>
+                      <BaseSelect
+                        label="Expected Pkg"
+                        name="expectedPkg"
+                        className="select-border"
+                        options={expectedPkgOptions}
+                        placeholder="Expected Package"
+                        handleChange={handleExpectedPkgChange}
+                        value={filterExpectedPkg}
+                      />
+                    </Col>
+                    <Col xl={2} sm={6} md={4} lg={2}>
+                      <BaseSelect
+                        label="Designation"
+                        name="designation"
+                        className="select-border"
+                        options={designationType}
+                        placeholder="Expected Package"
+                        handleChange={handleDesignationChange}
+                        value={filterDesignation}
+                      />
+                    </Col>
+                    <Col xl={2} sm={6} md={4} lg={2}>
+                      <BaseSelect
+                        label="City"
+                        name="city"
+                        className="select-border"
+                        options={cityOptions}
+                        placeholder="City"
+                        handleChange={handleCityChange}
+                        value={filterCity}
+                      />
+                    </Col>
+                    <Col xl={2} sm={6} md={4} lg={2}>
+                      <BaseInput
+                        label="Start Date"
+                        name="startDate"
+                        type="date"
+                        placeholder={InputPlaceHolder("Start Date")}
+                        handleChange={(e: {
+                          target: { value: SetStateAction<string> };
+                        }) => setStartDate(e.target.value)}
+                        value={startDate || ""}
+                      />
+                    </Col>
+
+                    <Col xl={2} sm={6} md={4} lg={2}>
+                      <BaseInput
+                        label="End Date"
+                        name="endDate"
+                        type="date"
+                        placeholder={InputPlaceHolder("End Date")}
+                        handleChange={(e: {
+                          target: { value: SetStateAction<string> };
+                        }) => setEndDate(e.target.value)}
+                        value={endDate || ""}
+                      />
+                    </Col>
+                    <Col xl={2} sm={6} md={4} lg={2}>
+                      <BaseButton
+                        color="primary"
+                        onClick={resetFilters}
+                        disabled={loader}
+                      >
+                        Reset Filters
+                      </BaseButton>
+                    </Col>
+                  </Row>
+                )}
               </CardBody>
             </Card>
           </div>
