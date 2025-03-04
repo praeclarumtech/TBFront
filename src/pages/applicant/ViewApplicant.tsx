@@ -2,8 +2,8 @@
 import { useEffect, useState } from "react";
 import { Col, Modal, Row } from "react-bootstrap";
 import { getApplicantDetails } from "api/applicantApi";
-import { errorHandle } from "components/helpers/service";
 import { Typography } from "@mui/material";
+import { errorHandle } from "utils/commonFunctions";
 
 const ViewModal = ({ show, onHide, applicantId }: any) => {
   const [formData, setFormData] = useState<any>(null);

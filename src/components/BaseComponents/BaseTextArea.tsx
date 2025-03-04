@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { BaseTextareaProps } from "interfaces/global.interface";
 import { Label, Input, FormFeedback } from "reactstrap";
+
 const BaseTextarea = ({
   label,
   name,
@@ -14,7 +16,7 @@ const BaseTextarea = ({
   disabled,
   rows = 4,
   cols = 50,
-}: any) => {
+}: BaseTextareaProps) => {
   return (
     <>
       {label && (

@@ -2,21 +2,24 @@ import { Row, Col, Card, Form } from "react-bootstrap";
 import * as Yup from "yup";
 import { useMounted } from "hooks/useMounted";
 import { useNavigate } from "react-router-dom";
-import {
-  emailRegex,
-  InputPlaceHolder,
-  projectTitle,
-  validationMessages,
-} from "components/constants/common";
-import { Modules, OK, setItem, SUCCESS } from "components/constants/enum";
 import { useFormik } from "formik";
 import { useState } from "react";
 import { login } from "api/usersApi";
 import { toast } from "react-toastify";
-import { errorHandle } from "components/helpers/service";
 import { jwtDecode } from "jwt-decode";
 import BaseInput from "components/BaseComponents/BaseInput";
 import BaseButton from "components/BaseComponents/BaseButton";
+import appConstants from "constants/constant";
+import { errorHandle, InputPlaceHolder, setItem } from "utils/commonFunctions";
+
+const {
+  projectTitle,
+  Modules,
+  validationMessages,
+  emailRegex,
+  OK,
+  SUCCESS,
+} = appConstants;
 
 const SignIn = () => {
   document.title = Modules.Login + " | " + projectTitle;

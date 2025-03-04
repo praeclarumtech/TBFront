@@ -1,12 +1,6 @@
 import { Row, Col, Card, Container, CardBody } from "react-bootstrap";
 import { Fragment, useMemo, useState, useEffect } from "react";
-import { Modules } from "components/constants/enum";
-import {
-  getSerialNumber,
-  handleResponse,
-  InputPlaceHolder,
-  projectTitle,
-} from "components/constants/common";
+
 import BaseButton from "components/BaseComponents/BaseButton";
 import TableContainer from "components/BaseComponents/TableContainer";
 import { Tooltip as ReactTooltip } from "react-tooltip";
@@ -22,6 +16,10 @@ import {
 import { toast } from "react-toastify";
 import DeleteModal from "components/BaseComponents/DeleteModal";
 import BaseModal from "components/BaseComponents/BaseModal";
+import appConstants from "constants/constant";
+import { getSerialNumber, InputPlaceHolder } from "utils/commonFunctions";
+
+const { projectTitle, Modules, handleResponse } = appConstants;
 
 const AddSkill = () => {
   document.title = Modules.Login + " | " + projectTitle;

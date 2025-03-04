@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Row, Col, Card, Container, CardBody } from "react-bootstrap";
-import { Fragment, useEffect, useState, useMemo } from "react";
-import { dynamicFind, errorHandle } from "components/helpers/service";
+import React, { Fragment, useEffect, useState, useMemo } from "react";
 import BaseButton from "components/BaseComponents/BaseButton";
 import { BaseSelect, MultiSelect } from "components/BaseComponents/BaseSelect";
 import TableContainer from "components/BaseComponents/TableContainer";
@@ -17,8 +16,6 @@ import { FaWhatsapp, FaEnvelope, FaCommentDots } from "react-icons/fa";
 import ViewModal from "./ViewApplicant";
 import BaseInput from "components/BaseComponents/BaseInput";
 import DeleteModal from "components/BaseComponents/DeleteModal";
-import { InputPlaceHolder, projectTitle } from "components/constants/common";
-import * as React from "react";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import Button from "@mui/material/Button";
@@ -26,7 +23,26 @@ import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
 
 import { SelectedOption } from "interfaces/applicant.interface";
-import { Modules } from "components/constants/enum";
+import {
+  dynamicFind,
+  errorHandle,
+  InputPlaceHolder,
+} from "utils/commonFunctions";
+import appConstants from "constants/constant";
+
+const {
+  projectTitle,
+  Modules,
+  skillOptions,
+  interviewStageOptions,
+  cityOptions,
+  experienceOptions,
+  statusOptions,
+  gendersType,
+  expectedPkgOptions,
+  noticePeriodOptions,
+  designationType,
+} = appConstants;
 
 type Anchor = "top" | "right" | "bottom";
 const Applicant = () => {
@@ -83,155 +99,6 @@ const Applicant = () => {
 
       setState({ ...state, [anchor]: open });
     };
-
-  const statusOptions = [
-    { label: "Hold", value: "Hold" },
-    { label: "Processing", value: "Processing" },
-    { label: "Selected", value: "Selected" },
-    { label: "Rejected", value: "Rejected" },
-    { label: "Pending", value: "Pending" },
-  ];
-
-  const interviewStageOptions = [
-    { label: "1st Interview", value: "1st Interview" },
-    { label: "2nd Interview", value: "2nd Interview" },
-    { label: "HR", value: "HR" },
-    { label: "Technical", value: "Technical" },
-    { label: "Final", value: "Final" },
-  ];
-
-  const experienceOptions = [
-    { value: 0, label: "0 Years" },
-    { value: 1, label: "1 Year" },
-    { value: 2, label: "2 Years" },
-    { value: 3, label: "3 Years" },
-    { value: 4, label: "4 Years" },
-    { value: 5, label: "5 Years" },
-    { value: 6, label: "6 Years" },
-    { value: 7, label: "7 Years" },
-  ];
-
-  const gendersType = [
-    { label: "Male", value: "male" },
-    { label: "Female", value: "female" },
-    { label: "Other", value: "other" },
-  ];
-
-  const noticePeriodOptions = [
-    { value: 0, label: "0 days" },
-    { value: 15, label: "1-15 days" },
-    { value: 30, label: "15 - 30 days" },
-    { value: 45, label: "30 - 45 days" },
-    { value: 60, label: "45 - 60 days" },
-    { value: 70, label: "60+ days" },
-  ];
-  const expectedPkgOptions = [
-    { value: 0, label: "0-0.03" },
-    { value: 10001, label: "10001-20000" },
-    { value: 20001, label: "20001-30000" },
-    { value: 30001, label: "30001-40000" },
-    { value: 40001, label: "40001-50000" },
-    { value: 50001, label: "Above 50000" },
-  ];
-
-  const cityOptions = [
-    { value: "Ahmedabad", label: "Ahemdabad" },
-    { value: "Delhi", label: "Delhi" },
-    { value: "Gandhi Nagar", label: "Gandhi Nagar" },
-    { value: "Banglore", label: "Banglore" },
-  ];
-
-  const skillOptions = [
-    { value: "JavaScript", label: "JavaScript" },
-    { value: "Node.js", label: "Node.js" },
-    { value: "Python", label: "Python" },
-    { value: "MongoDB", label: "MongoDB" },
-    { value: "Java", label: "Java" },
-    { value: "C", label: "C" },
-    { value: "C++", label: "C++" },
-    { value: "C#", label: "C#" },
-    { value: "SQL", label: "SQL" },
-    { value: "HTML", label: "HTML" },
-    { value: "CSS", label: "CSS" },
-    { value: "React", label: "React" },
-    { value: "Angular", label: "Angular" },
-    { value: "Vue.js", label: "Vue.js" },
-    { value: "Ruby", label: "Ruby" },
-    { value: "Ruby on Rails", label: "Ruby on Rails" },
-    { value: "PHP", label: "PHP" },
-    { value: "Swift", label: "Swift" },
-    { value: "Kotlin", label: "Kotlin" },
-    { value: "Go", label: "Go" },
-    { value: "R", label: "R" },
-    { value: "TypeScript", label: "TypeScript" },
-    { value: "Django", label: "Django" },
-    { value: "Flask", label: "Flask" },
-    { value: "Laravel", label: "Laravel" },
-    { value: "Spring Boot", label: "Spring Boot" },
-    { value: "ASP.NET", label: "ASP.NET" },
-    { value: "AWS", label: "AWS" },
-    { value: "Azure", label: "Azure" },
-    { value: "Google Cloud", label: "Google Cloud" },
-    { value: "Docker", label: "Docker" },
-    { value: "Kubernetes", label: "Kubernetes" },
-    { value: "TensorFlow", label: "TensorFlow" },
-    { value: "PyTorch", label: "PyTorch" },
-    { value: "Machine Learning", label: "Machine Learning" },
-    { value: "Deep Learning", label: "Deep Learning" },
-    { value: "Data Science", label: "Data Science" },
-    { value: "Blockchain", label: "Blockchain" },
-    { value: "Git", label: "Git" },
-    { value: "GitHub", label: "GitHub" },
-    { value: "Jenkins", label: "Jenkins" },
-    { value: "GraphQL", label: "GraphQL" },
-    { value: "RESTful APIs", label: "RESTful APIs" },
-    { value: "Firebase", label: "Firebase" },
-    { value: "SQLite", label: "SQLite" },
-    { value: "PostgreSQL", label: "PostgreSQL" },
-    { value: "MySQL", label: "MySQL" },
-    { value: "Redis", label: "Redis" },
-    { value: "Elasticsearch", label: "Elasticsearch" },
-    { value: "Apache Kafka", label: "Apache Kafka" },
-    { value: "Apache Hadoop", label: "Apache Hadoop" },
-    { value: "Unity", label: "Unity" },
-    { value: "Unreal Engine", label: "Unreal Engine" },
-    { value: "Arduino", label: "Arduino" },
-    { value: "Raspberry Pi", label: "Raspberry Pi" },
-    { value: "VMware", label: "VMware" },
-    { value: "Linux", label: "Linux" },
-    { value: "Shell Scripting", label: "Shell Scripting" },
-    { value: "Data Structures", label: "Data Structures" },
-    { value: "Algorithms", label: "Algorithms" },
-    { value: "Operating Systems", label: "Operating Systems" },
-    { value: "Computer Networks", label: "Computer Networks" },
-    { value: "Artificial Intelligence", label: "Artificial Intelligence" },
-    { value: "Cybersecurity", label: "Cybersecurity" },
-    { value: "DevOps", label: "DevOps" },
-    { value: "Agile", label: "Agile" },
-    { value: "Scrum", label: "Scrum" },
-    { value: "UI/UX Design", label: "UI/UX Design" },
-    { value: "Design Patterns", label: "Design Patterns" },
-    { value: "Test Automation", label: "Test Automation" },
-    { value: "Manual Testing", label: "Manual Testing" },
-    { value: "Business Intelligence", label: "Business Intelligence" },
-    { value: "Tableau", label: "Tableau" },
-    { value: "Power BI", label: "Power BI" },
-  ];
-
-  const designationType = [
-    { value: "SOFTWARE_ENGINEER", label: "Software Engineer" },
-    { value: "FRONTED_DEVLOPER", label: "Frontend Developer" },
-    { value: "BACKEND_DEVLOPER", label: "Backend Developer" },
-    { value: "FULL_STACK_DEVLOPER", label: "Full Stack Developer" },
-    { value: "DATA_ANALYST", label: "Data Analyst" },
-    { value: "DATA_SCIENTIST", label: "Data Scientist" },
-    { value: "PRODUCT_MANAGER", label: "Product Manager" },
-    { value: "UI_UX", label: "UX/UI Designer" },
-    { value: "QA", label: "QA Engineer" },
-    { value: "DEVOPS", label: "DevOps Engineer" },
-    { value: "BUSNESS_ANALYST", label: "Business Analyst" },
-    { value: "TECHNICSL_SUPPORT", label: "Technical Support Engineer" },
-  ];
 
   const fetchApplicants = async () => {
     setTableLoader(true);
@@ -437,22 +304,22 @@ const Applicant = () => {
       role="presentation"
     >
       <List>
-        <Row>
+        <Row className="flex justify-between items-center mb-4">
           <Col>
-            <h4 className="mb-3">Filters </h4>
+            <h3>Apply Filters</h3>
           </Col>
-          <Col>
+          <Col className="text-end">
             <BaseButton
-              className="mt-2"
               color="primary"
               onClick={resetFilters}
               variant="outlined"
-              sx={{ width: "100%" }}
+              sx={{ width: "auto" }}
             >
               Reset Filters
             </BaseButton>
           </Col>
         </Row>
+
         <MultiSelect
           label="Applied Skills"
           name="appliedSkills"

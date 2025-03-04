@@ -1,18 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Row, Col, Container } from "react-bootstrap";
-import * as Yup from "yup";
-import { InputPlaceHolder, projectTitle } from "components/constants/common";
-import { Modules } from "components/constants/enum";
 import { useFormik } from "formik";
 import { Fragment } from "react";
-import { dynamicFind } from "components/helpers/service";
 import BaseButton from "components/BaseComponents/BaseButton";
 import { BaseSelect } from "components/BaseComponents/BaseSelect";
 import { Form, Link } from "react-router-dom";
 import BaseInput from "components/BaseComponents/BaseInput";
 import moment from "moment";
 import BaseTextarea from "components/BaseComponents/BaseTextArea";
-type SelectedOption = { label: string; value: string };
+import { dynamicFind, InputPlaceHolder } from "utils/commonFunctions";
+import appConstants from "constants/constant";
+import {
+  personalApplicantSchema,
+  SelectedOption,
+} from "interfaces/applicant.interface";
+
+const { projectTitle, Modules, gendersType, countriesType, stateType } =
+  appConstants;
+
 const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
   document.title = Modules.Applicant + " | " + projectTitle;
   const minDateOfBirth = moment().subtract(15, "years").format("YYYY-MM-DD");
@@ -34,30 +39,7 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
       pincode: initialValues.pincode || "",
       city: initialValues.city || "",
     },
-    validationSchema: Yup.object({
-      firstName: Yup.string().required("First Name is required").max(15).min(2),
-      lastName: Yup.string().required("Last Name is required").max(15).min(2),
-      middleName: Yup.string().max(15).min(2),
-      email: Yup.string()
-        .email("Invalid email address")
-        .required("Email is required"),
-      phoneNumber: Yup.string()
-        .matches(/^[0-9]{10}$/, "Phone number must be 10 digits")
-        .required("Phone number is required"),
-      whatsappNumber: Yup.string()
-        .matches(/^[0-9]{10}$/, "WhatsApp number must be 10 digits")
-        .required("WhatsApp Number is required"),
-      dateOfBirth: Yup.date().required("Date of birth is required"),
-      city: Yup.string().required("City is required"),
-      pincode: Yup.string()
-        .matches(/^[0-9]{6}$/, "Pincode must be 6 digits")
-        .required("Pincode is required"),
-      fullAddress: Yup.string().required("Full Address is required"),
-      gender: Yup.string().required("Gender is required"),
-      country: Yup.string().required("Country is required"),
-      state: Yup.string().required("State is required"),
-    }),
-
+    validationSchema: personalApplicantSchema,
     onSubmit: (data: any) => {
       const structuredData = {
         name: {
@@ -84,41 +66,6 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
       onNext(data);
     },
   });
-
-  const gendersType = [
-    { label: "Male", value: "male" },
-    { label: "Female", value: "female" },
-    { label: "Other", value: "other" },
-  ];
-
-  const stateType = [
-    { label: "Delhi", value: "delhi" },
-    { label: "West Bengal", value: "west_bengal" },
-    { label: "Tamil Nadu", value: "tamil_nadu" },
-    { label: "Karnataka", value: "karnataka" },
-    { label: "Telangana", value: "telangana" },
-    { label: "Gujarat", value: "gujarat" },
-    { label: "Maharashtra", value: "maharashtra" },
-    { label: "Rajasthan", value: "rajasthan" },
-    { label: "Uttar Pradesh", value: "uttar_pradesh" },
-    { label: "Kerala", value: "kerala" },
-    { label: "Chandigarh", value: "chandigarh" },
-    { label: "Madhya Pradesh", value: "madhya_pradesh" },
-    { label: "Bihar", value: "bihar" },
-    { label: "Andhra Pradesh", value: "andhra_pradesh" },
-    { label: "Odisha", value: "odisha" },
-    { label: "Goa", value: "goa" },
-    { label: "Jharkhand", value: "jharkhand" },
-    { label: "Punjab", value: "punjab" },
-    { label: "Assam", value: "assam" },
-    { label: "Manipur", value: "manipur" },
-    { label: "Sikkim", value: "sikkim" },
-    { label: "Arunachal Pradesh", value: "arunachal_pradesh" },
-    { label: "Nagaland", value: "nagaland" },
-    { label: "Meghalaya", value: "meghalaya" },
-    { label: "Karnataka", value: "karnataka" },
-  ];
-  const countriesType = [{ label: "India", value: "india" }];
 
   return (
     <Fragment>
@@ -192,7 +139,7 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
                     touched={validation.touched.dateOfBirth}
                     error={validation.errors.dateOfBirth}
                     passwordToggle={false}
-                     min={minDateOfBirth}
+                    min={minDateOfBirth}
                   />
                 </Col>
 

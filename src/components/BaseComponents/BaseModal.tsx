@@ -1,16 +1,6 @@
 import { Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 import BaseButton from "./BaseButton";
-
-interface BaseModalProps {
-  show?: boolean;
-  onSubmitClick?: () => void;
-  onCloseClick?: () => void;
-  loader?: boolean;
-  children?: React.ReactNode;
-  modalTitle?: string;
-  cloaseButtonText?: string;
-  submitButtonText?: string;
-}
+import { BaseModalProps } from "interfaces/global.interface";
 
 const BaseModal: React.FC<BaseModalProps> = ({
   show,
@@ -28,7 +18,7 @@ const BaseModal: React.FC<BaseModalProps> = ({
       <ModalBody>{children}</ModalBody>
       <ModalFooter>
         <BaseButton
-          color=" "
+          color="secondary"
           className="btn btn-outline-dark border-1 rounded-5"
           type="button"
           onClick={onCloseClick}

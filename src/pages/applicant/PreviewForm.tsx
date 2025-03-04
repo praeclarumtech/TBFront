@@ -6,8 +6,7 @@ import BaseButton from "components/BaseComponents/BaseButton";
 import { Typography } from "@mui/material";
 
 const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
-
- const capitalizeWords = (str: string) => {
+  const capitalizeWords = (str: string) => {
     if (typeof str !== "string") {
       return "";
     }
@@ -18,9 +17,7 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
   };
 
   return (
-  
-      <>
-      
+    <>
       <div>
         <Typography
           variant="h6"
@@ -309,20 +306,16 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
             </Col>
           </Row>
         </div>
-      </div><div className="d-flex justify-content-between m-3">
+      </div>
+      <div className="d-flex justify-content-between m-3">
         <BaseButton variant="contained" onClick={() => onEdit(2)}>
           Back
         </BaseButton>
-        <BaseButton
-          variant="contained"
-          color="primary"
-          onClick={onSubmit}
-        >
+        <BaseButton variant="contained" color="primary" onClick={onSubmit}>
           {loading ? "Submitting..." : "Submit Application"}
         </BaseButton>
-        </div>
-      </>
-  
+      </div>
+    </>
   );
 };
 

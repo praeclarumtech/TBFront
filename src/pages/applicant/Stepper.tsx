@@ -20,10 +20,11 @@ import {
   getApplicantDetails,
   updateApplicant,
 } from "api/applicantApi";
-import { errorHandle } from "components/helpers/service";
 import { useParams } from "react-router-dom";
-import { projectTitle } from "components/constants/common";
-import { Modules } from "components/constants/enum";
+import appConstants from "constants/constant";
+import { errorHandle } from "utils/commonFunctions";
+
+const { projectTitle, Modules } = appConstants;
 
 const StepperForm = () => {
   const { id } = useParams();

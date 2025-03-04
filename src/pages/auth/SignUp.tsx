@@ -3,31 +3,28 @@ import { Link } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
-//import custom hook
 import { useMounted } from "hooks/useMounted";
-import { RequiredField } from "components/constants/requireMsg";
-import {
-  emailRegex,
-  InputPlaceHolder,
-  passwordRegex,
-  projectTitle,
-  validationMessages,
-} from "components/constants/common";
 import { useState } from "react";
-import {
-  ButtonEnums,
-  CREATED,
-  Modules,
-  SUCCESS,
-} from "components/constants/enum";
 import { register } from "api/usersApi";
 import { toast } from "react-toastify";
 import BaseInput from "components/BaseComponents/BaseInput";
 import BaseButton from "components/BaseComponents/BaseButton";
 import { BaseSelect } from "components/BaseComponents/BaseSelect";
-import { dynamicFind } from "components/helpers/service";
 import { SelectedOption } from "interfaces/applicant.interface";
+import appConstants from "constants/constant";
+import { dynamicFind, InputPlaceHolder, RequiredField } from "utils/commonFunctions";
 
+
+const {
+  projectTitle,
+  Modules,
+  ButtonEnums,
+  CREATED,
+  SUCCESS,
+  emailRegex,
+  passwordRegex,
+  validationMessages,
+} = appConstants;
 
 const SignUp = () => {
   document.title = Modules.Register + " | " + projectTitle;

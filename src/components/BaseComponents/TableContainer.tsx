@@ -30,9 +30,11 @@ import {
   NFTRankingGlobalFilter,
   TaskListGlobalFilter,
 } from "./GlobalSearchFilter";
-import { handleResponse, tableButtons } from "components/constants/common";
 import Loader from "./Loader";
+import appConstants from "constants/constant";
+import { TableContainerProps } from "interfaces/global.interface";
 
+const { handleResponse, tableButtons } = appConstants;
 // Column Filter
 const Filter = ({
   column,
@@ -92,40 +94,6 @@ const DebouncedInput = ({
     />
   );
 };
-
-interface TableContainerProps {
-  columns?: any;
-  data?: any;
-  isGlobalFilter?: any;
-  isProductsFilter?: any;
-  isCustomerFilter?: any;
-  isOrderFilter?: any;
-  isContactsFilter?: any;
-  isCompaniesFilter?: any;
-  isLeadsFilter?: any;
-  isCryptoOrdersFilter?: any;
-  isInvoiceListFilter?: any;
-  isTicketsListFilter?: any;
-  isNFTRankingFilter?: any;
-  isTaskListFilter?: any;
-  handleTaskClick?: any;
-  customPageSize?: any;
-  tableClass?: any;
-  theadClass?: any;
-  trClass?: any;
-  thClass?: any;
-  divClass?: any;
-  SearchPlaceholder?: any;
-  handleLeadClick?: any;
-  handleCompanyClick?: any;
-  handleContactClick?: any;
-  handleTicketClick?: any;
-  isHeaderTitle?: any;
-  totalRecords?: any;
-  pagination?: any;
-  setPagination?: any;
-  loader?: any;
-}
 
 const TableContainer = ({
   columns,

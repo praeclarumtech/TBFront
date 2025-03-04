@@ -1,19 +1,20 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { Row, Col, Container } from "react-bootstrap";
-import * as Yup from "yup";
-import { InputPlaceHolder, projectTitle } from "components/constants/common";
-import { Modules } from "components/constants/enum";
 import { useFormik } from "formik";
 import { Fragment } from "react";
-import { dynamicFind } from "components/helpers/service";
 import BaseButton from "components/BaseComponents/BaseButton";
 import { BaseSelect } from "components/BaseComponents/BaseSelect";
 import { Form } from "react-router-dom";
 import BaseInput from "components/BaseComponents/BaseInput";
-import { SelectedOption } from "interfaces/applicant.interface";
-
+import {
+  jobApplicantSchema,
+  SelectedOption,
+} from "interfaces/applicant.interface";
 import BaseTextarea from "components/BaseComponents/BaseTextArea";
+import { dynamicFind, InputPlaceHolder } from "utils/commonFunctions";
+import appConstants from "constants/constant";
+
+const { projectTitle, Modules, communicationOptions, workPreferenceType } =
+  appConstants;
 
 const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
   document.title = Modules.Applicant + " | " + projectTitle;
@@ -32,78 +33,11 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
       aboutUs: initialValues?.aboutUs || "",
       communicationSkill: initialValues?.communicationSkill || "",
     },
-    validationSchema: Yup.object({
-      currentPkg: Yup.string().matches(
-        /^\d+$/,
-        "Current package must be a valid number."
-      ),
-
-      expectedPkg: Yup.string().matches(
-        /^\d+$/,
-        "Expected package must be a valid number."
-      ),
-
-      negotiation: Yup.string().matches(
-        /^\d+$/,
-        "Negotiation amount must be a valid number."
-      ),
-
-      noticePeriod: Yup.string()
-
-        .min(0, "Notice period cannot be negative.")
-        .matches(/^\d+$/, "Notice period must be a valid number."),
-
-      readyForWork: Yup.string()
-        .required("Ready for work is required.")
-        .oneOf(["yes", "no"], "Ready for work must be either 'Yes' or 'No'."),
-
-      workPreference: Yup.string()
-        .required("Work preference is required.")
-        .oneOf(
-          ["remote", "onsite", "hybrid"],
-          "Work preference must be one of 'remote', 'onsite', or 'hybrid'."
-        ),
-
-      practicalUrl: Yup.string().url("Please enter a valid URL."),
-
-      practicalFeedback: Yup.string().min(
-        10,
-        "Feedback must be at least 10 characters long."
-      ),
-      communicationSkill: Yup.number()
-        .required("Rating is required")
-        .min(1, "Rating must be between 1 and 10")
-        .max(10, "Rating must be between 1 and 10"),
-      
-      aboutUs: Yup.string()
-        .required("About Us is required.")
-        .min(10, "About Us description must be at least 10 characters long."),
-    }),
-
+    validationSchema: jobApplicantSchema,
     onSubmit: (data: any) => {
-      console.log("Combined Form Data:", data);
       onNext(data);
     },
   });
-
-  const communicationOptions = [
-    { value: "1", label: "1" },
-    { value: "2", label: "2" },
-    { value: "3", label: "3" },
-    { value: "4", label: "4" },
-    { value: "5", label: "5" },
-    { value: "6", label: "6" },
-    { value: "7", label: "7" },
-    { value: "8", label: "8" },
-    { value: "9", label: "9" },
-    { value: "10", label: "10" },
-  ];
-
-  const workPreferenceType = [
-    { value: "remote", label: "Remote" },
-    { value: "onsite", label: "Onsite" },
-    { value: "hybrid", label: "Hybrid" },
-  ];
 
   return (
     <Fragment>
@@ -233,7 +167,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
               <Row className="mb-4">
                 <Col xs={12} sm={4} className="mb-3 mb-sm-0">
                   <BaseInput
-                    label="   Practical Url"
+                    label="Practical Url"
                     name="practicalUrl"
                     type="url"
                     placeholder={InputPlaceHolder("Enter Practical Url")}

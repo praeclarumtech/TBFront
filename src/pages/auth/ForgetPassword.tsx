@@ -2,23 +2,25 @@
 import { Row, Col, Card, Form } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
-// import custom hook
 import { useMounted } from "hooks/useMounted";
-import { CREATED, Modules, SUCCESS } from "components/constants/enum";
-import {
-  emailRegex,
-  InputPlaceHolder,
-  projectTitle,
-  validationMessages,
-} from "components/constants/common";
-import { errorHandle } from "components/helpers/service";
 import { sendOtp } from "api/usersApi";
 import { toast } from "react-toastify";
 import BaseInput from "components/BaseComponents/BaseInput";
 import BaseButton from "components/BaseComponents/BaseButton";
 import { useFormik } from "formik";
 import { useState } from "react";
+import appConstants from "constants/constant";
+import { errorHandle, InputPlaceHolder } from "utils/commonFunctions";
  
+const {
+  projectTitle,
+  CREATED,
+  Modules,
+  SUCCESS,
+  emailRegex,
+  validationMessages,
+} = appConstants;
+
 const ForgetPassword = () => {
   document.title = Modules.Forgot + " | " + projectTitle;
   const hasMounted = useMounted();
