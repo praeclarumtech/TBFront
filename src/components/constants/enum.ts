@@ -33,6 +33,7 @@ export const Modules = {
   Login: "Login",
   Register: "Register",
   Applicant: "Applicant",
+  Forgot: "Forgot"
 };
 
 const getItem = (key: any) => {

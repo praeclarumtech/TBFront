@@ -1,35 +1,61 @@
-import { Row, Col, Card, Form, Button } from "react-bootstrap";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Row, Col, Card, Form } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
+import * as Yup from "yup";
 // import custom hook
 import { useMounted } from "hooks/useMounted";
-
-const schema = yup.object().shape({
-  username: yup.string().required("Username is required").trim(),
-  email: yup.string().required("Email is required").email("Email is invalid"),
-});
-
+import { CREATED, Modules, SUCCESS } from "components/constants/enum";
+import {
+  emailRegex,
+  InputPlaceHolder,
+  projectTitle,
+  validationMessages,
+} from "components/constants/common";
+import { errorHandle } from "components/helpers/service";
+import { sendOtp } from "api/usersApi";
+import { toast } from "react-toastify";
+import BaseInput from "components/BaseComponents/BaseInput";
+import BaseButton from "components/BaseComponents/BaseButton";
+import { useFormik } from "formik";
+import { useState } from "react";
+ 
 const ForgetPassword = () => {
-  const navigate = useNavigate();
+  document.title = Modules.Forgot + " | " + projectTitle;
   const hasMounted = useMounted();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm({
-    resolver: yupResolver(schema),
+ 
+  const navigate = useNavigate();
+  const [loader, setLoader] = useState<boolean>(false);
+ 
+  const validation: any = useFormik({
+    enableReinitialize: true,
+    initialValues: {
+      email: "",
+    },
+    validationSchema: Yup.object({
+      email: Yup.string()
+        .email(validationMessages.format("Email"))
+        .matches(emailRegex, validationMessages.format("Email"))
+        .required(validationMessages.required("Email")),
+    }),
+    onSubmit: (values: any) => {
+      setLoader(true);
+      sendOtp(values)
+        .then((res) => {
+          if (res?.statusCode === CREATED && res?.success === SUCCESS) {
+            navigate("/");
+            toast.success(res?.message);
+          } else {
+            toast.error(res?.message);
+          }
+        })
+        .catch((error) => {
+          errorHandle(error);
+          setLoader(false);
+        })
+        .finally(() => setLoader(false));
+    },
   });
-  interface FormData {
-    email: string;
-  }
-
-  const onSubmitHandler = (data: FormData) => {
-    console.log({ data });
-    reset();
-  };
+ 
   return (
     <Row className="align-items-center justify-content-center g-0 min-vh-100">
       <Col xxl={4} lg={6} md={8} xs={12} className="py-8 py-xl-0">
@@ -42,7 +68,7 @@ const ForgetPassword = () => {
                   className="mb-2"
                   alt=""
                 /> */}
-
+ 
                 <h4 className="text-dark font-bold text-3xl justify-center text-center ">
                   Talent<span className="text-primary bold ">Box</span>{" "}
                 </h4>
@@ -53,22 +79,38 @@ const ForgetPassword = () => {
               </p>
             </div>
             {hasMounted && (
-              <Form onSubmit={handleSubmit(onSubmitHandler)}>
+              <Form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  validation.handleSubmit();
+                  return false;
+                }}
+              >
                 <Form.Group className="mb-3" controlId="email">
-                  <Form.Label>Email</Form.Label>
-                  <Form.Control
-                    {...register("email")}
-                    className={`${errors.email ? "is-invalid" : ""}`}
+                  <BaseInput
+                    label="Email"
                     name="email"
-                    placeholder="Enter Your Email"
+                    type="text"
+                    placeholder={InputPlaceHolder("email")}
+                    handleChange={validation.handleChange}
+                    handleBlur={validation.handleBlur}
+                    value={validation.values.email}
+                    touched={validation.touched.email}
+                    error={validation.errors.email}
+                    passwordToggle={false}
                   />
-                  <p className="p-1 text-red-500">{errors.email?.message}</p>
                 </Form.Group>
-
+ 
                 <div className="mb-3 d-grid">
-                  <Button variant="primary" type="submit">
-                    Reset Password
-                  </Button>
+                  <BaseButton
+                    color="primary"
+                    disabled={loader}
+                    className="w-100"
+                    type="submit"
+                    loader={loader}
+                  >
+                    Reset Password{" "}
+                  </BaseButton>
                 </div>
                 <span>
                   Don&apos;t have an account?{" "}
@@ -82,5 +124,7 @@ const ForgetPassword = () => {
     </Row>
   );
 };
-
+ 
 export default ForgetPassword;
+ 
+ 

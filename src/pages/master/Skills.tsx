@@ -46,8 +46,7 @@ const AddSkill = () => {
       if (res?.success) {
         setSkills(res.data.data || []);
         setTotalRecords(res.data?.pagination?.totalRecords || 0);
-      } 
-      else {
+      } else {
         toast.error(res?.message || "Failed to fetch skills");
       }
     } catch (error) {
@@ -58,7 +57,7 @@ const AddSkill = () => {
 
   useEffect(() => {
     fetchSkills();
-  }, [pagination.pageIndex, pagination.pageSize]); 
+  }, [pagination.pageIndex, pagination.pageSize]);
 
   const handleEdit = (skill: any) => {
     setEditingSkill(skill);
@@ -115,6 +114,7 @@ const AddSkill = () => {
           <div className="hstack gap-2">
             <BaseButton
               id={`edit-${cell?.row?.original?._id}`}
+              color="primary"
               className="btn btn-sm btn-soft-warning edit-list"
               onClick={() => handleEdit(cell?.row?.original)}
             >
@@ -236,7 +236,7 @@ const AddSkill = () => {
                     >
                       {formTitle}
                       <BaseButton
-                        color="success"
+                        color="primary"
                         disabled={loader}
                         type="submit"
                         loader={loader}
