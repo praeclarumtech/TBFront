@@ -4,46 +4,66 @@ import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 // import custom hook
 import { useMounted } from "hooks/useMounted";
-import { CREATED, Modules, SUCCESS } from "components/constants/enum";
+import { ACCEPTED, Modules, SUCCESS } from "components/constants/enum";
 import {
-  emailRegex,
   InputPlaceHolder,
+  passwordRegex,
   projectTitle,
   validationMessages,
 } from "components/constants/common";
 import { errorHandle } from "components/helpers/service";
-import { sendOtp } from "api/usersApi";
+import { forgotPassword } from "api/usersApi";
 import { toast } from "react-toastify";
 import BaseInput from "components/BaseComponents/BaseInput";
 import BaseButton from "components/BaseComponents/BaseButton";
 import { useFormik } from "formik";
 import { useState } from "react";
- 
-const ForgetPassword = () => {
-  document.title = Modules.Forgot + " | " + projectTitle;
+import { useLocation } from "react-router";
+
+const UpdatePassword = () => {
+  document.title = Modules.UpdatePassword + " | " + projectTitle;
   const hasMounted = useMounted();
- 
   const navigate = useNavigate();
+  const location = useLocation();
+  const { email } = location.state;
+
+  const [passwordShow, setPasswordShow] = useState<boolean>(false);
+  const [confirmPassword, setConfirmPassword] = useState<boolean>(false);
   const [loader, setLoader] = useState<boolean>(false);
- 
-  const validation: any = useFormik({
+
+  const validation = useFormik({
     enableReinitialize: true,
+
     initialValues: {
       email: "",
+      newPassword: "",
+      confirmPassword: "",
     },
     validationSchema: Yup.object({
-      email: Yup.string()
-        .email(validationMessages.format("Email"))
-        .matches(emailRegex, validationMessages.format("Email"))
-        .required(validationMessages.required("Email")),
+      newPassword: Yup.string()
+        .required(validationMessages.required("Password"))
+        .min(8, validationMessages.passwordLength("Password", 8))
+        .matches(
+          passwordRegex,
+          validationMessages.passwordComplexity("Password")
+        ),
+      confirmPassword: Yup.string()
+        .required(validationMessages.required("Confirm Password"))
+        .oneOf(
+          [Yup.ref("newPassword")],
+          "Password and confirm password should be same."
+        ),
     }),
-    onSubmit: (values: any) => {
-      const email = values?.email;
-      setLoader(true);
-      sendOtp(values)
+    onSubmit: (values) => {
+      const payload = {
+        newPassword: values.newPassword,
+        confirmPassword: values.confirmPassword,
+        email,
+      };
+      forgotPassword(payload)
         .then((res) => {
-          if (res?.statusCode === CREATED && res?.success === SUCCESS) {
-            navigate("/email-verify", { state: { email } });
+          if (res?.statusCode === ACCEPTED && res?.success === SUCCESS) {
+            navigate("/");
             toast.success(res?.message);
           } else {
             toast.error(res?.message);
@@ -51,12 +71,11 @@ const ForgetPassword = () => {
         })
         .catch((error) => {
           errorHandle(error);
-          setLoader(false);
         })
         .finally(() => setLoader(false));
     },
   });
- 
+
   return (
     <Row className="align-items-center justify-content-center g-0 min-vh-100">
       <Col xxl={4} lg={6} md={8} xs={12} className="py-8 py-xl-0">
@@ -69,7 +88,7 @@ const ForgetPassword = () => {
                   className="mb-2"
                   alt=""
                 /> */}
- 
+
                 <h4 className="text-dark font-bold text-3xl justify-center text-center ">
                   Talent<span className="text-primary bold ">Box</span>{" "}
                 </h4>
@@ -89,19 +108,38 @@ const ForgetPassword = () => {
               >
                 <Form.Group className="mb-3" controlId="email">
                   <BaseInput
-                    label="Email"
-                    name="email"
-                    type="text"
-                    placeholder={InputPlaceHolder("email")}
+                    label={"New Password"}
+                    name="newPassword"
+                    type="password"
+                    placeholder={InputPlaceHolder("new password")}
                     handleChange={validation.handleChange}
                     handleBlur={validation.handleBlur}
-                    value={validation.values.email}
-                    touched={validation.touched.email}
-                    error={validation.errors.email}
-                    passwordToggle={false}
+                    value={validation.values.newPassword}
+                    touched={validation.touched.newPassword}
+                    error={validation.errors.newPassword}
+                    passwordToggle={true}
+                    onclick={() => setPasswordShow(!passwordShow)}
                   />
                 </Form.Group>
- 
+
+                <Form.Group className="mb-3" controlId="email">
+                  <BaseInput
+                    label={"Confirm Passeord"}
+                    name="confirmPassword"
+                    type={confirmPassword ? "text" : "password"}
+                    placeholder={InputPlaceHolder("confirm passeord")}
+                    handleChange={validation.handleChange}
+                    handleBlur={validation.handleBlur}
+                    value={validation.values.confirmPassword}
+                    touched={validation.touched.confirmPassword}
+                    error={validation.errors.confirmPassword}
+                    passwordToggle={true}
+                    onclick={() => {
+                      setConfirmPassword(!confirmPassword);
+                    }}
+                  />
+                </Form.Group>
+
                 <div className="mb-3 d-grid">
                   <BaseButton
                     color="primary"
@@ -125,7 +163,5 @@ const ForgetPassword = () => {
     </Row>
   );
 };
- 
-export default ForgetPassword;
- 
- 
+
+export default UpdatePassword;
