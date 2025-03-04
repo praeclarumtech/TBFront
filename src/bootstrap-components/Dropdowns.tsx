@@ -16,7 +16,7 @@ import {
 import { DropDirection } from "react-bootstrap/esm/DropdownContext";
 
 // import widget/custom components
-import { HighlightCode } from "widgets";
+import HighlightCode from "../widgets/highlight-code/HighlightCode";
 
 // import hooks
 import { useMounted } from "hooks/useMounted";

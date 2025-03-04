@@ -9,8 +9,4 @@ import TasksPerformance from "./dashboard/TasksPerformance";
 import Teams from "./dashboard/Teams";
 
 // sub components for /pages/settings
-export {
-  ActiveProjects,
-  TasksPerformance,
-  Teams,
-};
+export { ActiveProjects, TasksPerformance, Teams };

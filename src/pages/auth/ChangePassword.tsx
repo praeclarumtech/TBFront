@@ -6,6 +6,7 @@ import * as yup from "yup";
 
 //import custom hook
 import { useMounted } from "hooks/useMounted";
+import { FormData } from "interfaces/global.interface";
 
 const schema = yup.object().shape({
   password: yup
@@ -30,7 +31,8 @@ const SignUp = () => {
   } = useForm({
     resolver: yupResolver(schema),
   });
-  const onSubmitHandler = (data: any) => {
+
+  const onSubmitHandler = (data: FormData) => {
     console.log({ data });
     reset();
   };

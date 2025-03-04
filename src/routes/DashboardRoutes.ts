@@ -29,29 +29,29 @@ export const DashboardMenu: DashboardMenuProps[] = [
     id: uuid(),
     title: "Email",
     icon: "monitor",
-    link: "/pages/email",
+    link: "/email",
   },
   {
     id: uuid(),
     title: "Reports",
     icon: "corner-left-down",
-    link: "/pages/reports",
+    link: "/report",
   },
   {
     id: uuid(),
     title: "Masters",
     grouptitle: true,
   },
-  {
-    id: uuid(),
-    title: "Add Passing Year",
-    icon: "monitor",
-    link: "/email",
-  },
+  // {
+  //   id: uuid(),
+  //   title: "Add Passing Year",
+  //   icon: "monitor",
+  //   link: "/master/passing-year",
+  // },
   {
     id: uuid(),
     title: "Add Skills",
     icon: "corner-left-down",
-    link: "/reports",
+    link: "/master/skills",
   },
 ];

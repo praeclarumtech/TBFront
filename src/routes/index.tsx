@@ -13,9 +13,13 @@ import ChangePassword from "pages/auth/ChangePassword";
 import SignUp from "pages/auth/SignUp";
 import Dashboard from "pages/dashboard/Index";
 import RootLayout from "layouts/RootLayout";
+import EmailTable from "pages/email/EmailTable";
+import EmailForm from "pages/email/EmailForm";
+import Report from "pages/report/Report";
+import PassingYear from "pages/master/PassingYear";
+import AddSkill from "pages/master/Skills";
 import StepperForm from "pages/applicant/Stepper";
 import Applicant from "pages/applicant/Index";
-
 
 const RenderRouter: React.FC = () => {
   const {
@@ -25,6 +29,9 @@ const RenderRouter: React.FC = () => {
     SIGN_UP,
     DASHBOARD,
     APPLICANTS,
+    EMAIL,
+    REPORT,
+    MASTER,
   } = routes;
 
   const router = createBrowserRouter(
@@ -36,11 +43,7 @@ const RenderRouter: React.FC = () => {
         <Route path={RESET_PASSWORD.path} element={<ChangePassword />} />
         <Route
           path={DASHBOARD.path}
-          element={
-            <RootLayout>
-              <Dashboard />
-            </RootLayout>
-          }
+          element={<RootLayout>{<Dashboard />}</RootLayout>}
         />
         <Route
           path={APPLICANTS.path}
@@ -67,8 +70,52 @@ const RenderRouter: React.FC = () => {
               </RootLayout>
             }
           />
-         
-      
+        </Route>
+        <Route path={EMAIL.path}>
+          <Route
+            index
+            element={
+              <RootLayout>
+                <EmailTable />
+              </RootLayout>
+            }
+          />
+          <Route
+            path="compose"
+            element={
+              <RootLayout>
+                <EmailForm />
+              </RootLayout>
+            }
+          />
+        </Route>
+        <Route path={REPORT.path}>
+          <Route
+            index
+            element={
+              <RootLayout>
+                <Report />
+              </RootLayout>
+            }
+          />
+        </Route>
+        <Route path={MASTER.path}>
+          <Route
+            path="passing-year"
+            element={
+              <RootLayout>
+                <PassingYear />
+              </RootLayout>
+            }
+          />
+          <Route
+            path="skills"
+            element={
+              <RootLayout>
+                <AddSkill />
+              </RootLayout>
+            }
+          />
         </Route>
       </Route>
     )

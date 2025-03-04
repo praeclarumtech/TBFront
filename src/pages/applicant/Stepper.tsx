@@ -8,7 +8,6 @@ import {
   Button,
   Typography,
 } from "@mui/material";
-
 import { Fragment, useEffect, useState } from "react";
 import PersonalDetailsForm from "./Personal";
 import EducationalDetailsForm from "./Education";
@@ -68,10 +67,11 @@ const StepperForm = () => {
     noticePeriod: "",
     readyForWork: "",
     workPreference: "",
-    portfolioUrl:"",
+    portfolioUrl: "",
     practicalUrl: "",
     practicalFeedback: "",
     aboutUs: "",
+    communicationSkill:"",
   });
   const steps = [
     "Personal Details",
@@ -146,6 +146,7 @@ const StepperForm = () => {
       practicalUrl: formData.practicalUrl,
       feedback: formData.practicalFeedback,
       aboutUs: formData.aboutUs,
+      communicationSkill: formData.communicationSkill,
     };
   };
 

@@ -1,5 +1,5 @@
 import { ListGroup, Dropdown, Image } from "react-bootstrap";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 export const DesktopNotifications = () => {
   const navigate = useNavigate();
@@ -39,10 +39,12 @@ export const DesktopNotifications = () => {
           <Dropdown.Item eventKey="2">
             <i className="fe fe-user me-2"></i> Edit Profile
           </Dropdown.Item>
-          <Dropdown.Item onClick={() => {
-            // Clear any auth tokens/session data here if needed
-            navigate('/login');
-          }}>
+          <Dropdown.Item
+            onClick={() => {
+              // Clear any auth tokens/session data here if needed
+              navigate("/");
+            }}
+          >
             <i className="fe fe-power me-2"></i>Sign Out
           </Dropdown.Item>
         </Dropdown.Menu>

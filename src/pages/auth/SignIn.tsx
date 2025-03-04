@@ -17,8 +17,6 @@ import { errorHandle } from "components/helpers/service";
 import { jwtDecode } from "jwt-decode";
 import BaseInput from "components/BaseComponents/BaseInput";
 import BaseButton from "components/BaseComponents/BaseButton";
-import appConstants from "constants/constant";
-const { ACCESS_TOKEN } = appConstants;
 
 const SignIn = () => {
   document.title = Modules.Login + " | " + projectTitle;
@@ -49,12 +47,11 @@ const SignIn = () => {
       login(payload)
         .then((res) => {
           if (res?.statusCode === OK && res?.success === SUCCESS) {
-            setItem("authUser", res?.data?.token);
+            setItem("authUser", res?.data);
 
             const decode = jwtDecode<any>(res?.data);
             const role = decode.role;
             const id = decode.id;
-            localStorage.setItem(ACCESS_TOKEN, res?.data);
             setItem("role", role);
             setItem("id", id);
             navigate("/dashboard");
@@ -95,7 +92,6 @@ const SignIn = () => {
                 }}
               >
                 <Form.Group className="mb-3" controlId="username">
-
                   <BaseInput
                     label="Email"
                     name="email"
@@ -126,7 +122,6 @@ const SignIn = () => {
                 </Form.Group>
                 <div>
                   <div className="d-grid">
-
                     <BaseButton
                       color="primary"
                       disabled={loader}

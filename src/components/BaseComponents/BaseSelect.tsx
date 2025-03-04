@@ -53,6 +53,8 @@ const MultiSelect = ({
   handleBlur,
   className,
   isDisabled,
+  placeholder,
+ 
 }: any) => {
   return (
     <>
@@ -72,6 +74,7 @@ const MultiSelect = ({
         onBlur={handleBlur}
         isClearable
         isDisabled={isDisabled}
+        placeholder={placeholder}
       />
       {touched && error ? (
         <div className="text-danger error-font">{error}</div>

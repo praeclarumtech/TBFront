@@ -17,7 +17,7 @@ import {
 import { ToastPosition } from "react-bootstrap/esm/ToastContainer";
 
 // import widget/custom components
-import { HighlightCode } from "widgets";
+import HighlightCode from "../widgets/highlight-code/HighlightCode";
 
 // import react code data file
 import {

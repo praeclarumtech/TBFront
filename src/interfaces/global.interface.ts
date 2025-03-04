@@ -43,3 +43,7 @@ export interface GlobalApiResponse extends statusCode, message {
 export interface ApiResponseError extends Omit<FetchBaseQueryError, "data"> {
   data: GlobalApiResponse;
 }
+export type FormData = {
+  password: string;
+  confirmPassword: string;
+};

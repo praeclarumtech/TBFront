@@ -5,7 +5,7 @@ import { Row, Col, Container } from "react-bootstrap";
 import { PageHeading } from "widgets";
 
 // import sub components
-import { BillingAddress, CurrentPlan } from "sub-components";
+import  BillingAddress  from "../../../sub-components/billing/BillingAddress";
 
 const Billing = () => {
   return (
@@ -20,7 +20,7 @@ const Billing = () => {
           xs={12}
         >
           <Row>
-            <CurrentPlan />
+            {/* <CurrentPlan /> */}
             <BillingAddress />
           </Row>
         </Col>

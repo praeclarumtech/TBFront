@@ -1,405 +1,314 @@
-
-
-import { useState, useEffect } from "react";
+import { Row, Col, Card, Container, CardBody } from "react-bootstrap";
+import { Fragment, useMemo, useState, useEffect } from "react";
+import { Modules } from "components/constants/enum";
 import {
-  Box,
-  Button,
-  Modal,
-  Typography,
-  TextField,
-  Input,
-} from "@mui/material";
-import axios from "axios";
-import "./index.css";
-import { Card, Col, Row } from "react-bootstrap";
-import { Edit as EditIcon, Delete as DeleteIcon } from "@mui/icons-material";
+  getSerialNumber,
+  handleResponse,
+  InputPlaceHolder,
+  projectTitle,
+} from "components/constants/common";
+import BaseButton from "components/BaseComponents/BaseButton";
+import TableContainer from "components/BaseComponents/TableContainer";
+import { Tooltip as ReactTooltip } from "react-tooltip";
+import * as Yup from "yup";
+import { useFormik } from "formik";
+import BaseInput from "components/BaseComponents/BaseInput";
+import {
+  createSkill,
+  updateSkill,
+  viewAllSkill,
+  deleteSkill,
+} from "api/skillsApi";
 import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-
-const marginLeft = {
-  position: "bottom",
-  marginLeft: "20px",
-};
-
-const modalStyle = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  boxShadow: 24,
-  p: 4,
-  borderRadius: "8px",
-};
-
-const BASE_URL = import.meta.env.VITE_API_URL;
-
-const viewSkillApi = `${BASE_URL}/api/skill/viewSkills/`;
-const createSkillApi = `${BASE_URL}/api/skill/addSkills/`;
-// const viewSkillById = (_id) => `${BASE_URL}/api/skill/viewById`;
+import DeleteModal from "components/BaseComponents/DeleteModal";
+import BaseModal from "components/BaseComponents/BaseModal";
 
 const AddSkill = () => {
-  const [open, setOpen] = useState(false);
-  const [skills, setSkills] = useState("");
-  const [search, setSearch] = useState("");
-  const [skillList, setSkillList] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [editingSkill, setEditingSkill] = useState<{ _id: string; skills: string } | null>(null);
+  document.title = Modules.Login + " | " + projectTitle;
+  const [skills, setSkills] = useState<any[]>([]);
+  const [editingSkill, setEditingSkill] = useState<any>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [skillToDelete, setSkillToDelete] = useState<any>(null);
+  const [showBaseModal, setShowBaseModal] = useState(false);
+  const [totalRecords, setTotalRecords] = useState(0);
   const [pagination, setPagination] = useState({
-    currentPage: 1,
-    totalPages: 1,
-    totalSkills: 0,
+    pageIndex: 0,
+    pageSize: 10,
   });
+
+  const fetchSkills = async () => {
+    try {
+      const res = await viewAllSkill({
+        page: pagination.pageIndex + 1,
+        pageSize: pagination.pageSize,
+      });
+
+      if (res?.success) {
+        setSkills(res.data.data || []);
+        setTotalRecords(res.data?.pagination?.totalRecords || 0);
+      } 
+      else {
+        toast.error(res?.message || "Failed to fetch skills");
+      }
+    } catch (error) {
+      toast.error("Something went wrong!");
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
     fetchSkills();
-  }, [search, pagination.currentPage]);
+  }, [pagination.pageIndex, pagination.pageSize]); 
 
-  const fetchSkills = () => {
-    setIsLoading(true);
-    const { currentPage } = pagination;
-    axios
-      .get(viewSkillApi, {
-        params: {
-          page: currentPage,
-          limit: 10, // You can adjust the limit here
-          searchQuery: search,
-        },
-      })
-      .then((res) => {
-        if (res.data && Array.isArray(res.data.data)) {
-          setSkillList(res.data.data);
-          setPagination((prevState) => ({
-            ...prevState,
-            totalPages: res.data.totalPages,
-            totalSkills: res.data.totalSkills,
-          }));
+  const handleEdit = (skill: any) => {
+    setEditingSkill(skill);
+    validation.setValues({
+      addSkills: skill.skills,
+    });
+    setShowBaseModal(true);
+  };
+
+  const handleDelete = (skill: any) => {
+    setSkillToDelete(skill);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = () => {
+    if (!skillToDelete) return;
+
+    setLoader(true);
+    deleteSkill({ _id: skillToDelete._id })
+      .then((res: { success: any; message: any }) => {
+        if (res?.success) {
+          toast.success(res?.message || "Skill deleted successfully");
+          fetchSkills();
         } else {
-          console.error("Invalid response format", res.data);
-          setError("Failed to fetch skills.");
-          toast.error("Failed to fetch skills.!", {
-            position: "top-right",
-            autoClose: 3000,
-          });
+          toast.error(res?.message || "Failed to delete skill");
         }
       })
-      .catch((err) => {
-        console.error("Error fetching skills:", err);
-        setError("Failed to fetch skills.");
-        toast.error("Failed to fetch skills.!", {
-          position: "top-right",
-          autoClose: 3000,
-        });
+      .catch((error: any) => {
+        toast.error("Something went wrong!");
+        console.error(error);
       })
       .finally(() => {
-        setIsLoading(false);
+        setLoader(false);
+        setShowDeleteModal(false);
+        setSkillToDelete(null);
       });
   };
 
-  const handleAddSkill = () => {
-    if (skills.trim()) {
-      axios
-        .post(createSkillApi, { skills })
-        .then((res) => {
-          if (res.data && res.data._id) {
-            setSkillList([...skillList, res.data]);
-            setSkills("");
-            setOpen(false);
-            toast.success("Skill added successfully!", {
-              position: "top-right",
-              autoClose: 3000,
-            });
+  const columns = useMemo(
+    () => [
+      {
+        header: "Sr.no",
+        cell: getSerialNumber,
+        enableColumnFilter: false,
+      },
+      {
+        header: "Skill",
+        accessorKey: "skills",
+        enableColumnFilter: false,
+      },
+      {
+        header: "Action",
+        cell: (cell: { row: { original: any } }) => (
+          <div className="hstack gap-2">
+            <BaseButton
+              id={`edit-${cell?.row?.original?._id}`}
+              className="btn btn-sm btn-soft-warning edit-list"
+              onClick={() => handleEdit(cell?.row?.original)}
+            >
+              <i className="ri-pencil-fill align-bottom" />
+              <ReactTooltip
+                place="bottom"
+                variant="warning"
+                content="Edit"
+                anchorId={`edit-${cell?.row?.original?._id}`}
+              />
+            </BaseButton>
+            <BaseButton
+              color="danger"
+              id={`delete-${cell?.row?.original?._id}`}
+              className="btn btn-sm btn-soft-danger bg-danger"
+              onClick={() => handleDelete(cell?.row?.original)}
+            >
+              <i className="ri-delete-bin-fill align-bottom" />
+              <ReactTooltip
+                place="bottom"
+                variant="error"
+                content="Delete"
+                anchorId={`delete-${cell?.row?.original?._id}`}
+              />
+            </BaseButton>
+          </div>
+        ),
+      },
+    ],
+    []
+  );
+
+  const [loader, setLoader] = useState(false);
+
+  const validation: any = useFormik({
+    enableReinitialize: true,
+    initialValues: {
+      addSkills: editingSkill ? editingSkill.skills : "",
+    },
+    validationSchema: Yup.object({
+      addSkills: Yup.string().required("Skill name is required"),
+    }),
+    onSubmit: (values) => {
+      setLoader(true);
+      const payload = {
+        _id: editingSkill?._id,
+        skills: values.addSkills,
+      };
+
+      const apiCall = editingSkill
+        ? updateSkill(payload)
+        : createSkill(payload);
+
+      apiCall
+        .then((res: { success: any; message: any }) => {
+          if (res?.success) {
+            toast.success(
+              res?.message ||
+                `Skill ${editingSkill ? "updated" : "added"} successfully`
+            );
+            setEditingSkill(null);
+            validation.resetForm();
             fetchSkills();
+            setShowBaseModal(false);
           } else {
-            console.error("Invalid response after adding skill:", res.data);
-            setError("Failed to add skill.");
-            toast.error("Failed to add skill.!", {
-              position: "top-right",
-              autoClose: 3000,
-            });
+            toast.error(
+              res?.message ||
+                `Failed to ${editingSkill ? "update" : "add"} skill`
+            );
           }
         })
-        .catch((err) => {
-          console.error("Error adding skill:", err);
-          setError("Failed to add skill.");
-          toast.error("Failed to add skill.!", {
-            position: "top-right",
-            autoClose: 3000,
-          });
-        });
-    }
-  };
-
-  const handleUpdateSkill = () => {
-    if (skills.trim() && editingSkill) {
-      axios
-        .put(`${BASE_URL}/api/skill/update/${editingSkill._id}`, { skills })
-        .then((res) => {
-          const updatedList = skillList.map((item) =>
-            item._id === editingSkill._id ? res.data : item
-          );
-          setSkillList(updatedList);
-          setSkills("");
-          setEditingSkill(null);
-          setOpen(false);
-          toast.success("Skill updated successfully!", {
-            position: "top-right",
-            autoClose: 3000,
-          });
-          fetchSkills();
+        .catch((error: any) => {
+          toast.error("Something went wrong!");
+          console.error(error);
         })
-        .catch((err) => {
-          console.error("Error updating skill:", err);
-          setError("Failed to update skill.");
-          toast.error("Failed to update skill.!", {
-            position: "top-right",
-            autoClose: 3000,
-          });
+        .finally(() => {
+          setLoader(false);
         });
-    }
+    },
+  });
+
+  const formTitle = editingSkill
+    ? "Edit Skill"
+    : "Add DropDown Items of Skills";
+  const submitButtonText = editingSkill ? "Update" : "Add";
+
+  const handleOpenBaseModal = () => {
+    setShowBaseModal(true);
   };
 
-  const handleDeleteSkill = (_id: any) => {
-    setIsLoading(true);
-    axios
-      .delete(`${BASE_URL}/api/skill/delete/${_id}`)
-      .then(() => {
-        setSkillList(skillList.filter((item) => item._id !== _id));
-        toast.success("Skill deleted successfully!", {
-          position: "top-right",
-          autoClose: 3000,
-        });
-        fetchSkills();
-      })
-      .catch((err) => {
-        console.error("Error deleting skill:", err);
-        setError("Failed to delete skill.");
-        toast.error("Failed to delete skill.!", {
-          position: "top-right",
-          autoClose: 3000,
-        });
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+  const handleSubmit = () => {
+    validation.handleSubmit();
   };
 
-  const handleSearchChange = (e: { target: { value: string; }; }) => {
-    setSearch(e.target.value.toLowerCase());
+  const handleCloseClick = () => {
+    setShowBaseModal(false);
   };
-
-  const handlePageChange = (newPage: number) => {
-    setPagination((prevState) => ({
-      ...prevState,
-      currentPage: newPage,
-    }));
-  };
-
-  const highlightText = (text: string) => {
-    if (!search) return text;
-    const parts = text.split(new RegExp(`(${search})`, "gi"));
-    return parts.map((part, index) =>
-      part.toLowerCase() === search.toLowerCase() ? (
-        <span key={index} style={{ backgroundColor: "#ffff00" }}>
-          {part}
-        </span>
-      ) : (
-        part
-      )
-    );
-  };
-
-  function openEditModal(item: any): void {
-    throw new Error("Function not implemented.");
-  }
 
   return (
-    <Row className="m-5">
-      <Col xl={12} lg={12} md={12} xs={12}>
-        <Card className="">
-          <Card.Body>
-            <Box sx={{ textAlign: "center", mt: 0 }} className="frm-container">
-              <Typography
-                sx={{
-                  fontSize: "20px",
-                  float: "left",
-                  marginLeft: "20px",
-                  fontWeight: "bold",
-                }}
-                className="lbl-tlt"
-              >
-                Add DropDown Items of Skill
-              </Typography>
-              <Box className="" sx={{ textAlign: "center", mt: 4 }}>
-                <div className="justify-end text-end mx-5">
-                  <Button
-                    variant="contained"
-                    onClick={() => setOpen(true)}
-                    className="px-5 !py-2 !bg-blue-600 !hover:bg-primary mx-5 !outline-none !text-white"
-                  >
-                    <i className="fa fa-solid fa-plus text-white py-2"> Add</i>
-                  </Button>
-                </div>
-
-                <Modal open={open} onClose={() => setOpen(false)}>
-                  <Box sx={modalStyle} className="modal-content">
-                    <Typography variant="h6" gutterBottom>
-                      Skill Name
-                    </Typography>
-                    <TextField
-                      fullWidth
-                      placeholder="Write down skill"
-                      value={skills}
-                      onChange={(e) => setSkills(e.target.value)}
-                      className="inp-pasy outline-none"
-                    />
-                    <Box
-                      sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        mt: 2,
-                      }}
+    <Fragment>
+      <DeleteModal
+        show={showDeleteModal}
+        onCloseClick={() => setShowDeleteModal(false)}
+        onDeleteClick={confirmDelete}
+        loader={loader}
+      />
+      <div className="pt-1 page-content"></div>
+      <Container fluid>
+        <Row>
+          <div>
+            <Card className="mb-3 my-3">
+              <CardBody>
+                <Row className="flex">
+                  <Row className="fw-bold text-dark ms-2 mt-1 h4 d-flex align-items-center">
+                    <Col
+                      sm={12}
+                      md={12}
+                      className="d-flex align-items-center justify-between !mb-2"
                     >
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={
-                          editingSkill ? handleUpdateSkill : handleAddSkill
-                        }
-                        className="btn-Add px-4 py-2 !bg-red-600 !hover:bg-denger !outline-none !text-white"
+                      {formTitle}
+                      <BaseButton
+                        color="success"
+                        disabled={loader}
+                        type="submit"
+                        loader={loader}
+                        className="ms-3 px-5 border rounded-5"
+                        onClick={handleOpenBaseModal}
                       >
-                        {editingSkill ? "Update" : "Add"}
-                      </Button>
-                      <Button
-                        variant="contained"
-                        color="secondary"
-                        onClick={() => setOpen(false)}
-                        className="btn-cancle px-4 py-1 !bg-blue-600 !hover:bg-primary !outline-none !text-white"
-                      >
-                        Close
-                      </Button>
-                    </Box>
-                  </Box>
-                </Modal>
+                        {submitButtonText}
+                      </BaseButton>
+                    </Col>
+                  </Row>
 
-                <Box sx={{ mt: 2 }} className="">
-                  <div className="mx-5 justify-end text-end">
-                    <TextField
-                      sx={{ marginRight: "" }}
-                      id="standard-basic"
-                      label="Quick Search"
-                      variant="standard"
-                      onChange={handleSearchChange}
-                      className="!quick-search"
-                    />
-                  </div>
-                  <Typography
-                    className="justify-start text-left"
-                    sx={{
-                      fontSize: "25px",
-                      marginLeft: "20px",
-                      fontWeight: "bold",
-                    }}
+                  <BaseModal
+                    show={showBaseModal}
+                    onCloseClick={handleCloseClick}
+                    onSubmitClick={handleSubmit}
+                    modalTitle={editingSkill ? "Edit Skill" : "Add Skill"}
+                    submitButtonText={
+                      editingSkill ? "Update Skill" : "Add Skill"
+                    }
+                    cloaseButtonText="Close"
                   >
-                    Skills
-                  </Typography>
-
-                  {error && <Typography color="error">{error}</Typography>}
-
-                  <div className="overflow-hidden">
-                    <table
-                      className="tbl-container custom-table"
-                      style={{
-                        marginTop: "20px",
-                        width: "100%",
-                        borderCollapse: "collapse",
-                      }}
-                    >
-                      <thead>
-                        <tr>
-                          <th>Sr.no</th>
-                          <th>Skill</th>
-                          <th>Action</th>
-                        </tr>
-                      </thead>
-
-                      <tbody>
-                        {skillList.map((item, index) => (
-                          <tr key={item._id}>
-                            <td>{index + 1}</td>
-                            <td>{highlightText(item.skills)}</td>
-                            <td className="flex justify-center space-x-2 text-center">
-                              <EditIcon
-                                style={{ cursor: "pointer" }}
-                                color="primary"
-                                onClick={() => openEditModal(item)}
-                                className="mx-2"
-                              >
-                                Edit
-                              </EditIcon>
-                              <DeleteIcon
-                                color="error"
-                                style={{ cursor: "pointer", marginLeft: 8 }}
-                                onClick={() => handleDeleteSkill(item._id)}
-                              />
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </Box>
-
-                <Box
-                  sx={{ inline: "true", textAlign: "center", mt: 2 }}
-                  className="div-tlt"
-                >
-                  <Typography>
-                    Totals:-{" "}
-                    <Input
-                      sx={marginLeft}
-                      placeholder="Number of Fields"
-                      value={pagination.totalSkills}
-                      readOnly
-                      className="inp-tlt"
-                    />
-                  </Typography>
-
-                  {/* Pagination Controls */}
-                  <Box
-                    sx={{ display: "flex", justifyContent: "center", mt: 3 }}
-                  >
-                    <Button
-                      disabled={pagination.currentPage === 1}
-                      onClick={() =>
-                        handlePageChange(pagination.currentPage - 1)
-                      }
-                    >
-                      Previous
-                    </Button>
-                    <Typography sx={{ margin: "0 20px" }}>
-                      Page {pagination.currentPage} of {pagination.totalPages}
-                    </Typography>
-                    <Button
-                      disabled={
-                        pagination.currentPage === pagination.totalPages
-                      }
-                      onClick={() =>
-                        handlePageChange(pagination.currentPage + 1)
-                      }
-                    >
-                      Next
-                    </Button>
-                  </Box>
-                </Box>
-              </Box>
-            </Box>
-          </Card.Body>
-        </Card>
-      </Col>
-    </Row>
+                    <Row>
+                      <Col xs={9} md={5} lg={9}>
+                        <BaseInput
+                          label="Skill Name"
+                          name="addSkills"
+                          className="bg-gray-100"
+                          type="text"
+                          placeholder={InputPlaceHolder("Skill to be Added")}
+                          handleChange={validation.handleChange}
+                          handleBlur={validation.handleBlur}
+                          value={validation.values.addSkills}
+                          touched={validation.touched.addSkills}
+                          error={validation.errors.addSkills}
+                          passwordToggle={false}
+                        />
+                      </Col>
+                    </Row>
+                  </BaseModal>
+                  <Row>
+                    <Col lg={12}>
+                      <div>
+                        {skills?.length > 0 ? (
+                          <TableContainer
+                            isHeaderTitle="Skills"
+                            columns={columns}
+                            data={skills}
+                            isGlobalFilter={true}
+                            customPageSize={10}
+                            theadClass="table-light text-muted"
+                            SearchPlaceholder="Search..."
+                            totalRecords={totalRecords}
+                            pagination={pagination}
+                            setPagination={setPagination}
+                            loader={loader}
+                          />
+                        ) : (
+                          <div className="py-4 text-center">
+                            <i className="ri-search-line d-block fs-1 text-success"></i>
+                            {handleResponse?.dataNotFound}
+                          </div>
+                        )}
+                      </div>
+                    </Col>
+                  </Row>
+                </Row>
+              </CardBody>
+            </Card>
+          </div>
+        </Row>
+      </Container>
+    </Fragment>
   );
 };
 

@@ -1,18 +1,17 @@
 // import node module libraries
 import { Col, Row, Container } from "react-bootstrap";
+import AboutMe from "sub-components/profile/AboutMe";
+import ActivityFeed from "sub-components/profile/ActivityFeed";
+import MyTeam from "sub-components/profile/MyTeam";
+import ProfileHeader from "sub-components/profile/ProfileHeader";
+import ProjectsContributions from "sub-components/profile/ProjectsContributions";
+import RecentFromBlog from "sub-components/profile/RecentFromBlog";
 
 // import widget as custom components
 import { PageHeading } from "widgets";
 
 // import sub components
-import {
-  AboutMe,
-  ActivityFeed,
-  MyTeam,
-  ProfileHeader,
-  ProjectsContributions,
-  RecentFromBlog,
-} from "sub-components";
+
 
 const Profile = () => {
   return (

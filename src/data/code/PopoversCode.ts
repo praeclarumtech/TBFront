@@ -1,7 +1,13 @@
 import { MouseEvent } from "react";
-export const copyAction = (event: MouseEvent<HTMLButtonElement>) =>
-  (event.currentTarget.innerHTML = "Copied") ||
-  setTimeout(() => (event.currentTarget.innerHTML = "Copy"), 300);
+export const copyAction = (event: MouseEvent<HTMLButtonElement>) => {
+  const target = event.currentTarget;
+  if (target) {
+    target.innerHTML = "Copied";
+    setTimeout(() => {
+      target.innerHTML = "Copy";
+    }, 300);
+  }
+};
 
 export const DefaultPopoverCode = `   
 <OverlayTrigger trigger="click" placement="right" overlay={
