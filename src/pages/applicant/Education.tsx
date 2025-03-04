@@ -38,7 +38,7 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
       resumeUrl: initialValues?.resumeUrl || "",
       rating: initialValues?.rating || "",
       portfolioUrl: initialValues?.portfolioUrl || "",
-      designation: initialValues?.designation || "",
+      CurrentCompanyDesignation: initialValues?.CurrentCompanyDesignation || "",
     },
     validationSchema: EducationApplicantSchema,
     onSubmit: (data) => {
@@ -206,26 +206,26 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                 </Col>
                 <Col xs={12} md={6} lg={4}>
                   <BaseSelect
-                    label="Designation"
-                    name="designation"
+                    label="Current Company Designation"
+                    name="CurrentCompanyDesignation"
                     className="select-border"
                     options={designationType}
                     placeholder={InputPlaceHolder("Degination")}
                     handleChange={(selectedOption: SelectedOption) => {
                       validation.setFieldValue(
-                        "designation",
+                        "CurrentCompanyDesignation",
                         selectedOption?.value || ""
                       );
                     }}
-                    handleBlur={validation.designation}
+                    handleBlur={validation.CurrentCompanyDesignation}
                     value={
                       dynamicFind(
                         designationType,
-                        validation.values.designation
+                        validation.values.CurrentCompanyDesignation
                       ) || ""
                     }
-                    touched={validation.touched.designation}
-                    error={validation.errors.designation}
+                    touched={validation.touched.CurrentCompanyDesignation}
+                    error={validation.errors.CurrentCompanyDesignation}
                   />
                 </Col>
 

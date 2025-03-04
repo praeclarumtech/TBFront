@@ -73,7 +73,7 @@ const StepperForm = () => {
     practicalFeedback: "",
     aboutUs: "",
     communicationSkill: "",
-    designation:"",
+    CurrentCompanyDesignation: "",
   });
   const steps = [
     "Personal Details",
@@ -149,7 +149,7 @@ const StepperForm = () => {
       feedback: formData.practicalFeedback,
       aboutUs: formData.aboutUs,
       communicationSkill: formData.communicationSkill,
-      designation:formData.designation,
+      CurrentCompanyDesignation: formData.CurrentCompanyDesignation,
     };
   };
 
