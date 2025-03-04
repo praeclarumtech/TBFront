@@ -115,7 +115,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                   />
                 </Col>
                 <Col xs={12} sm={4} className="mb-3 mb-sm-0">
-                  <BaseSelect
+                   <BaseSelect
                     label="Communication Skill(out of 10)"
                     name="communicationSkill"
                     className="select-border"
@@ -136,7 +136,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     }
                     touched={validation.touched.communicationSkill}
                     error={validation.errors.communicationSkill}
-                  />
+                  /> 
                 </Col>
                 <Col xs={12} sm={4}>
                   <BaseSelect
