@@ -4,13 +4,19 @@ import { viewAllEmail, deleteEmail } from "../../api/emailApi";
 import moment from "moment";
 import TableContainer from "../../components/BaseComponents/TableContainer";
 import BaseInput from "../../components/BaseComponents/BaseInput";
-import { InputPlaceHolder } from "../../components/constants/common";
 import Loader from "components/BaseComponents/Loader";
 import BaseButton from "components/BaseComponents/BaseButton";
 import { Tooltip as ReactTooltip } from "react-tooltip";
-import { errorHandle } from "components/helpers/service";
+import { errorHandle, InputPlaceHolder } from "utils/commonFunctions";
+import appConstants from "constants/constant";
+
+const {
+  projectTitle,
+  Modules,
+} = appConstants;
 
 const EmailTable = () => {
+   document.title = Modules.Register + " | " + projectTitle;
   const navigate = useNavigate();
 
   interface Email {

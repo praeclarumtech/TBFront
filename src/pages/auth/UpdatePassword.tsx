@@ -4,14 +4,6 @@ import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 // import custom hook
 import { useMounted } from "hooks/useMounted";
-import { ACCEPTED, Modules, SUCCESS } from "components/constants/enum";
-import {
-  InputPlaceHolder,
-  passwordRegex,
-  projectTitle,
-  validationMessages,
-} from "components/constants/common";
-import { errorHandle } from "components/helpers/service";
 import { forgotPassword } from "api/usersApi";
 import { toast } from "react-toastify";
 import BaseInput from "components/BaseComponents/BaseInput";
@@ -19,6 +11,17 @@ import BaseButton from "components/BaseComponents/BaseButton";
 import { useFormik } from "formik";
 import { useState } from "react";
 import { useLocation } from "react-router";
+import appConstants from "constants/constant";
+import { errorHandle, InputPlaceHolder } from "utils/commonFunctions";
+
+const {
+  projectTitle,
+  Modules,
+  SUCCESS,
+  passwordRegex,
+  validationMessages,
+  ACCEPTED,
+} = appConstants;
 
 const UpdatePassword = () => {
   document.title = Modules.UpdatePassword + " | " + projectTitle;

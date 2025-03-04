@@ -1,12 +1,13 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Row, Col, Card, CardBody } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import BaseButton from "components/BaseComponents/BaseButton";
-import { errorHandle } from "components/helpers/service";
-import { OK, SUCCESS } from "components/constants/enum";
 import { verifyOtp } from "api/usersApi";
+import appConstants from "constants/constant";
+import { errorHandle } from "utils/commonFunctions";
+
+const { OK, SUCCESS } = appConstants;
 
 const EmailVerification = () => {
   const history = useNavigate();

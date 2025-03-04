@@ -1,19 +1,29 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Row, Col, Container } from "react-bootstrap";
-import * as Yup from "yup";
-import { InputPlaceHolder, projectTitle } from "components/constants/common";
-import { Modules } from "components/constants/enum";
 import { useFormik } from "formik";
 import { Fragment, useState } from "react";
-import { dynamicFind } from "components/helpers/service";
 import BaseButton from "components/BaseComponents/BaseButton";
 import { BaseSelect, MultiSelect } from "components/BaseComponents/BaseSelect";
 import { Form } from "react-router-dom";
 import BaseInput from "components/BaseComponents/BaseInput";
-import { SelectedOption } from "interfaces/applicant.interface";
+import {
+  EducationApplicantSchema,
+  SelectedOption,
+} from "interfaces/applicant.interface";
+import { dynamicFind, InputPlaceHolder } from "utils/commonFunctions";
+import appConstants from "constants/constant";
+
+const {
+  projectTitle,
+  Modules,
+  passingYearType,
+  qualification,
+  skillOptions,
+  designationType,
+} = appConstants;
 
 const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
   document.title = Modules.Applicant + " | " + projectTitle;
+
   const validation: any = useFormik({
     enableReinitialize: true,
     initialValues: {
@@ -30,191 +40,11 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
       portfolioUrl: initialValues?.portfolioUrl || "",
       designation: initialValues?.designation || "",
     },
-    validationSchema: Yup.object({
-      qualification: Yup.array()
-        .required("Qualification is required")
-        .min(1, "At least one skill must be selected"),
-      degree: Yup.string().required("Degree Name is required"),
-      passingYear: Yup.string().required("Passing Year is required"),
-      appliedSkills: Yup.array()
-        .required("Passing Skill is required")
-        .min(1, "At least one skill must be selected"),
-      otherSkills: Yup.string(),
-      totalExperience: Yup.number()
-        .positive("Total Experience must be a positive number")
-        .required("Total Experience is required"),
-      relevantSkillExperience: Yup.number()
-        .min(0, "Relevant Skill Experience cannot be negative")
-        .required("Relevant Skill Experience is required")
-        .test(
-          "is-less-than-or-equal-total",
-          "Relevant Skill Experience must be less than or equal to Total Experience",
-          function (value) {
-            const totalExperience = this.parent.totalExperience;
-            return value <= totalExperience;
-          }
-        ),
-      designation: Yup.string().required("Designation is required"),
-      referral: Yup.string(),
-      portfolioUrl: Yup.string().url("Invalid URL"),
-      resumeUrl: Yup.string()
-        .url("Please enter a valid URL")
-        .required("Resume URL is required"),
-      rating: Yup.number()
-        .required("Rating is required")
-        .min(1, "Rating must be between 1 and 10")
-        .max(10, "Rating must be between 1 and 10"),
-    }),
-
+    validationSchema: EducationApplicantSchema,
     onSubmit: (data) => {
       onNext(data);
     },
   });
-
-  const qualification = [
-    { label: "Bachelors", value: "Bachelors" },
-    { label: "Masters", value: "masters" },
-    { label: "PhD", value: "phd" },
-    { label: "Diploma", value: "diploma" },
-    { label: "Associate Degree", value: "associate_degree" },
-    { label: "Certification", value: "certification" },
-    { label: "Doctorate", value: "doctorate" },
-    { label: "Post Graduate Diploma", value: "post_graduate_diploma" },
-    { label: "Advanced Diploma", value: "advanced_diploma" },
-  ];
-
-  const passingYeatType = [
-    { label: "2005", value: 2005 },
-    { label: "2006", value: 2006 },
-    { label: "2007", value: 2007 },
-    { label: "2008", value: 2008 },
-    { label: "2009", value: 2009 },
-    { label: "2010", value: 2010 },
-    { label: "2011", value: 2011 },
-    { label: "2012", value: 2012 },
-    { label: "2013", value: 2013 },
-    { label: "2014", value: 2014 },
-    { label: "2015", value: 2015 },
-    { label: "2016", value: 2016 },
-    { label: "2017", value: 2017 },
-    { label: "2018", value: 2018 },
-    { label: "2019", value: 2019 },
-    { label: "2020", value: 2020 },
-    { label: "2021", value: 2021 },
-    { label: "2022", value: 2022 },
-    { label: "2023", value: 2023 },
-    { label: "2024", value: 2024 },
-    { label: "2025", value: 2025 },
-    { label: "2026", value: 2026 },
-    { label: "2027", value: 2027 },
-    { label: "2028", value: 2028 },
-    { label: "2029", value: 2029 },
-  ];
-
-  const appliedSkillsType = [
-    { label: "JavaScript", value: "JavaScript" },
-    { label: "Node Js", value: "Node.js" },
-    { label: "Python", value: "Python" },
-    { label: "Java", value: "Java" },
-    { label: "Express Js", value: "Express Js" },
-    { label: "DotNet", value: "DotNet" },
-    { label: "Testing", value: "Testing" },
-    { label: "React Native", value: "React Native" },
-    { label: "Ionic", value: "Ionic" },
-    { label: "Flutter", value: "Flutter" },
-    { label: "Tailwind Css", value: "Tailwind Css" },
-    { label: "React", value: "React" },
-    { label: "Redux", value: "Redux" },
-    { value: "JavaScript", label: "JavaScript" },
-    { value: "Node.js", label: "Node.js" },
-    { value: "Python", label: "Python" },
-    { value: "MongoDB", label: "MongoDB" },
-    { value: "C", label: "C" },
-    { value: "C++", label: "C++" },
-    { value: "C#", label: "C#" },
-    { value: "SQL", label: "SQL" },
-    { value: "HTML", label: "HTML" },
-    { value: "CSS", label: "CSS" },
-    { value: "React", label: "React" },
-    { value: "Angular", label: "Angular" },
-    { value: "Vue.js", label: "Vue.js" },
-    { value: "Ruby", label: "Ruby" },
-    { value: "Ruby on Rails", label: "Ruby on Rails" },
-    { value: "PHP", label: "PHP" },
-    { value: "Swift", label: "Swift" },
-    { value: "Kotlin", label: "Kotlin" },
-    { value: "Go", label: "Go" },
-    { value: "R", label: "R" },
-    { value: "TypeScript", label: "TypeScript" },
-    { value: "Django", label: "Django" },
-    { value: "Flask", label: "Flask" },
-    { value: "Laravel", label: "Laravel" },
-    { value: "Spring Boot", label: "Spring Boot" },
-    { value: "ASP.NET", label: "ASP.NET" },
-    { value: "AWS", label: "AWS" },
-    { value: "Azure", label: "Azure" },
-    { value: "Google Cloud", label: "Google Cloud" },
-    { value: "Docker", label: "Docker" },
-    { value: "Kubernetes", label: "Kubernetes" },
-    { value: "TensorFlow", label: "TensorFlow" },
-    { value: "PyTorch", label: "PyTorch" },
-    { value: "Machine Learning", label: "Machine Learning" },
-    { value: "Deep Learning", label: "Deep Learning" },
-    { value: "Data Science", label: "Data Science" },
-    { value: "Blockchain", label: "Blockchain" },
-    { value: "Git", label: "Git" },
-    { value: "GitHub", label: "GitHub" },
-    { value: "Jenkins", label: "Jenkins" },
-    { value: "GraphQL", label: "GraphQL" },
-    { value: "RESTful APIs", label: "RESTful APIs" },
-    { value: "Firebase", label: "Firebase" },
-    { value: "SQLite", label: "SQLite" },
-    { value: "PostgreSQL", label: "PostgreSQL" },
-    { value: "MySQL", label: "MySQL" },
-    { value: "Redis", label: "Redis" },
-    { value: "Elasticsearch", label: "Elasticsearch" },
-    { value: "Apache Kafka", label: "Apache Kafka" },
-    { value: "Apache Hadoop", label: "Apache Hadoop" },
-    { value: "Unity", label: "Unity" },
-    { value: "Unreal Engine", label: "Unreal Engine" },
-    { value: "Arduino", label: "Arduino" },
-    { value: "Raspberry Pi", label: "Raspberry Pi" },
-    { value: "VMware", label: "VMware" },
-    { value: "Linux", label: "Linux" },
-    { value: "Shell Scripting", label: "Shell Scripting" },
-    { value: "Data Structures", label: "Data Structures" },
-    { value: "Algorithms", label: "Algorithms" },
-    { value: "Operating Systems", label: "Operating Systems" },
-    { value: "Computer Networks", label: "Computer Networks" },
-    { value: "Artificial Intelligence", label: "Artificial Intelligence" },
-    { value: "Cybersecurity", label: "Cybersecurity" },
-    { value: "DevOps", label: "DevOps" },
-    { value: "Agile", label: "Agile" },
-    { value: "Scrum", label: "Scrum" },
-    { value: "UI/UX Design", label: "UI/UX Design" },
-    { value: "Design Patterns", label: "Design Patterns" },
-    { value: "Test Automation", label: "Test Automation" },
-    { value: "Manual Testing", label: "Manual Testing" },
-    { value: "Business Intelligence", label: "Business Intelligence" },
-    { value: "Tableau", label: "Tableau" },
-    { value: "Power BI", label: "Power BI" },
-  ];
-
-  const designationType = [
-    { value: "SOFTWARE_ENGINEER", label: "Software Engineer" },
-    { value: "FRONTED_DEVLOPER", label: "Frontend Developer" },
-    { value: "BACKEND_DEVLOPER", label: "Backend Developer" },
-    { value: "FULL_STACK_DEVLOPER", label: "Full Stack Developer" },
-    { value: "DATA_ANALYST", label: "Data Analyst" },
-    { value: "DATA_SCIENTIST", label: "Data Scientist" },
-    { value: "PRODUCT_MANAGER", label: "Product Manager" },
-    { value: "UI_UX", label: "UX/UI Designer" },
-    { value: "QA", label: "QA Engineer" },
-    { value: "DEVOPS", label: "DevOps Engineer" },
-    { value: "BUSNESS_ANALYST", label: "Business Analyst" },
-    { value: "TECHNICSL_SUPPORT", label: "Technical Support Engineer" },
-  ];
-
 
   const [selectedMulti, setSelectedMulti] = useState<any>(
     initialValues.appliedSkills || []
@@ -233,7 +63,7 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
     validation.setFieldValue("qualification", ids);
     setSelectedQualification(selectedMulti);
   };
-  
+
   return (
     <Fragment>
       <div className="pt-3 page-content"></div>
@@ -293,7 +123,7 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     label="Passing Year"
                     name="passingYear"
                     className="select-border"
-                    options={passingYeatType}
+                    options={passingYearType}
                     placeholder={InputPlaceHolder("Passing Year")}
                     handleChange={(selectedOption: SelectedOption) => {
                       validation.setFieldValue(
@@ -304,7 +134,7 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     handleBlur={validation.handleBlur}
                     value={
                       dynamicFind(
-                        passingYeatType,
+                        passingYearType,
                         validation.values.passingYear
                       ) || ""
                     }
@@ -321,7 +151,7 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     value={selectedMulti || null}
                     isMulti={true}
                     onChange={handleMultiSkill}
-                    options={appliedSkillsType}
+                    options={skillOptions}
                     touched={validation.touched.appliedSkills}
                     error={validation.errors.appliedSkills}
                     handleBlur={validation.appliedSkills}

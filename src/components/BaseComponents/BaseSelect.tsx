@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Label } from "reactstrap";
 import Select from "react-select";
+import { BaseSelectProps, MultiSelectProps } from "interfaces/global.interface";
 
 const BaseSelect = ({
   label,
@@ -14,7 +15,7 @@ const BaseSelect = ({
   touched,
   error,
   isDisabled,
-}: any) => {
+}: BaseSelectProps) => {
   return (
     <>
       {label && (
@@ -54,8 +55,7 @@ const MultiSelect = ({
   className,
   isDisabled,
   placeholder,
- 
-}: any) => {
+}: MultiSelectProps) => {
   return (
     <>
       {label && (
