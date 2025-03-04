@@ -23,10 +23,6 @@ const routes = {
     path: "/app",
     title: "",
   },
-  RESET_PASSWORD: {
-    path: "/reset-password",
-    title: "",
-  },
   FORGET_PASSWORD: {
     title: "Forgot Password",
     path: "/forgot-password",

@@ -9,7 +9,6 @@ import routes from "./routes";
 import RootBoundary from "pages/dashboard/pages/RootBoundary";
 import SignIn from "pages/auth/SignIn";
 import ForgetPassword from "pages/auth/ForgetPassword";
-import ChangePassword from "pages/auth/ChangePassword";
 import SignUp from "pages/auth/SignUp";
 import Dashboard from "pages/dashboard/Index";
 import RootLayout from "layouts/RootLayout";
@@ -20,12 +19,15 @@ import PassingYear from "pages/master/PassingYear";
 import AddSkill from "pages/master/Skills";
 import StepperForm from "pages/applicant/Stepper";
 import Applicant from "pages/applicant/Index";
+import EmailVerification from "pages/auth/EmailVerify";
+import UpdatePassword from "pages/auth/UpdatePassword";
 
 const RenderRouter: React.FC = () => {
   const {
     ROOT,
     FORGET_PASSWORD,
-    RESET_PASSWORD,
+    VERIFY_EMAIL,
+    UPDATE_PASSWORD,
     SIGN_UP,
     DASHBOARD,
     APPLICANTS,
@@ -40,7 +42,8 @@ const RenderRouter: React.FC = () => {
         <Route index element={<SignIn />} />
         <Route path={SIGN_UP.path} element={<SignUp />} />
         <Route path={FORGET_PASSWORD.path} element={<ForgetPassword />} />
-        <Route path={RESET_PASSWORD.path} element={<ChangePassword />} />
+        <Route path={VERIFY_EMAIL.path} element={<EmailVerification />} />
+        <Route path={UPDATE_PASSWORD.path} element={<UpdatePassword />} />
         <Route
           path={DASHBOARD.path}
           element={<RootLayout>{<Dashboard />}</RootLayout>}
