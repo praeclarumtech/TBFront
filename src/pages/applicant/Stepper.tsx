@@ -67,10 +67,11 @@ const StepperForm = () => {
     noticePeriod: "",
     readyForWork: "",
     workPreference: "",
-    portfolioUrl:"",
+    portfolioUrl: "",
     practicalUrl: "",
     practicalFeedback: "",
     aboutUs: "",
+    communicationSkill:"",
   });
   const steps = [
     "Personal Details",
@@ -145,6 +146,7 @@ const StepperForm = () => {
       practicalUrl: formData.practicalUrl,
       feedback: formData.practicalFeedback,
       aboutUs: formData.aboutUs,
+      communicationSkill: formData.communicationSkill,
     };
   };
 

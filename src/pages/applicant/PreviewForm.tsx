@@ -1,15 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { Card, Col, Row } from "react-bootstrap";
-import { Button, Typography } from "@mui/material";
+
+import BaseButton from "components/BaseComponents/BaseButton";
+import { Typography } from "@mui/material";
 
 const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
-//   const capitalizeWords = (str: string) => {
-//     return str
-//       .split(" ")
-//       .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-//       .join(" ");
-//   };
 
  const capitalizeWords = (str: string) => {
     if (typeof str !== "string") {
@@ -148,7 +144,7 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
               </Typography>
               <Typography>
                 <span className="font-extrabold text-base !text-black pt-3">
-                  Rating:
+                  Javascript Rating:
                 </span>
                 <span>{" " + data.rating}</span>
               </Typography>
@@ -182,6 +178,12 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
                   Referral :
                 </span>
                 <span>{" " + capitalizeWords(data.referral)}</span>
+              </Typography>
+              <Typography>
+                <span className="font-extrabold text-base !text-black pt-3">
+                  Communication Skill Rating:
+                </span>
+                <span>{" " + data.communicationSkill}</span>
               </Typography>
             </Col>
           </Row>
@@ -254,24 +256,6 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
               </Typography>
             </Col>
             <Col xs={12}>
-              {/* <Typography>
-                <span className="font-extrabold text-base !text-black pt-3">
-                  Resume Url:
-                </span>
-                <span className="link-primary">{" " + data.resumeUrl}</span>
-              </Typography>
-              <Typography>
-                <span className="font-extrabold text-base !text-black pt-3">
-                  Portfolio Url:
-                </span>
-                <span className="link-primary">{" " + data.portfolioUrl}</span>
-              </Typography>
-              <Typography>
-                <span className="font-extrabold text-base !text-black pt-3">
-                  Practical Url :
-                </span>
-                <span className="link-primary">{" " + data.practicalUrl}</span>
-              </Typography> */}
               <Typography className="mt-2">
                 <span className="font-extrabold text-base text-black">
                   Resume URL:
@@ -295,7 +279,7 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
                   rel="noopener noreferrer"
                   className="text-blue-600 "
                 >
-                  {" "+data.portfolioUrl}
+                  {" " + data.portfolioUrl}
                 </a>
               </Typography>
               <Typography className="mt-2">
@@ -308,7 +292,7 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
                   rel="noopener noreferrer"
                   className="text-blue-600 "
                 >
-                  {" "+data.practicalUrl}
+                  {" " + data.practicalUrl}
                 </a>
               </Typography>
             </Col>
@@ -316,17 +300,17 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
         </div>
       </div>
       <div className="d-flex justify-content-between m-3">
-        <Button variant="contained" onClick={() => onEdit(2)}>
+        <BaseButton variant="contained" onClick={() => onEdit(2)}>
           Back
-        </Button>
-        <Button
+        </BaseButton>
+        <BaseButton
           variant="contained"
           color="primary"
           onClick={onSubmit}
           // disabled={loading}
         >
           {loading ? "Submitting..." : "Submit Application"}
-        </Button>
+        </BaseButton>
       </div>
     </Card>
   );

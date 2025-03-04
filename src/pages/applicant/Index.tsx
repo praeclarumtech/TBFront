@@ -38,6 +38,14 @@ const Applicant = () => {
   );
   const [filterExperience, setFilterExperience] =
     useState<SelectedOption | null>(null);
+  const [filterStatus, setFilterStatus] = useState<SelectedOption | null>(null);
+  const [filterInterviewStage, setFilterInterviewStage] = useState<SelectedOption | null>(null);
+  const [filterGender, setFilterGender] = useState<SelectedOption | null>(null);
+  const [filterNoticePeriod, setFilterNoticePeriod] =
+    useState<SelectedOption | null>(null);
+  const [filterExpectedPkg, setFilterExpectedPkg] =
+    useState<SelectedOption | null>(null);
+
   const [filterCity, setFilterCity] = useState<SelectedOption | null>(null);
   const [appliedSkills, setAppliedSkills] = useState<SelectedOption[]>([]);
   const [startDate, setStartDate] = useState("");
@@ -76,6 +84,31 @@ const Applicant = () => {
     { value: 7, label: "7 Years" },
   ];
 
+   const gendersType = [
+     { label: "Male", value: "male" },
+     { label: "Female", value: "female" },
+     { label: "Other", value: "other" },
+   ];
+  
+  const noticePeriodOptions = [
+    { value: 0, label: "0 days" },
+    { value: 15, label: "1-15 days" },
+    { value: 30, label: "15 - 30 days" },
+    { value: 45, label: "30 - 45 days" },
+    { value: 60, label: "45 - 60 days" },
+    {value: 70, label: "60+ days" }
+   
+  ];
+  const expectedPkgOptions = [
+    { value: 0, label: "0-0.03" },
+    { value: 10001, label: "10001-20000" },
+    { value: 20001, label: "20001-30000" },
+    { value: 30001, label: "30001-40000" },
+    { value: 40001, label: "40001-50000" },
+    { value: 50001, label: "Above 50000" },
+
+  ];
+
   const cityOptions = [
     { value: "Ahmedabad", label: "Ahemdabad" },
     { value: "Delhi", label: "Delhi" },
@@ -96,7 +129,7 @@ const Applicant = () => {
     setLoader(true);
 
     try {
-      let params: {
+      const params: {
         page: number;
         pageSize: number;
         totalExperience?: number;
@@ -151,10 +184,36 @@ const Applicant = () => {
   ]);
   const handleExperienceChange = (selectedOption: SelectedOption) => {
     setFilterExperience(selectedOption);
+    
   };
+
   const handleCityChange = (selectedOption: SelectedOption) => {
     setFilterCity(selectedOption);
   };
+
+   const handleGenderChange = (selectedOption: SelectedOption) => {
+     setFilterGender(selectedOption);
+  };
+  
+  const handleInterviewStageChange = (selectedOption: SelectedOption) => {
+    setFilterInterviewStage(selectedOption);
+  };
+  
+  const handleStatusChange = (selectedOption: SelectedOption) => {
+    setFilterStatus(selectedOption);
+    console.log("handleStatus", selectedOption);
+    
+  };
+  
+  const handleNoticePeriodChange = (selectedOption: SelectedOption) => {
+    setFilterNoticePeriod(selectedOption);
+    // console.log("notice period handle function : " + selectedOption.value);
+  };
+  
+  const handleExpectedPkgChange = (selectedOption: SelectedOption) => {
+    setFilterExpectedPkg(selectedOption);
+  };
+  
 
   const resetFilters = () => {
     setFilterExperience(null);
@@ -179,6 +238,7 @@ const Applicant = () => {
       deleteApplicantDetails(recordIdToDelete);
     }
   };
+
 
   const deleteApplicantDetails = (_id: string | undefined | null) => {
     setLoader(true);
@@ -408,6 +468,7 @@ const Applicant = () => {
                         label="Applied Skills"
                         name="appliedSkills"
                         className="select-border"
+                        placeholder="Applied Skills"
                         value={appliedSkills || null}
                         isMulti={true}
                         onChange={setAppliedSkills}
@@ -423,6 +484,61 @@ const Applicant = () => {
                         placeholder="Experience"
                         handleChange={handleExperienceChange}
                         value={filterExperience}
+                      />
+                    </Col>
+                    <Col xl={2} sm={6} md={4} lg={2}>
+                      <BaseSelect
+                        label="Gender"
+                        name="gender"
+                        className="select-border"
+                        options={gendersType}
+                        placeholder="Gender"
+                        handleChange={handleGenderChange}
+                        value={filterGender}
+                      />
+                    </Col>
+                    <Col xl={2} sm={6} md={4} lg={2}>
+                      <BaseSelect
+                        label="Notice Period"
+                        name="noticePeriod"
+                        className="select-border"
+                        options={noticePeriodOptions}
+                        placeholder="Notice Period"
+                        handleChange={handleNoticePeriodChange}
+                        value={filterNoticePeriod}
+                      />
+                    </Col>
+                    <Col xl={2} sm={6} md={4} lg={2}>
+                      <BaseSelect
+                        label="Interview stage"
+                        name="interviewStage"
+                        className="select-border"
+                        options={interviewStageOptions}
+                        placeholder="Interview Stage"
+                        handleChange={handleInterviewStageChange}
+                        value={filterInterviewStage}
+                      />
+                    </Col>
+                    <Col xl={2} sm={6} md={4} lg={2}>
+                      <BaseSelect
+                        label="Status"
+                        name="status"
+                        className="select-border"
+                        options={statusOptions}
+                        placeholder="status"
+                        handleChange={handleStatusChange}
+                        value={filterStatus}
+                      />
+                    </Col>
+                    <Col xl={2} sm={6} md={4} lg={2}>
+                      <BaseSelect
+                        label="Expected Pkg"
+                        name="expectedPkg"
+                        className="select-border"
+                        options={expectedPkgOptions}
+                        placeholder="Expected Package"
+                        handleChange={handleExpectedPkgChange}
+                        value={filterExpectedPkg}
                       />
                     </Col>
                     <Col xl={2} sm={6} md={4} lg={2}>

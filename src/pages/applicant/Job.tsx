@@ -13,6 +13,7 @@ import { Form } from "react-router-dom";
 import BaseInput from "components/BaseComponents/BaseInput";
 import { SelectedOption } from "interfaces/applicant.interface";
 
+import BaseTextarea from "components/BaseComponents/BaseTextArea";
 
 const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
   document.title = Modules.Applicant + " | " + projectTitle;
@@ -29,6 +30,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
       practicalUrl: initialValues?.practicalUrl || "",
       practicalFeedback: initialValues?.practicalFeedback || "",
       aboutUs: initialValues?.aboutUs || "",
+      communicationSkill: initialValues?.communicationSkill || "",
     },
     validationSchema: Yup.object({
       currentPkg: Yup.string().matches(
@@ -68,7 +70,11 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
         10,
         "Feedback must be at least 10 characters long."
       ),
-
+      communicationSkill: Yup.number()
+        .required("Rating is required")
+        .min(1, "Rating must be between 1 and 10")
+        .max(10, "Rating must be between 1 and 10"),
+      
       aboutUs: Yup.string()
         .required("About Us is required.")
         .min(10, "About Us description must be at least 10 characters long."),
@@ -80,9 +86,17 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
     },
   });
 
-  const workStatusType = [
-    { value: "yes", label: "Yes" },
-    { value: "no", label: "No" },
+  const communicationOptions = [
+    { value: "1", label: "1" },
+    { value: "2", label: "2" },
+    { value: "3", label: "3" },
+    { value: "4", label: "4" },
+    { value: "5", label: "5" },
+    { value: "6", label: "6" },
+    { value: "7", label: "7" },
+    { value: "8", label: "8" },
+    { value: "9", label: "9" },
+    { value: "10", label: "10" },
   ];
 
   const workPreferenceType = [
@@ -168,26 +182,26 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                 </Col>
                 <Col xs={12} sm={4} className="mb-3 mb-sm-0">
                   <BaseSelect
-                    label="Ready For WFO..."
-                    name="readyForWork"
+                    label="Communication Skill(out of 10)"
+                    name="communicationSkill"
                     className="select-border"
-                    options={workStatusType}
-                    placeholder={InputPlaceHolder("readyForWork")}
+                    options={communicationOptions}
+                    placeholder="CommunicationSkill"
                     handleChange={(selectedOption: SelectedOption) => {
                       validation.setFieldValue(
-                        "readyForWork",
+                        "communicationSkill",
                         selectedOption?.value || ""
                       );
                     }}
-                    handleBlur={validation.handleBlur}
+                    handleBlur={validation.communicationSkill}
                     value={
                       dynamicFind(
-                        workStatusType,
-                        validation.values.readyForWork
+                        communicationOptions,
+                        validation.values.communicationSkill
                       ) || ""
                     }
-                    touched={validation.touched.readyForWork}
-                    error={validation.errors.readyForWork}
+                    touched={validation.touched.communicationSkill}
+                    error={validation.errors.communicationSkill}
                   />
                 </Col>
                 <Col xs={12} sm={4}>
@@ -232,7 +246,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                   />
                 </Col>
                 <Col xs={12} sm={8} className="mb-3 mb-sm-0">
-                  <BaseInput
+                  <BaseTextarea
                     label="Practical Feedback"
                     name="practicalFeedback"
                     placeholder={InputPlaceHolder(
@@ -244,13 +258,15 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     touched={validation.touched.practicalFeedback}
                     error={validation.errors.practicalFeedback}
                     passwordToggle={false}
+                    rows={2}
+                    cols={50}
                   />
                 </Col>
               </Row>
 
               <Row className="mb-4">
                 <Col xs={12}>
-                  <BaseInput
+                  <BaseTextarea
                     label="About Us"
                     name="aboutUs"
                     placeholder={InputPlaceHolder(
@@ -262,6 +278,9 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     touched={validation.touched.aboutUs}
                     error={validation.errors.aboutUs}
                     passwordToggle={false}
+                    multiline
+                    rows={2}
+                    cols={50}
                   />
                 </Col>
               </Row>

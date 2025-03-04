@@ -11,12 +11,11 @@ import { BaseSelect } from "components/BaseComponents/BaseSelect";
 import { Form, Link } from "react-router-dom";
 import BaseInput from "components/BaseComponents/BaseInput";
 import moment from "moment";
-
-import { SelectedOption } from "interfaces/applicant.interface";
-
+import BaseTextarea from "components/BaseComponents/BaseTextArea";
+type SelectedOption = { label: string; value: string };
 const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
   document.title = Modules.Applicant + " | " + projectTitle;
-  // const minDateOfBirth = moment().subtract(15, "years").format("YYYY-MM-DD");
+  const minDateOfBirth = moment().subtract(15, "years").format("YYYY-MM-DD");
   const validation: any = useFormik({
     enableReinitialize: true,
     initialValues: {
@@ -27,8 +26,8 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
       phoneNumber: initialValues.phone.phoneNumber || "",
       email: initialValues.email || "",
       gender: initialValues.gender || "",
-      dateOfBirth: moment().format("YYYY-MM-DD") || "",
-      // dateOfBirth: "",
+      // dateOfBirth: moment().format("YYYY-MM-DD") || "",
+      dateOfBirth: initialValues.dateOfBirth || " ",
       fullAddress: initialValues.fullAddress || "",
       state: initialValues.state || "",
       country: initialValues.country || "",
@@ -36,9 +35,9 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
       city: initialValues.city || "",
     },
     validationSchema: Yup.object({
-      firstName: Yup.string().required("First Name is required"),
-      lastName: Yup.string().required("Last Name is required"),
-      middleName: Yup.string(),
+      firstName: Yup.string().required("First Name is required").max(15).min(2),
+      lastName: Yup.string().required("Last Name is required").max(15).min(2),
+      middleName: Yup.string().max(15).min(2),
       email: Yup.string()
         .email("Invalid email address")
         .required("Email is required"),
@@ -193,6 +192,7 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
                     touched={validation.touched.dateOfBirth}
                     error={validation.errors.dateOfBirth}
                     passwordToggle={false}
+                     min={minDateOfBirth}
                   />
                 </Col>
 
@@ -339,7 +339,7 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
                 </Col>
 
                 <Col xs={12}>
-                  <BaseInput
+                  <BaseTextarea
                     label="Full Address"
                     name="fullAddress"
                     placeholder={InputPlaceHolder("Full Address")}
