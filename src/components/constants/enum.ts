@@ -33,7 +33,9 @@ export const Modules = {
   Login: "Login",
   Register: "Register",
   Applicant: "Applicant",
-  Forgot: "Forgot"
+  Forgot: "Forgot",
+  EmailVerification: "Email Verification",
+  UpdatePassword: "Update Password",
 };
 
 const getItem = (key: any) => {

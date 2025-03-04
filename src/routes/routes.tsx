@@ -11,6 +11,8 @@ import PassingYear from "pages/master/PassingYear";
 import AddSkill from "pages/master/Skills";
 import Report from "pages/report/Report";
 import ForgetPassword from "pages/auth/ForgetPassword";
+import EmailVerification from "pages/auth/EmailVerify";
+import UpdatePassword from "pages/auth/UpdatePassword";
 
 const routes = {
   ROOT: {
@@ -21,14 +23,20 @@ const routes = {
     path: "/app",
     title: "",
   },
-  RESET_PASSWORD: {
-    path: "/reset-password",
-    title: "",
-  },
   FORGET_PASSWORD: {
     title: "Forgot Password",
     path: "/forgot-password",
     element: ForgetPassword,
+  },
+  VERIFY_EMAIL: {
+    title: "Email Verification",
+    path: "/email-verify",
+    element: EmailVerification,
+  },
+  UPDATE_PASSWORD: {
+    title: "Update Password",
+    path: "/update-password",
+    element: UpdatePassword,
   },
   SIGN_UP: {
     title: "Sign Up",

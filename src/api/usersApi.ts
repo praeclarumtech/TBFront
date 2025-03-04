@@ -1,4 +1,13 @@
-import { LOGIN, FORGOT_PASSWORD, REGISTER, UPDATEPROFILE, VIEWPROFILE, CHANGEPASSWORD, VERIFY_OTP, SEND_OTP } from "./apiRoutes";
+import {
+  LOGIN,
+  FORGOT_PASSWORD,
+  REGISTER,
+  UPDATEPROFILE,
+  VIEWPROFILE,
+  CHANGEPASSWORD,
+  VERIFY_OTP,
+  SEND_OTP,
+} from "./apiRoutes";
 import { authServices } from "./apiServices";
 
 export const login = async (data: object) => {
@@ -21,7 +30,7 @@ export const viewProfile = async (id?: number, data?: object) => {
   return response?.data;
 };
 
-export const changePassword = async(id?: number ,data?: object) =>{
+export const changePassword = async (id?: number, data?: object) => {
   const response = await authServices.post(`${CHANGEPASSWORD}/${id}`, data);
   return response?.data;
 };
@@ -30,14 +39,13 @@ export const sendOtp = async (data: object) => {
   const response = await authServices.post(`${SEND_OTP}`, data);
   return response?.data;
 };
- 
+
 export const verifyOtp = async (data: object) => {
   const response = await authServices.post(`${VERIFY_OTP}`, data);
   return response?.data;
 };
- 
-export const forgotPassword = async (data: object, id : string) => {
-  const response = await authServices.post(`${FORGOT_PASSWORD}/${id}`, data);
+
+export const forgotPassword = async (data: object) => {
+  const response = await authServices.put(`${FORGOT_PASSWORD}`, data);
   return response?.data;
 };
- 
