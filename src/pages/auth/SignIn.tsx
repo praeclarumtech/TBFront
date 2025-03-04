@@ -146,7 +146,7 @@ const SignIn = () => {
                       <a
                         href="#"
                         className="text-inherit fs-5"
-                        onClick={() => navigate("/forget-password")}
+                        onClick={() => navigate("/forgot-password")}
                       >
                         Forgot your password?
                       </a>

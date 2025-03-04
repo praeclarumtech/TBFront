@@ -1,62 +1,48 @@
 import { useMounted } from "hooks/useMounted";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { sendEmail } from "api/emailApi";
 import { toast } from "react-toastify";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 
 const EmailForm = () => {
   const hasMounted = useMounted();
   const navigate = useNavigate();
   // Add loading and error states
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
-
-  // Add state for form fields
-  const [formData, setFormData] = useState({
-    email_to: "",
-    email_bcc: "",
-    subject: "",
-    description: "",
-    // date:''
+  // Replace useState with useFormik
+  const validation = useFormik({
+    initialValues: {
+      email_to: "",
+      email_bcc: "",
+      subject: "",
+      description: "",
+    },
+    validationSchema: Yup.object({
+      email_to: Yup.string()
+        .email("Invalid email address")
+        .required("Recipient email is required"),
+      email_bcc: Yup.string().email("Invalid email address"),
+      subject: Yup.string().required("Subject is required"),
+    }),
+    onSubmit: async (values) => {
+      try {
+        await sendEmail(values);
+        toast.success("Email sent successfully!", {
+          closeOnClick: true,
+          autoClose: 5000,
+        });
+        navigate("/email");
+      } catch (err) {
+        toast.error("Failed to send email. Please try again.", {
+          closeOnClick: true,
+          autoClose: 5000,
+        });
+        console.error("Error sending email:", err);
+      }
+    },
   });
-
-  // Update handleSubmit to use the API
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError("");
-
-    try {
-      const response = await sendEmail(formData);
-      console.log("response===>>>", response);
-      toast.success("Email sent successfully!", {
-        closeOnClick: true,
-        autoClose: 5000,
-      });
-      navigate("/email"); // Redirect back to email list on success
-    } catch (err) {
-      toast.error("Failed to send email. Please try again.", {
-        closeOnClick: true,
-        autoClose: 5000,
-      });
-      console.error("Error sending email:", err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Add change handler
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { id, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [id]: value,
-    }));
-  };
 
   return (
     <>
@@ -79,16 +65,13 @@ const EmailForm = () => {
               </div>
 
               <div>
-                {error && (
-                  <div className="mb-4 text-red-600 text-center">{error}</div>
-                )}
                 {hasMounted && (
-                  <form onSubmit={handleSubmit}>
+                  <form onSubmit={validation.handleSubmit} noValidate>
                     <div className="grid grid-cols-2 gap-6 mb-3">
                       <div>
                         <label
                           className="block font-bold mb-2"
-                          htmlFor="toEmail"
+                          htmlFor="email_to"
                         >
                           To
                         </label>
@@ -96,16 +79,27 @@ const EmailForm = () => {
                           type="email"
                           placeholder="Enter Recipients"
                           id="email_to"
-                          required
-                          value={formData.email_to}
-                          onChange={handleChange}
-                          className="w-full p-2 bg-gray-100 rounded-md"
+                          value={validation.values.email_to}
+                          onChange={validation.handleChange}
+                          onBlur={validation.handleBlur}
+                          className={`w-full p-2 bg-gray-100 rounded-md ${
+                            validation.touched.email_to &&
+                            validation.errors.email_to
+                              ? "border-red-500 border-2"
+                              : ""
+                          }`}
                         />
+                        {validation.touched.email_to &&
+                          validation.errors.email_to && (
+                            <div className="text-red-500 text-sm mt-1">
+                              {validation.errors.email_to}
+                            </div>
+                          )}
                       </div>
                       <div>
                         <label
                           className="block font-bold mb-2"
-                          htmlFor="bccEmail"
+                          htmlFor="email_bcc"
                         >
                           Bcc
                         </label>
@@ -113,10 +107,22 @@ const EmailForm = () => {
                           type="email"
                           placeholder="Enter Your email"
                           id="email_bcc"
-                          value={formData.email_bcc}
-                          onChange={handleChange}
-                          className="w-full p-2 bg-gray-100 rounded-md"
+                          value={validation.values.email_bcc}
+                          onChange={validation.handleChange}
+                          onBlur={validation.handleBlur}
+                          className={`w-full p-2 bg-gray-100 rounded-md ${
+                            validation.touched.email_bcc &&
+                            validation.errors.email_bcc
+                              ? "border-red-500 border-2"
+                              : ""
+                          }`}
                         />
+                        {validation.touched.email_bcc &&
+                          validation.errors.email_bcc && (
+                            <div className="text-red-500 text-sm mt-1">
+                              {validation.errors.email_bcc}
+                            </div>
+                          )}
                       </div>
                     </div>
 
@@ -128,11 +134,22 @@ const EmailForm = () => {
                         type="text"
                         placeholder="Enter Your Subject"
                         id="subject"
-                        required
-                        value={formData.subject}
-                        onChange={handleChange}
-                        className="w-full p-2 bg-gray-100 rounded-md"
+                        value={validation.values.subject}
+                        onChange={validation.handleChange}
+                        onBlur={validation.handleBlur}
+                        className={`w-full p-2 bg-gray-100 rounded-md ${
+                          validation.touched.subject &&
+                          validation.errors.subject
+                            ? "border-red-500 border-2"
+                            : ""
+                        }`}
                       />
+                      {validation.touched.subject &&
+                        validation.errors.subject && (
+                          <div className="text-red-500 text-sm mt-1">
+                            {validation.errors.subject}
+                          </div>
+                        )}
                     </div>
 
                     <div className="mb-3">
@@ -140,21 +157,33 @@ const EmailForm = () => {
                         rows={4}
                         placeholder="Description"
                         id="description"
-                        value={formData.description}
-                        onChange={handleChange}
-                        className="w-full p-2 bg-gray-100 rounded-md"
+                        value={validation.values.description}
+                        onChange={validation.handleChange}
+                        onBlur={validation.handleBlur}
+                        className={`w-full p-2 bg-gray-100 rounded-md ${
+                          validation.touched.description &&
+                          validation.errors.description
+                            ? "border-red-500 border-2"
+                            : ""
+                        }`}
                       />
+                      {validation.touched.description &&
+                        validation.errors.description && (
+                          <div className="text-red-500 text-sm mt-1">
+                            {validation.errors.description}
+                          </div>
+                        )}
                     </div>
 
                     <div className="flex justify-end items-center gap-4">
-                      <button 
+                      <button
                         type="button"
                         disabled
                         className="p-2 hover:bg-gray-100 rounded-full opacity-50 cursor-not-allowed"
                       >
                         <i className="fa fa-paperclip"></i>
                       </button>
-                      <button 
+                      <button
                         type="button"
                         disabled
                         className="p-2 hover:bg-gray-100 rounded-full opacity-50 cursor-not-allowed"
@@ -163,10 +192,10 @@ const EmailForm = () => {
                       </button>
                       <button
                         type="submit"
-                        disabled={isLoading}
+                        disabled={validation.isSubmitting}
                         className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary-dark flex items-center gap-2 disabled:opacity-50"
                       >
-                        {isLoading ? (
+                        {validation.isSubmitting ? (
                           <>
                             Loading... <i className="fa fa-spinner fa-spin"></i>
                           </>

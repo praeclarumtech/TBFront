@@ -24,7 +24,7 @@ import Applicant from "pages/applicant/Index";
 const RenderRouter: React.FC = () => {
   const {
     ROOT,
-    FORGOT_PASSWORD,
+    FORGET_PASSWORD,
     RESET_PASSWORD,
     SIGN_UP,
     DASHBOARD,
@@ -39,7 +39,7 @@ const RenderRouter: React.FC = () => {
       <Route path={ROOT.path} errorElement={<RootBoundary />}>
         <Route index element={<SignIn />} />
         <Route path={SIGN_UP.path} element={<SignUp />} />
-        <Route path={FORGOT_PASSWORD.path} element={<ForgetPassword />} />
+        <Route path={FORGET_PASSWORD.path} element={<ForgetPassword />} />
         <Route path={RESET_PASSWORD.path} element={<ChangePassword />} />
         <Route
           path={DASHBOARD.path}

@@ -59,7 +59,7 @@ const StepperForm = () => {
     relevantSkillExperience: "",
     otherSkills: "",
     referral: "",
-    url: "",
+    resumeUrl: "",
     rating: "",
     currentPkg: "",
     expectedPkg: "",
@@ -67,9 +67,11 @@ const StepperForm = () => {
     noticePeriod: "",
     readyForWork: "",
     workPreference: "",
+    portfolioUrl: "",
     practicalUrl: "",
     practicalFeedback: "",
     aboutUs: "",
+    communicationSkill:"",
   });
   const steps = [
     "Personal Details",
@@ -132,7 +134,7 @@ const StepperForm = () => {
       relevantSkillExperience: formData.relevantSkillExperience,
       otherSkills: formData.otherSkills,
       referral: formData.referral,
-      url: formData.url,
+      resumeUrl: formData.resumeUrl,
       rating: formData.rating,
       currentPkg: formData.currentPkg,
       expectedPkg: formData.expectedPkg,
@@ -140,9 +142,11 @@ const StepperForm = () => {
       noticePeriod: formData.noticePeriod,
       readyForWork: formData.readyForWork,
       workPreference: formData.workPreference,
-      // practicalUrl: formData.practicalUrl,
-      // feedback: formData.practicalFeedback,
+      portfolioUrl: formData.portfolioUrl,
+      practicalUrl: formData.practicalUrl,
+      feedback: formData.practicalFeedback,
       aboutUs: formData.aboutUs,
+      communicationSkill: formData.communicationSkill,
     };
   };
 

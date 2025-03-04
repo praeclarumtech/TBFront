@@ -41,6 +41,7 @@ const BaseSelect = ({
 };
 
 const MultiSelect = ({
+  label,
   value,
   isMulti,
   onChange,
@@ -51,10 +52,17 @@ const MultiSelect = ({
   name,
   handleBlur,
   className,
-  isDisabled
+  isDisabled,
+  placeholder,
+ 
 }: any) => {
   return (
     <>
+      {label && (
+        <Label htmlFor={name} className="form-label">
+          {label}
+        </Label>
+      )}
       <Select
         value={value}
         className={className ? className : "select-border"}
@@ -66,6 +74,7 @@ const MultiSelect = ({
         onBlur={handleBlur}
         isClearable
         isDisabled={isDisabled}
+        placeholder={placeholder}
       />
       {touched && error ? (
         <div className="text-danger error-font">{error}</div>

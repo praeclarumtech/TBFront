@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { Row, Col, Card, Container, CardBody, Collapse } from "react-bootstrap";
-import { Fragment, useEffect, useState, useMemo } from "react";
+import { Row, Col, Card, Container, CardBody } from "react-bootstrap";
+import { Fragment, useEffect, useState, useMemo, SetStateAction } from "react";
 import { dynamicFind, errorHandle } from "components/helpers/service";
 import BaseButton from "components/BaseComponents/BaseButton";
-import { BaseSelect } from "components/BaseComponents/BaseSelect";
+import { BaseSelect, MultiSelect } from "components/BaseComponents/BaseSelect";
 import TableContainer from "components/BaseComponents/TableContainer";
 import { Link, useNavigate } from "react-router-dom";
 import { Tooltip as ReactTooltip } from "react-tooltip";
@@ -16,14 +15,15 @@ import {
 import { FaWhatsapp, FaEnvelope, FaCommentDots } from "react-icons/fa";
 import ViewModal from "./ViewApplicant";
 import BaseInput from "components/BaseComponents/BaseInput";
-import { InputPlaceHolder } from "components/constants/common";
-import Loader from "components/BaseComponents/Loader";
+import DeleteModal from "components/BaseComponents/DeleteModal";
+import { InputPlaceHolder, projectTitle } from "components/constants/common";
+// import { FILTER_APPLICANT } from "api/apiRoutes";
 
 import { SelectedOption } from "interfaces/applicant.interface";
+import { Modules } from "components/constants/enum";
 
 const Applicant = () => {
-  document.title = "Applicant | Project Title";
-
+   document.title = Modules.Applicant + " | " + projectTitle;
   const navigate = useNavigate();
   const [loader, setLoader] = useState(false);
   const [applicant, setApplicant] = useState<any[]>([]);
@@ -32,6 +32,30 @@ const Applicant = () => {
   );
   const [showModal, setShowModal] = useState(false);
   const [filtersVisible, setFiltersVisible] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [recordIdToDelete, setRecordIdToDelete] = useState<string | undefined>(
+    undefined
+  );
+  const [filterExperience, setFilterExperience] =
+    useState<SelectedOption | null>(null);
+  const [filterStatus, setFilterStatus] = useState<SelectedOption | null>(null);
+  const [filterInterviewStage, setFilterInterviewStage] = useState<SelectedOption | null>(null);
+  const [filterGender, setFilterGender] = useState<SelectedOption | null>(null);
+  const [filterNoticePeriod, setFilterNoticePeriod] =
+    useState<SelectedOption | null>(null);
+  const [filterExpectedPkg, setFilterExpectedPkg] =
+    useState<SelectedOption | null>(null);
+
+  const [filterCity, setFilterCity] = useState<SelectedOption | null>(null);
+  const [appliedSkills, setAppliedSkills] = useState<SelectedOption[]>([]);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 10,
+  });
+  const [tableLoader, setTableLoader] = useState(false);
 
   const statusOptions = [
     { label: "Hold", value: "Hold" },
@@ -49,33 +73,185 @@ const Applicant = () => {
     { label: "Final", value: "Final" },
   ];
 
-  const listOfApplicant = () => {
+  const experienceOptions = [
+    { value: 0, label: "0 Years" },
+    { value: 1, label: "1 Year" },
+    { value: 2, label: "2 Years" },
+    { value: 3, label: "3 Years" },
+    { value: 4, label: "4 Years" },
+    { value: 5, label: "5 Years" },
+    { value: 6, label: "6 Years" },
+    { value: 7, label: "7 Years" },
+  ];
+
+   const gendersType = [
+     { label: "Male", value: "male" },
+     { label: "Female", value: "female" },
+     { label: "Other", value: "other" },
+   ];
+  
+  const noticePeriodOptions = [
+    { value: 0, label: "0 days" },
+    { value: 15, label: "1-15 days" },
+    { value: 30, label: "15 - 30 days" },
+    { value: 45, label: "30 - 45 days" },
+    { value: 60, label: "45 - 60 days" },
+    {value: 70, label: "60+ days" }
+   
+  ];
+  const expectedPkgOptions = [
+    { value: 0, label: "0-0.03" },
+    { value: 10001, label: "10001-20000" },
+    { value: 20001, label: "20001-30000" },
+    { value: 30001, label: "30001-40000" },
+    { value: 40001, label: "40001-50000" },
+    { value: 50001, label: "Above 50000" },
+
+  ];
+
+  const cityOptions = [
+    { value: "Ahmedabad", label: "Ahemdabad" },
+    { value: "Delhi", label: "Delhi" },
+    { value: "Gandhi Nagar", label: "Gandhi Nagar" },
+    { value: "Banglore", label: "Banglore" },
+  ];
+
+  const skillOptions = [
+    { value: "JavaScript", label: "JavaScript" },
+    { value: "Node.js", label: "Node.js" },
+    { value: "Python", label: "Python" },
+    { value: "MongoDB", label: "MongoDB" },
+    { value: "Java", label: "Java" },
+  ];
+
+  const fetchApplicants = async () => {
+    setTableLoader(true);
     setLoader(true);
-    listOfApplicants()
-      .then((res) => {
-        setApplicant(res?.data?.item);
-      })
-      .catch((error) => errorHandle(error))
-      .finally(() => {
-        setLoader(false);
-      });
+
+    try {
+      const params: {
+        page: number;
+        pageSize: number;
+        totalExperience?: number;
+        city?: string;
+        appliedSkills?: string;
+        startDate?: string;
+        endDate?: string;
+      } = {
+        page: pagination.pageIndex + 1,
+        pageSize: pagination.pageSize,
+      };
+
+      if (filterExperience) {
+        params.totalExperience = Number(filterExperience.value);
+      }
+      if (filterCity) {
+        params.city = filterCity.value;
+      }
+      if (appliedSkills.length > 0) {
+        params.appliedSkills = appliedSkills
+          .map((skill: SelectedOption) => skill.value)
+          .join(",");
+      }
+      if (startDate) {
+        params.startDate = startDate;
+      }
+      if (endDate) {
+        params.endDate = endDate;
+      }
+
+      const res = await listOfApplicants(params);
+      setApplicant(res?.data?.item || []);
+      setTotalRecords(res?.data?.totalRecords || 0);
+    } catch (error) {
+      errorHandle(error);
+    } finally {
+      setTableLoader(false);
+      setLoader(false);
+    }
   };
 
   useEffect(() => {
-    listOfApplicant();
-  }, []);
+    fetchApplicants();
+  }, [
+    pagination.pageIndex,
+    pagination.pageSize,
+    filterExperience,
+    appliedSkills,
+    startDate,
+    endDate,
+    filterCity,
+  ]);
+  const handleExperienceChange = (selectedOption: SelectedOption) => {
+    setFilterExperience(selectedOption);
+    
+  };
+
+  const handleCityChange = (selectedOption: SelectedOption) => {
+    setFilterCity(selectedOption);
+  };
+
+   const handleGenderChange = (selectedOption: SelectedOption) => {
+     setFilterGender(selectedOption);
+  };
+  
+  const handleInterviewStageChange = (selectedOption: SelectedOption) => {
+    setFilterInterviewStage(selectedOption);
+  };
+  
+  const handleStatusChange = (selectedOption: SelectedOption) => {
+    setFilterStatus(selectedOption);
+    console.log("handleStatus", selectedOption);
+    
+  };
+  
+  const handleNoticePeriodChange = (selectedOption: SelectedOption) => {
+    setFilterNoticePeriod(selectedOption);
+    // console.log("notice period handle function : " + selectedOption.value);
+  };
+  
+  const handleExpectedPkgChange = (selectedOption: SelectedOption) => {
+    setFilterExpectedPkg(selectedOption);
+  };
+  
+
+  const resetFilters = () => {
+    setFilterExperience(null);
+    setAppliedSkills([]);
+    setStartDate("");
+    setEndDate("");
+    setFilterCity(null);
+    fetchApplicants();
+  };
+
+  const openDeleteModal = (id: string) => {
+    setRecordIdToDelete(id);
+    setShowDeleteModal(true);
+  };
+
+  const closeDeleteModal = () => {
+    setShowDeleteModal(false);
+  };
+
+  const handleDelete = () => {
+    if (recordIdToDelete) {
+      deleteApplicantDetails(recordIdToDelete);
+    }
+  };
+
 
   const deleteApplicantDetails = (_id: string | undefined | null) => {
     setLoader(true);
     deleteApplicant(_id)
       .then(() => {
-        listOfApplicant();
+        fetchApplicants();
       })
       .catch((error: any) => {
         errorHandle(error);
       })
       .finally(() => {
         setLoader(false);
+        setShowDeleteModal(false);
       });
   };
 
@@ -175,26 +351,10 @@ const Applicant = () => {
             <Link to="" className="btn btn-sm btn-soft-primary">
               <FaCommentDots />
             </Link>
-            <Link
-              to=""
-              className=""
-              // onClick={() =>
-              //   window.open(
-              //     `/applicant`
-              //   )
-              // }
-              // aria-disabled
-            >
+            <Link to="">
               <FaWhatsapp />
             </Link>
-            <Link
-              to=""
-              className="btn btn-sm btn-soft-info"
-              // onClick={() =>
-              //   window.open(
-              //     `/applicant`
-              //   )}
-            >
+            <Link to="" className="btn btn-sm btn-soft-info">
               <FaEnvelope />
             </Link>
           </div>
@@ -235,7 +395,7 @@ const Applicant = () => {
               id={`delete-${cell?.row?.original?.id}`}
               className="btn btn-sm btn-soft-danger remove-list"
               color="danger"
-              onClick={() => deleteApplicantDetails(cell.row.original._id)}
+              onClick={() => openDeleteModal(cell.row.original._id)}
             >
               <i className="ri-delete-bin-5-fill align-bottom" />
               <ReactTooltip
@@ -265,14 +425,21 @@ const Applicant = () => {
           applicantId={selectedApplicantId}
         />
       )}
+      <DeleteModal
+        show={showDeleteModal}
+        onCloseClick={closeDeleteModal}
+        onDeleteClick={handleDelete}
+        recordId={recordIdToDelete}
+        loader={loader}
+      />
       <Container fluid>
         <Row>
           <div>
             <Card className="mb-3 my-3">
               <CardBody>
                 <div className="container">
-                  <div className="row justify-content-between">
-                    <div className="col-auto d-flex justify-content-start">
+                  <div className="row flex justify-content-between">
+                    <div className="col-auto !d-flex !justify-content-start !mx-0 ">
                       <BaseButton
                         onClick={() => setFiltersVisible(!filtersVisible)}
                         color="primary"
@@ -281,7 +448,7 @@ const Applicant = () => {
                       </BaseButton>
                     </div>
 
-                    <div className="col-auto d-flex justify-content-end gap-2">
+                    <div className="col-auto !d-flex !justify-content-end mx-0 ">
                       <BaseButton
                         color="success"
                         disabled={loader}
@@ -293,62 +460,134 @@ const Applicant = () => {
                     </div>
                   </div>
                 </div>
-                <Collapse in={filtersVisible} className="mt-3">
-                  <div>
-                    <Row className="flex">
-                      <Col xl={3} sm={6} md={4} lg={2}>
-                        <BaseSelect
-                          name="appliedSkills"
-                          options={statusOptions}
-                          placeholder="Technology"
-                        />
-                      </Col>
-                      <Col xl={3} sm={6} md={4} lg={2}>
-                        <BaseSelect
-                          name="interviewStage"
-                          options={interviewStageOptions}
-                          placeholder="Experience"
-                        />
-                      </Col>
-                      <Col xl={2} sm={6} md={4} lg={2}>
-                        <BaseInput
-                          name="startDate"
-                          type="date"
-                          placeholder={InputPlaceHolder("Start Date")}
-                          // handleChange={validation.handleChange}
-                          // handleBlur={validation.handleBlur}
-                          // value={validation.values.dateOfBirth}
-                          // touched={validation.touched.dateOfBirth}
-                          // error={validation.errors.dateOfBirth}
-                          passwordToggle={false}
-                        />
-                      </Col>
-                      <Col xl={2} sm={6} md={4} lg={2}>
-                        <BaseInput
-                          name="endDate"
-                          type="date"
-                          placeholder={InputPlaceHolder("End Date")}
-                          // handleChange={validation.handleChange}
-                          // handleBlur={validation.handleBlur}
-                          // value={validation.values.dateOfBirth}
-                          // touched={validation.touched.dateOfBirth}
-                          // error={validation.errors.dateOfBirth}
-                          passwordToggle={false}
-                        />
-                      </Col>
-                      <Col xl={2} sm={6} md={6} lg={2}>
-                        <BaseButton
-                          color="primary"
-                          disabled={loader}
-                          type="submit"
-                          loader={loader}
-                        >
-                          Reset Filters
-                        </BaseButton>
-                      </Col>
-                    </Row>
-                  </div>
-                </Collapse>
+
+                {filtersVisible && (
+                  <Row className="flex mt-3">
+                    <Col xl={2} sm={6} md={4} lg={2}>
+                      <MultiSelect
+                        label="Applied Skills"
+                        name="appliedSkills"
+                        className="select-border"
+                        placeholder="Applied Skills"
+                        value={appliedSkills || null}
+                        isMulti={true}
+                        onChange={setAppliedSkills}
+                        options={skillOptions}
+                      />
+                    </Col>
+                    <Col xl={2} sm={6} md={4} lg={2}>
+                      <BaseSelect
+                        label="Experience"
+                        name="Experience"
+                        className="select-border"
+                        options={experienceOptions}
+                        placeholder="Experience"
+                        handleChange={handleExperienceChange}
+                        value={filterExperience}
+                      />
+                    </Col>
+                    <Col xl={2} sm={6} md={4} lg={2}>
+                      <BaseSelect
+                        label="Gender"
+                        name="gender"
+                        className="select-border"
+                        options={gendersType}
+                        placeholder="Gender"
+                        handleChange={handleGenderChange}
+                        value={filterGender}
+                      />
+                    </Col>
+                    <Col xl={2} sm={6} md={4} lg={2}>
+                      <BaseSelect
+                        label="Notice Period"
+                        name="noticePeriod"
+                        className="select-border"
+                        options={noticePeriodOptions}
+                        placeholder="Notice Period"
+                        handleChange={handleNoticePeriodChange}
+                        value={filterNoticePeriod}
+                      />
+                    </Col>
+                    <Col xl={2} sm={6} md={4} lg={2}>
+                      <BaseSelect
+                        label="Interview stage"
+                        name="interviewStage"
+                        className="select-border"
+                        options={interviewStageOptions}
+                        placeholder="Interview Stage"
+                        handleChange={handleInterviewStageChange}
+                        value={filterInterviewStage}
+                      />
+                    </Col>
+                    <Col xl={2} sm={6} md={4} lg={2}>
+                      <BaseSelect
+                        label="Status"
+                        name="status"
+                        className="select-border"
+                        options={statusOptions}
+                        placeholder="status"
+                        handleChange={handleStatusChange}
+                        value={filterStatus}
+                      />
+                    </Col>
+                    <Col xl={2} sm={6} md={4} lg={2}>
+                      <BaseSelect
+                        label="Expected Pkg"
+                        name="expectedPkg"
+                        className="select-border"
+                        options={expectedPkgOptions}
+                        placeholder="Expected Package"
+                        handleChange={handleExpectedPkgChange}
+                        value={filterExpectedPkg}
+                      />
+                    </Col>
+                    <Col xl={2} sm={6} md={4} lg={2}>
+                      <BaseSelect
+                        label="City"
+                        name="city"
+                        className="select-border"
+                        options={cityOptions}
+                        placeholder="City"
+                        handleChange={handleCityChange}
+                        value={filterCity}
+                      />
+                    </Col>
+                    <Col xl={2} sm={6} md={4} lg={2}>
+                      <BaseInput
+                        label="Start Date"
+                        name="startDate"
+                        type="date"
+                        placeholder={InputPlaceHolder("Start Date")}
+                        handleChange={(e: {
+                          target: { value: SetStateAction<string> };
+                        }) => setStartDate(e.target.value)}
+                        value={startDate || ""}
+                      />
+                    </Col>
+
+                    <Col xl={2} sm={6} md={4} lg={2}>
+                      <BaseInput
+                        label="End Date"
+                        name="endDate"
+                        type="date"
+                        placeholder={InputPlaceHolder("End Date")}
+                        handleChange={(e: {
+                          target: { value: SetStateAction<string> };
+                        }) => setEndDate(e.target.value)}
+                        value={endDate || ""}
+                      />
+                    </Col>
+                    <Col xl={2} sm={6} md={4} lg={2}>
+                      <BaseButton
+                        color="primary"
+                        onClick={resetFilters}
+                        disabled={loader}
+                      >
+                        Reset Filters
+                      </BaseButton>
+                    </Col>
+                  </Row>
+                )}
               </CardBody>
             </Card>
           </div>
@@ -357,30 +596,29 @@ const Applicant = () => {
         <Row>
           <Col lg={12}>
             <Card>
-              {loader ? (
-                <Loader />
-              ) : (
-                <div className="card-body pt-0">
-                  <div>
-                    {applicant?.length > 0 ? (
-                      <TableContainer
-                        isHeaderTitle="Applicants"
-                        columns={columns}
-                        data={applicant || []}
-                        isGlobalFilter
-                        customPageSize={5}
-                        theadClass="table-light text-muted"
-                        SearchPlaceholder="Search..."
-                      />
-                    ) : (
-                      <div className="py-4 text-center">
-                        <i className="ri-search-line d-block fs-1 text-success"></i>
-                        No applicants found.
-                      </div>
-                    )}
+              <div className="card-body pt-0">
+                {applicant.length > 0 ? (
+                  <TableContainer
+                    isHeaderTitle="Applicants"
+                    columns={columns}
+                    data={applicant}
+                    isGlobalFilter
+                    customPageSize={10}
+                    theadClass="table-light text-muted"
+                    SearchPlaceholder="Search..."
+                    tableClass="!text-nowrap !mb-0 !responsive !table-responsive-sm !table-hover !table-outline-none !mb-0"
+                    totalRecords={totalRecords}
+                    pagination={pagination}
+                    setPagination={setPagination}
+                    loader={tableLoader}
+                  />
+                ) : (
+                  <div className="py-4 text-center">
+                    <i className="ri-search-line d-block fs-1 text-success"></i>
+                    No applicants found.
                   </div>
-                </div>
-              )}
+                )}
+              </div>
             </Card>
           </Col>
         </Row>

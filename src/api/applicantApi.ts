@@ -6,11 +6,20 @@ import {
   UPDATE_APPLICANT,
   UPDATE_APPLICANT_STAGE,
   UPDATE_APPLICANT_STATUS,
+  FILTER_APPLICANT,
 } from "./apiRoutes";
 import { authServices } from "./apiServices";
 
-export const listOfApplicants = async (data?: object) => {
-  const response = await authServices.get(`${LIST_APPLICANT}`, data);
+export const listOfApplicants = async (params: {
+  page: number;
+  pageSize: number;
+  totalExperience?: number;
+  city?: string;
+  appliedSkills?: string;
+  startDate?: string;
+  endDate?: string;
+}) => {
+  const response = await authServices.get(`${LIST_APPLICANT}`, { params });
   return response?.data;
 };
 
@@ -57,3 +66,9 @@ export const updateStage = async (
 
   return response?.data;
 };
+export const filterApplicants = async () => {
+  const response = await authServices.get(`${FILTER_APPLICANT}`);
+  return response?.data;
+};
+
+

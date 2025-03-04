@@ -13,7 +13,8 @@ export const viewAllEmail = async (data?: object) => {
 
 export const deleteEmail = async (ids: string[]) => {
   const response = await authServices.delete(`${DELETE_EMAIL}`, {
-    data: { ids }
+    data: { ids },
   });
   return response?.data;
 };
+

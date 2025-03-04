@@ -10,6 +10,7 @@ import EmailForm from "pages/email/EmailForm";
 import PassingYear from "pages/master/PassingYear";
 import AddSkill from "pages/master/Skills";
 import Report from "pages/report/Report";
+import ForgetPassword from "pages/auth/ForgetPassword";
 
 const routes = {
   ROOT: {
@@ -24,9 +25,10 @@ const routes = {
     path: "/reset-password",
     title: "",
   },
-  FORGOT_PASSWORD: {
-    path: "/forget-password",
-    title: "",
+  FORGET_PASSWORD: {
+    title: "Forgot Password",
+    path: "/forgot-password",
+    element: ForgetPassword,
   },
   SIGN_UP: {
     title: "Sign Up",

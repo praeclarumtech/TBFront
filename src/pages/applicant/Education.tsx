@@ -22,16 +22,20 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
       passingYear: initialValues?.passingYear || "",
       totalExperience: initialValues?.totalExperience || "",
       relevantSkillExperience: initialValues?.relevantSkillExperience || "",
+      appliedSkills:initialValues?.appliedSkills || "",
       otherSkills: initialValues?.otherSkills || "",
       referral: initialValues?.referral || "",
-      url: initialValues?.url || "",
+      resumeUrl: initialValues?.resumeUrl || "",
       rating: initialValues?.rating || "",
+      portfolioUrl: initialValues?.portfolioUrl || "",
     },
     validationSchema: Yup.object({
-      qualification: Yup.string().required("Qualification is required"),
+      qualification: Yup.array()
+        .required("Qualification is required")
+        .min(1, "At least one skill must be selected"),
       degree: Yup.string().required("Degree Name is required"),
       passingYear: Yup.string().required("Passing Year is required"),
-      appliedSkills: Yup.array()
+      appliedSkills:Yup.array()
         .required("Passing Skill is required")
         .min(1, "At least one skill must be selected"),
       otherSkills: Yup.string(),
@@ -50,7 +54,8 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
           }
         ),
       referral: Yup.string(),
-      url: Yup.string()
+      portfolioUrl: Yup.string().url("Invalid URL"),
+      resumeUrl: Yup.string()
         .url("Please enter a valid URL")
         .required("Resume URL is required"),
       rating: Yup.number()
@@ -124,13 +129,21 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
   const [selectedMulti, setSelectedMulti] = useState<any>(
     initialValues.appliedSkills || []
   );
+  const [selectedQualification, setSelectedQualification] = useState<any>(
+    initialValues.qualification || []
+  );
 
-  const handleMulti = (selectedMulti: any) => {
+  const handleMultiSkill = (selectedMulti: any) => {
     const ids = selectedMulti?.map((item: any) => item.value) || [];
     validation.setFieldValue("appliedSkills", ids);
-
     setSelectedMulti(selectedMulti);
   };
+  const handleMultiQualification = (selectedMulti: any) => {
+    const ids = selectedMulti?.map((item: any) => item.value) || [];
+    validation.setFieldValue("qualification", ids);
+    setSelectedQualification(selectedMulti);
+  };
+  
   return (
     <Fragment>
       <div className="pt-3 page-content"></div>
@@ -147,8 +160,10 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
             >
               <Row className="g-3 mb-4">
                 <Col xs={12} md={6}>
-                  <BaseSelect
+                  <MultiSelect
                     label="Qualification"
+                    isMulti={true}
+                    onChange={handleMultiQualification}
                     name="qualification"
                     className="select-border"
                     options={qualification}
@@ -160,12 +175,8 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                       );
                     }}
                     handleBlur={validation.handleBlur}
-                    value={
-                      dynamicFind(
-                        qualification,
-                        validation.values.qualification
-                      ) || ""
-                    }
+                   
+                    value={selectedQualification || ""}
                     touched={validation.touched.qualification}
                     error={validation.errors.qualification}
                   />
@@ -220,11 +231,11 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     className="select-border"
                     value={selectedMulti || null}
                     isMulti={true}
-                    onChange={handleMulti}
+                    onChange={handleMultiSkill}
                     options={appliedSkillsType}
-                    touched={validation.touched.serviceType}
-                    error={validation.errors.serviceType}
-                    handleBlur={validation.handleBlur}
+                    touched={validation.touched.appliedSkills}
+                    error={validation.errors.appliedSkills}
+                    handleBlur={validation.appliedSkills}
                   />
                 </Col>
               </Row>
@@ -232,9 +243,9 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
               <Row className="g-3 mb-4">
                 <Col xs={12} md={6} lg={3}>
                   <BaseInput
-                    label="Total Experience"
+                    label="Total Experience(Year)"
                     name="totalExperience"
-                    type="text"
+                    type="number"
                     placeholder={InputPlaceHolder("Total Experience")}
                     handleChange={validation.handleChange}
                     handleBlur={validation.handleBlur}
@@ -247,9 +258,9 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
 
                 <Col xs={12} md={6} lg={3}>
                   <BaseInput
-                    label="Relevant Skill Experience"
+                    label="Relevant Experience(Year)"
                     name="relevantSkillExperience"
-                    type="text"
+                    type="number"
                     placeholder={InputPlaceHolder("Relevant skill experience")}
                     handleChange={validation.handleChange}
                     handleBlur={validation.handleBlur}
@@ -292,14 +303,14 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                 <Col xs={12} md={6} lg={4}>
                   <BaseInput
                     label="Resume Url"
-                    name="url"
+                    name="resumeUrl"
                     type="url"
                     placeholder={InputPlaceHolder("URL")}
                     handleChange={validation.handleChange}
                     handleBlur={validation.handleBlur}
-                    value={validation.values.url}
-                    touched={validation.touched.url}
-                    error={validation.errors.url}
+                    value={validation.values.resumeUrl}
+                    touched={validation.touched.resumeUrl}
+                    error={validation.errors.resumeUrl}
                     passwordToggle={false}
                     title="Please Upload Resume on Google Drive and share pulic url (Only PDF files allowed)"
                   />
@@ -307,7 +318,7 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
 
                 <Col xs={12} md={6} lg={4}>
                   <BaseInput
-                    label="Javascript Rating"
+                    label="Javascript Rate(out of 10)"
                     name="rating"
                     type="number"
                     placeholder={InputPlaceHolder("Rating")}
@@ -316,6 +327,20 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     value={validation.values.rating}
                     touched={validation.touched.rating}
                     error={validation.errors.rating}
+                    passwordToggle={false}
+                  />
+                </Col>
+                <Col xs={12} md={6} lg={6} className="mb-3">
+                  <BaseInput
+                    label="Portfolio Url"
+                    name="portfolioUrl"
+                    type="url"
+                    placeholder={InputPlaceHolder("Portfolio Url")}
+                    handleChange={validation.handleChange}
+                    handleBlur={validation.handleBlur}
+                    value={validation.values.portfolioUrl}
+                    touched={validation.touched.portfolioUrl}
+                    error={validation.errors.portfolioUrl}
                     passwordToggle={false}
                   />
                 </Col>

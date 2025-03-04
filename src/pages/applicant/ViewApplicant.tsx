@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { useEffect, useState } from "react";
 import { Col, Modal, Row } from "react-bootstrap";
 import { getApplicantDetails } from "api/applicantApi";
@@ -29,6 +28,16 @@ const ViewModal = ({ show, onHide, applicantId }: any) => {
       });
   }, [applicantId]);
 
+  const capitalizeWords = (str: string) => {
+    if (typeof str !== "string") {
+      return "";
+    }
+    return str
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(" ");
+  };
+
   if (!show) return null;
   return (
     <Modal show={show} onHide={onHide} size="lg" centered>
@@ -41,7 +50,6 @@ const ViewModal = ({ show, onHide, applicantId }: any) => {
         ) : (
           formData && (
             <div className="mx-2 p-3">
-              {/* Personal Details */}
               <Typography
                 variant="h6"
                 className="font-bold text-2xl text-blue-600"
@@ -57,8 +65,9 @@ const ViewModal = ({ show, onHide, applicantId }: any) => {
                       Name:
                     </span>
                     <span>
-                      {formData.name?.firstName} {formData.name?.middleName}{" "}
-                      {formData.name?.lastName}
+                      {" " + capitalizeWords(formData.name?.firstName + " ")}
+                      {capitalizeWords(formData.name?.middleName + " ")}{" "}
+                      {capitalizeWords(formData.name?.lastName)}
                     </span>
                   </Typography>
                   <Typography className="mt-2">
@@ -85,13 +94,13 @@ const ViewModal = ({ show, onHide, applicantId }: any) => {
                     <span className="font-extrabold text-base text-black">
                       Gender:
                     </span>
-                    <span> {formData.gender}</span>
+                    <span> {capitalizeWords(formData.gender)}</span>
                   </Typography>
                   <Typography className="mt-2">
                     <span className="font-extrabold text-base text-black">
                       Full Address:
                     </span>
-                    <span> {formData.fullAddress}</span>
+                    <span> {capitalizeWords(formData.fullAddress)}</span>
                   </Typography>
                 </Col>
 
@@ -107,19 +116,19 @@ const ViewModal = ({ show, onHide, applicantId }: any) => {
                     <span className="font-extrabold text-base text-black">
                       State:
                     </span>
-                    <span> {formData.state}</span>
+                    <span> {capitalizeWords(formData.state)}</span>
                   </Typography>
                   <Typography className="mt-2">
                     <span className="font-extrabold text-base text-black">
                       Country:
                     </span>
-                    <span> {formData.country}</span>
+                    <span> {capitalizeWords(formData.country)}</span>
                   </Typography>
                   <Typography className="mt-2">
                     <span className="font-extrabold text-base text-black">
                       City:
                     </span>
-                    <span> {formData.city}</span>
+                    <span> {capitalizeWords(formData.city)}</span>
                   </Typography>
                   <Typography className="mt-2">
                     <span className="font-extrabold text-base text-black">
@@ -145,13 +154,13 @@ const ViewModal = ({ show, onHide, applicantId }: any) => {
                     <span className="font-extrabold text-base text-black">
                       Qualification:
                     </span>
-                    <span> {formData.qualification}</span>
+                    <span> {capitalizeWords(formData.qualification)}</span>
                   </Typography>
                   <Typography className="mt-2">
                     <span className="font-extrabold text-base text-black">
                       Degree:
                     </span>
-                    <span> {formData.degree}</span>
+                    <span> {capitalizeWords(formData.degree)}</span>
                   </Typography>
                   <Typography className="mt-2">
                     <span className="font-extrabold text-base text-black">
@@ -166,7 +175,7 @@ const ViewModal = ({ show, onHide, applicantId }: any) => {
                     </span>
                     <span>
                       {formData.appliedSkills?.length > 0
-                        ? formData.appliedSkills.join(", ")
+                        ? capitalizeWords(formData.appliedSkills.join(", "))
                         : "No skills listed"}
                     </span>
                   </Typography>
@@ -189,7 +198,7 @@ const ViewModal = ({ show, onHide, applicantId }: any) => {
                     <span className="font-extrabold text-base text-black">
                       Other Skills:
                     </span>
-                    <span> {formData.otherSkills}</span>
+                    <span> {capitalizeWords(formData.otherSkills)}</span>
                   </Typography>
                 </Col>
               </Row>
@@ -233,7 +242,7 @@ const ViewModal = ({ show, onHide, applicantId }: any) => {
                     <span className="font-extrabold text-base text-black">
                       Ready for Work (WFO):
                     </span>
-                    <span> {formData.readyForWork}</span>
+                    <span> {capitalizeWords(formData.readyForWork)}</span>
                   </Typography>
                 </Col>
 
@@ -242,49 +251,79 @@ const ViewModal = ({ show, onHide, applicantId }: any) => {
                     <span className="font-extrabold text-base text-black">
                       Work Preference:
                     </span>
-                    <span> {formData.workPreference}</span>
+                    <span> {capitalizeWords(formData.workPreference)}</span>
                   </Typography>
                   <Typography className="mt-2">
                     <span className="font-extrabold text-base text-black">
                       Referral:
                     </span>
-                    <span> {formData.referral}</span>
+                    <span> {capitalizeWords(formData.referral)}</span>
                   </Typography>
                   <Typography className="mt-2">
                     <span className="font-extrabold text-base text-black">
                       Interview Stage:
                     </span>
-                    <span> {formData.interviewStage}</span>
+                    <span className="font-bold text-primary ">
+                      {" " + capitalizeWords(formData.interviewStage)}
+                    </span>
                   </Typography>
                   <Typography className="mt-2">
                     <span className="font-extrabold text-base text-black">
                       Status:
                     </span>
-                    <span> {formData.status}</span>
+                    <span className="font-bold text-primary ">
+                      {" " + capitalizeWords(formData.status)}
+                    </span>
                   </Typography>
+                </Col>
+                <Col xs={12} md={12} sm={12} lg={12}>
                   <Typography className="mt-2">
                     <span className="font-extrabold text-base text-black">
                       About Us:
                     </span>
-                    <span> {formData.aboutUs}</span>
+                    <span> {capitalizeWords(formData.aboutUs)}</span>
+                  </Typography>
+                  <Typography className="mt-2">
+                    <span className="font-extrabold text-base text-black">
+                      Resume URL:
+                    </span>
+                    <a
+                      href={formData.resumeUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 "
+                    >
+                      {formData.resumeUrl}
+                    </a>
+                  </Typography>
+                  <Typography className="mt-2">
+                    <span className="font-extrabold text-base text-black">
+                      Portfolio URL:
+                    </span>
+                    <a 
+                      href={formData.portfolioUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600"
+                    >
+                      {formData.portfolioUrl}
+                    </a>
+                  </Typography>
+                  <Typography className="mt-2">
+                    <span className="font-extrabold text-base text-black">
+                      Practical URL:
+                    </span>
+                    <a
+                      href={formData.practicalUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 "
+                    >
+                      {formData.practicalUrl}
+                    </a>
                   </Typography>
                 </Col>
               </Row>
-
-              {/* Portfolio URL */}
-              <Typography className="mt-2">
-                <span className="font-extrabold text-base text-black">
-                  Portfolio URL:
-                </span>
-                <a
-                  href={formData.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 underline"
-                >
-                  {formData.url}
-                </a>
-              </Typography>
             </div>
           )
         )}
