@@ -36,8 +36,12 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
       fullAddress: initialValues.fullAddress || "",
       state: initialValues.state || "",
       country: initialValues.country || "",
-      pincode: initialValues.pincode || "",
-      city: initialValues.city || "",
+      currentPincode: initialValues.currentPincode || "",
+      currentCity: initialValues.currentCity || "",
+      homeTownCity: initialValues.homeTownCity || "",
+      homePincode: initialValues.homePincode || "",
+      preferredLocations: initialValues.preferredLocations || "",
+      currentLocation: initialValues.currentLocation || "",
     },
     validationSchema: personalApplicantSchema,
     onSubmit: (data: any) => {
@@ -58,12 +62,17 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
         fullAddress: data.fullAddress,
         state: data.state,
         country: data.country,
-        pincode: data.pincode,
-        city: data.city,
+        currentPincode: data.currentPincode,
+        currentCity: data.currentCity,
+        homeTownCity: data.homeTownCity,
+        homePincode: data.homePincode,
+        preferredLocations: data.preferredLocations,
+        currentLocation: data.currentLocation,
       };
 
       onNext(structuredData);
       onNext(data);
+      
     },
   });
 
@@ -257,44 +266,86 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
 
                 <Col xs={12} md={6} lg={3}>
                   <BaseInput
-                    label="City"
-                    name="city"
+                    label="Current City"
+                    name="currentCity"
                     type="text"
-                    placeholder={InputPlaceHolder("City")}
+                    placeholder={InputPlaceHolder("Current City")}
                     handleChange={validation.handleChange}
                     handleBlur={validation.handleBlur}
-                    value={validation.values.city}
-                    touched={validation.touched.city}
-                    error={validation.errors.city}
+                    value={validation.values.currentCity}
+                    touched={validation.touched.currentCity}
+                    error={validation.errors.currentCity}
                     passwordToggle={false}
                   />
                 </Col>
 
                 <Col xs={12} md={6} lg={3}>
                   <BaseInput
-                    label="Pincode"
-                    name="pincode"
-                    type="text"
-                    placeholder={InputPlaceHolder("Pincode")}
+                    label="Current Pincode"
+                    name="currentPincode"
+                    type="number"
+                    placeholder={InputPlaceHolder("Current Pincode")}
                     handleChange={validation.handleChange}
                     handleBlur={validation.handleBlur}
-                    value={validation.values.pincode}
-                    touched={validation.touched.pincode}
-                    error={validation.errors.pincode}
+                    value={validation.values.currentPincode}
+                    touched={validation.touched.currentPincode}
+                    error={validation.errors.currentPincode}
+                    passwordToggle={false}
+                  />
+                </Col>
+                <Col xs={12} md={6} lg={4}>
+                  <BaseInput
+                    label="Home Town"
+                    name="homeTownCity"
+                    type="text"
+                    placeholder={InputPlaceHolder("Home Town/City")}
+                    handleChange={validation.handleChange}
+                    handleBlur={validation.handleBlur}
+                    value={validation.values.homeTownCity}
+                    touched={validation.touched.homeTownCity}
+                    error={validation.errors.homeTownCity}
+                    passwordToggle={false}
+                  />
+                </Col>
+                <Col xs={12} md={6} lg={4}>
+                  <BaseInput
+                    label="Home Town Pincode"
+                    name="homePincode"
+                    type="text"
+                    placeholder={InputPlaceHolder("Current Pincode")}
+                    handleChange={validation.handleChange}
+                    handleBlur={validation.handleBlur}
+                    value={validation.values.homePincode}
+                    touched={validation.touched.homePincode}
+                    error={validation.errors.homePincode}
+                    passwordToggle={false}
+                  />
+                </Col>
+                <Col xs={12} md={12} lg={4}>
+                  <BaseInput
+                    label="Preferred Locations"
+                    name="preferredLocations"
+                    type="text"
+                    placeholder={InputPlaceHolder("Preferred Locations")}
+                    handleChange={validation.handleChange}
+                    handleBlur={validation.handleBlur}
+                    value={validation.values.preferredLocations}
+                    touched={validation.touched.preferredLocations}
+                    error={validation.errors.preferredLocations}
                     passwordToggle={false}
                   />
                 </Col>
 
                 <Col xs={12}>
                   <BaseTextarea
-                    label="Full Address"
-                    name="fullAddress"
-                    placeholder={InputPlaceHolder("Full Address")}
+                    label="Current Location"
+                    name="currentLocation"
+                    placeholder={InputPlaceHolder("Current Location")}
                     handleChange={validation.handleChange}
                     handleBlur={validation.handleBlur}
-                    value={validation.values.fullAddress}
-                    touched={validation.touched.fullAddress}
-                    error={validation.errors.fullAddress}
+                    value={validation.values.currentLocation}
+                    touched={validation.touched.currentLocation}
+                    error={validation.errors.currentLocation}
                     passwordToggle={false}
                     multiline
                     rows={2}

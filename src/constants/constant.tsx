@@ -155,18 +155,23 @@ const appConstants = Object.freeze({
     { label: "2029", value: 2029 },
   ],
   designationType: [
-    { value: "SOFTWARE_ENGINEER", label: "Software Engineer" },
-    { value: "FRONTED_DEVLOPER", label: "Frontend Developer" },
-    { value: "BACKEND_DEVLOPER", label: "Backend Developer" },
-    { value: "FULL_STACK_DEVLOPER", label: "Full Stack Developer" },
-    { value: "DATA_ANALYST", label: "Data Analyst" },
-    { value: "DATA_SCIENTIST", label: "Data Scientist" },
-    { value: "PRODUCT_MANAGER", label: "Product Manager" },
-    { value: "UI_UX", label: "UX/UI Designer" },
-    { value: "QA", label: "QA Engineer" },
-    { value: "DEVOPS", label: "DevOps Engineer" },
-    { value: "BUSNESS_ANALYST", label: "Business Analyst" },
-    { value: "TECHNICSL_SUPPORT", label: "Technical Support Engineer" },
+    { value: "Software Engineer", label: "Software Engineer" },
+    { value: "Frontend Developer", label: "Frontend Developer" },
+    { value: "Backend Developer", label: "Backend Developer" },
+    { value: "Full Stack Developer", label: "Full Stack Developer" },
+    { value: "Data Analyst", label: "Data Analyst" },
+    { value: "Data Scientist", label: "Data Scientist" },
+    { value: "Product Manager", label: "Product Manager" },
+    { value: "UX/UI Designer", label: "UX/UI Designer" },
+    { value: "QA Engineer", label: "QA Engineer" },
+    { value: "DevOps Engineer", label: "DevOps Engineer" },
+    { value: "Business Analyst", label: "Business Analyst" },
+    {
+      value: "Technical Support Engineer",
+      label: "Technical Support Engineer",
+    },
+    { value: "Other", label: "Other" },
+    { value: "Na", label: "Na" },
   ],
 
   communicationOptions: [
@@ -216,6 +221,15 @@ const appConstants = Object.freeze({
     { label: "Female", value: "female" },
     { label: "Other", value: "other" },
   ],
+  maritalStatusType: [
+    { label: "Single", value: "Single" },
+    { label: "Married", value: "Married" },
+  ],
+  anyHandOnOffers: [
+    { label: "Yes", value: "true" },
+    { label: "No", value: "false" },
+  ],
+
   noticePeriodOptions: [
     { value: 0, label: "0 days" },
     { value: 15, label: "1-15 days" },

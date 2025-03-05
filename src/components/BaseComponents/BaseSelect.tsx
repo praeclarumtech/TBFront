@@ -1,8 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Label } from "reactstrap";
 import Select from "react-select";
 import { BaseSelectProps, MultiSelectProps } from "interfaces/global.interface";
-
 const BaseSelect = ({
   label,
   name,

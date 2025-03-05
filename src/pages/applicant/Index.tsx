@@ -109,7 +109,7 @@ const Applicant = () => {
         page: number;
         pageSize: number;
         totalExperience?: number;
-        city?: string;
+        currentCity?: string;
         appliedSkills?: string;
         startDate?: string;
         endDate?: string;
@@ -128,7 +128,7 @@ const Applicant = () => {
         params.totalExperience = Number(filterExperience.value);
       }
       if (filterCity) {
-        params.city = filterCity.value;
+        params.currentCity = filterCity.value;
       }
       if (appliedSkills.length > 0) {
         params.appliedSkills = appliedSkills
@@ -211,7 +211,7 @@ const Applicant = () => {
 
   const handleStatusChange = (selectedOption: SelectedOption) => {
     setFilterStatus(selectedOption);
-    console.log("handleStatus", selectedOption);
+    
   };
 
   const handleNoticePeriodChange = (selectedOption: SelectedOption) => {

@@ -10,8 +10,11 @@ interface EducationalDetails {
   totalExperience: number;
   relevantSkillExperience: number;
   referral: string;
-  url: string;
+  resumeUrl: string;
   rating: number;
+  maritalStatus: string;
+  CurrentCompanyDesignation: string;
+  portfolioUrl: string;
 }
 
 const initialState: EducationalDetails = {
@@ -23,8 +26,11 @@ const initialState: EducationalDetails = {
   totalExperience: 0,
   relevantSkillExperience: 0,
   referral: "",
-  url: "",
+  resumeUrl: "",
   rating: 0,
+  maritalStatus: "",
+  CurrentCompanyDesignation: "",
+  portfolioUrl: "",
 };
 
 const educationalDetailsSlice = createSlice({

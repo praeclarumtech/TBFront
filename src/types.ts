@@ -133,9 +133,8 @@ export interface Applicant {
   resume: string;
   totalExperience: number;
   relevantSkillExperience: number;
-  
   rating: number;
-  url: string;
+  resumeUrl: string;
   current_Pkg: string;
   expectedpkg: string;
   noticePeriod: string;
@@ -162,17 +161,8 @@ export interface Applicant {
   };
   readyForWork: string;
   workPreference: string;
-  
-
-  applicationNo: number; // Updated to match API
-
-
-  passingYear: number; // Updated to match API
-
-
-  aboutUs: string; // Updated to match API
-
-  interviewStage: string; // Updated to match API
-
- 
+  applicationNo: number;
+  passingYear: number;
+  aboutUs: string;
+  interviewStage: string;
 }

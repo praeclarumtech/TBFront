@@ -19,6 +19,7 @@ const {
   qualification,
   skillOptions,
   designationType,
+  maritalStatusType,
 } = appConstants;
 
 const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
@@ -39,10 +40,12 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
       rating: initialValues?.rating || "",
       portfolioUrl: initialValues?.portfolioUrl || "",
       CurrentCompanyDesignation: initialValues?.CurrentCompanyDesignation || "",
+      maritalStatus: initialValues?.maritalStatus || "",
     },
     validationSchema: EducationApplicantSchema,
     onSubmit: (data) => {
       onNext(data);
+     
     },
   });
 
@@ -118,7 +121,7 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
               </Row>
 
               <Row className="g-3 mb-4">
-                <Col xs={12} md={6}>
+                <Col xs={12} md={3}>
                   <BaseSelect
                     label="Passing Year"
                     name="passingYear"
@@ -140,6 +143,30 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     }
                     touched={validation.touched.passingYear}
                     error={validation.errors.passingYear}
+                  />
+                </Col>
+                <Col xs={12} md={3}>
+                  <BaseSelect
+                    label="Marital Status"
+                    name="maritalStatus"
+                    className="select-border"
+                    options={maritalStatusType}
+                    placeholder="Marital Status"
+                    handleChange={(selectedOption: SelectedOption) => {
+                      validation.setFieldValue(
+                        "maritalStatus",
+                        selectedOption?.value || ""
+                      );
+                    }}
+                    handleBlur={validation.handleBlur}
+                    value={
+                      dynamicFind(
+                        maritalStatusType,
+                        validation.values.maritalStatus
+                      ) || ""
+                    }
+                    touched={validation.touched.maritalStatus}
+                    error={validation.errors.maritalStatus}
                   />
                 </Col>
 
@@ -164,7 +191,7 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                   <BaseInput
                     label="Total Experience(Year)"
                     name="totalExperience"
-                    type="number"
+                    type="text"
                     placeholder={InputPlaceHolder("Total Experience")}
                     handleChange={validation.handleChange}
                     handleBlur={validation.handleBlur}
@@ -179,7 +206,7 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                   <BaseInput
                     label="Relevant Experience(Year)"
                     name="relevantSkillExperience"
-                    type="number"
+                    type="text"
                     placeholder={InputPlaceHolder("Relevant skill experience")}
                     handleChange={validation.handleChange}
                     handleBlur={validation.handleBlur}
