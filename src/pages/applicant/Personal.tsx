@@ -72,7 +72,7 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
 
       onNext(structuredData);
       onNext(data);
-      console.log("personal ", data);
+      
     },
   });
 

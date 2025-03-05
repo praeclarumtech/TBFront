@@ -45,7 +45,7 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
     validationSchema: EducationApplicantSchema,
     onSubmit: (data) => {
       onNext(data);
-      console.log("onSubmit education submitted", data);
+     
     },
   });
 

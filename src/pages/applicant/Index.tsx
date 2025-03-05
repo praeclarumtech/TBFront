@@ -211,7 +211,7 @@ const Applicant = () => {
 
   const handleStatusChange = (selectedOption: SelectedOption) => {
     setFilterStatus(selectedOption);
-    console.log("handleStatus", selectedOption);
+    
   };
 
   const handleNoticePeriodChange = (selectedOption: SelectedOption) => {

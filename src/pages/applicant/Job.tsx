@@ -45,7 +45,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
     validationSchema: jobApplicantSchema,
     onSubmit: (data: any) => {
       onNext(data);
-      console.log("onSubmit job submitted", data);
+     
     },
   });
 
