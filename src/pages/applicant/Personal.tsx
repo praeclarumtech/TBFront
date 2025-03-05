@@ -33,7 +33,7 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
       gender: initialValues.gender || "",
       // dateOfBirth: moment().format("YYYY-MM-DD") || "",
       dateOfBirth: initialValues.dateOfBirth || " ",
-      fullAddress: initialValues.fullAddress || "",
+
       state: initialValues.state || "",
       country: initialValues.country || "",
       currentPincode: initialValues.currentPincode || "",
@@ -59,7 +59,6 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
         email: data.email,
         gender: data.gender,
         dateOfBirth: data.dateOfBirth,
-        fullAddress: data.fullAddress,
         state: data.state,
         country: data.country,
         currentPincode: data.currentPincode,
@@ -72,7 +71,6 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
 
       onNext(structuredData);
       onNext(data);
-      
     },
   });
 

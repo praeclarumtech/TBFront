@@ -6,6 +6,8 @@ import BaseButton from "components/BaseComponents/BaseButton";
 import { Typography } from "@mui/material";
 
 const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
+  console.log("degination", data.currentCompanyDesignation);
+
   const capitalizeWords = (str: string) => {
     if (typeof str !== "string") {
       return "";
@@ -68,9 +70,21 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
               </Typography>
               <Typography>
                 <span className="font-extrabold text-base !text-black pt-3">
-                  Pincode:
+                  Currrent Pincode:
                 </span>
-                <span>{" " + data.pincode}</span>
+                <span>{" " + data.currentPincode}</span>
+              </Typography>
+              <Typography>
+                <span className="font-extrabold text-base !text-black pt-3">
+                  Currrent City:
+                </span>
+                <span>{" " + capitalizeWords(data.currentCity)}</span>
+              </Typography>
+              <Typography>
+                <span className="font-extrabold text-base !text-black pt-3">
+                  Preferred Locations:
+                </span>
+                <span>{" " + capitalizeWords(data.preferredLocations)}</span>
               </Typography>
             </Col>
             <div className="col-md-6">
@@ -100,9 +114,21 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
               </Typography>
               <Typography>
                 <span className="font-extrabold text-base !text-black pt-3">
-                  Full Address:
+                  Current Address:
                 </span>
-                <span>{" " + capitalizeWords(data.fullAddress)}</span>
+                <span>{" " + capitalizeWords(data.currentLocation)}</span>
+              </Typography>
+              <Typography>
+                <span className="font-extrabold text-base !text-black pt-3">
+                  Home Town:
+                </span>
+                <span>{" " + capitalizeWords(data.homeTownCity)}</span>
+              </Typography>
+              <Typography>
+                <span className="font-extrabold text-base !text-black pt-3">
+                  Home Pincode:
+                </span>
+                <span>{" " + data.homePincode}</span>
               </Typography>
             </div>
           </Row>
@@ -119,6 +145,16 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
         <div className="mx-2 p-2">
           <Row className="mx-2">
             <Col xs={12} md={6} className="mb-3  ">
+              <Typography>
+                <span className="font-extrabold text-base !text-black pt-3">
+                  Qualification:
+                </span>
+                <span>
+                  {data.qualification?.length > 0
+                    ? capitalizeWords(data.qualification.join(", "))
+                    : "No Qualification listed"}
+                </span>
+              </Typography>
               <Typography variant="body1" className="text-gray-600">
                 <span className="font-extrabold text-base !text-black pt-3">
                   Degree:
@@ -232,6 +268,18 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
 
               <Typography>
                 <span className="font-extrabold text-base !text-black pt-3">
+                  Last Follow UpDate:
+                </span>
+                <span>{" " + data.lastFollowUpDate}</span>
+              </Typography>
+              <Typography>
+                <span className="font-extrabold text-base !text-black pt-3">
+                  Marital Status:
+                </span>
+                <span>{" " + capitalizeWords(data.maritalStatus)}</span>
+              </Typography>
+              <Typography>
+                <span className="font-extrabold text-base !text-black pt-3">
                   About Us:
                 </span>
                 <span>{" " + capitalizeWords(data.aboutUs)}</span>
@@ -244,17 +292,29 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
                 </span>
                 <span>{" " + capitalizeWords(data.currentPkg)}</span>
               </Typography>
-              {/* <Typography>
+              <Typography>
                 <span className="font-extrabold text-base !text-black pt-3">
-                  Work Preference:
+                  Applied Role:
                 </span>
-                <span>{" " + capitalizeWords(data.readyForWork)}</span>
-              </Typography> */}
+                <span>{" " + capitalizeWords(data.appliedRole)}</span>
+              </Typography>
               <Typography>
                 <span className="font-extrabold text-base !text-black pt-3">
                   Ready for Work from office :
                 </span>
                 <span>{" " + capitalizeWords(data.workPreference)}</span>
+              </Typography>
+              <Typography>
+                <span className="font-extrabold text-base !text-black pt-3">
+                  Any Hand On Offers?:
+                </span>
+                <span>{" " + capitalizeWords(data.anyHandOnOffers)}</span>
+              </Typography>
+              <Typography>
+                <span className="font-extrabold text-base !text-black pt-3">
+                  current Company Name:
+                </span>
+                <span>{" " + capitalizeWords(data.currentCompanyName)}</span>
               </Typography>
 
               <Typography>

@@ -39,13 +39,12 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
       resumeUrl: initialValues?.resumeUrl || "",
       rating: initialValues?.rating || "",
       portfolioUrl: initialValues?.portfolioUrl || "",
-      CurrentCompanyDesignation: initialValues?.CurrentCompanyDesignation || "",
+      currentCompanyDesignation: initialValues?.currentCompanyDesignation || "",
       maritalStatus: initialValues?.maritalStatus || "",
     },
     validationSchema: EducationApplicantSchema,
     onSubmit: (data) => {
       onNext(data);
-     
     },
   });
 
@@ -234,25 +233,25 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                 <Col xs={12} md={6} lg={4}>
                   <BaseSelect
                     label="Current Company Designation"
-                    name="CurrentCompanyDesignation"
+                    name="currentCompanyDesignation"
                     className="select-border"
                     options={designationType}
                     placeholder={InputPlaceHolder("Degination")}
                     handleChange={(selectedOption: SelectedOption) => {
                       validation.setFieldValue(
-                        "CurrentCompanyDesignation",
+                        "currentCompanyDesignation",
                         selectedOption?.value || ""
                       );
                     }}
-                    handleBlur={validation.CurrentCompanyDesignation}
+                    handleBlur={validation.currentCompanyDesignation}
                     value={
                       dynamicFind(
                         designationType,
-                        validation.values.CurrentCompanyDesignation
+                        validation.values.currentCompanyDesignation
                       ) || ""
                     }
-                    touched={validation.touched.CurrentCompanyDesignation}
-                    error={validation.errors.CurrentCompanyDesignation}
+                    touched={validation.touched.currentCompanyDesignation}
+                    error={validation.errors.currentCompanyDesignation}
                   />
                 </Col>
 

@@ -226,8 +226,8 @@ const appConstants = Object.freeze({
     { label: "Married", value: "Married" },
   ],
   anyHandOnOffers: [
-    { label: "Yes", value: "true" },
-    { label: "No", value: "false" },
+    { label: "Yes", value: true },
+    { label: "No", value: false },
   ],
 
   noticePeriodOptions: [

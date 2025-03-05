@@ -60,6 +60,12 @@ const ViewModal = ({ show, onHide, applicantId }: any) => {
               <hr className="text-blue-900 font-extrabold mb-4" />
               <Row>
                 <Col xs={12} md={6} className="mb-3">
+                  <Typography className="mt-2">
+                    <span className="font-extrabold text-base text-black">
+                      Applicant Number:
+                    </span>
+                    <span> {formData.applicationNo}</span>
+                  </Typography>
                   <Typography variant="body1" className="text-gray-700">
                     <span className="font-extrabold text-base text-black">
                       Name:
@@ -96,11 +102,13 @@ const ViewModal = ({ show, onHide, applicantId }: any) => {
                     </span>
                     <span> {capitalizeWords(formData.gender)}</span>
                   </Typography>
-                  <Typography className="mt-2">
-                    <span className="font-extrabold text-base text-black">
-                      Full Address:
+                  <Typography>
+                    <span className="font-extrabold text-base !text-black pt-3">
+                      Current Address:
                     </span>
-                    <span> {capitalizeWords(formData.fullAddress)}</span>
+                    <span>
+                      {" " + capitalizeWords(formData.currentLocation)}
+                    </span>
                   </Typography>
                 </Col>
 
@@ -126,15 +134,23 @@ const ViewModal = ({ show, onHide, applicantId }: any) => {
                   </Typography>
                   <Typography className="mt-2">
                     <span className="font-extrabold text-base text-black">
-                      City:
+                      Currrent City:
                     </span>
-                    <span> {capitalizeWords(formData.city)}</span>
+                    <span> {capitalizeWords(formData.currentCity)}</span>
                   </Typography>
                   <Typography className="mt-2">
                     <span className="font-extrabold text-base text-black">
-                      Pincode:
+                      Currrent Pincode:
                     </span>
-                    <span> {formData.pincode}</span>
+                    <span> {formData.currentPincode}</span>
+                  </Typography>
+                  <Typography>
+                    <span className="font-extrabold text-base !text-black pt-3">
+                      Preferred Locations:
+                    </span>
+                    <span>
+                      {" " + capitalizeWords(formData.preferredLocations)}
+                    </span>
                   </Typography>
                 </Col>
               </Row>
@@ -300,7 +316,7 @@ const ViewModal = ({ show, onHide, applicantId }: any) => {
                     <span className="font-extrabold text-base text-black">
                       Portfolio URL:
                     </span>
-                    <a 
+                    <a
                       href={formData.portfolioUrl}
                       target="_blank"
                       rel="noopener noreferrer"
