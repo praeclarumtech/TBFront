@@ -3,7 +3,7 @@ import * as Yup from "yup";
 export type SelectedOption = { label: string; value: string };
 
 export const EducationApplicantSchema = Yup.object({
-  currentCompanyDesignation:Yup.string(),
+  currentCompanyDesignation: Yup.string(),
   qualification: Yup.array()
     .required("Qualification is required")
     .min(1, "At least one skill must be selected"),
@@ -27,9 +27,9 @@ export const EducationApplicantSchema = Yup.object({
 });
 
 export const jobApplicantSchema = Yup.object({
-  lastFollowUpDate:Yup.date(),
+  lastFollowUpDate: Yup.date(),
   maritalStatus: Yup.string(),
-  appliedRole: Yup.string(),
+  appliedRole: Yup.string().required("Applied Role is required."),
   anyHandOnOffers: Yup.boolean(),
   currentCompanyName: Yup.string(),
   currentPkg: Yup.string(),
@@ -62,10 +62,19 @@ export const jobApplicantSchema = Yup.object({
 });
 
 export const personalApplicantSchema = Yup.object({
-  firstName: Yup.string().required("First Name is required").max(15).min(2),
-  lastName: Yup.string().required("Last Name is required").max(15).min(2),
+  firstName: Yup.string()
+    .required("First Name is required")
+    .max(15)
+    .min(2)
+    .trim(),
+  lastName: Yup.string()
+    .required("Last Name is required")
+    .max(15)
+    .min(2)
+    .trim(),
   middleName: Yup.string().max(15).min(2),
   email: Yup.string()
+    .trim()
     .email("Invalid email address")
     .required("Email is required"),
   phoneNumber: Yup.string()
@@ -76,14 +85,15 @@ export const personalApplicantSchema = Yup.object({
     .required("WhatsApp Number is required"),
   dateOfBirth: Yup.date().required("Date of birth is required"),
   currentCity: Yup.string().required("Current City is required"),
-  currentPincode: Yup.string().matches(
-    /^[0-9]{6}$/,
-    "Pincode must be 6 digits"
-  ),
-  currentLocation: Yup.string(),
-  homeTownCity: Yup.string(),
-  homePincode: Yup.string().matches(/^[0-9]{6}$/, "Pincode must be 6 digits"),
-  preferredLocations: Yup.string(),
+  currentPincode: Yup.string()
+    .required("Current Pincode is required.")
+    .matches(/^[0-9]{6}$/, "Pincode must be 6 digits"),
+  currentLocation: Yup.string().required("Current Location is required"),
+  homeTownCity: Yup.string().required("Home Town City is required"),
+  homePincode: Yup.string()
+    .matches(/^[0-9]{6}$/, "Pincode must be 6 digits")
+    .required("Current Pincode is required."),
+  preferredLocations: Yup.string().required("Preferred Locations is required."),
   gender: Yup.string().required("Gender is required"),
   country: Yup.string().required("Country is required"),
   state: Yup.string().required("State is required"),

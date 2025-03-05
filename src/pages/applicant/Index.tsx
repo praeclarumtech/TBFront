@@ -211,7 +211,6 @@ const Applicant = () => {
 
   const handleStatusChange = (selectedOption: SelectedOption) => {
     setFilterStatus(selectedOption);
-    
   };
 
   const handleNoticePeriodChange = (selectedOption: SelectedOption) => {
@@ -443,7 +442,16 @@ const Applicant = () => {
     () => [
       {
         header: "Applicant Name",
-        accessorKey: "name.firstName",
+        // accessorKey: "name.firstName",
+        accessorKey: "name",
+        cell: (info: any) => {
+          const nameObj = info.row.original?.name || {};
+          const firstName = nameObj.firstName || "";
+          const middleName = nameObj.middleName || "";
+          const lastName = nameObj.lastName || "";
+
+          return `${firstName} ${middleName} ${lastName}`.trim();
+        },
         enableColumnFilter: false,
       },
       {

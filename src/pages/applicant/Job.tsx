@@ -45,7 +45,6 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
     validationSchema: jobApplicantSchema,
     onSubmit: (data: any) => {
       onNext(data);
-     
     },
   });
 
@@ -124,7 +123,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     passwordToggle={false}
                   />
                 </Col>
-                <Col xs={12} sm={4} className="mb-3 mb-sm-0">
+                <Col xs={12} sm={4} md={4} className="mb-3 mb-sm-0">
                   <BaseSelect
                     label="Communication Skill(out of 10)"
                     name="communicationSkill"
@@ -199,7 +198,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                   />
                 </Col>
 
-                <Col xs={12} sm={4} md={4} className="mb-3 mb-sm-0">
+                <Col xs={12} sm={4} md={4} lg={4} className="mb-3 mb-sm-0">
                   <BaseInput
                     label="Current Company"
                     name="currentCompanyName"
@@ -213,7 +212,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     passwordToggle={false}
                   />
                 </Col>
-                <Col xs={12} sm={4} md={4}>
+                <Col xs={12} sm={4} md={4} lg={4}>
                   <BaseSelect
                     label="Any Hand On Offers ?"
                     name="anyHandOnOffers"
