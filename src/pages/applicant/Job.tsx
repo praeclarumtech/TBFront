@@ -13,8 +13,14 @@ import BaseTextarea from "components/BaseComponents/BaseTextArea";
 import { dynamicFind, InputPlaceHolder } from "utils/commonFunctions";
 import appConstants from "constants/constant";
 
-const { projectTitle, Modules, communicationOptions, workPreferenceType } =
-  appConstants;
+const {
+  projectTitle,
+  Modules,
+  communicationOptions,
+  designationType,
+  anyHandOnOffers,
+  workPreferenceType,
+} = appConstants;
 
 const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
   document.title = Modules.Applicant + " | " + projectTitle;
@@ -26,16 +32,20 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
       expectedPkg: initialValues?.expectedPkg || "",
       negotiation: initialValues?.negotiation || "",
       noticePeriod: initialValues?.noticePeriod || "",
-      readyForWork: initialValues?.readyForWork || "",
       workPreference: initialValues?.workPreference || "",
       practicalUrl: initialValues?.practicalUrl || "",
       practicalFeedback: initialValues?.practicalFeedback || "",
       aboutUs: initialValues?.aboutUs || "",
       communicationSkill: initialValues?.communicationSkill || "",
+      appliedRole: initialValues?.appliedRole || "",
+      currentCompanyName: initialValues?.currentCompanyName || "",
+      anyHandOnOffers: initialValues?.anyHandOnOffers || "",
+      lastFollowUpDate: initialValues?.lastFollowUpDate || "",
     },
     validationSchema: jobApplicantSchema,
     onSubmit: (data: any) => {
       onNext(data);
+      console.log("onSubmit job submitted", data);
     },
   });
 
@@ -59,7 +69,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     label="Expected Package (LPA)"
                     name="expectedPkg"
                     type="text"
-                    placeholder={InputPlaceHolder("Enter expected package")}
+                    placeholder={InputPlaceHolder("Expected package")}
                     handleChange={validation.handleChange}
                     handleBlur={validation.handleBlur}
                     value={validation.values.expectedPkg}
@@ -74,7 +84,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     label="Current Package (LPA)"
                     name="currentPkg"
                     type="text"
-                    placeholder={InputPlaceHolder("Enter current package")}
+                    placeholder={InputPlaceHolder("Current package")}
                     handleChange={validation.handleChange}
                     handleBlur={validation.handleBlur}
                     value={validation.values.currentPkg}
@@ -88,7 +98,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     label=" Negotiation (₹)"
                     name="negotiation"
                     type="text"
-                    placeholder={InputPlaceHolder("Enter negotiation amount")}
+                    placeholder={InputPlaceHolder("Negotiation amount")}
                     handleChange={validation.handleChange}
                     handleBlur={validation.handleBlur}
                     value={validation.values.negotiation}
@@ -105,7 +115,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     label=" Notice Period (Days)"
                     name="noticePeriod"
                     type="text"
-                    placeholder={InputPlaceHolder("Enter notice period")}
+                    placeholder={InputPlaceHolder("Notice period")}
                     handleChange={validation.handleChange}
                     handleBlur={validation.handleBlur}
                     value={validation.values.noticePeriod}
@@ -115,7 +125,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                   />
                 </Col>
                 <Col xs={12} sm={4} className="mb-3 mb-sm-0">
-                   <BaseSelect
+                  <BaseSelect
                     label="Communication Skill(out of 10)"
                     name="communicationSkill"
                     className="select-border"
@@ -136,7 +146,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     }
                     touched={validation.touched.communicationSkill}
                     error={validation.errors.communicationSkill}
-                  /> 
+                  />
                 </Col>
                 <Col xs={12} sm={4}>
                   <BaseSelect
@@ -163,14 +173,92 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                   />
                 </Col>
               </Row>
-
               <Row className="mb-4">
-                <Col xs={12} sm={4} className="mb-3 mb-sm-0">
+                <Col xs={12} lg={4} md={4}>
+                  <BaseSelect
+                    label="Applied Role"
+                    name="appliedRole"
+                    className="select-border"
+                    options={designationType}
+                    placeholder={InputPlaceHolder("Applied Role")}
+                    handleChange={(selectedOption: SelectedOption) => {
+                      validation.setFieldValue(
+                        "appliedRole",
+                        selectedOption?.value || ""
+                      );
+                    }}
+                    handleBlur={validation.appliedRole}
+                    value={
+                      dynamicFind(
+                        designationType,
+                        validation.values.appliedRole
+                      ) || ""
+                    }
+                    touched={validation.touched.appliedRole}
+                    error={validation.errors.appliedRole}
+                  />
+                </Col>
+
+                <Col xs={12} sm={4} md={4} className="mb-3 mb-sm-0">
+                  <BaseInput
+                    label="Current Company"
+                    name="currentCompanyName"
+                    type="text"
+                    placeholder={InputPlaceHolder("Current Company")}
+                    handleChange={validation.handleChange}
+                    handleBlur={validation.handleBlur}
+                    value={validation.values.currentCompanyName}
+                    touched={validation.touched.currentCompanyName}
+                    error={validation.errors.currentCompanyName}
+                    passwordToggle={false}
+                  />
+                </Col>
+                <Col xs={12} sm={4} md={4}>
+                  <BaseSelect
+                    label="Any Hand On Offers ?"
+                    name="anyHandOnOffers"
+                    className="select-border"
+                    options={anyHandOnOffers}
+                    placeholder="anyHandOnOffers"
+                    handleChange={(selectedOption: SelectedOption) => {
+                      validation.setFieldValue(
+                        "anyHandOnOffers",
+                        selectedOption?.value || ""
+                      );
+                    }}
+                    handleBlur={validation.handleBlur}
+                    value={
+                      dynamicFind(
+                        anyHandOnOffers,
+                        validation.values.anyHandOnOffers
+                      ) || ""
+                    }
+                    touched={validation.touched.anyHandOnOffers}
+                    error={validation.errors.anyHandOnOffers}
+                  />
+                </Col>
+              </Row>
+              <Row className="mb-4">
+                <Col xs={12} sm={6} md={6} className="mb-3 mb-sm-0">
+                  <BaseInput
+                    label="Last Follow UpDate"
+                    name="lastFollowUpDate"
+                    type="date"
+                    placeholder={InputPlaceHolder("Last Follow UpDate")}
+                    handleChange={validation.handleChange}
+                    handleBlur={validation.handleBlur}
+                    value={validation.values.lastFollowUpDate}
+                    touched={validation.touched.lastFollowUpDate}
+                    error={validation.errors.lastFollowUpDate}
+                    passwordToggle={false}
+                  />
+                </Col>
+                <Col xs={12} sm={6} md={6} className="mb-3 mb-sm-0">
                   <BaseInput
                     label="Practical Url"
                     name="practicalUrl"
                     type="url"
-                    placeholder={InputPlaceHolder("Enter Practical Url")}
+                    placeholder={InputPlaceHolder("Practical Url")}
                     handleChange={validation.handleChange}
                     handleBlur={validation.handleBlur}
                     value={validation.values.practicalUrl}
@@ -179,7 +267,8 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     passwordToggle={false}
                   />
                 </Col>
-                <Col xs={12} sm={8} className="mb-3 mb-sm-0">
+
+                <Col xs={12} sm={12} md={12} className="mb-3 mb-sm-0">
                   <BaseTextarea
                     label="Practical Feedback"
                     name="practicalFeedback"

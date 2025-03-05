@@ -3,6 +3,7 @@ import * as Yup from "yup";
 export type SelectedOption = { label: string; value: string };
 
 export const EducationApplicantSchema = Yup.object({
+  currentCompanyDesignation:Yup.string(),
   qualification: Yup.array()
     .required("Qualification is required")
     .min(1, "At least one skill must be selected"),
@@ -12,24 +13,12 @@ export const EducationApplicantSchema = Yup.object({
     .required("Passing Skill is required")
     .min(1, "At least one skill must be selected"),
   otherSkills: Yup.string(),
-  totalExperience: Yup.number()
-    .positive("Total Experience must be a positive number")
-    .required("Total Experience is required"),
-  relevantSkillExperience: Yup.number()
-    .min(0, "Relevant Skill Experience cannot be negative")
-    .required("Relevant Skill Experience is required")
-    .test(
-      "is-less-than-or-equal-total",
-      "Relevant Skill Experience must be less than or equal to Total Experience",
-      function (value) {
-        const totalExperience = this.parent.totalExperience;
-        return value <= totalExperience;
-      }
-    ),
+  totalExperience: Yup.string(),
+  relevantSkillExperience: Yup.string(),
   referral: Yup.string(),
   portfolioUrl: Yup.string().url("Invalid URL"),
   resumeUrl: Yup.string()
-    .url("Please enter a valid URL")
+    // .url("Please enter a valid URL")
     .required("Resume URL is required"),
   rating: Yup.number()
     .required("Rating is required")
@@ -38,14 +27,13 @@ export const EducationApplicantSchema = Yup.object({
 });
 
 export const jobApplicantSchema = Yup.object({
-  currentPkg: Yup.string().matches(
-    /^\d+$/,
-    "Current package must be a valid number."
-  ),
-  expectedPkg: Yup.string().matches(
-    /^\d+$/,
-    "Expected package must be a valid number."
-  ),
+  lastFollowUpDate:Yup.date(),
+  maritalStatus: Yup.string(),
+  appliedRole: Yup.string(),
+  anyHandOnOffers: Yup.boolean(),
+  currentCompanyName: Yup.string(),
+  currentPkg: Yup.string(),
+  expectedPkg: Yup.string(),
   negotiation: Yup.string().matches(
     /^\d+$/,
     "Negotiation amount must be a valid number."
@@ -87,11 +75,15 @@ export const personalApplicantSchema = Yup.object({
     .matches(/^[0-9]{10}$/, "WhatsApp number must be 10 digits")
     .required("WhatsApp Number is required"),
   dateOfBirth: Yup.date().required("Date of birth is required"),
-  city: Yup.string().required("City is required"),
-  pincode: Yup.string()
-    .matches(/^[0-9]{6}$/, "Pincode must be 6 digits")
-    .required("Pincode is required"),
-  fullAddress: Yup.string().required("Full Address is required"),
+  currentCity: Yup.string().required("Current City is required"),
+  currentPincode: Yup.string().matches(
+    /^[0-9]{6}$/,
+    "Pincode must be 6 digits"
+  ),
+  currentLocation: Yup.string(),
+  homeTownCity: Yup.string(),
+  homePincode: Yup.string().matches(/^[0-9]{6}$/, "Pincode must be 6 digits"),
+  preferredLocations: Yup.string(),
   gender: Yup.string().required("Gender is required"),
   country: Yup.string().required("Country is required"),
   state: Yup.string().required("State is required"),

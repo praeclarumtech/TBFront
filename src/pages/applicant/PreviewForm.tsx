@@ -153,7 +153,7 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
                 <span className="font-extrabold text-base !text-black pt-3">
                   Designation :
                 </span>
-                <span>{" " + data.designation}</span>
+                <span>{" " + data.currentCompanyDesignation}</span>
               </Typography>
             </Col>
 
@@ -170,16 +170,7 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
                 </span>
                 <span>{" " + data.relevantSkillExperience}</span>
               </Typography>
-              <Typography>
-                <span className="font-extrabold text-base !text-black pt-3">
-                  Applied Skills :
-                </span>
-                <span>
-                  {data.appliedSkills?.length > 0
-                    ? capitalizeWords(data.appliedSkills.join(", "))
-                    : "No skills listed"}
-                </span>
-              </Typography>
+
               <Typography>
                 <span className="font-extrabold text-base !text-black pt-3">
                   Referral :
@@ -191,6 +182,16 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
                   Communication Skill Rating:
                 </span>
                 <span>{" " + data.communicationSkill}</span>
+              </Typography>
+              <Typography>
+                <span className="font-extrabold text-base !text-black pt-3">
+                  Applied Skills :
+                </span>
+                <span>
+                  {data.appliedSkills?.length > 0
+                    ? capitalizeWords(data.appliedSkills.join(", "))
+                    : "No skills listed"}
+                </span>
               </Typography>
             </Col>
           </Row>
@@ -243,12 +244,12 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
                 </span>
                 <span>{" " + capitalizeWords(data.currentPkg)}</span>
               </Typography>
-              <Typography>
+              {/* <Typography>
                 <span className="font-extrabold text-base !text-black pt-3">
                   Work Preference:
                 </span>
                 <span>{" " + capitalizeWords(data.readyForWork)}</span>
-              </Typography>
+              </Typography> */}
               <Typography>
                 <span className="font-extrabold text-base !text-black pt-3">
                   Ready for Work from office :

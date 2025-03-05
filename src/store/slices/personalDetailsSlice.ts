@@ -11,9 +11,15 @@ interface PersonalDetailsState {
   gender: string;
   country: string;
   state: string;
-  city: string;
-  pincode: string;
-  fullAddress: string;
+  // city: string;
+  // pincode: string;
+  // fullAddress: string;
+  currentPincode: string;
+  currentCity: string;
+  homeTownCity: string;
+  homePincode: string;
+  preferredLocations: string;
+  currentLocation: string;
 }
 
 const initialState: PersonalDetailsState = {
@@ -27,9 +33,17 @@ const initialState: PersonalDetailsState = {
   gender: '',
   country: '',
   state: '',
-  city: '',
-  pincode: '',
-  fullAddress: ''
+  // city: '',
+  // pincode: '',
+  // fullAddress: ''
+  currentPincode: '',
+  currentCity: '',
+  homeTownCity: '',
+  homePincode: '',
+  preferredLocations: '',
+  currentLocation: '',
+
+
 };
 
 const personalDetailsSlice = createSlice({
