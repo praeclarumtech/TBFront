@@ -1,7 +1,6 @@
-import  { useEffect, useState } from "react";
-import { Line } from "react-chartjs-2";
+import { useEffect, useState } from "react";
 import {
-  Chart as ChartjS,
+  Chart as ChartJS,
   CategoryScale,
   LinearScale,
   PointElement,
@@ -9,11 +8,12 @@ import {
   Title,
   Tooltip,
   Legend,
-  Filler,
+  ChartOptions,
+  Filler
 } from "chart.js";
-import { getApplicantsDetails } from "api/dashboardApi";
+import { Line } from "react-chartjs-2";
 
-ChartjS.register(
+ChartJS.register(
   CategoryScale,
   LinearScale,
   PointElement,
@@ -23,6 +23,7 @@ ChartjS.register(
   Legend,
   Filler
 );
+import { getApplicantsDetails } from "api/dashboardApi";
 
 const LineChart = () => {
   const [applicantsdetail, setApplicantsDetail] = useState([]);
@@ -45,21 +46,7 @@ const LineChart = () => {
   console.log(applicantsdetail);
   console.log(applicantsdetail);
 
-  const lineChartData = {
-    labels: ["da1", "day2"],
-    datasets: [
-      {
-        label: "Applicants",
-        data: ["100", "150"],
-        borderColor: "#6610f2",
-        backgroundColor: "rgba(102, 16, 242, 0.2)",
-        fill: true,
-        tension: 0.1,
-      },
-    ],
-  };
-
-  const op = {
+  const op: ChartOptions<"line"> = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
@@ -79,6 +66,20 @@ const LineChart = () => {
         border: { color: "#6610f2" },
       },
     },
+  };
+
+  // Define the dataset properly
+  const lineChartData = {
+    labels: ["Jan", "Feb", "Mar", "Apr", "May"],
+    datasets: [
+      {
+        label: "Sales",
+        data: [10, 20, 30, 40, 50],
+        borderColor: "#6610f2",
+        backgroundColor: "rgba(102, 16, 242, 0.2)",
+        fill: true,
+      },
+    ],
   };
 
   return (
