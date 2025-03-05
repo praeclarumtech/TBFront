@@ -96,6 +96,7 @@ const DebouncedInput = ({
 };
 
 const TableContainer = ({
+  isPagination = true,
   columns,
   data,
   isGlobalFilter,
@@ -307,83 +308,88 @@ const TableContainer = ({
           </tbody>
         </Table>
       </div>
-
-      <Row className="align-items-center mt-2 g-3 text-center text-sm-start">
-        <div className="col-sm">
-          <div className="text-muted">
-            Showing
-            <span className="fw-semibold ms-1">
-              {getState()?.pagination?.pageSize *
-                getState()?.pagination?.pageIndex +
-                1}
-              -
-              {Math.min(
-                (getState()?.pagination?.pageIndex + 1) *
-                  getState()?.pagination?.pageSize,
-                totalRecords
-              )}
-            </span>{" "}
-            of <span className="fw-semibold">{totalRecords}</span> Results
+      {isPagination && (
+        <Row className="align-items-center mt-2 g-3 text-center text-sm-start">
+          <div className="col-sm">
+            <div className="text-muted">
+              Showing
+              <span className="fw-semibold ms-1">
+                {getState()?.pagination?.pageSize *
+                  getState()?.pagination?.pageIndex +
+                  1}
+                -
+                {Math.min(
+                  (getState()?.pagination?.pageIndex + 1) *
+                    getState()?.pagination?.pageSize,
+                  totalRecords
+                )}
+              </span>{" "}
+              of <span className="fw-semibold">{totalRecords}</span> Results
+            </div>
           </div>
-        </div>
-        <div className="col-sm-auto">
-          <ul className="pagination pagination-separated pagination-md justify-content-center justify-content-sm-start mb-0">
-            <li
-              className={
-                !getCanPreviousPage() ? "page-item disabled" : "page-item"
-              }
-            >
-              <Link
-                to="#"
-                className="page-link"
-                aria-disabled={pagination?.pageIndex === 0}
-                onClick={() =>
-                  setPagination((prev: { pageIndex: number }) => ({
-                    ...prev,
-                    pageIndex: prev?.pageIndex - 1,
-                  }))
+          <div className="col-sm-auto">
+            <ul className="pagination pagination-separated pagination-md justify-content-center justify-content-sm-start mb-0">
+              <li
+                className={
+                  !getCanPreviousPage() ? "page-item disabled" : "page-item"
                 }
               >
-                {tableButtons.Previous}
-              </Link>
-            </li>
-            {getPageOptions()?.map((item: any, key: number) => (
-              <React.Fragment key={key}>
-                <li className="page-item">
-                  <Link
-                    to="#"
-                    className={
-                      getState()?.pagination.pageIndex === item
-                        ? "page-link active"
-                        : "page-link"
-                    }
-                    onClick={() => setPageIndex(item)}
-                  >
-                    {item + 1}
-                  </Link>
-                </li>
-              </React.Fragment>
-            ))}
-            <li
-              className={!getCanNextPage() ? "page-item disabled" : "page-item"}
-            >
-              <Link
-                to="#"
-                className="page-link"
-                aria-disabled={pagination.pageIndex + 1 >= table.getPageCount()}
-                onClick={() =>
-                  setPagination((prev: { pageIndex: number }) => ({
-                    ...prev,
-                    pageIndex: prev.pageIndex + 1,
-                  }))
+                <Link
+                  to="#"
+                  className="page-link"
+                  aria-disabled={pagination?.pageIndex === 0}
+                  onClick={() =>
+                    setPagination((prev: { pageIndex: number }) => ({
+                      ...prev,
+                      pageIndex: prev?.pageIndex - 1,
+                    }))
+                  }
+                >
+                  {tableButtons.Previous}
+                </Link>
+              </li>
+              {getPageOptions()?.map((item: any, key: number) => (
+                <React.Fragment key={key}>
+                  <li className="page-item">
+                    <Link
+                      to="#"
+                      className={
+                        getState()?.pagination.pageIndex === item
+                          ? "page-link active"
+                          : "page-link"
+                      }
+                      onClick={() => setPageIndex(item)}
+                    >
+                      {item + 1}
+                    </Link>
+                  </li>
+                </React.Fragment>
+              ))}
+              <li
+                className={
+                  !getCanNextPage() ? "page-item disabled" : "page-item"
                 }
               >
-                {tableButtons.Next}
-              </Link>
-            </li>
-          </ul>
-        </div>
-      </Row>
+                <Link
+                  to="#"
+                  className="page-link"
+                  aria-disabled={
+                    pagination.pageIndex + 1 >= table.getPageCount()
+                  }
+                  onClick={() =>
+                    setPagination((prev: { pageIndex: number }) => ({
+                      ...prev,
+                      pageIndex: prev.pageIndex + 1,
+                    }))
+                  }
+                >
+                  {tableButtons.Next}
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </Row>
+      )}
     </Fragment>
   );
 };

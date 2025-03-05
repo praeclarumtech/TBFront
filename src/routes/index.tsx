@@ -12,15 +12,16 @@ import ForgetPassword from "pages/auth/ForgetPassword";
 import SignUp from "pages/auth/SignUp";
 import Dashboard from "pages/dashboard/Index";
 import RootLayout from "layouts/RootLayout";
+// import ApplicantTables from "pages/Tables/ApplicantsTables";
+import Report from "pages/report/Report";
+import StepperForm from "pages/applicant/Stepper";
 import EmailTable from "pages/email/EmailTable";
 import EmailForm from "pages/email/EmailForm";
-import Report from "pages/report/Report";
 import PassingYear from "pages/master/PassingYear";
-import AddSkill from "pages/master/Skills";
-import StepperForm from "pages/applicant/Stepper";
 import Applicant from "pages/applicant/Index";
 import EmailVerification from "pages/auth/EmailVerify";
 import UpdatePassword from "pages/auth/UpdatePassword";
+import AddSkill from "pages/master/Skills";
 
 const RenderRouter: React.FC = () => {
   const {
