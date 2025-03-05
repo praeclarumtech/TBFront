@@ -165,6 +165,7 @@ export interface DeleteModalProps {
 
 export interface TableContainerProps {
   columns?: any;
+  isPagination?:boolean;
   data?: any;
   isGlobalFilter?: any;
   isProductsFilter?: any;
