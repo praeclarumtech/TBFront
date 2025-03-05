@@ -17,7 +17,7 @@ export const CustomToggle: React.FC<CustomToggleProps> = ({
 }) => {
   const { activeEventKey } = useContext(AccordionContext);
   const decoratedOnClick = useAccordionButton(eventKey, () =>
-  
+    console.log("totally custom!")
   );
   const isCurrentEventKey = activeEventKey === eventKey;
   return (
