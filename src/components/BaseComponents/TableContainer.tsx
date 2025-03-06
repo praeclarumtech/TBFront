@@ -129,6 +129,7 @@ const TableContainer = ({
 
   const fuzzyFilter: FilterFn<any> = (row: any, columnId, value, addMeta) => {
     const itemRank = rankItem(row?.getValue(columnId), value);
+
     addMeta({
       itemRank,
     });

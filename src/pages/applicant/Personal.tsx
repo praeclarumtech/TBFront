@@ -290,6 +290,7 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
                     touched={validation.touched.currentPincode}
                     error={validation.errors.currentPincode}
                     passwordToggle={false}
+                    className="!appearance-none"
                   />
                 </Col>
                 <Col xs={12} md={6} lg={4}>
