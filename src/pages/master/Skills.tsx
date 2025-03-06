@@ -22,7 +22,7 @@ import { getSerialNumber, InputPlaceHolder } from "utils/commonFunctions";
 const { projectTitle, Modules, handleResponse } = appConstants;
 
 const AddSkill = () => {
-  document.title = Modules.Login + " | " + projectTitle;
+  document.title = Modules.SKill + " | " + projectTitle;
   const [skills, setSkills] = useState<any[]>([]);
   const [editingSkill, setEditingSkill] = useState<any>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);

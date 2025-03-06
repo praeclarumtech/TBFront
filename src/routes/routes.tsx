@@ -13,6 +13,8 @@ import Report from "pages/report/Report";
 import ForgetPassword from "pages/auth/ForgetPassword";
 import EmailVerification from "pages/auth/EmailVerify";
 import UpdatePassword from "pages/auth/UpdatePassword";
+import Profile from "pages/dashboard/pages/Profile";
+import GeneralSetting from "sub-components/settings/GeneralSetting";
 
 const routes = {
   ROOT: {
@@ -42,6 +44,11 @@ const routes = {
     title: "Sign Up",
     path: "/sign-up",
     element: SignUp,
+  },
+  EDIT_PROFILE: {
+    title: "Profile",
+    path: "/Profile",
+    element: GeneralSetting,
   },
   DASHBOARD: {
     title: "Dashboard",

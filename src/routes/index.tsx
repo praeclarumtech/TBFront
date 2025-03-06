@@ -22,6 +22,7 @@ import Applicant from "pages/applicant/Index";
 import EmailVerification from "pages/auth/EmailVerify";
 import UpdatePassword from "pages/auth/UpdatePassword";
 import AddSkill from "pages/master/Skills";
+import GeneralSetting from "sub-components/settings/GeneralSetting";
 
 const RenderRouter: React.FC = () => {
   const {
@@ -35,6 +36,7 @@ const RenderRouter: React.FC = () => {
     EMAIL,
     REPORT,
     MASTER,
+    EDIT_PROFILE,
   } = routes;
 
   const router = createBrowserRouter(
@@ -45,6 +47,14 @@ const RenderRouter: React.FC = () => {
         <Route path={FORGET_PASSWORD.path} element={<ForgetPassword />} />
         <Route path={VERIFY_EMAIL.path} element={<EmailVerification />} />
         <Route path={UPDATE_PASSWORD.path} element={<UpdatePassword />} />
+        <Route
+          path={EDIT_PROFILE.path}
+          element={
+            <RootLayout>
+              <GeneralSetting />
+            </RootLayout>
+          }
+        />
         <Route
           path={DASHBOARD.path}
           element={<RootLayout>{<Dashboard />}</RootLayout>}
