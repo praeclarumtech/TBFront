@@ -1,5 +1,5 @@
 import { useMounted } from "hooks/useMounted";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { sendEmail } from "api/emailApi";
 import { toast } from "react-toastify";
 import { ToastContainer } from "react-toastify";
@@ -12,9 +12,11 @@ const EmailForm = () => {
   const navigate = useNavigate();
   // Add loading and error states
   // Replace useState with useFormik
+  const location = useLocation();
+  const initialEmail = location.state?.email_to || "";
   const validation = useFormik({
     initialValues: {
-      email_to: "",
+      email_to: initialEmail || "",
       email_bcc: "",
       subject: "",
       description: "",

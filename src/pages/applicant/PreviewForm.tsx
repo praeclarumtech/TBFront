@@ -6,8 +6,6 @@ import BaseButton from "components/BaseComponents/BaseButton";
 import { Typography } from "@mui/material";
 
 const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
-  console.log("degination", data.currentCompanyDesignation);
-
   const capitalizeWords = (str: string) => {
     if (typeof str !== "string") {
       return "";
@@ -149,11 +147,7 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
                 <span className="font-extrabold text-base !text-black pt-3">
                   Qualification:
                 </span>
-                <span>
-                  {data.qualification?.length > 0
-                    ? capitalizeWords(data.qualification.join(", "))
-                    : "No Qualification listed"}
-                </span>
+                <span>{data.qualification}</span>
               </Typography>
               <Typography variant="body1" className="text-gray-600">
                 <span className="font-extrabold text-base !text-black pt-3">
@@ -167,12 +161,7 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
                 </span>
                 <span>{" " + data.totalExperience}</span>
               </Typography>
-              <Typography>
-                <span className="font-extrabold text-base !text-black pt-3">
-                  Qualification :
-                </span>
-                <span>{" " + capitalizeWords(data.qualification)}</span>
-              </Typography>
+
               <Typography>
                 <span className="font-extrabold text-base !text-black pt-3">
                   Other Skills:
@@ -255,13 +244,13 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
 
               <Typography>
                 <span className="font-extrabold text-base !text-black pt-3">
-                  Negotiation :
+                  Negotiation(Rs) :
                 </span>
                 <span>{" " + data.negotiation}</span>
               </Typography>
               <Typography>
                 <span className="font-extrabold text-base !text-black pt-3">
-                  Notice Period:
+                  Notice Period(Days):
                 </span>
                 <span>{" " + data.noticePeriod}</span>
               </Typography>
@@ -308,7 +297,7 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
                 <span className="font-extrabold text-base !text-black pt-3">
                   Any Hand On Offers?:
                 </span>
-                <span>{" " + capitalizeWords(data.anyHandOnOffers)}</span>
+                <span>{" " + data.anyHandOnOffers ? "Yes" : "Not"}</span>
               </Typography>
               <Typography>
                 <span className="font-extrabold text-base !text-black pt-3">

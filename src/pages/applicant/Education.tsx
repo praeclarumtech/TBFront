@@ -31,8 +31,8 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
       qualification: initialValues?.qualification || "",
       degree: initialValues?.degree || "",
       passingYear: initialValues?.passingYear || "",
-      totalExperience: initialValues?.totalExperience || "",
-      relevantSkillExperience: initialValues?.relevantSkillExperience || "",
+      totalExperience: initialValues?.totalExperience || "0",
+      relevantSkillExperience: initialValues?.relevantSkillExperience || "0",
       appliedSkills: initialValues?.appliedSkills || "",
       otherSkills: initialValues?.otherSkills || "",
       referral: initialValues?.referral || "",
@@ -126,7 +126,7 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     name="passingYear"
                     className="select-border"
                     options={passingYearType}
-                    placeholder={InputPlaceHolder("Passing Year")}
+                    placeholder="Passing Year"
                     handleChange={(selectedOption: SelectedOption) => {
                       validation.setFieldValue(
                         "passingYear",
@@ -145,6 +145,28 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                   />
                 </Col>
                 <Col xs={12} md={3}>
+                  {/* <BaseSelect
+                    label="Marital Status"
+                    name="maritalStatus"
+                    className="select-border"
+                    options={maritalStatusType}
+                    placeholder="Marital Status"
+                    handleChange={(selectedOption: SelectedOption) => {
+                      validation.setFieldValue(
+                        "maritalStatus",
+                        selectedOption?.value || ""
+                      );
+                    }}
+                    handleBlur={validation.handleBlur}
+                    value={
+                      dynamicFind(
+                        maritalStatusType,
+                        validation.values.maritalStatus
+                      ) || ""
+                    }
+                    touched={validation.touched.maritalStatus}
+                    error={validation.errors.maritalStatus}
+                  /> */}
                   <BaseSelect
                     label="Marital Status"
                     name="maritalStatus"

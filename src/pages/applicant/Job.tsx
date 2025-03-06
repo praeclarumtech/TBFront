@@ -28,10 +28,10 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
   const validation: any = useFormik({
     enableReinitialize: true,
     initialValues: {
-      currentPkg: initialValues?.currentPkg || "",
-      expectedPkg: initialValues?.expectedPkg || "",
-      negotiation: initialValues?.negotiation || "",
-      noticePeriod: initialValues?.noticePeriod || "",
+      currentPkg: initialValues?.currentPkg || "0",
+      expectedPkg: initialValues?.expectedPkg || "0",
+      negotiation: initialValues?.negotiation || "0",
+      noticePeriod: initialValues?.noticePeriod || "0",
       workPreference: initialValues?.workPreference || "",
       practicalUrl: initialValues?.practicalUrl || "",
       practicalFeedback: initialValues?.practicalFeedback || "",
@@ -39,7 +39,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
       communicationSkill: initialValues?.communicationSkill || "",
       appliedRole: initialValues?.appliedRole || "",
       currentCompanyName: initialValues?.currentCompanyName || "",
-      anyHandOnOffers: initialValues?.anyHandOnOffers || "",
+      anyHandOnOffers: initialValues?.anyHandOnOffers || false,
       lastFollowUpDate: initialValues?.lastFollowUpDate || "",
     },
     validationSchema: jobApplicantSchema,
@@ -124,28 +124,29 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                   />
                 </Col>
                 <Col xs={12} sm={4} md={4} className="mb-3 mb-sm-0">
-                  <BaseSelect
+                  
+                 <BaseSelect
                     label="Communication Skill(out of 10)"
                     name="communicationSkill"
                     className="select-border"
                     options={communicationOptions}
-                    placeholder="CommunicationSkill"
+                    placeholder="Communication Skill"
                     handleChange={(selectedOption: SelectedOption) => {
                       validation.setFieldValue(
                         "communicationSkill",
                         selectedOption?.value || ""
-                      );
+                      ); 
                     }}
-                    handleBlur={validation.communicationSkill}
+                    handleBlur={validation.handleBlur}
                     value={
                       dynamicFind(
                         communicationOptions,
-                        validation.values.communicationSkill
-                      ) || ""
+                        String(validation.values.communicationSkill)
+                      ) || "" 
                     }
                     touched={validation.touched.communicationSkill}
                     error={validation.errors.communicationSkill}
-                  />
+                  /> 
                 </Col>
                 <Col xs={12} sm={4}>
                   <BaseSelect
@@ -218,11 +219,11 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     name="anyHandOnOffers"
                     className="select-border"
                     options={anyHandOnOffers}
-                    placeholder="anyHandOnOffers"
+                    placeholder="Select an option"
                     handleChange={(selectedOption: SelectedOption) => {
                       validation.setFieldValue(
                         "anyHandOnOffers",
-                        selectedOption?.value || ""
+                        selectedOption?.value || false
                       );
                     }}
                     handleBlur={validation.handleBlur}
@@ -230,7 +231,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                       dynamicFind(
                         anyHandOnOffers,
                         validation.values.anyHandOnOffers
-                      ) || ""
+                      ) || false
                     }
                     touched={validation.touched.anyHandOnOffers}
                     error={validation.errors.anyHandOnOffers}

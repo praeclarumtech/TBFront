@@ -21,6 +21,9 @@ const { projectTitle, Modules, gendersType, countriesType, stateType } =
 const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
   document.title = Modules.Applicant + " | " + projectTitle;
   const minDateOfBirth = moment().subtract(15, "years").format("YYYY-MM-DD");
+  const formattedDateOfBirth = initialValues.dateOfBirth
+    ? moment(initialValues.dateOfBirth).format("YYYY-MM-DD")
+    : "";
   const validation: any = useFormik({
     enableReinitialize: true,
     initialValues: {
@@ -31,9 +34,7 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
       phoneNumber: initialValues.phone.phoneNumber || "",
       email: initialValues.email || "",
       gender: initialValues.gender || "",
-      // dateOfBirth: moment().format("YYYY-MM-DD") || "",
-      dateOfBirth: initialValues.dateOfBirth || " ",
-
+      dateOfBirth: formattedDateOfBirth,
       state: initialValues.state || "",
       country: initialValues.country || "",
       currentPincode: initialValues.currentPincode || "",
@@ -58,7 +59,7 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
 
         email: data.email,
         gender: data.gender,
-        dateOfBirth: data.dateOfBirth,
+        dateOfBirth: moment(data.dateOfBirth).toISOString(),
         state: data.state,
         country: data.country,
         currentPincode: data.currentPincode,
