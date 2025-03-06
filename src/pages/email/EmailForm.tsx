@@ -14,9 +14,10 @@ const EmailForm = () => {
   // Replace useState with useFormik
   const location = useLocation();
   const initialEmail = location.state?.email_to || "";
+
   const validation = useFormik({
     initialValues: {
-      email_to: initialEmail || "",
+      email_to: initialEmail,
       email_bcc: "",
       subject: "",
       description: "",
@@ -91,10 +92,13 @@ const EmailForm = () => {
                               : ""
                           }`}
                         />
+
                         {validation.touched.email_to &&
                           validation.errors.email_to && (
                             <div className="text-red-500 text-sm mt-1">
-                              {validation.errors.email_to}
+                              {typeof validation.errors.email_to === "string"
+                                ? validation.errors.email_to
+                                : "An error occurred"}
                             </div>
                           )}
                       </div>

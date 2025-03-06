@@ -60,8 +60,8 @@ const ViewModal = ({ show, onHide, applicantId }: any) => {
               <hr className="text-blue-900 font-extrabold mb-4" />
               <Row>
                 <Col xs={12} md={6} className="mb-3">
-                  <Typography className="mt-2 justify-center text-center mb-2 ">
-                    <span className="font-extrabold text-base text-black">
+                  <Typography className="mt-2  mb-2 ">
+                    <span className="font-extrabold text-base text-primary">
                       Applicant Number:
                     </span>
                     <span> {formData.applicationNo}</span>
