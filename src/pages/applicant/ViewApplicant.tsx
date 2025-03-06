@@ -60,8 +60,8 @@ const ViewModal = ({ show, onHide, applicantId }: any) => {
               <hr className="text-blue-900 font-extrabold mb-4" />
               <Row>
                 <Col xs={12} md={6} className="mb-3">
-                  <Typography className="mt-2">
-                    <span className="font-extrabold text-base text-black">
+                  <Typography className="mt-2  mb-2 ">
+                    <span className="font-extrabold text-base text-primary">
                       Applicant Number:
                     </span>
                     <span> {formData.applicationNo}</span>
@@ -170,7 +170,7 @@ const ViewModal = ({ show, onHide, applicantId }: any) => {
                     <span className="font-extrabold text-base text-black">
                       Qualification:
                     </span>
-                    <span> {capitalizeWords(formData.qualification)}</span>
+                    <span> {formData.qualification}</span>
                   </Typography>
                   <Typography className="mt-2">
                     <span className="font-extrabold text-base text-black">
@@ -195,18 +195,30 @@ const ViewModal = ({ show, onHide, applicantId }: any) => {
                         : "No skills listed"}
                     </span>
                   </Typography>
+                  <Typography>
+                    <span className="font-extrabold text-base !text-black pt-3">
+                      Designation :
+                    </span>
+                    <span>{" " + formData.currentCompanyDesignation}</span>
+                  </Typography>
+                  <Typography>
+                    <span className="font-extrabold text-base !text-black pt-3">
+                      Javascript Rating:
+                    </span>
+                    <span>{" " + formData.rating}</span>
+                  </Typography>
                 </Col>
 
                 <Col xs={12} md={6} className="mb-3">
                   <Typography className="mt-2">
                     <span className="font-extrabold text-base text-black">
-                      Total Experience (in months):
+                      Total Experience (Year):
                     </span>
                     <span> {formData.totalExperience}</span>
                   </Typography>
                   <Typography className="mt-2">
                     <span className="font-extrabold text-base text-black">
-                      Relevant Skill Experience:
+                      Relevant Skill Experience(years):
                     </span>
                     <span> {formData.relevantSkillExperience}</span>
                   </Typography>
@@ -215,6 +227,18 @@ const ViewModal = ({ show, onHide, applicantId }: any) => {
                       Other Skills:
                     </span>
                     <span> {capitalizeWords(formData.otherSkills)}</span>
+                  </Typography>
+                  <Typography>
+                    <span className="font-extrabold text-base !text-black pt-3">
+                      Referral :
+                    </span>
+                    <span>{" " + capitalizeWords(formData.referral)}</span>
+                  </Typography>
+                  <Typography>
+                    <span className="font-extrabold text-base !text-black pt-3">
+                      Communication Skill Rating:
+                    </span>
+                    <span>{" " + formData.communicationSkill}</span>
                   </Typography>
                 </Col>
               </Row>
@@ -254,11 +278,24 @@ const ViewModal = ({ show, onHide, applicantId }: any) => {
                     </span>
                     <span> {formData.negotiation}</span>
                   </Typography>
-                  <Typography className="mt-2">
-                    <span className="font-extrabold text-base text-black">
-                      Ready for Work (WFO):
+                  <Typography>
+                    <span className="font-extrabold text-base !text-black pt-3">
+                      Last Follow UpDate:
                     </span>
-                    <span> {capitalizeWords(formData.readyForWork)}</span>
+                    <span>
+                      {" " +
+                        new Date(
+                          formData.lastFollowUpDate
+                        ).toLocaleDateString()}
+                    </span>
+                  </Typography>
+                  <Typography>
+                    <span className="font-extrabold text-base !text-black pt-3">
+                      Applicant Add Date:
+                    </span>
+                    <span>
+                      {" " + new Date(formData.createAt).toLocaleDateString()}
+                    </span>
                   </Typography>
                 </Col>
 
@@ -269,11 +306,19 @@ const ViewModal = ({ show, onHide, applicantId }: any) => {
                     </span>
                     <span> {capitalizeWords(formData.workPreference)}</span>
                   </Typography>
-                  <Typography className="mt-2">
-                    <span className="font-extrabold text-base text-black">
-                      Referral:
+                  <Typography>
+                    <span className="font-extrabold text-base !text-black pt-3">
+                      Marital Status:
                     </span>
-                    <span> {capitalizeWords(formData.referral)}</span>
+                    <span>{" " + capitalizeWords(formData.maritalStatus)}</span>
+                  </Typography>
+                  <Typography>
+                    <span className="font-extrabold text-base !text-black pt-3">
+                      current Company Name:
+                    </span>
+                    <span>
+                      {" " + capitalizeWords(formData.currentCompanyName)}
+                    </span>
                   </Typography>
                   <Typography className="mt-2">
                     <span className="font-extrabold text-base text-black">

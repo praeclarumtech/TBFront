@@ -1,9 +1,12 @@
+import moment from "moment";
 import * as Yup from "yup";
 
 export type SelectedOption = { label: string; value: string };
 
 export const EducationApplicantSchema = Yup.object({
-  currentCompanyDesignation: Yup.string(),
+  currentCompanyDesignation: Yup.string().required(
+    "Current Company Designation is required"
+  ),
   qualification: Yup.array()
     .required("Qualification is required")
     .min(1, "At least one skill must be selected"),
@@ -17,9 +20,7 @@ export const EducationApplicantSchema = Yup.object({
   relevantSkillExperience: Yup.string(),
   referral: Yup.string(),
   portfolioUrl: Yup.string().url("Invalid URL"),
-  resumeUrl: Yup.string()
-    // .url("Please enter a valid URL")
-    .required("Resume URL is required"),
+  resumeUrl: Yup.string().required("Resume URL is required"),
   rating: Yup.number()
     .required("Rating is required")
     .min(1, "Rating must be between 1 and 10")
@@ -29,6 +30,7 @@ export const EducationApplicantSchema = Yup.object({
 export const jobApplicantSchema = Yup.object({
   lastFollowUpDate: Yup.date(),
   maritalStatus: Yup.string(),
+  // maritalStatus: Yup.string().required("Marital status is required."),
   appliedRole: Yup.string().required("Applied Role is required."),
   anyHandOnOffers: Yup.boolean(),
   currentCompanyName: Yup.string(),
@@ -56,12 +58,25 @@ export const jobApplicantSchema = Yup.object({
     .required("Rating is required")
     .min(1, "Rating must be between 1 and 10")
     .max(10, "Rating must be between 1 and 10"),
-  aboutUs: Yup.string()
-    .required("About Us is required.")
-    .min(10, "About Us description must be at least 10 characters long."),
+  aboutUs: Yup.string().min(
+    10,
+    "About Us description must be at least 10 characters long."
+  ),
 });
 
 export const personalApplicantSchema = Yup.object({
+  dateOfBirth: Yup.date()
+    .required("Date of birth is required")
+    .nullable()
+    .typeError("Enter a valid date")
+    .test("is-old-enough", "You must be at least 15 years old", (value) => {
+      if (value) {
+        const birthDate = moment(value); 
+        const age = moment().diff(birthDate, "years");
+        return age >= 15; 
+      }
+      return false;
+    }),
   firstName: Yup.string()
     .required("First Name is required")
     .max(15)
@@ -83,7 +98,7 @@ export const personalApplicantSchema = Yup.object({
   whatsappNumber: Yup.string()
     .matches(/^[0-9]{10}$/, "WhatsApp number must be 10 digits")
     .required("WhatsApp Number is required"),
-  dateOfBirth: Yup.date().required("Date of birth is required"),
+
   currentCity: Yup.string().required("Current City is required"),
   currentPincode: Yup.string()
     .required("Current Pincode is required.")

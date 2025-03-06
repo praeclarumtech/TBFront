@@ -230,9 +230,28 @@ const TableContainer = ({
         </Row>
       )}
 
-      <div className={`h-[400px] overflow-auto ${divClass}`}>
-        <Table hover className={tableClass} style={{ height: "50%" }}>
-          <thead className={theadClass}>
+      <div
+        className={`h-[400px] overflow-auto ${divClass}`}
+        style={{
+          maxHeight: "400px",
+          overflowX: "auto",
+          overflowY: "auto",
+        }}
+      >
+        <Table
+          hover
+          className={tableClass}
+          style={{ height: "50%", minWidth: "100%" }}
+        >
+          <thead
+            className={`${theadClass} sticky-top`}
+            style={{
+              backgroundColor: "#fff",
+              position: "sticky",
+              top: "0",
+              zIndex: 1,
+            }}
+          >
             {getHeaderGroups()?.map((headerGroup: any) => (
               <tr className={trClass} key={headerGroup.id}>
                 {headerGroup?.headers?.map((header: any) => (
@@ -249,10 +268,22 @@ const TableContainer = ({
                           header?.column?.columnDef?.header,
                           header?.getContext()
                         )}
-                        {{
+                        {/* {{
                           asc: " ",
                           desc: " ",
                         }[header?.column?.getIsSorted() as string] ?? null}
+                        {header?.column?.getCanFilter() ? (
+                          <div>
+                            <Filter column={header?.column} table={table} />
+                          </div>
+                        ) : null} */}
+                        {header?.column?.getIsSorted() ? (
+                          <span>
+                            {header?.column?.getIsSorted() === "asc"
+                              ? " ↑"
+                              : " ↓"}
+                          </span>
+                        ) : null}
                         {header?.column?.getCanFilter() ? (
                           <div>
                             <Filter column={header?.column} table={table} />

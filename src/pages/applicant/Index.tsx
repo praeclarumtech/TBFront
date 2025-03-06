@@ -4,15 +4,16 @@ import React, { Fragment, useEffect, useState, useMemo } from "react";
 import BaseButton from "components/BaseComponents/BaseButton";
 import { BaseSelect, MultiSelect } from "components/BaseComponents/BaseSelect";
 import TableContainer from "components/BaseComponents/TableContainer";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Tooltip as ReactTooltip } from "react-tooltip";
+
 import {
   deleteApplicant,
   listOfApplicants,
   updateStage,
   updateStatus,
 } from "api/applicantApi";
-import { FaWhatsapp, FaEnvelope, FaCommentDots } from "react-icons/fa";
+
 import ViewModal from "./ViewApplicant";
 import BaseInput from "components/BaseComponents/BaseInput";
 import DeleteModal from "components/BaseComponents/DeleteModal";
@@ -54,7 +55,6 @@ const Applicant = () => {
     null
   );
   const [showModal, setShowModal] = useState(false);
-
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [recordIdToDelete, setRecordIdToDelete] = useState<string | undefined>(
     undefined
@@ -293,6 +293,17 @@ const Applicant = () => {
     navigate(`/applicants/edit-applicant/${applicantId}`);
   };
 
+  const handleEmail = (applicantId: string) => {
+    const selectedApplicant = applicant.find(
+      (applicant) => applicant._id === applicantId
+    );
+    if (selectedApplicant) {
+      navigate("/email/compose", {
+        state: { email_to: selectedApplicant.email },
+      });
+    }
+  };
+
   const drawerList = (anchor: Anchor) => (
     <Box
       sx={{
@@ -358,7 +369,6 @@ const Applicant = () => {
           value={filterInterviewStage}
         />
         <BaseSelect
-          isDisabled={true}
           label="Status"
           name="status"
           className="select-border mb-1"
@@ -369,7 +379,6 @@ const Applicant = () => {
         />
 
         <BaseSelect
-          isDisabled={true}
           label="Gender"
           name="gender"
           className="select-border mb-1"
@@ -380,7 +389,6 @@ const Applicant = () => {
         />
 
         <BaseSelect
-          isDisabled={true}
           label="Expected Pkg"
           name="expectedPkg"
           className="select-border mb-1 "
@@ -390,7 +398,6 @@ const Applicant = () => {
           value={filterExpectedPkg}
         />
         <BaseSelect
-          isDisabled={true}
           label="Designation"
           name="designation"
           className="select-border mb-1"
@@ -400,7 +407,6 @@ const Applicant = () => {
           value={filterDesignation}
         />
         <BaseSelect
-          isDisabled={true}
           label="Notice Period"
           name="noticePeriod"
           className="select-border mb-1"
@@ -442,21 +448,50 @@ const Applicant = () => {
     () => [
       {
         header: "Applicant Name",
-        // accessorKey: "name.firstName",
         accessorKey: "name",
         cell: (info: any) => {
           const nameObj = info.row.original?.name || {};
           const firstName = nameObj.firstName || "";
           const middleName = nameObj.middleName || "";
           const lastName = nameObj.lastName || "";
+          const fullName = `${firstName} ${middleName} ${lastName}`.trim();
 
-          return `${firstName} ${middleName} ${lastName}`.trim();
+          return (
+            <>
+              <div
+                style={truncateText}
+                className="truncated-text"
+                title={fullName}
+              >
+                {fullName}
+              </div>
+              <ReactTooltip
+                place="top"
+                variant="info"
+                style={toolipComponents}
+              />
+            </>
+          );
         },
         enableColumnFilter: false,
       },
       {
         header: "Technology",
         accessorKey: "appliedSkills",
+        cell: (cell: any) => (
+          <div
+            className="truncated-text"
+            style={truncateText}
+            title={cell.row.original.appliedSkills}
+          >
+            {cell.row.original.appliedSkills}
+          </div>
+        ),
+        enableColumnFilter: false,
+      },
+      {
+        header: "Experience",
+        accessorKey: "totalExperience",
         enableColumnFilter: false,
       },
       {
@@ -523,22 +558,7 @@ const Applicant = () => {
         ),
         enableColumnFilter: false,
       },
-      {
-        header: "Comments",
-        cell: () => (
-          <div className="d-flex align-items-center hstack gap-2">
-            <Link to="" className="btn btn-sm btn-soft-primary">
-              <FaCommentDots />
-            </Link>
-            <Link to="">
-              <FaWhatsapp />
-            </Link>
-            <Link to="" className="btn btn-sm btn-soft-info">
-              <FaEnvelope />
-            </Link>
-          </div>
-        ),
-      },
+
       {
         header: "Action",
         cell: (cell: any) => (
@@ -570,6 +590,7 @@ const Applicant = () => {
                 anchorId={`editMode-${cell.row.original._id}`}
               />
             </BaseButton>
+
             <BaseButton
               id={`delete-${cell?.row?.original?.id}`}
               className="btn btn-sm btn-soft-danger remove-list"
@@ -582,6 +603,19 @@ const Applicant = () => {
                 variant="error"
                 content="Delete"
                 anchorId={`delete-${cell?.row?.original?.id}`}
+              />
+            </BaseButton>
+            <BaseButton
+              id={`email-${cell?.row?.original?.id}`}
+              className="btn btn-sm btn-soft-secondary edit-list"
+              onClick={() => handleEmail(cell?.row?.original._id)}
+            >
+              <i className="ri-mail-close-line align-bottom" />
+              <ReactTooltip
+                place="bottom"
+                variant="info"
+                content="Edit"
+                anchorId={`editMode-${cell.row.original._id}`}
               />
             </BaseButton>
           </div>
@@ -684,6 +718,22 @@ const Applicant = () => {
       </Container>
     </Fragment>
   );
+};
+
+const truncateText = {
+  "white-space": "nowrap",
+  overflow: "hidden",
+  "text-overflow": "ellipsis",
+  "max-width": "150px",
+};
+
+const toolipComponents = {
+  "background-color": "blue !important",
+  color: "white !important",
+  "border-radius": "5px !important",
+  padding: "8px 12px !important",
+  "font-size": "14px !important",
+  border: "1px solid white !important",
 };
 
 export default Applicant;

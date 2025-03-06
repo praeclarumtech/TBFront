@@ -24,6 +24,7 @@ import { useParams } from "react-router-dom";
 import appConstants from "constants/constant";
 import { errorHandle } from "utils/commonFunctions";
 
+
 const { projectTitle, Modules } = appConstants;
 
 const StepperForm = () => {
@@ -129,7 +130,6 @@ const StepperForm = () => {
       },
       email: formData.email,
       gender: formData.gender,
-      // dateOfBirth:moment(formData.dateOfBirth).format("YYYY-MM-DD"),
       dateOfBirth: formData.dateOfBirth,
       state: formData.state,
       country: formData.country,
