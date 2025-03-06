@@ -124,8 +124,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                   />
                 </Col>
                 <Col xs={12} sm={4} md={4} className="mb-3 mb-sm-0">
-                  
-                 <BaseSelect
+                  <BaseSelect
                     label="Communication Skill(out of 10)"
                     name="communicationSkill"
                     className="select-border"
@@ -135,18 +134,18 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                       validation.setFieldValue(
                         "communicationSkill",
                         selectedOption?.value || ""
-                      ); 
+                      );
                     }}
                     handleBlur={validation.handleBlur}
                     value={
                       dynamicFind(
                         communicationOptions,
                         String(validation.values.communicationSkill)
-                      ) || "" 
+                      ) || ""
                     }
                     touched={validation.touched.communicationSkill}
                     error={validation.errors.communicationSkill}
-                  /> 
+                  />
                 </Col>
                 <Col xs={12} sm={4}>
                   <BaseSelect
@@ -238,8 +237,8 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                   />
                 </Col>
               </Row>
-              <Row className="mb-4">
-                <Col xs={12} sm={6} md={6} className="mb-3 mb-sm-0">
+              <Row className="!mb-4">
+                <Col xs={12} sm={6} md={6} className="!mb-3  mb-sm-0">
                   <BaseInput
                     label="Last Follow UpDate"
                     name="lastFollowUpDate"
@@ -253,7 +252,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     passwordToggle={false}
                   />
                 </Col>
-                <Col xs={12} sm={6} md={6} className="mb-3 mb-sm-0">
+                <Col xs={12} sm={6} md={6} className="mb-3  mb-sm-0">
                   <BaseInput
                     label="Practical Url"
                     name="practicalUrl"
@@ -268,7 +267,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                   />
                 </Col>
 
-                <Col xs={12} sm={12} md={12} className="mb-3 mb-sm-0">
+                <Col xs={12} sm={12} md={12} className="mb-3 mt-3 mb-sm-0">
                   <BaseTextarea
                     label="Practical Feedback"
                     name="practicalFeedback"

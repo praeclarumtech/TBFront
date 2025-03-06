@@ -114,11 +114,11 @@ const Applicant = () => {
         startDate?: string;
         endDate?: string;
         noticePeriod?: number;
-        designation?: string;
         status?: string;
         interviewStage?: string;
         gender?: string;
         expectedPkg?: string;
+        currentCompanyDesignation?: string;
       } = {
         page: pagination.pageIndex + 1,
         pageSize: pagination.pageSize,
@@ -141,6 +141,9 @@ const Applicant = () => {
       if (endDate) {
         params.endDate = endDate;
       }
+
+      //localhost:3000/api/applicants/viewAllApplicant?startDate=2025-02-01&endDate=2025-03-05
+
       if (filterNoticePeriod) {
         params.noticePeriod = Number(filterNoticePeriod.value);
       }
@@ -148,7 +151,7 @@ const Applicant = () => {
         params.status = filterStatus.value;
       }
       if (filterDesignation) {
-        params.designation = filterDesignation.value;
+        params.currentCompanyDesignation = filterDesignation.value;
       }
       if (filterInterviewStage) {
         params.interviewStage = filterInterviewStage.value;
@@ -473,6 +476,7 @@ const Applicant = () => {
             </>
           );
         },
+        filterFn: "fuzzy",
         enableColumnFilter: false,
       },
       {
@@ -577,6 +581,7 @@ const Applicant = () => {
                 anchorId={`usage-${cell?.row?.original?.id}`}
               />
             </BaseButton>
+
             <BaseButton
               id={`editMode-${cell?.row?.original?.id}`}
               className="btn btn-sm btn-soft-secondary edit-list"
@@ -587,7 +592,7 @@ const Applicant = () => {
                 place="bottom"
                 variant="info"
                 content="Edit"
-                anchorId={`editMode-${cell.row.original._id}`}
+                anchorId={`editMode-${cell?.row?.original?.id}`} // ensure unique ID
               />
             </BaseButton>
 
@@ -602,9 +607,10 @@ const Applicant = () => {
                 place="bottom"
                 variant="error"
                 content="Delete"
-                anchorId={`delete-${cell?.row?.original?.id}`}
+                anchorId={`delete-${cell?.row?.original?.id}`} // ensure unique ID
               />
             </BaseButton>
+
             <BaseButton
               id={`email-${cell?.row?.original?.id}`}
               className="btn btn-sm btn-soft-secondary edit-list"
@@ -614,8 +620,8 @@ const Applicant = () => {
               <ReactTooltip
                 place="bottom"
                 variant="info"
-                content="Edit"
-                anchorId={`editMode-${cell.row.original._id}`}
+                content="Email"
+                anchorId={`email-${cell?.row?.original?.id}`} // ensure unique ID
               />
             </BaseButton>
           </div>
