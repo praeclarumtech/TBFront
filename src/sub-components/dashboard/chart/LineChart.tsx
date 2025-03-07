@@ -9,7 +9,7 @@ import {
   Tooltip,
   Legend,
   ChartOptions,
-  Filler
+  Filler,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 
@@ -23,11 +23,19 @@ ChartJS.register(
   Legend,
   Filler
 );
+
 import { getApplicantsDetails } from "api/dashboardApi";
 
 const LineChart = () => {
-  const [applicantsdetail, setApplicantsDetail] = useState([]);
-  // const [error, setError] = useState<string | null>(null);
+  const formatLabel = (text: string) => {
+    return text
+      .replace(/Applicants$/, "") // Removes Applicants From end
+      .replace(/([A-Z])/g, " $1") // Add space before uppercase letters
+      .replace(/^./, (str: string) => str.toUpperCase()) // Capitalize first letter
+      .trim();
+  };
+
+  const [applicantsDetail, setApplicantsDetail] = useState({});
 
   useEffect(() => {
     fetchApplicantsDetails();
@@ -35,56 +43,59 @@ const LineChart = () => {
 
   const fetchApplicantsDetails = async () => {
     try {
-      const data = await getApplicantsDetails();
-      console.log("data inside", data);
-      setApplicantsDetail(data.data);
+      const response = await getApplicantsDetails();
+      // console.log("data inside", response);
+      setApplicantsDetail(response.data);
     } catch (error) {
-      // setError("Failed to load applicants");
       console.error("API Error:", error);
     }
   };
-  console.log(applicantsdetail);
-  console.log(applicantsdetail);
 
-  const op: ChartOptions<"line"> = {
+  const labels = Object.keys(applicantsDetail).map((key) => formatLabel(key));
+  const dataValues = Object.values(applicantsDetail);
+
+  const options: ChartOptions<"line"> = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
       legend: {
         position: "bottom",
       },
+      title: {
+        display: false,
+        text: "Technology Applicants Statistics",
+      },
     },
     scales: {
       x: {
         grid: { display: false },
-        ticks: { color: "#6610f2" },
-        border: { color: "#6610f2" },
+        ticks: { color: "#0000FF" },
+        border: { color: "#0000FF" },
       },
       y: {
         grid: { display: false },
-        ticks: { color: "#6610f2" },
-        border: { color: "#6610f2" },
+        ticks: { color: "#0000FF" },
+        border: { color: "#0000FF" },
       },
     },
   };
 
-  // Define the dataset properly
-  const lineChartData = {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May"],
+  const chartData = {
+    labels: labels,
     datasets: [
       {
-        label: "Sales",
-        data: [10, 20, 30, 40, 50],
-        borderColor: "#6610f2",
-        backgroundColor: "rgba(102, 16, 242, 0.2)",
+        label: "Skills",
+        data: dataValues,
+        borderColor: "#0000FF",
+        backgroundColor: "rgba(135, 206, 235)",
         fill: true,
       },
     ],
   };
 
   return (
-    <div className="w-full h-full min-h-[300px]">
-      <Line data={lineChartData} options={op} />
+    <div className="w-full h-full min-h-[350px]">
+      <Line data={chartData} options={options} />
     </div>
   );
 };
