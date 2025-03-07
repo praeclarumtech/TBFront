@@ -246,7 +246,7 @@ const appConstants = Object.freeze({
 
   expectedPkgOptions: [
     { value: 0, label: "0" },
-    { value: 0 - 1, label: "0-0.5 LPA" },
+    { value: 0 - 1, label: "1 LPA" },
     { value: 1 - 2, label: "1-2 LPA" },
     { value: 2 - 3, label: "2 - 3 LPA" },
     { value: 3 - 4, label: "3 - 4 LPA" },

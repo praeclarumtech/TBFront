@@ -33,9 +33,10 @@ const EmailForm = () => {
         "valid-emails",
         "Invalid email address",
         (value) => {
+          if (!value) return true; 
           const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-          const emails = value?.split(",").map((email) => email.trim());
-          return emails?.every((email) => emailRegex.test(email));
+          const emails = value.split(",").map((email) => email.trim());
+          return emails.every((email) => emailRegex.test(email));
         }
       ),
 
@@ -43,7 +44,7 @@ const EmailForm = () => {
     }),
     onSubmit: async (values) => {
       try {
-        // Convert the comma-separated email strings into arrays
+   
         const emailToArray = values.email_to
           .split(",")
           .map((email: string) => email.trim());
@@ -51,7 +52,7 @@ const EmailForm = () => {
           .split(",")
           .map((email) => email.trim());
 
-        // Send the email data to the backend with arrays for email_to and email_bcc
+
         await sendEmail({
           ...values,
           email_to: emailToArray,
@@ -105,7 +106,7 @@ const EmailForm = () => {
                           To
                         </label>
                         <input
-                          type="text" // Change input type to "text" to allow multiple emails
+                          type="text" 
                           placeholder="Enter Recipients"
                           id="email_to"
                           value={validation.values.email_to}
@@ -118,18 +119,7 @@ const EmailForm = () => {
                               : ""
                           }`}
                         />
-                        {/* {validation.touched.email_to &&
-                          validation.errors.email_to && (
-                            <div className="text-red-500 text-sm mt-1">
-                              {validation.errors.email_to}
-                            </div>
-                          )} */}
-                        {validation.touched.subject &&
-                          validation.errors.subject && (
-                            <div className="text-red-500 text-sm mt-1">
-                              {validation.errors.subject}
-                            </div>
-                          )}
+                       
                       </div>
                       <div>
                         <label
@@ -139,7 +129,7 @@ const EmailForm = () => {
                           Bcc
                         </label>
                         <input
-                          type="text" // Change input type to "text" to allow multiple emails
+                          type="text" 
                           placeholder="Enter Your BCC emails"
                           id="email_bcc"
                           value={validation.values.email_bcc}
