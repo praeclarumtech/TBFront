@@ -24,7 +24,7 @@ export const getRecentApplications = async () => {
 
 export const getApplicantsDetails = async () => {
     try{
-        const response = await axios.get(`${API_BASE_URL}/applicant/applicantDetails`)
+        const response = await axios.get(`https://tbapi-jtu7.onrender.com/api/reports/applicants/technologyStatistics`)
         return response.data
     }catch  (error){
         console.log("Error fetching Applicant Details:-",error)

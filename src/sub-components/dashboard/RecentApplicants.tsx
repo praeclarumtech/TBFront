@@ -34,13 +34,13 @@ const RecentApplicants = () => {
       {
         header: "Name",
         accessorKey: "name",
-        cell: (info:any) => {
-          const nameObj = info.row.original?.name || {}; 
+        cell: (info: any) => {
+          const nameObj = info.row.original?.name || {};
           const firstName = nameObj.firstName || "";
           const middleName = nameObj.middleName || "";
           const lastName = nameObj.lastName || "";
 
-          return `${firstName} ${middleName} ${lastName}`.trim(); 
+          return `${firstName} ${middleName} ${lastName}`.trim();
         },
         enableColumnFilter: false,
       },
@@ -67,22 +67,20 @@ const RecentApplicants = () => {
               <h4 className="h4">Recent Applicants </h4>
             </Card.Header>
             <Card.Body>
-              <div className="card-body pt-0">
-                <div>
-                  {recentApplicants?.length > 0 ? (
-                    <TableContainer
-                      columns={column}
-                      data={recentApplicants ? recentApplicants : []}
-                      theadClass="table-secondary text-white"
-                      isPagination={false}
-                    />
-                  ) : (
-                    <div className="py-4 text-center">
-                      <i className="ri-search-line d-block fs-1 text-success"></i>
-                      {handleResponse?.dataNotFound}
-                    </div>
-                  )}
-                </div>
+              <div>
+                {recentApplicants?.length > 0 ? (
+                  <TableContainer
+                    columns={column}
+                    data={recentApplicants ? recentApplicants : []}
+                    theadClass="table-secondary text-white"
+                    isPagination={false}
+                  />
+                ) : (
+                  <div className="py-4 text-center">
+                    <i className="ri-search-line d-block fs-1 text-success"></i>
+                    {handleResponse?.dataNotFound}
+                  </div>
+                )}
               </div>
             </Card.Body>
           </Card>
