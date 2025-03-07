@@ -444,7 +444,7 @@ const Applicant = () => {
           name="designation"
           className="select-border mb-1"
           options={designationType}
-          placeholder="Expected Package"
+          placeholder="Designation"
           handleChange={handleDesignationChange}
           value={filterDesignation}
         />
@@ -769,9 +769,9 @@ const Applicant = () => {
 
                       <BaseButton
                         color="success"
-                        disabled={loader}
+                        // disabled={loader}
                         onClick={handleNavigate}
-                        loader={loader}
+                        // loader={loader}
                       >
                         Add New Applicant
                       </BaseButton>

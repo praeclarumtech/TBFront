@@ -61,7 +61,7 @@ const ViewModal = ({ show, onHide, applicantId }: any) => {
               <div className="mx-2 p-3">
                 <Row className="mx-2">
                   <Col xs={12} md={6} className="mb-3">
-                    <Typography className="mt-2  mb-2 ">
+                    <Typography className=" mb-2 ">
                       <span className="font-bold text-base text-primary">
                         Applicant Number:
                       </span>
@@ -169,7 +169,7 @@ const ViewModal = ({ show, onHide, applicantId }: any) => {
               <div className="mx-2 p-2">
                 <Row className="mx-2">
                   <Col xs={12} md={6} className="mb-3">
-                    <Typography className="mt-2">
+                    <Typography className="">
                       <span className="font-bold text-base text-black">
                         Qualification:
                       </span>
@@ -260,7 +260,7 @@ const ViewModal = ({ show, onHide, applicantId }: any) => {
               <div className="mx-2 p-3">
                 <Row className="mx-2">
                   <Col xs={12} md={6} className="mb-3">
-                    <Typography className="mt-2">
+                    <Typography className="">
                       <span className="font-bold text-base text-black">
                         Current Package:
                       </span>
