@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Card } from "react-bootstrap";
-import { getTotalApplicants } from "api/dashboardApi";
+
 import appConstants from "constants/constant";
 
 interface StatRightProps {
