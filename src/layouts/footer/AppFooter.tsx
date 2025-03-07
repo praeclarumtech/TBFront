@@ -9,7 +9,7 @@ const AppFooter: React.FC<AppFooterProps> = () => {
     <footer className="navbar-classic navbar navbar-expand-lg bg-white py-2">
       <div className="container-fluid w-100">
         <div className="w-100 d-flex justify-content-center align-items-center">
-          <small>
+          <small className="fw-bold">
             Copyright © {new Date().getFullYear()} - Praeclarum Tech. All rights reserved.
           </small>
         </div>

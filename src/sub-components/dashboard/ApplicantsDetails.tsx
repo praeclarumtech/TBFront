@@ -1,5 +1,3 @@
-// import { Container } from "react-bootstrap/lib/Tab";
-import { Dropdown } from "react-bootstrap";
 import { Col, Row, Card } from "react-bootstrap";
 import LineChart from "./chart/LineChart";
 
@@ -9,10 +7,10 @@ const ApplicantsDeatils = () => {
       <Row className="mt-6">
         {/* mt-6*/}
         <Col>
-          <Card>
+          <Card className="min-h-[490px]">
             <Card.Header className="bg-white border-0 d-flex justify-content-between align-items-center">
-              <div className="h4">Applicants Details</div>
-              <div>
+              <div className="h4">Skills Statistics</div>
+              {/* <div>
                 <Dropdown>
                   <Dropdown.Toggle
                     variant="outline-primary"
@@ -27,10 +25,10 @@ const ApplicantsDeatils = () => {
                     <Dropdown.Item href="#/vue">Vue JS</Dropdown.Item>
                   </Dropdown.Menu>
                 </Dropdown>
-              </div>
+              </div> */}
             </Card.Header>
-            <Card.Body>
-              <LineChart />
+            <Card.Body className="d-flex justify-content-center items-center">
+            <LineChart />
             </Card.Body>
           </Card>
         </Col>
