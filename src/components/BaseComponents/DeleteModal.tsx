@@ -1,20 +1,13 @@
+import { DeleteModalProps } from "interfaces/global.interface";
 import React from "react";
 import { Button, Modal, ModalBody, Spinner } from "reactstrap";
-
-interface DeleteModalProps {
-  show?: boolean;
-  onDeleteClick?: () => void;
-  onCloseClick?: () => void;
-  recordId?: string;
-  loader?: boolean;
-}
 
 const DeleteModal: React.FC<DeleteModalProps> = ({
   show,
   onDeleteClick,
   onCloseClick,
   recordId,
-  loader
+  loader,
 }) => {
   return (
     <Modal fade={true} isOpen={show} toggle={onCloseClick} centered={true}>
@@ -33,8 +26,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
           <Button color="light" size="btn w-sm" onClick={onCloseClick}>
             Close
           </Button>
-          <Button  
-          color="danger" size="btn w-sm" onClick={onDeleteClick}>
+          <Button color="danger" size="btn w-sm" onClick={onDeleteClick}>
             Yes, Delete It!
             {loader}
             {loader && <Spinner size="sm" className="me-2" />}{" "}

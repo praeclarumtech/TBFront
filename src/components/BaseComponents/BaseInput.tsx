@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { Label, Input, FormFeedback } from "reactstrap";
 import BaseButton from "./BaseButton";
+import { BaseInputProps } from "interfaces/global.interface";
 
 const BaseInput = ({
   label,
@@ -15,8 +16,8 @@ const BaseInput = ({
   touched,
   error,
   maxLength,
-  disabled
-}: any) => {
+  disabled,
+}: BaseInputProps) => {
   const [passwordShow, setPasswordShow] = useState(false);
 
   const togglePasswordVisibility = () => {

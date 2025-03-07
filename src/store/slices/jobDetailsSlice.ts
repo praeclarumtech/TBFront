@@ -6,9 +6,12 @@ interface JobDetailsState {
   currentPkg: string;
   negotiation: string;
   noticePeriod: string;
-  readyForWork: string;
+  // readyForWork: string;
   workPreference: string;
   aboutUs: string;
+  currentCompanyName: string;
+  anyHandOnOffers: boolean;
+  appliedRole: string;
 }
 
 const initialState: JobDetailsState = {
@@ -16,9 +19,12 @@ const initialState: JobDetailsState = {
   currentPkg: '',
   negotiation: '',
   noticePeriod: '',
-  readyForWork: '',
+  // readyForWork: '',
   workPreference: '',
-  aboutUs: ''
+  aboutUs: '',
+  currentCompanyName: '',
+  anyHandOnOffers: false,
+  appliedRole: '',
 };
 
 const jobDetailsSlice = createSlice({

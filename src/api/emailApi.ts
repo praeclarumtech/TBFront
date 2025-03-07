@@ -6,8 +6,13 @@ export const sendEmail = async (data?: object) => {
   return response?.data;
 };
 
-export const viewAllEmail = async (data?: object) => {
-  const response = await authServices.get(`${VIEW_ALL_EMAIL}`, data);
+export const viewAllEmail = async (params: {
+  page: number;
+  pageSize: number;
+  startDate?: string;
+  endDate?: string;
+}) => {
+  const response = await authServices.get(`${VIEW_ALL_EMAIL}`, { params });
   return response?.data;
 };
 
@@ -17,4 +22,3 @@ export const deleteEmail = async (ids: string[]) => {
   });
   return response?.data;
 };
-

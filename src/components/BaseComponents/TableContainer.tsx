@@ -30,9 +30,11 @@ import {
   NFTRankingGlobalFilter,
   TaskListGlobalFilter,
 } from "./GlobalSearchFilter";
-import { handleResponse, tableButtons } from "components/constants/common";
 import Loader from "./Loader";
+import appConstants from "constants/constant";
+import { TableContainerProps } from "interfaces/global.interface";
 
+const { handleResponse, tableButtons } = appConstants;
 // Column Filter
 const Filter = ({
   column,
@@ -93,41 +95,8 @@ const DebouncedInput = ({
   );
 };
 
-interface TableContainerProps {
-  columns?: any;
-  data?: any;
-  isGlobalFilter?: any;
-  isProductsFilter?: any;
-  isCustomerFilter?: any;
-  isOrderFilter?: any;
-  isContactsFilter?: any;
-  isCompaniesFilter?: any;
-  isLeadsFilter?: any;
-  isCryptoOrdersFilter?: any;
-  isInvoiceListFilter?: any;
-  isTicketsListFilter?: any;
-  isNFTRankingFilter?: any;
-  isTaskListFilter?: any;
-  handleTaskClick?: any;
-  customPageSize?: any;
-  tableClass?: any;
-  theadClass?: any;
-  trClass?: any;
-  thClass?: any;
-  divClass?: any;
-  SearchPlaceholder?: any;
-  handleLeadClick?: any;
-  handleCompanyClick?: any;
-  handleContactClick?: any;
-  handleTicketClick?: any;
-  isHeaderTitle?: any;
-  totalRecords?: any;
-  pagination?: any;
-  setPagination?: any;
-  loader?: any;
-}
-
 const TableContainer = ({
+  isPagination = true,
   columns,
   data,
   isGlobalFilter,
@@ -160,6 +129,7 @@ const TableContainer = ({
 
   const fuzzyFilter: FilterFn<any> = (row: any, columnId, value, addMeta) => {
     const itemRank = rankItem(row?.getValue(columnId), value);
+
     addMeta({
       itemRank,
     });
@@ -261,9 +231,28 @@ const TableContainer = ({
         </Row>
       )}
 
-      <div className={`h-[400px] overflow-auto ${divClass}`}>
-        <Table hover className={tableClass} style={{ height: "50%" }}>
-          <thead className={theadClass}>
+      <div
+        className={`h-[400px] overflow-auto ${divClass}`}
+        style={{
+          maxHeight: "400px",
+          overflowX: "auto",
+          overflowY: "auto",
+        }}
+      >
+        <Table
+          hover
+          className={tableClass}
+          style={{ height: "50%", minWidth: "100%" }}
+        >
+          <thead
+            className={`${theadClass} sticky-top`}
+            style={{
+              backgroundColor: "#fff",
+              position: "sticky",
+              top: "0",
+              zIndex: 1,
+            }}
+          >
             {getHeaderGroups()?.map((headerGroup: any) => (
               <tr className={trClass} key={headerGroup.id}>
                 {headerGroup?.headers?.map((header: any) => (
@@ -280,10 +269,22 @@ const TableContainer = ({
                           header?.column?.columnDef?.header,
                           header?.getContext()
                         )}
-                        {{
+                        {/* {{
                           asc: " ",
                           desc: " ",
                         }[header?.column?.getIsSorted() as string] ?? null}
+                        {header?.column?.getCanFilter() ? (
+                          <div>
+                            <Filter column={header?.column} table={table} />
+                          </div>
+                        ) : null} */}
+                        {header?.column?.getIsSorted() ? (
+                          <span>
+                            {header?.column?.getIsSorted() === "asc"
+                              ? " ↑"
+                              : " ↓"}
+                          </span>
+                        ) : null}
                         {header?.column?.getCanFilter() ? (
                           <div>
                             <Filter column={header?.column} table={table} />
@@ -339,83 +340,88 @@ const TableContainer = ({
           </tbody>
         </Table>
       </div>
-
-      <Row className="align-items-center mt-2 g-3 text-center text-sm-start">
-        <div className="col-sm">
-          <div className="text-muted">
-            Showing
-            <span className="fw-semibold ms-1">
-              {getState()?.pagination?.pageSize *
-                getState()?.pagination?.pageIndex +
-                1}
-              -
-              {Math.min(
-                (getState()?.pagination?.pageIndex + 1) *
-                  getState()?.pagination?.pageSize,
-                totalRecords
-              )}
-            </span>{" "}
-            of <span className="fw-semibold">{totalRecords}</span> Results
+      {isPagination && (
+        <Row className="align-items-center mt-2 g-3 text-center text-sm-start">
+          <div className="col-sm">
+            <div className="text-muted">
+              Showing
+              <span className="fw-semibold ms-1">
+                {getState()?.pagination?.pageSize *
+                  getState()?.pagination?.pageIndex +
+                  1}
+                -
+                {Math.min(
+                  (getState()?.pagination?.pageIndex + 1) *
+                    getState()?.pagination?.pageSize,
+                  totalRecords
+                )}
+              </span>{" "}
+              of <span className="fw-semibold">{totalRecords}</span> Results
+            </div>
           </div>
-        </div>
-        <div className="col-sm-auto">
-          <ul className="pagination pagination-separated pagination-md justify-content-center justify-content-sm-start mb-0">
-            <li
-              className={
-                !getCanPreviousPage() ? "page-item disabled" : "page-item"
-              }
-            >
-              <Link
-                to="#"
-                className="page-link"
-                aria-disabled={pagination?.pageIndex === 0}
-                onClick={() =>
-                  setPagination((prev: { pageIndex: number }) => ({
-                    ...prev,
-                    pageIndex: prev?.pageIndex - 1,
-                  }))
+          <div className="col-sm-auto">
+            <ul className="pagination pagination-separated pagination-md justify-content-center justify-content-sm-start mb-0">
+              <li
+                className={
+                  !getCanPreviousPage() ? "page-item disabled" : "page-item"
                 }
               >
-                {tableButtons.Previous}
-              </Link>
-            </li>
-            {getPageOptions()?.map((item: any, key: number) => (
-              <React.Fragment key={key}>
-                <li className="page-item">
-                  <Link
-                    to="#"
-                    className={
-                      getState()?.pagination.pageIndex === item
-                        ? "page-link active"
-                        : "page-link"
-                    }
-                    onClick={() => setPageIndex(item)}
-                  >
-                    {item + 1}
-                  </Link>
-                </li>
-              </React.Fragment>
-            ))}
-            <li
-              className={!getCanNextPage() ? "page-item disabled" : "page-item"}
-            >
-              <Link
-                to="#"
-                className="page-link"
-                aria-disabled={pagination.pageIndex + 1 >= table.getPageCount()}
-                onClick={() =>
-                  setPagination((prev: { pageIndex: number }) => ({
-                    ...prev,
-                    pageIndex: prev.pageIndex + 1,
-                  }))
+                <Link
+                  to="#"
+                  className="page-link"
+                  aria-disabled={pagination?.pageIndex === 0}
+                  onClick={() =>
+                    setPagination((prev: { pageIndex: number }) => ({
+                      ...prev,
+                      pageIndex: prev?.pageIndex - 1,
+                    }))
+                  }
+                >
+                  {tableButtons.Previous}
+                </Link>
+              </li>
+              {getPageOptions()?.map((item: any, key: number) => (
+                <React.Fragment key={key}>
+                  <li className="page-item">
+                    <Link
+                      to="#"
+                      className={
+                        getState()?.pagination.pageIndex === item
+                          ? "page-link active"
+                          : "page-link"
+                      }
+                      onClick={() => setPageIndex(item)}
+                    >
+                      {item + 1}
+                    </Link>
+                  </li>
+                </React.Fragment>
+              ))}
+              <li
+                className={
+                  !getCanNextPage() ? "page-item disabled" : "page-item"
                 }
               >
-                {tableButtons.Next}
-              </Link>
-            </li>
-          </ul>
-        </div>
-      </Row>
+                <Link
+                  to="#"
+                  className="page-link"
+                  aria-disabled={
+                    pagination.pageIndex + 1 >= table.getPageCount()
+                  }
+                  onClick={() =>
+                    setPagination((prev: { pageIndex: number }) => ({
+                      ...prev,
+                      pageIndex: prev.pageIndex + 1,
+                    }))
+                  }
+                >
+                  {tableButtons.Next}
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </Row>
+      )}
     </Fragment>
   );
 };

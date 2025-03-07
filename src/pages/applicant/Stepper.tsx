@@ -20,10 +20,12 @@ import {
   getApplicantDetails,
   updateApplicant,
 } from "api/applicantApi";
-import { errorHandle } from "components/helpers/service";
 import { useParams } from "react-router-dom";
-import { projectTitle } from "components/constants/common";
-import { Modules } from "components/constants/enum";
+import appConstants from "constants/constant";
+import { errorHandle } from "utils/commonFunctions";
+
+
+const { projectTitle, Modules } = appConstants;
 
 const StepperForm = () => {
   const { id } = useParams();
@@ -46,12 +48,11 @@ const StepperForm = () => {
     email: "",
     gender: "",
     dateOfBirth: "",
-    fullAddress: "",
     state: "",
     country: "",
-    pincode: "",
-    city: "",
-    qualification: "",
+    currentPincode: "",
+    currentCity: "",
+    qualification: [],
     degree: "",
     passingYear: "",
     appliedSkills: [],
@@ -65,13 +66,22 @@ const StepperForm = () => {
     expectedPkg: "",
     negotiation: "",
     noticePeriod: "",
-    readyForWork: "",
     workPreference: "",
     portfolioUrl: "",
     practicalUrl: "",
     practicalFeedback: "",
     aboutUs: "",
-    communicationSkill:"",
+    communicationSkill: "",
+    currentCompanyDesignation: "",
+    currentLocation: "",
+    preferredLocations: "",
+    homePincode: "",
+    homeTownCity: "",
+    maritalStatus: "",
+    currentCompanyName: "",
+    appliedRole: "",
+    anyHandOnOffers: "",
+    lastFollowUpDate: "",
   });
   const steps = [
     "Personal Details",
@@ -121,11 +131,10 @@ const StepperForm = () => {
       email: formData.email,
       gender: formData.gender,
       dateOfBirth: formData.dateOfBirth,
-      fullAddress: formData.fullAddress,
       state: formData.state,
       country: formData.country,
-      pincode: formData.pincode,
-      city: formData.city,
+      currentPincode: formData.currentPincode,
+      currentCity: formData.currentCity,
       qualification: formData.qualification,
       degree: formData.degree,
       passingYear: formData.passingYear,
@@ -140,13 +149,22 @@ const StepperForm = () => {
       expectedPkg: formData.expectedPkg,
       negotiation: formData.negotiation,
       noticePeriod: formData.noticePeriod,
-      readyForWork: formData.readyForWork,
       workPreference: formData.workPreference,
       portfolioUrl: formData.portfolioUrl,
       practicalUrl: formData.practicalUrl,
       feedback: formData.practicalFeedback,
       aboutUs: formData.aboutUs,
       communicationSkill: formData.communicationSkill,
+      currentCompanyDesignation: formData.currentCompanyDesignation,
+      homeTownCity: formData.homeTownCity,
+      preferredLocations: formData.preferredLocations,
+      homePincode: formData.homePincode,
+      maritalStatus: formData.maritalStatus,
+      currentCompanyName: formData.currentCompanyName,
+      appliedRole: formData.appliedRole,
+      anyHandOnOffers: formData.anyHandOnOffers,
+      lastFollowUpDate: formData.lastFollowUpDate,
+      currentLocation: formData.currentLocation,
     };
   };
 

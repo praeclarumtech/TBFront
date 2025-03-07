@@ -1,29 +1,53 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Row, Col, Card, Container, CardBody } from "react-bootstrap";
-import { Fragment, useEffect, useState, useMemo, SetStateAction } from "react";
-import { dynamicFind, errorHandle } from "components/helpers/service";
+import React, { Fragment, useEffect, useState, useMemo } from "react";
 import BaseButton from "components/BaseComponents/BaseButton";
 import { BaseSelect, MultiSelect } from "components/BaseComponents/BaseSelect";
 import TableContainer from "components/BaseComponents/TableContainer";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Tooltip as ReactTooltip } from "react-tooltip";
+
 import {
   deleteApplicant,
   listOfApplicants,
   updateStage,
   updateStatus,
 } from "api/applicantApi";
-import { FaWhatsapp, FaEnvelope, FaCommentDots } from "react-icons/fa";
+
 import ViewModal from "./ViewApplicant";
 import BaseInput from "components/BaseComponents/BaseInput";
 import DeleteModal from "components/BaseComponents/DeleteModal";
-import { InputPlaceHolder, projectTitle } from "components/constants/common";
-// import { FILTER_APPLICANT } from "api/apiRoutes";
+import Box from "@mui/material/Box";
+import Drawer from "@mui/material/Drawer";
+import Button from "@mui/material/Button";
+import List from "@mui/material/List";
+import Divider from "@mui/material/Divider";
 
 import { SelectedOption } from "interfaces/applicant.interface";
-import { Modules } from "components/constants/enum";
+import {
+  dynamicFind,
+  errorHandle,
+  InputPlaceHolder,
+} from "utils/commonFunctions";
+import appConstants from "constants/constant";
 
+const {
+  projectTitle,
+  Modules,
+  skillOptions,
+  interviewStageOptions,
+  cityOptions,
+  experienceOptions,
+  statusOptions,
+  gendersType,
+  expectedPkgOptions,
+  noticePeriodOptions,
+  designationType,
+} = appConstants;
+
+type Anchor = "top" | "right" | "bottom";
 const Applicant = () => {
-   document.title = Modules.Applicant + " | " + projectTitle;
+  document.title = Modules.Applicant + " | " + projectTitle;
   const navigate = useNavigate();
   const [loader, setLoader] = useState(false);
   const [applicant, setApplicant] = useState<any[]>([]);
@@ -31,7 +55,6 @@ const Applicant = () => {
     null
   );
   const [showModal, setShowModal] = useState(false);
-  const [filtersVisible, setFiltersVisible] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [recordIdToDelete, setRecordIdToDelete] = useState<string | undefined>(
     undefined
@@ -39,13 +62,15 @@ const Applicant = () => {
   const [filterExperience, setFilterExperience] =
     useState<SelectedOption | null>(null);
   const [filterStatus, setFilterStatus] = useState<SelectedOption | null>(null);
-  const [filterInterviewStage, setFilterInterviewStage] = useState<SelectedOption | null>(null);
+  const [filterInterviewStage, setFilterInterviewStage] =
+    useState<SelectedOption | null>(null);
   const [filterGender, setFilterGender] = useState<SelectedOption | null>(null);
   const [filterNoticePeriod, setFilterNoticePeriod] =
     useState<SelectedOption | null>(null);
   const [filterExpectedPkg, setFilterExpectedPkg] =
     useState<SelectedOption | null>(null);
-
+  const [filterDesignation, SetFilterDesignation] =
+    useState<SelectedOption | null>(null);
   const [filterCity, setFilterCity] = useState<SelectedOption | null>(null);
   const [appliedSkills, setAppliedSkills] = useState<SelectedOption[]>([]);
   const [startDate, setStartDate] = useState("");
@@ -57,72 +82,23 @@ const Applicant = () => {
   });
   const [tableLoader, setTableLoader] = useState(false);
 
-  const statusOptions = [
-    { label: "Hold", value: "Hold" },
-    { label: "Processing", value: "Processing" },
-    { label: "Selected", value: "Selected" },
-    { label: "Rejected", value: "Rejected" },
-    { label: "Pending", value: "Pending" },
-  ];
+  const [state, setState] = React.useState({
+    right: false,
+  });
 
-  const interviewStageOptions = [
-    { label: "1st Interview", value: "1st Interview" },
-    { label: "2nd Interview", value: "2nd Interview" },
-    { label: "HR", value: "HR" },
-    { label: "Technical", value: "Technical" },
-    { label: "Final", value: "Final" },
-  ];
+  const toggleDrawer =
+    (anchor: Anchor, open: boolean) =>
+    (event: React.KeyboardEvent | React.MouseEvent) => {
+      if (
+        event.type === "keydown" &&
+        ((event as React.KeyboardEvent).key === "Tab" ||
+          (event as React.KeyboardEvent).key === "Shift")
+      ) {
+        return;
+      }
 
-  const experienceOptions = [
-    { value: 0, label: "0 Years" },
-    { value: 1, label: "1 Year" },
-    { value: 2, label: "2 Years" },
-    { value: 3, label: "3 Years" },
-    { value: 4, label: "4 Years" },
-    { value: 5, label: "5 Years" },
-    { value: 6, label: "6 Years" },
-    { value: 7, label: "7 Years" },
-  ];
-
-   const gendersType = [
-     { label: "Male", value: "male" },
-     { label: "Female", value: "female" },
-     { label: "Other", value: "other" },
-   ];
-  
-  const noticePeriodOptions = [
-    { value: 0, label: "0 days" },
-    { value: 15, label: "1-15 days" },
-    { value: 30, label: "15 - 30 days" },
-    { value: 45, label: "30 - 45 days" },
-    { value: 60, label: "45 - 60 days" },
-    {value: 70, label: "60+ days" }
-   
-  ];
-  const expectedPkgOptions = [
-    { value: 0, label: "0-0.03" },
-    { value: 10001, label: "10001-20000" },
-    { value: 20001, label: "20001-30000" },
-    { value: 30001, label: "30001-40000" },
-    { value: 40001, label: "40001-50000" },
-    { value: 50001, label: "Above 50000" },
-
-  ];
-
-  const cityOptions = [
-    { value: "Ahmedabad", label: "Ahemdabad" },
-    { value: "Delhi", label: "Delhi" },
-    { value: "Gandhi Nagar", label: "Gandhi Nagar" },
-    { value: "Banglore", label: "Banglore" },
-  ];
-
-  const skillOptions = [
-    { value: "JavaScript", label: "JavaScript" },
-    { value: "Node.js", label: "Node.js" },
-    { value: "Python", label: "Python" },
-    { value: "MongoDB", label: "MongoDB" },
-    { value: "Java", label: "Java" },
-  ];
+      setState({ ...state, [anchor]: open });
+    };
 
   const fetchApplicants = async () => {
     setTableLoader(true);
@@ -133,10 +109,16 @@ const Applicant = () => {
         page: number;
         pageSize: number;
         totalExperience?: number;
-        city?: string;
+        currentCity?: string;
         appliedSkills?: string;
         startDate?: string;
         endDate?: string;
+        noticePeriod?: number;
+        status?: string;
+        interviewStage?: string;
+        gender?: string;
+        expectedPkg?: string;
+        currentCompanyDesignation?: string;
       } = {
         page: pagination.pageIndex + 1,
         pageSize: pagination.pageSize,
@@ -146,7 +128,7 @@ const Applicant = () => {
         params.totalExperience = Number(filterExperience.value);
       }
       if (filterCity) {
-        params.city = filterCity.value;
+        params.currentCity = filterCity.value;
       }
       if (appliedSkills.length > 0) {
         params.appliedSkills = appliedSkills
@@ -158,6 +140,27 @@ const Applicant = () => {
       }
       if (endDate) {
         params.endDate = endDate;
+      }
+
+      //localhost:3000/api/applicants/viewAllApplicant?startDate=2025-02-01&endDate=2025-03-05
+
+      if (filterNoticePeriod) {
+        params.noticePeriod = Number(filterNoticePeriod.value);
+      }
+      if (filterStatus) {
+        params.status = filterStatus.value;
+      }
+      if (filterDesignation) {
+        params.currentCompanyDesignation = filterDesignation.value;
+      }
+      if (filterInterviewStage) {
+        params.interviewStage = filterInterviewStage.value;
+      }
+      if (filterGender) {
+        params.gender = filterGender.value;
+      }
+      if (filterExpectedPkg) {
+        params.expectedPkg = filterExpectedPkg.value;
       }
 
       const res = await listOfApplicants(params);
@@ -181,39 +184,58 @@ const Applicant = () => {
     startDate,
     endDate,
     filterCity,
+    filterGender,
+    filterInterviewStage,
+    filterStatus,
+    filterNoticePeriod,
+    filterExpectedPkg,
+    filterDesignation,
   ]);
+
+  const handleAppliedSkillsChange = (selectedOptions: SelectedOption[]) => {
+    setAppliedSkills(selectedOptions);
+  };
+
   const handleExperienceChange = (selectedOption: SelectedOption) => {
     setFilterExperience(selectedOption);
-    
   };
 
   const handleCityChange = (selectedOption: SelectedOption) => {
     setFilterCity(selectedOption);
   };
 
-   const handleGenderChange = (selectedOption: SelectedOption) => {
-     setFilterGender(selectedOption);
+  const handleGenderChange = (selectedOption: SelectedOption) => {
+    setFilterGender(selectedOption);
   };
-  
+
   const handleInterviewStageChange = (selectedOption: SelectedOption) => {
     setFilterInterviewStage(selectedOption);
   };
-  
+
   const handleStatusChange = (selectedOption: SelectedOption) => {
     setFilterStatus(selectedOption);
-    console.log("handleStatus", selectedOption);
-    
   };
-  
+
   const handleNoticePeriodChange = (selectedOption: SelectedOption) => {
     setFilterNoticePeriod(selectedOption);
-    // console.log("notice period handle function : " + selectedOption.value);
   };
-  
+
   const handleExpectedPkgChange = (selectedOption: SelectedOption) => {
     setFilterExpectedPkg(selectedOption);
   };
-  
+  const handleDesignationChange = (selectedOption: SelectedOption) => {
+    SetFilterDesignation(selectedOption);
+  };
+  const handleDateChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    isStartDate: boolean
+  ) => {
+    if (isStartDate) {
+      setStartDate(e.target.value);
+    } else {
+      setEndDate(e.target.value);
+    }
+  };
 
   const resetFilters = () => {
     setFilterExperience(null);
@@ -221,6 +243,13 @@ const Applicant = () => {
     setStartDate("");
     setEndDate("");
     setFilterCity(null);
+    setFilterGender(null);
+    setFilterInterviewStage(null);
+    setFilterStatus(null);
+    setFilterNoticePeriod(null);
+    setFilterExpectedPkg(null);
+    SetFilterDesignation(null);
+
     fetchApplicants();
   };
 
@@ -238,7 +267,6 @@ const Applicant = () => {
       deleteApplicantDetails(recordIdToDelete);
     }
   };
-
 
   const deleteApplicantDetails = (_id: string | undefined | null) => {
     setLoader(true);
@@ -268,16 +296,206 @@ const Applicant = () => {
     navigate(`/applicants/edit-applicant/${applicantId}`);
   };
 
+  const handleEmail = (applicantId: string) => {
+    const selectedApplicant = applicant.find(
+      (applicant) => applicant._id === applicantId
+    );
+    if (selectedApplicant) {
+      navigate("/email/compose", {
+        state: { email_to: selectedApplicant.email },
+      });
+    }
+  };
+
+  const drawerList = (anchor: Anchor) => (
+    <Box
+      sx={{
+        width: anchor === "top" || anchor === "bottom" ? "auto" : 400,
+        padding: "16px",
+        marginTop: anchor === "top" ? "64px" : 0,
+      }}
+      role="presentation"
+    >
+      <List>
+        <Row className="flex justify-between items-center mb-4">
+          <Col>
+            <h3>Apply Filters</h3>
+          </Col>
+          <Col className="text-end">
+            <BaseButton
+              color="primary"
+              onClick={resetFilters}
+              variant="outlined"
+              sx={{ width: "auto" }}
+            >
+              Reset Filters
+            </BaseButton>
+          </Col>
+        </Row>
+
+        <MultiSelect
+          label="Applied Skills"
+          name="appliedSkills"
+          className="select-border mb-1 "
+          placeholder="Applied Skills"
+          value={appliedSkills || null}
+          isMulti={true}
+          onChange={handleAppliedSkillsChange}
+          options={skillOptions}
+        />
+
+        <BaseSelect
+          label="Experience"
+          name="Experience"
+          className="select-border mb-1"
+          options={experienceOptions}
+          placeholder="Experience"
+          handleChange={handleExperienceChange}
+          value={filterExperience}
+        />
+        <BaseSelect
+          label="City"
+          name="city"
+          className="select-border mb-1 "
+          options={cityOptions}
+          placeholder="City"
+          handleChange={handleCityChange}
+          value={filterCity}
+        />
+        <BaseSelect
+          label="Interview Stage"
+          name="interviewStage"
+          className="select-border mb-1"
+          options={interviewStageOptions}
+          placeholder="Interview Stage"
+          handleChange={handleInterviewStageChange}
+          value={filterInterviewStage}
+        />
+        <BaseSelect
+          label="Status"
+          name="status"
+          className="select-border mb-1"
+          options={statusOptions}
+          placeholder="Status"
+          handleChange={handleStatusChange}
+          value={filterStatus}
+        />
+
+        <BaseSelect
+          label="Gender"
+          name="gender"
+          className="select-border mb-1"
+          options={gendersType}
+          placeholder="Gender"
+          handleChange={handleGenderChange}
+          value={filterGender}
+        />
+
+        <BaseSelect
+          label="Expected Pkg"
+          name="expectedPkg"
+          className="select-border mb-1 "
+          options={expectedPkgOptions}
+          placeholder="Expected Package"
+          handleChange={handleExpectedPkgChange}
+          value={filterExpectedPkg}
+        />
+        <BaseSelect
+          label="Designation"
+          name="designation"
+          className="select-border mb-1"
+          options={designationType}
+          placeholder="Expected Package"
+          handleChange={handleDesignationChange}
+          value={filterDesignation}
+        />
+        <BaseSelect
+          label="Notice Period"
+          name="noticePeriod"
+          className="select-border mb-1"
+          options={noticePeriodOptions}
+          placeholder="Notice Period"
+          handleChange={handleNoticePeriodChange}
+          value={filterNoticePeriod}
+        />
+
+        <BaseInput
+          label="Start Date"
+          name="startDate"
+          className="select-border mb-1"
+          type="date"
+          placeholder={InputPlaceHolder("Start Date")}
+          handleChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            handleDateChange(e, true)
+          }
+          value={startDate || ""}
+        />
+
+        <BaseInput
+          label="End Date"
+          name="endDate"
+          type="date"
+          placeholder={InputPlaceHolder("End Date")}
+          handleChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            handleDateChange(e, false)
+          }
+          value={endDate || ""}
+        />
+      </List>
+
+      <Divider />
+    </Box>
+  );
+
   const columns = useMemo(
     () => [
       {
         header: "Applicant Name",
-        accessorKey: "name.firstName",
+        accessorKey: "name",
+        cell: (info: any) => {
+          const nameObj = info.row.original?.name || {};
+          const firstName = nameObj.firstName || "";
+          const middleName = nameObj.middleName || "";
+          const lastName = nameObj.lastName || "";
+          const fullName = `${firstName} ${middleName} ${lastName}`.trim();
+
+          return (
+            <>
+              <div
+                style={truncateText}
+                className="truncated-text"
+                title={fullName}
+              >
+                {fullName}
+              </div>
+              <ReactTooltip
+                place="top"
+                variant="info"
+                style={toolipComponents}
+              />
+            </>
+          );
+        },
+        filterFn: "fuzzy",
         enableColumnFilter: false,
       },
       {
         header: "Technology",
         accessorKey: "appliedSkills",
+        cell: (cell: any) => (
+          <div
+            className="truncated-text"
+            style={truncateText}
+            title={cell.row.original.appliedSkills}
+          >
+            {cell.row.original.appliedSkills}
+          </div>
+        ),
+        enableColumnFilter: false,
+      },
+      {
+        header: "Experience",
+        accessorKey: "totalExperience",
         enableColumnFilter: false,
       },
       {
@@ -344,22 +562,7 @@ const Applicant = () => {
         ),
         enableColumnFilter: false,
       },
-      {
-        header: "Comments",
-        cell: () => (
-          <div className="d-flex align-items-center hstack gap-2">
-            <Link to="" className="btn btn-sm btn-soft-primary">
-              <FaCommentDots />
-            </Link>
-            <Link to="">
-              <FaWhatsapp />
-            </Link>
-            <Link to="" className="btn btn-sm btn-soft-info">
-              <FaEnvelope />
-            </Link>
-          </div>
-        ),
-      },
+
       {
         header: "Action",
         cell: (cell: any) => (
@@ -378,6 +581,7 @@ const Applicant = () => {
                 anchorId={`usage-${cell?.row?.original?.id}`}
               />
             </BaseButton>
+
             <BaseButton
               id={`editMode-${cell?.row?.original?.id}`}
               className="btn btn-sm btn-soft-secondary edit-list"
@@ -388,9 +592,10 @@ const Applicant = () => {
                 place="bottom"
                 variant="info"
                 content="Edit"
-                anchorId={`editMode-${cell.row.original._id}`}
+                anchorId={`editMode-${cell?.row?.original?.id}`} // ensure unique ID
               />
             </BaseButton>
+
             <BaseButton
               id={`delete-${cell?.row?.original?.id}`}
               className="btn btn-sm btn-soft-danger remove-list"
@@ -402,7 +607,21 @@ const Applicant = () => {
                 place="bottom"
                 variant="error"
                 content="Delete"
-                anchorId={`delete-${cell?.row?.original?.id}`}
+                anchorId={`delete-${cell?.row?.original?.id}`} // ensure unique ID
+              />
+            </BaseButton>
+
+            <BaseButton
+              id={`email-${cell?.row?.original?.id}`}
+              className="btn btn-sm btn-soft-secondary edit-list"
+              onClick={() => handleEmail(cell?.row?.original._id)}
+            >
+              <i className="ri-mail-close-line align-bottom" />
+              <ReactTooltip
+                place="bottom"
+                variant="info"
+                content="Email"
+                anchorId={`email-${cell?.row?.original?.id}`} // ensure unique ID
               />
             </BaseButton>
           </div>
@@ -440,12 +659,20 @@ const Applicant = () => {
                 <div className="container">
                   <div className="row flex justify-content-between">
                     <div className="col-auto !d-flex !justify-content-start !mx-0 ">
-                      <BaseButton
-                        onClick={() => setFiltersVisible(!filtersVisible)}
+                      <Button
+                        onClick={toggleDrawer("right", true)}
                         color="primary"
                       >
-                        {filtersVisible ? "Hide Filters" : "Show Filters"}
-                      </BaseButton>
+                        <i className="fa fa-filter mx-1"></i> Show Filters
+                      </Button>
+                      <Drawer
+                        className="!mt-16 "
+                        anchor="right"
+                        open={state["right"]}
+                        onClose={toggleDrawer("right", false)}
+                      >
+                        {drawerList("right")}
+                      </Drawer>
                     </div>
 
                     <div className="col-auto !d-flex !justify-content-end mx-0 ">
@@ -460,134 +687,6 @@ const Applicant = () => {
                     </div>
                   </div>
                 </div>
-
-                {filtersVisible && (
-                  <Row className="flex mt-3">
-                    <Col xl={2} sm={6} md={4} lg={2}>
-                      <MultiSelect
-                        label="Applied Skills"
-                        name="appliedSkills"
-                        className="select-border"
-                        placeholder="Applied Skills"
-                        value={appliedSkills || null}
-                        isMulti={true}
-                        onChange={setAppliedSkills}
-                        options={skillOptions}
-                      />
-                    </Col>
-                    <Col xl={2} sm={6} md={4} lg={2}>
-                      <BaseSelect
-                        label="Experience"
-                        name="Experience"
-                        className="select-border"
-                        options={experienceOptions}
-                        placeholder="Experience"
-                        handleChange={handleExperienceChange}
-                        value={filterExperience}
-                      />
-                    </Col>
-                    <Col xl={2} sm={6} md={4} lg={2}>
-                      <BaseSelect
-                        label="Gender"
-                        name="gender"
-                        className="select-border"
-                        options={gendersType}
-                        placeholder="Gender"
-                        handleChange={handleGenderChange}
-                        value={filterGender}
-                      />
-                    </Col>
-                    <Col xl={2} sm={6} md={4} lg={2}>
-                      <BaseSelect
-                        label="Notice Period"
-                        name="noticePeriod"
-                        className="select-border"
-                        options={noticePeriodOptions}
-                        placeholder="Notice Period"
-                        handleChange={handleNoticePeriodChange}
-                        value={filterNoticePeriod}
-                      />
-                    </Col>
-                    <Col xl={2} sm={6} md={4} lg={2}>
-                      <BaseSelect
-                        label="Interview stage"
-                        name="interviewStage"
-                        className="select-border"
-                        options={interviewStageOptions}
-                        placeholder="Interview Stage"
-                        handleChange={handleInterviewStageChange}
-                        value={filterInterviewStage}
-                      />
-                    </Col>
-                    <Col xl={2} sm={6} md={4} lg={2}>
-                      <BaseSelect
-                        label="Status"
-                        name="status"
-                        className="select-border"
-                        options={statusOptions}
-                        placeholder="status"
-                        handleChange={handleStatusChange}
-                        value={filterStatus}
-                      />
-                    </Col>
-                    <Col xl={2} sm={6} md={4} lg={2}>
-                      <BaseSelect
-                        label="Expected Pkg"
-                        name="expectedPkg"
-                        className="select-border"
-                        options={expectedPkgOptions}
-                        placeholder="Expected Package"
-                        handleChange={handleExpectedPkgChange}
-                        value={filterExpectedPkg}
-                      />
-                    </Col>
-                    <Col xl={2} sm={6} md={4} lg={2}>
-                      <BaseSelect
-                        label="City"
-                        name="city"
-                        className="select-border"
-                        options={cityOptions}
-                        placeholder="City"
-                        handleChange={handleCityChange}
-                        value={filterCity}
-                      />
-                    </Col>
-                    <Col xl={2} sm={6} md={4} lg={2}>
-                      <BaseInput
-                        label="Start Date"
-                        name="startDate"
-                        type="date"
-                        placeholder={InputPlaceHolder("Start Date")}
-                        handleChange={(e: {
-                          target: { value: SetStateAction<string> };
-                        }) => setStartDate(e.target.value)}
-                        value={startDate || ""}
-                      />
-                    </Col>
-
-                    <Col xl={2} sm={6} md={4} lg={2}>
-                      <BaseInput
-                        label="End Date"
-                        name="endDate"
-                        type="date"
-                        placeholder={InputPlaceHolder("End Date")}
-                        handleChange={(e: {
-                          target: { value: SetStateAction<string> };
-                        }) => setEndDate(e.target.value)}
-                        value={endDate || ""}
-                      />
-                    </Col>
-                    <Col xl={2} sm={6} md={4} lg={2}>
-                      <BaseButton
-                        color="primary"
-                        onClick={resetFilters}
-                        disabled={loader}
-                      >
-                        Reset Filters
-                      </BaseButton>
-                    </Col>
-                  </Row>
-                )}
               </CardBody>
             </Card>
           </div>
@@ -625,6 +724,22 @@ const Applicant = () => {
       </Container>
     </Fragment>
   );
+};
+
+const truncateText = {
+  "white-space": "nowrap",
+  overflow: "hidden",
+  "text-overflow": "ellipsis",
+  "max-width": "150px",
+};
+
+const toolipComponents = {
+  "background-color": "blue !important",
+  color: "white !important",
+  "border-radius": "5px !important",
+  padding: "8px 12px !important",
+  "font-size": "14px !important",
+  border: "1px solid white !important",
 };
 
 export default Applicant;

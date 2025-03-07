@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Label } from "reactstrap";
 import Select from "react-select";
-
+import { BaseSelectProps, MultiSelectProps } from "interfaces/global.interface";
 const BaseSelect = ({
   label,
   name,
@@ -14,7 +13,7 @@ const BaseSelect = ({
   touched,
   error,
   isDisabled,
-}: any) => {
+}: BaseSelectProps) => {
   return (
     <>
       {label && (
@@ -32,6 +31,7 @@ const BaseSelect = ({
         onBlur={handleBlur}
         isClearable
         isDisabled={isDisabled}
+        menuPlacement="bottom"
       />
       {touched && error ? (
         <div className="text-danger error-font">{error}</div>
@@ -54,8 +54,7 @@ const MultiSelect = ({
   className,
   isDisabled,
   placeholder,
- 
-}: any) => {
+}: MultiSelectProps) => {
   return (
     <>
       {label && (

@@ -47,3 +47,153 @@ export type FormData = {
   password: string;
   confirmPassword: string;
 };
+export interface JWTDecodedUser {
+  exp: number;
+}
+
+type InputType =
+  | "number"
+  | "text"
+  | "password"
+  | "email"
+  | "tel"
+  | "url"
+  | "date";
+export interface BaseInputProps {
+  label?: string;
+  name: string;
+  type: InputType;
+  className?: string;
+  placeholder?: string;
+  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
+  value: any;
+  touched?: boolean;
+  error?: string;
+  maxLength?: number;
+  disabled?: boolean;
+  passwordToggle?: boolean;
+  title?: string;
+  onclick?: () => void;
+  min?: string;
+}
+
+export interface BaseButtonProps {
+  color?: string;
+  disabled?: boolean;
+  loader?: boolean;
+  className?: string;
+  type?: "button" | "submit" | "reset";
+  onClick?: () => void;
+  id?: string;
+  children?: React.ReactNode;
+  variant?: string;
+  sx?: any;
+}
+
+export interface BaseModalProps {
+  show?: boolean;
+  onSubmitClick?: () => void;
+  onCloseClick?: () => void;
+  loader?: boolean;
+  children?: React.ReactNode;
+  modalTitle?: string;
+  cloaseButtonText?: string;
+  submitButtonText?: string;
+}
+export interface MultiSelectProps {
+  label?: string;
+  value: any;
+  isMulti?: boolean;
+  onChange: (selectedOption: any) => void;
+  options: any[];
+  styles?: any;
+  touched?: boolean;
+  error?: string;
+  name: string;
+  handleBlur?: (event: React.FocusEvent<HTMLElement>) => void;
+  className?: string;
+  isDisabled?: boolean;
+  placeholder?: string;
+  handleChange?: (selectedOption: any) => void;
+}
+
+export interface BaseSelectProps {
+  label?: string;
+  name: string;
+  className?: string;
+  options: any[];
+  placeholder?: string;
+  handleChange: (selectedOption: any) => void;
+  handleBlur?: (event: React.FocusEvent<HTMLElement>) => void;
+  value: any;
+  touched?: boolean;
+  error?: string;
+  isDisabled?: boolean;
+}
+
+export interface BaseTextareaProps {
+  label?: string;
+  name: string;
+  className?: string;
+  placeholder?: string;
+  handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleBlur: (event: React.FocusEvent<HTMLInputElement>) => void;
+  value: string;
+  touched?: boolean;
+  error?: string;
+  maxLength?: number;
+  disabled?: boolean;
+  rows?: number;
+  cols?: number;
+  passwordToggle?: boolean;
+  multiline?: boolean;
+}
+
+export interface BreadCrumbProps {
+  title: string;
+  pageTitle: string;
+}
+
+export interface DeleteModalProps {
+  show?: boolean;
+  onDeleteClick?: () => void;
+  onCloseClick?: () => void;
+  recordId?: string;
+  loader?: boolean;
+}
+
+export interface TableContainerProps {
+  columns?: any;
+  isPagination?:boolean;
+  data?: any;
+  isGlobalFilter?: any;
+  isProductsFilter?: any;
+  isCustomerFilter?: any;
+  isOrderFilter?: any;
+  isContactsFilter?: any;
+  isCompaniesFilter?: any;
+  isLeadsFilter?: any;
+  isCryptoOrdersFilter?: any;
+  isInvoiceListFilter?: any;
+  isTicketsListFilter?: any;
+  isNFTRankingFilter?: any;
+  isTaskListFilter?: any;
+  handleTaskClick?: any;
+  customPageSize?: any;
+  tableClass?: any;
+  theadClass?: any;
+  trClass?: any;
+  thClass?: any;
+  divClass?: any;
+  SearchPlaceholder?: any;
+  handleLeadClick?: any;
+  handleCompanyClick?: any;
+  handleContactClick?: any;
+  handleTicketClick?: any;
+  isHeaderTitle?: any;
+  totalRecords?: any;
+  pagination?: any;
+  setPagination?: any;
+  loader?: any;
+}

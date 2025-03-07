@@ -1,21 +1,29 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Row, Col, Container } from "react-bootstrap";
-import * as Yup from "yup";
-import { InputPlaceHolder, projectTitle } from "components/constants/common";
-import { Modules } from "components/constants/enum";
 import { useFormik } from "formik";
 import { Fragment } from "react";
-import { dynamicFind } from "components/helpers/service";
 import BaseButton from "components/BaseComponents/BaseButton";
 import { BaseSelect } from "components/BaseComponents/BaseSelect";
 import { Form, Link } from "react-router-dom";
 import BaseInput from "components/BaseComponents/BaseInput";
 import moment from "moment";
 import BaseTextarea from "components/BaseComponents/BaseTextArea";
-type SelectedOption = { label: string; value: string };
+import { dynamicFind, InputPlaceHolder } from "utils/commonFunctions";
+import appConstants from "constants/constant";
+import {
+  personalApplicantSchema,
+  SelectedOption,
+} from "interfaces/applicant.interface";
+
+const { projectTitle, Modules, gendersType, countriesType, stateType } =
+  appConstants;
+
 const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
   document.title = Modules.Applicant + " | " + projectTitle;
   const minDateOfBirth = moment().subtract(15, "years").format("YYYY-MM-DD");
+  const formattedDateOfBirth = initialValues.dateOfBirth
+    ? moment(initialValues.dateOfBirth).format("YYYY-MM-DD")
+    : "";
   const validation: any = useFormik({
     enableReinitialize: true,
     initialValues: {
@@ -26,38 +34,17 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
       phoneNumber: initialValues.phone.phoneNumber || "",
       email: initialValues.email || "",
       gender: initialValues.gender || "",
-      // dateOfBirth: moment().format("YYYY-MM-DD") || "",
-      dateOfBirth: initialValues.dateOfBirth || " ",
-      fullAddress: initialValues.fullAddress || "",
+      dateOfBirth: formattedDateOfBirth,
       state: initialValues.state || "",
       country: initialValues.country || "",
-      pincode: initialValues.pincode || "",
-      city: initialValues.city || "",
+      currentPincode: initialValues.currentPincode || "",
+      currentCity: initialValues.currentCity || "",
+      homeTownCity: initialValues.homeTownCity || "",
+      homePincode: initialValues.homePincode || "",
+      preferredLocations: initialValues.preferredLocations || "",
+      currentLocation: initialValues.currentLocation || "",
     },
-    validationSchema: Yup.object({
-      firstName: Yup.string().required("First Name is required").max(15).min(2),
-      lastName: Yup.string().required("Last Name is required").max(15).min(2),
-      middleName: Yup.string().max(15).min(2),
-      email: Yup.string()
-        .email("Invalid email address")
-        .required("Email is required"),
-      phoneNumber: Yup.string()
-        .matches(/^[0-9]{10}$/, "Phone number must be 10 digits")
-        .required("Phone number is required"),
-      whatsappNumber: Yup.string()
-        .matches(/^[0-9]{10}$/, "WhatsApp number must be 10 digits")
-        .required("WhatsApp Number is required"),
-      dateOfBirth: Yup.date().required("Date of birth is required"),
-      city: Yup.string().required("City is required"),
-      pincode: Yup.string()
-        .matches(/^[0-9]{6}$/, "Pincode must be 6 digits")
-        .required("Pincode is required"),
-      fullAddress: Yup.string().required("Full Address is required"),
-      gender: Yup.string().required("Gender is required"),
-      country: Yup.string().required("Country is required"),
-      state: Yup.string().required("State is required"),
-    }),
-
+    validationSchema: personalApplicantSchema,
     onSubmit: (data: any) => {
       const structuredData = {
         name: {
@@ -72,53 +59,21 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
 
         email: data.email,
         gender: data.gender,
-        dateOfBirth: data.dateOfBirth,
-        fullAddress: data.fullAddress,
+        dateOfBirth: moment(data.dateOfBirth).toISOString(),
         state: data.state,
         country: data.country,
-        pincode: data.pincode,
-        city: data.city,
+        currentPincode: data.currentPincode,
+        currentCity: data.currentCity,
+        homeTownCity: data.homeTownCity,
+        homePincode: data.homePincode,
+        preferredLocations: data.preferredLocations,
+        currentLocation: data.currentLocation,
       };
 
       onNext(structuredData);
       onNext(data);
     },
   });
-
-  const gendersType = [
-    { label: "Male", value: "male" },
-    { label: "Female", value: "female" },
-    { label: "Other", value: "other" },
-  ];
-
-  const stateType = [
-    { label: "Delhi", value: "delhi" },
-    { label: "West Bengal", value: "west_bengal" },
-    { label: "Tamil Nadu", value: "tamil_nadu" },
-    { label: "Karnataka", value: "karnataka" },
-    { label: "Telangana", value: "telangana" },
-    { label: "Gujarat", value: "gujarat" },
-    { label: "Maharashtra", value: "maharashtra" },
-    { label: "Rajasthan", value: "rajasthan" },
-    { label: "Uttar Pradesh", value: "uttar_pradesh" },
-    { label: "Kerala", value: "kerala" },
-    { label: "Chandigarh", value: "chandigarh" },
-    { label: "Madhya Pradesh", value: "madhya_pradesh" },
-    { label: "Bihar", value: "bihar" },
-    { label: "Andhra Pradesh", value: "andhra_pradesh" },
-    { label: "Odisha", value: "odisha" },
-    { label: "Goa", value: "goa" },
-    { label: "Jharkhand", value: "jharkhand" },
-    { label: "Punjab", value: "punjab" },
-    { label: "Assam", value: "assam" },
-    { label: "Manipur", value: "manipur" },
-    { label: "Sikkim", value: "sikkim" },
-    { label: "Arunachal Pradesh", value: "arunachal_pradesh" },
-    { label: "Nagaland", value: "nagaland" },
-    { label: "Meghalaya", value: "meghalaya" },
-    { label: "Karnataka", value: "karnataka" },
-  ];
-  const countriesType = [{ label: "India", value: "india" }];
 
   return (
     <Fragment>
@@ -192,7 +147,7 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
                     touched={validation.touched.dateOfBirth}
                     error={validation.errors.dateOfBirth}
                     passwordToggle={false}
-                     min={minDateOfBirth}
+                    min={minDateOfBirth}
                   />
                 </Col>
 
@@ -310,44 +265,87 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
 
                 <Col xs={12} md={6} lg={3}>
                   <BaseInput
-                    label="City"
-                    name="city"
+                    label="Current City"
+                    name="currentCity"
                     type="text"
-                    placeholder={InputPlaceHolder("City")}
+                    placeholder={InputPlaceHolder("Current City")}
                     handleChange={validation.handleChange}
                     handleBlur={validation.handleBlur}
-                    value={validation.values.city}
-                    touched={validation.touched.city}
-                    error={validation.errors.city}
+                    value={validation.values.currentCity}
+                    touched={validation.touched.currentCity}
+                    error={validation.errors.currentCity}
                     passwordToggle={false}
                   />
                 </Col>
 
                 <Col xs={12} md={6} lg={3}>
                   <BaseInput
-                    label="Pincode"
-                    name="pincode"
-                    type="text"
-                    placeholder={InputPlaceHolder("Pincode")}
+                    label="Current Pincode"
+                    name="currentPincode"
+                    type="number"
+                    placeholder={InputPlaceHolder("Current Pincode")}
                     handleChange={validation.handleChange}
                     handleBlur={validation.handleBlur}
-                    value={validation.values.pincode}
-                    touched={validation.touched.pincode}
-                    error={validation.errors.pincode}
+                    value={validation.values.currentPincode}
+                    touched={validation.touched.currentPincode}
+                    error={validation.errors.currentPincode}
+                    passwordToggle={false}
+                    className="!appearance-none"
+                  />
+                </Col>
+                <Col xs={12} md={6} lg={4}>
+                  <BaseInput
+                    label="Home Town"
+                    name="homeTownCity"
+                    type="text"
+                    placeholder={InputPlaceHolder("Home Town/City")}
+                    handleChange={validation.handleChange}
+                    handleBlur={validation.handleBlur}
+                    value={validation.values.homeTownCity}
+                    touched={validation.touched.homeTownCity}
+                    error={validation.errors.homeTownCity}
+                    passwordToggle={false}
+                  />
+                </Col>
+                <Col xs={12} md={6} lg={4}>
+                  <BaseInput
+                    label="Home Town Pincode"
+                    name="homePincode"
+                    type="text"
+                    placeholder={InputPlaceHolder("Current Pincode")}
+                    handleChange={validation.handleChange}
+                    handleBlur={validation.handleBlur}
+                    value={validation.values.homePincode}
+                    touched={validation.touched.homePincode}
+                    error={validation.errors.homePincode}
+                    passwordToggle={false}
+                  />
+                </Col>
+                <Col xs={12} md={12} lg={4}>
+                  <BaseInput
+                    label="Preferred Locations"
+                    name="preferredLocations"
+                    type="text"
+                    placeholder={InputPlaceHolder("Preferred Locations")}
+                    handleChange={validation.handleChange}
+                    handleBlur={validation.handleBlur}
+                    value={validation.values.preferredLocations}
+                    touched={validation.touched.preferredLocations}
+                    error={validation.errors.preferredLocations}
                     passwordToggle={false}
                   />
                 </Col>
 
                 <Col xs={12}>
                   <BaseTextarea
-                    label="Full Address"
-                    name="fullAddress"
-                    placeholder={InputPlaceHolder("Full Address")}
+                    label="Current Location"
+                    name="currentLocation"
+                    placeholder={InputPlaceHolder("Current Location")}
                     handleChange={validation.handleChange}
                     handleBlur={validation.handleBlur}
-                    value={validation.values.fullAddress}
-                    touched={validation.touched.fullAddress}
-                    error={validation.errors.fullAddress}
+                    value={validation.values.currentLocation}
+                    touched={validation.touched.currentLocation}
+                    error={validation.errors.currentLocation}
                     passwordToggle={false}
                     multiline
                     rows={2}
