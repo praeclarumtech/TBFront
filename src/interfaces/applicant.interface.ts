@@ -20,7 +20,7 @@ export const EducationApplicantSchema = Yup.object({
   relevantSkillExperience: Yup.string(),
   referral: Yup.string(),
   portfolioUrl: Yup.string().url("Invalid URL"),
-  resumeUrl: Yup.string().required("Resume URL is required"),
+  resumeUrl: Yup.string().url().required("Resume URL is required"),
   rating: Yup.number()
     .required("Rating is required")
     .min(1, "Rating must be between 1 and 10")

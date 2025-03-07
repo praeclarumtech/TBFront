@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Row, Col, Container } from "react-bootstrap";
 import { useFormik } from "formik";
 import { Fragment, useState } from "react";
@@ -24,6 +25,7 @@ const {
 
 const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
   document.title = Modules.Applicant + " | " + projectTitle;
+  // const [appliedSkills, setAppliedSkills] = useState([]);
 
   const validation: any = useFormik({
     enableReinitialize: true,
@@ -145,28 +147,7 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                   />
                 </Col>
                 <Col xs={12} md={3}>
-                  {/* <BaseSelect
-                    label="Marital Status"
-                    name="maritalStatus"
-                    className="select-border"
-                    options={maritalStatusType}
-                    placeholder="Marital Status"
-                    handleChange={(selectedOption: SelectedOption) => {
-                      validation.setFieldValue(
-                        "maritalStatus",
-                        selectedOption?.value || ""
-                      );
-                    }}
-                    handleBlur={validation.handleBlur}
-                    value={
-                      dynamicFind(
-                        maritalStatusType,
-                        validation.values.maritalStatus
-                      ) || ""
-                    }
-                    touched={validation.touched.maritalStatus}
-                    error={validation.errors.maritalStatus}
-                  /> */}
+                  
                   <BaseSelect
                     label="Marital Status"
                     name="maritalStatus"

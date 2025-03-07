@@ -242,7 +242,7 @@ const TableContainer = ({
         <Table
           hover
           className={tableClass}
-          style={{ height: "50%", minWidth: "100%" }}
+          // style={{ height: "50%", minWidth: "100%" }}
         >
           <thead
             className={`${theadClass} sticky-top`}

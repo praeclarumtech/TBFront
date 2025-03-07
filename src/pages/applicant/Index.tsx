@@ -81,7 +81,7 @@ const Applicant = () => {
     pageSize: 10,
   });
   const [tableLoader, setTableLoader] = useState(false);
-
+  const [selectedApplicants, setSelectedApplicants] = useState<string[]>([]); // Array to store selected applicants
   const [state, setState] = React.useState({
     right: false,
   });
@@ -142,11 +142,10 @@ const Applicant = () => {
         params.endDate = endDate;
       }
 
-      //localhost:3000/api/applicants/viewAllApplicant?startDate=2025-02-01&endDate=2025-03-05
-
       if (filterNoticePeriod) {
         params.noticePeriod = Number(filterNoticePeriod.value);
       }
+
       if (filterStatus) {
         params.status = filterStatus.value;
       }
@@ -190,6 +189,7 @@ const Applicant = () => {
     filterNoticePeriod,
     filterExpectedPkg,
     filterDesignation,
+    // selectedApplicants,
   ]);
 
   const handleAppliedSkillsChange = (selectedOptions: SelectedOption[]) => {
@@ -252,6 +252,21 @@ const Applicant = () => {
 
     fetchApplicants();
   };
+  const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.checked) {
+      setSelectedApplicants(applicant.map((app) => app._id)); // Select all applicants
+    } else {
+      setSelectedApplicants([]); // Deselect all
+    }
+  };
+
+  const handleSelectApplicant = (applicantId: string) => {
+    setSelectedApplicants((prev) =>
+      prev.includes(applicantId)
+        ? prev.filter((id) => id !== applicantId)
+        : [...prev, applicantId]
+    );
+  };
 
   const openDeleteModal = (id: string) => {
     setRecordIdToDelete(id);
@@ -305,6 +320,30 @@ const Applicant = () => {
         state: { email_to: selectedApplicant.email },
       });
     }
+  };
+
+  const handleSendEmail = () => {
+    const emails = applicant
+      .filter((app) => selectedApplicants.includes(app._id))
+      .map((app) => app.email);
+    navigate("/email/compose", {
+      state: {
+        email_to: emails.join(", "),
+        email_bcc: "",
+        subject: "",
+        description: "",
+      },
+    });
+  };
+
+  const handleSendWhatsApp = () => {
+    const message = applicant
+      .filter((app) => selectedApplicants.includes(app._id))
+      .map((app) => `Name: ${app.name}, Email: ${app.email}`)
+      .join("\n");
+
+    // Send WhatsApp message (example: using a WhatsApp API)
+    window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, "_blank");
   };
 
   const drawerList = (anchor: Anchor) => (
@@ -450,6 +489,24 @@ const Applicant = () => {
   const columns = useMemo(
     () => [
       {
+        header: (
+          <input
+            type="checkbox"
+            onChange={handleSelectAll}
+            checked={selectedApplicants.length === applicant.length}
+          />
+        ),
+        accessorKey: "select",
+        cell: (info: any) => (
+          <input
+            type="checkbox"
+            checked={selectedApplicants.includes(info.row.original._id)}
+            onChange={() => handleSelectApplicant(info.row.original._id)}
+          />
+        ),
+        enableColumnFilter: false,
+      },
+      {
         header: "Applicant Name",
         accessorKey: "name",
         cell: (info: any) => {
@@ -471,6 +528,7 @@ const Applicant = () => {
               <ReactTooltip
                 place="top"
                 variant="info"
+                content={fullName}
                 style={toolipComponents}
               />
             </>
@@ -480,7 +538,7 @@ const Applicant = () => {
         enableColumnFilter: false,
       },
       {
-        header: "Technology",
+        header: "appliedSkills",
         accessorKey: "appliedSkills",
         cell: (cell: any) => (
           <div
@@ -504,6 +562,7 @@ const Applicant = () => {
         cell: (cell: any) => (
           <BaseSelect
             name="interviewStage"
+            // className="custom-select"
             options={interviewStageOptions}
             value={dynamicFind(
               interviewStageOptions,
@@ -533,11 +592,12 @@ const Applicant = () => {
         enableColumnFilter: false,
       },
       {
-        header: "Status",
+        header: "Applicant Status",
         accessorKey: "status",
         cell: (cell: any) => (
           <BaseSelect
             name="status"
+            // className="custom-select"
             options={statusOptions}
             value={dynamicFind(statusOptions, cell.row.original.status)}
             handleChange={(selectedOption: SelectedOption) => {
@@ -614,6 +674,7 @@ const Applicant = () => {
             <BaseButton
               id={`email-${cell?.row?.original?.id}`}
               className="btn btn-sm btn-soft-secondary edit-list"
+              // onClick={() => handleEmail(cell?.row?.original._id)}
               onClick={() => handleEmail(cell?.row?.original._id)}
             >
               <i className="ri-mail-close-line align-bottom" />
@@ -621,14 +682,14 @@ const Applicant = () => {
                 place="bottom"
                 variant="info"
                 content="Email"
-                anchorId={`email-${cell?.row?.original?.id}`} // ensure unique ID
+                anchorId={`email-${cell?.row?.original?.id}`}
               />
             </BaseButton>
           </div>
         ),
       },
     ],
-    [applicant]
+    [applicant, selectedApplicants]
   );
 
   const handleNavigate = () => {
@@ -657,13 +718,14 @@ const Applicant = () => {
             <Card className="mb-3 my-3">
               <CardBody>
                 <div className="container">
-                  <div className="row flex justify-content-between">
-                    <div className="col-auto !d-flex !justify-content-start !mx-0 ">
+                  <div className="row justify-content-between align-items-center">
+                    {/* Left: Show Filters Button */}
+                    <div className="col-auto d-flex justify-content-start mx-0">
                       <Button
                         onClick={toggleDrawer("right", true)}
                         color="primary"
                       >
-                        <i className="fa fa-filter mx-1"></i> Show Filters
+                        <i className="fa fa-filter mx-1 "></i> Show Filters
                       </Button>
                       <Drawer
                         className="!mt-16 "
@@ -675,7 +737,36 @@ const Applicant = () => {
                       </Drawer>
                     </div>
 
-                    <div className="col-auto !d-flex !justify-content-end mx-0 ">
+                    {/* Right: WhatsApp, Email, and New Applicant Buttons */}
+                    <div className="col-auto d-flex justify-content-end mx-0 flex-wrap">
+                      {selectedApplicants.length > 0 && (
+                        <>
+                          <BaseButton
+                            className="btn btn-lg btn-soft-secondary bg-green-900 edit-list mx-1 px-3"
+                            onClick={handleSendWhatsApp}
+                          >
+                            <i className="ri-whatsapp-line align-bottom" />
+                            <ReactTooltip
+                              place="bottom"
+                              variant="info"
+                              content="WhatsApp"
+                            />
+                          </BaseButton>
+
+                          <BaseButton
+                            className="btn text-lg btn-soft-secondary bg-primary edit-list mx-1 "
+                            onClick={handleSendEmail}
+                          >
+                            <i className="ri-mail-close-line align-bottom" />
+                            <ReactTooltip
+                              place="bottom"
+                              variant="info"
+                              content="Email"
+                            />
+                          </BaseButton>
+                        </>
+                      )}
+
                       <BaseButton
                         color="success"
                         disabled={loader}
@@ -727,14 +818,14 @@ const Applicant = () => {
 };
 
 const truncateText = {
-  "white-space": "nowrap",
+  whiteSpace: "nowrap",
   overflow: "hidden",
-  "text-overflow": "ellipsis",
-  "max-width": "150px",
+  textOverflow: "ellipsis",
+  maxWidth: "150px",
 };
 
 const toolipComponents = {
-  "background-color": "blue !important",
+  backgroundColor: "blue !important",
   color: "white !important",
   "border-radius": "5px !important",
   padding: "8px 12px !important",

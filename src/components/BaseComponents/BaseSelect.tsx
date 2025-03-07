@@ -31,7 +31,7 @@ const BaseSelect = ({
         onBlur={handleBlur}
         isClearable
         isDisabled={isDisabled}
-        menuPlacement="bottom"
+        menuPlacement="auto"
       />
       {touched && error ? (
         <div className="text-danger error-font">{error}</div>

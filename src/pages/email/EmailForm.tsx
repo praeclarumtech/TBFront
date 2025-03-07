@@ -10,33 +10,59 @@ import * as Yup from "yup";
 const EmailForm = () => {
   const hasMounted = useMounted();
   const navigate = useNavigate();
-  // Add loading and error states
-  // Replace useState with useFormik
   const location = useLocation();
   const initialEmail = location.state?.email_to || "";
 
   const validation = useFormik({
     initialValues: {
-      email_to: initialEmail,
+      email_to: initialEmail || "",
       email_bcc: "",
       subject: "",
       description: "",
     },
     validationSchema: Yup.object({
       email_to: Yup.string()
-        .email("Invalid email address")
+        .test("valid-emails", "Invalid email address", (value) => {
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          const emails = value?.split(",").map((email) => email.trim());
+          return emails?.every((email) => emailRegex.test(email));
+        })
         .required("Recipient email is required"),
-      email_bcc: Yup.string().email("Invalid email address"),
+
+      email_bcc: Yup.string().test(
+        "valid-emails",
+        "Invalid email address",
+        (value) => {
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          const emails = value?.split(",").map((email) => email.trim());
+          return emails?.every((email) => emailRegex.test(email));
+        }
+      ),
+
       subject: Yup.string().required("Subject is required"),
     }),
     onSubmit: async (values) => {
       try {
-        await sendEmail(values);
+        // Convert the comma-separated email strings into arrays
+        const emailToArray = values.email_to
+          .split(",")
+          .map((email: string) => email.trim());
+        const emailBccArray = values.email_bcc
+          .split(",")
+          .map((email) => email.trim());
+
+        // Send the email data to the backend with arrays for email_to and email_bcc
+        await sendEmail({
+          ...values,
+          email_to: emailToArray,
+          email_bcc: emailBccArray,
+        });
+
         toast.success("Email sent successfully!", {
           closeOnClick: true,
           autoClose: 5000,
         });
-        navigate("/email");
+        navigate("/applicants");
       } catch (err) {
         toast.error("Failed to send email. Please try again.", {
           closeOnClick: true,
@@ -55,7 +81,7 @@ const EmailForm = () => {
             <div className="p-10 relative">
               <button
                 className="absolute left-5 top-5 text-gray-600 hover:text-gray-800 flex items-center"
-                onClick={() => navigate("/email")}
+                onClick={() => navigate("/applicants")}
               >
                 <i className="fa fa-arrow-left mr-2"></i>
                 Back
@@ -79,7 +105,7 @@ const EmailForm = () => {
                           To
                         </label>
                         <input
-                          type="email"
+                          type="text" // Change input type to "text" to allow multiple emails
                           placeholder="Enter Recipients"
                           id="email_to"
                           value={validation.values.email_to}
@@ -92,13 +118,16 @@ const EmailForm = () => {
                               : ""
                           }`}
                         />
-
-                        {validation.touched.email_to &&
+                        {/* {validation.touched.email_to &&
                           validation.errors.email_to && (
                             <div className="text-red-500 text-sm mt-1">
-                              {typeof validation.errors.email_to === "string"
-                                ? validation.errors.email_to
-                                : "An error occurred"}
+                              {validation.errors.email_to}
+                            </div>
+                          )} */}
+                        {validation.touched.subject &&
+                          validation.errors.subject && (
+                            <div className="text-red-500 text-sm mt-1">
+                              {validation.errors.subject}
                             </div>
                           )}
                       </div>
@@ -110,8 +139,8 @@ const EmailForm = () => {
                           Bcc
                         </label>
                         <input
-                          type="email"
-                          placeholder="Enter Your email"
+                          type="text" // Change input type to "text" to allow multiple emails
+                          placeholder="Enter Your BCC emails"
                           id="email_bcc"
                           value={validation.values.email_bcc}
                           onChange={validation.handleChange}
@@ -182,20 +211,6 @@ const EmailForm = () => {
                     </div>
 
                     <div className="flex justify-end items-center gap-4">
-                      <button
-                        type="button"
-                        disabled
-                        className="p-2 hover:bg-gray-100 rounded-full opacity-50 cursor-not-allowed"
-                      >
-                        <i className="fa fa-paperclip"></i>
-                      </button>
-                      <button
-                        type="button"
-                        disabled
-                        className="p-2 hover:bg-gray-100 rounded-full opacity-50 cursor-not-allowed"
-                      >
-                        <i className="fa fa-file-image"></i>
-                      </button>
                       <button
                         type="submit"
                         disabled={validation.isSubmitting}
