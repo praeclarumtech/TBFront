@@ -24,7 +24,6 @@ import { useParams } from "react-router-dom";
 import appConstants from "constants/constant";
 import { errorHandle } from "utils/commonFunctions";
 
-
 const { projectTitle, Modules } = appConstants;
 
 const StepperForm = () => {
@@ -53,7 +52,7 @@ const StepperForm = () => {
     currentPincode: "",
     currentCity: "",
     qualification: [],
-    degree: "",
+    specialization: "",
     passingYear: "",
     appliedSkills: [],
     totalExperience: "",
@@ -70,13 +69,16 @@ const StepperForm = () => {
     portfolioUrl: "",
     practicalUrl: "",
     practicalFeedback: "",
-    aboutUs: "",
+    collegeName: "",
+    comment: "",
     communicationSkill: "",
     currentCompanyDesignation: "",
-    currentLocation: "",
+    cgpa: "",
+    currentAddress: "",
+    permanentAddress: "",
     preferredLocations: "",
-    homePincode: "",
-    homeTownCity: "",
+    // homePincode: "",
+    // homeTownCity: "",
     maritalStatus: "",
     currentCompanyName: "",
     appliedRole: "",
@@ -136,7 +138,7 @@ const StepperForm = () => {
       currentPincode: formData.currentPincode,
       currentCity: formData.currentCity,
       qualification: formData.qualification,
-      degree: formData.degree,
+      specialization: formData.specialization,
       passingYear: formData.passingYear,
       appliedSkills: formData.appliedSkills,
       totalExperience: formData.totalExperience,
@@ -153,24 +155,28 @@ const StepperForm = () => {
       portfolioUrl: formData.portfolioUrl,
       practicalUrl: formData.practicalUrl,
       feedback: formData.practicalFeedback,
-      aboutUs: formData.aboutUs,
+      comment: formData.comment,
       communicationSkill: formData.communicationSkill,
       currentCompanyDesignation: formData.currentCompanyDesignation,
-      homeTownCity: formData.homeTownCity,
+      // homeTownCity: formData.homeTownCity,
       preferredLocations: formData.preferredLocations,
-      homePincode: formData.homePincode,
+      // homePincode: formData.homePincode,
       maritalStatus: formData.maritalStatus,
       currentCompanyName: formData.currentCompanyName,
       appliedRole: formData.appliedRole,
       anyHandOnOffers: formData.anyHandOnOffers,
       lastFollowUpDate: formData.lastFollowUpDate,
-      currentLocation: formData.currentLocation,
+      collegeName: formData.collegeName,
+      cgpa: formData.cgpa,
+      currentAddress: formData.currentAddress,
+      permanentAddress: formData.permanentAddress,
     };
   };
 
   const handleSubmit = async () => {
     setLoading(true);
     const apiData = formatApiData();
+    console.log("apiData", apiData);
 
     if (!id) {
       createApplicant(apiData)

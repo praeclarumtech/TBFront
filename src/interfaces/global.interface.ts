@@ -165,7 +165,7 @@ export interface DeleteModalProps {
 
 export interface TableContainerProps {
   columns?: any;
-  isPagination?:boolean;
+  isPagination?: boolean;
   data?: any;
   isGlobalFilter?: any;
   isProductsFilter?: any;
@@ -196,4 +196,20 @@ export interface TableContainerProps {
   pagination?: any;
   setPagination?: any;
   loader?: any;
+}
+
+export interface BaseSliderProps {
+  label?: string | any;
+  name?: string | any;
+  className?: string;
+  value?: string | any;
+  handleChange?: any;
+  min?: number;
+  max?: number;
+  step?: any;
+  disabled?: boolean;
+  error?: string;
+  touched?: boolean;
+  valueLabelDisplay?: any;
+  valueLabelFormat?: any;
 }

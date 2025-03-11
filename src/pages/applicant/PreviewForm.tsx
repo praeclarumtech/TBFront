@@ -62,27 +62,29 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
               </Typography>
               <Typography>
                 <span className="font-bold text-base !text-black pt-3">
+                  Marital Status:
+                </span>
+                <span>{" " + capitalizeWords(data.maritalStatus)}</span>
+              </Typography>
+
+              <Typography>
+                <span className="font-bold text-base !text-black pt-3">
                   Country:
                 </span>
                 <span>{" " + capitalizeWords(data.country)}</span>
               </Typography>
-              <Typography>
+              {/* <Typography>
                 <span className="font-bold text-base !text-black pt-3">
                   Currrent Pincode:
                 </span>
                 <span>{" " + data.currentPincode}</span>
-              </Typography>
+              </Typography> */}
+
               <Typography>
                 <span className="font-bold text-base !text-black pt-3">
-                  Currrent City:
+                  Permanemt Address:
                 </span>
-                <span>{" " + capitalizeWords(data.currentCity)}</span>
-              </Typography>
-              <Typography>
-                <span className="font-bold text-base !text-black pt-3">
-                  Preferred Locations:
-                </span>
-                <span>{" " + capitalizeWords(data.preferredLocations)}</span>
+                <span>{" " + capitalizeWords(data.permanentAddress)}</span>
               </Typography>
             </Col>
             <div className="col-md-6">
@@ -106,6 +108,12 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
               </Typography>
               <Typography>
                 <span className="font-bold text-base !text-black pt-3">
+                  City:
+                </span>
+                <span>{" " + capitalizeWords(data.currentCity)}</span>
+              </Typography>
+              <Typography>
+                <span className="font-bold text-base !text-black pt-3">
                   State :
                 </span>
                 <span>{" " + data.state}</span>
@@ -114,19 +122,7 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
                 <span className="font-bold text-base !text-black pt-3">
                   Current Address:
                 </span>
-                <span>{" " + capitalizeWords(data.currentLocation)}</span>
-              </Typography>
-              <Typography>
-                <span className="font-bold text-base !text-black pt-3">
-                  Home Town:
-                </span>
-                <span>{" " + capitalizeWords(data.homeTownCity)}</span>
-              </Typography>
-              <Typography>
-                <span className="font-bold text-base !text-black pt-3">
-                  Home Pincode:
-                </span>
-                <span>{" " + data.homePincode}</span>
+                <span>{" " + capitalizeWords(data.currentAddress)}</span>
               </Typography>
             </div>
           </Row>
@@ -151,73 +147,34 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
               </Typography>
               <Typography variant="body1" className="text-gray-600">
                 <span className="font-bold text-base !text-black pt-3">
-                  Degree:
+                  Specialization:
                 </span>
-                <span className="">{" " + capitalizeWords(data.degree)}</span>
+                <span className="">
+                  {" " + capitalizeWords(data.specialization)}
+                </span>
               </Typography>
-              <Typography>
+              <Typography variant="body1" className="text-gray-600">
                 <span className="font-bold text-base !text-black pt-3">
-                  Total Experience:
+                  CGPA:
                 </span>
-                <span>{" " + data.totalExperience}</span>
-              </Typography>
-
-              <Typography>
-                <span className="font-bold text-base !text-black pt-3">
-                  Other Skills:
+                <span className="">
+                  {" " + capitalizeWords(data.cgpa) + " Cgpa"}
                 </span>
-                <span>{" " + capitalizeWords(data.otherSkills)}</span>
-              </Typography>
-              <Typography>
-                <span className="font-bold text-base !text-black pt-3">
-                  Javascript Rating:
-                </span>
-                <span>{" " + data.rating}</span>
-              </Typography>
-              <Typography>
-                <span className="font-bold text-base !text-black pt-3">
-                  Designation :
-                </span>
-                <span>{" " + data.currentCompanyDesignation}</span>
               </Typography>
             </Col>
 
             <Col xs={12} md={6} className="mb-3">
               <Typography>
                 <span className="font-bold text-base !text-black pt-3">
+                  College Name:
+                </span>
+                <span>{" " + data.collegeName}</span>
+              </Typography>
+              <Typography>
+                <span className="font-bold text-base !text-black pt-3">
                   Passing Year:
                 </span>
                 <span>{" " + data.passingYear}</span>
-              </Typography>
-              <Typography>
-                <span className="font-bold text-base !text-black pt-3">
-                  Relevant Skill Experience:
-                </span>
-                <span>{" " + data.relevantSkillExperience}</span>
-              </Typography>
-
-              <Typography>
-                <span className="font-bold text-base !text-black pt-3">
-                  Referral :
-                </span>
-                <span>{" " + capitalizeWords(data.referral)}</span>
-              </Typography>
-              <Typography>
-                <span className="font-bold text-base !text-black pt-3">
-                  Communication Skill Rating:
-                </span>
-                <span>{" " + data.communicationSkill}</span>
-              </Typography>
-              <Typography>
-                <span className="font-bold text-base !text-black pt-3">
-                  Applied Skills:
-                </span>
-                <span>
-                  {" "}
-                  {data.appliedSkills?.length > 0
-                    ? capitalizeWords(data.appliedSkills.join(", "))
-                    : "No skills listed"}
-                </span>
               </Typography>
             </Col>
           </Row>
@@ -234,26 +191,64 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
         <div className="mx-2 p-3">
           <Row className="mx-2">
             <Col xs={12} md={6} className="mb-3">
-              <Typography variant="body1" className="text-gray-600">
+              <Typography>
                 <span className="font-bold text-base !text-black pt-3">
-                  Expected Package:
+                  Applied Skills:
                 </span>
-                <span className="">
-                  {" " + capitalizeWords(data.expectedPkg)}
+                <span>
+                  {" "}
+                  {data.appliedSkills?.length > 0
+                    ? capitalizeWords(data.appliedSkills.join(", "))
+                    : "No skills listed"}
                 </span>
               </Typography>
-
+              <Typography>
+                <span className="font-bold text-base !text-black pt-3">
+                  Total Experience:
+                </span>
+                <span>{" " + data.totalExperience + " Years"}</span>
+              </Typography>
+              <Typography>
+                <span className="font-bold text-base !text-black pt-3">
+                  Javascript Rating(Out of 10):
+                </span>
+                <span>{" " + data.rating}</span>
+              </Typography>
+              <Typography>
+                <span className="font-bold text-base !text-black pt-3">
+                  Current Company Name:
+                </span>
+                <span>{" " + capitalizeWords(data.currentCompanyName)}</span>
+              </Typography>
+              <Typography>
+                <span className="font-bold text-base !text-black pt-3">
+                  Current Package:
+                </span>
+                <span>{" " + capitalizeWords(data.currentPkg) + " LPA"}</span>
+              </Typography>
               <Typography>
                 <span className="font-bold text-base !text-black pt-3">
                   Negotiation(Rs) :
                 </span>
-                <span>{" " + data.negotiation}</span>
+                <span>{" " + data.negotiation + " Rs."}</span>
               </Typography>
               <Typography>
                 <span className="font-bold text-base !text-black pt-3">
-                  Notice Period(Days):
+                  Work Preference :
                 </span>
-                <span>{" " + data.noticePeriod}</span>
+                <span>{" " + capitalizeWords(data.workPreference)}</span>
+              </Typography>
+              <Typography>
+                <span className="font-bold text-base !text-black pt-3">
+                  Applied Role:
+                </span>
+                <span>{" " + capitalizeWords(data.appliedRole)}</span>
+              </Typography>
+              <Typography>
+                <span className="font-bold text-base !text-black pt-3">
+                  Referral :
+                </span>
+                <span>{" " + capitalizeWords(data.referral)}</span>
               </Typography>
 
               <Typography>
@@ -264,49 +259,67 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
                   {" " + new Date(data.lastFollowUpDate).toLocaleDateString()}
                 </span>
               </Typography>
+
               <Typography>
                 <span className="font-bold text-base !text-black pt-3">
-                  Marital Status:
+                  comment:
                 </span>
-                <span>{" " + capitalizeWords(data.maritalStatus)}</span>
-              </Typography>
-              <Typography>
-                <span className="font-bold text-base !text-black pt-3">
-                  About Us:
-                </span>
-                <span>{" " + capitalizeWords(data.aboutUs)}</span>
+                <span>{" " + capitalizeWords(data.comment)}</span>
               </Typography>
             </Col>
             <Col xs={12} md={6}>
               <Typography>
                 <span className="font-bold text-base !text-black pt-3">
-                  Current Package:
+                  Other Skills:
                 </span>
-                <span>{" " + capitalizeWords(data.currentPkg)}</span>
+                <span>{" " + capitalizeWords(data.otherSkills)}</span>
               </Typography>
               <Typography>
                 <span className="font-bold text-base !text-black pt-3">
-                  Applied Role:
+                  Relevant Skill Experience:
                 </span>
-                <span>{" " + capitalizeWords(data.appliedRole)}</span>
+                <span>{" " + data.relevantSkillExperience + " Years"}</span>
               </Typography>
               <Typography>
                 <span className="font-bold text-base !text-black pt-3">
-                  Ready for Work from office :
+                  Communication Skill Rating(Out of 10):
                 </span>
-                <span>{" " + capitalizeWords(data.workPreference)}</span>
+                <span>{" " + data.communicationSkill}</span>
               </Typography>
+              <Typography>
+                <span className="font-bold text-base !text-black pt-3">
+                  Current Company Designation :
+                </span>
+                <span>{" " + data.currentCompanyDesignation}</span>
+              </Typography>
+
+              <Typography variant="body1" className="text-gray-600">
+                <span className="font-bold text-base !text-black pt-3">
+                  Expected Package:
+                </span>
+                <span className="">
+                  {" " + capitalizeWords(data.expectedPkg) + " LPA"}
+                </span>
+              </Typography>
+              <Typography>
+                <span className="font-bold text-base !text-black pt-3">
+                  Notice Period(Days):
+                </span>
+                <span>{" " + data.noticePeriod + " days"}</span>
+              </Typography>
+
+              <Typography>
+                <span className="font-bold text-base !text-black pt-3">
+                  Preferred Locations:
+                </span>
+                <span>{" " + capitalizeWords(data.preferredLocations)}</span>
+              </Typography>
+
               <Typography>
                 <span className="font-bold text-base !text-black pt-3">
                   Any Hand On Offers?:
                 </span>
                 <span>{" " + data.anyHandOnOffers ? "Yes" : "Not"}</span>
-              </Typography>
-              <Typography>
-                <span className="font-bold text-base !text-black pt-3">
-                  Current Company Name:
-                </span>
-                <span>{" " + capitalizeWords(data.currentCompanyName)}</span>
               </Typography>
 
               <Typography>
