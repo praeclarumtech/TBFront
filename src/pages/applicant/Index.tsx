@@ -70,15 +70,15 @@ const Applicant = () => {
   const [filterInterviewStage, setFilterInterviewStage] =
     useState<SelectedOption | null>(null);
   const [filterEngRating, setFilterEngRating] = useState<number[]>([0, 11]);
-  const [filterMaritalStatus, setFilterMaritalStatus] =
-    useState<SelectedOption | null>(null);
+
   const [filterAnyHandOnOffers, setFilterAnyHandOnOffers] =
     useState<SelectedOption | null>(null);
   const [filterGender, setFilterGender] = useState<SelectedOption | null>(null);
-  const [filterRating, setFilterRating] = useState<number[]>([0, 11]);
+  const [filterRating, setFilterRating] = useState<number[]>([0,11]);
   const [filterWorkPreference, setFilterWorkPreference] =
     useState<SelectedOption | null>(null);
-  const [filterExpectedPkg, setFilterExpectedPkg] = useState<number[]>([0, 20]);
+  const [filterExpectedPkg, setFilterExpectedPkg] = useState<number[]>([0, 100]);
+  const [filterCurrentPkg, setFilterCurrentPkg] = useState<number[]>([0, 1000]);
   const [filterDesignation, SetFilterDesignation] =
     useState<SelectedOption | null>(null);
   const [filterCity, setFilterCity] = useState<SelectedOption | null>(null);
@@ -136,6 +136,7 @@ const Applicant = () => {
         rating?: string;
         workPreference?: string;
         communicationSkill?: string;
+        currentPkg?:string;
       } = {
         page: pagination.pageIndex + 1,
         pageSize: pagination.pageSize,
@@ -154,9 +155,13 @@ const Applicant = () => {
       if (filterNoticePeriod) {
         params.noticePeriod = `${filterNoticePeriod[0]}-${filterNoticePeriod[1]}`;
       }
+      
       if (filterExpectedPkg) {
         params.expectedPkg = `${filterExpectedPkg[0]}-${filterExpectedPkg[1]}`;
       }
+       if (filterCurrentPkg) {
+         params.currentPkg = `${filterCurrentPkg[0]}-${filterCurrentPkg[1]}`;
+       }
       if (filterWorkPreference) {
         params.workPreference = filterWorkPreference.value;
       }
@@ -164,9 +169,7 @@ const Applicant = () => {
         params.anyHandOnOffers = filterAnyHandOnOffers.value;
       }
 
-      if (filterMaritalStatus) {
-        params.maritalStatus = filterMaritalStatus.value;
-      }
+     
       if (filterCity) {
         params.currentCity = filterCity.value;
       }
@@ -222,11 +225,11 @@ const Applicant = () => {
     filterStatus,
     filterNoticePeriod,
     filterExpectedPkg,
+    filterCurrentPkg,
     filterDesignation,
     experienceRange,
     filterDesignation,
     filterAnyHandOnOffers,
-    filterMaritalStatus,
     filterState,
     filterRating,
     filterEngRating,
@@ -264,9 +267,7 @@ const Applicant = () => {
     setFilterAnyHandOnOffers(selectedOption);
   };
 
-  const handleMaritalStatusChange = (selectedOption: SelectedOption) => {
-    setFilterMaritalStatus(selectedOption);
-  };
+  
 
   const handleDesignationChange = (selectedOption: SelectedOption) => {
     SetFilterDesignation(selectedOption);
@@ -290,15 +291,16 @@ const Applicant = () => {
     setFilterGender(null);
     setFilterInterviewStage(null);
     setFilterStatus(null);
-    setFilterNoticePeriod([0, 100]);
-    setFilterExpectedPkg([0, 100]);
+    setFilterNoticePeriod([]);
+    setFilterExpectedPkg([]);
+    setFilterCurrentPkg([]);
     SetFilterDesignation(null);
-    setExperienceRange([0, 20]);
+    setExperienceRange([]);
     setFilterAnyHandOnOffers(null);
-    setFilterMaritalStatus(null);
+  
     setFilterWorkPreference(null);
-    setFilterRating([0, 11]);
-    setFilterEngRating([0, 11]);
+    setFilterRating([]);
+    setFilterEngRating([]);
     setFilterState(null);
     fetchApplicants();
   };
@@ -436,6 +438,7 @@ const Applicant = () => {
         <BaseSlider
           label="Experience (in years)"
           name="experience"
+          className="select-border mx-5 mb-1 "
           value={experienceRange}
           handleChange={(_event: any, newValue: number[]) => {
             setExperienceRange(newValue as number[]);
@@ -496,9 +499,23 @@ const Applicant = () => {
         <BaseSlider
           label="Expected Pkg(LPA)"
           name="expectedPkg"
+          className="select-border mx-5 mb-1  "
           value={filterExpectedPkg}
           handleChange={(_event: any, newValue: number[]) => {
             setFilterExpectedPkg(newValue as number[]);
+          }}
+          min={0}
+          max={100}
+          step={1}
+          valueLabelDisplay="auto"
+        />
+        <BaseSlider
+          label="Current Pkg(LPA)"
+          name="currentPkg"
+          className="select-border mx-5 mb-1  "
+          value={filterCurrentPkg}
+          handleChange={(_event: any, newValue: number[]) => {
+            setFilterCurrentPkg(newValue as number[]);
           }}
           min={0}
           max={100}
@@ -519,12 +536,13 @@ const Applicant = () => {
         <BaseSlider
           label="Notice Period (in Days)"
           name="noticePeriod"
+          className="select-border mx-5 mb-1  "
           value={filterNoticePeriod}
           handleChange={(_event: any, newValue: number[]) => {
             setFilterNoticePeriod(newValue as number[]);
           }}
           min={0}
-          max={100}
+          max={90}
           step={1}
           valueLabelDisplay="auto"
         />
@@ -543,6 +561,7 @@ const Applicant = () => {
           label="JavaScript Rating"
           name="rating"
           value={filterRating}
+          className="select-border mx-5 mb-1  "
           handleChange={(_event: any, newValue: number[]) => {
             setFilterRating(newValue as number[]);
           }}
@@ -555,6 +574,7 @@ const Applicant = () => {
         <BaseSlider
           label="Eng.Communication Rating"
           name="communication"
+          className="select-border mx-5 mb-1  "
           value={filterEngRating}
           handleChange={(_event: any, newValue: number[]) => {
             setFilterEngRating(newValue as number[]);
@@ -573,16 +593,7 @@ const Applicant = () => {
           handleChange={handleAnyHandOnOffersChange}
           value={filterAnyHandOnOffers}
         />
-
-        <BaseSelect
-          label="Marital Status"
-          name="maritalStatus"
-          className="select-border mb-1"
-          options={maritalStatusType}
-          placeholder="Any Hand On Offers"
-          handleChange={handleMaritalStatusChange}
-          value={filterMaritalStatus}
-        />
+ 
         <BaseInput
           label="Start Date"
           name="startDate"
@@ -847,9 +858,11 @@ const Applicant = () => {
                     <div className="col-auto d-flex justify-content-start mx-0">
                       <Button
                         onClick={toggleDrawer("right", true)}
-                        color="primary"
+                        // color="primary"
+                        className="bg-primary text-white "
+                        style={{ textTransform: "none" }}
                       >
-                        <i className="fa fa-filter mx-1 "></i> Show Filters
+                        <i className="fa fa-filter mx-1 "></i> Filters
                       </Button>
                       <Drawer
                         className="!mt-16 "
