@@ -7,7 +7,7 @@ export const EducationApplicantSchema = Yup.object({
   qualification: Yup.string().required("Qualification is required!"),
   specialization: Yup.string()
     .required("Specialization Name is required!")
-    .matches(/^[A-Za-z\s]+$/, "Specialization name can only contain letters."),
+    .matches(/^[A-Za-z\s]+$/, "Specialization can only contain letters."),
   passingYear: Yup.string().required("Passing Year is required!"),
   cgpa: Yup.string()
     .min(1, "CGPA must be at least 1.")
@@ -41,12 +41,12 @@ export const jobApplicantSchema = Yup.object({
     "Please enter a valid expected package."
   ),
   negotiation: Yup.string(),
-    // .matches(
-    // /^\d+$/,
-    // "Please enter a valid negotiation amount."
+  // .matches(
+  // /^\d+$/,
+  // "Please enter a valid negotiation amount."
   // ),
   noticePeriod: Yup.string()
-    .matches(/^\d+$/, "Please enter a valid notice period in days.")
+    // .matches(/^\d+$/, "Please enter a valid notice period in days.")
     .min(0, "Notice period cannot be negative."),
   workPreference: Yup.string()
     .required("Work preference is required!")
@@ -59,6 +59,9 @@ export const jobApplicantSchema = Yup.object({
     10,
     "Please provide detailed feedback (minimum 10 characters.)"
   ),
+  linkedinUrl: Yup.string().url("Please enter a valid URL."),
+  clientCvUrl: Yup.string().url("Please enter a valid URL."),
+  clientFeedback: Yup.string(),
   communicationSkill: Yup.number()
     .required("Communication skill rating is required!")
     .min(1, "Rating must be between 1 and 10.")

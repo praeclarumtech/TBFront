@@ -84,6 +84,9 @@ const StepperForm = () => {
     appliedRole: "",
     anyHandOnOffers: "",
     lastFollowUpDate: "",
+    linkedinUrl: "",
+    clientCvUrl: "",
+    clientFeedback: "",
   });
   const steps = [
     "Personal Details",
@@ -170,6 +173,9 @@ const StepperForm = () => {
       cgpa: formData.cgpa,
       currentAddress: formData.currentAddress,
       permanentAddress: formData.permanentAddress,
+      linkedinUrl: formData.linkedinUrl,
+      clientCvUrl: formData.clientCvUrl,
+      clientFeedback: formData.clientFeedback,
     };
   };
 

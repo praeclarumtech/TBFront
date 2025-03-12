@@ -6,20 +6,20 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
-
+ 
 # Dependency directories
 node_modules
 .pnp
 .pnp.js
-
+ 
 # Build output
 dist
 dist-ssr
 build
-
+ 
 # Local environment settings
 *.local
-
+ 
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -30,10 +30,10 @@ build
 *.njsproj
 *.sln
 *.sw?
-
+ 
 # Deployment scripts
 *.sh
-
+ 
 # Yarn
 .pnp.*
 !.yarn/cache
@@ -42,10 +42,11 @@ build
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
-
+ 
 # Environment variables
 .env*
 !.env.example
-
+ 
 # Test output
 coverage
+ 
