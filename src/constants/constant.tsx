@@ -192,19 +192,18 @@ const appConstants = Object.freeze({
     { value: "hybrid", label: "Hybrid" },
   ],
   statusOptions: [
-    { label: "Hold", value: "Hold" },
-    { label: "Processing", value: "Processing" },
-    { label: "Selected", value: "Selected" },
-    { label: "Rejected", value: "Rejected" },
-    { label: "Pending", value: "Pending" },
+    { label: "Hold", value: "hold" },
+    { label: "In-Process", value: "in-process" },
+    { label: "Selected", value: "selected" },
+    { label: "Rejected", value: "rejected" },
+    { label: "Pending", value: "pending" },
   ],
 
   interviewStageOptions: [
-    { label: "1st Interview", value: "1st Interview" },
-    { label: "2nd Interview", value: "2nd Interview" },
-    { label: "HR", value: "HR" },
-    { label: "Technical", value: "Technical" },
-    { label: "Final", value: "Final" },
+    { label: "Practical", value: "practical" },
+    { label: "HR", value: "hr round" },
+    { label: "Technical", value: "technical" },
+    { label: "Client", value: "client" },
   ],
   experienceOptions: [
     { value: 0, label: "0 Years" },

@@ -21,6 +21,7 @@ export const FILTER_APPLICANT = "applicants/viewApplicant/?";
 export const SEND_EMAIL = "email/applicant/sendEmail";
 export const VIEW_ALL_EMAIL = "email/applicant/getAllEmails";
 export const DELETE_EMAIL = "email/applicant/deleteManyEmails";
+export const VIEW_EMAIL = "email/applicant/viewEmailById";
 
 //Passing Year module
 export const ADD_PASSING_YEAR = "year";

@@ -58,11 +58,13 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
       portfolioUrl: initialValues?.portfolioUrl || "",
       currentCompanyDesignation: initialValues?.currentCompanyDesignation || "",
       preferredLocations: initialValues?.preferredLocations || "",
+      linkedinUrl: initialValues?.linkedinUrl || "",
+      clientCvUrl: initialValues?.clientCvUrl || "",
+      clientFeedback: initialValues?.clientFeedback || "",
     },
     validationSchema: jobApplicantSchema,
     onSubmit: (data: any) => {
       onNext(data);
-      console.log("job submitted", data);
     },
   });
 
@@ -380,18 +382,6 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                 />
               </Col>
               <Col xs={12} sm={4} md={4} lg={4} className="mb-3 mb-sm-0">
-                {/* <BaseInput
-                  label="Expected Package (LPA)"
-                  name="expectedPkg"
-                  type="text"
-                  placeholder={InputPlaceHolder("Expected package")}
-                  handleChange={validation.handleChange}
-                  handleBlur={validation.handleBlur}
-                  value={validation.values.expectedPkg}
-                  touched={validation.touched.expectedPkg}
-                  error={validation.errors.expectedPkg}
-                  passwordToggle={false}
-                /> */}
                 <BaseInput
                   label="Expected Package (LPA)"
                   name="expectedPkg"
@@ -445,18 +435,6 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                 />
               </Col>
               <Col xs={12} sm={4} md={4} lg={4} className="mb-3 mb-sm-0">
-                {/* <BaseInput
-                  label=" Negotiation (₹)"
-                  name="negotiation"
-                  type="text"
-                  placeholder={InputPlaceHolder("Negotiation amount")}
-                  handleChange={validation.handleChange}
-                  handleBlur={validation.handleBlur}
-                  value={validation.values.negotiation}
-                  touched={validation.touched.negotiation}
-                  error={validation.errors.negotiation}
-                  passwordToggle={false}
-                /> */}
                 <BaseInput
                   label="Negotiation (₹)"
                   name="negotiation"
@@ -515,18 +493,6 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
               </Col>
 
               <Col xs={12} sm={4} md={4} lg={4} className="mb-3">
-                {/* <BaseInput
-                  label="Notice Period (Days)"
-                  name="noticePeriod"
-                  type="text"
-                  placeholder={InputPlaceHolder("Notice period")}
-                  handleChange={validation.handleChange}
-                  handleBlur={validation.handleBlur}
-                  value={validation.values.noticePeriod}
-                  touched={validation.touched.noticePeriod}
-                  error={validation.errors.noticePeriod}
-                  passwordToggle={false}
-                /> */}
                 <BaseInput
                   label="Notice Period (Days)"
                   name="noticePeriod"
@@ -694,7 +660,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
               </Col>
               <Col xs={12} sm={4} md={4} lg={4} className="mb-3  mb-sm-0">
                 <BaseInput
-                  label="Last Follow UpDate"
+                  label="Last Follow Up Date"
                   name="lastFollowUpDate"
                   type="date"
                   placeholder={InputPlaceHolder("Last Follow UpDate")}
@@ -707,7 +673,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                 />
               </Col>
 
-              <Col xs={12} md={8} lg={6} sm={12} className="mb-3">
+              <Col xs={12} md={8} lg={4} sm={12} className="mb-3">
                 <BaseInput
                   label="Portfolio Url"
                   name="portfolioUrl"
@@ -721,7 +687,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                   passwordToggle={false}
                 />
               </Col>
-              <Col xs={12} md={6} lg={6} sm={12} className="mb-3">
+              <Col xs={12} md={6} lg={4} sm={12} className="mb-3">
                 <BaseInput
                   label="Resume Url"
                   name="resumeUrl"
@@ -736,11 +702,64 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                   title="Please Upload Resume on Google Drive and share pulic url (Only PDF files allowed)"
                 />
               </Col>
-              <Col xs={12} md={6} lg={4} sm={12} className="mb-3  mb-sm-0">
+              <Col xs={12} md={6} lg={4} sm={12} className="mb-3">
+                <BaseInput
+                  label="Linkedin Url"
+                  name="linkedinUrl"
+                  type="url"
+                  placeholder={InputPlaceHolder("Linkedin URL")}
+                  handleChange={validation.handleChange}
+                  handleBlur={validation.handleBlur}
+                  value={validation.values.linkedinUrl}
+                  touched={validation.touched.linkedinUrl}
+                  error={validation.errors.linkedinUrl}
+                  passwordToggle={false}
+                />
+              </Col>
+              <Col xs={12} md={12} lg={4} sm={12} className="mb-3">
+                <BaseInput
+                  label="Client Cv Url"
+                  name="clientCvUrl"
+                  type="url"
+                  placeholder={InputPlaceHolder("Client Cv Url")}
+                  handleChange={validation.handleChange}
+                  handleBlur={validation.handleBlur}
+                  value={validation.values.clientCvUrl}
+                  touched={validation.touched.clientCvUrl}
+                  error={validation.errors.clientCvUrl}
+                  passwordToggle={false}
+                />
+              </Col>
+              <Col
+                xs={12}
+                sm={12}
+                md={12}
+                lg={8}
+                className="!md:mb-3 !mb-3 mb-sm-0"
+              >
+                <BaseTextarea
+                  label="Client Feedback"
+                  name="clientFeedback"
+                  className="mb-3"
+                  placeholder={InputPlaceHolder(
+                    "Describe about Us Practical Task..."
+                  )}
+                  handleChange={validation.handleChange}
+                  handleBlur={validation.handleBlur}
+                  value={validation.values.clientFeedback}
+                  touched={validation.touched.clientFeedback}
+                  error={validation.errors.clientFeedback}
+                  passwordToggle={false}
+                  rows={2}
+                  cols={50}
+                />
+              </Col>
+              <Col xs={12} md={12} lg={4} sm={12} className="!mb-3  mb-sm-0">
                 <BaseInput
                   label="Practical Url"
                   name="practicalUrl"
                   type="url"
+                  className="mb-3"
                   placeholder={InputPlaceHolder("Practical Url")}
                   handleChange={validation.handleChange}
                   handleBlur={validation.handleBlur}
@@ -751,10 +770,17 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                 />
               </Col>
 
-              <Col xs={12} sm={12} md={12} lg={8} className="!md:mb-3 mb-sm-0">
+              <Col
+                xs={12}
+                sm={12}
+                md={12}
+                lg={8}
+                className="!md:mb-3 !mb-3  mb-sm-0"
+              >
                 <BaseTextarea
                   label="Practical Feedback"
                   name="practicalFeedback"
+                  className="mb-3"
                   placeholder={InputPlaceHolder(
                     "Describe about Us Practical Task..."
                   )}

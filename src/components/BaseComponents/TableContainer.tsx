@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { Fragment, useEffect, useState } from "react";
 import { CardBody, Col, Row, Table } from "reactstrap";
 import { Link } from "react-router-dom";
@@ -34,7 +35,7 @@ import Loader from "./Loader";
 import appConstants from "constants/constant";
 import { TableContainerProps } from "interfaces/global.interface";
 
-const { handleResponse, tableButtons } = appConstants;
+const { handleResponse } = appConstants;
 // Column Filter
 const Filter = ({
   column,
@@ -341,26 +342,12 @@ const TableContainer = ({
         </Table>
       </div>
       {isPagination && (
-        <Row className="align-items-center mt-2 g-3 text-center text-sm-start">
-          <div className="col-sm">
-            <div className="text-muted">
-              Showing
-              <span className="fw-semibold ms-1">
-                {getState()?.pagination?.pageSize *
-                  getState()?.pagination?.pageIndex +
-                  1}
-                -
-                {Math.min(
-                  (getState()?.pagination?.pageIndex + 1) *
-                    getState()?.pagination?.pageSize,
-                  totalRecords
-                )}
-              </span>{" "}
-              of <span className="fw-semibold">{totalRecords}</span> Results
-            </div>
+        <Row className="align-items-center mt-2 g-3">
+          <div className="col-sm-6">
+            <div className="text-muted">Total Records: {totalRecords}</div>
           </div>
-          <div className="col-sm-auto">
-            <ul className="pagination pagination-separated pagination-md justify-content-center justify-content-sm-start mb-0">
+          <div className="col-sm-6">
+            <ul className="pagination pagination-separated justify-content-end mb-0">
               <li
                 className={
                   !getCanPreviousPage() ? "page-item disabled" : "page-item"
@@ -369,34 +356,57 @@ const TableContainer = ({
                 <Link
                   to="#"
                   className="page-link"
-                  aria-disabled={pagination?.pageIndex === 0}
                   onClick={() =>
                     setPagination((prev: { pageIndex: number }) => ({
                       ...prev,
-                      pageIndex: prev?.pageIndex - 1,
+                      pageIndex: prev.pageIndex - 1,
                     }))
                   }
                 >
-                  {tableButtons.Previous}
+                  <i className="ri-arrow-left-s-line" />
                 </Link>
               </li>
-              {getPageOptions()?.map((item: any, key: number) => (
-                <React.Fragment key={key}>
-                  <li className="page-item">
-                    <Link
-                      to="#"
-                      className={
-                        getState()?.pagination.pageIndex === item
-                          ? "page-link active"
-                          : "page-link"
-                      }
-                      onClick={() => setPageIndex(item)}
+
+              {getPageOptions().map((item: number) => {
+                // Show first page, current page ±1, and last page
+                const currentPage = getState().pagination.pageIndex;
+                const isFirstPage = item === 0;
+                const isLastPage = item === getPageOptions().length - 1;
+                const isCurrentPageArea = Math.abs(item - currentPage) <= 1;
+
+                if (isFirstPage || isLastPage || isCurrentPageArea) {
+                  return (
+                    <li
+                      key={item}
+                      className={`page-item ${
+                        currentPage === item ? "active" : ""
+                      }`}
                     >
-                      {item + 1}
-                    </Link>
-                  </li>
-                </React.Fragment>
-              ))}
+                      <Link
+                        to="#"
+                        className="page-link"
+                        onClick={() => setPageIndex(item)}
+                      >
+                        {item + 1}
+                      </Link>
+                    </li>
+                  );
+                } else if (
+                  (item === currentPage - 2 && currentPage > 2) ||
+                  (item === currentPage + 2 &&
+                    currentPage < getPageOptions().length - 3)
+                ) {
+                  return (
+                    <li key={item} className="page-item disabled">
+                      <Link to="#" className="page-link">
+                        ...
+                      </Link>
+                    </li>
+                  );
+                }
+                return null;
+              })}
+
               <li
                 className={
                   !getCanNextPage() ? "page-item disabled" : "page-item"
@@ -405,9 +415,6 @@ const TableContainer = ({
                 <Link
                   to="#"
                   className="page-link"
-                  aria-disabled={
-                    pagination.pageIndex + 1 >= table.getPageCount()
-                  }
                   onClick={() =>
                     setPagination((prev: { pageIndex: number }) => ({
                       ...prev,
@@ -415,7 +422,7 @@ const TableContainer = ({
                     }))
                   }
                 >
-                  {tableButtons.Next}
+                  <i className="ri-arrow-right-s-line" />
                 </Link>
               </li>
             </ul>
