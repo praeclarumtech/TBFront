@@ -128,45 +128,16 @@ const EmailTable = () => {
     },
   ];
 
-  // const fetchEmails = async () => {
-  //   setLoading(true);
-  //   try {
-  //     const params = {
-  //       page: pagination.pageIndex + 1,
-  //       pageSize: pagination.pageSize,
-  //       startDate,
-  //       endDate,
-  //     };
-  //     if (startDate) {
-  //       params.startDate = startDate;
-  //     }
-  //     if (endDate) {
-  //       params.endDate = endDate;
-  //     }
-  //     const response = await viewAllEmail(params);
-
-  //     const emailData = Array.isArray(response.data?.emails)
-  //       ? response.data.emails
-  //       : [];
-
-  //     setEmails(emailData);
-  //     setTotalRecords(response.data?.totalRecords || 0);
-  //   } catch (error) {
-  //     errorHandle(error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   const fetchEmails = async () => {
     setLoading(true);
     try {
       const params = {
         page: pagination.pageIndex + 1,
         pageSize: pagination.pageSize,
+        startDate,
+        endDate,
       };
 
-      // Only append startDate and endDate if they are set
       if (startDate) {
         params.startDate = startDate;
       }
@@ -188,10 +159,6 @@ const EmailTable = () => {
       setLoading(false);
     }
   };
-
-  // useEffect(() => {
-  //   fetchEmails();
-  // }, [pagination.pageIndex, pagination.pageSize, startDate, endDate]);
 
   useEffect(() => {
     fetchEmails();
