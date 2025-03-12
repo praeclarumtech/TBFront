@@ -42,7 +42,7 @@ const {
   gendersType,
   stateType,
   anyHandOnOffers,
-  maritalStatusType,
+  // maritalStatusType,
   workPreferenceType,
   designationType,
 } = appConstants;
