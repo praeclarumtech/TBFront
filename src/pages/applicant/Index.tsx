@@ -97,7 +97,7 @@ const Applicant = () => {
     pageSize: 10,
   });
   const [tableLoader, setTableLoader] = useState(false);
-  const [selectedApplicants, setSelectedApplicants] = useState<string[]>([]); // Array to store selected applicants
+  const [selectedApplicants, setSelectedApplicants] = useState<string[]>([]); 
   const [state, setState] = React.useState({
     right: false,
   });
@@ -167,6 +167,7 @@ const Applicant = () => {
         if (filterCurrentPkg) {
           params.currentPkg = `${filterCurrentPkg[0]}-${filterCurrentPkg[1]}`;
         }
+      }
         if (filterWorkPreference) {
           params.workPreference = filterWorkPreference.value;
         }
@@ -202,7 +203,7 @@ const Applicant = () => {
         if (filterGender) {
           params.gender = filterGender.value;
         }
-      }
+     
       const res = await listOfApplicants(params);
       setApplicant(res?.data?.item || []);
       setTotalRecords(res?.data?.totalRecords || 0);
@@ -240,15 +241,32 @@ const Applicant = () => {
   ]);
 
 const handleFilterChange = () => {
-  // Call fetchApplicants with filters applied
   fetchApplicants(true);
   };
-  
 
   const handleRatingChange = (e: React.ChangeEvent<any>) => {
     setFilterRating(e.target.value as number[]);
     handleFilterChange(); 
   };
+
+  const handleEngRatingChange = (e: React.ChangeEvent<any>) => {
+    setFilterEngRating(e.target.value as number[]);
+    handleFilterChange();
+  };
+  const handleNoticePeriodChange = (e: React.ChangeEvent<any>) => {
+    setFilterNoticePeriod(e.target.value as number[]);
+    handleFilterChange();
+  };
+  const handleExpectedPkgChange = (e: React.ChangeEvent<any>) => {
+    setFilterExpectedPkg(e.target.value as number[]);
+    handleFilterChange();
+  };
+  const handleCurrentPkgChange = (e: React.ChangeEvent<any>) => {
+    setFilterCurrentPkg(e.target.value as number[]);
+    handleFilterChange();
+  };
+  
+  
 const handleExperienceChange = (e: React.ChangeEvent<any>) => {
   setExperienceRange(e.target.value as number[]);
   handleFilterChange();
@@ -256,42 +274,42 @@ const handleExperienceChange = (e: React.ChangeEvent<any>) => {
   
   const handleAppliedSkillsChange = (selectedOptions: SelectedOption[]) => {
     setAppliedSkills(selectedOptions);
-    handleFilterChange();
+   
  
   };
 
   const handleCityChange = (selectedOption: SelectedOption) => {
     setFilterCity(selectedOption);
-    handleFilterChange();
+    
     
   };
   const handleStateChange = (selectedOption: SelectedOption) => {
     setFilterState(selectedOption);
-    handleFilterChange();
+  
 
   };
 
   const handleGenderChange = (selectedOption: SelectedOption) => {
     setFilterGender(selectedOption);
-    handleFilterChange();
+    
     
 
   };
 
   const handleInterviewStageChange = (selectedOption: SelectedOption) => {
     setFilterInterviewStage(selectedOption);
-    handleFilterChange();
+   
    
   };
 
   const handleStatusChange = (selectedOption: SelectedOption) => {
     setFilterStatus(selectedOption);
-    handleFilterChange();
+    
   };
 
   const handleWorkPreferenceChange = (selectedOption: SelectedOption) => {
     setFilterWorkPreference(selectedOption);
-    handleFilterChange();
+   
   };
 
   const handleAnyHandOnOffersChange = (selectedOption: SelectedOption) => {
@@ -300,7 +318,7 @@ const handleExperienceChange = (e: React.ChangeEvent<any>) => {
 
   const handleDesignationChange = (selectedOption: SelectedOption) => {
     SetFilterDesignation(selectedOption);
-    handleFilterChange();
+  
   };
   const handleDateChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -311,7 +329,7 @@ const handleExperienceChange = (e: React.ChangeEvent<any>) => {
     } else {
       setEndDate(e.target.value);
     }
-    handleFilterChange();
+ 
   };
 
   const resetFilters = () => {
@@ -534,9 +552,10 @@ const handleExperienceChange = (e: React.ChangeEvent<any>) => {
           name="expectedPkg"
           className="select-border mx-5 mb-1  "
           value={filterExpectedPkg}
-          handleChange={(e: React.ChangeEvent<any>) => {
-            setFilterExpectedPkg(e.target.value as number[]); // Ensure you set an array, not just a number
-          }}
+          // handleChange={(e: React.ChangeEvent<any>) => {
+          //   setFilterExpectedPkg(e.target.value as number[]); // Ensure you set an array, not just a number
+          // }}
+          handleChange={handleExpectedPkgChange}
           min={0}
           max={100}
           step={1}
@@ -547,9 +566,10 @@ const handleExperienceChange = (e: React.ChangeEvent<any>) => {
           name="currentPkg"
           className="select-border mx-5 mb-1  "
           value={filterCurrentPkg}
-          handleChange={(e: React.ChangeEvent<any>) => {
-            setFilterCurrentPkg(e.target.value as number[]); // Ensure you set an array, not just a number
-          }}
+          // handleChange={(e: React.ChangeEvent<any>) => {
+          //   setFilterCurrentPkg(e.target.value as number[]); // Ensure you set an array, not just a number
+          // }}
+          handleChange={handleCurrentPkgChange}
           min={0}
           max={100}
           step={1}
@@ -571,9 +591,10 @@ const handleExperienceChange = (e: React.ChangeEvent<any>) => {
           name="noticePeriod"
           className="select-border mx-5 mb-1  "
           value={filterNoticePeriod}
-          handleChange={(e: React.ChangeEvent<any>) => {
-            setFilterNoticePeriod(e.target.value as number[]); // Ensure you set an array, not just a number
-          }}
+          // handleChange={(e: React.ChangeEvent<any>) => {
+          //   setFilterNoticePeriod(e.target.value as number[]); // Ensure you set an array, not just a number
+          // }}
+          handleChange={handleNoticePeriodChange}
           min={0}
           max={90}
           step={1}
@@ -610,9 +631,10 @@ const handleExperienceChange = (e: React.ChangeEvent<any>) => {
           name="communication"
           className="select-border mx-5 mb-1  "
           value={filterEngRating}
-          handleChange={(e: React.ChangeEvent<any>) => {
-            setFilterEngRating(e.target.value as number[]); // Ensure you set an array, not just a number
-          }}
+          // handleChange={(e: React.ChangeEvent<any>) => {
+          //   setFilterEngRating(e.target.value as number[]); // Ensure you set an array, not just a number
+          // }}
+          handleChange={handleEngRatingChange}
           min={0}
           max={10}
           step={1}
