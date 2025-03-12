@@ -66,7 +66,7 @@
 
 // export default AreaChart;
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -96,6 +96,7 @@ ChartJS.register(
 const StackedAreaChart = () => {
 
     const [Applicaiton, setApplication] = useState([]);
+    console.log(Applicaiton);
     
       useEffect(() => {
         fetchStatusOfApplication();

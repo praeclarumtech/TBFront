@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -10,7 +10,6 @@ import {
   Legend,
   BarElement,
 } from "chart.js";
-import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { Bar } from "react-chartjs-2";
 import { Col, Row, Card } from "react-bootstrap";
@@ -26,7 +25,6 @@ ChartJS.register(
 );
 
 const DashboardChart = () => {
-  const [isLoading, setIsLoading] = useState<boolean>(true);
   const options: ChartOptions<"bar"> = {
     responsive: true,
     maintainAspectRatio: false,
