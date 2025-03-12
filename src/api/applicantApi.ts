@@ -7,6 +7,7 @@ import {
   UPDATE_APPLICANT_STAGE,
   UPDATE_APPLICANT_STATUS,
   FILTER_APPLICANT,
+  CITY,
 } from "./apiRoutes";
 import { authServices } from "./apiServices";
 
@@ -80,5 +81,10 @@ export const updateStage = async (
 };
 export const filterApplicants = async () => {
   const response = await authServices.get(`${FILTER_APPLICANT}`);
+  return response?.data;
+};
+
+export const city = async () => {
+  const response = await authServices.get(`${CITY}`);
   return response?.data;
 };

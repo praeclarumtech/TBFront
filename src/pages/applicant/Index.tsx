@@ -1,3 +1,5 @@
+
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Row, Col, Card, Container, CardBody } from "react-bootstrap";
 import React, { Fragment, useEffect, useState, useMemo } from "react";
@@ -95,7 +97,7 @@ const Applicant = () => {
     pageSize: 10,
   });
   const [tableLoader, setTableLoader] = useState(false);
-  const [selectedApplicants, setSelectedApplicants] = useState<string[]>([]); // Array to store selected applicants
+  const [selectedApplicants, setSelectedApplicants] = useState<string[]>([]); 
   const [state, setState] = React.useState({
     right: false,
   });
@@ -114,7 +116,7 @@ const Applicant = () => {
       setState({ ...state, [anchor]: open });
     };
 
-  const fetchApplicants = async () => {
+  const fetchApplicants = async (isFiltered = false) => {
     setTableLoader(true);
     setLoader(true);
 
@@ -145,64 +147,63 @@ const Applicant = () => {
         pageSize: pagination.pageSize,
       };
 
-      if (filterRating) {
-        params.rating = `${filterRating[0]}-${filterRating[1]}`;
+    
+      if (isFiltered) {
+        if (filterRating) {
+          params.rating = `${filterRating[0]}-${filterRating[1]}`;
+        }
+        if (filterEngRating) {
+          params.communicationSkill = `${filterEngRating[0]}-${filterEngRating[1]}`;
+        }
+        if (experienceRange) {
+          params.totalExperience = `${experienceRange[0]}-${experienceRange[1]}`;
+        }
+        if (filterNoticePeriod) {
+          params.noticePeriod = `${filterNoticePeriod[0]}-${filterNoticePeriod[1]}`;
+        }
+        if (filterExpectedPkg) {
+          params.expectedPkg = `${filterExpectedPkg[0]}-${filterExpectedPkg[1]}`;
+        }
+        if (filterCurrentPkg) {
+          params.currentPkg = `${filterCurrentPkg[0]}-${filterCurrentPkg[1]}`;
+        }
       }
-      if (filterEngRating) {
-        params.communicationSkill = `${filterEngRating[0]}-${filterEngRating[1]}`;
-      }
-      if (experienceRange) {
-        params.totalExperience = `${experienceRange[0]}-${experienceRange[1]}`;
-      }
-
-      if (filterNoticePeriod) {
-        params.noticePeriod = `${filterNoticePeriod[0]}-${filterNoticePeriod[1]}`;
-      }
-
-      if (filterExpectedPkg) {
-        params.expectedPkg = `${filterExpectedPkg[0]}-${filterExpectedPkg[1]}`;
-      }
-
-      if (filterCurrentPkg) {
-        params.currentPkg = `${filterCurrentPkg[0]}-${filterCurrentPkg[1]}`;
-      }
-      if (filterWorkPreference) {
-        params.workPreference = filterWorkPreference.value;
-      }
-      if (filterAnyHandOnOffers) {
-        params.anyHandOnOffers = filterAnyHandOnOffers.value;
-      }
-
-      if (filterCity) {
-        params.currentCity = filterCity.value;
-      }
-      if (filterState) {
-        params.state = filterState.value;
-      }
-      if (appliedSkills.length > 0) {
-        params.appliedSkills = appliedSkills
-          .map((skill: SelectedOption) => skill.value)
-          .join(",");
-      }
-      if (startDate) {
-        params.startDate = startDate;
-      }
-      if (endDate) {
-        params.endDate = endDate;
-      }
-      if (filterStatus) {
-        params.status = filterStatus.value;
-      }
-      if (filterDesignation) {
-        params.currentCompanyDesignation = filterDesignation.value;
-      }
-      if (filterInterviewStage) {
-        params.interviewStage = filterInterviewStage.value;
-      }
-      if (filterGender) {
-        params.gender = filterGender.value;
-      }
-
+        if (filterWorkPreference) {
+          params.workPreference = filterWorkPreference.value;
+        }
+        if (filterAnyHandOnOffers) {
+          params.anyHandOnOffers = filterAnyHandOnOffers.value;
+        }
+        if (filterCity) {
+          params.currentCity = filterCity.value;
+        }
+        if (filterState) {
+          params.state = filterState.value;
+        }
+        if (appliedSkills.length > 0) {
+          params.appliedSkills = appliedSkills
+            .map((skill: SelectedOption) => skill.value)
+            .join(",");
+        }
+        if (startDate) {
+          params.startDate = startDate;
+        }
+        if (endDate) {
+          params.endDate = endDate;
+        }
+        if (filterStatus) {
+          params.status = filterStatus.value;
+        }
+        if (filterDesignation) {
+          params.currentCompanyDesignation = filterDesignation.value;
+        }
+        if (filterInterviewStage) {
+          params.interviewStage = filterInterviewStage.value;
+        }
+        if (filterGender) {
+          params.gender = filterGender.value;
+        }
+     
       const res = await listOfApplicants(params);
       setApplicant(res?.data?.item || []);
       setTotalRecords(res?.data?.totalRecords || 0);
@@ -215,7 +216,7 @@ const Applicant = () => {
   };
 
   useEffect(() => {
-    fetchApplicants();
+    fetchApplicants(false);
   }, [
     pagination.pageIndex,
     pagination.pageSize,
@@ -239,31 +240,76 @@ const Applicant = () => {
     filterWorkPreference,
   ]);
 
+const handleFilterChange = () => {
+  fetchApplicants(true);
+  };
+
+  const handleRatingChange = (e: React.ChangeEvent<any>) => {
+    setFilterRating(e.target.value as number[]);
+    handleFilterChange(); 
+  };
+
+  const handleEngRatingChange = (e: React.ChangeEvent<any>) => {
+    setFilterEngRating(e.target.value as number[]);
+    handleFilterChange();
+  };
+  const handleNoticePeriodChange = (e: React.ChangeEvent<any>) => {
+    setFilterNoticePeriod(e.target.value as number[]);
+    handleFilterChange();
+  };
+  const handleExpectedPkgChange = (e: React.ChangeEvent<any>) => {
+    setFilterExpectedPkg(e.target.value as number[]);
+    handleFilterChange();
+  };
+  const handleCurrentPkgChange = (e: React.ChangeEvent<any>) => {
+    setFilterCurrentPkg(e.target.value as number[]);
+    handleFilterChange();
+  };
+  
+  
+const handleExperienceChange = (e: React.ChangeEvent<any>) => {
+  setExperienceRange(e.target.value as number[]);
+  handleFilterChange();
+};
+  
   const handleAppliedSkillsChange = (selectedOptions: SelectedOption[]) => {
     setAppliedSkills(selectedOptions);
+   
+ 
   };
 
   const handleCityChange = (selectedOption: SelectedOption) => {
     setFilterCity(selectedOption);
+    
+    
   };
   const handleStateChange = (selectedOption: SelectedOption) => {
     setFilterState(selectedOption);
+  
+
   };
 
   const handleGenderChange = (selectedOption: SelectedOption) => {
     setFilterGender(selectedOption);
+    
+    
+
   };
 
   const handleInterviewStageChange = (selectedOption: SelectedOption) => {
     setFilterInterviewStage(selectedOption);
+   
+   
   };
 
   const handleStatusChange = (selectedOption: SelectedOption) => {
     setFilterStatus(selectedOption);
+    
   };
 
   const handleWorkPreferenceChange = (selectedOption: SelectedOption) => {
     setFilterWorkPreference(selectedOption);
+   
   };
 
   const handleAnyHandOnOffersChange = (selectedOption: SelectedOption) => {
@@ -272,6 +318,7 @@ const Applicant = () => {
 
   const handleDesignationChange = (selectedOption: SelectedOption) => {
     SetFilterDesignation(selectedOption);
+  
   };
   const handleDateChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -282,6 +329,7 @@ const Applicant = () => {
     } else {
       setEndDate(e.target.value);
     }
+ 
   };
 
   const resetFilters = () => {
@@ -298,12 +346,12 @@ const Applicant = () => {
     SetFilterDesignation(null);
     setExperienceRange([0, 25]);
     setFilterAnyHandOnOffers(null);
-
     setFilterWorkPreference(null);
     setFilterRating([0, 11]);
     setFilterEngRating([0, 11]);
     setFilterState(null);
-    fetchApplicants();
+    // fetchApplicants();
+    fetchApplicants(false);
   };
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
@@ -395,6 +443,7 @@ const Applicant = () => {
       .map((app) => `Name: ${app.name}, Email: ${app.email}`)
       .join("\n");
 
+   
     window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, "_blank");
   };
 
@@ -440,9 +489,10 @@ const Applicant = () => {
           name="experience"
           className="select-border mx-5 mb-1 "
           value={experienceRange}
-          handleChange={(e: React.ChangeEvent<any>) => {
-            setExperienceRange(e.target.value as number[]); // Ensure you set an array, not just a number
-          }}
+          // handleChange={(e: React.ChangeEvent<any>) => {
+          //   setExperienceRange(e.target.value as number[]); // Ensure you set an array, not just a number
+          // }}
+          handleChange={handleExperienceChange}
           min={0}
           max={25}
           step={1}
@@ -502,9 +552,10 @@ const Applicant = () => {
           name="expectedPkg"
           className="select-border mx-5 mb-1  "
           value={filterExpectedPkg}
-          handleChange={(e: React.ChangeEvent<any>) => {
-            setFilterExpectedPkg(e.target.value as number[]);
-          }}
+          // handleChange={(e: React.ChangeEvent<any>) => {
+          //   setFilterExpectedPkg(e.target.value as number[]); // Ensure you set an array, not just a number
+          // }}
+          handleChange={handleExpectedPkgChange}
           min={0}
           max={100}
           step={1}
@@ -515,9 +566,10 @@ const Applicant = () => {
           name="currentPkg"
           className="select-border mx-5 mb-1  "
           value={filterCurrentPkg}
-          handleChange={(e: React.ChangeEvent<any>) => {
-            setFilterCurrentPkg(e.target.value as number[]); 
-          }}
+          // handleChange={(e: React.ChangeEvent<any>) => {
+          //   setFilterCurrentPkg(e.target.value as number[]); // Ensure you set an array, not just a number
+          // }}
+          handleChange={handleCurrentPkgChange}
           min={0}
           max={100}
           step={1}
@@ -539,9 +591,10 @@ const Applicant = () => {
           name="noticePeriod"
           className="select-border mx-5 mb-1  "
           value={filterNoticePeriod}
-          handleChange={(e: React.ChangeEvent<any>) => {
-            setFilterNoticePeriod(e.target.value as number[]); 
-          }}
+          // handleChange={(e: React.ChangeEvent<any>) => {
+          //   setFilterNoticePeriod(e.target.value as number[]); // Ensure you set an array, not just a number
+          // }}
+          handleChange={handleNoticePeriodChange}
           min={0}
           max={90}
           step={1}
@@ -563,9 +616,10 @@ const Applicant = () => {
           name="rating"
           value={filterRating}
           className="select-border mx-5 mb-1  "
-          handleChange={(e: React.ChangeEvent<any>) => {
-            setFilterRating(e.target.value as number[]); 
-          }}
+          // handleChange={(e: React.ChangeEvent<any>) => {
+          //   setFilterRating(e.target.value as number[]); // Ensure you set an array, not just a number
+          // }}
+          handleChange={handleRatingChange}
           min={0}
           max={10}
           step={1}
@@ -577,9 +631,10 @@ const Applicant = () => {
           name="communication"
           className="select-border mx-5 mb-1  "
           value={filterEngRating}
-          handleChange={(e: React.ChangeEvent<any>) => {
-            setFilterEngRating(e.target.value as number[]); 
-          }}
+          // handleChange={(e: React.ChangeEvent<any>) => {
+          //   setFilterEngRating(e.target.value as number[]); // Ensure you set an array, not just a number
+          // }}
+          handleChange={handleEngRatingChange}
           min={0}
           max={10}
           step={1}
@@ -927,7 +982,7 @@ const Applicant = () => {
               <div className="card-body pt-0">
                 {tableLoader ? (
                   <div className="text-center py-4">
-                    <Skeleton count={5} />
+                  <Skeleton count={5}/>
                   </div>
                 ) : (
                   <div>
