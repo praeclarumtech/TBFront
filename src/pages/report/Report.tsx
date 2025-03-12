@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from "react";
+import  { Fragment, useState, useEffect } from "react";
 import { Card, Col, Container, Row } from "react-bootstrap";
 import {
   BoxArrowInUpRight,
@@ -6,7 +6,6 @@ import {
   Icon1Circle,
   Icon2Circle,
 } from "react-bootstrap-icons";
-// import AreaChart from "sub-components/report/AreaChart";
 import DounutChart from "sub-components/report/DounutChart";
 import ProgressBar from "sub-components/report/ProgressBar";
 import ProgressChart from "sub-components/report/ProgressChart";
@@ -18,6 +17,8 @@ const Report = () => {
   const [applicantsOnProcess3, setApplicantsOnProcess3] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+console.log(error)
 
   useEffect(() => {
     fetchApplicantsOnProcess();

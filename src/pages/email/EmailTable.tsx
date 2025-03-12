@@ -242,7 +242,7 @@ import { viewAllEmail, deleteEmail } from "../../api/emailApi";
 import moment from "moment";
 import TableContainer from "../../components/BaseComponents/TableContainer";
 import BaseInput from "../../components/BaseComponents/BaseInput";
-import Loader from "components/BaseComponents/Loader";
+
 import BaseButton from "components/BaseComponents/BaseButton";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import { errorHandle, InputPlaceHolder } from "utils/commonFunctions";
