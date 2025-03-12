@@ -18,6 +18,8 @@ import DeleteModal from "components/BaseComponents/DeleteModal";
 import BaseModal from "components/BaseComponents/BaseModal";
 import appConstants from "constants/constant";
 import { getSerialNumber, InputPlaceHolder } from "utils/commonFunctions";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 const { projectTitle, Modules, handleResponse } = appConstants;
 
@@ -33,8 +35,10 @@ const AddSkill = () => {
     pageIndex: 0,
     pageSize: 10,
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   const fetchSkills = async () => {
+    setIsLoading(true);
     try {
       const res = await viewAllSkill({
         page: pagination.pageIndex + 1,
@@ -50,6 +54,8 @@ const AddSkill = () => {
     } catch (error) {
       toast.error("Something went wrong!");
       console.error(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -276,28 +282,34 @@ const AddSkill = () => {
                   </BaseModal>
                   <Row>
                     <Col lg={12}>
-                      <div>
-                        {skills?.length > 0 ? (
-                          <TableContainer
-                            isHeaderTitle="Skills"
-                            columns={columns}
-                            data={skills}
-                            isGlobalFilter={true}
-                            customPageSize={10}
-                            theadClass="table-light text-muted"
-                            SearchPlaceholder="Search..."
-                            totalRecords={totalRecords}
-                            pagination={pagination}
-                            setPagination={setPagination}
-                            loader={loader}
-                          />
-                        ) : (
-                          <div className="py-4 text-center">
-                            <i className="ri-search-line d-block fs-1 text-success"></i>
-                            {handleResponse?.dataNotFound}
-                          </div>
-                        )}
-                      </div>
+                      {isLoading ? (
+                        <div className="text-center py-4">
+                          <Skeleton count={5} />
+                        </div>
+                      ) : (
+                        <div>
+                          {skills?.length > 0 ? (
+                            <TableContainer
+                              isHeaderTitle="Skills"
+                              columns={columns}
+                              data={skills}
+                              isGlobalFilter={true}
+                              customPageSize={10}
+                              theadClass="table-light text-muted"
+                              SearchPlaceholder="Search..."
+                              totalRecords={totalRecords}
+                              pagination={pagination}
+                              setPagination={setPagination}
+                              loader={loader}
+                            />
+                          ) : (
+                            <div className="py-4 text-center">
+                              <i className="ri-search-line d-block fs-1 text-success"></i>
+                              {handleResponse?.dataNotFound}
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </Col>
                   </Row>
                 </Row>

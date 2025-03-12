@@ -2,12 +2,19 @@ import { Fragment, useEffect, useState } from "react";
 import { Container, Col, Row } from "react-bootstrap";
 import { StatRightTopIcon } from "widgets";
 import RecentApplicants from "sub-components/dashboard/RecentApplicants";
-import { People, ListTask, ClockHistory, GraphUp } from "react-bootstrap-icons";
+import {
+  People,
+  ClockHistory,
+  GraphUp,
+  Check2Circle,
+  XCircle,
+  ExclamationCircle,
+} from "react-bootstrap-icons";
 import ApplicantsDeatils from "sub-components/dashboard/ApplicantsDetails";
 import { getTotalApplicants } from "api/dashboardApi";
 
 const Dashboard = () => {
-  const [totalApplicants, setTotalApplicants] = useState<any>();
+  const [totalApplicants, setTotalApplicants] = useState<number | null>(null);
   const [holdApplicants, setHoldApplicants] = useState<number | null>(null);
   const [pendingApplicants, setPendingApplicants] = useState<number | null>(
     null
@@ -15,111 +22,129 @@ const Dashboard = () => {
   const [inProcessApplicants, setInProcessApplicants] = useState<number | null>(
     null
   );
+  const [isLoading, setIsLoading] = useState<boolean>(true); // ✅ Tracks loading
+  const [error, setError] = useState<string | null>(null);
+  const [rejectedApplicants, setRejectedApplicants] = useState<number | null>(
+    null
+  );
+  const [selectedApplicants, setSelectedApplicants] = useState<number | null>(
+    null
+  );
 
-  // const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<any>(null);
+  const [selectedTechnology, setSelectedTechnology] = useState<string | null>(
+    null
+  );
+
+  const handleResetFilter = () => {
+    setSelectedTechnology(null);
+  };
+
+  // const handleBarClick = (technology: string) => {
+  //   setSelectedTechnology(technology);
+  // };
 
   useEffect(() => {
     fetchTotalApplicants();
   }, []);
 
   const fetchTotalApplicants = async () => {
+    setIsLoading(true);
     try {
       const data = await getTotalApplicants();
-      console.log(data);
+      console.log("API Response:", data);
+      // ✅ Check if data exists before setting state
       setTotalApplicants(data.data.totalApplicants);
       setHoldApplicants(data.data.holdApplicants);
       setPendingApplicants(data.data.pendingApplicants);
       setInProcessApplicants(data.data.inProcessApplicants);
+      setRejectedApplicants(data.data.rejectedApplicants);
+      setSelectedApplicants(data.data.selectedApplicants);
     } catch (error) {
-      setError("Failed to load applicants");
       console.error("API Error:", error);
+      setError("Failed to load applicants");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <Fragment>
       <div className="min-h-screen">
-        <div className="pt-5 pb-23 bg-primary"></div>
+        <div className="pb-23"></div>
         <Container fluid className="mt-n23 px-6">
-          <Row>
-            <Col
-              xl={3}
-              lg={6}
-              md={6}
-              xs={12}
-              className="d-flex justify-content-between align-items-center mb-3"
-            >
+          <Row className="bg-primary mx-n6 mb-n6 mt-n8 pt-3">
+            <Col xl={2} lg={6} md={6} xs={12} className="mb-3">
               <StatRightTopIcon
                 title="Total Applicants"
-                icon={<People size={18} />}
+                icon={<People size={20} />}
                 data={totalApplicants}
                 error={error}
-                classes={
-                  "icon-shape icon-md rounded-2 bg-light-primary text-primary"
-                }
+                classes="icon-shape icon-lg rounded-2 bg-light-primary text-primary"
+                isLoading={isLoading}
               />
             </Col>
-            <Col
-              xl={3}
-              lg={6}
-              md={6}
-              xs={12}
-              className="d-flex justify-content-between align-items-center mb-3"
-            >
+            <Col xl={2} lg={6} md={6} xs={12} className="mb-3">
               <StatRightTopIcon
-                title="Applicants in Process"
-                icon={<ListTask size={18} />}
+                title="In Process"
+                icon={<ClockHistory size={20} />}
                 data={inProcessApplicants}
                 error={error}
-                classes={
-                  "icon-shape icon-md rounded-2 bg-light-success text-success"
-                }
+                classes="icon-shape icon-lg rounded-2 bg-light-info text-info"
+                isLoading={isLoading}
               />
             </Col>
-            <Col
-              xl={3}
-              lg={6}
-              md={6}
-              xs={12}
-              className="d-flex justify-content-between align-items-center mb-3"
-            >
+            <Col xl={2} lg={6} md={6} xs={12} className="mb-3">
               <StatRightTopIcon
-                title="Applicants on Hold"
-                icon={<GraphUp size={18} />}
+                title="On Hold"
+                icon={<GraphUp size={20} />}
                 data={holdApplicants}
                 error={error}
-                classes={
-                  "icon-shape icon-md rounded-2 bg-light-warning text-warning"
-                }
+                classes="icon-shape icon-lg rounded-2 bg-light-warning text-warning"
+                isLoading={isLoading}
               />
             </Col>
-            <Col
-              xl={3}
-              lg={6}
-              md={6}
-              xs={12}
-              className="d-flex justify-content-between align-items-center mb-3"
-            >
+            <Col xl={2} lg={6} md={6} xs={12} className="mb-3">
               <StatRightTopIcon
-                title="Total Pending "
-                icon={<ClockHistory size={18} />}
+                title="Total Pending"
+                icon={<ExclamationCircle size={20} />}
                 data={pendingApplicants}
                 error={error}
-                classes={
-                  "icon-shape icon-md rounded-2 bg-light-danger text-danger"
-                }
+                classes="icon-shape icon-lg rounded-2 bg-light-warning text-warning"
+                isLoading={isLoading}
+              />
+            </Col>
+            <Col xl={2} lg={6} md={6} xs={12} className="mb-3">
+              <StatRightTopIcon
+                title="Selected"
+                icon={<Check2Circle size={20} />}
+                data={selectedApplicants}
+                error={error}
+                classes="icon-shape icon-lg rounded-2 bg-light-success text-success"
+                isLoading={isLoading}
+              />
+            </Col>
+            <Col xl={2} lg={6} md={6} xs={12} className="mb-3">
+              <StatRightTopIcon
+                title="Rejected"
+                icon={<XCircle size={20} />}
+                data={rejectedApplicants}
+                error={error}
+                classes="icon-shape icon-lg rounded-2 bg-light-danger text-danger"
+                isLoading={isLoading}
               />
             </Col>
           </Row>
-
-          {/* <ActiveProjects /> */}
-          <Row className="mb-3">
-            <Col xl={6} lg={12} md={12} xs={12}>
-              <ApplicantsDeatils  />
+          <Row className="mt-3">
+            <Col xl={6}>
+              <ApplicantsDeatils
+                setSelectedTechnology={setSelectedTechnology}
+              />
             </Col>
-            <Col xl={6} lg={12} md={12} xs={12}>
-              <RecentApplicants />
+            <Col xl={6}>
+              <RecentApplicants
+                selectedTechnology={selectedTechnology}
+                onResetFilter={handleResetFilter}
+              />
             </Col>
           </Row>
         </Container>
@@ -127,4 +152,5 @@ const Dashboard = () => {
     </Fragment>
   );
 };
+
 export default Dashboard;

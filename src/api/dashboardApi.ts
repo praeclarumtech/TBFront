@@ -11,16 +11,27 @@ export const getTotalApplicants = async () => {
         throw error
     }
 }
-
-export const getRecentApplications = async () => {
-    try{
-        const response = await axios.get(`${API_BASE_URL}/applicant/recentApplicant`)
+export const getRecentApplications = async (appliedSkills = "") => {
+    try {
+        const response = await axios.get(
+            `https://tbapi-jtu7.onrender.com/api/applicants/viewAllApplicant?appliedSkills=${appliedSkills || ""}`
+        );
         return response.data;
-    }catch (error){
-        console.log("Error fetching reccent application:-",error)
-        throw error
+    } catch (error) {
+        console.error("Error fetching recent applications:", error);
+        throw error;
     }
-}
+};
+
+// export const getRecentApplications = async () => {
+//     try{
+//         const response = await axios.get(`https://tbapi-jtu7.onrender.com/api/applicants/viewAllApplicant?appliedSkills=${}`)
+//         return response.data;
+//     }catch (error){
+//         console.log("Error fetching reccent application:-",error)
+//         throw error
+//     }
+// }
 
 export const getApplicantsDetails = async () => {
     try{

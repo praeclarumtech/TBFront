@@ -31,6 +31,7 @@ import {
 } from "utils/commonFunctions";
 import appConstants from "constants/constant";
 import BaseSlider from "components/BaseComponents/BaseSlider";
+import Skeleton from "react-loading-skeleton";
 
 const {
   projectTitle,
@@ -924,25 +925,34 @@ const Applicant = () => {
           <Col lg={12}>
             <Card>
               <div className="card-body pt-0">
-                {applicant.length > 0 ? (
-                  <TableContainer
-                    isHeaderTitle="Applicants"
-                    columns={columns}
-                    data={applicant}
-                    isGlobalFilter
-                    customPageSize={10}
-                    theadClass="table-light text-muted"
-                    SearchPlaceholder="Search..."
-                    tableClass="!text-nowrap !mb-0 !responsive !table-responsive-sm !table-hover !table-outline-none !mb-0"
-                    totalRecords={totalRecords}
-                    pagination={pagination}
-                    setPagination={setPagination}
-                    loader={tableLoader}
-                  />
+                {tableLoader ? (
+                  <div className="text-center py-4">
+                  <Skeleton count={5}/>
+                  </div>
                 ) : (
-                  <div className="py-4 text-center">
-                    <i className="ri-search-line d-block fs-1 text-success"></i>
-                    No applicants found.
+                  <div>
+                    {applicant.length > 0 ? (
+                      <TableContainer
+                        isHeaderTitle="Applicants"
+                        columns={columns}
+                        data={applicant}
+                        isGlobalFilter
+                        customPageSize={10}
+                        theadClass="table-light text-muted"
+                        SearchPlaceholder="Search..."
+                        tableClass="!text-nowrap !mb-0 !responsive !table-responsive-sm !table-hover !table-outline-none !mb-0"
+                        totalRecords={totalRecords}
+                        pagination={pagination}
+                        setPagination={setPagination}
+                        loader={tableLoader}
+                      />
+                    ) : (
+                      // <<div className="py-4 text-center">
+                      //   <i className="ri-search-line d-block fs-1 text-success"></i>
+                      //   No applicants found.
+                      // </div>>
+                      <></>
+                    )}
                   </div>
                 )}
               </div>
