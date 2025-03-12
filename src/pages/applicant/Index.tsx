@@ -30,6 +30,7 @@ import {
   InputPlaceHolder,
 } from "utils/commonFunctions";
 import appConstants from "constants/constant";
+import BaseSlider from "components/BaseComponents/BaseSlider";
 
 const {
   projectTitle,
@@ -37,11 +38,12 @@ const {
   skillOptions,
   interviewStageOptions,
   cityOptions,
-  experienceOptions,
   statusOptions,
   gendersType,
-  expectedPkgOptions,
-  noticePeriodOptions,
+  stateType,
+  anyHandOnOffers,
+  // maritalStatusType,
+  workPreferenceType,
   designationType,
 } = appConstants;
 
@@ -59,19 +61,28 @@ const Applicant = () => {
   const [recordIdToDelete, setRecordIdToDelete] = useState<string | undefined>(
     undefined
   );
-  const [filterExperience, setFilterExperience] =
-    useState<SelectedOption | null>(null);
+  const [experienceRange, setExperienceRange] = useState<number[]>([0, 20]);
+  const [filterNoticePeriod, setFilterNoticePeriod] = useState<number[]>([
+    0, 50,
+  ]);
+
   const [filterStatus, setFilterStatus] = useState<SelectedOption | null>(null);
   const [filterInterviewStage, setFilterInterviewStage] =
     useState<SelectedOption | null>(null);
+  const [filterEngRating, setFilterEngRating] = useState<number[]>([0, 11]);
+
+  const [filterAnyHandOnOffers, setFilterAnyHandOnOffers] =
+    useState<SelectedOption | null>(null);
   const [filterGender, setFilterGender] = useState<SelectedOption | null>(null);
-  const [filterNoticePeriod, setFilterNoticePeriod] =
+  const [filterRating, setFilterRating] = useState<number[]>([0,11]);
+  const [filterWorkPreference, setFilterWorkPreference] =
     useState<SelectedOption | null>(null);
-  const [filterExpectedPkg, setFilterExpectedPkg] =
-    useState<SelectedOption | null>(null);
+  const [filterExpectedPkg, setFilterExpectedPkg] = useState<number[]>([0, 100]);
+  const [filterCurrentPkg, setFilterCurrentPkg] = useState<number[]>([0, 1000]);
   const [filterDesignation, SetFilterDesignation] =
     useState<SelectedOption | null>(null);
   const [filterCity, setFilterCity] = useState<SelectedOption | null>(null);
+  const [filterState, setFilterState] = useState<SelectedOption | null>(null);
   const [appliedSkills, setAppliedSkills] = useState<SelectedOption[]>([]);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -108,27 +119,62 @@ const Applicant = () => {
       const params: {
         page: number;
         pageSize: number;
-        totalExperience?: number;
+        totalExperience?: string;
         currentCity?: string;
         appliedSkills?: string;
         startDate?: string;
         endDate?: string;
-        noticePeriod?: number;
+        noticePeriod?: string;
         status?: string;
         interviewStage?: string;
         gender?: string;
         expectedPkg?: string;
         currentCompanyDesignation?: string;
+        state?: string;
+        maritalStatus?: string;
+        anyHandOnOffers?: string;
+        rating?: string;
+        workPreference?: string;
+        communicationSkill?: string;
+        currentPkg?:string;
       } = {
         page: pagination.pageIndex + 1,
         pageSize: pagination.pageSize,
       };
 
-      if (filterExperience) {
-        params.totalExperience = Number(filterExperience.value);
+      if (filterRating) {
+        params.rating = `${filterRating[0]}-${filterRating[1]}`;
       }
+      if (filterEngRating) {
+        params.communicationSkill = `${filterEngRating[0]}-${filterEngRating[1]}`;
+      }
+      if (experienceRange) {
+        params.totalExperience = `${experienceRange[0]}-${experienceRange[1]}`;
+      }
+
+      if (filterNoticePeriod) {
+        params.noticePeriod = `${filterNoticePeriod[0]}-${filterNoticePeriod[1]}`;
+      }
+      
+      if (filterExpectedPkg) {
+        params.expectedPkg = `${filterExpectedPkg[0]}-${filterExpectedPkg[1]}`;
+      }
+       if (filterCurrentPkg) {
+         params.currentPkg = `${filterCurrentPkg[0]}-${filterCurrentPkg[1]}`;
+       }
+      if (filterWorkPreference) {
+        params.workPreference = filterWorkPreference.value;
+      }
+      if (filterAnyHandOnOffers) {
+        params.anyHandOnOffers = filterAnyHandOnOffers.value;
+      }
+
+     
       if (filterCity) {
         params.currentCity = filterCity.value;
+      }
+      if (filterState) {
+        params.state = filterState.value;
       }
       if (appliedSkills.length > 0) {
         params.appliedSkills = appliedSkills
@@ -141,11 +187,6 @@ const Applicant = () => {
       if (endDate) {
         params.endDate = endDate;
       }
-
-      if (filterNoticePeriod) {
-        params.noticePeriod = Number(filterNoticePeriod.value);
-      }
-
       if (filterStatus) {
         params.status = filterStatus.value;
       }
@@ -157,9 +198,6 @@ const Applicant = () => {
       }
       if (filterGender) {
         params.gender = filterGender.value;
-      }
-      if (filterExpectedPkg) {
-        params.expectedPkg = filterExpectedPkg.value;
       }
 
       const res = await listOfApplicants(params);
@@ -178,7 +216,6 @@ const Applicant = () => {
   }, [
     pagination.pageIndex,
     pagination.pageSize,
-    filterExperience,
     appliedSkills,
     startDate,
     endDate,
@@ -188,20 +225,26 @@ const Applicant = () => {
     filterStatus,
     filterNoticePeriod,
     filterExpectedPkg,
+    filterCurrentPkg,
     filterDesignation,
-    // selectedApplicants,
+    experienceRange,
+    filterDesignation,
+    filterAnyHandOnOffers,
+    filterState,
+    filterRating,
+    filterEngRating,
+    filterWorkPreference,
   ]);
 
   const handleAppliedSkillsChange = (selectedOptions: SelectedOption[]) => {
     setAppliedSkills(selectedOptions);
   };
 
-  const handleExperienceChange = (selectedOption: SelectedOption) => {
-    setFilterExperience(selectedOption);
-  };
-
   const handleCityChange = (selectedOption: SelectedOption) => {
     setFilterCity(selectedOption);
+  };
+  const handleStateChange = (selectedOption: SelectedOption) => {
+    setFilterState(selectedOption);
   };
 
   const handleGenderChange = (selectedOption: SelectedOption) => {
@@ -216,13 +259,16 @@ const Applicant = () => {
     setFilterStatus(selectedOption);
   };
 
-  const handleNoticePeriodChange = (selectedOption: SelectedOption) => {
-    setFilterNoticePeriod(selectedOption);
+  const handleWorkPreferenceChange = (selectedOption: SelectedOption) => {
+    setFilterWorkPreference(selectedOption);
   };
 
-  const handleExpectedPkgChange = (selectedOption: SelectedOption) => {
-    setFilterExpectedPkg(selectedOption);
+  const handleAnyHandOnOffersChange = (selectedOption: SelectedOption) => {
+    setFilterAnyHandOnOffers(selectedOption);
   };
+
+  
+
   const handleDesignationChange = (selectedOption: SelectedOption) => {
     SetFilterDesignation(selectedOption);
   };
@@ -238,7 +284,6 @@ const Applicant = () => {
   };
 
   const resetFilters = () => {
-    setFilterExperience(null);
     setAppliedSkills([]);
     setStartDate("");
     setEndDate("");
@@ -246,17 +291,24 @@ const Applicant = () => {
     setFilterGender(null);
     setFilterInterviewStage(null);
     setFilterStatus(null);
-    setFilterNoticePeriod(null);
-    setFilterExpectedPkg(null);
+    setFilterNoticePeriod([]);
+    setFilterExpectedPkg([]);
+    setFilterCurrentPkg([]);
     SetFilterDesignation(null);
-
+    setExperienceRange([]);
+    setFilterAnyHandOnOffers(null);
+  
+    setFilterWorkPreference(null);
+    setFilterRating([]);
+    setFilterEngRating([]);
+    setFilterState(null);
     fetchApplicants();
   };
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      setSelectedApplicants(applicant.map((app) => app._id)); // Select all applicants
+      setSelectedApplicants(applicant.map((app) => app._id));
     } else {
-      setSelectedApplicants([]); // Deselect all
+      setSelectedApplicants([]);
     }
   };
 
@@ -383,15 +435,20 @@ const Applicant = () => {
           options={skillOptions}
         />
 
-        <BaseSelect
-          label="Experience"
-          name="Experience"
-          className="select-border mb-1"
-          options={experienceOptions}
-          placeholder="Experience"
-          handleChange={handleExperienceChange}
-          value={filterExperience}
+        <BaseSlider
+          label="Experience (in years)"
+          name="experience"
+          className="select-border mx-5 mb-1 "
+          value={experienceRange}
+          handleChange={(_event: any, newValue: number[]) => {
+            setExperienceRange(newValue as number[]);
+          }}
+          min={0}
+          max={50}
+          step={1}
+          valueLabelDisplay="auto"
         />
+
         <BaseSelect
           label="City"
           name="city"
@@ -400,6 +457,15 @@ const Applicant = () => {
           placeholder="City"
           handleChange={handleCityChange}
           value={filterCity}
+        />
+        <BaseSelect
+          label="State"
+          name="state"
+          className="select-border mb-1 "
+          options={stateType}
+          placeholder="State"
+          handleChange={handleStateChange}
+          value={filterState}
         />
         <BaseSelect
           label="Interview Stage"
@@ -430,15 +496,33 @@ const Applicant = () => {
           value={filterGender}
         />
 
-        <BaseSelect
-          label="Expected Pkg"
+        <BaseSlider
+          label="Expected Pkg(LPA)"
           name="expectedPkg"
-          className="select-border mb-1 "
-          options={expectedPkgOptions}
-          placeholder="Expected Package"
-          handleChange={handleExpectedPkgChange}
+          className="select-border mx-5 mb-1  "
           value={filterExpectedPkg}
+          handleChange={(_event: any, newValue: number[]) => {
+            setFilterExpectedPkg(newValue as number[]);
+          }}
+          min={0}
+          max={100}
+          step={1}
+          valueLabelDisplay="auto"
         />
+        <BaseSlider
+          label="Current Pkg(LPA)"
+          name="currentPkg"
+          className="select-border mx-5 mb-1  "
+          value={filterCurrentPkg}
+          handleChange={(_event: any, newValue: number[]) => {
+            setFilterCurrentPkg(newValue as number[]);
+          }}
+          min={0}
+          max={100}
+          step={1}
+          valueLabelDisplay="auto"
+        />
+
         <BaseSelect
           label="Designation"
           name="designation"
@@ -448,16 +532,68 @@ const Applicant = () => {
           handleChange={handleDesignationChange}
           value={filterDesignation}
         />
-        <BaseSelect
-          label="Notice Period"
+
+        <BaseSlider
+          label="Notice Period (in Days)"
           name="noticePeriod"
-          className="select-border mb-1"
-          options={noticePeriodOptions}
-          placeholder="Notice Period"
-          handleChange={handleNoticePeriodChange}
+          className="select-border mx-5 mb-1  "
           value={filterNoticePeriod}
+          handleChange={(_event: any, newValue: number[]) => {
+            setFilterNoticePeriod(newValue as number[]);
+          }}
+          min={0}
+          max={90}
+          step={1}
+          valueLabelDisplay="auto"
         />
 
+        <BaseSelect
+          label="Work Preference"
+          name="workPreference"
+          className="select-border mb-1"
+          options={workPreferenceType}
+          placeholder="Work Preference"
+          handleChange={handleWorkPreferenceChange}
+          value={filterWorkPreference}
+        />
+
+        <BaseSlider
+          label="JavaScript Rating"
+          name="rating"
+          value={filterRating}
+          className="select-border mx-5 mb-1  "
+          handleChange={(_event: any, newValue: number[]) => {
+            setFilterRating(newValue as number[]);
+          }}
+          min={0}
+          max={10}
+          step={1}
+          valueLabelDisplay="auto"
+        />
+
+        <BaseSlider
+          label="Eng.Communication Rating"
+          name="communication"
+          className="select-border mx-5 mb-1  "
+          value={filterEngRating}
+          handleChange={(_event: any, newValue: number[]) => {
+            setFilterEngRating(newValue as number[]);
+          }}
+          min={0}
+          max={10}
+          step={1}
+          valueLabelDisplay="auto"
+        />
+        <BaseSelect
+          label="Any Hand On Offers"
+          name="anyHandOnOffers"
+          className="select-border mb-1"
+          options={anyHandOnOffers}
+          placeholder="Any Hand On Offers"
+          handleChange={handleAnyHandOnOffersChange}
+          value={filterAnyHandOnOffers}
+        />
+ 
         <BaseInput
           label="Start Date"
           name="startDate"
@@ -469,7 +605,6 @@ const Applicant = () => {
           }
           value={startDate || ""}
         />
-
         <BaseInput
           label="End Date"
           name="endDate"
@@ -723,9 +858,11 @@ const Applicant = () => {
                     <div className="col-auto d-flex justify-content-start mx-0">
                       <Button
                         onClick={toggleDrawer("right", true)}
-                        color="primary"
+                        // color="primary"
+                        className="bg-primary text-white "
+                        style={{ textTransform: "none" }}
                       >
-                        <i className="fa fa-filter mx-1 "></i> Show Filters
+                        <i className="fa fa-filter mx-1 "></i> Filters
                       </Button>
                       <Drawer
                         className="!mt-16 "

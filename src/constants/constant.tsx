@@ -236,12 +236,12 @@ const appConstants = Object.freeze({
   ],
 
   noticePeriodOptions: [
-    { value: 0, label: "0 days" },
-    { value: 1 - 10, label: "1-10 days" },
-    { value: 9 - 20, label: "10 - 20 days" },
-    { value: 19 - 30, label: "20 - 30 days" },
-    { value: 29 - 40, label: "30 - 40 days" },
-    { value: 39 - 100, label: "40+ days" },
+    { value: "0", label: "Immediate" },
+    { value: "1-10", label: "1-10 days" },
+    { value: "9-20", label: "10 - 20 days" },
+    { value: "19-30", label: "20 - 30 days" },
+    { value: "29-40", label: "30 - 40 days" },
+    { value: "39-100", label: "40+ days" },
   ],
 
   expectedPkgOptions: [

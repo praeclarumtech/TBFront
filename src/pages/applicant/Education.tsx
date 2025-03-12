@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Row, Col, Container } from "react-bootstrap";
 import { useFormik } from "formik";
-import { Fragment, useState } from "react";
+import { Fragment } from "react";
 import BaseButton from "components/BaseComponents/BaseButton";
-import { BaseSelect, MultiSelect } from "components/BaseComponents/BaseSelect";
+import { BaseSelect } from "components/BaseComponents/BaseSelect";
 import { Form } from "react-router-dom";
 import BaseInput from "components/BaseComponents/BaseInput";
 import {
@@ -13,60 +13,26 @@ import {
 import { dynamicFind, InputPlaceHolder } from "utils/commonFunctions";
 import appConstants from "constants/constant";
 
-const {
-  projectTitle,
-  Modules,
-  passingYearType,
-  qualification,
-  skillOptions,
-  designationType,
-  maritalStatusType,
-} = appConstants;
+const { projectTitle, Modules, passingYearType, qualification } = appConstants;
 
 const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
   document.title = Modules.Applicant + " | " + projectTitle;
-  // const [appliedSkills, setAppliedSkills] = useState([]);
 
   const validation: any = useFormik({
     enableReinitialize: true,
     initialValues: {
       qualification: initialValues?.qualification || "",
-      degree: initialValues?.degree || "",
+      specialization: initialValues?.specialization || "",
       passingYear: initialValues?.passingYear || "",
-      totalExperience: initialValues?.totalExperience || "0",
-      relevantSkillExperience: initialValues?.relevantSkillExperience || "0",
-      appliedSkills: initialValues?.appliedSkills || "",
-      otherSkills: initialValues?.otherSkills || "",
-      referral: initialValues?.referral || "",
-      resumeUrl: initialValues?.resumeUrl || "",
-      rating: initialValues?.rating || "",
-      portfolioUrl: initialValues?.portfolioUrl || "",
-      currentCompanyDesignation: initialValues?.currentCompanyDesignation || "",
-      maritalStatus: initialValues?.maritalStatus || "",
+      cgpa: initialValues?.cgpa || "",
+      collegeName: initialValues?.collegeName || "",
     },
     validationSchema: EducationApplicantSchema,
     onSubmit: (data) => {
       onNext(data);
+      console.log("educationApplicant", data);
     },
   });
-
-  const [selectedMulti, setSelectedMulti] = useState<any>(
-    initialValues.appliedSkills || []
-  );
-  const [selectedQualification, setSelectedQualification] = useState<any>(
-    initialValues.qualification || []
-  );
-
-  const handleMultiSkill = (selectedMulti: any) => {
-    const ids = selectedMulti?.map((item: any) => item.value) || [];
-    validation.setFieldValue("appliedSkills", ids);
-    setSelectedMulti(selectedMulti);
-  };
-  const handleMultiQualification = (selectedMulti: any) => {
-    const ids = selectedMulti?.map((item: any) => item.value) || [];
-    validation.setFieldValue("qualification", ids);
-    setSelectedQualification(selectedMulti);
-  };
 
   return (
     <Fragment>
@@ -84,10 +50,8 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
             >
               <Row className="g-3 mb-4">
                 <Col xs={12} md={6}>
-                  <MultiSelect
+                  <BaseSelect
                     label="Qualification"
-                    isMulti={true}
-                    onChange={handleMultiQualification}
                     name="qualification"
                     className="select-border"
                     options={qualification}
@@ -99,7 +63,12 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                       );
                     }}
                     handleBlur={validation.handleBlur}
-                    value={selectedQualification || ""}
+                    value={
+                      dynamicFind(
+                        qualification,
+                        validation.values.qualification
+                      ) || ""
+                    }
                     touched={validation.touched.qualification}
                     error={validation.errors.qualification}
                   />
@@ -107,22 +76,40 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
 
                 <Col xs={12} md={6}>
                   <BaseInput
-                    label="Degree"
-                    name="degree"
+                    label="Specialization"
+                    name="specialization"
                     type="text"
-                    placeholder={InputPlaceHolder("Degree")}
-                    handleChange={validation.handleChange}
+                    placeholder={InputPlaceHolder("Specialization")}
+                    handleChange={(e) => {
+                      const value = e.target.value.replace(/[^A-Za-z\s]/g, "");
+                      validation.setFieldValue("specialization", value);
+                    }}
                     handleBlur={validation.handleBlur}
-                    value={validation.values.degree}
-                    touched={validation.touched.degree}
-                    error={validation.errors.degree}
+                    value={validation.values.specialization}
+                    touched={validation.touched.specialization}
+                    error={validation.errors.specialization}
                     passwordToggle={false}
                   />
                 </Col>
-              </Row>
+                <Col xs={12} md={4} lg={4}>
+                  <BaseInput
+                    label="College Name"
+                    name="collegeName"
+                    type="text"
+                    placeholder={InputPlaceHolder("College Name")}
+                    handleChange={(e) => {
+                      const value = e.target.value.replace(/[^A-Za-z\s]/g, "");
+                      validation.setFieldValue("collegeName", value);
+                    }}
+                    handleBlur={validation.handleBlur}
+                    value={validation.values.collegeName}
+                    touched={validation.touched.collegeName}
+                    error={validation.errors.collegeName}
+                    passwordToggle={false}
+                  />
+                </Col>
 
-              <Row className="g-3 mb-4">
-                <Col xs={12} md={3}>
+                <Col xs={12} md={4} lg={4}>
                   <BaseSelect
                     label="Passing Year"
                     name="passingYear"
@@ -146,172 +133,54 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     error={validation.errors.passingYear}
                   />
                 </Col>
-                <Col xs={12} md={3}>
-                  
-                  <BaseSelect
-                    label="Marital Status"
-                    name="maritalStatus"
-                    className="select-border"
-                    options={maritalStatusType}
-                    placeholder="Marital Status"
-                    handleChange={(selectedOption: SelectedOption) => {
-                      validation.setFieldValue(
-                        "maritalStatus",
-                        selectedOption?.value || ""
-                      );
+
+                <Col xs={12} md={4} lg={4}>
+                  <BaseInput
+                    label="CGPA"
+                    name="cgpa"
+                    type="text"
+                    placeholder={InputPlaceHolder("CGPA")}
+                    handleChange={(e) => {
+                      let value = e.target.value;
+                      value = value.replace(/[^0-9.]/g, "");
+
+                      const parts = value.split(".");
+                      if (parts.length > 2) {
+                        value = parts[0] + "." + parts.slice(1).join("");
+                      }
+
+                      if (parts[1]?.length > 2) {
+                        value = parts[0] + "." + parts[1].slice(0, 2);
+                      }
+
+                      const numValue = parseFloat(value);
+
+                      if (!isNaN(numValue) && numValue >= 1 && numValue <= 10) {
+                        validation.setFieldValue("cgpa", value);
+                      } else if (value === "" || value === ".") {
+                        validation.setFieldValue("cgpa", value);
+                      } else if (!value) {
+                        validation.setFieldValue("cgpa", "");
+                      }
                     }}
-                    handleBlur={validation.handleBlur}
-                    value={
-                      dynamicFind(
-                        maritalStatusType,
-                        validation.values.maritalStatus
-                      ) || ""
-                    }
-                    touched={validation.touched.maritalStatus}
-                    error={validation.errors.maritalStatus}
-                  />
-                </Col>
+                    handleBlur={(e) => {
+                      const value = e.target.value;
 
-                <Col xs={12} md={6}>
-                  <MultiSelect
-                    label="Applied Skills"
-                    name="appliedSkills"
-                    className="select-border"
-                    value={selectedMulti || null}
-                    isMulti={true}
-                    onChange={handleMultiSkill}
-                    options={skillOptions}
-                    touched={validation.touched.appliedSkills}
-                    error={validation.errors.appliedSkills}
-                    handleBlur={validation.appliedSkills}
-                  />
-                </Col>
-              </Row>
-
-              <Row className="g-3 mb-4">
-                <Col xs={12} md={6} lg={3}>
-                  <BaseInput
-                    label="Total Experience(Year)"
-                    name="totalExperience"
-                    type="text"
-                    placeholder={InputPlaceHolder("Total Experience")}
-                    handleChange={validation.handleChange}
-                    handleBlur={validation.handleBlur}
-                    value={validation.values.totalExperience}
-                    touched={validation.touched.totalExperience}
-                    error={validation.errors.totalExperience}
-                    passwordToggle={false}
-                  />
-                </Col>
-
-                <Col xs={12} md={6} lg={3}>
-                  <BaseInput
-                    label="Relevant Experience(Year)"
-                    name="relevantSkillExperience"
-                    type="text"
-                    placeholder={InputPlaceHolder("Relevant skill experience")}
-                    handleChange={validation.handleChange}
-                    handleBlur={validation.handleBlur}
-                    value={validation.values.relevantSkillExperience}
-                    touched={validation.touched.relevantSkillExperience}
-                    error={validation.errors.relevantSkillExperience}
-                    passwordToggle={false}
-                  />
-                </Col>
-
-                <Col xs={12} md={6} lg={6}>
-                  <BaseInput
-                    label="Other Skill"
-                    name="otherSkills"
-                    type="text"
-                    placeholder={InputPlaceHolder("Other Skill")}
-                    handleChange={validation.handleChange}
-                    handleBlur={validation.handleBlur}
-                    value={validation.values.otherSkills}
-                    touched={validation.touched.otherSkills}
-                    error={validation.errors.otherSkills}
-                    passwordToggle={false}
-                  />
-                </Col>
-                <Col xs={12} md={6} lg={4}>
-                  <BaseSelect
-                    label="Current Company Designation"
-                    name="currentCompanyDesignation"
-                    className="select-border"
-                    options={designationType}
-                    placeholder={InputPlaceHolder("Degination")}
-                    handleChange={(selectedOption: SelectedOption) => {
-                      validation.setFieldValue(
-                        "currentCompanyDesignation",
-                        selectedOption?.value || ""
-                      );
+                      if (value && !isNaN(parseFloat(value))) {
+                        const numValue = parseFloat(value);
+                        if (numValue >= 1 && numValue <= 10) {
+                          validation.setFieldValue("cgpa", numValue.toFixed(2));
+                        } else {
+                          validation.setFieldValue("cgpa", "");
+                        }
+                      } else {
+                        validation.setFieldValue("cgpa", "");
+                      }
+                      validation.handleBlur(e);
                     }}
-                    handleBlur={validation.currentCompanyDesignation}
-                    value={
-                      dynamicFind(
-                        designationType,
-                        validation.values.currentCompanyDesignation
-                      ) || ""
-                    }
-                    touched={validation.touched.currentCompanyDesignation}
-                    error={validation.errors.currentCompanyDesignation}
-                  />
-                </Col>
-
-                <Col xs={12} md={6} lg={4}>
-                  <BaseInput
-                    label="Javascript Rate(out of 10)"
-                    name="rating"
-                    type="number"
-                    placeholder={InputPlaceHolder("Rating")}
-                    handleChange={validation.handleChange}
-                    handleBlur={validation.handleBlur}
-                    value={validation.values.rating}
-                    touched={validation.touched.rating}
-                    error={validation.errors.rating}
-                    passwordToggle={false}
-                  />
-                </Col>
-                <Col xs={12} md={6} lg={4}>
-                  <BaseInput
-                    label="Referral"
-                    name="referral"
-                    type="text"
-                    placeholder={InputPlaceHolder("Referral")}
-                    handleChange={validation.handleChange}
-                    handleBlur={validation.handleBlur}
-                    value={validation.values.referral}
-                    touched={validation.touched.referral}
-                    error={validation.errors.referral}
-                    passwordToggle={false}
-                  />
-                </Col>
-                <Col xs={12} md={6} lg={6}>
-                  <BaseInput
-                    label="Resume Url"
-                    name="resumeUrl"
-                    type="url"
-                    placeholder={InputPlaceHolder("Resume URL")}
-                    handleChange={validation.handleChange}
-                    handleBlur={validation.handleBlur}
-                    value={validation.values.resumeUrl}
-                    touched={validation.touched.resumeUrl}
-                    error={validation.errors.resumeUrl}
-                    passwordToggle={false}
-                    title="Please Upload Resume on Google Drive and share pulic url (Only PDF files allowed)"
-                  />
-                </Col>
-                <Col xs={12} md={6} lg={6} className="mb-3">
-                  <BaseInput
-                    label="Portfolio Url"
-                    name="portfolioUrl"
-                    type="url"
-                    placeholder={InputPlaceHolder("Portfolio Url")}
-                    handleChange={validation.handleChange}
-                    handleBlur={validation.handleBlur}
-                    value={validation.values.portfolioUrl}
-                    touched={validation.touched.portfolioUrl}
-                    error={validation.errors.portfolioUrl}
+                    value={validation.values.cgpa}
+                    touched={validation.touched.cgpa}
+                    error={validation.errors.cgpa}
                     passwordToggle={false}
                   />
                 </Col>
