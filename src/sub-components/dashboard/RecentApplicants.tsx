@@ -1,30 +1,40 @@
 import { useEffect, useMemo, useState } from "react";
 import TableContainer from "components/BaseComponents/TableContainer";
-import { Col, Row, Card } from "react-bootstrap";
+import { Col, Row, Card, Button } from "react-bootstrap";
 import { getRecentApplications } from "api/dashboardApi";
 import appConstants from "constants/constant";
 import { getSerialNumber } from "utils/commonFunctions";
+import Skeleton from "react-loading-skeleton";
 
 const { handleResponse } = appConstants;
 
-const RecentApplicants = () => {
+const RecentApplicants = ({
+  selectedTechnology,
+  onResetFilter,
+}: {
+  selectedTechnology: string | null;
+  onResetFilter: () => void;
+}) => {
   const [recentApplicants, setRecentApplicants] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     fetchRecentApplicants();
-  }, []);
+  }, [selectedTechnology]); // Refetch when technology changes
 
   const fetchRecentApplicants = async () => {
+    setIsLoading(true);
     try {
-      const data = await getRecentApplications();
+      const data = await getRecentApplications(selectedTechnology || undefined); // Pass filter
       setRecentApplicants(data?.data?.item || []);
-      console.log("data", data);
     } catch (error) {
       console.log("Error loading recent applicants");
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const column = useMemo(
+  const columns = useMemo(
     () => [
       {
         header: "ID",
@@ -36,42 +46,50 @@ const RecentApplicants = () => {
         accessorKey: "name",
         cell: (info: any) => {
           const nameObj = info.row.original?.name || {};
-          const firstName = nameObj.firstName || "";
-          const middleName = nameObj.middleName || "";
-          const lastName = nameObj.lastName || "";
-
-          return `${firstName} ${middleName} ${lastName}`.trim();
+          return `${nameObj.firstName || ""} ${nameObj.middleName || ""} ${
+            nameObj.lastName || ""
+          }`.trim();
         },
         enableColumnFilter: false,
       },
       {
-        header: "Technolog",
+        header: "Technology",
         accessorKey: "appliedSkills",
         enableColumnFilter: false,
       },
       {
-        header: "Exprience",
+        header: "Experience",
         accessorKey: "totalExperience",
         enableColumnFilter: false,
       },
     ],
-    []
+    [recentApplicants]
   );
 
   return (
-    <>
-      <Row className="mt-6">
-        <Col>
-          <Card>
-            <Card.Header className="bg-white border-0 d-flex justify-content-between align-items-center ">
-              <h4 className="h4">Recent Applicants </h4>
-            </Card.Header>
-            <Card.Body>
-              <div>
+    <Row className="mt-6">
+      <Col>
+        <Card>
+          <Card.Header className="bg-white border-0 d-flex justify-content-between align-items-center p-4">
+            <h4 className="h4">{selectedTechnology} Applicants</h4>
+            {selectedTechnology && (
+              <Button variant="primary" onClick={onResetFilter}>
+                Reset Filter
+              </Button>
+            )}
+          </Card.Header>
+          <Card.Body>
+            {isLoading ? (
+              <div className="min-h[400px] w-full">
+                <Skeleton className="min-h-[400px]" />
+              </div>
+            ) : (
+              <>
+                {" "}
                 {recentApplicants?.length > 0 ? (
                   <TableContainer
-                    columns={column}
-                    data={recentApplicants ? recentApplicants : []}
+                    columns={columns}
+                    data={recentApplicants}
                     theadClass="table-secondary text-white"
                     isPagination={false}
                   />
@@ -81,12 +99,12 @@ const RecentApplicants = () => {
                     {handleResponse?.dataNotFound}
                   </div>
                 )}
-              </div>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-    </>
+              </>
+            )}
+          </Card.Body>
+        </Card>
+      </Col>
+    </Row>
   );
 };
 
