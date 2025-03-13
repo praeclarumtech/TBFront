@@ -11,7 +11,12 @@ import ProgressBar from "sub-components/report/ProgressBar";
 import ProgressChart from "sub-components/report/ProgressChart";
 import { getApplicationOnProcess } from "api/reportApi";
 import AreaChart from "sub-components/report/AreaChart";
+import appConstants from "constants/constant";
+
+const { projectTitle, Modules } = appConstants;
+
 const Report = () => {
+  document.title = Modules.Reports + " | " + projectTitle;
   const [applicantsOnProcess1, setApplicantsOnProcess1] = useState([]);
   const [applicantsOnProcess2, setApplicantsOnProcess2] = useState([]);
   const [applicantsOnProcess3, setApplicantsOnProcess3] = useState([]);

@@ -21,7 +21,6 @@ import BaseInput from "components/BaseComponents/BaseInput";
 import DeleteModal from "components/BaseComponents/DeleteModal";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
-import Button from "@mui/material/Button";
 import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
 
@@ -916,14 +915,13 @@ const handleExperienceChange = (e: React.ChangeEvent<any>) => {
                   <div className="row justify-content-between align-items-center">
                     {/* Left: Show Filters Button */}
                     <div className="col-auto d-flex justify-content-start mx-0">
-                      <Button
+                      <button
                         onClick={toggleDrawer("right", true)}
                         // color="primary"
-                        className="bg-primary text-white "
-                        style={{ textTransform: "none" }}
+                        className="btn btn-primary"
                       >
                         <i className="fa fa-filter mx-1 "></i> Filters
-                      </Button>
+                      </button>
                       <Drawer
                         className="!mt-16 "
                         anchor="right"

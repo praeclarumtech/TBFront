@@ -8,85 +8,80 @@ import * as Yup from "yup";
 import { useFormik } from "formik";
 import BaseInput from "components/BaseComponents/BaseInput";
 import {
-  createSkill,
-  updateSkill,
-  viewAllSkill,
-  deleteSkill,
-} from "api/skillsApi";
+  createDegree,
+  updateDegree,
+  viewAllDegree,
+  deleteDegree,
+} from "api/apiDegree";
 import { toast } from "react-toastify";
 import DeleteModal from "components/BaseComponents/DeleteModal";
 import BaseModal from "components/BaseComponents/BaseModal";
 import appConstants from "constants/constant";
 import { getSerialNumber, InputPlaceHolder } from "utils/commonFunctions";
-import Skeleton from "react-loading-skeleton";
-import "react-loading-skeleton/dist/skeleton.css";
 
 const { projectTitle, Modules, handleResponse } = appConstants;
 
-const AddSkill = () => {
-  document.title = Modules.SKill + " | " + projectTitle;
-  const [skills, setSkills] = useState<any[]>([]);
-  const [editingSkill, setEditingSkill] = useState<any>(null);
+const AddDegree = () => {
+  document.title = Modules.Degree + " | " + projectTitle;
+  const [degrees, setDegrees] = useState<any[]>([]);
+  const [editingDegree, setEditingDegree] = useState<any>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [skillToDelete, setSkillToDelete] = useState<any>(null);
+  const [degreeToDelete, setDegreeToDelete] = useState<any>(null);
   const [showBaseModal, setShowBaseModal] = useState(false);
   const [totalRecords, setTotalRecords] = useState(0);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
   });
-  const [isLoading, setIsLoading] = useState(false);
+  const [loader, setLoader] = useState(false);
 
-  const fetchSkills = async () => {
-    setIsLoading(true);
+  const fetchDegrees = async () => {
     try {
-      const res = await viewAllSkill({
+      const res = await viewAllDegree({
         page: pagination.pageIndex + 1,
         pageSize: pagination.pageSize,
       });
 
       if (res?.success) {
-        setSkills(res.data.data || []);
+        setDegrees(res.data.data || []);
         setTotalRecords(res.data?.pagination?.totalRecords || 0);
       } else {
-        toast.error(res?.message || "Failed to fetch skills");
+        toast.error(res?.message || "Failed to fetch degrees");
       }
     } catch (error) {
       toast.error("Something went wrong!");
       console.error(error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchSkills();
+    fetchDegrees();
   }, [pagination.pageIndex, pagination.pageSize]);
 
-  const handleEdit = (skill: any) => {
-    setEditingSkill(skill);
+  const handleEdit = (degree: any) => {
+    setEditingDegree(degree);
     validation.setValues({
-      addSkills: skill.skills,
+      degreeName: degree.degree,
     });
     setShowBaseModal(true);
   };
 
-  const handleDelete = (skill: any) => {
-    setSkillToDelete(skill);
+  const handleDelete = (degree: any) => {
+    setDegreeToDelete(degree);
     setShowDeleteModal(true);
   };
 
   const confirmDelete = () => {
-    if (!skillToDelete) return;
+    if (!degreeToDelete) return;
 
     setLoader(true);
-    deleteSkill({ _id: skillToDelete._id })
+    deleteDegree({ _id: degreeToDelete._id })
       .then((res: { success: any; message: any }) => {
         if (res?.success) {
-          toast.success(res?.message || "Skill deleted successfully");
-          fetchSkills();
+          toast.success(res?.message || "Degree deleted successfully");
+          fetchDegrees();
         } else {
-          toast.error(res?.message || "Failed to delete skill");
+          toast.error(res?.message || "Failed to delete degree");
         }
       })
       .catch((error: any) => {
@@ -96,7 +91,7 @@ const AddSkill = () => {
       .finally(() => {
         setLoader(false);
         setShowDeleteModal(false);
-        setSkillToDelete(null);
+        setDegreeToDelete(null);
       });
   };
 
@@ -108,8 +103,8 @@ const AddSkill = () => {
         enableColumnFilter: false,
       },
       {
-        header: "Skill",
-        accessorKey: "skills",
+        header: "Degree",
+        accessorKey: "degree",
         enableColumnFilter: false,
       },
       {
@@ -151,47 +146,48 @@ const AddSkill = () => {
     []
   );
 
-  const [loader, setLoader] = useState(false);
-
-  const validation = useFormik({
+  const validation: any = useFormik({
     enableReinitialize: true,
     initialValues: {
-      addSkills: editingSkill ? editingSkill.skills : "",
+      degreeName: "", 
     },
     validationSchema: Yup.object({
-      addSkills: Yup.string().required("Skill name is required"),
+      degreeName: Yup.string().required("Degree name is required"),
     }),
+
     onSubmit: (values) => {
       setLoader(true);
       const payload = {
-        _id: editingSkill?._id,
-        skills: values.addSkills,
+        _id: editingDegree?._id,
+        degree: values.degreeName,
       };
 
-      const apiCall = editingSkill
-        ? updateSkill(payload)
-        : createSkill(payload);
+      const apiCall = editingDegree
+        ? updateDegree(payload)
+        : createDegree(payload);
 
       apiCall
-        .then((res) => {
+        .then((res: { success: any; message: any }) => {
           if (res?.success) {
             toast.success(
               res?.message ||
-                `Skill ${editingSkill ? "updated" : "added"} successfully`
+                `Degree ${editingDegree ? "updated" : "added"} successfully`
             );
-            setEditingSkill(null); // Reset editing state
-            validation.resetForm(); // Clear form data after submission
-            fetchSkills(); // Refresh data
+
+            setEditingDegree(null);
+            validation.resetForm();
+            fetchDegrees();
             setShowBaseModal(false);
           } else {
             toast.error(
               res?.message ||
-                `Failed to ${editingSkill ? "update" : "add"} skill`
+                `Failed to ${editingDegree ? "update" : "add"} degree`
             );
           }
         })
-        .catch(() => {
+        .catch((error: any) => {
           toast.error("Something went wrong!");
+          console.error(error);
         })
         .finally(() => {
           setLoader(false);
@@ -199,13 +195,11 @@ const AddSkill = () => {
     },
   });
 
-  const formTitle = editingSkill
-    ? "Edit Skill"
-    : "Add DropDown Items of Skills";
+  const formTitle = editingDegree ? "Edit Degree" : "Add Degree";
   const submitButtonText = "Add";
 
   const handleOpenBaseModal = () => {
-    setEditingSkill(null);
+    setEditingDegree(null);
     validation.resetForm();
     setShowBaseModal(true);
   };
@@ -216,7 +210,7 @@ const AddSkill = () => {
 
   const handleCloseClick = () => {
     setShowBaseModal(false);
-    setEditingSkill(null); 
+    setEditingDegree(null);
     validation.resetForm();
   };
 
@@ -257,32 +251,28 @@ const AddSkill = () => {
 
                   <BaseModal
                     show={showBaseModal}
-                    onCloseClick={handleCloseClick}
                     setShowBaseModal={setShowBaseModal}
+                    onCloseClick={handleCloseClick}
                     onSubmitClick={handleSubmit}
-                    modalTitle={editingSkill ? "Edit Skill" : "Add Skill"}
+                    modalTitle={editingDegree ? "Edit Degree" : "Add Degree"}
                     submitButtonText={
-                      editingSkill ? "Update Skill" : "Add Skill"
+                      editingDegree ? "Update Degree" : "Add Degree"
                     }
                     cloaseButtonText="Close"
                   >
                     <Row>
                       <Col xs={9} md={5} lg={9}>
                         <BaseInput
-                          label="Skill Name"
-                          name="addSkills"
+                          label="Degree Name"
+                          name="degreeName"
                           className="bg-gray-100"
                           type="text"
-                          placeholder={InputPlaceHolder("Skill to be Added")}
+                          placeholder={InputPlaceHolder("Degree to be Added")}
                           handleChange={validation.handleChange}
                           handleBlur={validation.handleBlur}
-                          value={validation.values.addSkills}
-                          touched={!!validation.touched.addSkills}
-                          error={
-                            typeof validation.errors.addSkills === "string"
-                              ? validation.errors.addSkills
-                              : undefined
-                          }
+                          value={validation.values.degreeName}
+                          touched={validation.touched.degreeName}
+                          error={validation.errors.degreeName}
                           passwordToggle={false}
                         />
                       </Col>
@@ -290,34 +280,28 @@ const AddSkill = () => {
                   </BaseModal>
                   <Row>
                     <Col lg={12}>
-                      {isLoading ? (
-                        <div className="text-center py-4">
-                          <Skeleton count={5} />
-                        </div>
-                      ) : (
-                        <div>
-                          {skills?.length > 0 ? (
-                            <TableContainer
-                              isHeaderTitle="Skills"
-                              columns={columns}
-                              data={skills}
-                              isGlobalFilter={true}
-                              customPageSize={10}
-                              theadClass="table-light text-muted"
-                              SearchPlaceholder="Search..."
-                              totalRecords={totalRecords}
-                              pagination={pagination}
-                              setPagination={setPagination}
-                              loader={loader}
-                            />
-                          ) : (
-                            <div className="py-4 text-center">
-                              <i className="ri-search-line d-block fs-1 text-success"></i>
-                              {handleResponse?.dataNotFound}
-                            </div>
-                          )}
-                        </div>
-                      )}
+                      <div>
+                        {degrees?.length > 0 ? (
+                          <TableContainer
+                            isHeaderTitle="Degrees"
+                            columns={columns}
+                            data={degrees}
+                            isGlobalFilter={true}
+                            customPageSize={10}
+                            theadClass="table-light text-muted"
+                            SearchPlaceholder="Search..."
+                            totalRecords={totalRecords}
+                            pagination={pagination}
+                            setPagination={setPagination}
+                            loader={loader}
+                          />
+                        ) : (
+                          <div className="py-4 text-center">
+                            <i className="ri-search-line d-block fs-1 text-success"></i>
+                            {handleResponse?.dataNotFound}
+                          </div>
+                        )}
+                      </div>
                     </Col>
                   </Row>
                 </Row>
@@ -330,4 +314,4 @@ const AddSkill = () => {
   );
 };
 
-export default AddSkill;
+export default AddDegree;

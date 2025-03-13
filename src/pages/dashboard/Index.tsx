@@ -12,8 +12,12 @@ import {
 } from "react-bootstrap-icons";
 import ApplicantsDeatils from "sub-components/dashboard/ApplicantsDetails";
 import { getTotalApplicants } from "api/dashboardApi";
+import appConstants from "constants/constant";
+
+const { projectTitle, Modules } = appConstants;
 
 const Dashboard = () => {
+  document.title = Modules.Dashboard + " | " + projectTitle;
   const [totalApplicants, setTotalApplicants] = useState<number | null>(null);
   const [holdApplicants, setHoldApplicants] = useState<number | null>(null);
   const [pendingApplicants, setPendingApplicants] = useState<number | null>(
@@ -59,7 +63,7 @@ const Dashboard = () => {
       setInProcessApplicants(data.data.inProcessApplicants);
       setRejectedApplicants(data.data.rejectedApplicants);
       setSelectedApplicants(data.data.selectedApplicants);
-      console.log("api in dash",data.data)
+      console.log("api in dash", data.data);
     } catch (error) {
       console.error("API Error:", error);
       setError("Failed to load applicants");
