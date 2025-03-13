@@ -100,6 +100,7 @@ export interface BaseModalProps {
   modalTitle?: string;
   cloaseButtonText?: string;
   submitButtonText?: string;
+  setShowBaseModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 export interface MultiSelectProps {
   label?: string;

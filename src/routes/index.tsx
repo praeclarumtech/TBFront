@@ -22,6 +22,7 @@ import Applicant from "pages/applicant/Index";
 import EmailVerification from "pages/auth/EmailVerify";
 import UpdatePassword from "pages/auth/UpdatePassword";
 import AddSkill from "pages/master/Skills";
+import AddDegree from "pages/master/Degree";
 
 const RenderRouter: React.FC = () => {
   const {
@@ -117,6 +118,14 @@ const RenderRouter: React.FC = () => {
             element={
               <RootLayout>
                 <AddSkill />
+              </RootLayout>
+            }
+          />
+          <Route
+            path="degree"
+            element={
+              <RootLayout>
+                <AddDegree />
               </RootLayout>
             }
           />

@@ -115,6 +115,7 @@ const appConstants = Object.freeze({
     Reports: "Reports",
     EmailVerification: "Email Verification",
     UpdatePassword: "Update Password",
+    Degree:"Degree"
   },
   qualification: [
     { label: "Bachelors", value: "Bachelors" },

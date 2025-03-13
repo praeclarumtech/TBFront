@@ -5,7 +5,7 @@ export const UPDATEPROFILE = "user/updateProfile";
 export const VIEWPROFILE = "user/viewProfile";
 export const CHANGEPASSWORD = "user/changePassword";
 export const VERIFY_OTP = "user/sendEmail/verifyOtp";
-export const SEND_OTP = "user/sendEmail"
+export const SEND_OTP = "user/sendEmail";
 export const FORGOT_PASSWORD = "user/forgotPassword";
 
 //Applicant module
@@ -38,3 +38,10 @@ export const VIEW_SKILL = "skill/viewById";
 export const VIEW_ALL_SKILL = "skill/viewSkills";
 export const UPDATE_SKILL = "skill/update";
 export const DELETE_SKILL = "skill/delete";
+
+//Degree module
+export const CREATE_DEGREE = "degree/addDegree";
+export const VIEW_DEGREE = "degree/viewById";
+export const VIEW_ALL_DEGREE = "degree/viewDegrees";
+export const UPDATE_DEGREE = "degree/update";
+export const DELETE_DEGREE = "degree/delete";

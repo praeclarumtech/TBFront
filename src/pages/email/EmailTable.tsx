@@ -18,7 +18,7 @@ import Skeleton from "react-loading-skeleton";
 const { projectTitle, Modules } = appConstants;
 
 const EmailTable = () => {
-  document.title = Modules.Register + " | " + projectTitle;
+  document.title = Modules.Email + " | " + projectTitle;
   const navigate = useNavigate();
 
   interface Email {
@@ -221,7 +221,7 @@ const EmailTable = () => {
         />
       )}
       {/* Header Section with Filter and Compose Button */}
-      <div className="mt-[40px] mb-4">
+      <div className="mt-3 mb-4">
         <div className="card mb-3">
           <div className="card-body">
             <div className="container">
@@ -238,9 +238,9 @@ const EmailTable = () => {
                     {filtersVisible ? (
                       "Hide Filters"
                     ) : (
-                      <div>
+                      <>
                         <i className="fa fa-filter mx-1 "></i> Filters
-                      </div>
+                      </>
                     )}
                   </button>
                 </div>

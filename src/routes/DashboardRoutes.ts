@@ -54,4 +54,10 @@ export const DashboardMenu: DashboardMenuProps[] = [
     icon: "corner-left-down",
     link: "/master/skills",
   },
+  {
+    id: uuid(),
+    title: "Add Degree",
+    icon: "corner-left-down",
+    link: "/master/degree",
+  },
 ];
