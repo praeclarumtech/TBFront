@@ -34,6 +34,7 @@ import {
 import appConstants from "constants/constant";
 import BaseSlider from "components/BaseComponents/BaseSlider";
 import Skeleton from "react-loading-skeleton";
+import { XSquare } from "react-bootstrap-icons";
 
 const {
   projectTitle,
@@ -437,15 +438,15 @@ const handleExperienceChange = (e: React.ChangeEvent<any>) => {
     });
   };
 
-  const handleSendWhatsApp = () => {
-    const message = applicant
-      .filter((app) => selectedApplicants.includes(app._id))
-      .map((app) => `Name: ${app.name}, Email: ${app.email}`)
-      .join("\n");
+  // const handleSendWhatsApp = () => {
+  //   const message = applicant
+  //     .filter((app) => selectedApplicants.includes(app._id))
+  //     .map((app) => `Name: ${app.name}, Email: ${app.email}`)
+  //     .join("\n");
 
-   
-    window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, "_blank");
-  };
+  //   // Send WhatsApp message (example: using a WhatsApp API)
+  //   window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, "_blank");
+  // };
 
   const drawerList = (anchor: Anchor) => (
     <Box
@@ -456,6 +457,9 @@ const handleExperienceChange = (e: React.ChangeEvent<any>) => {
       }}
       role="presentation"
     >
+      <button type="button" onClick={toggleDrawer("right", false)}>
+        <XSquare size={25} />
+      </button>
       <List>
         <Row className="flex justify-between items-center mb-4">
           <Col>
@@ -931,10 +935,11 @@ const handleExperienceChange = (e: React.ChangeEvent<any>) => {
                     </div>
 
                     {/* Right: WhatsApp, Email, and New Applicant Buttons */}
+
                     <div className="col-auto d-flex justify-content-end mx-0 flex-wrap">
                       {selectedApplicants.length > 0 && (
                         <>
-                          <BaseButton
+                          {/* <BaseButton
                             className="btn btn-lg btn-soft-secondary bg-green-900 edit-list mx-1 px-3"
                             onClick={handleSendWhatsApp}
                           >
@@ -944,7 +949,7 @@ const handleExperienceChange = (e: React.ChangeEvent<any>) => {
                               variant="info"
                               content="WhatsApp"
                             />
-                          </BaseButton>
+                          </BaseButton> */}
 
                           <BaseButton
                             className="btn text-lg btn-soft-secondary bg-primary edit-list mx-1 "
@@ -982,7 +987,7 @@ const handleExperienceChange = (e: React.ChangeEvent<any>) => {
               <div className="card-body pt-0">
                 {tableLoader ? (
                   <div className="text-center py-4">
-                  <Skeleton count={5}/>
+                    <Skeleton count={5} />
                   </div>
                 ) : (
                   <div>

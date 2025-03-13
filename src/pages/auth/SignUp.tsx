@@ -12,7 +12,11 @@ import BaseButton from "components/BaseComponents/BaseButton";
 import { BaseSelect } from "components/BaseComponents/BaseSelect";
 import { SelectedOption } from "interfaces/applicant.interface";
 import appConstants from "constants/constant";
-import { dynamicFind, InputPlaceHolder, RequiredField } from "utils/commonFunctions";
+import {
+  dynamicFind,
+  InputPlaceHolder,
+  RequiredField,
+} from "utils/commonFunctions";
 
 
 const {
@@ -112,159 +116,163 @@ const SignUp = () => {
   };
 
   return (
-    <Row className="align-items-center justify-content-center g-0 min-vh-100">
-      <Col xxl={4} lg={6} md={8} xs={12} className="py-8 py-xl-0">
-        <Card className="smooth-shadow-md">
-          <Card.Body className="p-6">
-            <div className="mb-4">
-              {/* <Link to="/"> */}
-              <h4 className="text-dark font-bold text-3xl justify-center text-center ">
-                Talent<span className="text-primary bold ">Box</span>{" "}
-              </h4>
-              {/* </Link> */}
-              <p className="mb-6 justify-center text-center">
-                Please enter your user information.
-              </p>
-            </div>
+    <>
+      <Row className="align-items-center justify-content-center g-0 min-vh-100">
+        <Col xxl={4} lg={6} md={8} xs={12} className="py-8 py-xl-0">
+          <Card className="smooth-shadow-md">
+            <Card.Body className="p-6">
+              <div className="mb-4">
+                {/* <Link to="/"> */}
+                <h4 className="text-dark font-bold text-3xl justify-center text-center ">
+                  Talent<span className="text-primary bold ">Box</span>{" "}
+                </h4>
+                {/* </Link> */}
+                <p className="mb-6 justify-center text-center">
+                  Please enter your user information.
+                </p>
+              </div>
 
-            {hasMounted && (
-              <Form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  validation.handleSubmit();
-                  return false;
-                }}
-              >
-                <Form.Group className="mb-3" controlId="username">
-                  <BaseInput
-                    label="Username"
-                    name="userName"
-                    type="text"
-                    placeholder={InputPlaceHolder("UserName")}
-                    handleChange={validation.handleChange}
-                    handleBlur={validation.handleBlur}
-                    value={validation.values.userName}
-                    touched={validation.touched.userName}
-                    error={validation.errors.userName}
-                    passwordToggle={false}
-                  />
-                </Form.Group>
+              {hasMounted && (
+                <Form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    validation.handleSubmit();
+                    return false;
+                  }}
+                >
+                  <Form.Group className="mb-3" controlId="username">
+                    <BaseInput
+                      label="Username"
+                      name="userName"
+                      type="text"
+                      placeholder={InputPlaceHolder("UserName")}
+                      handleChange={validation.handleChange}
+                      handleBlur={validation.handleBlur}
+                      value={validation.values.userName}
+                      touched={validation.touched.userName}
+                      error={validation.errors.userName}
+                      passwordToggle={false}
+                    />
+                  </Form.Group>
 
-                <Form.Group className="mb-3" controlId="email">
-                  <BaseInput
-                    label="Email"
-                    name="email"
-                    type="text"
-                    placeholder={InputPlaceHolder("Email")}
-                    handleChange={validation.handleChange}
-                    handleBlur={validation.handleBlur}
-                    value={validation.values.email}
-                    touched={validation.touched.email}
-                    error={validation.errors.email}
-                    passwordToggle={false}
-                  />
-                </Form.Group>
+                  <Form.Group className="mb-3" controlId="email">
+                    <BaseInput
+                      label="Email"
+                      name="email"
+                      type="text"
+                      placeholder={InputPlaceHolder("Email")}
+                      handleChange={validation.handleChange}
+                      handleBlur={validation.handleBlur}
+                      value={validation.values.email}
+                      touched={validation.touched.email}
+                      error={validation.errors.email}
+                      passwordToggle={false}
+                    />
+                  </Form.Group>
 
-                <Form.Group className="mb-3" controlId="email">
-                  <BaseSelect
-                    label="Role"
-                    name="role"
-                    className="select-border"
-                    options={roleType}
-                    placeholder={InputPlaceHolder("Role")}
-                    handleChange={(selectedOption: SelectedOption) => {
-                      validation.setFieldValue(
-                        "role",
-                        selectedOption?.value || ""
-                      );
-                    }}
-                    handleBlur={validation.handleBlur}
-                    value={dynamicFind(roleType, validation.values.role) || ""}
-                    touched={validation.touched.role}
-                    error={validation.errors.role}
-                  />
-                </Form.Group>
+                  <Form.Group className="mb-3" controlId="email">
+                    <BaseSelect
+                      label="Role"
+                      name="role"
+                      className="select-border"
+                      options={roleType}
+                      placeholder={InputPlaceHolder("Role")}
+                      handleChange={(selectedOption: SelectedOption) => {
+                        validation.setFieldValue(
+                          "role",
+                          selectedOption?.value || ""
+                        );
+                      }}
+                      handleBlur={validation.handleBlur}
+                      value={
+                        dynamicFind(roleType, validation.values.role) || ""
+                      }
+                      touched={validation.touched.role}
+                      error={validation.errors.role}
+                    />
+                  </Form.Group>
 
-                <Form.Group className="mb-3" controlId="password">
-                  <BaseInput
-                    label="Password"
-                    name="password"
-                    type="password"
-                    placeholder={InputPlaceHolder("Password")}
-                    handleChange={validation.handleChange}
-                    handleBlur={validation.handleBlur}
-                    value={validation.values.password}
-                    touched={validation.touched.password}
-                    error={validation.errors.password}
-                    passwordToggle={true}
-                    onclick={() => setPasswordShow(!passwordShow)}
-                    disabled={false}
-                  />
-                </Form.Group>
+                  <Form.Group className="mb-3" controlId="password">
+                    <BaseInput
+                      label="Password"
+                      name="password"
+                      type="password"
+                      placeholder={InputPlaceHolder("Password")}
+                      handleChange={validation.handleChange}
+                      handleBlur={validation.handleBlur}
+                      value={validation.values.password}
+                      touched={validation.touched.password}
+                      error={validation.errors.password}
+                      passwordToggle={true}
+                      onclick={() => setPasswordShow(!passwordShow)}
+                      disabled={false}
+                    />
+                  </Form.Group>
 
-                <Form.Group className="mb-3" controlId="confirm-password">
-                  <BaseInput
-                    label="Confirm Password"
-                    name="confirmPassword"
-                    type={confirmPassword ? "text" : "password"}
-                    placeholder={InputPlaceHolder("Confirm password")}
-                    handleChange={validation.handleChange}
-                    handleBlur={validation.handleBlur}
-                    value={validation.values.confirmPassword}
-                    touched={validation.touched.confirmPassword}
-                    error={validation.errors.confirmPassword}
-                    passwordToggle={true}
-                    onclick={() => {
-                      setConfirmPassword(!confirmPassword);
-                    }}
-                    disabled={false}
-                  />
-                </Form.Group>
+                  <Form.Group className="mb-3" controlId="confirm-password">
+                    <BaseInput
+                      label="Confirm Password"
+                      name="confirmPassword"
+                      type={confirmPassword ? "text" : "password"}
+                      placeholder={InputPlaceHolder("Confirm password")}
+                      handleChange={validation.handleChange}
+                      handleBlur={validation.handleBlur}
+                      value={validation.values.confirmPassword}
+                      touched={validation.touched.confirmPassword}
+                      error={validation.errors.confirmPassword}
+                      passwordToggle={true}
+                      onclick={() => {
+                        setConfirmPassword(!confirmPassword);
+                      }}
+                      disabled={false}
+                    />
+                  </Form.Group>
 
-                <div className="mb-3">
-                  <Form.Check type="checkbox" id="check-api-checkbox">
-                    <Form.Check.Input type="checkbox" />
-                    <Form.Check.Label>
-                      I agree to the <Link to="#"> Terms of Service </Link> and{" "}
-                      <Link to="#"> Privacy Policy.</Link>
-                    </Form.Check.Label>
-                  </Form.Check>
-                </div>
-
-                <div>
-                  <div className="d-grid">
-                    <BaseButton
-                      color="primary"
-                      disabled={loader}
-                      className="w-100"
-                      type="submit"
-                      loader={loader}
-                    >
-                      {ButtonEnums.Submit}
-                    </BaseButton>
+                  <div className="mb-3">
+                    <Form.Check type="checkbox" id="check-api-checkbox">
+                      <Form.Check.Input type="checkbox" />
+                      <Form.Check.Label>
+                        I agree to the <Link to="#"> Terms of Service </Link>{" "}
+                        and <Link to="#"> Privacy Policy.</Link>
+                      </Form.Check.Label>
+                    </Form.Check>
                   </div>
-                  <div className="d-md-flex justify-content-between mt-4">
-                    <div className="mb-2 mb-md-0">
-                      <div onClick={() => navigate("/")} className="fs-5">
-                        Already member? Login{" "}
-                      </div>
-                    </div>
-                    <div>
-                      <div
-                        onClick={() => navigate("/forgot-password")}
-                        className="text-inherit fs-5"
+
+                  <div>
+                    <div className="d-grid">
+                      <BaseButton
+                        color="primary"
+                        disabled={loader}
+                        className="w-100"
+                        type="submit"
+                        loader={loader}
                       >
-                        Forgot your password?
+                        {ButtonEnums.Submit}
+                      </BaseButton>
+                    </div>
+                    <div className="d-md-flex justify-content-between mt-4">
+                      <div className="mb-2 mb-md-0">
+                        <div onClick={() => navigate("/")} className="fs-5">
+                          Already member? <a className="text-primary cursor-pointer">Login</a>{" "}
+                        </div>
+                      </div>
+                      <div>
+                        <div
+                          onClick={() => navigate("/forgot-password")}
+                          className=" fs-5"
+                        >
+                          <a className="text-primary cursor-pointer">Forgot your password?</a>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </Form>
-            )}
-          </Card.Body>
-        </Card>
-      </Col>
-    </Row>
+                </Form>
+              )}
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+    </>
   );
 };
 

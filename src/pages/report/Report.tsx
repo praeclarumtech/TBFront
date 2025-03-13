@@ -33,6 +33,7 @@ console.log(error)
       setApplicantsOnProcess1(data.data.technicalRoundApplicants);
       setApplicantsOnProcess2(data.data.hrRoundApplicants);
       setApplicantsOnProcess3(data.data.finalRoundApplicants);
+      console.log(data.data)
     } catch (error) {
       console.error("API Error:", error);
       setError("Failed to load applicants");
@@ -129,7 +130,7 @@ console.log(error)
                         </Col>
                         <Col xl={6} lg={6} md={6} xs={12}>
                           <h4 className="fw-bold"> Applicants </h4>
-                          <div className="items-center">
+                          <div className="items-center mt-3">
                             {/* <AreaChart /> */}
                               <AreaChart />
                           </div>

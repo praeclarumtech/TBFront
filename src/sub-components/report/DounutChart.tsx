@@ -67,7 +67,7 @@ const DounutChart = () => {
   };
 
   const options: ChartOptions<"doughnut"> = {
-    cutout: "60%",
+    cutout: "65%",
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
