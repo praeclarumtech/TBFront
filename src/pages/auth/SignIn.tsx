@@ -12,6 +12,7 @@ import BaseButton from "components/BaseComponents/BaseButton";
 import appConstants from "constants/constant";
 import { errorHandle, InputPlaceHolder, setItem } from "utils/commonFunctions";
 
+
 const {
   projectTitle,
   Modules,
@@ -73,6 +74,7 @@ const SignIn = () => {
 
   const hasMounted = useMounted();
   return (
+    <div>
     <Row className="align-items-center justify-content-center g-0 min-vh-100">
       <Col xxl={4} lg={6} md={8} xs={12} className="py-8 py-xl-0">
         <Card className="smooth-shadow-md">
@@ -148,7 +150,7 @@ const SignIn = () => {
                     <div>
                       <a
                         href="#"
-                        className="text-inherit fs-5"
+                        className="text-primary cursor-pointer fs-5"
                         onClick={() => navigate("/forgot-password")}
                       >
                         Forgot your password?
@@ -162,6 +164,7 @@ const SignIn = () => {
         </Card>
       </Col>
     </Row>
+    </div>
   );
 };
 

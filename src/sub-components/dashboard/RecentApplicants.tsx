@@ -37,7 +37,7 @@ const RecentApplicants = ({
   const columns = useMemo(
     () => [
       {
-        header: "ID",
+        header: "Sr.No",
         cell: getSerialNumber,
         enableColumnFilter: false,
       },

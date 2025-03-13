@@ -59,6 +59,7 @@ const Dashboard = () => {
       setInProcessApplicants(data.data.inProcessApplicants);
       setRejectedApplicants(data.data.rejectedApplicants);
       setSelectedApplicants(data.data.selectedApplicants);
+      console.log("api in dash",data.data)
     } catch (error) {
       console.error("API Error:", error);
       setError("Failed to load applicants");
@@ -73,7 +74,7 @@ const Dashboard = () => {
         <div className="pb-23"></div>
         <Container fluid className="mt-n23 px-6">
           <Row className="bg-primary mx-n6 mb-n6 mt-n8 pt-3">
-            <Col xl={2} lg={6} md={6} xs={12} className="mb-3">
+            <Col xl={2} lg={4} md={6} xs={12} className="mb-3">
               <StatRightTopIcon
                 title="Total Applicants"
                 icon={<People size={20} />}
@@ -83,7 +84,7 @@ const Dashboard = () => {
                 isLoading={isLoading}
               />
             </Col>
-            <Col xl={2} lg={6} md={6} xs={12} className="mb-3">
+            <Col xl={2} lg={4} md={6} xs={12} className="mb-3">
               <StatRightTopIcon
                 title="In Process"
                 icon={<ClockHistory size={20} />}
@@ -93,7 +94,7 @@ const Dashboard = () => {
                 isLoading={isLoading}
               />
             </Col>
-            <Col xl={2} lg={6} md={6} xs={12} className="mb-3">
+            <Col xl={2} lg={4} md={6} xs={12} className="mb-3">
               <StatRightTopIcon
                 title="On Hold"
                 icon={<GraphUp size={20} />}
@@ -103,7 +104,7 @@ const Dashboard = () => {
                 isLoading={isLoading}
               />
             </Col>
-            <Col xl={2} lg={6} md={6} xs={12} className="mb-3">
+            <Col xl={2} lg={4} md={6} xs={12} className="mb-3">
               <StatRightTopIcon
                 title="Total Pending"
                 icon={<ExclamationCircle size={20} />}
@@ -113,7 +114,7 @@ const Dashboard = () => {
                 isLoading={isLoading}
               />
             </Col>
-            <Col xl={2} lg={6} md={6} xs={12} className="mb-3">
+            <Col xl={2} lg={4} md={6} xs={12} className="mb-3">
               <StatRightTopIcon
                 title="Selected"
                 icon={<Check2Circle size={20} />}
@@ -123,7 +124,7 @@ const Dashboard = () => {
                 isLoading={isLoading}
               />
             </Col>
-            <Col xl={2} lg={6} md={6} xs={12} className="mb-3">
+            <Col xl={2} lg={4} md={6} xs={12} className="mb-3">
               <StatRightTopIcon
                 title="Rejected"
                 icon={<XCircle size={20} />}

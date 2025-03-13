@@ -10,10 +10,11 @@ import { Tooltip as ReactTooltip } from "react-tooltip";
 import { errorHandle, InputPlaceHolder } from "utils/commonFunctions";
 import appConstants from "constants/constant";
 import ViewEmail from "./ViewEmail";
-import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { deleteEmail, viewAllEmail } from "api/emailApi";
 import DeleteModal from "components/BaseComponents/DeleteModal";
+import Skeleton from "react-loading-skeleton";
+
 const { projectTitle, Modules } = appConstants;
 
 const EmailTable = () => {
@@ -234,7 +235,13 @@ const EmailTable = () => {
                     }}
                     className="btn btn-primary"
                   >
-                    {filtersVisible ? "Hide Filters" : "Show Filters"}
+                    {filtersVisible ? (
+                      "Hide Filters"
+                    ) : (
+                      <div>
+                        <i className="fa fa-filter mx-1 "></i> Filters
+                      </div>
+                    )}
                   </button>
                 </div>
 
@@ -302,7 +309,7 @@ const EmailTable = () => {
             </div>
           ) : (
             <TableContainer
-              isHeaderTitle="Emails"
+              isHeaderTitle="Email"
               columns={columns}
               data={emails}
               isGlobalFilter

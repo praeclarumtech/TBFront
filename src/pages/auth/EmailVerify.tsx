@@ -85,7 +85,13 @@ const EmailVerification = () => {
               Verify OTP
             </BaseButton>
             <p className="text-center mt-3">
-              Didn’t receive a code? <a href="/forgot-password">Resend</a>
+              Didn’t receive a code?{" "}
+              <a
+                className="text-primary cursor-pointer"
+                href="/forgot-password"
+              >
+                Resend
+              </a>
             </p>
           </CardBody>
         </Card>

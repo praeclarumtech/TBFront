@@ -63,7 +63,7 @@ const EmailForm = () => {
           closeOnClick: true,
           autoClose: 5000,
         });
-        navigate("/applicants");
+        navigate("/email");
       } catch (err) {
         toast.error("Failed to send email. Please try again.", {
           closeOnClick: true,
@@ -82,7 +82,7 @@ const EmailForm = () => {
             <div className="p-10 relative">
               <button
                 className="absolute left-5 top-5 text-gray-600 hover:text-gray-800 flex items-center"
-                onClick={() => navigate("/applicants")}
+                onClick={() => navigate("/email")}
               >
                 <i className="fa fa-arrow-left mr-2"></i>
                 Back

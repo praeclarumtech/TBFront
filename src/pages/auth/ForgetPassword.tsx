@@ -11,7 +11,8 @@ import { useFormik } from "formik";
 import { useState } from "react";
 import appConstants from "constants/constant";
 import { errorHandle, InputPlaceHolder } from "utils/commonFunctions";
- 
+
+
 const {
   projectTitle,
   CREATED,
@@ -24,10 +25,10 @@ const {
 const ForgetPassword = () => {
   document.title = Modules.Forgot + " | " + projectTitle;
   const hasMounted = useMounted();
- 
+
   const navigate = useNavigate();
   const [loader, setLoader] = useState<boolean>(false);
- 
+
   const validation: any = useFormik({
     enableReinitialize: true,
     initialValues: {
@@ -58,7 +59,7 @@ const ForgetPassword = () => {
         .finally(() => setLoader(false));
     },
   });
- 
+
   return (
     <Row className="align-items-center justify-content-center g-0 min-vh-100">
       <Col xxl={4} lg={6} md={8} xs={12} className="py-8 py-xl-0">
@@ -71,7 +72,7 @@ const ForgetPassword = () => {
                   className="mb-2"
                   alt=""
                 /> */}
- 
+
                 <h4 className="text-dark font-bold text-3xl justify-center text-center ">
                   Talent<span className="text-primary bold ">Box</span>{" "}
                 </h4>
@@ -103,7 +104,7 @@ const ForgetPassword = () => {
                     passwordToggle={false}
                   />
                 </Form.Group>
- 
+
                 <div className="mb-3 d-grid">
                   <BaseButton
                     color="primary"
@@ -115,9 +116,9 @@ const ForgetPassword = () => {
                     Reset Password{" "}
                   </BaseButton>
                 </div>
-                <span>
+                <span className="text-gray-600">
                   Don&apos;t have an account?{" "}
-                  <a onClick={() => navigate("/")}>Sign In</a>
+                  <a onClick={() => navigate("/")} className="text-primary cursor-pointer">Sign In</a>
                 </span>
               </Form>
             )}
@@ -127,7 +128,5 @@ const ForgetPassword = () => {
     </Row>
   );
 };
- 
+
 export default ForgetPassword;
- 
- 
