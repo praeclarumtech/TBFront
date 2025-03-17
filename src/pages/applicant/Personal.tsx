@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Row, Col, Container } from "react-bootstrap";
+import React, { useState, useEffect } from "react";
 import { useFormik } from "formik";
 import { Fragment } from "react";
 import BaseButton from "components/BaseComponents/BaseButton";
@@ -8,8 +9,13 @@ import { Form, Link } from "react-router-dom";
 import BaseInput from "components/BaseComponents/BaseInput";
 import moment from "moment";
 import BaseTextarea from "components/BaseComponents/BaseTextArea";
-import { dynamicFind, InputPlaceHolder } from "utils/commonFunctions";
+import {
+  dynamicFind,
+  errorHandle,
+  InputPlaceHolder,
+} from "utils/commonFunctions";
 import appConstants from "constants/constant";
+import { city as fetchCities } from "../../api/applicantApi";
 import {
   personalApplicantSchema,
   SelectedOption,
@@ -26,6 +32,29 @@ const {
 
 const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
   document.title = Modules.Applicant + " | " + projectTitle;
+  const [cities, setCities] = useState([]);
+
+  useEffect(() => {
+    const getCities = async () => {
+      try {
+        const cityData = await fetchCities();
+        console.log("my", cityData);
+
+        if (cityData?.data) {
+          setCities(
+            cityData.data.map((city: { city_name: string; _id: string }) => ({
+              label: city.city_name,
+              value: city._id,
+            }))
+          );
+        }
+      } catch (error) {
+        errorHandle(error);
+      }
+    };
+    getCities();
+  }, []);
+
   const minDateOfBirth = moment().subtract(15, "years").format("YYYY-MM-DD");
   const formattedDateOfBirth = initialValues.dateOfBirth
     ? moment(initialValues.dateOfBirth).format("YYYY-MM-DD")
@@ -267,20 +296,24 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
                   />
                 </Col>
                 <Col xs={12} md={6} lg={4}>
-                  <BaseInput
+                  <BaseSelect
                     label="City"
                     name="currentCity"
-                    type="text"
-                    placeholder={InputPlaceHolder("Current City")}
-                    handleChange={(e) => {
-                      const value = e.target.value.replace(/[^A-Za-z\s]/g, "");
-                      validation.setFieldValue("currentCity", value);
+                    className="select-border"
+                    options={cities}
+                    placeholder={InputPlaceHolder("City")}
+                    handleChange={(selectedOption: SelectedOption) => {
+                      validation.setFieldValue(
+                        "currentCity",
+                        selectedOption?.value || ""
+                      );
                     }}
                     handleBlur={validation.handleBlur}
-                    value={validation.values.currentCity}
+                    value={
+                      dynamicFind(cities, validation.values.currentCity) || ""
+                    }
                     touched={validation.touched.currentCity}
                     error={validation.errors.currentCity}
-                    passwordToggle={false}
                   />
                 </Col>
                 <Col xs={12} md={6} lg={4}>

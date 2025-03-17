@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   LIST_APPLICANT,
   CREATE_APPLICANT,
@@ -8,6 +9,8 @@ import {
   UPDATE_APPLICANT_STATUS,
   FILTER_APPLICANT,
   CITY,
+  IMPORT_APPLICANT,
+  EXPORT_APPLICANT,
 } from "./apiRoutes";
 import { authServices } from "./apiServices";
 
@@ -86,5 +89,80 @@ export const filterApplicants = async () => {
 
 export const city = async () => {
   const response = await authServices.get(`${CITY}`);
+  return response?.data;
+};
+
+// export const importApplicant = async (
+//   params: {
+//     yes?: string;
+//   },
+//   formData: FormData,
+//   config?: {
+//     onUploadProgress?: (progressEvent: any) => void;
+//   }
+// ) => {
+//   const response = await authServices.post(`${IMPORT_APPLICANT}`, formData, {
+//     params,
+//     headers: {
+//       "Content-Type": "multipart/form-data",
+//     },
+//     ...config,
+//     timeout: 300000, // 5 minutes
+//   });
+//   return response?.data;
+// };
+
+// export const importApplicant = async (
+//   // params: { update: "yes" },
+//   formData: FormData,
+//   config?: {
+//     onUploadProgress?: (progressEvent: any) => void;
+//   }
+// ) => {
+//   const response = await authServices.post(`${IMPORT_APPLICANT}`, formData, {
+//     // params,
+//     headers: {
+//       "Content-Type": "multipart/form-data",
+//     },
+//     ...config,
+//     timeout: 300000, // 5 minutes
+//   });
+//   return response?.data;
+// };
+
+
+export const importApplicant = async (
+  formData: FormData,
+  updateFlag: "yes" | "no", 
+  config?: {
+    onUploadProgress?: (progressEvent: any) => void;
+  }
+) => {
+  const url = `${IMPORT_APPLICANT}/${updateFlag}`; // Dynamically build the URL with the update flag
+
+  try {
+    const response = await authServices.post(url, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      ...config,
+      timeout: 300000, // 5 minutes
+    });
+
+    return response?.data; // Return the data received from the server
+  } catch (error) {
+    console.error("Error in importApplicant:", error);
+    throw error; // Rethrow the error to handle it in the calling function
+  }
+};
+
+export const ExportApplicant = async (config?: {
+  onDownloadProgress?: (progressEvent: any) => void;
+}) => {
+  const response = await authServices.get(`${EXPORT_APPLICANT}`, {
+    responseType: "blob",
+    timeout: 300000,
+    ...config,
+  });
   return response?.data;
 };

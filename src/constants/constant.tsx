@@ -201,10 +201,12 @@ const appConstants = Object.freeze({
   ],
 
   interviewStageOptions: [
+    { label: "First Interview", value: "first interview" },
     { label: "Practical", value: "practical" },
     { label: "HR", value: "hr round" },
     { label: "Technical", value: "technical" },
     { label: "Client", value: "client" },
+
   ],
   experienceOptions: [
     { value: 0, label: "0 Years" },

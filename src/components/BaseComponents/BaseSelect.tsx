@@ -13,6 +13,7 @@ const BaseSelect = ({
   touched,
   error,
   isDisabled,
+  styles,
 }: BaseSelectProps) => {
   return (
     <>
@@ -32,6 +33,7 @@ const BaseSelect = ({
         isClearable
         isDisabled={isDisabled}
         menuPlacement="auto"
+        styles={styles}
       />
       {touched && error ? (
         <div className="text-danger error-font">{error}</div>

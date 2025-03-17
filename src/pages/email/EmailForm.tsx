@@ -6,6 +6,9 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import BaseInput from "components/BaseComponents/BaseInput";
+import { InputPlaceHolder } from "utils/commonFunctions";
+import BaseTextarea from "components/BaseComponents/BaseTextArea";
 
 const EmailForm = () => {
   const hasMounted = useMounted();
@@ -33,7 +36,7 @@ const EmailForm = () => {
         "valid-emails",
         "Invalid email address",
         (value) => {
-          if (!value) return true; 
+          if (!value) return true;
           const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
           const emails = value.split(",").map((email) => email.trim());
           return emails.every((email) => emailRegex.test(email));
@@ -44,14 +47,12 @@ const EmailForm = () => {
     }),
     onSubmit: async (values) => {
       try {
-   
         const emailToArray = values.email_to
           .split(",")
           .map((email: string) => email.trim());
         const emailBccArray = values.email_bcc
           .split(",")
           .map((email) => email.trim());
-
 
         await sendEmail({
           ...values,
@@ -63,7 +64,8 @@ const EmailForm = () => {
           closeOnClick: true,
           autoClose: 5000,
         });
-        navigate("/email");
+        validation.resetForm();
+        navigate("/email/compose");
       } catch (err) {
         toast.error("Failed to send email. Please try again.", {
           closeOnClick: true,
@@ -99,48 +101,46 @@ const EmailForm = () => {
                   <form onSubmit={validation.handleSubmit} noValidate>
                     <div className="grid grid-cols-2 gap-6 mb-3">
                       <div>
-                        <label
-                          className="block font-bold mb-2"
-                          htmlFor="email_to"
-                        >
-                          To
-                        </label>
-                        <input
-                          type="text" 
-                          placeholder="Enter Recipients"
-                          id="email_to"
-                          value={validation.values.email_to}
-                          onChange={validation.handleChange}
-                          onBlur={validation.handleBlur}
+                        <BaseInput
+                          label=" To"
+                          name="email_to"
                           className={`w-full p-2 bg-gray-100 rounded-md ${
                             validation.touched.email_to &&
                             validation.errors.email_to
                               ? "border-red-500 border-2"
                               : ""
                           }`}
+                          type="text"
+                          placeholder={InputPlaceHolder("Enter Recipients")}
+                          handleChange={validation.handleChange}
+                          handleBlur={validation.handleBlur}
+                          value={validation.values.email_to}
+                          // touched={validation.touched.email_to}
+                          // error={validation.errors.email_to}
+                          error={
+                            typeof validation.errors.email_to === "string"
+                              ? validation.errors.email_to
+                              : undefined
+                          }
+                          passwordToggle={false}
                         />
-                       
                       </div>
                       <div>
-                        <label
-                          className="block font-bold mb-2"
-                          htmlFor="email_bcc"
-                        >
-                          Bcc
-                        </label>
-                        <input
-                          type="text" 
-                          placeholder="Enter Your BCC emails"
-                          id="email_bcc"
-                          value={validation.values.email_bcc}
-                          onChange={validation.handleChange}
-                          onBlur={validation.handleBlur}
+                        <BaseInput
+                          label="Bcc"
+                          name="email_bcc"
                           className={`w-full p-2 bg-gray-100 rounded-md ${
                             validation.touched.email_bcc &&
                             validation.errors.email_bcc
                               ? "border-red-500 border-2"
                               : ""
                           }`}
+                          type="text"
+                          placeholder={InputPlaceHolder("Enter BCC Emails")}
+                          handleChange={validation.handleChange}
+                          handleBlur={validation.handleBlur}
+                          value={validation.values.email_bcc}
+                          error={validation.errors.email_bcc}
                         />
                         {validation.touched.email_bcc &&
                           validation.errors.email_bcc && (
@@ -152,22 +152,21 @@ const EmailForm = () => {
                     </div>
 
                     <div className="mb-3">
-                      <label className="block font-bold mb-2" htmlFor="subject">
-                        Subject
-                      </label>
-                      <input
+                      <BaseInput
+                        label="Subject"
+                        name="subject"
                         type="text"
-                        placeholder="Enter Your Subject"
-                        id="subject"
-                        value={validation.values.subject}
-                        onChange={validation.handleChange}
-                        onBlur={validation.handleBlur}
                         className={`w-full p-2 bg-gray-100 rounded-md ${
                           validation.touched.subject &&
                           validation.errors.subject
                             ? "border-red-500 border-2"
                             : ""
                         }`}
+                        placeholder={InputPlaceHolder("Enter Your Subject")}
+                        handleChange={validation.handleChange}
+                        handleBlur={validation.handleBlur}
+                        value={validation.values.subject}
+                        error={validation.errors.subject}
                       />
                       {validation.touched.subject &&
                         validation.errors.subject && (
@@ -178,19 +177,25 @@ const EmailForm = () => {
                     </div>
 
                     <div className="mb-3">
-                      <textarea
-                        rows={4}
-                        placeholder="Description"
-                        id="description"
+                      <BaseTextarea
+                        label="Description"
+                        name="description"
+                        placeholder={InputPlaceHolder("Description")}
+                        handleChange={validation.handleChange}
+                        handleBlur={validation.handleBlur}
                         value={validation.values.description}
-                        onChange={validation.handleChange}
-                        onBlur={validation.handleBlur}
+                        touched={validation.touched.description}
+                        error={validation.errors.description}
                         className={`w-full p-2 bg-gray-100 rounded-md ${
                           validation.touched.description &&
                           validation.errors.description
                             ? "border-red-500 border-2"
                             : ""
                         }`}
+                        passwordToggle={false}
+                        multiline
+                        rows={4}
+                        cols={50}
                       />
                       {validation.touched.description &&
                         validation.errors.description && (
