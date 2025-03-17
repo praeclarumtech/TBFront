@@ -18,7 +18,9 @@ export const UPDATE_APPLICANT_STATUS = "applicants/update/status";
 export const UPDATE_APPLICANT_STAGE = "applicants/update/status";
 export const FILTER_APPLICANT = "applicants/viewApplicant/?";
 export const CITY = "city";
-
+export const EXPORT_APPLICANT = "applicants/exportCsv/";
+// export const IMPORT_APPLICANT = "applicants/importCsv/yes";
+export const IMPORT_APPLICANT = "applicants/importCsv";
 //Email module
 export const SEND_EMAIL = "email/applicant/sendEmail";
 export const VIEW_ALL_EMAIL = "email/applicant/getAllEmails";

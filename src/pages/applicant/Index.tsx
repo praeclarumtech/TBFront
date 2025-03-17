@@ -1,19 +1,22 @@
-
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Row, Col, Card, Container, CardBody } from "react-bootstrap";
-import React, { Fragment, useEffect, useState, useMemo } from "react";
+import React, { Fragment, useEffect, useState, useMemo, useRef } from "react";
 import BaseButton from "components/BaseComponents/BaseButton";
 import { BaseSelect, MultiSelect } from "components/BaseComponents/BaseSelect";
 import TableContainer from "components/BaseComponents/TableContainer";
 import { useNavigate } from "react-router-dom";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 
+import { Dropdown } from "react-bootstrap"; // Bootstrap dropdown
+
+import { toast } from "react-toastify";
 import {
   deleteApplicant,
   listOfApplicants,
   updateStage,
   updateStatus,
+  importApplicant,
+  ExportApplicant,
 } from "api/applicantApi";
 
 import ViewModal from "./ViewApplicant";
@@ -34,6 +37,8 @@ import appConstants from "constants/constant";
 import BaseSlider from "components/BaseComponents/BaseSlider";
 import Skeleton from "react-loading-skeleton";
 import { XSquare } from "react-bootstrap-icons";
+import saveAs from "file-saver";
+import BasePopUpModal from "components/BaseComponents/BasePopUpModal";
 
 const {
   projectTitle,
@@ -65,25 +70,28 @@ const Applicant = () => {
     undefined
   );
   const [experienceRange, setExperienceRange] = useState<number[]>([0, 25]);
-  const [filterNoticePeriod, setFilterNoticePeriod] = useState<number[]>([
-    0, 100,
-  ]);
 
+  const [filterNoticePeriod, setFilterNoticePeriod] = useState<number[]>([
+    0, 90,
+  ]);
+  const [uploadedFile, setUploadedFile] = useState<FormData | null>(null);
+
+  // const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [filterStatus, setFilterStatus] = useState<SelectedOption | null>(null);
   const [filterInterviewStage, setFilterInterviewStage] =
     useState<SelectedOption | null>(null);
-  const [filterEngRating, setFilterEngRating] = useState<number[]>([0, 11]);
+  const [filterEngRating, setFilterEngRating] = useState<number[]>([0, 10]);
 
   const [filterAnyHandOnOffers, setFilterAnyHandOnOffers] =
     useState<SelectedOption | null>(null);
   const [filterGender, setFilterGender] = useState<SelectedOption | null>(null);
-  const [filterRating, setFilterRating] = useState<number[]>([0, 11]);
+  const [filterRating, setFilterRating] = useState<number[]>([0, 10]);
   const [filterWorkPreference, setFilterWorkPreference] =
     useState<SelectedOption | null>(null);
   const [filterExpectedPkg, setFilterExpectedPkg] = useState<number[]>([
-    0, 1000,
+    0, 100,
   ]);
-  const [filterCurrentPkg, setFilterCurrentPkg] = useState<number[]>([0, 1000]);
+  const [filterCurrentPkg, setFilterCurrentPkg] = useState<number[]>([0, 100]);
   const [filterDesignation, SetFilterDesignation] =
     useState<SelectedOption | null>(null);
   const [filterCity, setFilterCity] = useState<SelectedOption | null>(null);
@@ -97,10 +105,17 @@ const Applicant = () => {
     pageSize: 10,
   });
   const [tableLoader, setTableLoader] = useState(false);
-  const [selectedApplicants, setSelectedApplicants] = useState<string[]>([]); 
+  const [selectedApplicants, setSelectedApplicants] = useState<string[]>([]);
   const [state, setState] = React.useState({
     right: false,
   });
+   const [showDropdown, setShowDropdown] = useState(false);
+  const [importLoader, setImportLoader] = useState(false);
+  const [importProgress, setImportProgress] = useState(0);
+  const [isImporting, setIsImporting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [showPopupModal, setShowPopupModal] = useState(false);
+  const [duplicateEmails, setDuplicateEmails] = useState<string[]>([]);
 
   const toggleDrawer =
     (anchor: Anchor, open: boolean) =>
@@ -116,7 +131,7 @@ const Applicant = () => {
       setState({ ...state, [anchor]: open });
     };
 
-  const fetchApplicants = async (isFiltered = false) => {
+  const fetchApplicants = async () => {
     setTableLoader(true);
     setLoader(true);
 
@@ -124,6 +139,7 @@ const Applicant = () => {
       const params: {
         page: number;
         pageSize: number;
+        limit: number;
         totalExperience?: string;
         currentCity?: string;
         appliedSkills?: string;
@@ -145,65 +161,66 @@ const Applicant = () => {
       } = {
         page: pagination.pageIndex + 1,
         pageSize: pagination.pageSize,
+        limit: 50,
       };
 
-    
-      if (isFiltered) {
-        if (filterRating) {
-          params.rating = `${filterRating[0]}-${filterRating[1]}`;
-        }
-        if (filterEngRating) {
-          params.communicationSkill = `${filterEngRating[0]}-${filterEngRating[1]}`;
-        }
-        if (experienceRange) {
-          params.totalExperience = `${experienceRange[0]}-${experienceRange[1]}`;
-        }
-        if (filterNoticePeriod) {
-          params.noticePeriod = `${filterNoticePeriod[0]}-${filterNoticePeriod[1]}`;
-        }
-        if (filterExpectedPkg) {
-          params.expectedPkg = `${filterExpectedPkg[0]}-${filterExpectedPkg[1]}`;
-        }
-        if (filterCurrentPkg) {
-          params.currentPkg = `${filterCurrentPkg[0]}-${filterCurrentPkg[1]}`;
-        }
+      if (experienceRange[0] !== 0 || experienceRange[1] !== 25) {
+        params.totalExperience = `${experienceRange[0]}-${experienceRange[1]}`;
       }
-        if (filterWorkPreference) {
-          params.workPreference = filterWorkPreference.value;
-        }
-        if (filterAnyHandOnOffers) {
-          params.anyHandOnOffers = filterAnyHandOnOffers.value;
-        }
-        if (filterCity) {
-          params.currentCity = filterCity.value;
-        }
-        if (filterState) {
-          params.state = filterState.value;
-        }
-        if (appliedSkills.length > 0) {
-          params.appliedSkills = appliedSkills
-            .map((skill: SelectedOption) => skill.value)
-            .join(",");
-        }
-        if (startDate) {
-          params.startDate = startDate;
-        }
-        if (endDate) {
-          params.endDate = endDate;
-        }
-        if (filterStatus) {
-          params.status = filterStatus.value;
-        }
-        if (filterDesignation) {
-          params.currentCompanyDesignation = filterDesignation.value;
-        }
-        if (filterInterviewStage) {
-          params.interviewStage = filterInterviewStage.value;
-        }
-        if (filterGender) {
-          params.gender = filterGender.value;
-        }
-     
+      if (filterNoticePeriod[0] !== 0 || filterNoticePeriod[1] !== 90) {
+        params.noticePeriod = `${filterNoticePeriod[0]}-${filterNoticePeriod[1]}`;
+      }
+      if (filterRating[0] !== 0 || filterRating[1] !== 10) {
+        params.rating = `${filterRating[0]}-${filterRating[1]}`;
+      }
+
+      if (filterEngRating[0] !== 0 || filterEngRating[1] !== 10) {
+        params.communicationSkill = `${filterEngRating[0]}-${filterEngRating[1]}`;
+      }
+      if (filterExpectedPkg[0] !== 0 || filterExpectedPkg[1] !== 100) {
+        params.expectedPkg = `${filterExpectedPkg[0]}-${filterExpectedPkg[1]}`;
+      }
+
+      if (filterCurrentPkg[0] !== 0 || filterCurrentPkg[1] !== 100) {
+        params.currentPkg = `${filterCurrentPkg[0]}-${filterCurrentPkg[1]}`;
+      }
+
+      if (filterWorkPreference) {
+        params.workPreference = filterWorkPreference.value;
+      }
+      if (filterAnyHandOnOffers) {
+        params.anyHandOnOffers = filterAnyHandOnOffers.value;
+      }
+      if (filterCity) {
+        params.currentCity = filterCity.value;
+      }
+      if (filterState) {
+        params.state = filterState.value;
+      }
+      if (appliedSkills.length > 0) {
+        params.appliedSkills = appliedSkills
+          .map((skill: SelectedOption) => skill.value)
+          .join(",");
+      }
+      if (startDate) {
+        params.startDate = startDate;
+      }
+      if (endDate) {
+        params.endDate = endDate;
+      }
+      if (filterStatus) {
+        params.status = filterStatus.value;
+      }
+      if (filterDesignation) {
+        params.currentCompanyDesignation = filterDesignation.value;
+      }
+      if (filterInterviewStage) {
+        params.interviewStage = filterInterviewStage.value;
+      }
+      if (filterGender) {
+        params.gender = filterGender.value;
+      }
+
       const res = await listOfApplicants(params);
       setApplicant(res?.data?.item || []);
       setTotalRecords(res?.data?.totalRecords || 0);
@@ -216,7 +233,7 @@ const Applicant = () => {
   };
 
   useEffect(() => {
-    fetchApplicants(false);
+    fetchApplicants();
   }, [
     pagination.pageIndex,
     pagination.pageSize,
@@ -227,11 +244,10 @@ const Applicant = () => {
     filterGender,
     filterInterviewStage,
     filterStatus,
+    experienceRange,
     filterNoticePeriod,
     filterExpectedPkg,
     filterCurrentPkg,
-    filterDesignation,
-    experienceRange,
     filterDesignation,
     filterAnyHandOnOffers,
     filterState,
@@ -240,76 +256,52 @@ const Applicant = () => {
     filterWorkPreference,
   ]);
 
-const handleFilterChange = () => {
-  fetchApplicants(true);
+  const handleExperienceChange = (e: React.ChangeEvent<any>) => {
+    setExperienceRange(e.target.value as number[]);
   };
-
+  const handleNoticePeriodChange = (e: React.ChangeEvent<any>) => {
+    setFilterNoticePeriod(e.target.value as number[]);
+  };
   const handleRatingChange = (e: React.ChangeEvent<any>) => {
     setFilterRating(e.target.value as number[]);
-    handleFilterChange(); 
   };
 
   const handleEngRatingChange = (e: React.ChangeEvent<any>) => {
     setFilterEngRating(e.target.value as number[]);
-    handleFilterChange();
   };
-  const handleNoticePeriodChange = (e: React.ChangeEvent<any>) => {
-    setFilterNoticePeriod(e.target.value as number[]);
-    handleFilterChange();
-  };
+
   const handleExpectedPkgChange = (e: React.ChangeEvent<any>) => {
     setFilterExpectedPkg(e.target.value as number[]);
-    handleFilterChange();
   };
   const handleCurrentPkgChange = (e: React.ChangeEvent<any>) => {
     setFilterCurrentPkg(e.target.value as number[]);
-    handleFilterChange();
   };
-  
-  
-const handleExperienceChange = (e: React.ChangeEvent<any>) => {
-  setExperienceRange(e.target.value as number[]);
-  handleFilterChange();
-};
-  
+
   const handleAppliedSkillsChange = (selectedOptions: SelectedOption[]) => {
     setAppliedSkills(selectedOptions);
-   
- 
   };
 
   const handleCityChange = (selectedOption: SelectedOption) => {
     setFilterCity(selectedOption);
-    
-    
   };
   const handleStateChange = (selectedOption: SelectedOption) => {
     setFilterState(selectedOption);
-  
-
   };
 
   const handleGenderChange = (selectedOption: SelectedOption) => {
     setFilterGender(selectedOption);
-    
-    
-
   };
 
   const handleInterviewStageChange = (selectedOption: SelectedOption) => {
     setFilterInterviewStage(selectedOption);
-   
-   
   };
 
   const handleStatusChange = (selectedOption: SelectedOption) => {
     setFilterStatus(selectedOption);
-    
   };
 
   const handleWorkPreferenceChange = (selectedOption: SelectedOption) => {
     setFilterWorkPreference(selectedOption);
-   
   };
 
   const handleAnyHandOnOffersChange = (selectedOption: SelectedOption) => {
@@ -318,7 +310,6 @@ const handleExperienceChange = (e: React.ChangeEvent<any>) => {
 
   const handleDesignationChange = (selectedOption: SelectedOption) => {
     SetFilterDesignation(selectedOption);
-  
   };
   const handleDateChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -329,7 +320,6 @@ const handleExperienceChange = (e: React.ChangeEvent<any>) => {
     } else {
       setEndDate(e.target.value);
     }
- 
   };
 
   const resetFilters = () => {
@@ -347,11 +337,12 @@ const handleExperienceChange = (e: React.ChangeEvent<any>) => {
     setExperienceRange([0, 25]);
     setFilterAnyHandOnOffers(null);
     setFilterWorkPreference(null);
-    setFilterRating([0, 11]);
-    setFilterEngRating([0, 11]);
+
+    setFilterRating([0, 10]);
+    setFilterEngRating([0, 10]);
     setFilterState(null);
-    // fetchApplicants();
-    fetchApplicants(false);
+
+    fetchApplicants();
   };
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
@@ -447,6 +438,194 @@ const handleExperienceChange = (e: React.ChangeEvent<any>) => {
   //   window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, "_blank");
   // };
 
+  // const handleFileImport = async (
+  //   event: React.ChangeEvent<HTMLInputElement>
+  // ) => {
+  //   const file = event.target.files?.[0];
+  //   if (!file) return;
+
+  //   // Check file extension
+  //   const fileExtension = file.name.split(".").pop()?.toLowerCase();
+  //   if (!["csv", "xlsx", "xls"].includes(fileExtension || "")) {
+  //     toast.error("Please upload a valid CSV or Excel file");
+  //     return;
+  //   }
+
+  //   if (file.size > 5 * 1024 * 1024) {
+  //     // 5MB
+  //     // toast("Large file detected. Import may take a few minutes.", {
+  //     //   icon: "⚠️",
+  //     //   duration: 4000,
+  //     toast.error(
+  //       "Large file detected. Import may take a few minutes."
+  //       //   , {
+  //       //   icon: "⚠️",
+  //       //   duration: 4000,
+  //       // }
+  //     );
+  //   }
+
+  //   setImportLoader(true);
+  //   setIsImporting(true);
+  //   setImportProgress(0);
+
+  //   try {
+  //     const formData = new FormData();
+  //     formData.append("csvFile", file);
+
+  //     const response = await importApplicant(formData, {
+  //       onUploadProgress: (progressEvent: { loaded: number; total: any }) => {
+  //         const progress = Math.round(
+  //           (progressEvent.loaded * 100) / (progressEvent.total || 100)
+  //         );
+  //         setImportProgress(progress);
+  //       },
+  //     });
+
+  //     if (response?.success) {
+  //       toast.success(response?.message || "File imported successfully!");
+  //       await fetchApplicants();
+  //     } else {
+  //       throw new Error(response?.message || "Import failed");
+  //     }
+  //   } catch (error: any) {
+  //     console.error("Import error:", error);
+
+  //     if (error.response?.data) {
+  //       const errorMessage =
+  //         error.response.data.message || error.response.data.error;
+  //       toast.error(errorMessage || "Failed to import file");
+  //     } else if (error.message) {
+  //       // Handle other errors with messages
+  //       toast.error(error.message);
+  //     } else {
+  //       toast.error("An unexpected error occurred during import");
+  //     }
+  //   } finally {
+  //     setImportLoader(false);
+  //     setIsImporting(false);
+  //     setImportProgress(0);
+  //     if (fileInputRef.current) {
+  //       fileInputRef.current.value = "";
+  //     }
+  //   }
+  // };
+
+  const handleFileImport = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // setUploadedFile(file); 
+    setImportLoader(true);
+    setIsImporting(true);
+    setImportProgress(0);
+
+    try {
+      const formData = new FormData();
+      formData.append("csvFile", file);
+      setUploadedFile(formData);
+
+      const updateFlag = "no"; 
+
+      const response = await importApplicant(formData, updateFlag, {
+        onUploadProgress: (progressEvent) => {
+          const progress = Math.round(
+            (progressEvent.loaded * 100) / (progressEvent.total || 100)
+          );
+          setImportProgress(progress);
+        },
+      });
+
+      if (response?.success) {
+        toast.success(response?.message || "File imported successfully!");
+
+
+        const duplicateEmails = response?.existingEmails || [];
+        if (duplicateEmails.length > 0) {
+          setShowPopupModal(true);
+          setDuplicateEmails(duplicateEmails);
+        } else {
+          await fetchApplicants();
+        }
+      } else {
+        throw new Error(response?.message || "Import failed");
+      }
+    } catch (error: any) {
+      console.error("Import error:", error);
+      toast.error(error.message || "Failed to import file");
+    } finally {
+      setImportLoader(false);
+      setIsImporting(false);
+      setImportProgress(0);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
+
+
+
+  const handleModalConfirm = async () => {
+    if (!uploadedFile) return;
+
+    setImportLoader(true);
+    setIsImporting(true);
+    setImportProgress(0);
+
+    try {
+      const response = await importApplicant(uploadedFile, "yes", {
+        onUploadProgress: (progressEvent) => {
+          const progress = Math.round(
+            (progressEvent.loaded * 100) / (progressEvent.total || 100)
+          );
+          setImportProgress(progress);
+        },
+      });
+
+      if (response?.success) {
+        toast.success("Existing applicants updated successfully!");
+        setShowPopupModal(false);
+        await fetchApplicants(); // Refresh the list after updating
+      } else {
+        throw new Error(response?.message || "Update failed");
+      }
+    } catch (error: any) {
+      console.error("Update error:", error);
+      toast.error(error.message || "Failed to update applicants");
+    } finally {
+      setImportLoader(false);
+      setIsImporting(false);
+      setImportProgress(0);
+    }
+  };
+
+  const handleModalCancel = () => {
+    setShowPopupModal(false);
+  };
+
+  const handleExportExcel = async () => {
+    try {
+      toast.info("Preparing file for download...");
+
+      const response = await ExportApplicant();
+
+      if (!response) {
+        toast.error("Failed to download file");
+        return;
+      }
+
+      const blob = new Blob([response], { type: "text/csv" });
+
+      saveAs(blob, "applicants.csv");
+
+      toast.success("File downloaded successfully!");
+    } catch (error) {
+      console.error("Export error:", error);
+      toast.error("Failed to export file");
+    }
+  };
   const drawerList = (anchor: Anchor) => (
     <Box
       sx={{
@@ -488,19 +667,18 @@ const handleExperienceChange = (e: React.ChangeEvent<any>) => {
         />
 
         <BaseSlider
+
           label="Experience (in years)"
           name="experience"
           className="select-border mx-5 mb-1 "
           value={experienceRange}
-          // handleChange={(e: React.ChangeEvent<any>) => {
-          //   setExperienceRange(e.target.value as number[]); // Ensure you set an array, not just a number
-          // }}
+          // onChange={handleExperienceChange}
           handleChange={handleExperienceChange}
           min={0}
           max={25}
           step={1}
-          disabled={false}
           valueLabelDisplay="auto"
+          disabled={false}
         />
 
         <BaseSelect
@@ -569,9 +747,6 @@ const handleExperienceChange = (e: React.ChangeEvent<any>) => {
           name="currentPkg"
           className="select-border mx-5 mb-1  "
           value={filterCurrentPkg}
-          // handleChange={(e: React.ChangeEvent<any>) => {
-          //   setFilterCurrentPkg(e.target.value as number[]); // Ensure you set an array, not just a number
-          // }}
           handleChange={handleCurrentPkgChange}
           min={0}
           max={100}
@@ -594,14 +769,12 @@ const handleExperienceChange = (e: React.ChangeEvent<any>) => {
           name="noticePeriod"
           className="select-border mx-5 mb-1  "
           value={filterNoticePeriod}
-          // handleChange={(e: React.ChangeEvent<any>) => {
-          //   setFilterNoticePeriod(e.target.value as number[]); // Ensure you set an array, not just a number
-          // }}
           handleChange={handleNoticePeriodChange}
           min={0}
           max={90}
           step={1}
           valueLabelDisplay="auto"
+          disabled={false}
         />
 
         <BaseSelect
@@ -619,9 +792,6 @@ const handleExperienceChange = (e: React.ChangeEvent<any>) => {
           name="rating"
           value={filterRating}
           className="select-border mx-5 mb-1  "
-          // handleChange={(e: React.ChangeEvent<any>) => {
-          //   setFilterRating(e.target.value as number[]); // Ensure you set an array, not just a number
-          // }}
           handleChange={handleRatingChange}
           min={0}
           max={10}
@@ -634,9 +804,6 @@ const handleExperienceChange = (e: React.ChangeEvent<any>) => {
           name="communication"
           className="select-border mx-5 mb-1  "
           value={filterEngRating}
-          // handleChange={(e: React.ChangeEvent<any>) => {
-          //   setFilterEngRating(e.target.value as number[]); // Ensure you set an array, not just a number
-          // }}
           handleChange={handleEngRatingChange}
           min={0}
           max={10}
@@ -757,6 +924,7 @@ const handleExperienceChange = (e: React.ChangeEvent<any>) => {
           <BaseSelect
             name="interviewStage"
             // className="custom-select"
+            styles={customStyles}
             options={interviewStageOptions}
             value={dynamicFind(
               interviewStageOptions,
@@ -792,6 +960,7 @@ const handleExperienceChange = (e: React.ChangeEvent<any>) => {
           <BaseSelect
             name="status"
             // className="custom-select"
+            styles={customStyles}
             options={statusOptions}
             value={dynamicFind(statusOptions, cell.row.original.status)}
             handleChange={(selectedOption: SelectedOption) => {
@@ -846,7 +1015,7 @@ const handleExperienceChange = (e: React.ChangeEvent<any>) => {
                 place="bottom"
                 variant="info"
                 content="Edit"
-                anchorId={`editMode-${cell?.row?.original?.id}`} // ensure unique ID
+                anchorId={`editMode-${cell?.row?.original?.id}`}
               />
             </BaseButton>
 
@@ -861,7 +1030,7 @@ const handleExperienceChange = (e: React.ChangeEvent<any>) => {
                 place="bottom"
                 variant="error"
                 content="Delete"
-                anchorId={`delete-${cell?.row?.original?.id}`} // ensure unique ID
+                anchorId={`delete-${cell?.row?.original?.id}`}
               />
             </BaseButton>
 
@@ -892,6 +1061,30 @@ const handleExperienceChange = (e: React.ChangeEvent<any>) => {
 
   return (
     <Fragment>
+      {/* <BasePopUpModal
+        isOpen={showPopupModal}
+        onRequestClose={() => setShowPopupModal(false)}
+        title="Duplicate Records Detected"
+        message="The following records already exist in the system:"
+        items={duplicateEmails}
+        confirmAction={handleModalConfirm}
+        cancelAction={handleModalCancel}
+        confirmText="Yes, Update"
+        cancelText="No, Don't Update"
+        disabled={false}
+      /> */}
+      <BasePopUpModal
+        isOpen={showPopupModal}
+        onRequestClose={() => setShowPopupModal(false)}
+        title="Duplicate Records Detected"
+        message="The following applicants already exist in the system:"
+        items={duplicateEmails} // Ensure this comes from the backend
+        confirmAction={handleModalConfirm}
+        cancelAction={handleModalCancel}
+        confirmText="Yes, Update"
+        cancelText="No, Don't Update"
+      />
+
       {showModal && selectedApplicantId && (
         <ViewModal
           show={showModal}
@@ -903,7 +1096,7 @@ const handleExperienceChange = (e: React.ChangeEvent<any>) => {
         show={showDeleteModal}
         onCloseClick={closeDeleteModal}
         onDeleteClick={handleDelete}
-        recordId={recordIdToDelete}
+        // recordId={recordIdToDelete}
         loader={loader}
       />
       <Container fluid>
@@ -963,13 +1156,192 @@ const handleExperienceChange = (e: React.ChangeEvent<any>) => {
                         </>
                       )}
 
-                      <BaseButton
-                        color="success"
-                        // disabled={loader}
-                        onClick={handleNavigate}
-                        // loader={loader}
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        accept=".csv,.xlsx,.xls"
+                        style={{ display: "none" }}
+                        onChange={handleFileImport}
+                      />
+
+                      {isImporting && (
+                        <div>
+                          <p>Importing...</p>
+                          <progress value={importProgress} max={100} />
+                        </div>
+                      )}
+                      {/* <button onClick={handleExportExcel}>
+                        Export to Excel
+                      </button> */}
+                      {/* <BaseButton
+                        color="primary"
+                        className="mx-2 position-relative"
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={importLoader}
                       >
-                        Add New Applicant
+                        {importLoader ? (
+                          <>
+                            <i className="ri-loader-4-line animate-spin align-bottom me-1" />
+                            {isImporting
+                              ? `Importing... ${importProgress}%`
+                              : "Processing..."}
+                          </>
+                        ) : (
+                          <>
+                            <i className="ri-upload-2-line align-bottom me-1" />
+                            Import
+                          </>
+                        )}
+                        {isImporting && (
+                          <div
+                            className="progress position-absolute bottom-0 start-0"
+                            style={{
+                              height: "4px",
+                              width: "100%",
+                              borderRadius: "0 0 4px 4px",
+                            }}
+                          >
+                            <div
+                              className="progress-bar"
+                              role="progressbar"
+                              style={{ width: `${importProgress}%` }}
+                              aria-valuenow={importProgress}
+                              aria-valuemin={0}
+                              aria-valuemax={100}
+                            />
+                          </div>
+                        )}
+                      </BaseButton> */}
+                      {/* <Dropdown>
+                        <Dropdown.Toggle
+                          variant="link"
+                          id="dropdown-custom-components"
+                          className="bg-primary text-white mx-2"
+                        >
+                          <i className="ri-upload-2-line align-bottom me-1" />
+                        </Dropdown.Toggle>
+
+                        <Dropdown.Menu>
+                          <Dropdown.Item onClick={handleExportExcel}>
+                            <i className="ri-upload-2-line align-bottom me-1" />
+                            Export
+                          </Dropdown.Item>{" "}
+                          <Dropdown.Item
+                            onClick={() => fileInputRef.current?.click()}
+                            disabled={importLoader}
+                          >
+                            {importLoader ? (
+                              <>
+                                <i className="ri-loader-4-line animate-spin align-bottom me-1" />
+                                {isImporting
+                                  ? `Importing... ${importProgress}%`
+                                  : "Processing..."}
+                              </>
+                            ) : (
+                              <>
+                                <i className="ri-download-2-line align-bottom me-1" />
+                                Import
+                              </>
+                            )}
+                            {isImporting && (
+                              <div
+                                className="progress position-absolute bottom-0 start-0"
+                                style={{
+                                  height: "4px",
+                                  width: "100%",
+                                  borderRadius: "0 0 4px 4px",
+                                }}
+                              >
+                                <div
+                                  className="progress-bar"
+                                  role="progressbar"
+                                  style={{ width: `${importProgress}%` }}
+                                  aria-valuenow={importProgress}
+                                  aria-valuemin={0}
+                                  aria-valuemax={100}
+                                />
+                              </div>
+                            )}
+                          </Dropdown.Item>
+                        </Dropdown.Menu>
+                      </Dropdown> */}
+
+                      <Dropdown
+                        show={showDropdown}
+                        onMouseEnter={() => setShowDropdown(true)}
+                        onMouseLeave={() => setShowDropdown(false)}
+                      >
+                        {/* Main Dropdown Button with Tooltip */}
+                        <Dropdown.Toggle
+                          id="export-dropdown"
+                          variant="link"
+                          className="bg-primary text-white mx-2"
+                          data-tip
+                          data-for="export-tooltip"
+                        >
+                          <i className="ri-upload-2-line align-bottom me-1" />
+                        </Dropdown.Toggle>
+
+                        {/* Tooltip for Export Icon */}
+                        <ReactTooltip
+                          id="export-tooltip"
+                          place="top"
+                          // effect="solid"
+                        >
+                          Export Options
+                        </ReactTooltip>
+
+                        <Dropdown.Menu>
+                          {/* Export Option */}
+                          <Dropdown.Item onClick={handleExportExcel}>
+                            <i className="ri-upload-2-line align-bottom me-1" />
+                            Export
+                          </Dropdown.Item>
+
+                          {/* Import Option */}
+                          <Dropdown.Item
+                            onClick={() => fileInputRef.current?.click()}
+                            disabled={importLoader}
+                          >
+                            {importLoader ? (
+                              <>
+                                <i className="ri-loader-4-line animate-spin align-bottom me-1" />
+                                {isImporting
+                                  ? `Importing... ${importProgress}%`
+                                  : "Processing..."}
+                              </>
+                            ) : (
+                              <>
+                                <i className="ri-download-2-line align-bottom me-1" />
+                                Import
+                              </>
+                            )}
+                            {isImporting && (
+                              <div
+                                className="progress position-absolute bottom-0 start-0"
+                                style={{
+                                  height: "4px",
+                                  width: "100%",
+                                  borderRadius: "0 0 4px 4px",
+                                }}
+                              >
+                                <div
+                                  className="progress-bar"
+                                  role="progressbar"
+                                  style={{ width: `${importProgress}%` }}
+                                  aria-valuenow={importProgress}
+                                  aria-valuemin={0}
+                                  aria-valuemax={100}
+                                />
+                              </div>
+                            )}
+                          </Dropdown.Item>
+                        </Dropdown.Menu>
+                      </Dropdown>
+
+                      <BaseButton color="success" onClick={handleNavigate}>
+                        <i className="ri-add-line align-bottom me-1" />
+                        Add
                       </BaseButton>
                     </div>
                   </div>
@@ -1036,6 +1408,40 @@ const toolipComponents = {
   padding: "8px 12px !important",
   "font-size": "14px !important",
   border: "1px solid white !important",
+};
+const customStyles = {
+  control: (provided: any) => ({
+    ...provided,
+    fontSize: "12px",
+    backgroundColor: "#f0f0f0",
+    borderRadius: "8px",
+    borderColor: "#ccc",
+    // padding: "3px 3px !important",
+  }),
+
+  option: (provided: any, state: any) => ({
+    ...provided,
+    fontSize: "12px",
+    backgroundColor: state.isSelected ? "#007bff" : "transparent",
+    color: state.isSelected ? "#fff" : "#000",
+  }),
+  singleValue: (provided: any) => ({
+    ...provided,
+    color: "#333",
+  }),
+  dropdownIndicator: (provided: any) => ({
+    ...provided,
+    color: "#007bff",
+  }),
+  clearIndicator: (provided: any) => ({
+    ...provided,
+    display: "none",
+    color: "#dc3545",
+  }),
+  menu: (provided: any) => ({
+    ...provided,
+    borderRadius: "8px",
+  }),
 };
 
 export default Applicant;

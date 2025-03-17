@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 
 export type timeStamp = { timeStamp: number };
@@ -131,6 +132,7 @@ export interface BaseSelectProps {
   touched?: boolean;
   error?: string;
   isDisabled?: boolean;
+  styles?: any;
 }
 
 export interface BaseTextareaProps {
@@ -213,4 +215,17 @@ export interface BaseSliderProps {
   touched?: boolean;
   valueLabelDisplay?: any;
   valueLabelFormat?: any;
+}
+
+export interface BasePopUpModalProps {
+  isOpen: boolean;
+  onRequestClose: () => void;
+  title: string;
+  message?: string;
+  items?: string[]; // Optional array of items to display in the modal
+  confirmAction: () => void;
+  cancelAction: () => void;
+  confirmText?: string;
+  cancelText?: string;
+  disabled?: boolean;
 }
