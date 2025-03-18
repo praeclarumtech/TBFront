@@ -312,15 +312,16 @@ const EmailTable = () => {
               isHeaderTitle="Email"
               columns={columns}
               data={emails}
-              isGlobalFilter
+              // isGlobalFilter
               customPageSize={10}
               theadClass="table-light text-muted"
               tableClass="!text-nowrap !mb-0 !responsive !table-responsive-sm !table-hover !table-outline-none !mb-0"
-              SearchPlaceholder="Search..."
+              // SearchPlaceholder="Search..."
               totalRecords={totalRecords}
               pagination={pagination}
               setPagination={setPagination}
               loader={loading}
+              customPadding="0.3rem 1.75rem"
             />
           )}
         </div>

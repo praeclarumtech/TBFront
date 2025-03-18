@@ -26,6 +26,7 @@ export const SEND_EMAIL = "email/applicant/sendEmail";
 export const VIEW_ALL_EMAIL = "email/applicant/getAllEmails";
 export const DELETE_EMAIL = "email/applicant/deleteManyEmails";
 export const VIEW_EMAIL = "email/applicant/viewEmailById";
+export const DELETE_MULTIPLE_EMAIL = "email/applicant/deleteManyEmails";
 
 //Passing Year module
 export const ADD_PASSING_YEAR = "year";
@@ -40,6 +41,7 @@ export const VIEW_SKILL = "skill/viewById";
 export const VIEW_ALL_SKILL = "skill/viewSkills";
 export const UPDATE_SKILL = "skill/update";
 export const DELETE_SKILL = "skill/delete";
+export const IMPORT_SKILLS = "skill/importCsv";
 
 //Degree module
 export const CREATE_DEGREE = "degree/addDegree";

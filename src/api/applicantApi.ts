@@ -92,68 +92,24 @@ export const city = async () => {
   return response?.data;
 };
 
-// export const importApplicant = async (
-//   params: {
-//     yes?: string;
-//   },
-//   formData: FormData,
-//   config?: {
-//     onUploadProgress?: (progressEvent: any) => void;
-//   }
-// ) => {
-//   const response = await authServices.post(`${IMPORT_APPLICANT}`, formData, {
-//     params,
-//     headers: {
-//       "Content-Type": "multipart/form-data",
-//     },
-//     ...config,
-//     timeout: 300000, // 5 minutes
-//   });
-//   return response?.data;
-// };
-
-// export const importApplicant = async (
-//   // params: { update: "yes" },
-//   formData: FormData,
-//   config?: {
-//     onUploadProgress?: (progressEvent: any) => void;
-//   }
-// ) => {
-//   const response = await authServices.post(`${IMPORT_APPLICANT}`, formData, {
-//     // params,
-//     headers: {
-//       "Content-Type": "multipart/form-data",
-//     },
-//     ...config,
-//     timeout: 300000, // 5 minutes
-//   });
-//   return response?.data;
-// };
-
-
 export const importApplicant = async (
   formData: FormData,
-  updateFlag: "yes" | "no", 
   config?: {
     onUploadProgress?: (progressEvent: any) => void;
+    params?: any;
   }
 ) => {
-  const url = `${IMPORT_APPLICANT}/${updateFlag}`; // Dynamically build the URL with the update flag
+  const url = `${IMPORT_APPLICANT}`;
 
-  try {
-    const response = await authServices.post(url, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-      ...config,
-      timeout: 300000, // 5 minutes
-    });
-
-    return response?.data; // Return the data received from the server
-  } catch (error) {
-    console.error("Error in importApplicant:", error);
-    throw error; // Rethrow the error to handle it in the calling function
-  }
+  const response = await authServices.post(url, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+    params: config?.params,
+    ...config,
+    timeout: 300000,
+  });
+  return response?.data;
 };
 
 export const ExportApplicant = async (config?: {

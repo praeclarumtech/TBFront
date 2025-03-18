@@ -1,15 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Row, Col, Card, Container, CardBody } from "react-bootstrap";
+import { Row, Col, Card, Container, CardBody, Spinner } from "react-bootstrap";
 import React, { Fragment, useEffect, useState, useMemo, useRef } from "react";
 import BaseButton from "components/BaseComponents/BaseButton";
 import { BaseSelect, MultiSelect } from "components/BaseComponents/BaseSelect";
 import TableContainer from "components/BaseComponents/TableContainer";
 import { useNavigate } from "react-router-dom";
 import { Tooltip as ReactTooltip } from "react-tooltip";
-
-import { Dropdown } from "react-bootstrap"; // Bootstrap dropdown
-
+import { Dropdown } from "react-bootstrap";
 import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+import "react-loading-skeleton/dist/skeleton.css";
 import {
   deleteApplicant,
   listOfApplicants,
@@ -39,11 +40,13 @@ import Skeleton from "react-loading-skeleton";
 import { XSquare } from "react-bootstrap-icons";
 import saveAs from "file-saver";
 import BasePopUpModal from "components/BaseComponents/BasePopUpModal";
-
+import { ViewAppliedSkills } from "api/skillsApi";
+import { FaExclamationTriangle } from "react-icons/fa";
+// import toast from "react-hot-toast";
 const {
   projectTitle,
   Modules,
-  skillOptions,
+  // skillOptions,
   interviewStageOptions,
   cityOptions,
   statusOptions,
@@ -74,8 +77,8 @@ const Applicant = () => {
   const [filterNoticePeriod, setFilterNoticePeriod] = useState<number[]>([
     0, 90,
   ]);
+  // const [uploadedFile, setUploadedFile] = useState<FormData | null>(null);
   const [uploadedFile, setUploadedFile] = useState<FormData | null>(null);
-
   // const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [filterStatus, setFilterStatus] = useState<SelectedOption | null>(null);
   const [filterInterviewStage, setFilterInterviewStage] =
@@ -109,13 +112,16 @@ const Applicant = () => {
   const [state, setState] = React.useState({
     right: false,
   });
-   const [showDropdown, setShowDropdown] = useState(false);
+
+  const [skillOptions, setSkillOptions] = useState<any[]>([]);
+  const [showDropdown, setShowDropdown] = useState(false);
   const [importLoader, setImportLoader] = useState(false);
   const [importProgress, setImportProgress] = useState(0);
   const [isImporting, setIsImporting] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
   const [showPopupModal, setShowPopupModal] = useState(false);
-  const [duplicateEmails, setDuplicateEmails] = useState<string[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const toggleDrawer =
     (anchor: Anchor, open: boolean) =>
@@ -158,6 +164,8 @@ const Applicant = () => {
         workPreference?: string;
         communicationSkill?: string;
         currentPkg?: string;
+        applicantName?: string;
+        searchSkills?: string;
       } = {
         page: pagination.pageIndex + 1,
         pageSize: pagination.pageSize,
@@ -211,6 +219,7 @@ const Applicant = () => {
       if (filterStatus) {
         params.status = filterStatus.value;
       }
+
       if (filterDesignation) {
         params.currentCompanyDesignation = filterDesignation.value;
       }
@@ -256,6 +265,38 @@ const Applicant = () => {
     filterWorkPreference,
   ]);
 
+  useEffect(() => {
+    const fetchSkills = async () => {
+      try {
+        setLoading(true);
+        //  const allSkills: any[] = [];
+        const page = 1;
+        const pageSize = 50;
+        const limit = 200;
+        const response = await ViewAppliedSkills({
+          page,
+          pageSize,
+          limit,
+        });
+
+        const skillData = response?.data?.data || [];
+
+        setSkillOptions(
+          skillData.map((item: any) => ({
+            label: item.skills,
+            value: item._id,
+          }))
+        );
+      } catch (error) {
+        console.error("Error fetching skills", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSkills();
+  }, []);
+
   const handleExperienceChange = (e: React.ChangeEvent<any>) => {
     setExperienceRange(e.target.value as number[]);
   };
@@ -276,6 +317,10 @@ const Applicant = () => {
   const handleCurrentPkgChange = (e: React.ChangeEvent<any>) => {
     setFilterCurrentPkg(e.target.value as number[]);
   };
+
+  //   const handleSearchFilterChange = (e: React.ChangeEvent<any>) =>{
+  //   setSearchFilter(e.target.value as string[]);
+  // }
 
   const handleAppliedSkillsChange = (selectedOptions: SelectedOption[]) => {
     setAppliedSkills(selectedOptions);
@@ -438,86 +483,28 @@ const Applicant = () => {
   //   window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, "_blank");
   // };
 
-  // const handleFileImport = async (
-  //   event: React.ChangeEvent<HTMLInputElement>
-  // ) => {
-  //   const file = event.target.files?.[0];
-  //   if (!file) return;
-
-  //   // Check file extension
-  //   const fileExtension = file.name.split(".").pop()?.toLowerCase();
-  //   if (!["csv", "xlsx", "xls"].includes(fileExtension || "")) {
-  //     toast.error("Please upload a valid CSV or Excel file");
-  //     return;
-  //   }
-
-  //   if (file.size > 5 * 1024 * 1024) {
-  //     // 5MB
-  //     // toast("Large file detected. Import may take a few minutes.", {
-  //     //   icon: "⚠️",
-  //     //   duration: 4000,
-  //     toast.error(
-  //       "Large file detected. Import may take a few minutes."
-  //       //   , {
-  //       //   icon: "⚠️",
-  //       //   duration: 4000,
-  //       // }
-  //     );
-  //   }
-
-  //   setImportLoader(true);
-  //   setIsImporting(true);
-  //   setImportProgress(0);
-
-  //   try {
-  //     const formData = new FormData();
-  //     formData.append("csvFile", file);
-
-  //     const response = await importApplicant(formData, {
-  //       onUploadProgress: (progressEvent: { loaded: number; total: any }) => {
-  //         const progress = Math.round(
-  //           (progressEvent.loaded * 100) / (progressEvent.total || 100)
-  //         );
-  //         setImportProgress(progress);
-  //       },
-  //     });
-
-  //     if (response?.success) {
-  //       toast.success(response?.message || "File imported successfully!");
-  //       await fetchApplicants();
-  //     } else {
-  //       throw new Error(response?.message || "Import failed");
-  //     }
-  //   } catch (error: any) {
-  //     console.error("Import error:", error);
-
-  //     if (error.response?.data) {
-  //       const errorMessage =
-  //         error.response.data.message || error.response.data.error;
-  //       toast.error(errorMessage || "Failed to import file");
-  //     } else if (error.message) {
-  //       // Handle other errors with messages
-  //       toast.error(error.message);
-  //     } else {
-  //       toast.error("An unexpected error occurred during import");
-  //     }
-  //   } finally {
-  //     setImportLoader(false);
-  //     setIsImporting(false);
-  //     setImportProgress(0);
-  //     if (fileInputRef.current) {
-  //       fileInputRef.current.value = "";
-  //     }
-  //   }
-  // };
-
   const handleFileImport = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    // setUploadedFile(file); 
+    const fileExtension = file.name.split(".").pop()?.toLowerCase();
+    if (!["csv", "xlsx", "xls"].includes(fileExtension || "")) {
+      toast.error("Please upload a valid CSV or Excel file");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      // 5MB
+      toast("Large file detected. Import may take a few minutes.", {
+        // icon: "⚠️",
+        icon: <FaExclamationTriangle />,
+        // duration: 4000,
+        autoClose: 4000,
+      });
+    }
+
     setImportLoader(true);
     setIsImporting(true);
     setImportProgress(0);
@@ -527,9 +514,7 @@ const Applicant = () => {
       formData.append("csvFile", file);
       setUploadedFile(formData);
 
-      const updateFlag = "no"; 
-
-      const response = await importApplicant(formData, updateFlag, {
+      const response = await importApplicant(formData, {
         onUploadProgress: (progressEvent) => {
           const progress = Math.round(
             (progressEvent.loaded * 100) / (progressEvent.total || 100)
@@ -537,18 +522,11 @@ const Applicant = () => {
           setImportProgress(progress);
         },
       });
-
+      console.log("API Response:", response);
       if (response?.success) {
         toast.success(response?.message || "File imported successfully!");
-
-
-        const duplicateEmails = response?.existingEmails || [];
-        if (duplicateEmails.length > 0) {
-          setShowPopupModal(true);
-          setDuplicateEmails(duplicateEmails);
-        } else {
-          await fetchApplicants();
-        }
+      } else if (!response?.success && response.statusCode === 409) {
+        setShowPopupModal(true);
       } else {
         throw new Error(response?.message || "Import failed");
       }
@@ -556,6 +534,7 @@ const Applicant = () => {
       console.error("Import error:", error);
       toast.error(error.message || "Failed to import file");
     } finally {
+      fetchApplicants();
       setImportLoader(false);
       setIsImporting(false);
       setImportProgress(0);
@@ -565,9 +544,9 @@ const Applicant = () => {
     }
   };
 
-
-
   const handleModalConfirm = async () => {
+    console.log("calling confim modal");
+
     if (!uploadedFile) return;
 
     setImportLoader(true);
@@ -575,7 +554,12 @@ const Applicant = () => {
     setImportProgress(0);
 
     try {
-      const response = await importApplicant(uploadedFile, "yes", {
+      const formData = new FormData();
+      formData.append("csvFile", uploadedFile.get("csvFile") as Blob);
+      const updateFlag = "true";
+
+      const response = await importApplicant(formData, {
+        params: { updateFlag },
         onUploadProgress: (progressEvent) => {
           const progress = Math.round(
             (progressEvent.loaded * 100) / (progressEvent.total || 100)
@@ -587,7 +571,7 @@ const Applicant = () => {
       if (response?.success) {
         toast.success("Existing applicants updated successfully!");
         setShowPopupModal(false);
-        await fetchApplicants(); // Refresh the list after updating
+        await fetchApplicants();
       } else {
         throw new Error(response?.message || "Update failed");
       }
@@ -598,12 +582,25 @@ const Applicant = () => {
       setImportLoader(false);
       setIsImporting(false);
       setImportProgress(0);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
     }
   };
 
   const handleModalCancel = () => {
     setShowPopupModal(false);
   };
+
+  // useEffect(() => {
+  //   console.log("Is modal open?", showPopupModal);
+  // }, [showPopupModal]);
+
+  // useEffect(() => {
+  //   handleFileImport
+  // }, []);
+
+  console.log("Is modal open?", showPopupModal);
 
   const handleExportExcel = async () => {
     try {
@@ -664,10 +661,15 @@ const Applicant = () => {
           isMulti={true}
           onChange={handleAppliedSkillsChange}
           options={skillOptions}
+          // isLoading={loading}
         />
-
+        {loading && (
+          <div style={{ marginTop: "10px" }}>
+            <Spinner animation="border" size="sm" />
+            <span style={{ marginLeft: "5px" }}>Loading skills...</span>
+          </div>
+        )}
         <BaseSlider
-
           label="Experience (in years)"
           name="experience"
           className="select-border mx-5 mb-1 "
@@ -733,9 +735,6 @@ const Applicant = () => {
           name="expectedPkg"
           className="select-border mx-5 mb-1  "
           value={filterExpectedPkg}
-          // handleChange={(e: React.ChangeEvent<any>) => {
-          //   setFilterExpectedPkg(e.target.value as number[]); // Ensure you set an array, not just a number
-          // }}
           handleChange={handleExpectedPkgChange}
           min={0}
           max={100}
@@ -943,7 +942,9 @@ const Applicant = () => {
                   { interviewStage: selectedOption.value },
                   cell.row.original._id
                 )
-                  .then(() => {})
+                  .then(() => {
+                    toast.success("Applicant status updated successfully!");
+                  })
                   .catch((error: any) => {
                     errorHandle(error);
                   });
@@ -975,7 +976,9 @@ const Applicant = () => {
                   { status: selectedOption.value },
                   cell.row.original._id
                 )
-                  .then(() => {})
+                  .then(() => {
+                    toast.success("Applicant status updated successfully!");
+                  })
                   .catch((error: any) => {
                     errorHandle(error);
                   });
@@ -1061,24 +1064,11 @@ const Applicant = () => {
 
   return (
     <Fragment>
-      {/* <BasePopUpModal
-        isOpen={showPopupModal}
-        onRequestClose={() => setShowPopupModal(false)}
-        title="Duplicate Records Detected"
-        message="The following records already exist in the system:"
-        items={duplicateEmails}
-        confirmAction={handleModalConfirm}
-        cancelAction={handleModalCancel}
-        confirmText="Yes, Update"
-        cancelText="No, Don't Update"
-        disabled={false}
-      /> */}
       <BasePopUpModal
-        isOpen={showPopupModal}
-        onRequestClose={() => setShowPopupModal(false)}
-        title="Duplicate Records Detected"
-        message="The following applicants already exist in the system:"
-        items={duplicateEmails} // Ensure this comes from the backend
+        isOpen={showPopupModal} // Ensure this is true when there are duplicates
+        onRequestClose={() => setShowPopupModal(false)} // Close the modal
+        title="Duplicate Records Found"
+        message="Do you want to update the existing applicants?"
         confirmAction={handleModalConfirm}
         cancelAction={handleModalCancel}
         confirmText="Yes, Update"
@@ -1106,7 +1096,6 @@ const Applicant = () => {
               <CardBody>
                 <div className="container">
                   <div className="row justify-content-between align-items-center">
-                    {/* Left: Show Filters Button */}
                     <div className="col-auto d-flex justify-content-start mx-0">
                       <button
                         onClick={toggleDrawer("right", true)}
@@ -1124,8 +1113,6 @@ const Applicant = () => {
                         {drawerList("right")}
                       </Drawer>
                     </div>
-
-                    {/* Right: WhatsApp, Email, and New Applicant Buttons */}
 
                     <div className="col-auto d-flex justify-content-end mx-0 flex-wrap">
                       {selectedApplicants.length > 0 && (
@@ -1162,109 +1149,8 @@ const Applicant = () => {
                         accept=".csv,.xlsx,.xls"
                         style={{ display: "none" }}
                         onChange={handleFileImport}
+                        disabled={isImporting}
                       />
-
-                      {isImporting && (
-                        <div>
-                          <p>Importing...</p>
-                          <progress value={importProgress} max={100} />
-                        </div>
-                      )}
-                      {/* <button onClick={handleExportExcel}>
-                        Export to Excel
-                      </button> */}
-                      {/* <BaseButton
-                        color="primary"
-                        className="mx-2 position-relative"
-                        onClick={() => fileInputRef.current?.click()}
-                        disabled={importLoader}
-                      >
-                        {importLoader ? (
-                          <>
-                            <i className="ri-loader-4-line animate-spin align-bottom me-1" />
-                            {isImporting
-                              ? `Importing... ${importProgress}%`
-                              : "Processing..."}
-                          </>
-                        ) : (
-                          <>
-                            <i className="ri-upload-2-line align-bottom me-1" />
-                            Import
-                          </>
-                        )}
-                        {isImporting && (
-                          <div
-                            className="progress position-absolute bottom-0 start-0"
-                            style={{
-                              height: "4px",
-                              width: "100%",
-                              borderRadius: "0 0 4px 4px",
-                            }}
-                          >
-                            <div
-                              className="progress-bar"
-                              role="progressbar"
-                              style={{ width: `${importProgress}%` }}
-                              aria-valuenow={importProgress}
-                              aria-valuemin={0}
-                              aria-valuemax={100}
-                            />
-                          </div>
-                        )}
-                      </BaseButton> */}
-                      {/* <Dropdown>
-                        <Dropdown.Toggle
-                          variant="link"
-                          id="dropdown-custom-components"
-                          className="bg-primary text-white mx-2"
-                        >
-                          <i className="ri-upload-2-line align-bottom me-1" />
-                        </Dropdown.Toggle>
-
-                        <Dropdown.Menu>
-                          <Dropdown.Item onClick={handleExportExcel}>
-                            <i className="ri-upload-2-line align-bottom me-1" />
-                            Export
-                          </Dropdown.Item>{" "}
-                          <Dropdown.Item
-                            onClick={() => fileInputRef.current?.click()}
-                            disabled={importLoader}
-                          >
-                            {importLoader ? (
-                              <>
-                                <i className="ri-loader-4-line animate-spin align-bottom me-1" />
-                                {isImporting
-                                  ? `Importing... ${importProgress}%`
-                                  : "Processing..."}
-                              </>
-                            ) : (
-                              <>
-                                <i className="ri-download-2-line align-bottom me-1" />
-                                Import
-                              </>
-                            )}
-                            {isImporting && (
-                              <div
-                                className="progress position-absolute bottom-0 start-0"
-                                style={{
-                                  height: "4px",
-                                  width: "100%",
-                                  borderRadius: "0 0 4px 4px",
-                                }}
-                              >
-                                <div
-                                  className="progress-bar"
-                                  role="progressbar"
-                                  style={{ width: `${importProgress}%` }}
-                                  aria-valuenow={importProgress}
-                                  aria-valuemin={0}
-                                  aria-valuemax={100}
-                                />
-                              </div>
-                            )}
-                          </Dropdown.Item>
-                        </Dropdown.Menu>
-                      </Dropdown> */}
 
                       <Dropdown
                         show={showDropdown}
@@ -1282,7 +1168,6 @@ const Applicant = () => {
                           <i className="ri-upload-2-line align-bottom me-1" />
                         </Dropdown.Toggle>
 
-                        {/* Tooltip for Export Icon */}
                         <ReactTooltip
                           id="export-tooltip"
                           place="top"
@@ -1299,10 +1184,18 @@ const Applicant = () => {
                           </Dropdown.Item>
 
                           {/* Import Option */}
+
                           <Dropdown.Item
                             onClick={() => fileInputRef.current?.click()}
                             disabled={importLoader}
                           >
+                            {isImporting && (
+                              <div>
+                                <p>Importing...</p>
+                                <progress value={importProgress} max={100} />
+                              </div>
+                            )}
+
                             {importLoader ? (
                               <>
                                 <i className="ri-loader-4-line animate-spin align-bottom me-1" />
@@ -1375,6 +1268,8 @@ const Applicant = () => {
                         pagination={pagination}
                         setPagination={setPagination}
                         loader={tableLoader}
+                        customPadding="0.3rem 1.5rem"
+                        rowHeight="10px !important"
                       />
                     ) : (
                       // <<div className="py-4 text-center">
@@ -1409,14 +1304,18 @@ const toolipComponents = {
   "font-size": "14px !important",
   border: "1px solid white !important",
 };
+
 const customStyles = {
   control: (provided: any) => ({
     ...provided,
     fontSize: "12px",
     backgroundColor: "#f0f0f0",
     borderRadius: "8px",
-    borderColor: "#ccc",
-    // padding: "3px 3px !important",
+    borderColor: "transparent",
+    // padding: "0.25rem 0.5rem",
+    minHeight: "25px",
+    outline: "none",
+    boxShadow: "none",
   }),
 
   option: (provided: any, state: any) => ({
@@ -1425,19 +1324,23 @@ const customStyles = {
     backgroundColor: state.isSelected ? "#007bff" : "transparent",
     color: state.isSelected ? "#fff" : "#000",
   }),
+
   singleValue: (provided: any) => ({
     ...provided,
     color: "#333",
   }),
+
   dropdownIndicator: (provided: any) => ({
     ...provided,
     color: "#007bff",
   }),
+
   clearIndicator: (provided: any) => ({
     ...provided,
     display: "none",
     color: "#dc3545",
   }),
+
   menu: (provided: any) => ({
     ...provided,
     borderRadius: "8px",

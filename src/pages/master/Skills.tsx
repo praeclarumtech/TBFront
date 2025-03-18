@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Row, Col, Card, Container, CardBody } from "react-bootstrap";
-import { Fragment, useMemo, useState, useEffect } from "react";
-
+import { Fragment, useMemo, useState, useEffect, useRef } from "react";
+// import { read, utils } from "xlsx";
+import toast from "react-hot-toast";
 import BaseButton from "components/BaseComponents/BaseButton";
 import TableContainer from "components/BaseComponents/TableContainer";
 import { Tooltip as ReactTooltip } from "react-tooltip";
@@ -12,8 +14,9 @@ import {
   updateSkill,
   viewAllSkill,
   deleteSkill,
+  importSkills,
 } from "api/skillsApi";
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
 import DeleteModal from "components/BaseComponents/DeleteModal";
 import BaseModal from "components/BaseComponents/BaseModal";
 import appConstants from "constants/constant";
@@ -34,8 +37,13 @@ const AddSkill = () => {
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
+    limit: 50,
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [importLoader, setImportLoader] = useState(false);
+  const [importProgress, setImportProgress] = useState(0);
+  const [isImporting, setIsImporting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const fetchSkills = async () => {
     setIsLoading(true);
@@ -43,6 +51,7 @@ const AddSkill = () => {
       const res = await viewAllSkill({
         page: pagination.pageIndex + 1,
         pageSize: pagination.pageSize,
+        limit: 50,
       });
 
       if (res?.success) {
@@ -216,8 +225,78 @@ const AddSkill = () => {
 
   const handleCloseClick = () => {
     setShowBaseModal(false);
-    setEditingSkill(null); 
+    setEditingSkill(null);
     validation.resetForm();
+  };
+
+  const handleFileImport = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Check file extension
+    const fileExtension = file.name.split(".").pop()?.toLowerCase();
+    if (!["csv", "xlsx", "xls"].includes(fileExtension || "")) {
+      toast.error("Please upload a valid CSV or Excel file");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      // 5MB
+      toast("Large file detected. Import may take a few minutes.", {
+        icon: "⚠️",
+        duration: 4000,
+      });
+    }
+
+    setImportLoader(true);
+    setIsImporting(true);
+    setImportProgress(0);
+
+    try {
+      const formData = new FormData();
+      formData.append("csvFile", file);
+
+      const response = await importSkills(formData, {
+        onUploadProgress: (progressEvent) => {
+          const progress = Math.round(
+            (progressEvent.loaded * 100) / (progressEvent.total || 100)
+          );
+          setImportProgress(progress);
+        },
+      });
+
+      if (response?.success) {
+        toast.success(response?.message || "File imported successfully!");
+        await fetchSkills();
+      } else {
+        throw new Error(response?.message || "Import failed");
+      }
+    } catch (error: any) {
+      console.error("Import error:", error);
+
+      if (error.response?.data) {
+        // Handle structured API errors
+        const errorMessage =
+          error.response.data.message || error.response.data.error;
+        toast.error(errorMessage || "Failed to import file");
+      } else if (error.message) {
+        // Handle other errors with messages
+        toast.error(error.message);
+      } else {
+        // Generic error
+        toast.error("An unexpected error occurred during import");
+      }
+    } finally {
+      // Reset states
+      setImportLoader(false);
+      setIsImporting(false);
+      setImportProgress(0);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
   };
 
   return (
@@ -239,19 +318,68 @@ const AddSkill = () => {
                     <Col
                       sm={12}
                       md={12}
-                      className="d-flex align-items-center justify-between !mb-2"
+                      className="d-flex justify-content-between !mb-2"
                     >
                       {formTitle}
-                      <BaseButton
-                        color="primary"
-                        disabled={loader}
-                        type="submit"
-                        loader={loader}
-                        className="ms-3 px-5 border rounded-5"
-                        onClick={handleOpenBaseModal}
-                      >
-                        {submitButtonText}
-                      </BaseButton>
+                      <div className="d-flex justify-content-end">
+                        <input
+                          type="file"
+                          ref={fileInputRef}
+                          accept=".csv,.xlsx,.xls"
+                          style={{ display: "none" }}
+                          onChange={handleFileImport}
+                        />
+                        <BaseButton
+                          color="primary"
+                          className="mx-2 position-relative"
+                          onClick={() => fileInputRef.current?.click()}
+                          disabled={importLoader}
+                        >
+                          {importLoader ? (
+                            <>
+                              <i className="ri-loader-4-line animate-spin align-bottom me-1" />
+                              {isImporting
+                                ? `Importing... ${importProgress}%`
+                                : "Processing..."}
+                            </>
+                          ) : (
+                            <>
+                              <i className="ri-upload-2-line align-bottom me-1" />
+                              Import
+                            </>
+                          )}
+                          {isImporting && (
+                            <div
+                              className="progress position-absolute bottom-0 start-0"
+                              style={{
+                                height: "4px",
+                                width: "100%",
+                                borderRadius: "0 0 4px 4px",
+                              }}
+                            >
+                              <div
+                                className="progress-bar"
+                                role="progressbar"
+                                style={{ width: `${importProgress}%` }}
+                                aria-valuenow={importProgress}
+                                aria-valuemin={0}
+                                aria-valuemax={100}
+                              />
+                            </div>
+                          )}
+                        </BaseButton>
+                        <BaseButton
+                          color="success"
+                          disabled={loader}
+                          type="submit"
+                          loader={loader}
+                          // className="ms-3 px-5 border rounded-5"
+                          onClick={handleOpenBaseModal}
+                        >
+                          <i className="ri-add-line align-bottom me-1" />
+                          {submitButtonText}
+                        </BaseButton>
+                      </div>
                     </Col>
                   </Row>
 
@@ -264,7 +392,7 @@ const AddSkill = () => {
                     submitButtonText={
                       editingSkill ? "Update Skill" : "Add Skill"
                     }
-                    cloaseButtonText="Close"
+                    closeButtonText="Close"
                   >
                     <Row>
                       <Col xs={9} md={5} lg={9}>
@@ -301,14 +429,15 @@ const AddSkill = () => {
                               isHeaderTitle="Skills"
                               columns={columns}
                               data={skills}
-                              isGlobalFilter={true}
+                              // isGlobalFilter={true}
                               customPageSize={10}
                               theadClass="table-light text-muted"
-                              SearchPlaceholder="Search..."
+                              // SearchPlaceholder="Search..."
                               totalRecords={totalRecords}
                               pagination={pagination}
                               setPagination={setPagination}
                               loader={loader}
+                              customPadding="0.3rem 1.75rem"
                             />
                           ) : (
                             <div className="py-4 text-center">

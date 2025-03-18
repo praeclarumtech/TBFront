@@ -124,6 +124,7 @@ const TableContainer = ({
   pagination,
   setPagination,
   loader,
+  customPadding,
 }: TableContainerProps) => {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
@@ -317,7 +318,7 @@ const TableContainer = ({
                   <tr key={row.id}>
                     {row?.getVisibleCells()?.map((cell: any) => {
                       return (
-                        <td key={cell.id}>
+                        <td key={cell.id} style={{ padding: customPadding || "0.75rem 1.5rem" }} >
                           {flexRender(
                             cell?.column?.columnDef?.cell,
                             cell?.getContext()

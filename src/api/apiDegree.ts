@@ -13,7 +13,7 @@ export const createDegree = async (data?: object) => {
 };
 
 export const viewAllDegree = async (
-  params: { page?: number; pageSize?: number } = {}
+  params: { page?: number; pageSize?: number; limit?: number } = {}
 ) => {
   const response = await authServices.get(`${VIEW_ALL_DEGREE}`, { params });
   return response?.data;

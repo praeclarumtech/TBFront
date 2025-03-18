@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Row, Col, Card, Container, CardBody } from "react-bootstrap";
 import { Fragment, useMemo, useState, useEffect } from "react";
 
@@ -32,6 +33,7 @@ const AddDegree = () => {
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
+    limit: 50,
   });
   const [loader, setLoader] = useState(false);
 
@@ -40,6 +42,7 @@ const AddDegree = () => {
       const res = await viewAllDegree({
         page: pagination.pageIndex + 1,
         pageSize: pagination.pageSize,
+        limit: 50,
       });
 
       if (res?.success) {
@@ -149,7 +152,7 @@ const AddDegree = () => {
   const validation: any = useFormik({
     enableReinitialize: true,
     initialValues: {
-      degreeName: "", 
+      degreeName: "",
     },
     validationSchema: Yup.object({
       degreeName: Yup.string().required("Degree name is required"),
@@ -229,21 +232,23 @@ const AddDegree = () => {
             <Card className="mb-3 my-3">
               <CardBody>
                 <Row className="flex">
-                  <Row className="fw-bold text-dark ms-2 mt-1 h4 d-flex align-items-center">
+                  <Row className="fw-bold text-dark ms-2  h4 d-flex align-items-center">
                     <Col
                       sm={12}
                       md={12}
-                      className="d-flex align-items-center justify-between !mb-2"
+                      className="d-flex align-items-center justify-between "
                     >
                       {formTitle}
                       <BaseButton
-                        color="primary"
+                        color="success"
                         disabled={loader}
                         type="submit"
                         loader={loader}
-                        className="ms-3 px-5 border rounded-5"
+                        // className="ms-3 px-5 border rounded-5"
+
                         onClick={handleOpenBaseModal}
                       >
+                        <i className="ri-add-line align-bottom " />
                         {submitButtonText}
                       </BaseButton>
                     </Col>
@@ -258,7 +263,7 @@ const AddDegree = () => {
                     submitButtonText={
                       editingDegree ? "Update Degree" : "Add Degree"
                     }
-                    cloaseButtonText="Close"
+                    closeButtonText="Close"
                   >
                     <Row>
                       <Col xs={9} md={5} lg={9}>
@@ -278,7 +283,7 @@ const AddDegree = () => {
                       </Col>
                     </Row>
                   </BaseModal>
-                  <Row>
+                  <Row className="mt-3">
                     <Col lg={12}>
                       <div>
                         {degrees?.length > 0 ? (
@@ -286,14 +291,15 @@ const AddDegree = () => {
                             isHeaderTitle="Degrees"
                             columns={columns}
                             data={degrees}
-                            isGlobalFilter={true}
+                            // isGlobalFilter={true}
                             customPageSize={10}
                             theadClass="table-light text-muted"
-                            SearchPlaceholder="Search..."
+                            // SearchPlaceholder="Search..."
                             totalRecords={totalRecords}
                             pagination={pagination}
                             setPagination={setPagination}
                             loader={loader}
+                            customPadding="0.3rem 1.75rem"
                           />
                         ) : (
                           <div className="py-4 text-center">

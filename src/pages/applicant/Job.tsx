@@ -14,6 +14,8 @@ import BaseTextarea from "components/BaseComponents/BaseTextArea";
 import { dynamicFind, InputPlaceHolder } from "utils/commonFunctions";
 import appConstants from "constants/constant";
 import moment from "moment";
+import { ViewAppliedSkills } from "api/skillsApi";
+// import React, { useState, useEffect } from "react";
 
 const {
   projectTitle,
@@ -22,11 +24,12 @@ const {
   designationType,
   anyHandOnOffers,
   workPreferenceType,
-  skillOptions,
+  // skillOptions,
 } = appConstants;
 
 const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
   document.title = Modules.Applicant + " | " + projectTitle;
+  const [skillOptions, setSkillOptions] = useState<any[]>([]);
   const [selectedMulti, setSelectedMulti] = useState<any>([]);
   const formattedlastFollowUpDate = initialValues.lastFollowUpDate
     ? moment(initialValues.lastFollowUpDate).format("YYYY-MM-DD")
@@ -75,6 +78,24 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
       );
       setSelectedMulti(selectedSkills);
     }
+    const fetchSkills = async () => {
+      try {
+        const page = 1;
+        const pageSize = 50;
+        const limit = 200;
+        const response = await ViewAppliedSkills({ page, pageSize, limit });
+        const skillData = response?.data.data || [];
+        setSkillOptions(
+          skillData.map((item: any) => ({
+            label: item.skills,
+            value: item._id,
+          }))
+        );
+      } catch (error) {
+        console.error("Error fetching skills", error);
+      }
+    };
+    fetchSkills();
   }, [initialValues]);
 
   const handleMultiSkill = (selectedMulti: any) => {
@@ -98,7 +119,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
           >
             <Row className="mb-4">
               <Col xs={12} sm={12} md={6} lg={6} className="mb-3">
-                <MultiSelect
+                {/* <MultiSelect
                   label="Applied Skills"
                   name="appliedSkills"
                   className="select-border"
@@ -109,6 +130,18 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                   touched={validation.touched.appliedSkills}
                   error={validation.errors.appliedSkills}
                   handleBlur={validation.appliedSkills}
+                /> */}
+                <MultiSelect
+                  label="Applied Skills"
+                  name="appliedSkills"
+                  className="select-border"
+                  value={selectedMulti || []}
+                  isMulti={true}
+                  onChange={handleMultiSkill}
+                  options={skillOptions}
+                  touched={validation.touched.appliedSkills}
+                  error={validation.errors.appliedSkills}
+                  handleBlur={validation.handleBlur}
                 />
               </Col>
               <Col xs={12} sm={12} md={6} lg={6} className="mb-3">

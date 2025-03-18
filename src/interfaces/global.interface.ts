@@ -99,7 +99,7 @@ export interface BaseModalProps {
   loader?: boolean;
   children?: React.ReactNode;
   modalTitle?: string;
-  cloaseButtonText?: string;
+  closeButtonText?: string;
   submitButtonText?: string;
   setShowBaseModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -166,6 +166,15 @@ export interface DeleteModalProps {
   loader?: boolean;
 }
 
+export interface MultiDeleteModalProps {
+  show?: boolean;
+  onDeleteClick?: () => void;
+  onCloseClick?: () => void;
+  recordId?: string;
+  loader?: boolean;
+  deleteItems: string[] | null;
+}
+
 export interface TableContainerProps {
   columns?: any;
   isPagination?: boolean;
@@ -199,6 +208,11 @@ export interface TableContainerProps {
   pagination?: any;
   setPagination?: any;
   loader?: any;
+  rowHeight?: any;
+  tableMarginTop?: any;
+  searchBoxMarginTop?: any;
+  titleMarginTop?: any;
+  customPadding?: any;
 }
 
 export interface BaseSliderProps {
