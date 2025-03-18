@@ -1,4 +1,3 @@
-
 import { Modal, Button } from "react-bootstrap";
 import { BasePopUpModalProps } from "interfaces/global.interface"; // Assuming you have this interface defined
 

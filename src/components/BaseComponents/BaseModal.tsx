@@ -10,30 +10,31 @@ const BaseModal: React.FC<BaseModalProps> = ({
   children,
   modalTitle,
   submitButtonText,
-  cloaseButtonText,
+  closeButtonText,
   setShowBaseModal,
 }) => {
-
   const toggle = () => setShowBaseModal(!show);
   return (
     <Modal fade={true} isOpen={show} toggle={toggle} centered>
       <ModalHeader toggle={toggle}>{modalTitle}</ModalHeader>
       <ModalBody>{children}</ModalBody>
+
       <ModalFooter>
         <BaseButton
-          color="secondary"
-          className="btn btn-outline-dark border-1 rounded-5 text-white"
+          color="danger" // Changed "denger" to "danger"
+          className=" text-white"
           type="button"
           onClick={onCloseClick}
         >
-          {cloaseButtonText}
+          {closeButtonText}
+          {/* Fixed the typo from 'cloaseButtonText' to 'closeButtonText' */}
         </BaseButton>
         <BaseButton
-          color="success"
+          color="primary"
           disabled={loader}
           type="submit"
           loader={loader}
-          className="ms-3 px-5 border rounded-5"
+          className="ms-3 px-5 "
           onClick={onSubmitClick}
         >
           {submitButtonText}

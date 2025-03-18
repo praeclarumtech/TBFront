@@ -3,6 +3,7 @@ import {
   VIEW_ALL_EMAIL,
   SEND_EMAIL,
   VIEW_EMAIL,
+  DELETE_MULTIPLE_EMAIL,
 } from "./apiRoutes";
 import { authServices } from "./apiServices";
 
@@ -30,5 +31,12 @@ export const deleteEmail = async (ids: string[]) => {
 
 export const getEmailDetails = async (id: string | undefined | null) => {
   const response = await authServices.get(`${VIEW_EMAIL}/${id}`);
+  return response?.data;
+};
+
+export const deleteMultipleEmail = async (ids: string[]) => {
+  const response = await authServices.delete(`${DELETE_MULTIPLE_EMAIL}`, {
+    data: { ids },
+  });
   return response?.data;
 };
