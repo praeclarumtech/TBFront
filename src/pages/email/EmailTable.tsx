@@ -11,9 +11,17 @@ import { errorHandle, InputPlaceHolder } from "utils/commonFunctions";
 import appConstants from "constants/constant";
 import ViewEmail from "./ViewEmail";
 import "react-loading-skeleton/dist/skeleton.css";
-import { deleteEmail, viewAllEmail } from "api/emailApi";
+import { deleteEmail, viewAllEmail, deleteMultipleEmail } from "api/emailApi";
 import DeleteModal from "components/BaseComponents/DeleteModal";
 import Skeleton from "react-loading-skeleton";
+import debounce from "lodash.debounce";
+import Box from "@mui/material/Box";
+import Drawer from "@mui/material/Drawer";
+import List from "@mui/material/List";
+import Divider from "@mui/material/Divider";
+import { XLg } from "react-bootstrap-icons";
+import { Col, Row } from "react-bootstrap";
+import React from "react";
 
 const { projectTitle, Modules } = appConstants;
 
@@ -22,6 +30,7 @@ const EmailTable = () => {
   const navigate = useNavigate();
 
   interface Email {
+    [x: string]: any;
     _id: string;
     email_to: string;
     subject: string;
@@ -30,7 +39,7 @@ const EmailTable = () => {
 
   const [emails, setEmails] = useState<Email[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filtersVisible, setFiltersVisible] = useState(false);
+  // const [filtersVisible, setFiltersVisible] = useState(false);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [totalRecords, setTotalRecords] = useState(0);
@@ -44,8 +53,14 @@ const EmailTable = () => {
     pageSize: 10,
   });
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [emailToDelete, setEmailToDelete] = useState<string | null>(null);
+  const [emailToDelete, setEmailToDelete] = useState<string[]>([]);
   const [deleteLoader, setDeleteLoader] = useState(false);
+  const [selectedApplicants, setSelectedApplicants] = useState<string[]>([]);
+  const [searchAll, setSearchAll] = useState<string>("");
+  const [state, setState] = React.useState({
+    right: false,
+  });
+  const [multipleEmailDelete, setMultipleEmailDelete] = useState<string[]>([]);
 
   const handleView = (id: string) => {
     setSelectedApplicantId(id);
@@ -54,7 +69,46 @@ const EmailTable = () => {
   const handleCloseModal = () => {
     setShowModal(false);
   };
+
+  const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.checked) {
+      setSelectedApplicants(emails.map((app) => app._id));
+    } else {
+      setSelectedApplicants([]);
+    }
+  };
+
+  const handleSelectApplicant = (applicantId: string) => {
+    setSelectedApplicants((prev) =>
+      prev.includes(applicantId)
+        ? prev.filter((id) => id !== applicantId)
+        : [...prev, applicantId]
+    );
+  };
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchAll(event.target.value);
+  };
+
   const columns = [
+    {
+      header: (
+        <input
+          type="checkbox"
+          onChange={handleSelectAll}
+          checked={selectedApplicants.length === emails.length}
+        />
+      ),
+      accessorKey: "select",
+      cell: (info: any) => (
+        <input
+          type="checkbox"
+          checked={selectedApplicants.includes(info.row.original._id)}
+          onChange={() => handleSelectApplicant(info.row.original._id)}
+        />
+      ),
+      enableColumnFilter: false,
+    },
     {
       header: "Email",
       accessorKey: "email_to",
@@ -67,17 +121,26 @@ const EmailTable = () => {
       enableColumnFilter: false,
     },
     {
-      header: "appliedSkills",
+      header: "Applied Skills",
       accessorKey: "applicantDetails.appliedSkills",
-      cell: (cell: any) => (
-        <div
-          className="truncated-text"
-          style={truncateText}
-          title={cell.row.original.applicantDetails.appliedSkills}
-        >
-          {cell.row.original.applicantDetails.appliedSkills}
-        </div>
-      ),
+      cell: (cell: any) => {
+        const skills = cell.row.original.applicantDetails.appliedSkills;
+
+        // Ensure it's an array, then join with ", "
+        const formattedSkills = Array.isArray(skills)
+          ? skills.join(", ")
+          : skills;
+
+        return (
+          <div
+            className="truncated-text"
+            style={truncateText}
+            title={formattedSkills}
+          >
+            {formattedSkills}
+          </div>
+        );
+      },
       enableColumnFilter: false,
     },
     {
@@ -132,18 +195,27 @@ const EmailTable = () => {
   const fetchEmails = async () => {
     setLoading(true);
     try {
-      const params = {
+      const params: {
+        page: number;
+        pageSize: number;
+        startDate?: string;
+        endDate?: string;
+        search?: string;
+        appliedSkills?: string;
+      } = {
         page: pagination.pageIndex + 1,
         pageSize: pagination.pageSize,
-        startDate,
-        endDate,
       };
-
       if (startDate) {
         params.startDate = startDate;
       }
       if (endDate) {
         params.endDate = endDate;
+      }
+      const searchValue = searchAll?.trim();
+      if (searchValue) {
+        params.search = searchValue;
+        params.appliedSkills = searchValue;
       }
 
       const response = await viewAllEmail(params);
@@ -162,11 +234,17 @@ const EmailTable = () => {
   };
 
   useEffect(() => {
-    fetchEmails();
-  }, [pagination.pageIndex, pagination.pageSize, startDate, endDate]);
+    const delayedSearch = debounce(() => {
+      fetchEmails();
+    }, 0);
+
+    delayedSearch();
+
+    return () => delayedSearch.cancel();
+  }, [pagination.pageIndex, pagination.pageSize, startDate, endDate]); // Runs when `searchAll` changes
 
   const handleDelete = (id: string) => {
-    setEmailToDelete(id);
+    setEmailToDelete([id]);
     setShowDeleteModal(true);
   };
   const handleDateChange = (
@@ -179,15 +257,27 @@ const EmailTable = () => {
       setEndDate(e.target.value);
     }
   };
-  const confirmDelete = async () => {
-    if (!emailToDelete) return;
 
+  const confirmDelete = async () => {
     setDeleteLoader(true);
     try {
-      await deleteEmail([emailToDelete]);
-      fetchEmails();
+      await deleteEmail(emailToDelete); // Pass the array of selected emails
+      fetchEmails(); // Refresh email list
       setShowDeleteModal(false);
-      setEmailToDelete(null);
+    } catch (error) {
+      errorHandle(error);
+    } finally {
+      setDeleteLoader(false);
+    }
+  };
+
+  const confirmMultipleDelete = async (multipleEmailDelete: string[]) => {
+    setDeleteLoader(true);
+    try {
+      await deleteMultipleEmail(multipleEmailDelete); // Pass the array of selected emails
+      fetchEmails(); // Refresh email list
+      setShowDeleteModal(false);
+      setSelectedApplicants([]); // Clear selection
     } catch (error) {
       errorHandle(error);
     } finally {
@@ -201,15 +291,124 @@ const EmailTable = () => {
     fetchEmails();
   };
 
+  const handleDeleteAll = () => {
+    if (selectedApplicants.length > 0) {
+      console.log("Emails to Delete:-",multipleEmailDelete)
+      setMultipleEmailDelete([...selectedApplicants]);
+      setShowDeleteModal(true);
+    }
+  };
+
+  const filteredEmails = emails.filter((email) => {
+    const searchTerm = searchAll.toLowerCase();
+
+    return (
+      email.email_to?.toLowerCase().includes(searchTerm) ||
+      email.subject?.toLowerCase().includes(searchTerm) ||
+      email.applicantDetails?.name?.firstName
+        ?.toLowerCase()
+        .includes(searchTerm) ||
+      (Array.isArray(email.applicantDetails?.appliedSkills) &&
+        email.applicantDetails.appliedSkills.some((skill: string) =>
+          skill.toLowerCase().includes(searchTerm)
+        )) ||
+      moment(email.createdAt).format("YYYY-MM-DD").includes(searchTerm)
+    );
+  });
+
+  type Anchor = "top" | "right" | "bottom";
+
+  const toggleDrawer =
+    (anchor: Anchor, open: boolean) =>
+    (event: React.KeyboardEvent | React.MouseEvent) => {
+      if (
+        event.type === "keydown" &&
+        ((event as React.KeyboardEvent).key === "Tab" ||
+          (event as React.KeyboardEvent).key === "Shift")
+      ) {
+        return;
+      }
+
+      setState({ ...state, [anchor]: open });
+    };
+
+  const drawerList = (anchor: Anchor) => (
+    <Box
+      sx={{
+        width: anchor === "top" || anchor === "bottom" ? "auto" : 400,
+        padding: "16px",
+        marginTop: anchor === "top" ? "64px" : 0,
+      }}
+      role="presentation"
+    >
+      <button
+        type="button"
+        onClick={toggleDrawer("right", false)}
+        className="p-2 border border-transparent rounded-md transition-all duration-150  
+           hover:border-primary active:scale-90"
+      >
+        <XLg
+          size={20}
+          className="text-gray-600 transition-colors duration-150 hover:text-primary"
+        />
+      </button>
+      <List>
+        <Row className="flex justify-between items-center mb-4">
+          <Col>
+            <h3>Apply Filters</h3>
+          </Col>
+          <Col className="text-end">
+            <BaseButton
+              color="primary"
+              onClick={resetFilters}
+              variant="outlined"
+              sx={{ width: "auto" }}
+            >
+              Reset Filters
+            </BaseButton>
+          </Col>
+        </Row>
+
+        <BaseInput
+          label="Start Date"
+          name="startDate"
+          className="select-border mb-1"
+          type="date"
+          placeholder={InputPlaceHolder("Start Date")}
+          handleChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            handleDateChange(e, true)
+          }
+          value={startDate || ""}
+        />
+        <BaseInput
+          label="End Date"
+          name="endDate"
+          type="date"
+          placeholder={InputPlaceHolder("End Date")}
+          handleChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            handleDateChange(e, false)
+          }
+          value={endDate || ""}
+        />
+      </List>
+
+      <Divider />
+    </Box>
+  );
+
   return (
     <div className="container mx-auto">
       <DeleteModal
         show={showDeleteModal}
         onCloseClick={() => {
           setShowDeleteModal(false);
-          setEmailToDelete(null);
+          setEmailToDelete([]);
         }}
-        onDeleteClick={confirmDelete}
+        onDeleteClick={() =>
+          selectedApplicants.length > 1
+            ? confirmMultipleDelete(selectedApplicants) // ✅ Wrap in an arrow function
+            : confirmDelete()
+        }
         loader={deleteLoader}
       />
 
@@ -227,7 +426,7 @@ const EmailTable = () => {
             <div className="container">
               <div className="row justify-content-between">
                 <div className="col-auto d-flex justify-content-start">
-                  <button
+                  {/* <button
                     type="button"
                     onClick={(e) => {
                       e.preventDefault();
@@ -242,13 +441,53 @@ const EmailTable = () => {
                         <i className="fa fa-filter mx-1 "></i> Filters
                       </>
                     )}
+                  </button> */}
+                  <button
+                    onClick={toggleDrawer("right", true)}
+                    // color="primary"
+                    className="btn btn-primary"
+                  >
+                    <i className="fa fa-filter mx-1 "></i> Filters
                   </button>
+                  <Drawer
+                    className="!mt-16 "
+                    anchor="right"
+                    open={state["right"]}
+                    onClose={toggleDrawer("right", false)}
+                  >
+                    {drawerList("right")}
+                  </Drawer>
                 </div>
 
-                <div className="col-auto d-flex justify-content-end gap-2">
+                <div className="col-auto d-flex justify-content-end">
+                  <div>
+                    <input
+                      id="search-bar-0"
+                      className="form-control search h-10"
+                      placeholder="Search..."
+                      onChange={handleSearchChange}
+                      value={searchAll}
+                    />
+                  </div>
+                  {selectedApplicants.length > 1 && (
+                    <BaseButton
+                      className="btn text-lg bg-danger edit-list ml-2 w-fit border-0"
+                      onClick={handleDeleteAll}
+                    >
+                      <i className="ri-delete-bin-fill align-bottom" />
+                      <ReactTooltip
+                        place="bottom"
+                        variant="error"
+                        content="Delete"
+                        anchorId={`Delete ${selectedApplicants.length} Emails`}
+                      />
+                    </BaseButton>
+                  )}
+
+                  {/* Compose Email Button */}
                   <button
                     onClick={() => navigate("/email/compose")}
-                    className="btn btn-success"
+                    className="btn btn-success ml-2"
                   >
                     Compose Email
                   </button>
@@ -256,7 +495,7 @@ const EmailTable = () => {
               </div>
             </div>
 
-            {filtersVisible && (
+            {/* {filtersVisible && (
               <div className="mt-3 w-100">
                 <div className="row g-3">
                   <div className="col-xl-2 col-sm-6 col-md-4 col-lg-2">
@@ -296,7 +535,7 @@ const EmailTable = () => {
                   </div>
                 </div>
               </div>
-            )}
+            )} */}
           </div>
         </div>
       </div>
@@ -311,7 +550,7 @@ const EmailTable = () => {
             <TableContainer
               isHeaderTitle="Email"
               columns={columns}
-              data={emails}
+              data={filteredEmails}
               // isGlobalFilter
               customPageSize={10}
               theadClass="table-light text-muted"
@@ -321,7 +560,7 @@ const EmailTable = () => {
               pagination={pagination}
               setPagination={setPagination}
               loader={loading}
-              customPadding="0.3rem 1.75rem"
+              customPadding="0.3rem 1.5rem"
             />
           )}
         </div>

@@ -46,9 +46,7 @@ const RecentApplicants = ({
         accessorKey: "name",
         cell: (info: any) => {
           const nameObj = info.row.original?.name || {};
-          return `${nameObj.firstName || ""} ${nameObj.middleName || ""} ${
-            nameObj.lastName || ""
-          }`.trim();
+          return `${nameObj.firstName || ""} ${nameObj.lastName || ""}`.trim();
         },
         enableColumnFilter: false,
       },
@@ -69,8 +67,8 @@ const RecentApplicants = ({
   return (
     <Row className="mt-6">
       <Col>
-        <Card>
-          <Card.Header className="bg-white border-0 d-flex justify-content-between align-items-center p-4">
+        <Card className="w-full min-h-[390px]">
+          <Card.Header className="bg-white border-0 d-flex justify-content-between align-items-center p-4 pb-0">
             <h4 className="h4">{selectedTechnology} Applicants</h4>
             {selectedTechnology && (
               <Button variant="primary" onClick={onResetFilter}>
@@ -78,7 +76,7 @@ const RecentApplicants = ({
               </Button>
             )}
           </Card.Header>
-          <Card.Body>
+          <Card.Body className="pt-0">
             {isLoading ? (
               <div className="min-h[400px] w-full">
                 <Skeleton className="min-h-[400px]" />

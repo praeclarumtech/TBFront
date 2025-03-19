@@ -65,7 +65,7 @@ const EmailForm = () => {
           autoClose: 5000,
         });
         validation.resetForm();
-        navigate("/email/compose");
+        navigate("/email");
       } catch (err) {
         toast.error("Failed to send email. Please try again.", {
           closeOnClick: true,

@@ -10,7 +10,7 @@ const ApplicantsDetails = ({
   return (
     <Row className="mt-6">
       <Col>
-        <Card className=" w-full min-h-[490px]">
+        <Card className=" w-full min-h-[400px]">
           <Card.Header className="bg-white border-0 d-flex justify-content-between align-items-center p-4">
             <h4 className="h4">Skills Statistics</h4>
           </Card.Header>

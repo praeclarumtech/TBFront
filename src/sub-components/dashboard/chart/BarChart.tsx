@@ -62,7 +62,8 @@ const BarChart = ({ onBarClick }: BarChartProps) => {
     return text
       .replace(/Applicants$/, "")
       .replace(/([A-Z])/g, " $1")
-      .trim();
+      .trim()
+      .replace(/\b\w/g, (char) => char.toUpperCase());
   };
 
   const labels = Object.keys(applicantsDetail).map((key) => formatLabel(key));
@@ -153,9 +154,9 @@ const BarChart = ({ onBarClick }: BarChartProps) => {
   const chartRef = useRef<any>(null);
 
   return (
-    <div className="w-full min-h-[400px] flex justify-center items-center ">
+    <div className="w-full min-h-[390px] flex justify-center items-center ">
       {isLoading ? (
-        <Skeleton width="500px" height="300px" />
+        <Skeleton width="500px" height="350px" />
       ) : Object.keys(applicantsDetail).length > 0 ? (
         <Bar
           ref={chartRef}
