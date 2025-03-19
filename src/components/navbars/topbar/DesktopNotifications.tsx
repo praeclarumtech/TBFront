@@ -36,13 +36,19 @@ export const DesktopNotifications = () => {
             </div>
             <div className=" dropdown-divider mt-3 mb-2"></div>
           </Dropdown.Item>
-          <Dropdown.Item eventKey="2">
+          <Dropdown.Item
+            eventKey="2"
+            onClick={() => {
+              // Clear any auth tokens/session data here if needed
+              navigate("/src/sub-components/profile/ProfileHeader.tsx");
+            }}
+          >
             <i className="fe fe-user me-2"></i> Edit Profile
           </Dropdown.Item>
           <Dropdown.Item
             onClick={() => {
               // Clear any auth tokens/session data here if needed
-              navigate("/");
+              navigate("/src/sub-components/profile/ProfileHeader.tsx");
             }}
           >
             <i className="fe fe-power me-2"></i>Sign Out

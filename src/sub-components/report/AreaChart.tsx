@@ -1,4 +1,4 @@
-// import React from "react";
+// import { useEffect, useState } from "react";
 // import { Line } from "react-chartjs-2";
 // import {
 //   Chart as ChartJS,
@@ -9,62 +9,292 @@
 //   Filler,
 //   Tooltip,
 //   Legend,
+//   ChartOptions,
 // } from "chart.js";
 
-// // Register Chart.js components
-// ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Filler, Tooltip, Legend);
+//     import { getApplication } from "api/reportApi";
+// import { Dropdown } from "reactstrap";
 
-// const AreaChart = () => {
-//   const data = {
-//     labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-//     datasets: [
-//       {
-//         label: "Revenue",
-//         data: [10, 30, 20, 50, 40, 70], // First dataset
-//         fill: true,
-//         backgroundColor: "rgba(75, 192, 192, 0.5)", // Light blue fill
-//         borderColor: "rgba(75, 192, 192, 1)", // Blue line
-//         // tension: 0.4, // Smooth curve
-//       },
-//       {
-//         label: "Profit",
-//         data: [5, 20, 15, 35, 30, 50], // Second dataset
-//         fill: true,
-//         backgroundColor: "rgba(255, 99, 132, 0.5)", // Light red fill
-//         borderColor: "rgba(255, 99, 132, 1)", // Red line
+// // Register necessary components
+// ChartJS.register(
+//   CategoryScale,
+//   LinearScale,
+//   PointElement,
+//   LineElement,
+//   Filler,
+//   Tooltip,
+//   Legend
+// );
 
-//       },
-//     ],
-//   };
+// const StackedAreaChart = () => {
 
-//   const options = {
+//     const [application, setApplication] = useState([]);
+//     const [selectedTime, setSelectedTime] = useState("month");
+//     console.log(application);
+
+//       useEffect(() => {
+//         fetchStatusOfApplication(selectedTime);
+//       }, [selectedTime]);
+
+//       const fetchStatusOfApplication = async (cType: string) => {
+//         try {
+//           const data = await getApplication(cType);
+//           // setApplication(data.data);
+//           setApplication(Array.isArray(data.data) ? data.data : []);
+
+//           console.log("Area",data)
+//         } catch (error) {
+//           // setError("Failed to load applicants");
+//           console.error("API Error:", error);
+//           setApplication([]);
+//         }
+//       };
+
+//       const handleLabelClick = (time: string) => {
+//         setSelectedTime(time); // Update selected time
+//         console.log(time)
+//       };
+
+//       // const labels = application.map((app: any) => app.date);
+
+//       const labels = Array.isArray(application) ? application.map((app: any) => app.date) : [];
+// const weekData = Array.isArray(application) ? application.map((app: any) => app.week) : [];
+// const monthData = Array.isArray(application) ? application.map((app: any) => app.month) : [];
+
+//       const data = {
+//         labels ,
+//         datasets: [
+//           {
+//             label: "Week",
+//             data: weekData,
+//             backgroundColor: "rgba(153, 102, 255, 0.5)",
+//             borderColor: "rgba(153, 102, 255, 1)",
+//             fill: true,
+//           },
+//           {
+//             label: "Month",
+//             data: monthData,
+//             backgroundColor: "rgba(255, 99, 132, 0.5)",
+//             borderColor: "rgba(255, 99, 132, 1)",
+//             fill: true,
+//           },
+//         ],
+//       };
+
+//   const options: ChartOptions<"line"> = {
 //     responsive: true,
 //     maintainAspectRatio: false,
 //     plugins: {
 //       legend: {
-//         display: true,
+//         position: "bottom",
+//         onClick: (_e, legendItem) => handleLabelClick(legendItem.text.toLowerCase()),
 //       },
 //     },
 //     scales: {
 //       x: {
 //         grid: {
-//           display: false, // Hide X-axis grid lines
+//           display: false,
 //         },
 //       },
 //       y: {
+//         stacked: true, // Enables stacking
 //         beginAtZero: true,
 //       },
 //     },
 //   };
 
 //   return (
+//     <div>
+//         <div>
+//         <Dropdown>
+//         <Dropdown.Menu align={"end"}>
+//           <Dropdown.Item eventKey="1">Action</Dropdown.Item>
+//           <Dropdown.Item eventKey="2">Another action</Dropdown.Item>
+//           <Dropdown.Item eventKey="3">Something else here</Dropdown.Item>
+//         </Dropdown.Menu>
+//       </Dropdown>
+//         </div>
+
 //     <div style={{ height: "300px", width: "100%" }}>
 //       <Line data={data} options={options} />
+//     </div>
 //     </div>
 //   );
 // };
 
-// export default AreaChart;
+// export default StackedAreaChart;
+
+// import { useEffect, useState } from "react";
+// import { Line } from "react-chartjs-2";
+// import {
+//   Chart as ChartJS,
+//   CategoryScale,
+//   LinearScale,
+//   PointElement,
+//   LineElement,
+//   Filler,
+//   Tooltip,
+//   Legend,
+//   ChartOptions,
+// } from "chart.js";
+
+// import { getApplication } from "api/reportApi";
+// import {
+//   Dropdown,
+//   DropdownToggle,
+//   DropdownMenu,
+//   DropdownItem,
+// } from "reactstrap";
+
+// // Register necessary components
+// ChartJS.register(
+//   CategoryScale,
+//   LinearScale,
+//   PointElement,
+//   LineElement,
+//   Filler,
+//   Tooltip,
+//   Legend
+// );
+
+// interface ApplicationData {
+//   date: string;
+//   week: number;
+//   month: number;
+// }
+
+// const StackedAreaChart = () => {
+//   const [applicationWeek, setApplicationWeek] = useState([]);
+//   const [applicationMonth, setApplicationMonth] = useState([]);
+//   const [application, setApplication] = useState<ApplicationData[]>([]);
+
+//   const [selectedTime, setSelectedTime] = useState("month");
+//   const [dropdownOpen, setDropdownOpen] = useState(false);
+
+//   // console.log("Selected Time:", selectedTime);
+//   // console.log("Application Data:", applicationWeek);
+
+//   useEffect(() => {
+//     fetchStatusOfApplication(selectedTime);
+//   }, [selectedTime]);
+
+//   const fetchStatusOfApplication = async (cType: string) => {
+//     try {
+//       const response = await getApplication(cType);
+//       console.log("API Response:", response);
+
+//       if (Array.isArray(response.data)) {
+//         // ✅ Case 1: If API returns an array, use it as is.
+//         setApplication(response.data);
+//       } else if (typeof response.data === "object" && response.data.totalApplications) {
+//         // ✅ Case 2: If API returns an object, create an array with a single entry.
+//         setApplication([
+//           {
+//             date: new Date().toISOString().split("T")[0], // Today's date
+//             week: response.data.totalApplications, // Use totalApplications for week
+//             month: response.data.totalApplications, // Use totalApplications for month
+//           },
+//         ]);
+//       } else {
+//         setApplication([]); // ✅ Case 3: If no valid data, set empty array.
+//       }
+//     } catch (error) {
+//       console.error("API Error:", error);
+//       setApplication([]); // Prevents undefined errors
+//     }
+//   };
+
+//   // Handle dropdown selection
+//   const handleSelect = (time: string) => {
+//     setSelectedTime(time);
+//   };
+
+//   // Handle legend clicks
+//   const handleLabelClick = (time: string) => {
+//     setSelectedTime(time);
+//   };
+
+//   // Ensure application is an array
+//   const labels = Array.isArray(application)
+//     ? application.map((app: any) => app.date)
+//     : [];
+//   const weekData = Array.isArray(application)
+//     ? application.map((app: any) => app.week)
+//     : [];
+//   const monthData = Array.isArray(application)
+//     ? application.map((app: any) => app.month)
+//     : [];
+
+//   // const weekData = weekDat.totalApplications
+
+//   const data = {
+//     labels,
+//     datasets: [
+//         {
+//         label: "Week",
+//         data: applicationWeek,
+//         backgroundColor: "rgba(153, 102, 255, 0.5)",
+//         borderColor: "rgba(153, 102, 255, 1)",
+//         fill: true,
+//       },
+//       {
+//         label: "Month",
+//         data: applicationMonth,
+//         backgroundColor: "rgba(255, 99, 132, 0.5)",
+//         borderColor: "rgba(255, 99, 132, 1)",
+//         fill: true,
+//       },
+//     ],
+//   };
+
+//   const options: ChartOptions<"line"> = {
+//     responsive: true,
+//     maintainAspectRatio: false,
+//     plugins: {
+//       legend: {
+//         position: "bottom",
+//         onClick: (_e, legendItem) =>
+//           handleLabelClick(legendItem.text.toLowerCase()),
+//       },
+//     },
+//     scales: {
+//       x: {
+//         grid: {
+//           display: false,
+//         },
+//       },
+//       y: {
+//         stacked: true, // Enables stacking
+//         beginAtZero: true,
+//       },
+//     },
+//   };
+
+//   return (
+//     <div>
+//       {/* Dropdown for selecting time period */}
+//       <Dropdown
+//         isOpen={dropdownOpen}
+//         toggle={() => setDropdownOpen(!dropdownOpen)}
+//       >
+//         <DropdownToggle caret>{selectedTime}</DropdownToggle>
+//         <DropdownMenu>
+//           <DropdownItem onClick={() => handleSelect("month")}>
+//             Month
+//           </DropdownItem>
+//           <DropdownItem onClick={() => handleSelect("week")}>Week</DropdownItem>
+//         </DropdownMenu>
+//       </Dropdown>
+
+//       {/* Chart */}
+//       <div style={{ height: "300px", width: "100%" }}>
+//         <Line data={data} options={options} />
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default StackedAreaChart;
 
 import { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
@@ -79,10 +309,10 @@ import {
   Legend,
   ChartOptions,
 } from "chart.js";
+import { getApplication } from "api/reportApi";
+import Skeleton from "react-loading-skeleton";
 
-    import { getApplication } from "api/reportApi";
-
-// Register necessary components
+// Register Chart.js components
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -93,50 +323,79 @@ ChartJS.register(
   Legend
 );
 
+// Define TypeScript Interface for Application Data
+interface ApplicationData {
+  date: string;
+  week: number;
+  month: number;
+}
+
 const StackedAreaChart = () => {
+  const [application, setApplication] = useState<ApplicationData[]>([]);
+  const [selectedTime, setSelectedTime] = useState("month");
+  const [isLoading, setIsLoading] = useState(false);
 
-    const [Applicaiton, setApplication] = useState([]);
-    console.log(Applicaiton);
-    
-      useEffect(() => {
-        fetchStatusOfApplication();
-      }, []);
-    
-      const fetchStatusOfApplication = async () => {
-        try {
-          const data = await getApplication();
-          setApplication(data.data);
-          console.log("Area",data)
-        } catch (error) {
-          // setError("Failed to load applicants");
-          console.error("API Error:", error);
-        }
-      };
-    
+  console.log("Application Data:", application);
 
+  useEffect(() => {
+    fetchStatusOfApplication(selectedTime);
+  }, [selectedTime]);
+
+  const fetchStatusOfApplication = async (cType: string) => {
+    setIsLoading(true);
+    try {
+      const response = await getApplication(cType);
+      console.log("API Response:", response);
+
+      if (Array.isArray(response.data)) {
+        setApplication(response.data);
+      } else if (
+        typeof response.data === "object" &&
+        response.data.totalApplications
+      ) {
+        setApplication([
+          {
+            date: new Date().toISOString().split("T")[0], // Today's date
+            week: response.data.totalApplications ?? 0, // Assign totalApplications to week
+            month: response.data.totalApplications ?? 0, // Assign totalApplications to month
+          },
+        ]);
+      } else {
+        setApplication([]); // If no valid data, set empty array
+      }
+    } catch (error) {
+      console.error("API Error:", error);
+      setApplication([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleLabelClick = (time: string) => {
+    setSelectedTime(time);
+    console.log("Selected Time:", time);
+  };
+
+  // const labels = application.map((app) => app.date);
+  const labels = ["jan","fab", "march"]
+  const weekData = application.map((app) => app.week);
+  const monthData = application.map((app) => app.month);
 
   const data = {
-    labels: ["2016", "2017", "2018", "2019"],
+    labels,
     datasets: [
       {
         label: "Week",
-        data: [100, 200, 250, 300],
-        backgroundColor: "rgba(255, 159, 64, 1)", // Orange color with transparency
-        borderColor: "rgba(255, 255, 255, 1)",
+        data: selectedTime === "week" ? weekData : [],
+        backgroundColor: "rgba(153, 102, 255, 0.5)",
+        borderColor: "rgba(153, 102, 255, 1)",
         fill: true,
       },
       {
-        label: "Monthly",
-        data: [80, 180, 230, 280],
-        backgroundColor: "rgba(75, 192, 192, 1)", // Green color with transparency
-        borderColor: "rgba(255, 255, 255, 1)",
-        fill: true,
-      },
-      {
-        label: "1st 3 Months",
-        data: [10, 120, 170, 220],
-        backgroundColor: "rgba(153, 102, 255, 1)", // Purple color with transparency
-        borderColor: "rgba(255, 255, 255, 1)",
+        label: "Month",
+        data: selectedTime === "month" ? monthData : [],
+        backgroundColor: "rgba(255, 99, 132, 0.5)",
+        borderColor: "rgba(255, 99, 132, 1)",
         fill: true,
       },
     ],
@@ -148,6 +407,8 @@ const StackedAreaChart = () => {
     plugins: {
       legend: {
         position: "bottom",
+        onClick: (_e, legendItem) =>
+          handleLabelClick(legendItem.text.toLowerCase()),
       },
     },
     scales: {
@@ -157,7 +418,7 @@ const StackedAreaChart = () => {
         },
       },
       y: {
-        stacked: true, // Enables stacking
+        stacked: true,
         beginAtZero: true,
       },
     },
@@ -165,7 +426,13 @@ const StackedAreaChart = () => {
 
   return (
     <div style={{ height: "300px", width: "100%" }}>
-      <Line data={data} options={options} />
+      {isLoading ? (
+        <Skeleton height={300} width={500} />
+      ) : (
+        <div style={{ height: "300px", width: "100%" }}>
+          <Line data={data} options={options} />
+        </div>
+      )}
     </div>
   );
 };

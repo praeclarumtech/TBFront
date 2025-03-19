@@ -19,6 +19,7 @@ import DeleteModal from "components/BaseComponents/DeleteModal";
 import BaseModal from "components/BaseComponents/BaseModal";
 import appConstants from "constants/constant";
 import { getSerialNumber, InputPlaceHolder } from "utils/commonFunctions";
+import Skeleton from "react-loading-skeleton";
 
 const { projectTitle, Modules, handleResponse } = appConstants;
 
@@ -27,7 +28,7 @@ const AddDegree = () => {
   const [degrees, setDegrees] = useState<any[]>([]);
   const [editingDegree, setEditingDegree] = useState<any>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [degreeToDelete, setDegreeToDelete] = useState<any>(null);
+  const [degreeToDelete, setDegreeToDelete] = useState<any>([]);
   const [showBaseModal, setShowBaseModal] = useState(false);
   const [totalRecords, setTotalRecords] = useState(0);
   const [pagination, setPagination] = useState({
@@ -36,8 +37,12 @@ const AddDegree = () => {
     limit: 50,
   });
   const [loader, setLoader] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedDegree, setSelectedDegree] = useState<string[]>([]);
+  const [searchAll, setSearchAll] = useState<string>("");
 
   const fetchDegrees = async () => {
+    setIsLoading(true);
     try {
       const res = await viewAllDegree({
         page: pagination.pageIndex + 1,
@@ -54,6 +59,8 @@ const AddDegree = () => {
     } catch (error) {
       toast.error("Something went wrong!");
       console.error(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -74,32 +81,101 @@ const AddDegree = () => {
     setShowDeleteModal(true);
   };
 
-  const confirmDelete = () => {
-    if (!degreeToDelete) return;
+  // const confirmDelete = () => {
+  //   if (!degreeToDelete) return;
+
+  //   setLoader(true);
+  //   deleteDegree({ _id: degreeToDelete._id })
+  //     .then((res: { success: any; message: any }) => {
+  //       if (res?.success) {
+  //         toast.success(res?.message || "Degree deleted successfully");
+  //         fetchDegrees();
+  //       } else {
+  //         toast.error(res?.message || "Failed to delete degree");
+  //       }
+  //     })
+  //     .catch((error: any) => {
+  //       toast.error("Something went wrong!");
+  //       console.error(error);
+  //     })
+  //     .finally(() => {
+  //       setLoader(false);
+  //       setShowDeleteModal(false);
+  //       setDegreeToDelete(null);
+  //     });
+  // };
+
+  const confirmDelete = async () => {
+    if (!degreeToDelete || degreeToDelete.length === 0) {
+      toast.error("No degrees selected for deletion.");
+      return;
+    }
 
     setLoader(true);
-    deleteDegree({ _id: degreeToDelete._id })
-      .then((res: { success: any; message: any }) => {
-        if (res?.success) {
-          toast.success(res?.message || "Degree deleted successfully");
-          fetchDegrees();
-        } else {
-          toast.error(res?.message || "Failed to delete degree");
-        }
-      })
-      .catch((error: any) => {
-        toast.error("Something went wrong!");
-        console.error(error);
-      })
-      .finally(() => {
-        setLoader(false);
-        setShowDeleteModal(false);
-        setDegreeToDelete(null);
-      });
+
+    try {
+      await Promise.all(
+        degreeToDelete.map((id: any) => deleteDegree({ _id: id }))
+      );
+
+      toast.success("Selected degrees deleted successfully");
+      fetchDegrees();
+    } catch (error) {
+      toast.error("Failed to delete one or more degrees.");
+      console.error(error);
+    } finally {
+      setLoader(false);
+      setShowDeleteModal(false);
+      setDegreeToDelete([]);
+    }
+  };
+
+  const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.checked) {
+      setSelectedDegree(degrees.map((degree) => degree._id)); // Select all
+    } else {
+      setSelectedDegree([]); // Unselect all
+    }
+  };
+
+  const handleSelectDegree = (degreeId: string) => {
+    setSelectedDegree(
+      (prev) =>
+        prev.includes(degreeId)
+          ? prev.filter((id) => id !== degreeId) // Unselect if already selected
+          : [...prev, degreeId] // Add to selected list
+    );
+  };
+
+  const handleDeleteAll = () => {
+    if (selectedDegree.length > 1) {
+      setDegreeToDelete([...selectedDegree]);
+      setShowDeleteModal(true);
+    }
   };
 
   const columns = useMemo(
     () => [
+      {
+        header: (
+          <input
+            type="checkbox"
+            onChange={handleSelectAll}
+            checked={
+              selectedDegree.length === degrees.length && degrees.length > 0
+            }
+          />
+        ),
+        accessorKey: "select",
+        cell: (info: any) => (
+          <input
+            type="checkbox"
+            checked={selectedDegree.includes(info.row.original._id)}
+            onChange={() => handleSelectDegree(info.row.original._id)}
+          />
+        ),
+        enableColumnFilter: false,
+      },
       {
         header: "Sr.no",
         cell: getSerialNumber,
@@ -146,7 +222,7 @@ const AddDegree = () => {
         ),
       },
     ],
-    []
+    [degrees, selectedDegree]
   );
 
   const validation: any = useFormik({
@@ -217,6 +293,14 @@ const AddDegree = () => {
     validation.resetForm();
   };
 
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchAll(event.target.value);
+  };
+
+  const filteredDegree = degrees.filter((fDegree) =>
+    fDegree.degree.toLowerCase().includes(searchAll.toLowerCase())
+  );
+
   return (
     <Fragment>
       <DeleteModal
@@ -232,25 +316,52 @@ const AddDegree = () => {
             <Card className="mb-3 my-3">
               <CardBody>
                 <Row className="flex">
-                  <Row className="fw-bold text-dark ms-2  h4 d-flex align-items-center">
+                  <Row className="fw-bold text-dark h4 d-flex align-items-center">
                     <Col
                       sm={12}
                       md={12}
-                      className="d-flex align-items-center justify-between "
+                      className="d-flex align-items-center justify-between ml-2"
                     >
                       {formTitle}
-                      <BaseButton
-                        color="success"
-                        disabled={loader}
-                        type="submit"
-                        loader={loader}
-                        // className="ms-3 px-5 border rounded-5"
-
-                        onClick={handleOpenBaseModal}
-                      >
-                        <i className="ri-add-line align-bottom " />
-                        {submitButtonText}
-                      </BaseButton>
+                      <div className="d-flex justify-end">
+                        <div>
+                          <input
+                            id="search-bar-0"
+                            className="form-control search h-10 gap-2"
+                            placeholder="Search..."
+                            onChange={handleSearchChange}
+                            value={searchAll}
+                          />
+                        </div>
+                        <div className="d-flex justify-content-end">
+                          {selectedDegree.length > 1 && (
+                            <BaseButton
+                              className="btn text-lg bg-danger edit-list ml-2 w-fit border-0"
+                              onClick={handleDeleteAll}
+                            >
+                              <i className="ri-delete-bin-fill align-bottom" />
+                              <ReactTooltip
+                                place="bottom"
+                                variant="error"
+                                content="Delete"
+                                anchorId={`Delete ${selectedDegree.length} Emails`}
+                              />
+                            </BaseButton>
+                          )}
+                          <BaseButton
+                            color="primary"
+                            disabled={loader}
+                            type="submit"
+                            loader={loader}
+                            // className="ms-3 px-5 border rounded-5"
+                            className="mx-2"
+                            onClick={handleOpenBaseModal}
+                          >
+                            <i className="ri-add-line align-bottom mx-1" />
+                            {submitButtonText}
+                          </BaseButton>
+                        </div>
+                      </div>
                     </Col>
                   </Row>
 
@@ -285,29 +396,34 @@ const AddDegree = () => {
                   </BaseModal>
                   <Row className="mt-3">
                     <Col lg={12}>
-                      <div>
-                        {degrees?.length > 0 ? (
-                          <TableContainer
-                            isHeaderTitle="Degrees"
-                            columns={columns}
-                            data={degrees}
-                            // isGlobalFilter={true}
-                            customPageSize={10}
-                            theadClass="table-light text-muted"
-                            // SearchPlaceholder="Search..."
-                            totalRecords={totalRecords}
-                            pagination={pagination}
-                            setPagination={setPagination}
-                            loader={loader}
-                            customPadding="0.3rem 1.75rem"
-                          />
-                        ) : (
-                          <div className="py-4 text-center">
-                            <i className="ri-search-line d-block fs-1 text-success"></i>
-                            {handleResponse?.dataNotFound}
-                          </div>
-                        )}
-                      </div>
+                      {isLoading ? (
+                        <div className="text-center py-4">
+                          <Skeleton count={5} />
+                        </div>
+                      ) : (
+                        <div>
+                          {degrees?.length > 0 ? (
+                            <TableContainer
+                              isHeaderTitle="Degrees"
+                              columns={columns}
+                              data={filteredDegree}
+                              isGlobalFilter={false}
+                              customPageSize={10}
+                              theadClass="table-light text-muted"
+                              SearchPlaceholder="Search..."
+                              totalRecords={totalRecords}
+                              pagination={pagination}
+                              setPagination={setPagination}
+                              loader={loader}
+                            />
+                          ) : (
+                            <div className="py-4 text-center">
+                              <i className="ri-search-line d-block fs-1 text-success"></i>
+                              {handleResponse?.dataNotFound}
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </Col>
                   </Row>
                 </Row>

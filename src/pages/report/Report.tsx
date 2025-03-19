@@ -1,10 +1,11 @@
-import  { Fragment, useState, useEffect } from "react";
+import { Fragment, useState, useEffect } from "react";
 import { Card, Col, Container, Row } from "react-bootstrap";
 import {
   BoxArrowInUpRight,
   Check2Circle,
   Icon1Circle,
   Icon2Circle,
+  PersonCircle,
 } from "react-bootstrap-icons";
 import DounutChart from "sub-components/report/DounutChart";
 import ProgressBar from "sub-components/report/ProgressBar";
@@ -23,7 +24,7 @@ const Report = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-console.log(error)
+  console.log(error);
 
   useEffect(() => {
     fetchApplicantsOnProcess();
@@ -38,7 +39,7 @@ console.log(error)
       setApplicantsOnProcess1(data.data.technicalRoundApplicants);
       setApplicantsOnProcess2(data.data.hrRoundApplicants);
       setApplicantsOnProcess3(data.data.finalRoundApplicants);
-      console.log(data.data)
+      console.log("datainreportssss",data.data);
     } catch (error) {
       console.error("API Error:", error);
       setError("Failed to load applicants");
@@ -62,25 +63,25 @@ console.log(error)
                         <Col xl={8} lg={6} md={6} xs={12}>
                           <h4 className="fw-bold w-full">
                             {" "}
-                            Applicantion on Process
+                            Application on Process
                           </h4>
                           <div className="mt-5">
                             <div className="d-flex my-2">
                               <div className="icon-shape icon-lg rounded-2 shadow-md bg-light-warning text-warning">
                                 {/* <Cart /> */}
-                                <Icon1Circle size={20}/>
+                                <Icon1Circle size={20} />
                               </div>
                               <ProgressBar
                                 value={applicantsOnProcess1}
                                 colour="bg-warning"
-                                lebel= "Technical Round"
+                                lebel="Technical Round"
                                 loading={isLoading}
                               />
                             </div>
                             <div className="d-flex my-2">
                               <div className="icon-shape icon-lg rounded-2 shadow-md bg-light-success text-success">
                                 {/* <Truck /> */}
-                                <Icon2Circle size={20}/>
+                                <Icon2Circle size={20} />
                               </div>
                               <ProgressBar
                                 value={applicantsOnProcess2}
@@ -91,21 +92,27 @@ console.log(error)
                             </div>
                             <div className="d-flex my-2">
                               <div className="icon-shape icon-lg rounded-2 shadow-md bg-light-info text-info">
-                                <Check2Circle size={20}/>
+                                {/* <Icon2Circle size={20} /> */}
+                                <PersonCircle size={20}/>
+                              </div>
+                              <ProgressBar
+                                value={74}
+                                colour="bg-info"
+                                lebel="Client Round"
+                                loading={isLoading}
+                              />
+                            </div>
+                            <div className="d-flex my-2">
+                              <div className="icon-shape icon-lg rounded-2 shadow-md bg-light-primary text-primary">
+                                <Check2Circle size={20} />
                               </div>
                               <ProgressBar
                                 value={applicantsOnProcess3}
-                                colour="bg-info"
+                                colour="bg-primary"
                                 lebel="Final Round"
                                 loading={isLoading}
                               />
                             </div>
-                            {/* <div className="d-flex my-2">
-                              <div className="icon-shape icon-md rounded-2 shadow-md bg-light-info text-info">
-                                <Icon2Circle />
-                              </div>
-                              <ProgressBar value={74} colour="bg-info" />
-                            </div> */}
                           </div>
                         </Col>
                         <Col xl={4} lg={6} md={6} xs={12}>
@@ -137,7 +144,7 @@ console.log(error)
                           <h4 className="fw-bold"> Applicants </h4>
                           <div className="items-center mt-3">
                             {/* <AreaChart /> */}
-                              <AreaChart />
+                            <AreaChart />
                           </div>
                         </Col>
                       </div>

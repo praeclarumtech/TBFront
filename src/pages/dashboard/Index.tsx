@@ -55,7 +55,7 @@ const Dashboard = () => {
     setIsLoading(true);
     try {
       const data = await getTotalApplicants();
-      console.log("API Response:", data);
+      // console.log("API Response:", data);
       // ✅ Check if data exists before setting state
       setTotalApplicants(data.data.totalApplicants);
       setHoldApplicants(data.data.holdApplicants);
@@ -63,7 +63,6 @@ const Dashboard = () => {
       setInProcessApplicants(data.data.inProcessApplicants);
       setRejectedApplicants(data.data.rejectedApplicants);
       setSelectedApplicants(data.data.selectedApplicants);
-      console.log("api in dash", data.data);
     } catch (error) {
       console.error("API Error:", error);
       setError("Failed to load applicants");
@@ -74,7 +73,7 @@ const Dashboard = () => {
 
   return (
     <Fragment>
-      <div className="min-h-screen">
+      <div >
         <div className="pb-23"></div>
         <Container fluid className="mt-n23 px-6">
           <Row className="bg-primary mx-n6 mb-n6 mt-n8 pt-3">
@@ -140,7 +139,7 @@ const Dashboard = () => {
             </Col>
           </Row>
           <Row className="mt-3">
-            <Col xl={6}>
+            <Col xl={6} >
               <ApplicantsDeatils
                 setSelectedTechnology={setSelectedTechnology}
               />
@@ -159,3 +158,5 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
+
