@@ -449,7 +449,6 @@ const Applicant = () => {
   const handleDeleteAll = () => {
     if (selectedApplicants.length > 0) {
       setMultipleApplicantsDelete(selectedApplicants);
-      console.log("Applicants to delete :- ", multipleApplicantDelete);
       setShowDeleteModal(true);
     }
   };
@@ -1177,7 +1176,7 @@ const Applicant = () => {
         // onDeleteClick={handleDelete}
         onDeleteClick={() =>
           selectedApplicants.length > 1
-            ? deleteMultipleApplicantDetails(selectedApplicants) // ✅ Wrap in an arrow function
+            ? deleteMultipleApplicantDetails(multipleApplicantDelete) // ✅ Wrap in an arrow function
             : handleDelete
         }
         // recordId={recordIdToDelete}
