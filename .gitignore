@@ -50,3 +50,5 @@ build
 # Test output
 coverage
  
+ 
+ package-lock.json
