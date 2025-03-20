@@ -14,6 +14,7 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
       .join(" ");
   };
+  console.log("preview ", data);
 
   return (
     <>
@@ -40,27 +41,30 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
               <Typography variant="body1" className="text-gray-600">
                 <span className="  !text-black pt-3">Name:</span>
                 <span className="">
-                  {" " + capitalizeWords(data.firstName)}{" "}
-                  {" " + capitalizeWords(data.middleName)}
-                  {" " + capitalizeWords(data.lastName)}
+                  {" " + capitalizeWords(data?.name?.firstName)}
+                  {" " + capitalizeWords(data?.name?.middleName)}
+                  {" " + capitalizeWords(data?.name?.lastName)}
                 </span>
               </Typography>
               <Typography>
                 <span className="  !text-black pt-3">Phone Number:</span>
-                <span>{" " + data.phoneNumber}</span>
+                <span>{" " + data?.phone?.phoneNumber}</span>
               </Typography>
               <Typography>
                 <span className="  !text-black pt-3">Date of Birth:</span>
-                <span>{" " + data.dateOfBirth}</span>
+                <span>
+                  {" "}
+                  {" " + new Date(data?.dateOfBirth).toLocaleDateString()}
+                </span>
               </Typography>
               <Typography>
                 <span className="  !text-black pt-3">Marital Status:</span>
-                <span>{" " + capitalizeWords(data.maritalStatus)}</span>
+                <span>{" " + capitalizeWords(data?.maritalStatus)}</span>
               </Typography>
 
               <Typography>
                 <span className="text-base  !text-black pt-3">Country:</span>
-                <span>{" " + capitalizeWords(data.country)}</span>
+                <span>{" " + capitalizeWords(data?.country)}</span>
               </Typography>
               {/* <Typography>
                 <span className="text-base  !text-black pt-3">
@@ -73,37 +77,37 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
                 <span className="text-base  !text-black pt-3">
                   Permanemt Address:
                 </span>
-                <span>{" " + capitalizeWords(data.permanentAddress)}</span>
+                <span>{" " + capitalizeWords(data?.permanentAddress)}</span>
               </Typography>
             </Col>
             <div className="col-md-6">
               <Typography>
                 <span className="text-base  !text-black pt-3">Email:</span>
-                <span>{" " + data.email}</span>
+                <span>{" " + data?.email}</span>
               </Typography>
               <Typography>
                 <span className="text-base  !text-black pt-3">
                   WhatsApp Number:
                 </span>
-                <span>{" " + data.whatsappNumber}</span>
+                <span>{" " + data?.phone?.whatsappNumber}</span>
               </Typography>
               <Typography>
                 <span className="text-base  !text-black pt-3">Gender :</span>
-                <span>{" " + capitalizeWords(data.gender)}</span>
+                <span>{" " + capitalizeWords(data?.gender)}</span>
               </Typography>
               <Typography>
                 <span className="text-base  !text-black pt-3">City:</span>
-                <span>{" " + capitalizeWords(data.currentCity)}</span>
+                <span>{" " + capitalizeWords(data?.currentCity)}</span>
               </Typography>
               <Typography>
                 <span className="text-base  !text-black pt-3">State :</span>
-                <span>{" " + data.state}</span>
+                <span>{" " + data?.state}</span>
               </Typography>
               <Typography>
                 <span className="text-base  !text-black pt-3">
                   Current Address:
                 </span>
-                <span>{" " + capitalizeWords(data.currentAddress)}</span>
+                <span>{" " + capitalizeWords(data?.currentAddress)}</span>
               </Typography>
             </div>
           </Row>
@@ -119,18 +123,18 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
             <Col xs={12} md={6} className="mb-3  ">
               <Typography>
                 <span className="  !text-black pt-3">Qualification:</span>
-                <span>{data.qualification}</span>
+                <span>{data?.qualification}</span>
               </Typography>
               <Typography variant="body1" className="text-gray-600">
                 <span className="  !text-black pt-3">Specialization:</span>
                 <span className="">
-                  {" " + capitalizeWords(data.specialization)}
+                  {" " + capitalizeWords(data?.specialization)}
                 </span>
               </Typography>
               <Typography variant="body1" className="text-gray-600">
                 <span className="  !text-black pt-3">CGPA:</span>
                 <span className="">
-                  {" " + capitalizeWords(data.cgpa) + " Cgpa"}
+                  {" " + capitalizeWords(data?.cgpa) + " Cgpa"}
                 </span>
               </Typography>
             </Col>
@@ -138,11 +142,11 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
             <Col xs={12} md={6} className="mb-3">
               <Typography>
                 <span className="  !text-black pt-3">College Name:</span>
-                <span>{" " + data.collegeName}</span>
+                <span>{" " + data?.collegeName}</span>
               </Typography>
               <Typography>
                 <span className="  !text-black pt-3">Passing Year:</span>
-                <span>{" " + data.passingYear}</span>
+                <span>{" " + data?.passingYear}</span>
               </Typography>
             </Col>
           </Row>
@@ -167,122 +171,122 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
               </Typography>
               <Typography>
                 <span className="  !text-black pt-3">Total Experience:</span>
-                <span>{" " + data.totalExperience + " Years"}</span>
+                <span>{" " + data?.totalExperience + " Years"}</span>
               </Typography>
               <Typography>
                 <span className="  !text-black pt-3">
                   Javascript Rating(Out of 10):
                 </span>
-                <span>{" " + data.rating}</span>
+                <span>{" " + data?.rating}</span>
               </Typography>
               <Typography>
                 <span className="  !text-black pt-3">
                   Current Company Name:
                 </span>
-                <span>{" " + capitalizeWords(data.currentCompanyName)}</span>
+                <span>{" " + capitalizeWords(data?.currentCompanyName)}</span>
               </Typography>
               <Typography>
                 <span className="  !text-black pt-3">Current Package:</span>
-                <span>{" " + capitalizeWords(data.currentPkg) + " LPA"}</span>
+                <span>{" " + capitalizeWords(data?.currentPkg) + " LPA"}</span>
               </Typography>
               <Typography>
                 <span className="  !text-black pt-3">Negotiation(Rs) :</span>
-                <span>{" " + data.negotiation + " Rs."}</span>
+                <span>{" " + data?.negotiation + " Rs."}</span>
               </Typography>
               <Typography>
                 <span className="  !text-black pt-3">Work Preference :</span>
-                <span>{" " + capitalizeWords(data.workPreference)}</span>
+                <span>{" " + capitalizeWords(data?.workPreference)}</span>
               </Typography>
               <Typography>
                 <span className="  !text-black pt-3">Applied Role:</span>
-                <span>{" " + capitalizeWords(data.appliedRole)}</span>
+                <span>{" " + capitalizeWords(data?.appliedRole)}</span>
               </Typography>
               <Typography>
                 <span className="  !text-black pt-3">Referral :</span>
-                <span>{" " + capitalizeWords(data.referral)}</span>
+                <span>{" " + capitalizeWords(data?.referral)}</span>
               </Typography>
 
               <Typography>
                 <span className="  !text-black pt-3">Last Follow UpDate:</span>
                 <span>
-                  {" " + new Date(data.lastFollowUpDate).toLocaleDateString()}
+                  {" " + new Date(data?.lastFollowUpDate).toLocaleDateString()}
                 </span>
               </Typography>
               <Typography>
                 <span className="  !text-black pt-3">Any Hand On Offers?:</span>
-                <span>{" " + data.anyHandOnOffers ? "Yes" : "Not"}</span>
+                <span>{" " + data?.anyHandOnOffers ? "Yes" : "Not"}</span>
               </Typography>
 
               <Typography>
                 <span className="  !text-black pt-3">comment:</span>
-                <span>{" " + capitalizeWords(data.comment)}</span>
+                <span>{" " + capitalizeWords(data?.comment)}</span>
               </Typography>
             </Col>
             <Col xs={12} md={6}>
               <Typography>
                 <span className="  !text-black pt-3">Other Skills:</span>
-                <span>{" " + capitalizeWords(data.otherSkills)}</span>
+                <span>{" " + capitalizeWords(data?.otherSkills)}</span>
               </Typography>
               <Typography>
                 <span className="  !text-black pt-3">
                   Relevant Skill Experience:
                 </span>
-                <span>{" " + data.relevantSkillExperience + " Years"}</span>
+                <span>{" " + data?.relevantSkillExperience + " Years"}</span>
               </Typography>
               <Typography>
                 <span className="  !text-black pt-3">
                   Communication Skill Rating(Out of 10):
                 </span>
-                <span>{" " + data.communicationSkill}</span>
+                <span>{" " + data?.communicationSkill}</span>
               </Typography>
               <Typography>
                 <span className="  !text-black pt-3">
                   Current Company Designation :
                 </span>
-                <span>{" " + data.currentCompanyDesignation}</span>
+                <span>{" " + data?.currentCompanyDesignation}</span>
               </Typography>
 
               <Typography variant="body1" className="text-gray-600">
                 <span className="  !text-black pt-3">Expected Package:</span>
                 <span className="">
-                  {" " + capitalizeWords(data.expectedPkg) + " LPA"}
+                  {" " + capitalizeWords(data?.expectedPkg) + " LPA"}
                 </span>
               </Typography>
               <Typography>
                 <span className="  !text-black pt-3">Notice Period(Days):</span>
-                <span>{" " + data.noticePeriod + " days"}</span>
+                <span>{" " + data?.noticePeriod + " days"}</span>
               </Typography>
 
               <Typography>
                 <span className="  !text-black pt-3">Preferred Locations:</span>
-                <span>{" " + capitalizeWords(data.preferredLocations)}</span>
+                <span>{" " + capitalizeWords(data?.preferredLocations)}</span>
               </Typography>
 
               <Typography>
                 <span className="  !text-black pt-3">Practical Feedback :</span>
-                <span>{" " + capitalizeWords(data.practicalFeedback)}</span>
+                <span>{" " + capitalizeWords(data?.practicalFeedback)}</span>
               </Typography>
               <Typography>
                 <span className="  !text-black pt-3">Client Feedback :</span>
-                <span>{" " + capitalizeWords(data.clientFeedback)}</span>
+                <span>{" " + capitalizeWords(data?.clientFeedback)}</span>
               </Typography>
             </Col>
             <Col xs={12}>
               <Typography className="mt-2">
                 <span className="  text-black">Resume URL:</span>
                 <a
-                  href={data.resumeUrl}
+                  href={data?.resumeUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-blue-600 "
                 >
-                  {" " + data.resumeUrl}
+                  {" " + data?.resumeUrl}
                 </a>
               </Typography>
               <Typography className="mt-2">
                 <span className="  text-black">Portfolio URL:</span>
                 <a
-                  href={data.portfolioUrl}
+                  href={data?.portfolioUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-blue-600 "
@@ -293,35 +297,35 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
               <Typography className="mt-2">
                 <span className="  text-black">Linkedin URL:</span>
                 <a
-                  href={data.linkedinUrl}
+                  href={data?.linkedinUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-blue-600 "
                 >
-                  {" " + data.linkedinUrl}
+                  {" " + data?.linkedinUrl}
                 </a>
               </Typography>
               <Typography className="mt-2">
                 <span className=" text-black">Client Cv URL:</span>
                 <a
-                  href={data.clientCvUrl}
+                  href={data?.clientCvUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-blue-600"
                 >
-                  {" " + data.clientCvUrl}
+                  {" " + data?.clientCvUrl}
                   {/* {formData.portfolioUrl} */}
                 </a>
               </Typography>
               <Typography className="mt-2">
                 <span className="  text-black">Practical URL:</span>
                 <a
-                  href={data.practicalUrl}
+                  href={data?.practicalUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-blue-600 "
                 >
-                  {" " + data.practicalUrl}
+                  {" " + data?.practicalUrl}
                 </a>
               </Typography>
             </Col>

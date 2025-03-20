@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { useEffect, useState } from "react";
 import { Modal, Spin, Badge, Card, Row, Col, Tag } from "antd";
 import { getApplicantDetails } from "api/applicantApi";
@@ -56,6 +56,7 @@ interface ApplicantDetails {
   practicalUrl: string;
   clientCvUrl: string;
   clientFeedback: string;
+  permanentAddress: string;
   linkedinUrl: string;
   feedback: string;
   practicalFeedback: string;
@@ -200,29 +201,36 @@ const ViewModal: React.FC<ViewModalProps> = ({ show, onHide, applicantId }) => {
                     formData.gender ? capitalizeWords(formData.gender) : "-"
                   }
                 />
-                <DetailsRow
+                {/* <DetailsRow
                   label="Date of Birth"
                   value={
                     formData.dateOfBirth
                       ? new Date(formData.dateOfBirth).toLocaleDateString()
                       : "-"
                   }
-                />
+                /> */}
                 <DetailsRow
-                  label="Marital Status"
+                  label="Date of Birth"
                   value={
-                    formData.maritalStatus
-                      ? capitalizeWords(formData.maritalStatus)
+                    formData.dateOfBirth
+                      ? new Date(formData.dateOfBirth).toLocaleDateString(
+                          "en-GB",
+                          {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                          }
+                        )
                       : "-"
                   }
                 />
               </Col>
               <Col span={12}>
                 <DetailsRow
-                  label="Current Address"
+                  label="Marital Status"
                   value={
-                    formData.currentAddress
-                      ? capitalizeWords(formData.currentAddress)
+                    formData.maritalStatus
+                      ? capitalizeWords(formData.maritalStatus)
                       : "-"
                   }
                 />
@@ -245,14 +253,22 @@ const ViewModal: React.FC<ViewModalProps> = ({ show, onHide, applicantId }) => {
                   }
                 />
                 <DetailsRow
-                  label="Home Town"
+                  label="Current Address"
                   value={
-                    formData.homeTownCity
-                      ? capitalizeWords(formData.homeTownCity)
+                    formData.currentAddress
+                      ? capitalizeWords(formData.currentAddress)
                       : "-"
                   }
                 />
                 <DetailsRow
+                  label="Permanent Address "
+                  value={
+                    formData.permanentAddress
+                      ? capitalizeWords(formData.permanentAddress)
+                      : "-"
+                  }
+                />
+                {/* <DetailsRow
                   label="Home Pincode"
                   value={
                     formData.homePincode ? (
@@ -263,7 +279,7 @@ const ViewModal: React.FC<ViewModalProps> = ({ show, onHide, applicantId }) => {
                       "-"
                     )
                   }
-                />
+                /> */}
               </Col>
             </Row>
           </DetailsCard>

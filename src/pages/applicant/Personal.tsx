@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Row, Col, Container } from "react-bootstrap";
+import { Row, Col, Container, Spinner } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
 import { useFormik } from "formik";
 import { Fragment } from "react";
@@ -19,6 +19,7 @@ import { city as fetchCities } from "../../api/applicantApi";
 import {
   personalApplicantSchema,
   SelectedOption,
+  City,
 } from "interfaces/applicant.interface";
 
 const {
@@ -32,14 +33,14 @@ const {
 
 const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
   document.title = Modules.Applicant + " | " + projectTitle;
-  const [cities, setCities] = useState([]);
+  const [cities, setCities] = useState<City[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);  
 
   useEffect(() => {
     const getCities = async () => {
       try {
+        setLoading(true);  
         const cityData = await fetchCities();
-        console.log("my", cityData);
-
         if (cityData?.data) {
           setCities(
             cityData.data.map((city: { city_name: string; _id: string }) => ({
@@ -50,15 +51,23 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
         }
       } catch (error) {
         errorHandle(error);
+      } finally {
+        setLoading(false);  // Set loading to false once fetch is complete
       }
     };
+
     getCities();
   }, []);
+
+  const initialCityValue =
+    cities.find((city) => city.label === initialValues.currentCity)?.value ||
+    "";
 
   const minDateOfBirth = moment().subtract(15, "years").format("YYYY-MM-DD");
   const formattedDateOfBirth = initialValues.dateOfBirth
     ? moment(initialValues.dateOfBirth).format("YYYY-MM-DD")
     : "";
+
   const validation: any = useFormik({
     enableReinitialize: true,
     initialValues: {
@@ -72,14 +81,23 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
       dateOfBirth: formattedDateOfBirth,
       state: initialValues.state || "",
       country: initialValues.country || "",
-      // currentPincode: initialValues.currentPincode || "",
-      currentCity: initialValues.currentCity || "",
+      currentCity: initialCityValue,
       currentAddress: initialValues.currentAddress || "",
       maritalStatus: initialValues?.maritalStatus || "",
       permanentAddress: initialValues?.permanentAddress || "",
     },
     validationSchema: personalApplicantSchema,
     onSubmit: (data: any) => {
+      setLoading(true); 
+
+      const selectedCity = cities.find(
+        (city) => city.value === data.currentCity
+      );
+
+      if (selectedCity) {
+        data.currentCity = selectedCity.label;
+      }
+
       const structuredData = {
         name: {
           firstName: data.firstName,
@@ -90,15 +108,12 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
           whatsappNumber: data.whatsappNumber,
           phoneNumber: data.phoneNumber,
         },
-
         email: data.email,
         gender: data.gender,
         dateOfBirth: moment(data.dateOfBirth).toISOString(),
         state: data.state,
         country: data.country,
-        // currentPincode: data.currentPincode,
         currentCity: data.currentCity,
-
         currentAddress: data.currentAddress,
         maritalStatus: data.maritalStatus,
         permanentAddress: data.permanentAddress,
@@ -106,6 +121,8 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
 
       onNext(structuredData);
       onNext(data);
+
+      setLoading(false);  
     },
   });
 
@@ -123,180 +140,196 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
               }}
               className="p-3"
             >
-              <Row className="mb-3 g-3">
-                <Col xs={12} md={6} lg={4}>
-                  <BaseInput
-                    label="First Name"
-                    name="firstName"
-                    type="text"
-                    placeholder={InputPlaceHolder("First Name")}
-                    handleChange={(e) => {
-                      const value = e.target.value.replace(/[^A-Za-z\s]/g, "");
-                      validation.setFieldValue("firstName", value);
-                    }}
-                    handleBlur={validation.handleBlur}
-                    value={validation.values.firstName}
-                    touched={validation.touched.firstName}
-                    error={validation.errors.firstName}
-                    passwordToggle={false}
-                  />
-                </Col>
+              {loading ? ( 
+                <div className="d-flex justify-content-center my-5">
+                  <Spinner animation="border" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </Spinner>
+                </div>
+              ) : (
+                <Row className="mb-3 g-3">
+                  <Col xs={12} md={6} lg={4}>
+                    <BaseInput
+                      label="First Name"
+                      name="firstName"
+                      type="text"
+                      placeholder={InputPlaceHolder("First Name")}
+                      handleChange={(e) => {
+                        const value = e.target.value.replace(
+                          /[^A-Za-z\s]/g,
+                          ""
+                        );
+                        validation.setFieldValue("firstName", value);
+                      }}
+                      handleBlur={validation.handleBlur}
+                      value={validation.values.firstName}
+                      touched={validation.touched.firstName}
+                      error={validation.errors.firstName}
+                      passwordToggle={false}
+                    />
+                  </Col>
 
-                <Col xs={12} md={6} lg={4}>
-                  <BaseInput
-                    label="Middle Name"
-                    name="middleName"
-                    type="text"
-                    placeholder={InputPlaceHolder("Middle Name")}
-                    handleChange={(e) => {
-                      const value = e.target.value.replace(/[^A-Za-z\s]/g, "");
-                      validation.setFieldValue("middleName", value);
-                    }}
-                    handleBlur={validation.handleBlur}
-                    value={validation.values.middleName}
-                    touched={validation.touched.middleName}
-                    error={validation.errors.middleName}
-                    passwordToggle={false}
-                  />
-                </Col>
+                  <Col xs={12} md={6} lg={4}>
+                    <BaseInput
+                      label="Middle Name"
+                      name="middleName"
+                      type="text"
+                      placeholder={InputPlaceHolder("Middle Name")}
+                      handleChange={(e) => {
+                        const value = e.target.value.replace(
+                          /[^A-Za-z\s]/g,
+                          ""
+                        );
+                        validation.setFieldValue("middleName", value);
+                      }}
+                      handleBlur={validation.handleBlur}
+                      value={validation.values.middleName}
+                      touched={validation.touched.middleName}
+                      error={validation.errors.middleName}
+                      passwordToggle={false}
+                    />
+                  </Col>
 
-                <Col xs={12} md={6} lg={4}>
-                  <BaseInput
-                    label="Last Name"
-                    name="lastName"
-                    type="text"
-                    placeholder={InputPlaceHolder("Last Name")}
-                    handleChange={(e) => {
-                      const value = e.target.value.replace(/[^A-Za-z\s]/g, "");
-                      validation.setFieldValue("lastName", value);
-                    }}
-                    handleBlur={validation.handleBlur}
-                    value={validation.values.lastName}
-                    touched={validation.touched.lastName}
-                    error={validation.errors.lastName}
-                    passwordToggle={false}
-                  />
-                </Col>
+                  <Col xs={12} md={6} lg={4}>
+                    <BaseInput
+                      label="Last Name"
+                      name="lastName"
+                      type="text"
+                      placeholder={InputPlaceHolder("Last Name")}
+                      handleChange={(e) => {
+                        const value = e.target.value.replace(
+                          /[^A-Za-z\s]/g,
+                          ""
+                        );
+                        validation.setFieldValue("lastName", value);
+                      }}
+                      handleBlur={validation.handleBlur}
+                      value={validation.values.lastName}
+                      touched={validation.touched.lastName}
+                      error={validation.errors.lastName}
+                      passwordToggle={false}
+                    />
+                  </Col>
 
-                <Col xs={12} md={6} lg={4}>
-                  <BaseInput
-                    label="Email"
-                    name="email"
-                    type="text"
-                    placeholder={InputPlaceHolder("Email")}
-                    handleChange={validation.handleChange}
-                    handleBlur={validation.handleBlur}
-                    value={validation.values.email}
-                    touched={validation.touched.email}
-                    error={validation.errors.email}
-                    passwordToggle={false}
-                  />
-                </Col>
+                  <Col xs={12} md={6} lg={4}>
+                    <BaseInput
+                      label="Email"
+                      name="email"
+                      type="text"
+                      placeholder={InputPlaceHolder("Email")}
+                      handleChange={validation.handleChange}
+                      handleBlur={validation.handleBlur}
+                      value={validation.values.email}
+                      touched={validation.touched.email}
+                      error={validation.errors.email}
+                      passwordToggle={false}
+                    />
+                  </Col>
 
-                <Col xs={12} md={6} lg={4}>
-                  <BaseInput
-                    label="Phone Number"
-                    name="phoneNumber"
-                    type="text"
-                    placeholder={InputPlaceHolder("Phone Number")}
-                    handleChange={(e) => {
-                      const value = e.target.value
-                        .replace(/\D/g, "")
-                        .slice(0, 10);
-                      validation.setFieldValue("phoneNumber", value);
-                    }}
-                    handleBlur={validation.handleBlur}
-                    value={validation.values.phoneNumber}
-                    touched={validation.touched.phoneNumber}
-                    error={validation.errors.phoneNumber}
-                    passwordToggle={false}
-                    maxLength={10}
-                  />
-                </Col>
+                  <Col xs={12} md={6} lg={4}>
+                    <BaseInput
+                      label="Phone Number"
+                      name="phoneNumber"
+                      type="text"
+                      placeholder={InputPlaceHolder("Phone Number")}
+                      handleChange={(e) => {
+                        const value = e.target.value
+                          .replace(/\D/g, "")
+                          .slice(0, 10);
+                        validation.setFieldValue("phoneNumber", value);
+                      }}
+                      handleBlur={validation.handleBlur}
+                      value={validation.values.phoneNumber}
+                      touched={validation.touched.phoneNumber}
+                      error={validation.errors.phoneNumber}
+                      passwordToggle={false}
+                      maxLength={10}
+                    />
+                  </Col>
 
-                <Col xs={12} md={6} lg={4}>
-                  <BaseInput
-                    label="Whatsapp Number"
-                    name="whatsappNumber"
-                    type="text"
-                    placeholder={InputPlaceHolder("Whatsapp Number")}
-                    handleChange={(e) => {
-                      const value = e.target.value
-                        .replace(/\D/g, "")
-                        .slice(0, 10);
-                      validation.setFieldValue("whatsappNumber", value);
-                    }}
-                    handleBlur={validation.handleBlur}
-                    value={validation.values.whatsappNumber}
-                    touched={validation.touched.whatsappNumber}
-                    error={validation.errors.whatsappNumber}
-                    passwordToggle={false}
-                    maxLength={10}
-                  />
-                </Col>
+                  <Col xs={12} md={6} lg={4}>
+                    <BaseInput
+                      label="Whatsapp Number"
+                      name="whatsappNumber"
+                      type="text"
+                      placeholder={InputPlaceHolder("Whatsapp Number")}
+                      handleChange={(e) => {
+                        const value = e.target.value
+                          .replace(/\D/g, "")
+                          .slice(0, 10);
+                        validation.setFieldValue("whatsappNumber", value);
+                      }}
+                      handleBlur={validation.handleBlur}
+                      value={validation.values.whatsappNumber}
+                      touched={validation.touched.whatsappNumber}
+                      error={validation.errors.whatsappNumber}
+                      passwordToggle={false}
+                      maxLength={10}
+                    />
+                  </Col>
 
-                <Col xs={12} md={6} lg={4}>
-                  <BaseInput
-                    label="Date Of Birth"
-                    name="dateOfBirth"
-                    type="date"
-                    placeholder={InputPlaceHolder("Date Of Birth")}
-                    handleChange={validation.handleChange}
-                    handleBlur={validation.handleBlur}
-                    value={validation.values.dateOfBirth || ""}
-                    touched={validation.touched.dateOfBirth}
-                    error={validation.errors.dateOfBirth}
-                    passwordToggle={false}
-                    min={minDateOfBirth}
-                  />
-                </Col>
-                <Col xs={12} md={6} lg={4}>
-                  <BaseSelect
-                    label="Gender"
-                    name="gender"
-                    className="select-border"
-                    options={gendersType}
-                    placeholder={InputPlaceHolder("Gender")}
-                    handleChange={(selectedOption: SelectedOption) => {
-                      validation.setFieldValue(
-                        "gender",
-                        selectedOption?.value || ""
-                      );
-                    }}
-                    handleBlur={validation.handleBlur}
-                    value={
-                      dynamicFind(gendersType, validation.values.gender) || ""
-                    }
-                    touched={validation.touched.gender}
-                    error={validation.errors.gender}
-                  />
-                </Col>
-                <Col xs={12} md={6} lg={4}>
-                  <BaseSelect
-                    label="Marital Status"
-                    name="maritalStatus"
-                    className="select-border"
-                    options={maritalStatusType}
-                    placeholder="Marital Status"
-                    handleChange={(selectedOption: SelectedOption) => {
-                      validation.setFieldValue(
-                        "maritalStatus",
-                        selectedOption?.value || ""
-                      );
-                    }}
-                    handleBlur={validation.handleBlur}
-                    value={
-                      dynamicFind(
-                        maritalStatusType,
-                        validation.values.maritalStatus
-                      ) || ""
-                    }
-                    touched={validation.touched.maritalStatus}
-                    error={validation.errors.maritalStatus}
-                  />
-                </Col>
-                <Col xs={12} md={6} lg={4}>
-                  <BaseSelect
+                  <Col xs={12} md={6} lg={4}>
+                    <BaseInput
+                      label="Date Of Birth"
+                      name="dateOfBirth"
+                      type="date"
+                      placeholder={InputPlaceHolder("Date Of Birth")}
+                      handleChange={validation.handleChange}
+                      handleBlur={validation.handleBlur}
+                      value={validation.values.dateOfBirth || ""}
+                      touched={validation.touched.dateOfBirth}
+                      error={validation.errors.dateOfBirth}
+                      passwordToggle={false}
+                      min={minDateOfBirth}
+                    />
+                  </Col>
+                  <Col xs={12} md={6} lg={4}>
+                    <BaseSelect
+                      label="Gender"
+                      name="gender"
+                      className="select-border"
+                      options={gendersType}
+                      placeholder={InputPlaceHolder("Gender")}
+                      handleChange={(selectedOption: SelectedOption) => {
+                        validation.setFieldValue(
+                          "gender",
+                          selectedOption?.value || ""
+                        );
+                      }}
+                      handleBlur={validation.handleBlur}
+                      value={
+                        dynamicFind(gendersType, validation.values.gender) || ""
+                      }
+                      touched={validation.touched.gender}
+                      error={validation.errors.gender}
+                    />
+                  </Col>
+                  <Col xs={12} md={6} lg={4}>
+                    <BaseSelect
+                      label="Marital Status"
+                      name="maritalStatus"
+                      className="select-border"
+                      options={maritalStatusType}
+                      placeholder="Marital Status"
+                      handleChange={(selectedOption: SelectedOption) => {
+                        validation.setFieldValue(
+                          "maritalStatus",
+                          selectedOption?.value || ""
+                        );
+                      }}
+                      handleBlur={validation.handleBlur}
+                      value={
+                        dynamicFind(
+                          maritalStatusType,
+                          validation.values.maritalStatus
+                        ) || ""
+                      }
+                      touched={validation.touched.maritalStatus}
+                      error={validation.errors.maritalStatus}
+                    />
+                  </Col>
+                  <Col xs={12} md={6} lg={4}>
+                    {/* <BaseSelect
                     label="City"
                     name="currentCity"
                     className="select-border"
@@ -314,31 +347,50 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
                     }
                     touched={validation.touched.currentCity}
                     error={validation.errors.currentCity}
-                  />
-                </Col>
-                <Col xs={12} md={6} lg={4}>
-                  <BaseSelect
-                    label="State"
-                    name="state"
-                    className="select-border"
-                    options={stateType}
-                    placeholder={InputPlaceHolder("State")}
-                    handleChange={(selectedOption: SelectedOption) => {
-                      validation.setFieldValue(
-                        "state",
-                        selectedOption?.value || ""
-                      );
-                    }}
-                    handleBlur={validation.handleBlur}
-                    value={
-                      dynamicFind(stateType, validation.values.state) || ""
-                    }
-                    touched={validation.touched.state}
-                    error={validation.errors.state}
-                  />
-                </Col>
+                  /> */}
+                    <BaseSelect
+                      label="City"
+                      name="currentCity"
+                      className="select-border"
+                      options={cities}
+                      placeholder={InputPlaceHolder("City")}
+                      handleChange={(selectedOption: SelectedOption) => {
+                        validation.setFieldValue(
+                          "currentCity",
+                          selectedOption?.value || ""
+                        );
+                      }}
+                      handleBlur={validation.handleBlur}
+                      value={
+                        dynamicFind(cities, validation.values.currentCity) || ""
+                      }
+                      touched={validation.touched.currentCity}
+                      error={validation.errors.currentCity}
+                    />
+                  </Col>
+                  <Col xs={12} md={6} lg={4}>
+                    <BaseSelect
+                      label="State"
+                      name="state"
+                      className="select-border"
+                      options={stateType}
+                      placeholder={InputPlaceHolder("State")}
+                      handleChange={(selectedOption: SelectedOption) => {
+                        validation.setFieldValue(
+                          "state",
+                          selectedOption?.value || ""
+                        );
+                      }}
+                      handleBlur={validation.handleBlur}
+                      value={
+                        dynamicFind(stateType, validation.values.state) || ""
+                      }
+                      touched={validation.touched.state}
+                      error={validation.errors.state}
+                    />
+                  </Col>
 
-                {/* <Col xs={12} md={6} lg={3}>
+                  {/* <Col xs={12} md={6} lg={3}>
                   <BaseInput
                     label="Current Pincode"
                     name="currentPincode"
@@ -353,92 +405,93 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
                     className="!appearance-none"
                   />
                 </Col> */}
-                <Col xs={12} md={6} lg={4}>
-                  <BaseSelect
-                    label="Country"
-                    name="country"
-                    className="select-border"
-                    options={countriesType}
-                    placeholder={InputPlaceHolder("Country")}
-                    handleChange={(selectedOption: SelectedOption) => {
-                      validation.setFieldValue(
-                        "country",
-                        selectedOption?.value || ""
-                      );
-                    }}
-                    handleBlur={validation.handleBlur}
-                    value={
-                      dynamicFind(countriesType, validation.values.country) ||
-                      ""
-                    }
-                    touched={validation.touched.country}
-                    error={validation.errors.country}
-                  />
-                </Col>
-
-                <Col xs={12} md={12} lg={12}>
-                  <BaseTextarea
-                    label="Current Address"
-                    name="currentAddress"
-                    placeholder={InputPlaceHolder("Current Address")}
-                    handleChange={validation.handleChange}
-                    handleBlur={validation.handleBlur}
-                    value={validation.values.currentAddress}
-                    touched={validation.touched.currentAddress}
-                    error={validation.errors.currentAddress}
-                    passwordToggle={false}
-                    multiline
-                    rows={2}
-                    cols={50}
-                  />
-                </Col>
-
-                <Col xs={12} md={12} lg={12}>
-                  <div className="d-flex align-items-center">
-                    <input
-                      name="checkbox"
-                      type="checkbox"
-                      checked={validation.values.checkbox}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        const isChecked = e.target.checked;
-                        validation.setFieldValue("checkbox", isChecked);
-
-                        if (isChecked) {
-                          validation.setFieldValue(
-                            "permanentAddress",
-                            validation.values.currentAddress
-                          );
-                        } else {
-                          validation.setFieldValue("permanentAddress", "");
-                        }
+                  <Col xs={12} md={6} lg={4}>
+                    <BaseSelect
+                      label="Country"
+                      name="country"
+                      className="select-border"
+                      options={countriesType}
+                      placeholder={InputPlaceHolder("Country")}
+                      handleChange={(selectedOption: SelectedOption) => {
+                        validation.setFieldValue(
+                          "country",
+                          selectedOption?.value || ""
+                        );
                       }}
-                      onBlur={validation.handleBlur}
+                      handleBlur={validation.handleBlur}
+                      value={
+                        dynamicFind(countriesType, validation.values.country) ||
+                        ""
+                      }
+                      touched={validation.touched.country}
+                      error={validation.errors.country}
                     />
+                  </Col>
 
-                    <label htmlFor="checkbox" className="ms-2">
-                      Permanent address same as current address
-                    </label>
-                  </div>
-                </Col>
+                  <Col xs={12} md={12} lg={12}>
+                    <BaseTextarea
+                      label="Current Address"
+                      name="currentAddress"
+                      placeholder={InputPlaceHolder("Current Address")}
+                      handleChange={validation.handleChange}
+                      handleBlur={validation.handleBlur}
+                      value={validation.values.currentAddress}
+                      touched={validation.touched.currentAddress}
+                      error={validation.errors.currentAddress}
+                      passwordToggle={false}
+                      multiline
+                      rows={2}
+                      cols={50}
+                    />
+                  </Col>
 
-                <Col xs={12} md={12} lg={12}>
-                  <BaseTextarea
-                    label="Permanent Address"
-                    name="permanentAddress"
-                    placeholder={InputPlaceHolder("Permanent Address")}
-                    handleChange={validation.handleChange}
-                    handleBlur={validation.handleBlur}
-                    value={validation.values.permanentAddress}
-                    touched={validation.touched.permanentAddress}
-                    error={validation.errors.permanentAddress}
-                    passwordToggle={false}
-                    multiline
-                    rows={2}
-                    cols={50}
-                  />
-                </Col>
-              </Row>
+                  <Col xs={12} md={12} lg={12}>
+                    <div className="d-flex align-items-center">
+                      <input
+                        name="checkbox"
+                        type="checkbox"
+                        id="checkbox"
+                        checked={validation.values.checkbox}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          const isChecked = e.target.checked;
+                          validation.setFieldValue("checkbox", isChecked);
 
+                          if (isChecked) {
+                            validation.setFieldValue(
+                              "permanentAddress",
+                              validation.values.currentAddress
+                            );
+                          } else {
+                            validation.setFieldValue("permanentAddress", "");
+                          }
+                        }}
+                        onBlur={validation.handleBlur}
+                      />
+
+                      <label htmlFor="checkbox" className="ms-2">
+                        Permanent address same as current address
+                      </label>
+                    </div>
+                  </Col>
+
+                  <Col xs={12} md={12} lg={12}>
+                    <BaseTextarea
+                      label="Permanent Address"
+                      name="permanentAddress"
+                      placeholder={InputPlaceHolder("Permanent Address")}
+                      handleChange={validation.handleChange}
+                      handleBlur={validation.handleBlur}
+                      value={validation.values.permanentAddress}
+                      touched={validation.touched.permanentAddress}
+                      error={validation.errors.permanentAddress}
+                      passwordToggle={false}
+                      multiline
+                      rows={2}
+                      cols={50}
+                    />
+                  </Col>
+                </Row>
+              )}
               <div className="d-flex flex-column flex-md-row justify-content-end gap-3 mt-4">
                 <Link
                   to="/applicants"
