@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Row, Col, Container } from "react-bootstrap";
+import { Row, Col, Container, Spinner} from "react-bootstrap";
 import { useFormik } from "formik";
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import BaseButton from "components/BaseComponents/BaseButton";
 import { BaseSelect } from "components/BaseComponents/BaseSelect";
 import { Form } from "react-router-dom";
@@ -17,7 +17,7 @@ const { projectTitle, Modules, passingYearType, qualification } = appConstants;
 
 const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
   document.title = Modules.Applicant + " | " + projectTitle;
-
+  const [loading, setLoading] = useState<boolean>(false);  
   const validation: any = useFormik({
     enableReinitialize: true,
     initialValues: {
@@ -29,7 +29,9 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
     },
     validationSchema: EducationApplicantSchema,
     onSubmit: (data) => {
+      setLoading(true); 
       onNext(data);
+      setLoading(true); 
     },
   });
 
@@ -47,144 +49,151 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
               }}
               className="p-3"
             >
-              <Row className="g-3 mb-4">
-                <Col xs={12} md={6}>
-                  <BaseSelect
-                    label="Qualification"
-                    name="qualification"
-                    className="select-border"
-                    options={qualification}
-                    placeholder={InputPlaceHolder("Qualification")}
-                    handleChange={(selectedOption: SelectedOption) => {
-                      validation.setFieldValue(
-                        "qualification",
-                        selectedOption?.value || ""
-                      );
-                    }}
-                    handleBlur={validation.handleBlur}
-                    value={
-                      dynamicFind(
-                        qualification,
-                        validation.values.qualification
-                      ) || ""
-                    }
-                    touched={validation.touched.qualification}
-                    error={validation.errors.qualification}
-                  />
-                </Col>
-
-                <Col xs={12} md={6}>
-                  <BaseInput
-                    label="Specialization"
-                    name="specialization"
-                    type="text"
-                    placeholder={InputPlaceHolder("Specialization")}
-                    handleChange={(e) => {
-                      const value = e.target.value.replace(/[^A-Za-z\s]/g, "");
-                      validation.setFieldValue("specialization", value);
-                    }}
-                    handleBlur={validation.handleBlur}
-                    value={validation.values.specialization}
-                    touched={validation.touched.specialization}
-                    error={validation.errors.specialization}
-                    passwordToggle={false}
-                  />
-                </Col>
-                <Col xs={12} md={4} lg={4}>
-                  <BaseInput
-                    label="College Name"
-                    name="collegeName"
-                    type="text"
-                    placeholder={InputPlaceHolder("College Name")}
-                    handleChange={(e) => {
-                      const value = e.target.value.replace(/[^A-Za-z\s]/g, "");
-                      validation.setFieldValue("collegeName", value);
-                    }}
-                    handleBlur={validation.handleBlur}
-                    value={validation.values.collegeName}
-                    touched={validation.touched.collegeName}
-                    error={validation.errors.collegeName}
-                    passwordToggle={false}
-                  />
-                </Col>
-
-                <Col xs={12} md={4} lg={4}>
-                  <BaseSelect
-                    label="Passing Year"
-                    name="passingYear"
-                    className="select-border"
-                    options={passingYearType}
-                    placeholder="Passing Year"
-                    handleChange={(selectedOption: SelectedOption) => {
-                      validation.setFieldValue(
-                        "passingYear",
-                        selectedOption?.value || ""
-                      );
-                    }}
-                    handleBlur={validation.handleBlur}
-                    value={
-                      dynamicFind(
-                        passingYearType,
-                        validation.values.passingYear
-                      ) || ""
-                    }
-                    touched={validation.touched.passingYear}
-                    error={validation.errors.passingYear}
-                  />
-                </Col>
-
-                <Col xs={12} md={4} lg={4}>
-                  <BaseInput
-                    label="CGPA"
-                    name="cgpa"
-                    type="text"
-                    placeholder={InputPlaceHolder("CGPA")}
-                    handleChange={(e) => {
-                      let value = e.target.value;
-                      value = value.replace(/[^0-9.]/g, "");
-
-                      const parts = value.split(".");
-                      if (parts.length > 2) {
-                        value = parts[0] + "." + parts.slice(1).join("");
+              {loading ? (
+                <div className="d-flex justify-content-center my-5">
+                  <Spinner animation="border" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </Spinner>
+                </div>
+              ) : (
+                <Row className="g-3 mb-4">
+                  <Col xs={12} md={6}>
+                    <BaseSelect
+                      label="Qualification"
+                      name="qualification"
+                      className="select-border"
+                      options={qualification}
+                      placeholder={InputPlaceHolder("Qualification")}
+                      handleChange={(selectedOption: SelectedOption) => {
+                        validation.setFieldValue(
+                          "qualification",
+                          selectedOption?.value || ""
+                        );
+                      }}
+                      handleBlur={validation.handleBlur}
+                      value={
+                        dynamicFind(
+                          qualification,
+                          validation.values.qualification
+                        ) || ""
                       }
+                      touched={validation.touched.qualification}
+                      error={validation.errors.qualification}
+                    />
+                  </Col>
 
-                      if (parts[1]?.length > 2) {
-                        value = parts[0] + "." + parts[1].slice(0, 2);
+                  <Col xs={12} md={6}>
+                    <BaseInput
+                      label="Specialization"
+                      name="specialization"
+                      type="text"
+                      placeholder={InputPlaceHolder("Specialization")}
+                      handleChange={(e) => {
+                        const value = e.target.value.replace(/[^A-Za-z\s]/g, "");
+                        validation.setFieldValue("specialization", value);
+                      }}
+                      handleBlur={validation.handleBlur}
+                      value={validation.values.specialization}
+                      touched={validation.touched.specialization}
+                      error={validation.errors.specialization}
+                      passwordToggle={false}
+                    />
+                  </Col>
+                  <Col xs={12} md={4} lg={4}>
+                    <BaseInput
+                      label="College Name"
+                      name="collegeName"
+                      type="text"
+                      placeholder={InputPlaceHolder("College Name")}
+                      handleChange={(e) => {
+                        const value = e.target.value.replace(/[^A-Za-z\s]/g, "");
+                        validation.setFieldValue("collegeName", value);
+                      }}
+                      handleBlur={validation.handleBlur}
+                      value={validation.values.collegeName}
+                      touched={validation.touched.collegeName}
+                      error={validation.errors.collegeName}
+                      passwordToggle={false}
+                    />
+                  </Col>
+
+                  <Col xs={12} md={4} lg={4}>
+                    <BaseSelect
+                      label="Passing Year"
+                      name="passingYear"
+                      className="select-border"
+                      options={passingYearType}
+                      placeholder="Passing Year"
+                      handleChange={(selectedOption: SelectedOption) => {
+                        validation.setFieldValue(
+                          "passingYear",
+                          selectedOption?.value || ""
+                        );
+                      }}
+                      handleBlur={validation.handleBlur}
+                      value={
+                        dynamicFind(
+                          passingYearType,
+                          validation.values.passingYear
+                        ) || ""
                       }
+                      touched={validation.touched.passingYear}
+                      error={validation.errors.passingYear}
+                    />
+                  </Col>
 
-                      const numValue = parseFloat(value);
+                  <Col xs={12} md={4} lg={4}>
+                    <BaseInput
+                      label="CGPA"
+                      name="cgpa"
+                      type="text"
+                      placeholder={InputPlaceHolder("CGPA")}
+                      handleChange={(e) => {
+                        let value = e.target.value;
+                        value = value.replace(/[^0-9.]/g, "");
 
-                      if (!isNaN(numValue) && numValue >= 1 && numValue <= 10) {
-                        validation.setFieldValue("cgpa", value);
-                      } else if (value === "" || value === ".") {
-                        validation.setFieldValue("cgpa", value);
-                      } else if (!value) {
-                        validation.setFieldValue("cgpa", "");
-                      }
-                    }}
-                    handleBlur={(e) => {
-                      const value = e.target.value;
+                        const parts = value.split(".");
+                        if (parts.length > 2) {
+                          value = parts[0] + "." + parts.slice(1).join("");
+                        }
 
-                      if (value && !isNaN(parseFloat(value))) {
+                        if (parts[1]?.length > 2) {
+                          value = parts[0] + "." + parts[1].slice(0, 2);
+                        }
+
                         const numValue = parseFloat(value);
-                        if (numValue >= 1 && numValue <= 10) {
-                          validation.setFieldValue("cgpa", numValue.toFixed(2));
+
+                        if (!isNaN(numValue) && numValue >= 1 && numValue <= 10) {
+                          validation.setFieldValue("cgpa", value);
+                        } else if (value === "" || value === ".") {
+                          validation.setFieldValue("cgpa", value);
+                        } else if (!value) {
+                          validation.setFieldValue("cgpa", "");
+                        }
+                      }}
+                      handleBlur={(e) => {
+                        const value = e.target.value;
+
+                        if (value && !isNaN(parseFloat(value))) {
+                          const numValue = parseFloat(value);
+                          if (numValue >= 1 && numValue <= 10) {
+                            validation.setFieldValue("cgpa", numValue.toFixed(2));
+                          } else {
+                            validation.setFieldValue("cgpa", "");
+                          }
                         } else {
                           validation.setFieldValue("cgpa", "");
                         }
-                      } else {
-                        validation.setFieldValue("cgpa", "");
-                      }
-                      validation.handleBlur(e);
-                    }}
-                    value={validation.values.cgpa}
-                    touched={validation.touched.cgpa}
-                    error={validation.errors.cgpa}
-                    passwordToggle={false}
-                  />
-                </Col>
-              </Row>
-
+                        validation.handleBlur(e);
+                      }}
+                      value={validation.values.cgpa}
+                      touched={validation.touched.cgpa}
+                      error={validation.errors.cgpa}
+                      passwordToggle={false}
+                    />
+                  </Col>
+                </Row>
+              )}
               <div className="d-flex flex-column flex-md-row justify-content-end gap-3 mt-4">
                 <BaseButton
                   className="order-1 order-md-0"

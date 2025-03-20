@@ -162,51 +162,58 @@ const AddSkill = () => {
 
   const [loader, setLoader] = useState(false);
 
-  const validation = useFormik({
-    enableReinitialize: true,
-    initialValues: {
-      addSkills: editingSkill ? editingSkill.skills : "",
-    },
-    validationSchema: Yup.object({
-      addSkills: Yup.string().required("Skill name is required"),
-    }),
-    onSubmit: (values) => {
-      setLoader(true);
-      const payload = {
-        _id: editingSkill?._id,
-        skills: values.addSkills,
-      };
+ const validation = useFormik({
+   enableReinitialize: true,
+   initialValues: {
+     addSkills: editingSkill ? editingSkill.skills : "",
+   },
+   validationSchema: Yup.object({
+     addSkills: Yup.string().required("Skill name is required"),
+   }),
+   onSubmit: (values) => {
+     setLoader(true);
+     const payload = {
+       _id: editingSkill?._id,
+       skills: values.addSkills,
+     };
 
-      const apiCall = editingSkill
-        ? updateSkill(payload)
-        : createSkill(payload);
+      const existingSkill = skills.find(
+        (skill) => skill.skills.toLowerCase() === values.addSkills.toLowerCase()
+     );
+     
+       if (existingSkill && !editingSkill) {
+         toast.error("This skill already exists!");
+         setLoader(false);
+         return;
+       }
+     const apiCall = editingSkill ? updateSkill(payload) : createSkill(payload);
 
-      apiCall
-        .then((res) => {
-          if (res?.success) {
-            toast.success(
-              res?.message ||
-                `Skill ${editingSkill ? "updated" : "added"} successfully`
-            );
-            setEditingSkill(null); // Reset editing state
-            validation.resetForm(); // Clear form data after submission
-            fetchSkills(); // Refresh data
-            setShowBaseModal(false);
-          } else {
-            toast.error(
-              res?.message ||
-                `Failed to ${editingSkill ? "update" : "add"} skill`
-            );
-          }
-        })
-        .catch(() => {
-          toast.error("Something went wrong!");
-        })
-        .finally(() => {
-          setLoader(false);
-        });
-    },
-  });
+       apiCall
+         .then((res) => {
+           if (res?.success) {
+             toast.success(
+               res?.message ||
+                 `Skill ${editingSkill ? "updated" : "added"} successfully`
+             );
+             setEditingSkill(null); // Reset editing state
+             validation.resetForm(); // Clear form data after submission
+             fetchSkills(); // Refresh data
+             setShowBaseModal(false);
+           } else {
+             toast.error(
+               res?.message ||
+                 `Failed to ${editingSkill ? "update" : "add"} skill`
+             );
+           }
+         })
+         .catch(() => {
+           toast.error("Something went wrong!");
+         })
+         .finally(() => {
+           setLoader(false);
+         });
+   },
+ });
 
   const formTitle = editingSkill
     ? "Edit Skill"
