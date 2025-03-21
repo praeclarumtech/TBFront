@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import { Modal, Spin, Badge, Card, Row, Col, Tag } from "antd";
 import { getApplicantDetails } from "api/applicantApi";
@@ -56,6 +55,7 @@ interface ApplicantDetails {
   practicalUrl: string;
   clientCvUrl: string;
   clientFeedback: string;
+  addedFrom: string;
   linkedinUrl: string;
   feedback: string;
   practicalFeedback: string;
@@ -82,12 +82,14 @@ const DetailsRow = ({
   label,
   value,
   icon,
-}: {
+}: // className,
+{
   label: string;
   value?: string | number | JSX.Element;
   icon?: JSX.Element;
+  // className?: string;
 }) => (
-  <p className="mb-[0.8rem]">
+  <p className="mb-[0.8rem] whitespace-nowrap">
     {icon}
     <strong>{label}:</strong> {value || "-"}
   </p>
@@ -593,7 +595,10 @@ const ViewModal: React.FC<ViewModalProps> = ({ show, onHide, applicantId }) => {
                   label="General Feedback"
                   value={formData.feedback || "-"}
                 />
-
+                <DetailsRow
+                  label="Applicant Add By"
+                  value={formData?.addedFrom || "-"}
+                />
                 <DetailsRow
                   label="Client Feedback"
                   value={formData.clientFeedback || "-"}

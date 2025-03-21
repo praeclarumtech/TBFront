@@ -234,8 +234,6 @@ const AddSkill = () => {
   ) => {
     const file = event.target.files?.[0];
     if (!file) return;
-
-    // Check file extension
     const fileExtension = file.name.split(".").pop()?.toLowerCase();
     if (!["csv", "xlsx", "xls"].includes(fileExtension || "")) {
       toast.error("Please upload a valid CSV or Excel file");

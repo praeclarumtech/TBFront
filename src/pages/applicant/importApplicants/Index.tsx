@@ -1,24 +1,28 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Row, Col, Card, Container, CardBody, Spinner } from "react-bootstrap";
-import React, { Fragment, useEffect, useState, useMemo } from "react";
+import React, { Fragment, useEffect, useState, useMemo, useRef } from "react";
 import BaseButton from "components/BaseComponents/BaseButton";
 import { BaseSelect, MultiSelect } from "components/BaseComponents/BaseSelect";
 import TableContainer from "components/BaseComponents/TableContainer";
 import { useNavigate } from "react-router-dom";
 import { Tooltip as ReactTooltip } from "react-tooltip";
+
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import "react-loading-skeleton/dist/skeleton.css";
 import {
   deleteApplicant,
-  listOfApplicants,
+  // listOfApplicants,
+  listOfImportApplicants,
   updateStage,
   updateStatus,
+  importApplicant,
   ExportApplicant,
+  resumeUpload,
 } from "api/applicantApi";
 
-import ViewModal from "./ViewApplicant";
+import ViewModal from "../ViewApplicant";
 import BaseInput from "components/BaseComponents/BaseInput";
 import DeleteModal from "components/BaseComponents/DeleteModal";
 import Box from "@mui/material/Box";
@@ -37,8 +41,10 @@ import BaseSlider from "components/BaseComponents/BaseSlider";
 import Skeleton from "react-loading-skeleton";
 import { XSquare } from "react-bootstrap-icons";
 import saveAs from "file-saver";
+import BasePopUpModal from "components/BaseComponents/BasePopUpModal";
 import { ViewAppliedSkills } from "api/skillsApi";
-
+import { FaExclamationTriangle } from "react-icons/fa";
+// import toast from "react-hot-toast";
 const {
   projectTitle,
   Modules,
@@ -55,7 +61,7 @@ const {
 } = appConstants;
 
 type Anchor = "top" | "right" | "bottom";
-const Applicant = () => {
+function ImportApplicant() {
   document.title = Modules.Applicant + " | " + projectTitle;
   const navigate = useNavigate();
   const [loader, setLoader] = useState(false);
@@ -73,7 +79,9 @@ const Applicant = () => {
   const [filterNoticePeriod, setFilterNoticePeriod] = useState<number[]>([
     0, 90,
   ]);
-
+  // const [uploadedFile, setUploadedFile] = useState<FormData | null>(null);
+  const [uploadedFile, setUploadedFile] = useState<FormData | null>(null);
+  // const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [filterStatus, setFilterStatus] = useState<SelectedOption | null>(null);
   const [filterInterviewStage, setFilterInterviewStage] =
     useState<SelectedOption | null>(null);
@@ -108,7 +116,12 @@ const Applicant = () => {
   });
 
   const [skillOptions, setSkillOptions] = useState<any[]>([]);
-
+  // const [showDropdown, setShowDropdown] = useState(false);
+  const [importLoader, setImportLoader] = useState(false);
+  const [importProgress, setImportProgress] = useState(0);
+  const [isImporting, setIsImporting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [showPopupModal, setShowPopupModal] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
 
   const toggleDrawer =
@@ -218,7 +231,7 @@ const Applicant = () => {
         params.gender = filterGender.value;
       }
 
-      const res = await listOfApplicants(params);
+      const res = await listOfImportApplicants(params);
       setApplicant(res?.data?.item || []);
       setTotalRecords(res?.data?.totalRecords || 0);
     } catch (error) {
@@ -480,6 +493,336 @@ const Applicant = () => {
 
   //   }
   // };
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //  const file = e.target.files[0];
+    const file = e.target.files && e.target.files[0];
+    //  const fileExtension = file.name.split(".").pop()?.toLowerCase();
+    //  const fileExtension = file && file.name.split(".").pop()?.toLowerCase();
+    const fileExtension = file?.name?.split(".").pop()?.toLowerCase() ?? "";
+    if (["csv", "xlsx", "xls"].includes(fileExtension ?? "")) {
+      handleFileImport(e);
+    } else if (["doc", "pdf"].includes(fileExtension ?? "")) {
+      const newEvent = {
+        target: {
+          files: [file],
+        },
+      } as unknown as React.ChangeEvent<HTMLInputElement>;
+      handleResumeUpload(newEvent as React.ChangeEvent<HTMLInputElement>);
+    }
+  };
+
+  //  const handleResumeUpload = async (
+  //   event: React.ChangeEvent<HTMLInputElement>
+  // ) => {
+  //   const file = event.target.files?.[0];
+  //   if (!file) return;
+  //   const fileExtension = file.name.split(".").pop()?.toLowerCase();
+  //   if (!["doc", "pdf"].includes(fileExtension || "")) {
+  //     toast.error("Please upload a valid Pdf or doc file");
+  //     return;
+  //   }
+
+  //   if (file.size > 5 * 1024 * 1024) {
+  //     // 5MB
+  //     toast(
+  //       "Large file detected. Import may take a few minutes."
+  //       // , {
+  //       // icon: "⚠️",
+  //       // duration: 4000,
+  //       // }
+  //     );
+  //   }
+
+  //   setImportLoader(true);
+  //   setIsImporting(true);
+  //   setImportProgress(0);
+
+  //   try {
+  //     const formData = new FormData();
+  //     formData.append("resume", file);
+
+  //     const response = await resumeUpload(formData, {
+
+  //       onUploadProgress: (progressEvent) => {
+  //         const progress = Math.round(
+  //           (progressEvent.loaded * 100) / (progressEvent.total || 100)
+  //         );
+  //         setImportProgress(progress);
+  //       },
+  //     });
+  //     console.log(response);
+  //     if (response?.success) {
+  //       toast.success(response?.message || "File imported successfully!");
+  //       // await fetchSkills();
+  //     } else {
+  //       throw new Error(response?.message || "Import failed");
+  //     }
+  //   } catch (error: any) {
+  //     console.error("Import error:", error);
+
+  //     if (error.response?.data) {
+  //       // Handle structured API errors
+  //       const errorMessage =
+  //         error.response.data.message || error.response.data.error;
+  //       toast.error(errorMessage || "Failed to import file");
+  //     } else if (error.message) {
+  //       // Handle other errors with messages
+  //       toast.error(error.message);
+  //     } else {
+  //       // Generic error
+  //       toast.error("An unexpected error occurred during import");
+  //     }
+  //   } finally {
+  //     // Reset states
+  //     setImportLoader(false);
+  //     setIsImporting(false);
+  //     setImportProgress(0);
+  //     if (fileInputRef.current) {
+  //       fileInputRef.current.value = "";
+  //     }
+  //   }
+  // };
+
+  const handleResumeUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    const fileExtension = file.name.split(".").pop()?.toLowerCase();
+    if (!["doc", "pdf"].includes(fileExtension || "")) {
+      toast.error("Please upload a valid Pdf or doc file");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      // 5MB
+      toast(
+        "Large file detected. Import may take a few minutes."
+        // , {
+        // icon: "⚠️",
+        // duration: 4000,
+        // }
+      );
+    }
+
+    setImportLoader(true);
+    setIsImporting(true);
+    setImportProgress(0);
+
+    try {
+      const formData = new FormData();
+      formData.append("resume", file);
+
+      const response = await resumeUpload(formData, {
+        onUploadProgress: (progressEvent) => {
+          const progress = Math.round(
+            (progressEvent.loaded * 100) / (progressEvent.total || 100)
+          );
+          setImportProgress(progress);
+        },
+      });
+      console.log(response);
+      if (response?.success) {
+        toast.success(response?.message || "File imported successfully!");
+        await fetchApplicants();
+      } else {
+        throw new Error(response?.message || "Import failed");
+      }
+    } catch (error: any) {
+      console.error("Import error:", error);
+
+      if (error.response?.data) {
+        // Handle structured API errors
+        const errorMessage =
+          error.response.data.message || error.response.data.error;
+        toast.error(errorMessage || "Failed to import file");
+      } else if (error.message) {
+        // Handle other errors with messages
+        toast.error(error.message);
+      } else {
+        // Generic error
+        toast.error("An unexpected error occurred during import");
+      }
+    } finally {
+      // Reset states
+      setImportLoader(false);
+      setIsImporting(false);
+      setImportProgress(0);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
+
+  // const handleFileImport = async (
+  //   event: React.ChangeEvent<HTMLInputElement>
+  // ) => {
+  //   const file = event.target.files?.[0];
+  //   if (!file) return;
+
+  //   const fileExtension = file.name.split(".").pop()?.toLowerCase();
+  //   if (!["csv", "xlsx", "xls"].includes(fileExtension || "")) {
+  //     toast.error("Please upload a valid CSV or Excel file");
+  //     return;
+  //   }
+
+  //   if (file.size > 5 * 1024 * 1024) {
+  //     // 5MB
+  //     toast("Large file detected. Import may take a few minutes.", {
+  //       // icon: "⚠️",
+  //       icon: <FaExclamationTriangle />,
+  //       // duration: 4000,
+  //       autoClose: 4000,
+  //     });
+  //   }
+
+  //   setImportLoader(true);
+  //   setIsImporting(true);
+  //   setImportProgress(0);
+
+  //   try {
+  //     const formData = new FormData();
+  //     formData.append("csvFile", file);
+  //     setUploadedFile(formData);
+
+  //     const response = await importApplicant(formData, {
+  //       onUploadProgress: (progressEvent) => {
+  //         const progress = Math.round(
+  //           (progressEvent.loaded * 100) / (progressEvent.total || 100)
+  //         );
+  //         setImportProgress(progress);
+  //       },
+  //     });
+  //     console.log("API Response:", response);
+  //     if (response?.success) {
+  //       toast.success(response?.message || "File imported successfully!");
+  //     } else if (!response?.success && response.statusCode === 409) {
+  //       setShowPopupModal(true);
+  //     } else {
+  //       throw new Error(response?.message || "Import failed");
+  //     }
+  //   } catch (error: any) {
+  //     console.error("Import error:", error);
+  //     toast.error(error.message || "Failed to import file");
+  //   } finally {
+  //     fetchApplicants();
+  //     setImportLoader(false);
+  //     setIsImporting(false);
+  //     setImportProgress(0);
+  //     if (fileInputRef.current) {
+  //       fileInputRef.current.value = "";
+  //     }
+  //   }
+  // };
+
+  const handleFileImport = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const fileExtension = file.name.split(".").pop()?.toLowerCase();
+    if (!["csv", "xlsx", "xls"].includes(fileExtension || "")) {
+      toast.error("Please upload a valid CSV or Excel file");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      // 5MB
+      toast("Large file detected. Import may take a few minutes.", {
+        // icon: "⚠️",
+        icon: <FaExclamationTriangle />,
+        // duration: 4000,
+        autoClose: 4000,
+      });
+    }
+
+    setImportLoader(true);
+    setIsImporting(true);
+    setImportProgress(0);
+
+    try {
+      const formData = new FormData();
+      formData.append("csvFile", file);
+      setUploadedFile(formData);
+
+      const response = await importApplicant(formData, {
+        onUploadProgress: (progressEvent) => {
+          const progress = Math.round(
+            (progressEvent.loaded * 100) / (progressEvent.total || 100)
+          );
+          setImportProgress(progress);
+        },
+      });
+      console.log("API Response:", response);
+      if (response?.success) {
+        toast.success(response?.message || "File imported successfully!");
+      } else if (!response?.success && response.statusCode === 409) {
+        setShowPopupModal(true);
+      } else {
+        throw new Error(response?.message || "Import failed");
+      }
+    } catch (error: any) {
+      console.error("Import error:", error);
+      toast.error(error.message || "Failed to import file");
+    } finally {
+      fetchApplicants();
+      setImportLoader(false);
+      setIsImporting(false);
+      setImportProgress(0);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
+
+  const handleModalConfirm = async () => {
+    console.log("calling confim modal");
+
+    if (!uploadedFile) return;
+
+    setImportLoader(true);
+    setIsImporting(true);
+    setImportProgress(0);
+
+    try {
+      const formData = new FormData();
+      formData.append("csvFile", uploadedFile.get("csvFile") as Blob);
+      const updateFlag = "true";
+
+      const response = await importApplicant(formData, {
+        params: { updateFlag },
+        onUploadProgress: (progressEvent) => {
+          const progress = Math.round(
+            (progressEvent.loaded * 100) / (progressEvent.total || 100)
+          );
+          setImportProgress(progress);
+        },
+      });
+
+      if (response?.success) {
+        toast.success("Existing applicants updated successfully!");
+        setShowPopupModal(false);
+        await fetchApplicants();
+      } else {
+        throw new Error(response?.message || "Update failed");
+      }
+    } catch (error: any) {
+      console.error("Update error:", error);
+      toast.error(error.message || "Failed to update applicants");
+    } finally {
+      setImportLoader(false);
+      setIsImporting(false);
+      setImportProgress(0);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
+
+  const handleModalCancel = () => {
+    setShowPopupModal(false);
+  };
 
   // useEffect(() => {
   //   console.log("Is modal open?", showPopupModal);
@@ -488,6 +831,8 @@ const Applicant = () => {
   // useEffect(() => {
   //   handleFileImport
   // }, []);
+
+  console.log("Is modal open?", showPopupModal);
 
   const handleExportExcel = async () => {
     try {
@@ -946,12 +1291,23 @@ const Applicant = () => {
     [applicant, selectedApplicants]
   );
 
-  const handleNavigate = () => {
-    navigate("/applicants/add-applicant");
-  };
+  // const handleNavigate = () => {
+  //   navigate("/applicants/add-applicant");
+  // };
 
   return (
     <Fragment>
+      <BasePopUpModal
+        isOpen={showPopupModal} // Ensure this is true when there are duplicates
+        onRequestClose={() => setShowPopupModal(false)} // Close the modal
+        title="Duplicate Records Found"
+        message="Do you want to update the existing applicants?"
+        confirmAction={handleModalConfirm}
+        cancelAction={handleModalCancel}
+        confirmText="Yes, Update"
+        cancelText="No, Don't Update"
+      />
+
       {showModal && selectedApplicantId && (
         <ViewModal
           show={showModal}
@@ -995,16 +1351,16 @@ const Applicant = () => {
                       {selectedApplicants.length > 0 && (
                         <>
                           {/* <BaseButton
-                            className="btn btn-lg btn-soft-secondary bg-green-900 edit-list mx-1 px-3"
-                            onClick={handleSendWhatsApp}
-                          >
-                            <i className="ri-whatsapp-line align-bottom" />
-                            <ReactTooltip
-                              place="bottom"
-                              variant="info"
-                              content="WhatsApp"
-                            />
-                          </BaseButton> */}
+                             className="btn btn-lg btn-soft-secondary bg-green-900 edit-list mx-1 px-3"
+                             onClick={handleSendWhatsApp}
+                           >
+                             <i className="ri-whatsapp-line align-bottom" />
+                             <ReactTooltip
+                               place="bottom"
+                               variant="info"
+                               content="WhatsApp"
+                             />
+                           </BaseButton> */}
 
                           <BaseButton
                             className="btn text-lg btn-soft-secondary bg-primary edit-list mx-1 "
@@ -1020,9 +1376,56 @@ const Applicant = () => {
                         </>
                       )}
 
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        accept=".csv,.xlsx,.xls,.xls,doc,pdf"
+                        style={{ display: "none" }}
+                        onChange={handleFileChange}
+                        disabled={isImporting}
+                      />
                       <BaseButton
                         color="primary"
-                        className="btn btn-soft-secondary bg-green-900 edit-list mx-1 "
+                        className="mx-2 position-relative"
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={importLoader}
+                      >
+                        {importLoader ? (
+                          <>
+                            <i className="ri-loader-4-line animate-spin align-bottom me-1" />
+                            {isImporting
+                              ? `Importing... ${importProgress}%`
+                              : "Processing..."}
+                          </>
+                        ) : (
+                          <>
+                            <i className="ri-download-2-line align-bottom me-1" />
+                            Import
+                          </>
+                        )}
+                        {isImporting && (
+                          <div
+                            className="progress position-absolute bottom-0 start-0"
+                            style={{
+                              height: "4px",
+                              width: "100%",
+                              borderRadius: "0 0 4px 4px",
+                            }}
+                          >
+                            <div
+                              className="progress-bar"
+                              role="progressbar"
+                              style={{ width: `${importProgress}%` }}
+                              aria-valuenow={importProgress}
+                              aria-valuemin={0}
+                              aria-valuemax={100}
+                            />
+                          </div>
+                        )}
+                      </BaseButton>
+                      <BaseButton
+                        color="primary"
+                        className="btn btn-soft-secondary bg-green-900 edit-list "
                         onClick={handleExportExcel}
                         // disabled={exportLoader}
                       >
@@ -1030,10 +1433,10 @@ const Applicant = () => {
                         Export
                       </BaseButton>
 
-                      <BaseButton color="success" onClick={handleNavigate}>
+                      {/* <BaseButton color="success" onClick={handleNavigate}>
                         <i className="ri-add-line align-bottom me-1" />
                         Add
-                      </BaseButton>
+                      </BaseButton> */}
                     </div>
                   </div>
                 </div>
@@ -1054,7 +1457,7 @@ const Applicant = () => {
                   <div>
                     {applicant.length > 0 ? (
                       <TableContainer
-                        isHeaderTitle="Applicants"
+                        isHeaderTitle="Import Applicants"
                         columns={columns}
                         data={applicant}
                         isGlobalFilter
@@ -1085,7 +1488,7 @@ const Applicant = () => {
       </Container>
     </Fragment>
   );
-};
+}
 
 const truncateText = {
   whiteSpace: "nowrap",
@@ -1144,5 +1547,4 @@ const customStyles = {
     borderRadius: "8px",
   }),
 };
-
-export default Applicant;
+export default ImportApplicant;

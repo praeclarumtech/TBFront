@@ -11,6 +11,8 @@ import {
   CITY,
   IMPORT_APPLICANT,
   EXPORT_APPLICANT,
+  IMPORT_RESUME,
+  IMPORT_APPLICANT_LIST,
 } from "./apiRoutes";
 import { authServices } from "./apiServices";
 
@@ -119,6 +121,49 @@ export const ExportApplicant = async (config?: {
     responseType: "blob",
     timeout: 300000,
     ...config,
+  });
+  return response?.data;
+};
+
+export const resumeUpload = async (
+  formData: FormData,
+  config?: {
+    onUploadProgress?: (progressEvent: any) => void;
+  }
+) => {
+  const response = await authServices.post(`${IMPORT_RESUME}`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+    ...config,
+    timeout: 300000, 
+  });
+  return response?.data;
+};
+
+export const listOfImportApplicants = async (params: {
+  page: number;
+  pageSize: number;
+  totalExperience?: string;
+  city?: string;
+  appliedSkills?: string;
+  startDate?: string;
+  endDate?: string;
+  currentCity?: string;
+  noticePeriod?: string;
+  status?: string;
+  interviewStage?: string;
+  gender?: string;
+  expectedPkg?: string;
+  currentCompanyDesignation?: string;
+  state?: string;
+  currentPkg?: string;
+  anyHandOnOffers?: string;
+  rating?: string;
+  workPreference?: string;
+}) => {
+  const response = await authServices.get(`${IMPORT_APPLICANT_LIST}`, {
+    params,
   });
   return response?.data;
 };

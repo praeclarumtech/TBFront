@@ -23,6 +23,7 @@ import EmailVerification from "pages/auth/EmailVerify";
 import UpdatePassword from "pages/auth/UpdatePassword";
 import AddSkill from "pages/master/Skills";
 import AddDegree from "pages/master/Degree";
+import ImportApplicantTables from "pages/applicant/importApplicants/";
 
 const RenderRouter: React.FC = () => {
   const {
@@ -55,6 +56,14 @@ const RenderRouter: React.FC = () => {
           element={
             <RootLayout>
               <Applicant />
+            </RootLayout>
+          }
+        />
+        <Route
+          path={"import-applicants"}
+          element={
+            <RootLayout>
+              <ImportApplicantTables />
             </RootLayout>
           }
         />
