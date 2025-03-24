@@ -8,7 +8,6 @@ import { useNavigate } from "react-router-dom";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
 import "react-loading-skeleton/dist/skeleton.css";
 import {
   deleteApplicant,
@@ -16,6 +15,7 @@ import {
   updateStage,
   updateStatus,
   ExportApplicant,
+  deleteMultipleApplicant,
 } from "api/applicantApi";
 
 import ViewModal from "./ViewApplicant";
@@ -25,8 +25,12 @@ import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
-
-import { SelectedOption } from "interfaces/applicant.interface";
+import { city as fetchCities } from "../../api/applicantApi";
+import {
+  City,
+  SelectedOption,
+  SelectedOption1,
+} from "interfaces/applicant.interface";
 import {
   dynamicFind,
   errorHandle,
@@ -35,16 +39,20 @@ import {
 import appConstants from "constants/constant";
 import BaseSlider from "components/BaseComponents/BaseSlider";
 import Skeleton from "react-loading-skeleton";
-import { XSquare } from "react-bootstrap-icons";
+import { XLg } from "react-bootstrap-icons";
 import saveAs from "file-saver";
+
+import debounce from "lodash.debounce";
+
+const { handleResponse } = appConstants;
 import { ViewAppliedSkills } from "api/skillsApi";
 
 const {
   projectTitle,
   Modules,
-  // skillOptions,
+
   interviewStageOptions,
-  cityOptions,
+
   statusOptions,
   gendersType,
   stateType,
@@ -93,7 +101,7 @@ const Applicant = () => {
     useState<SelectedOption | null>(null);
   const [filterCity, setFilterCity] = useState<SelectedOption | null>(null);
   const [filterState, setFilterState] = useState<SelectedOption | null>(null);
-  const [appliedSkills, setAppliedSkills] = useState<SelectedOption[]>([]);
+  const [appliedSkills, setAppliedSkills] = useState<SelectedOption1[]>([]);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [totalRecords, setTotalRecords] = useState(0);
@@ -107,9 +115,14 @@ const Applicant = () => {
     right: false,
   });
 
-  const [skillOptions, setSkillOptions] = useState<any[]>([]);
+  const [skillOptions, setSkillOptions] = useState<SelectedOption1[]>([]);
 
   const [loading, setLoading] = useState<boolean>(false);
+  const [cities, setCities] = useState<City[]>([]);
+  const [searchAll, setSearchAll] = useState<string>("");
+  const [multipleApplicantDelete, setMultipleApplicantsDelete] = useState<
+    string[]
+  >([]);
 
   const toggleDrawer =
     (anchor: Anchor, open: boolean) =>
@@ -154,6 +167,8 @@ const Applicant = () => {
         currentPkg?: string;
         applicantName?: string;
         searchSkills?: string;
+        searchS?: string;
+        // name?: string;
       } = {
         page: pagination.pageIndex + 1,
         pageSize: pagination.pageSize,
@@ -188,16 +203,18 @@ const Applicant = () => {
         params.anyHandOnOffers = filterAnyHandOnOffers.value;
       }
       if (filterCity) {
-        params.currentCity = filterCity.value;
+        params.currentCity = filterCity.label;
       }
       if (filterState) {
         params.state = filterState.value;
       }
+
       if (appliedSkills.length > 0) {
         params.appliedSkills = appliedSkills
-          .map((skill: SelectedOption) => skill.value)
+          .map((skill) => skill.label)
           .join(",");
       }
+
       if (startDate) {
         params.startDate = startDate;
       }
@@ -217,6 +234,11 @@ const Applicant = () => {
       if (filterGender) {
         params.gender = filterGender.value;
       }
+      const searchValue = searchAll?.trim();
+      if (searchValue) {
+        params.searchS = searchValue;
+        params.appliedSkills = searchValue;
+      }
 
       const res = await listOfApplicants(params);
       setApplicant(res?.data?.item || []);
@@ -230,7 +252,12 @@ const Applicant = () => {
   };
 
   useEffect(() => {
-    fetchApplicants();
+    const delayedSearch = debounce(() => {
+      fetchApplicants();
+    }, 0);
+
+    delayedSearch();
+    return () => delayedSearch.cancel();
   }, [
     pagination.pageIndex,
     pagination.pageSize,
@@ -276,7 +303,7 @@ const Applicant = () => {
           }))
         );
       } catch (error) {
-        console.error("Error fetching skills", error);
+        errorHandle(error);
       } finally {
         setLoading(false);
       }
@@ -306,17 +333,10 @@ const Applicant = () => {
     setFilterCurrentPkg(e.target.value as number[]);
   };
 
-  //   const handleSearchFilterChange = (e: React.ChangeEvent<any>) =>{
-  //   setSearchFilter(e.target.value as string[]);
-  // }
-
-  const handleAppliedSkillsChange = (selectedOptions: SelectedOption[]) => {
+  const handleAppliedSkillsChange = (selectedOptions: SelectedOption1[]) => {
     setAppliedSkills(selectedOptions);
   };
 
-  const handleCityChange = (selectedOption: SelectedOption) => {
-    setFilterCity(selectedOption);
-  };
   const handleStateChange = (selectedOption: SelectedOption) => {
     setFilterState(selectedOption);
   };
@@ -355,6 +375,10 @@ const Applicant = () => {
     }
   };
 
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchAll(event.target.value);
+  };
+
   const resetFilters = () => {
     setAppliedSkills([]);
     setStartDate("");
@@ -377,6 +401,41 @@ const Applicant = () => {
 
     fetchApplicants();
   };
+
+  useEffect(() => {
+    const getCities = async () => {
+      try {
+        const cityData = await fetchCities();
+
+        if (cityData?.data) {
+          setCities(
+            cityData.data.map((city: { city_name: string; _id: string }) => ({
+              label: city.city_name,
+              value: city._id,
+            }))
+          );
+        }
+      } catch (error) {
+        errorHandle(error);
+      }
+    };
+
+    getCities();
+  }, []);
+
+  const handleCityChange = (selectedOption: SelectedOption) => {
+    setFilterCity(selectedOption);
+
+    if (selectedOption) {
+      const selectedCityId = selectedOption.value;
+      const selectedCity = cities.find((city) => city.value === selectedCityId);
+
+      if (selectedCity) {
+        // console.log("Selected city name:", selectedCity.label);
+      }
+    }
+  };
+
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
       setSelectedApplicants(applicant.map((app) => app._id));
@@ -406,6 +465,31 @@ const Applicant = () => {
     if (recordIdToDelete) {
       deleteApplicantDetails(recordIdToDelete);
     }
+  };
+
+  const handleDeleteAll = () => {
+    if (selectedApplicants.length > 0) {
+      setMultipleApplicantsDelete(selectedApplicants);
+      setShowDeleteModal(true);
+    }
+  };
+
+  const deleteMultipleApplicantDetails = (
+    multipleApplicantDelete: string[] | undefined | null
+  ) => {
+    setLoader(true);
+    deleteMultipleApplicant(multipleApplicantDelete)
+      .then(() => {
+        fetchApplicants();
+        setSelectedApplicants([]);
+      })
+      .catch((error: any) => {
+        errorHandle(error);
+      })
+      .finally(() => {
+        setLoader(false);
+        setShowDeleteModal(false);
+      });
   };
 
   const deleteApplicantDetails = (_id: string | undefined | null) => {
@@ -461,24 +545,114 @@ const Applicant = () => {
     });
   };
 
-  // const handleSendWhatsApp = () => {
-  //   const message = applicant
-  //     .filter((app) => selectedApplicants.includes(app._id))
-  //     .map((app) => `Name: ${app.name}, Email: ${app.email}`)
-  //     .join("\n");
+  // const handleFileImport = async (
+  //   event: React.ChangeEvent<HTMLInputElement>
+  // ) => {
+  //   const file = event.target.files?.[0];
+  //   if (!file) return;
 
-  //   // Send WhatsApp message (example: using a WhatsApp API)
-  //   window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, "_blank");
-  // };
-  // const handleFileChange = (e) => {
-  //   const file = e.target.files[0];
   //   const fileExtension = file.name.split(".").pop()?.toLowerCase();
-  //   if (["csv", "xlsx", "xls"].includes(fileExtension)) {
-  //     handleFileImport(e);
-  //   } else if (["doc", "pdf"].includes(fileExtension)) {
-  //     // handleResumeUpload(file);
-
+  //   if (!["csv", "xlsx", "xls"].includes(fileExtension || "")) {
+  //     toast.error("Please upload a valid CSV or Excel file");
+  //     return;
   //   }
+
+  //   if (file.size > 5 * 1024 * 1024) {
+  //     // 5MB
+  //     toast("Large file detected. Import may take a few minutes.", {
+  //       // icon: "⚠️",
+  //       icon: <FaExclamationTriangle />,
+
+  //       autoClose: 4000,
+  //     });
+  //   }
+
+  //   setImportLoader(true);
+  //   setIsImporting(true);
+  //   setImportProgress(0);
+
+  //   try {
+  //     const formData = new FormData();
+  //     formData.append("csvFile", file);
+  //     setUploadedFile(formData);
+
+  //     const response = await importApplicant(formData, {
+  //       onUploadProgress: (progressEvent) => {
+  //         const progress = Math.round(
+  //           (progressEvent.loaded * 100) / (progressEvent.total || 100)
+  //         );
+  //         setImportProgress(progress);
+  //       },
+  //     });
+  //     // console.log("API Response:", response);
+  //     if (response?.success) {
+  //       toast.success(response?.message || "File imported successfully!");
+  //     } else if (!response?.success && response.statusCode === 409) {
+  //       setShowPopupModal(true);
+  //     } else {
+  //       throw new Error(response?.message || "Import failed");
+  //     }
+  //   } catch (error: any) {
+  //     // console.error("Import error:", error);
+  //     // errorHandle(error)
+  //     toast.error(error.message || "Failed to import file");
+  //   } finally {
+  //     fetchApplicants();
+  //     setImportLoader(false);
+  //     setIsImporting(false);
+  //     setImportProgress(0);
+  //     if (fileInputRef.current) {
+  //       fileInputRef.current.value = "";
+  //     }
+  //   }
+  // };
+
+  // const handleModalConfirm = async () => {
+  //   // console.log("calling confim modal");
+
+  //   if (!uploadedFile) return;
+
+  //   setImportLoader(true);
+  //   setIsImporting(true);
+  //   setImportProgress(0);
+
+  //   try {
+  //     const formData = new FormData();
+  //     formData.append("csvFile", uploadedFile.get("csvFile") as Blob);
+  //     const updateFlag = "true";
+
+  //     const response = await importApplicant(formData, {
+  //       params: { updateFlag },
+  //       onUploadProgress: (progressEvent) => {
+  //         const progress = Math.round(
+  //           (progressEvent.loaded * 100) / (progressEvent.total || 100)
+  //         );
+  //         setImportProgress(progress);
+  //       },
+  //     });
+
+  //     if (response?.success) {
+  //       toast.success("Existing applicants updated successfully!");
+  //       setShowPopupModal(false);
+  //       await fetchApplicants();
+  //     } else {
+  //       throw new Error(response?.message || "Update failed");
+  //     }
+  //   } catch (error: any) {
+  //     // console.error("Update error:", error);
+  //     toast.error(error.message || "Failed to update applicants");
+  //   } finally {
+  //     setImportLoader(false);
+  //     setIsImporting(false);
+  //     setImportProgress(0);
+  //     if (fileInputRef.current) {
+  //       fileInputRef.current.value = "";
+  //     }
+  //   }
+  // };
+
+  // const handleModalCancel = () => {
+  //   setShowPopupModal(false);
   // };
 
   // useEffect(() => {
@@ -506,8 +680,9 @@ const Applicant = () => {
 
       toast.success("File downloaded successfully!");
     } catch (error) {
-      console.error("Export error:", error);
-      toast.error("Failed to export file");
+      // console.error("Export error:", error);
+      errorHandle(error);
+      // toast.error("Failed to export file");
     }
   };
 
@@ -520,8 +695,16 @@ const Applicant = () => {
       }}
       role="presentation"
     >
-      <button type="button" onClick={toggleDrawer("right", false)}>
-        <XSquare size={25} />
+      <button
+        type="button"
+        onClick={toggleDrawer("right", false)}
+        className="p-2 border border-transparent rounded-md transition-all duration-150  
+             hover:border-primary active:scale-90"
+      >
+        <XLg
+          size={20}
+          className="text-gray-600 transition-colors duration-150 hover:text-primary"
+        />
       </button>
       <List>
         <Row className="flex justify-between items-center mb-4">
@@ -540,17 +723,32 @@ const Applicant = () => {
           </Col>
         </Row>
 
-        <MultiSelect
+        {/* <MultiSelect
           label="Applied Skills"
           name="appliedSkills"
-          className="select-border mb-1 "
+          className="select-border mb-1"
           placeholder="Applied Skills"
-          value={appliedSkills || null}
+          value={
+            appliedSkills.map((label) =>
+              skillOptions.find((option) => option.label === label)
+            ) || []
+          }
           isMulti={true}
           onChange={handleAppliedSkillsChange}
           options={skillOptions}
-          // isLoading={loading}
+        /> */}
+
+        <MultiSelect
+          label="Applied Skills"
+          name="appliedSkills"
+          className="select-border mb-1"
+          placeholder="Applied Skills"
+          value={appliedSkills}
+          isMulti={true}
+          onChange={handleAppliedSkillsChange}
+          options={skillOptions}
         />
+
         {loading && (
           <div style={{ marginTop: "10px" }}>
             <Spinner animation="border" size="sm" />
@@ -570,16 +768,16 @@ const Applicant = () => {
           valueLabelDisplay="auto"
           disabled={false}
         />
-
         <BaseSelect
           label="City"
           name="city"
           className="select-border mb-1 "
-          options={cityOptions}
+          options={cities}
           placeholder="City"
           handleChange={handleCityChange}
           value={filterCity}
         />
+
         <BaseSelect
           label="State"
           name="state"
@@ -786,15 +984,15 @@ const Applicant = () => {
         enableColumnFilter: false,
       },
       {
-        header: "appliedSkills",
+        header: "applied Skills",
         accessorKey: "appliedSkills",
         cell: (cell: any) => (
           <div
             className="truncated-text"
             style={truncateText}
-            title={cell.row.original.appliedSkills}
+            title={cell.row.original.appliedSkills?.join(", ")}
           >
-            {cell.row.original.appliedSkills}
+            {cell.row.original.appliedSkills?.join(", ")}
           </div>
         ),
         enableColumnFilter: false,
@@ -928,7 +1126,6 @@ const Applicant = () => {
             <BaseButton
               id={`email-${cell?.row?.original?.id}`}
               className="btn btn-sm btn-soft-secondary edit-list"
-              // onClick={() => handleEmail(cell?.row?.original._id)}
               onClick={() => handleEmail(cell?.row?.original._id)}
             >
               <i className="ri-mail-close-line align-bottom" />
@@ -950,8 +1147,48 @@ const Applicant = () => {
     navigate("/applicants/add-applicant");
   };
 
+  const filteredApplicant = applicant.filter((applicants) => {
+    const searchTerm = searchAll.toLowerCase();
+
+    // Construct full name
+    // const nameObj = applicants.name || {};
+    // const firstName = nameObj.firstName || "";
+    // const middleName = nameObj.middleName || "";
+    // const lastName = nameObj.lastName || "";
+    // const fullName = `${firstName} ${middleName} ${lastName}`
+    //   .trim()
+    //   .toLowerCase();
+
+    return (
+      // fullName.includes(searchTerm) || // ✅ Search by full name
+      applicants?.name?.firstName?.toLowerCase().includes(searchTerm) ||
+      applicants?.name?.middleName?.toLowerCase().includes(searchTerm) ||
+      applicants?.name?.lastName?.toLowerCase().includes(searchTerm) ||
+      applicants.subject?.toLowerCase().includes(searchTerm) ||
+      applicants.interviewStage?.toLowerCase().includes(searchTerm) ||
+      applicants.status?.toLowerCase().includes(searchTerm) ||
+      applicants.totalExperience?.toString().includes(searchTerm) ||
+      applicants.totalExperience?.toString().includes(searchTerm) ||
+      (Array.isArray(applicants.appliedSkills) &&
+        applicants.appliedSkills.some((skill: string) =>
+          skill.toLowerCase().includes(searchTerm)
+        ))
+    );
+  });
+
   return (
     <Fragment>
+      {/* <BasePopUpModal
+        isOpen={showPopupModal}
+        onRequestClose={() => setShowPopupModal(false)}
+        title="Duplicate Records Found"
+        message="Do you want to update the existing applicants?"
+        confirmAction={handleModalConfirm}
+        cancelAction={handleModalCancel}
+        confirmText="Yes, Update"
+        cancelText="No, Don't Update"
+      /> */}
+
       {showModal && selectedApplicantId && (
         <ViewModal
           show={showModal}
@@ -962,7 +1199,12 @@ const Applicant = () => {
       <DeleteModal
         show={showDeleteModal}
         onCloseClick={closeDeleteModal}
-        onDeleteClick={handleDelete}
+        // onDeleteClick={handleDelete}
+        onDeleteClick={() =>
+          selectedApplicants.length > 1
+            ? deleteMultipleApplicantDetails(multipleApplicantDelete) // ✅ Wrap in an arrow function
+            : handleDelete
+        }
         // recordId={recordIdToDelete}
         loader={loader}
       />
@@ -991,7 +1233,18 @@ const Applicant = () => {
                       </Drawer>
                     </div>
 
-                    <div className="col-auto d-flex justify-content-end mx-0 flex-wrap">
+                    {/* Right: WhatsApp, Email, and New Applicant Buttons */}
+
+                    <div className="col-auto d-flex justify-content-end flex-wrap mr-2">
+                      <div>
+                        <input
+                          id="search-bar-0"
+                          className="form-control search h-10"
+                          placeholder="Search..."
+                          onChange={handleSearchChange}
+                          value={searchAll}
+                        />
+                      </div>
                       {selectedApplicants.length > 0 && (
                         <>
                           {/* <BaseButton
@@ -1007,7 +1260,20 @@ const Applicant = () => {
                           </BaseButton> */}
 
                           <BaseButton
-                            className="btn text-lg btn-soft-secondary bg-primary edit-list mx-1 "
+                            className="btn text-lg bg-danger edit-list ml-2 w-fit border-0"
+                            onClick={handleDeleteAll}
+                          >
+                            <i className="ri-delete-bin-fill align-bottom" />
+                            <ReactTooltip
+                              place="bottom"
+                              variant="error"
+                              content="Delete"
+                              anchorId={`Delete ${selectedApplicants.length} Emails`}
+                            />
+                          </BaseButton>
+
+                          <BaseButton
+                            className="btn text-lg btn-soft-secondary bg-primary edit-list ml-2 mr-0"
                             onClick={handleSendEmail}
                           >
                             <i className="ri-mail-close-line align-bottom" />
@@ -1047,17 +1313,17 @@ const Applicant = () => {
             <Card>
               <div className="card-body pt-0">
                 {tableLoader ? (
-                  <div className="text-center py-4">
+                  <div className="text-center pb-4 pt-8">
                     <Skeleton count={5} />
                   </div>
                 ) : (
-                  <div>
+                  <div className="card-body pt-4">
                     {applicant.length > 0 ? (
                       <TableContainer
                         isHeaderTitle="Applicants"
                         columns={columns}
-                        data={applicant}
-                        isGlobalFilter
+                        data={filteredApplicant}
+                        // isGlobalFilter
                         customPageSize={10}
                         theadClass="table-light text-muted"
                         SearchPlaceholder="Search..."
@@ -1070,11 +1336,9 @@ const Applicant = () => {
                         rowHeight="10px !important"
                       />
                     ) : (
-                      // <<div className="py-4 text-center">
-                      //   <i className="ri-search-line d-block fs-1 text-success"></i>
-                      //   No applicants found.
-                      // </div>>
-                      <></>
+                      <div className="py-4 text-center">
+                        {handleResponse?.dataNotFound}
+                      </div>
                     )}
                   </div>
                 )}
@@ -1088,10 +1352,16 @@ const Applicant = () => {
 };
 
 const truncateText = {
+  // display: "flex",
   whiteSpace: "nowrap",
   overflow: "hidden",
   textOverflow: "ellipsis",
   maxWidth: "150px",
+  fontSize: "14px",
+  // alignItems: "center",
+  // justifyContent: "center",
+  // height: "40px",
+  // textAlign: "left",
 };
 
 const toolipComponents = {
@@ -1110,8 +1380,8 @@ const customStyles = {
     backgroundColor: "#f0f0f0",
     borderRadius: "8px",
     borderColor: "transparent",
-    // padding: "0.25rem 0.5rem",
-    minHeight: "25px",
+    // padding: "0.25rem 0.6rem",
+    minHeight: "20px",
     outline: "none",
     boxShadow: "none",
   }),

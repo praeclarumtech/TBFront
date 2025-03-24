@@ -2,7 +2,7 @@ import moment from "moment";
 import * as Yup from "yup";
 
 export type SelectedOption = { label: string; value: string };
-
+export type SelectedOption1 = { label: string; value: string;id:number };
 export const EducationApplicantSchema = Yup.object({
   qualification: Yup.string().required("Qualification is required!"),
   specialization: Yup.string()
@@ -55,21 +55,22 @@ export const jobApplicantSchema = Yup.object({
       "Please select a valid work preference."
     ),
   practicalUrl: Yup.string().url("Please enter a valid URL."),
-  practicalFeedback: Yup.string().min(
-    10,
-    "Please provide detailed feedback (minimum 10 characters.)"
-  ),
+  practicalFeedback: Yup.string()
+    .min(10, "Please provide detailed feedback (minimum 10 characters.)")
+    .max(150, " Please keep your practicalFeedback under 150 characters."),
   linkedinUrl: Yup.string().url("Please enter a valid URL."),
   clientCvUrl: Yup.string().url("Please enter a valid URL."),
-  clientFeedback: Yup.string(),
+  clientFeedback: Yup.string().max(
+    150,
+    " Please keep your clientFeedback under 150 characters."
+  ),
   communicationSkill: Yup.number()
     .required("Communication skill rating is required!")
     .min(1, "Rating must be between 1 and 10.")
     .max(10, "Rating must be between 1 and 10."),
-  comment: Yup.string().min(
-    10,
-    "Please provide a detailed response about how you found us."
-  ),
+  comment: Yup.string()
+    .min(10, "Please provide a detailed comment about how you found us.")
+    .max(150, " Please keep your comment under 150 characters."),
   appliedSkills: Yup.array()
     .required("Skills are required!")
     .min(1, "Please select at least one skill."),
@@ -129,19 +130,30 @@ export const personalApplicantSchema = Yup.object({
   whatsappNumber: Yup.string()
     .matches(/^[0-9]{10}$/, "Please enter a valid 10-digit WhatsApp number.")
     .required("WhatsApp number is required!"),
-  currentCity: Yup.string()
-    .required("Current city is required!"),
-    // .matches(/^[A-Za-z\s]+$/, "City name can only contain letters."),
+  currentCity: Yup.string().required("Current city is required!"),
+  // .matches(/^[A-Za-z\s]+$/, "City name can only contain letters."),
   // currentPincode: Yup.string()
   //   .required("Current pincode is required!")
   //   .matches(/^[0-9]{6}$/, "Please enter a valid 6-digit pincode"),
   currentAddress: Yup.string()
     .required("Current location is required!")
-    .min(5, "Please provide a detailed location."),
-  permanentAddress: Yup.string().min(5, "Please provide a detailed location."),
+    .min(5, "Please provide a detailed location.")
+    .max(150, " Please keep your currentAddress under 150 characters."),
+  permanentAddress: Yup.string()
+    .min(5, "Please provide a detailed location.")
+    .max(150, " Please keep your permanentAddress under 150 characters."),
   gender: Yup.string().required("Gender is required!"),
 
   country: Yup.string().required("Country is required!"),
 
   state: Yup.string().required("State is required!"),
 });
+
+export interface City {
+  label: string;
+  value: string;
+}
+export interface appliedSkills {
+  label: string;
+  value: string;
+}

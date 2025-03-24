@@ -20,9 +20,12 @@ export const UPDATE_APPLICANT_STAGE = "applicants/update/status";
 export const FILTER_APPLICANT = "applicants/viewApplicant/?";
 export const CITY = "city";
 export const EXPORT_APPLICANT = "applicants/exportCsv/";
+export const DELETE_MULTIPLE_APPLICANT = "applicants/deleteManyApplicants"
+
 export const IMPORT_APPLICANT = "applicants/importCsv";
 export const IMPORT_RESUME = "applicants/upload-resume";
 export const IMPORT_APPLICANT_LIST = "applicants/viewResumeAndCsvApplicant";
+
 //Email module
 export const SEND_EMAIL = "email/applicant/sendEmail";
 export const VIEW_ALL_EMAIL = "email/applicant/getAllEmails";

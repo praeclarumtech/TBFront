@@ -30,7 +30,7 @@ import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
 
-import { SelectedOption } from "interfaces/applicant.interface";
+import { SelectedOption, SelectedOption1 } from "interfaces/applicant.interface";
 import {
   dynamicFind,
   errorHandle,
@@ -208,9 +208,10 @@ function ImportApplicant() {
       }
       if (appliedSkills.length > 0) {
         params.appliedSkills = appliedSkills
-          .map((skill: SelectedOption) => skill.value)
+          .map((skill) => skill.label)
           .join(",");
       }
+
       if (startDate) {
         params.startDate = startDate;
       }
@@ -323,9 +324,15 @@ function ImportApplicant() {
   //   setSearchFilter(e.target.value as string[]);
   // }
 
-  const handleAppliedSkillsChange = (selectedOptions: SelectedOption[]) => {
-    setAppliedSkills(selectedOptions);
-  };
+  // const handleAppliedSkillsChange = (selectedOptions: SelectedOption[]) => {
+  //   setAppliedSkills(selectedOptions);
+  // };
+  const handleAppliedSkillsChange = (selectedOptions: SelectedOption1[]) => {
+     
+      setAppliedSkills(selectedOptions);
+  
+     
+    };
 
   const handleCityChange = (selectedOption: SelectedOption) => {
     setFilterCity(selectedOption);
@@ -621,7 +628,7 @@ function ImportApplicant() {
           setImportProgress(progress);
         },
       });
-      console.log(response);
+      // console.log(response);
       if (response?.success) {
         toast.success(response?.message || "File imported successfully!");
         await fetchApplicants();
@@ -629,7 +636,8 @@ function ImportApplicant() {
         throw new Error(response?.message || "Import failed");
       }
     } catch (error: any) {
-      console.error("Import error:", error);
+      // console.error("Import error:", error);
+      errorHandle(error);
 
       if (error.response?.data) {
         // Handle structured API errors
@@ -754,7 +762,7 @@ function ImportApplicant() {
           setImportProgress(progress);
         },
       });
-      console.log("API Response:", response);
+      // console.log("API Response:", response);
       if (response?.success) {
         toast.success(response?.message || "File imported successfully!");
       } else if (!response?.success && response.statusCode === 409) {
@@ -888,13 +896,12 @@ function ImportApplicant() {
         <MultiSelect
           label="Applied Skills"
           name="appliedSkills"
-          className="select-border mb-1 "
+          className="select-border mb-1"
           placeholder="Applied Skills"
-          value={appliedSkills || null}
+          value={appliedSkills}
           isMulti={true}
           onChange={handleAppliedSkillsChange}
           options={skillOptions}
-          // isLoading={loading}
         />
         {loading && (
           <div style={{ marginTop: "10px" }}>

@@ -13,6 +13,7 @@ import {
   EXPORT_APPLICANT,
   IMPORT_RESUME,
   IMPORT_APPLICANT_LIST,
+  DELETE_MULTIPLE_APPLICANT,
 } from "./apiRoutes";
 import { authServices } from "./apiServices";
 
@@ -36,6 +37,7 @@ export const listOfApplicants = async (params: {
   anyHandOnOffers?: string;
   rating?: string;
   workPreference?: string;
+  searchS?: string;
 }) => {
   const response = await authServices.get(`${LIST_APPLICANT}`, { params });
   return response?.data;
@@ -125,6 +127,17 @@ export const ExportApplicant = async (config?: {
   return response?.data;
 };
 
+export const deleteMultipleApplicant = async (
+  ids: string[] | undefined | null
+) => {
+  if (!ids || ids.length === 0) return;
+
+  const response = await authServices.delete(DELETE_MULTIPLE_APPLICANT, {
+    data: { ids }, // Send IDs inside request body
+  });
+  return response?.data;
+};
+
 export const resumeUpload = async (
   formData: FormData,
   config?: {
@@ -136,7 +149,7 @@ export const resumeUpload = async (
       "Content-Type": "multipart/form-data",
     },
     ...config,
-    timeout: 300000, 
+    timeout: 300000,
   });
   return response?.data;
 };

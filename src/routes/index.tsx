@@ -23,7 +23,7 @@ import EmailVerification from "pages/auth/EmailVerify";
 import UpdatePassword from "pages/auth/UpdatePassword";
 import AddSkill from "pages/master/Skills";
 import AddDegree from "pages/master/Degree";
-import ImportApplicantTables from "pages/applicant/importApplicants/";
+import ImportApplicantTables from "pages/applicant/importApplicants/Index";
 
 const RenderRouter: React.FC = () => {
   const {

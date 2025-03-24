@@ -14,7 +14,7 @@ import ForgetPassword from "pages/auth/ForgetPassword";
 import EmailVerification from "pages/auth/EmailVerify";
 import UpdatePassword from "pages/auth/UpdatePassword";
 import AddDegree from "pages/master/Degree";
-import ImportApplicantTables from "pages/applicant/importApplicants/";
+import ImportApplicantTables from "pages/applicant/importApplicants/Index";
 
 const routes = {
   ROOT: {
