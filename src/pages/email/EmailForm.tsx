@@ -7,7 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import BaseInput from "components/BaseComponents/BaseInput";
-import { InputPlaceHolder } from "utils/commonFunctions";
+import { errorHandle, InputPlaceHolder } from "utils/commonFunctions";
 import BaseTextarea from "components/BaseComponents/BaseTextArea";
 
 const EmailForm = () => {
@@ -62,7 +62,7 @@ const EmailForm = () => {
 
         toast.success("Email sent successfully!", {
           closeOnClick: true,
-          autoClose: 5000,
+          autoClose: 3000,
         });
         validation.resetForm();
         navigate("/email");
@@ -71,7 +71,7 @@ const EmailForm = () => {
           closeOnClick: true,
           autoClose: 5000,
         });
-        console.error("Error sending email:", err);
+        errorHandle( err);
       }
     },
   });
