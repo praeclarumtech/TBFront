@@ -33,7 +33,6 @@ import // ProductsGlobalFilter,
 import Loader from "./Loader";
 import appConstants from "constants/constant";
 import { TableContainerProps } from "interfaces/global.interface";
-import Skeleton from "react-loading-skeleton";
 
 const { handleResponse } = appConstants;
 // Column Filter
@@ -308,8 +307,7 @@ const TableContainer = ({
                   className="text-center"
                 >
                   <div className="flex justify-center items-center py-4">
-                    {/* <Loader /> */}
-                    <Skeleton count={5}/>
+                    <Loader />
                   </div>
                 </td>
               </tr>
