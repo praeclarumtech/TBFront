@@ -17,6 +17,7 @@ import {
   updateStatus,
   importApplicant,
   ExportApplicant,
+  deleteMultipleApplicant,
 } from "api/applicantApi";
 
 import ViewModal from "./ViewApplicant";
@@ -40,9 +41,13 @@ import {
 import appConstants from "constants/constant";
 import BaseSlider from "components/BaseComponents/BaseSlider";
 import Skeleton from "react-loading-skeleton";
-import { XSquare } from "react-bootstrap-icons";
+import { XLg } from "react-bootstrap-icons";
 import saveAs from "file-saver";
 import BasePopUpModal from "components/BaseComponents/BasePopUpModal";
+// import moment from "moment";
+import debounce from "lodash.debounce";
+
+const { handleResponse } = appConstants;
 import { ViewAppliedSkills } from "api/skillsApi";
 import { FaExclamationTriangle } from "react-icons/fa";
 
@@ -126,6 +131,10 @@ const Applicant = () => {
   const [showPopupModal, setShowPopupModal] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [cities, setCities] = useState<City[]>([]);
+  const [searchAll, setSearchAll] = useState<string>("");
+  const [multipleApplicantDelete, setMultipleApplicantsDelete] = useState<
+    string[]
+  >([]);
 
   const toggleDrawer =
     (anchor: Anchor, open: boolean) =>
@@ -170,6 +179,8 @@ const Applicant = () => {
         currentPkg?: string;
         applicantName?: string;
         searchSkills?: string;
+        searchS?: string;
+        // name?: string;
       } = {
         page: pagination.pageIndex + 1,
         pageSize: pagination.pageSize,
@@ -236,6 +247,11 @@ const Applicant = () => {
       if (filterGender) {
         params.gender = filterGender.value;
       }
+      const searchValue = searchAll?.trim();
+      if (searchValue) {
+        params.searchS = searchValue;
+        params.appliedSkills = searchValue;
+      }
 
       const res = await listOfApplicants(params);
       setApplicant(res?.data?.item || []);
@@ -249,7 +265,12 @@ const Applicant = () => {
   };
 
   useEffect(() => {
-    fetchApplicants();
+    const delayedSearch = debounce(() => {
+      fetchApplicants();
+    }, 0);
+
+    delayedSearch();
+    return () => delayedSearch.cancel();
   }, [
     pagination.pageIndex,
     pagination.pageSize,
@@ -370,6 +391,11 @@ const Applicant = () => {
     }
   };
 
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    // console.log("Typed:", event.target.value);
+    setSearchAll(event.target.value);
+  };
+
   const resetFilters = () => {
     setAppliedSkills([]);
     setStartDate("");
@@ -458,6 +484,31 @@ const Applicant = () => {
     if (recordIdToDelete) {
       deleteApplicantDetails(recordIdToDelete);
     }
+  };
+
+  const handleDeleteAll = () => {
+    if (selectedApplicants.length > 0) {
+      setMultipleApplicantsDelete(selectedApplicants);
+      setShowDeleteModal(true);
+    }
+  };
+
+  const deleteMultipleApplicantDetails = (
+    multipleApplicantDelete: string[] | undefined | null
+  ) => {
+    setLoader(true);
+    deleteMultipleApplicant(multipleApplicantDelete)
+      .then(() => {
+        fetchApplicants();
+        setSelectedApplicants([]);
+      })
+      .catch((error: any) => {
+        errorHandle(error);
+      })
+      .finally(() => {
+        setLoader(false);
+        setShowDeleteModal(false);
+      });
   };
 
   const deleteApplicantDetails = (_id: string | undefined | null) => {
@@ -666,8 +717,16 @@ const Applicant = () => {
       }}
       role="presentation"
     >
-      <button type="button" onClick={toggleDrawer("right", false)}>
-        <XSquare size={25} />
+      <button
+        type="button"
+        onClick={toggleDrawer("right", false)}
+        className="p-2 border border-transparent rounded-md transition-all duration-150  
+             hover:border-primary active:scale-90"
+      >
+        <XLg
+          size={20}
+          className="text-gray-600 transition-colors duration-150 hover:text-primary"
+        />
       </button>
       <List>
         <Row className="flex justify-between items-center mb-4">
@@ -948,15 +1007,15 @@ const Applicant = () => {
         enableColumnFilter: false,
       },
       {
-        header: "appliedSkills",
+        header: "applied Skills",
         accessorKey: "appliedSkills",
         cell: (cell: any) => (
           <div
             className="truncated-text"
             style={truncateText}
-            title={cell.row.original.appliedSkills}
+            title={cell.row.original.appliedSkills?.join(", ")}
           >
-            {cell.row.original.appliedSkills}
+            {cell.row.original.appliedSkills?.join(", ")}
           </div>
         ),
         enableColumnFilter: false,
@@ -1111,6 +1170,35 @@ const Applicant = () => {
     navigate("/applicants/add-applicant");
   };
 
+  const filteredApplicant = applicant.filter((applicants) => {
+    const searchTerm = searchAll.toLowerCase();
+
+    // Construct full name
+    // const nameObj = applicants.name || {};
+    // const firstName = nameObj.firstName || "";
+    // const middleName = nameObj.middleName || "";
+    // const lastName = nameObj.lastName || "";
+    // const fullName = `${firstName} ${middleName} ${lastName}`
+    //   .trim()
+    //   .toLowerCase();
+
+    return (
+      // fullName.includes(searchTerm) || // ✅ Search by full name
+      applicants?.name?.firstName?.toLowerCase().includes(searchTerm) ||
+      applicants?.name?.middleName?.toLowerCase().includes(searchTerm) ||
+      applicants?.name?.lastName?.toLowerCase().includes(searchTerm) ||
+      applicants.subject?.toLowerCase().includes(searchTerm) ||
+      applicants.interviewStage?.toLowerCase().includes(searchTerm) ||
+      applicants.status?.toLowerCase().includes(searchTerm) ||
+      applicants.totalExperience?.toString().includes(searchTerm) ||
+      applicants.totalExperience?.toString().includes(searchTerm) ||
+      (Array.isArray(applicants.appliedSkills) &&
+        applicants.appliedSkills.some((skill: string) =>
+          skill.toLowerCase().includes(searchTerm)
+        ))
+    );
+  });
+
   return (
     <Fragment>
       <BasePopUpModal
@@ -1134,7 +1222,12 @@ const Applicant = () => {
       <DeleteModal
         show={showDeleteModal}
         onCloseClick={closeDeleteModal}
-        onDeleteClick={handleDelete}
+        // onDeleteClick={handleDelete}
+        onDeleteClick={() =>
+          selectedApplicants.length > 1
+            ? deleteMultipleApplicantDetails(multipleApplicantDelete) // ✅ Wrap in an arrow function
+            : handleDelete
+        }
         // recordId={recordIdToDelete}
         loader={loader}
       />
@@ -1163,7 +1256,18 @@ const Applicant = () => {
                       </Drawer>
                     </div>
 
-                    <div className="col-auto d-flex justify-content-end mx-0 flex-wrap">
+                    {/* Right: WhatsApp, Email, and New Applicant Buttons */}
+
+                    <div className="col-auto d-flex justify-content-end flex-wrap mr-2">
+                      <div>
+                        <input
+                          id="search-bar-0"
+                          className="form-control search h-10"
+                          placeholder="Search..."
+                          onChange={handleSearchChange}
+                          value={searchAll}
+                        />
+                      </div>
                       {selectedApplicants.length > 0 && (
                         <>
                           {/* <BaseButton
@@ -1179,7 +1283,20 @@ const Applicant = () => {
                           </BaseButton> */}
 
                           <BaseButton
-                            className="btn text-lg btn-soft-secondary bg-primary edit-list mx-1 "
+                            className="btn text-lg bg-danger edit-list ml-2 w-fit border-0"
+                            onClick={handleDeleteAll}
+                          >
+                            <i className="ri-delete-bin-fill align-bottom" />
+                            <ReactTooltip
+                              place="bottom"
+                              variant="error"
+                              content="Delete"
+                              anchorId={`Delete ${selectedApplicants.length} Emails`}
+                            />
+                          </BaseButton>
+
+                          <BaseButton
+                            className="btn text-lg btn-soft-secondary bg-primary edit-list ml-2 mr-0"
                             onClick={handleSendEmail}
                           >
                             <i className="ri-mail-close-line align-bottom" />
@@ -1298,17 +1415,17 @@ const Applicant = () => {
             <Card>
               <div className="card-body pt-0">
                 {tableLoader ? (
-                  <div className="text-center py-4">
+                  <div className="text-center pb-4 pt-8">
                     <Skeleton count={5} />
                   </div>
                 ) : (
-                  <div>
+                  <div className="card-body pt-4">
                     {applicant.length > 0 ? (
                       <TableContainer
                         isHeaderTitle="Applicants"
                         columns={columns}
-                        data={applicant}
-                        isGlobalFilter
+                        data={filteredApplicant}
+                        // isGlobalFilter
                         customPageSize={10}
                         theadClass="table-light text-muted"
                         SearchPlaceholder="Search..."
@@ -1321,12 +1438,9 @@ const Applicant = () => {
                         rowHeight="10px !important"
                       />
                     ) : (
-                      (
-                        <div className="py-4 text-center">
-                          <i className="ri-search-line d-block fs-1 text-success"></i>
-                          No applicants found.
-                        </div>
-                      ) > <></>
+                      <div className="py-4 text-center">
+                        {handleResponse?.dataNotFound}
+                      </div>
                     )}
                   </div>
                 )}

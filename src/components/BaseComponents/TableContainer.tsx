@@ -19,17 +19,17 @@ import {
 import { rankItem } from "@tanstack/match-sorter-utils";
 
 import {
-  ProductsGlobalFilter,
-  CustomersGlobalFilter,
-  OrderGlobalFilter,
-  ContactsGlobalFilter,
-  CompaniesGlobalFilter,
-  LeadsGlobalFilter,
-  CryptoOrdersGlobalFilter,
-  InvoiceListGlobalSearch,
-  TicketsListGlobalFilter,
-  NFTRankingGlobalFilter,
-  TaskListGlobalFilter,
+  // ProductsGlobalFilter,
+  // CustomersGlobalFilter,
+  // OrderGlobalFilter,
+  // ContactsGlobalFilter,
+  // CompaniesGlobalFilter,
+  // LeadsGlobalFilter,
+  // CryptoOrdersGlobalFilter,
+  // InvoiceListGlobalSearch,
+  // TicketsListGlobalFilter,
+  // NFTRankingGlobalFilter,
+  // TaskListGlobalFilter,
 } from "./GlobalSearchFilter";
 import Loader from "./Loader";
 import appConstants from "constants/constant";
@@ -102,16 +102,16 @@ const TableContainer = ({
   data,
   isGlobalFilter,
   isProductsFilter,
-  isCustomerFilter,
-  isOrderFilter,
+  // isCustomerFilter,
+  // isOrderFilter,
+  // isLeadsFilter,
+  // isCryptoOrdersFilter,
+  // isInvoiceListFilter,
+  // isTicketsListFilter,
+  isNFTRankingFilter,
+  // isTaskListFilter,
   isContactsFilter,
   isCompaniesFilter,
-  isLeadsFilter,
-  isCryptoOrdersFilter,
-  isInvoiceListFilter,
-  isTicketsListFilter,
-  isNFTRankingFilter,
-  isTaskListFilter,
   customPageSize,
   tableClass,
   theadClass,
@@ -186,9 +186,9 @@ const TableContainer = ({
 
   return (
     <Fragment>
-      {isGlobalFilter && (
+      
         <Row className="mb-3">
-          <CardBody>
+          <CardBody className="pb-0 pt-0">
             <form>
               <Row className="d-flex justify-content-between">
                 {isHeaderTitle && (
@@ -196,6 +196,7 @@ const TableContainer = ({
                     <h4>{isHeaderTitle}</h4>
                   </Col>
                 )}
+                {isGlobalFilter && (
                 <Col sm={3}>
                   <div
                     className={
@@ -216,7 +217,8 @@ const TableContainer = ({
                     <i className="bx bx-search-alt search-icon"></i>
                   </div>
                 </Col>
-                {isProductsFilter && <ProductsGlobalFilter />}
+                   )}
+                {/* {isProductsFilter && <ProductsGlobalFilter />}
                 {isCustomerFilter && <CustomersGlobalFilter />}
                 {isOrderFilter && <OrderGlobalFilter />}
                 {isContactsFilter && <ContactsGlobalFilter />}
@@ -226,12 +228,12 @@ const TableContainer = ({
                 {isInvoiceListFilter && <InvoiceListGlobalSearch />}
                 {isTicketsListFilter && <TicketsListGlobalFilter />}
                 {isNFTRankingFilter && <NFTRankingGlobalFilter />}
-                {isTaskListFilter && <TaskListGlobalFilter />}
+                {isTaskListFilter && <TaskListGlobalFilter />} */}
               </Row>
             </form>
           </CardBody>
         </Row>
-      )}
+   
 
       <div
         className={`h-[400px] overflow-auto ${divClass}`}

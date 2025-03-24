@@ -31,9 +31,9 @@ export const getStatusOfApplication = async () => {
         throw error
     }
 }
-export const getApplication = async () => {
+export const getApplication = async (cType: string) => {
     try{
-        const response = await axios.get(`${API_BASE_URL}//getApplicationsByDate?calendarType=month`)
+        const response = await axios.get(`${API_BASE_URL}/getApplicationsByDate?calendarType=${cType}`)
         return response.data
     }catch (error){
         console.log("Error fetching Api :-",error);
