@@ -475,7 +475,7 @@ const AddSkill = () => {
                               </>
                             ) : (
                               <>
-                                <i className="ri-upload-2-line align-bottom me-1" />
+                                <i className="ri-download-2-line align-bottom me-1" />
                                 Import
                               </>
                             )}
@@ -552,6 +552,7 @@ const AddSkill = () => {
                     <Col lg={12}>
                       {isLoading ? (
                         <div className="text-center py-4">
+                          <Skeleton count={1} className="min-h-10 mb-5"/>
                           <Skeleton count={5} />
                         </div>
                       ) : (
@@ -562,7 +563,7 @@ const AddSkill = () => {
                               columns={columns}
                               data={filteredSkills}
                               // isGlobalFilter={true}
-                              customPageSize={10}
+                              customPageSize={50}
                               theadClass="table-light text-muted"
                               // SearchPlaceholder="Search..."
                               totalRecords={totalRecords}

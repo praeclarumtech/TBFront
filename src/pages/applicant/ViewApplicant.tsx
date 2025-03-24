@@ -113,7 +113,8 @@ const DetailsCard = ({
         <span className="ml-2 text-blue-600">{title}</span>
       </div>
     }
-    bordered={false}
+    // bordered={false}
+    variant="outlined"
     className="custom-card"
   >
     {children}

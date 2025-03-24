@@ -18,19 +18,18 @@ import {
 
 import { rankItem } from "@tanstack/match-sorter-utils";
 
-import {
-  // ProductsGlobalFilter,
-  // CustomersGlobalFilter,
-  // OrderGlobalFilter,
-  // ContactsGlobalFilter,
-  // CompaniesGlobalFilter,
-  // LeadsGlobalFilter,
-  // CryptoOrdersGlobalFilter,
-  // InvoiceListGlobalSearch,
-  // TicketsListGlobalFilter,
-  // NFTRankingGlobalFilter,
-  // TaskListGlobalFilter,
-} from "./GlobalSearchFilter";
+import // ProductsGlobalFilter,
+// CustomersGlobalFilter,
+// OrderGlobalFilter,
+// ContactsGlobalFilter,
+// CompaniesGlobalFilter,
+// LeadsGlobalFilter,
+// CryptoOrdersGlobalFilter,
+// InvoiceListGlobalSearch,
+// TicketsListGlobalFilter,
+// NFTRankingGlobalFilter,
+// TaskListGlobalFilter,
+"./GlobalSearchFilter";
 import Loader from "./Loader";
 import appConstants from "constants/constant";
 import { TableContainerProps } from "interfaces/global.interface";
@@ -186,17 +185,16 @@ const TableContainer = ({
 
   return (
     <Fragment>
-      
-        <Row className="mb-3">
-          <CardBody className="pb-0 pt-0">
-            <form>
-              <Row className="d-flex justify-content-between">
-                {isHeaderTitle && (
-                  <Col lg={7} sm={3}>
-                    <h4>{isHeaderTitle}</h4>
-                  </Col>
-                )}
-                {isGlobalFilter && (
+      <Row className="mb-3">
+        <CardBody className="pb-0 pt-0">
+          <form>
+            <Row className="d-flex justify-content-between">
+              {isHeaderTitle && (
+                <Col lg={7} sm={3}>
+                  <h4>{isHeaderTitle}</h4>
+                </Col>
+              )}
+              {isGlobalFilter && (
                 <Col sm={3}>
                   <div
                     className={
@@ -217,8 +215,8 @@ const TableContainer = ({
                     <i className="bx bx-search-alt search-icon"></i>
                   </div>
                 </Col>
-                   )}
-                {/* {isProductsFilter && <ProductsGlobalFilter />}
+              )}
+              {/* {isProductsFilter && <ProductsGlobalFilter />}
                 {isCustomerFilter && <CustomersGlobalFilter />}
                 {isOrderFilter && <OrderGlobalFilter />}
                 {isContactsFilter && <ContactsGlobalFilter />}
@@ -229,11 +227,10 @@ const TableContainer = ({
                 {isTicketsListFilter && <TicketsListGlobalFilter />}
                 {isNFTRankingFilter && <NFTRankingGlobalFilter />}
                 {isTaskListFilter && <TaskListGlobalFilter />} */}
-              </Row>
-            </form>
-          </CardBody>
-        </Row>
-   
+            </Row>
+          </form>
+        </CardBody>
+      </Row>
 
       <div
         className={`h-[400px] overflow-auto ${divClass}`}
@@ -320,7 +317,10 @@ const TableContainer = ({
                   <tr key={row.id}>
                     {row?.getVisibleCells()?.map((cell: any) => {
                       return (
-                        <td key={cell.id} style={{ padding: customPadding || "0.75rem 1.5rem" }} >
+                        <td
+                          key={cell.id}
+                          style={{ padding: customPadding || "0.75rem 1.5rem" }}
+                        >
                           {flexRender(
                             cell?.column?.columnDef?.cell,
                             cell?.getContext()
@@ -345,50 +345,178 @@ const TableContainer = ({
         </Table>
       </div>
       {isPagination && (
+        // <Row className="align-items-center mt-2 g-3">
+        //   <div className="col-sm-6">
+        //     <div className="text-muted">Total Records: {totalRecords}</div>
+        //   </div>
+        //   <div className="col-sm-6">
+        //     <ul className="pagination pagination-separated justify-content-end mb-0">
+        //       <li
+        //         className={
+        //           !getCanPreviousPage() ? "page-item disabled" : "page-item"
+        //         }
+        //       >
+        //         <Link
+        //           to="#"
+        //           className="page-link"
+        //           onClick={() =>
+        //             setPagination((prev: { pageIndex: number }) => ({
+        //               ...prev,
+        //               pageIndex: prev.pageIndex - 1,
+        //             }))
+        //           }
+        //         >
+        //           <i className="ri-arrow-left-s-line" />
+        //         </Link>
+        //       </li>
+
+        //       {getPageOptions().map((item: number) => {
+        //         // Show first page, current page ±1, and last page
+        //         const currentPage = getState().pagination.pageIndex;
+        //         const isFirstPage = item === 0;
+        //         const isLastPage = item === getPageOptions().length - 1;
+        //         const isCurrentPageArea = Math.abs(item - currentPage) <= 1;
+
+        //         if (isFirstPage || isLastPage || isCurrentPageArea) {
+        //           return (
+        //             <li
+        //               key={item}
+        //               className={`page-item ${
+        //                 currentPage === item ? "active" : ""
+        //               }`}
+        //             >
+        //               <Link
+        //                 to="#"
+        //                 className="page-link"
+        //                 onClick={() => setPageIndex(item)}
+        //               >
+        //                 {item + 1}
+        //               </Link>
+        //             </li>
+        //           );
+        //         } else if (
+        //           (item === currentPage - 2 && currentPage > 2) ||
+        //           (item === currentPage + 2 &&
+        //             currentPage < getPageOptions().length - 3)
+        //         ) {
+        //           return (
+        //             <li key={item} className="page-item disabled">
+        //               <Link to="#" className="page-link">
+        //                 ...
+        //               </Link>
+        //             </li>
+        //           );
+        //         }
+        //         return null;
+        //       })}
+
+        //       <li
+        //         className={
+        //           !getCanNextPage() ? "page-item disabled" : "page-item"
+        //         }
+        //       >
+        //         <Link
+        //           to="#"
+        //           className="page-link"
+        //           onClick={() =>
+        //             setPagination((prev: { pageIndex: number }) => ({
+        //               ...prev,
+        //               pageIndex: prev.pageIndex + 1,
+        //             }))
+        //           }
+        //         >
+        //           <i className="ri-arrow-right-s-line" />
+        //         </Link>
+        //       </li>
+        //     </ul>
+        //   </div>
+        // </Row>
+
         <Row className="align-items-center mt-2 g-3">
           <div className="col-sm-6">
             <div className="text-muted">Total Records: {totalRecords}</div>
           </div>
           <div className="col-sm-6">
-            <ul className="pagination pagination-separated justify-content-end mb-0">
+            <ul
+              className="pagination pagination-separated justify-content-end mb-0"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
+                listStyle: "none",
+              }}
+            >
+              {/* Previous Arrow */}
               <li
-                className={
-                  !getCanPreviousPage() ? "page-item disabled" : "page-item"
-                }
+                className={`page-item ${
+                  !getCanPreviousPage() ? "disabled" : ""
+                }`}
+                style={{
+                  opacity: !getCanPreviousPage() ? 0.3 : 1,
+                  cursor: !getCanPreviousPage() ? "not-allowed" : "pointer",
+                  fontSize: "18px",
+                }}
               >
                 <Link
                   to="#"
-                  className="page-link"
+                  className="page-link border-0 bg-white"
                   onClick={() =>
                     setPagination((prev: { pageIndex: number }) => ({
                       ...prev,
                       pageIndex: prev.pageIndex - 1,
                     }))
                   }
+                  style={{
+                    textDecoration: "none",
+                    color: "#666",
+                    fontSize: "20px",
+                    transition: "color 0.2s ease-in-out",
+                  }}
+                  onMouseEnter={(e) =>
+                    ((e.currentTarget as HTMLElement).style.color = "#007bff")
+                  }
+                  onMouseLeave={(e) =>
+                    ((e.currentTarget as HTMLElement).style.color = "#666")
+                  }
                 >
                   <i className="ri-arrow-left-s-line" />
                 </Link>
               </li>
 
-              {getPageOptions().map((item: number) => {
-                // Show first page, current page ±1, and last page
+              {/* Page Numbers */}
+              {getPageOptions().map((item) => {
                 const currentPage = getState().pagination.pageIndex;
                 const isFirstPage = item === 0;
                 const isLastPage = item === getPageOptions().length - 1;
                 const isCurrentPageArea = Math.abs(item - currentPage) <= 1;
-
                 if (isFirstPage || isLastPage || isCurrentPageArea) {
                   return (
-                    <li
-                      key={item}
-                      className={`page-item ${
-                        currentPage === item ? "active" : ""
-                      }`}
-                    >
+                    <li key={item}>
                       <Link
                         to="#"
                         className="page-link"
                         onClick={() => setPageIndex(item)}
+                        style={{
+                          // padding: "4px 10px",
+                          margin: "0 2px",
+                          display: "inline-block",
+                          fontSize: "14px",
+                          // fontWeight: "500",
+                          transition: "all 0.2s ease-in-out",
+                          textDecoration: "none",
+                          color: currentPage === item ? "#fff" : "#666",
+                          backgroundColor:
+                            currentPage === item ? "#006bff" : "transparent",
+                          borderRadius: "50%",
+                          border: "0px",
+                          fontWeight: currentPage === item ? "bold" : "normal",
+                          boxShadow:
+                            currentPage === item
+                              ? "0px 2px 6px rgba(0, 123, 255, 0.5)"
+                              : "none",
+                          padding:
+                            currentPage === item ? "6px 12px" : "4px 10px",
+                        }}
                       >
                         {item + 1}
                       </Link>
@@ -401,28 +529,44 @@ const TableContainer = ({
                 ) {
                   return (
                     <li key={item} className="page-item disabled">
-                      <Link to="#" className="page-link">
+                      <span style={{ color: "#999", fontSize: "16px" }}>
                         ...
-                      </Link>
+                      </span>
                     </li>
                   );
                 }
                 return null;
               })}
 
+              {/* Next Arrow */}
               <li
-                className={
-                  !getCanNextPage() ? "page-item disabled" : "page-item"
-                }
+                className={`page-item ${!getCanNextPage() ? "disabled" : ""}`}
+                style={{
+                  opacity: !getCanNextPage() ? 0.3 : 1,
+                  cursor: !getCanNextPage() ? "not-allowed" : "pointer",
+                  fontSize: "18px",
+                }}
               >
                 <Link
                   to="#"
-                  className="page-link"
+                  className="page-link border-0 bg-white"
                   onClick={() =>
                     setPagination((prev: { pageIndex: number }) => ({
                       ...prev,
                       pageIndex: prev.pageIndex + 1,
                     }))
+                  }
+                  style={{
+                    textDecoration: "none",
+                    color: "#666",
+                    fontSize: "20px",
+                    transition: "color 0.2s ease-in-out",
+                  }}
+                  onMouseEnter={(e) =>
+                    ((e.currentTarget as HTMLElement).style.color = "#007bff")
+                  }
+                  onMouseLeave={(e) =>
+                    ((e.currentTarget as HTMLElement).style.color = "#666")
                   }
                 >
                   <i className="ri-arrow-right-s-line" />

@@ -11,7 +11,12 @@ interface ProgressBarProps {
   loading: boolean;
 }
 
-const ProgressBar: React.FC<ProgressBarProps> = ({ value, colour, lebel,loading }) => {
+const ProgressBar: React.FC<ProgressBarProps> = ({
+  value,
+  colour,
+  lebel,
+  loading,
+}) => {
   const [percentage, setPercentage] = useState(0);
 
   useEffect(() => {
@@ -24,11 +29,11 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ value, colour, lebel,loading 
   return (
     <div className="h-2 w-3/4 bg-light rounded-lg mx-2 my-2">
       {loading ? (
-        <Skeleton  width="100%" />
+        <Skeleton width="100%" />
       ) : (
         <>
           <div
-            className={`flex h-full transition justify-center rounded ease-in-out ${colour}`}
+            className={`flex h-full rounded transition-all ease-in-out duration-300 ${colour} hover:shadow-2xl hover:brightness-125 hover:scale-105`}
             style={{ width: `${percentage}%` }}
           ></div>
           <div className="d-flex justify-between mt-1">
