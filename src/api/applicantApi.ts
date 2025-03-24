@@ -11,6 +11,8 @@ import {
   CITY,
   IMPORT_APPLICANT,
   EXPORT_APPLICANT,
+  IMPORT_RESUME,
+  IMPORT_APPLICANT_LIST,
   DELETE_MULTIPLE_APPLICANT,
 } from "./apiRoutes";
 import { authServices } from "./apiServices";
@@ -35,7 +37,7 @@ export const listOfApplicants = async (params: {
   anyHandOnOffers?: string;
   rating?: string;
   workPreference?: string;
-  searchS?:string;
+  searchS?: string;
 }) => {
   const response = await authServices.get(`${LIST_APPLICANT}`, { params });
   return response?.data;
@@ -125,7 +127,9 @@ export const ExportApplicant = async (config?: {
   return response?.data;
 };
 
-export const deleteMultipleApplicant = async (ids: string[] | undefined | null) => {
+export const deleteMultipleApplicant = async (
+  ids: string[] | undefined | null
+) => {
   if (!ids || ids.length === 0) return;
 
   const response = await authServices.delete(DELETE_MULTIPLE_APPLICANT, {
@@ -134,3 +138,45 @@ export const deleteMultipleApplicant = async (ids: string[] | undefined | null) 
   return response?.data;
 };
 
+export const resumeUpload = async (
+  formData: FormData,
+  config?: {
+    onUploadProgress?: (progressEvent: any) => void;
+  }
+) => {
+  const response = await authServices.post(`${IMPORT_RESUME}`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+    ...config,
+    timeout: 300000,
+  });
+  return response?.data;
+};
+
+export const listOfImportApplicants = async (params: {
+  page: number;
+  pageSize: number;
+  totalExperience?: string;
+  city?: string;
+  appliedSkills?: string;
+  startDate?: string;
+  endDate?: string;
+  currentCity?: string;
+  noticePeriod?: string;
+  status?: string;
+  interviewStage?: string;
+  gender?: string;
+  expectedPkg?: string;
+  currentCompanyDesignation?: string;
+  state?: string;
+  currentPkg?: string;
+  anyHandOnOffers?: string;
+  rating?: string;
+  workPreference?: string;
+}) => {
+  const response = await authServices.get(`${IMPORT_APPLICANT_LIST}`, {
+    params,
+  });
+  return response?.data;
+};

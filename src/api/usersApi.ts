@@ -7,6 +7,7 @@ import {
   CHANGEPASSWORD,
   VERIFY_OTP,
   SEND_OTP,
+  GET_PROFILE,
 } from "./apiRoutes";
 import { authServices } from "./apiServices";
 
@@ -14,6 +15,12 @@ export const login = async (data: object) => {
   const response = await authServices.post(`${LOGIN}`, data);
   return response?.data;
 };
+
+export const getProfile = async (data: object) => {
+  const response = await authServices.get(`${GET_PROFILE}`, data);
+  return response?.data;
+};
+
 
 export const register = async (data: object) => {
   const response = await authServices.post(`${REGISTER}`, data);

@@ -1,8 +1,23 @@
+import { getProfile } from "api/usersApi";
+import {  useEffect } from "react";
 import { ListGroup, Dropdown, Image } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
 export const DesktopNotifications = () => {
   const navigate = useNavigate();
+// const [user, setUser] = useState({});
+
+  useEffect(() => {
+  console.log("useEffect hook called");
+  const fetchProfile = async () => {
+    const token = sessionStorage.getItem("authUser"); 
+    const response = await getProfile({ token });
+    console.log("profile1", response);
+    console.log("firstname",response?.firstname);
+  };
+  fetchProfile();
+}, []);
+
   return (
     <ListGroup
       as="ul"

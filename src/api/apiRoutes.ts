@@ -7,6 +7,7 @@ export const CHANGEPASSWORD = "user/changePassword";
 export const VERIFY_OTP = "user/sendEmail/verifyOtp";
 export const SEND_OTP = "user/sendEmail";
 export const FORGOT_PASSWORD = "user/forgotPassword";
+export const GET_PROFILE = "user/getProfileByToken";
 
 //Applicant module
 export const LIST_APPLICANT = "applicants/viewAllApplicant";
@@ -21,8 +22,9 @@ export const CITY = "city";
 export const EXPORT_APPLICANT = "applicants/exportCsv/";
 export const DELETE_MULTIPLE_APPLICANT = "applicants/deleteManyApplicants"
 
-// export const IMPORT_APPLICANT = "applicants/importCsv/yes";
 export const IMPORT_APPLICANT = "applicants/importCsv";
+export const IMPORT_RESUME = "applicants/upload-resume";
+export const IMPORT_APPLICANT_LIST = "applicants/viewResumeAndCsvApplicant";
 
 //Email module
 export const SEND_EMAIL = "email/applicant/sendEmail";

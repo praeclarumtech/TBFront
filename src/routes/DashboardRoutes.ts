@@ -16,8 +16,14 @@ export const DashboardMenu: DashboardMenuProps[] = [
   {
     id: uuid(),
     title: "Applicants",
-    icon: "layers",
+    icon: "users",
     link: "/applicants",
+  },
+  {
+    id: uuid(),
+    title: "Import Applicants",
+    icon: "upload",
+    link: "/import-applicants",
   },
 
   {
@@ -28,13 +34,13 @@ export const DashboardMenu: DashboardMenuProps[] = [
   {
     id: uuid(),
     title: "Email",
-    icon: "monitor",
+    icon: "mail",
     link: "/email",
   },
   {
     id: uuid(),
     title: "Reports",
-    icon: "corner-left-down",
+    icon: "pie-chart",
     link: "/report",
   },
   {
@@ -51,13 +57,13 @@ export const DashboardMenu: DashboardMenuProps[] = [
   {
     id: uuid(),
     title: "Add Skills",
-    icon: "corner-left-down",
+    icon: "plus",
     link: "/master/skills",
   },
   {
     id: uuid(),
     title: "Add Degree",
-    icon: "corner-left-down",
+    icon: "plus",
     link: "/master/degree",
   },
 ];

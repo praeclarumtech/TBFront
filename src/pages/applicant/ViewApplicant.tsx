@@ -57,6 +57,7 @@ interface ApplicantDetails {
   clientCvUrl: string;
   clientFeedback: string;
   permanentAddress: string;
+  addedFrom: string;
   linkedinUrl: string;
   feedback: string;
   practicalFeedback: string;
@@ -83,12 +84,14 @@ const DetailsRow = ({
   label,
   value,
   icon,
-}: {
+}: // className,
+{
   label: string;
   value?: string | number | JSX.Element;
   icon?: JSX.Element;
+  // className?: string;
 }) => (
-  <p className="mb-[0.8rem]">
+  <p className="mb-[0.8rem] whitespace-nowrap">
     {icon}
     <strong>{label}:</strong> {value || "-"}
   </p>
@@ -297,7 +300,7 @@ const ViewModal: React.FC<ViewModalProps> = ({ show, onHide, applicantId }) => {
                     )
                   }
                 />
-                <DetailsRow
+                {/* <DetailsRow
                   label="Degree"
                   value={
                     formData.degree ? (
@@ -306,7 +309,7 @@ const ViewModal: React.FC<ViewModalProps> = ({ show, onHide, applicantId }) => {
                       "-"
                     )
                   }
-                />
+                /> */}
                 <DetailsRow
                   label="Specialization"
                   value={
@@ -609,7 +612,10 @@ const ViewModal: React.FC<ViewModalProps> = ({ show, onHide, applicantId }) => {
                   label="General Feedback"
                   value={formData.feedback || "-"}
                 />
-
+                <DetailsRow
+                  label="Applicant Add By"
+                  value={formData?.addedFrom || "-"}
+                />
                 <DetailsRow
                   label="Client Feedback"
                   value={formData.clientFeedback || "-"}

@@ -11,7 +11,11 @@ import {
   SelectedOption,
 } from "interfaces/applicant.interface";
 import BaseTextarea from "components/BaseComponents/BaseTextArea";
-import { dynamicFind, errorHandle, InputPlaceHolder } from "utils/commonFunctions";
+import {
+  dynamicFind,
+  errorHandle,
+  InputPlaceHolder,
+} from "utils/commonFunctions";
 import appConstants from "constants/constant";
 import moment from "moment";
 import { ViewAppliedSkills } from "api/skillsApi";
@@ -70,22 +74,29 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
     onSubmit: (data: any) => {
       setLoading(true);
       // console.log("initial on on submit", initialValues);
+      // const appliedSkillsNames = selectedMulti.map((item: any) => item.label);
+
+      // const updatedData = {
+      //   ...data,
+      //   appliedSkills: appliedSkillsNames,
+      // };
       const appliedSkillsNames = selectedMulti.map((item: any) => item.label);
 
       const updatedData = {
         ...data,
-        appliedSkills: appliedSkillsNames,
+        appliedSkills: appliedSkillsNames, // Send the skill names instead of IDs
       };
 
       onNext(updatedData);
-      // console.log("job Data:", updatedData);
-      onNext(data);
+      console.log("job Data:", updatedData);
+      // onNext(data);
+      // console.log("job on submit", data);
       setLoading(false);
     },
   });
 
   useEffect(() => {
-     setLoading(true);
+    setLoading(true);
     const fetchSkills = async () => {
       try {
         const page = 1;
@@ -94,7 +105,6 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
         const response = await ViewAppliedSkills({ page, pageSize, limit });
         const skillData = response?.data.data || [];
 
-       
         setSkillOptions(
           skillData.map((item: any) => ({
             label: item.skills,
@@ -109,7 +119,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
           const selectedSkills = skillData
             .filter((option: { skills: any }) =>
               initialValues.appliedSkills.includes(option.skills)
-            ) 
+            )
             .map((item: { skills: any; _id: any }) => ({
               label: item.skills,
               value: item._id,
@@ -122,20 +132,26 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
         // console.error("Error fetching skills", error);
         errorHandle(error);
       } finally {
-         setLoading(false);
+        setLoading(false);
       }
     };
 
     fetchSkills();
   }, [initialValues]);
 
-  const handleMultiSkill = (selectedMulti: any) => {
-   
-    const ids = selectedMulti?.map((item: any) => item.value) || []; 
-    validation.setFieldValue("appliedSkills", ids); 
-    setSelectedMulti(selectedMulti); 
-  };
+  // const handleMultiSkill = (selectedMulti: any) => {
 
+  //   const ids = selectedMulti?.map((item: any) => item.value) || [];
+  //   validation.setFieldValue("appliedSkills", ids);
+  //   setSelectedMulti(selectedMulti);
+  // };
+
+  const handleMultiSkill = (selectedMulti: any) => {
+    // Extract skill IDs for form values (stored as value)
+    const ids = selectedMulti?.map((item: any) => item.value) || [];
+    validation.setFieldValue("appliedSkills", ids); // Save IDs in form field
+    setSelectedMulti(selectedMulti); // Update selected multi to store both IDs and Names (for display)
+  };
   // console.log("Selected skills (mapped):", selectedMulti);
 
   return (
@@ -286,7 +302,10 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                             numValue.toFixed(2)
                           );
                         } else {
-                          validation.setFieldValue("relevantSkillExperience", "");
+                          validation.setFieldValue(
+                            "relevantSkillExperience",
+                            ""
+                          );
                         }
                       } else {
                         validation.setFieldValue("relevantSkillExperience", "");
@@ -411,7 +430,11 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
 
                       const numValue = parseFloat(value);
 
-                      if (!isNaN(numValue) && numValue >= 0 && numValue <= 1000) {
+                      if (
+                        !isNaN(numValue) &&
+                        numValue >= 0 &&
+                        numValue <= 1000
+                      ) {
                         validation.setFieldValue("currentPkg", value);
                       } else if (value === "" || value === ".") {
                         validation.setFieldValue("currentPkg", value);
@@ -464,7 +487,11 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
 
                       const numValue = parseFloat(value);
 
-                      if (!isNaN(numValue) && numValue >= 0 && numValue <= 1000) {
+                      if (
+                        !isNaN(numValue) &&
+                        numValue >= 0 &&
+                        numValue <= 1000
+                      ) {
                         validation.setFieldValue("expectedPkg", value);
                       } else if (value === "" || value === ".") {
                         validation.setFieldValue("expectedPkg", value);
@@ -575,7 +602,11 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
 
                       const numValue = parseFloat(value);
 
-                      if (!isNaN(numValue) && numValue >= 0 && numValue <= 100) {
+                      if (
+                        !isNaN(numValue) &&
+                        numValue >= 0 &&
+                        numValue <= 100
+                      ) {
                         validation.setFieldValue("noticePeriod", value);
                       } else if (value === "" || value === ".") {
                         validation.setFieldValue("noticePeriod", value);

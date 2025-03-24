@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Row, Col, Card, Form } from "react-bootstrap";
 import * as Yup from "yup";
 import { useMounted } from "hooks/useMounted";

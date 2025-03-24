@@ -14,7 +14,7 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
       .join(" ");
   };
-  console.log("preview ", data);
+  // console.log("preview ", data);
 
   return (
     <>

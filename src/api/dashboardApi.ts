@@ -7,7 +7,8 @@ export const getTotalApplicants = async () => {
         const response = await axios.get(`${API_BASE_URL}/applicant/count`);
         return response.data
     }catch (error){
-        console.log("Error fetching total applicants :- ",error);
+        console.log("Error fetching total applicants :- ", error);
+        
         throw error
     }
 }
