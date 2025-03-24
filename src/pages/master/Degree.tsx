@@ -349,7 +349,7 @@ const AddDegree = () => {
                             </BaseButton>
                           )}
                           <BaseButton
-                            color="primary"
+                            color="success"
                             disabled={loader}
                             type="submit"
                             loader={loader}
@@ -398,6 +398,8 @@ const AddDegree = () => {
                     <Col lg={12}>
                       {isLoading ? (
                         <div className="text-center py-4">
+                          <Skeleton count={1} className="min-h-10 mb-5" />
+
                           <Skeleton count={5} />
                         </div>
                       ) : (

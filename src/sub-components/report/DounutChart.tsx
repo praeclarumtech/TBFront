@@ -22,7 +22,7 @@ const centerTextPlugin = {
     const text = "Technology wise\nApplicants"; // Add a line break for better formatting
     const fontSize = Math.min(width / 18, height / 9, 18);
 
-    ctx.font = `600 ${fontSize}px Arial`; 
+    ctx.font = `600 ${fontSize}px Arial`;
     ctx.textBaseline = "middle";
     ctx.textAlign = "center";
     ctx.fillStyle = "#000"; // Slightly darker for better visibility
@@ -56,7 +56,6 @@ const DounutChart = () => {
     try {
       const data = await getSkillStatistics();
       setSkillStatistics(data.data);
-      console.log(data);
     } catch (error) {
       console.error("API Error:", error);
     } finally {
@@ -114,7 +113,10 @@ const DounutChart = () => {
   return (
     <div className="flex items-center justify-center w-full h-[350px]">
       {isLoading ? (
-        <Skeleton height={300} width={300} borderRadius="50%" />
+        <div>
+          <Skeleton height={300} width={300} borderRadius="50%" />
+          <Skeleton height={20} width={300} />
+        </div>
       ) : (
         <div className="w-full h-[350px] flex items-center justify-center">
           <Doughnut

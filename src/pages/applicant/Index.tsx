@@ -39,14 +39,14 @@ import {
 import appConstants from "constants/constant";
 import BaseSlider from "components/BaseComponents/BaseSlider";
 import Skeleton from "react-loading-skeleton";
-import { XLg } from "react-bootstrap-icons";
 import saveAs from "file-saver";
 
 import debounce from "lodash.debounce";
 
 const { handleResponse } = appConstants;
 import { ViewAppliedSkills } from "api/skillsApi";
-
+import { IconButton } from "@mui/material";
+import { Close } from "@mui/icons-material";
 const {
   projectTitle,
   Modules,
@@ -461,7 +461,7 @@ const Applicant = () => {
     setShowDeleteModal(false);
   };
 
-  const handleDelete = () => {
+  const handleDelete = (recordIdToDelete : any) => {
     if (recordIdToDelete) {
       deleteApplicantDetails(recordIdToDelete);
     }
@@ -480,6 +480,7 @@ const Applicant = () => {
     setLoader(true);
     deleteMultipleApplicant(multipleApplicantDelete)
       .then(() => {
+        console.log("deleteddddd",multipleApplicantDelete)
         fetchApplicants();
         setSelectedApplicants([]);
       })
@@ -496,6 +497,7 @@ const Applicant = () => {
     setLoader(true);
     deleteApplicant(_id)
       .then(() => {
+        console.log("in dedleetetee",_id)
         fetchApplicants();
       })
       .catch((error: any) => {
@@ -695,17 +697,14 @@ const Applicant = () => {
       }}
       role="presentation"
     >
-      <button
-        type="button"
-        onClick={toggleDrawer("right", false)}
-        className="p-2 border border-transparent rounded-md transition-all duration-150  
-             hover:border-primary active:scale-90"
-      >
-        <XLg
-          size={20}
-          className="text-gray-600 transition-colors duration-150 hover:text-primary"
-        />
-      </button>
+      <div className="mb-4">
+        <IconButton
+          onClick={toggleDrawer("right", false)}
+          sx={{ position: "absolute", top: 8, left: 8, zIndex: 10 }}
+        >
+          <Close />
+        </IconButton>
+      </div>
       <List>
         <Row className="flex justify-between items-center mb-4">
           <Col>
@@ -1088,7 +1087,7 @@ const Applicant = () => {
               <i className="ri-eye-fill align-bottom" />
               <ReactTooltip
                 place="bottom"
-                variant="success"
+                variant="info"
                 content="View"
                 anchorId={`usage-${cell?.row?.original?.id}`}
               />
@@ -1102,7 +1101,7 @@ const Applicant = () => {
               <i className="ri-pencil-fill align-bottom" />
               <ReactTooltip
                 place="bottom"
-                variant="info"
+                variant="warning"
                 content="Edit"
                 anchorId={`editMode-${cell?.row?.original?.id}`}
               />
@@ -1119,13 +1118,13 @@ const Applicant = () => {
                 place="bottom"
                 variant="error"
                 content="Delete"
-                anchorId={`delete-${cell?.row?.original?.id}`}
+                anchorId={`delete-${cell?.row?.original?._id}`}
               />
             </BaseButton>
 
             <BaseButton
               id={`email-${cell?.row?.original?.id}`}
-              className="btn btn-sm btn-soft-secondary edit-list"
+              className="btn btn-sm btn-soft-secondary bg-success edit-list"
               onClick={() => handleEmail(cell?.row?.original._id)}
             >
               <i className="ri-mail-close-line align-bottom" />
@@ -1201,9 +1200,9 @@ const Applicant = () => {
         onCloseClick={closeDeleteModal}
         // onDeleteClick={handleDelete}
         onDeleteClick={() =>
-          selectedApplicants.length > 1
+          selectedApplicants.length > 2
             ? deleteMultipleApplicantDetails(multipleApplicantDelete) // ✅ Wrap in an arrow function
-            : handleDelete
+            : handleDelete(recordIdToDelete)
         }
         // recordId={recordIdToDelete}
         loader={loader}
@@ -1313,7 +1312,9 @@ const Applicant = () => {
             <Card>
               <div className="card-body pt-0">
                 {tableLoader ? (
-                  <div className="text-center pb-4 pt-8">
+                  <div className="text-center py-4">
+                    <Skeleton count={1} className="min-h-10 mb-5" />
+
                     <Skeleton count={5} />
                   </div>
                 ) : (
@@ -1324,7 +1325,7 @@ const Applicant = () => {
                         columns={columns}
                         data={filteredApplicant}
                         // isGlobalFilter
-                        customPageSize={10}
+                        customPageSize={50}
                         theadClass="table-light text-muted"
                         SearchPlaceholder="Search..."
                         tableClass="!text-nowrap !mb-0 !responsive !table-responsive-sm !table-hover !table-outline-none !mb-0"
@@ -1400,7 +1401,7 @@ const customStyles = {
 
   dropdownIndicator: (provided: any) => ({
     ...provided,
-    color: "#007bff",
+    color: "#secondary",
   }),
 
   clearIndicator: (provided: any) => ({

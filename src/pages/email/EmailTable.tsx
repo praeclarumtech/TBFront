@@ -19,9 +19,10 @@ import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
-import { XLg } from "react-bootstrap-icons";
 import { Col, Row } from "react-bootstrap";
 import React from "react";
+import IconButton from "@mui/material/IconButton";
+import { Close } from "@mui/icons-material";
 
 const { projectTitle, Modules } = appConstants;
 
@@ -293,7 +294,7 @@ const EmailTable = () => {
 
   const handleDeleteAll = () => {
     if (selectedApplicants.length > 0) {
-      console.log("Emails to Delete:-",multipleEmailDelete)
+      console.log("Emails to Delete:-", multipleEmailDelete);
       setMultipleEmailDelete([...selectedApplicants]);
       setShowDeleteModal(true);
     }
@@ -341,17 +342,14 @@ const EmailTable = () => {
       }}
       role="presentation"
     >
-      <button
-        type="button"
-        onClick={toggleDrawer("right", false)}
-        className="p-2 border border-transparent rounded-md transition-all duration-150  
-           hover:border-primary active:scale-90"
-      >
-        <XLg
-          size={20}
-          className="text-gray-600 transition-colors duration-150 hover:text-primary"
-        />
-      </button>
+      <div className="mb-4">
+        <IconButton
+          onClick={toggleDrawer("right", false)}
+          sx={{ position: "absolute", top: 8, left: 8, zIndex: 10 }}
+        >
+          <Close />
+        </IconButton>
+      </div>
       <List>
         <Row className="flex justify-between items-center mb-4">
           <Col>
@@ -544,6 +542,8 @@ const EmailTable = () => {
         <div className="card-body">
           {loading ? (
             <div className="text-center py-4">
+              <Skeleton count={1} className="min-h-10 mb-5" />
+
               <Skeleton count={5} />
             </div>
           ) : (

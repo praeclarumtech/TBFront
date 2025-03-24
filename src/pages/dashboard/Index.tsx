@@ -13,10 +13,15 @@ import {
 import ApplicantsDeatils from "sub-components/dashboard/ApplicantsDetails";
 import { getTotalApplicants } from "api/dashboardApi";
 import appConstants from "constants/constant";
+import { useNavigate } from "react-router-dom";
 
 const { projectTitle, Modules } = appConstants;
 
 const Dashboard = () => {
+
+    const navigate = useNavigate();
+  
+
   document.title = Modules.Dashboard + " | " + projectTitle;
   const [totalApplicants, setTotalApplicants] = useState<number | null>(null);
   const [holdApplicants, setHoldApplicants] = useState<number | null>(null);
@@ -55,8 +60,7 @@ const Dashboard = () => {
     setIsLoading(true);
     try {
       const data = await getTotalApplicants();
-      // console.log("API Response:", data);
-      // ✅ Check if data exists before setting state
+  
       setTotalApplicants(data.data.totalApplicants);
       setHoldApplicants(data.data.holdApplicants);
       setPendingApplicants(data.data.pendingApplicants);
@@ -77,17 +81,17 @@ const Dashboard = () => {
         <div className="pb-23"></div>
         <Container fluid className="mt-n23 px-6">
           <Row className="bg-primary mx-n6 mb-n6 mt-n8 pt-3">
-            <Col xl={2} lg={4} md={6} xs={12} className="mb-3">
+            <Col xl={2} lg={4} md={6} xs={6} className="mb-3">
               <StatRightTopIcon
                 title="Total Applicants"
-                icon={<People size={20} />}
+                icon={<People size={20} onClick={() => navigate("/applicants")} className="cursor-pointer" />}
                 data={totalApplicants}
                 error={error}
                 classes="icon-shape icon-lg rounded-2 bg-light-primary text-primary"
                 isLoading={isLoading}
               />
             </Col>
-            <Col xl={2} lg={4} md={6} xs={12} className="mb-3">
+            <Col xl={2} lg={4} md={6} xs={6} className="mb-3">
               <StatRightTopIcon
                 title="In Process"
                 icon={<ClockHistory size={20} />}
@@ -97,7 +101,7 @@ const Dashboard = () => {
                 isLoading={isLoading}
               />
             </Col>
-            <Col xl={2} lg={4} md={6} xs={12} className="mb-3">
+            <Col xl={2} lg={4} md={6} xs={6} className="mb-3">
               <StatRightTopIcon
                 title="On Hold"
                 icon={<GraphUp size={20} />}
@@ -107,7 +111,7 @@ const Dashboard = () => {
                 isLoading={isLoading}
               />
             </Col>
-            <Col xl={2} lg={4} md={6} xs={12} className="mb-3">
+            <Col xl={2} lg={4} md={6} xs={6} className="mb-3">
               <StatRightTopIcon
                 title="Total Pending"
                 icon={<ExclamationCircle size={20} />}
@@ -117,7 +121,7 @@ const Dashboard = () => {
                 isLoading={isLoading}
               />
             </Col>
-            <Col xl={2} lg={4} md={6} xs={12} className="mb-3">
+            <Col xl={2} lg={4} md={6} xs={6} className="mb-3">
               <StatRightTopIcon
                 title="Selected"
                 icon={<Check2Circle size={20} />}
@@ -127,7 +131,7 @@ const Dashboard = () => {
                 isLoading={isLoading}
               />
             </Col>
-            <Col xl={2} lg={4} md={6} xs={12} className="mb-3">
+            <Col xl={2} lg={4} md={6} xs={6} className="mb-3">
               <StatRightTopIcon
                 title="Rejected"
                 icon={<XCircle size={20} />}

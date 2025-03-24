@@ -55,7 +55,7 @@ export const DesktopNotifications = () => {
             eventKey="2"
             onClick={() => {
               // Clear any auth tokens/session data here if needed
-              navigate("/src/sub-components/profile/ProfileHeader.tsx");
+              navigate("/");
             }}
           >
             <i className="fe fe-user me-2"></i> Edit Profile
@@ -63,7 +63,7 @@ export const DesktopNotifications = () => {
           <Dropdown.Item
             onClick={() => {
               // Clear any auth tokens/session data here if needed
-              navigate("/src/sub-components/profile/ProfileHeader.tsx");
+              navigate("/");
             }}
           >
             <i className="fe fe-power me-2"></i>Sign Out

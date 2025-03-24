@@ -68,7 +68,7 @@ const RecentApplicants = ({
     <Row className="mt-6">
       <Col>
         <Card className="w-full min-h-[390px]">
-          <Card.Header className="bg-white border-0 d-flex justify-content-between align-items-center p-4 pb-0">
+          <Card.Header className="bg-white border-0 d-flex justify-content-between align-items-center p-4 pb-0 min-h-[63px]">
             <h4 className="h4">{selectedTechnology} Applicants</h4>
             {selectedTechnology && (
               <Button variant="primary" onClick={onResetFilter}>
@@ -78,8 +78,8 @@ const RecentApplicants = ({
           </Card.Header>
           <Card.Body className="pt-0">
             {isLoading ? (
-              <div className="min-h[400px] w-full">
-                <Skeleton className="min-h-[400px]" />
+              <div className="min-h-[410px] w-full">
+                <Skeleton className="min-h-[412px]" />
               </div>
             ) : (
               <>
@@ -90,6 +90,7 @@ const RecentApplicants = ({
                     data={recentApplicants}
                     theadClass="table-secondary text-white"
                     isPagination={false}
+                    customPadding="0.3rem 1.5rem"
                   />
                 ) : (
                   <div className="py-4 text-center">
