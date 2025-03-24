@@ -31,7 +31,7 @@ const AddSkill = () => {
   const [skills, setSkills] = useState<any[]>([]);
   const [editingSkill, setEditingSkill] = useState<any>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [skillToDelete, setSkillToDelete] = useState<any>(null);
+  const [skillToDelete, setSkillToDelete] = useState<any>([]);
   const [showBaseModal, setShowBaseModal] = useState(false);
   const [totalRecords, setTotalRecords] = useState(0);
   const [pagination, setPagination] = useState({
@@ -44,6 +44,8 @@ const AddSkill = () => {
   const [importProgress, setImportProgress] = useState(0);
   const [isImporting, setIsImporting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
+  const [searchAll, setSearchAll] = useState<string>("");
 
   const fetchSkills = async () => {
     setIsLoading(true);
@@ -85,32 +87,125 @@ const AddSkill = () => {
     setShowDeleteModal(true);
   };
 
-  const confirmDelete = () => {
-    if (!skillToDelete) return;
+  // const confirmDelete = () => {
+  //   if (!skillToDelete) return;
+
+  //   setLoader(true);
+  //   deleteSkill({ _id: skillToDelete._id })
+  //     .then((res: { success: any; message: any }) => {
+  //       if (res?.success) {
+  //         toast.success(res?.message || "Skill deleted successfully");
+  //         fetchSkills();
+  //       } else {
+  //         toast.error(res?.message || "Failed to delete skill");
+  //       }
+  //     })
+  //     .catch((error: any) => {
+  //       toast.error("Something went wrong!");
+  //       console.error(error);
+  //     })
+  //     .finally(() => {
+  //       setLoader(false);
+  //       setShowDeleteModal(false);
+  //       setSkillToDelete(null);
+  //     });
+  // };
+
+  const confirmDelete = async () => {
+    console.log("Attempting to delete skills:", skillToDelete);
+
+    if (!skillToDelete || skillToDelete.length === 0) {
+      toast.error("No skills selected for deletion.");
+      return;
+    }
 
     setLoader(true);
-    deleteSkill({ _id: skillToDelete._id })
-      .then((res: { success: any; message: any }) => {
-        if (res?.success) {
-          toast.success(res?.message || "Skill deleted successfully");
-          fetchSkills();
+
+    try {
+      // If deleting multiple skills
+      if (Array.isArray(skillToDelete)) {
+        const deleteRequests = skillToDelete.map((id) =>
+          deleteSkill({ _id: id })
+        );
+
+        // Wait for all delete requests to finish
+        const results = await Promise.all(deleteRequests);
+
+        const allSuccess = results.every((res) => res?.success);
+        if (allSuccess) {
+          toast.success("Skills deleted successfully");
         } else {
-          toast.error(res?.message || "Failed to delete skill");
+          toast.error("Some skills could not be deleted.");
         }
-      })
-      .catch((error: any) => {
-        toast.error("Something went wrong!");
-        console.error(error);
-      })
-      .finally(() => {
-        setLoader(false);
-        setShowDeleteModal(false);
-        setSkillToDelete(null);
-      });
+      }
+      // If deleting a single skill
+      else if (skillToDelete._id) {
+        const res = await deleteSkill({ _id: skillToDelete._id });
+        if (res?.success) {
+          toast.success("Skill deleted successfully");
+        } else {
+          toast.error("Failed to delete skill");
+        }
+      }
+
+      fetchSkills(); // Refresh data
+    } catch (error) {
+      toast.error("Something went wrong!");
+      console.error(error);
+    } finally {
+      setLoader(false);
+      setShowDeleteModal(false);
+      setSkillToDelete([]);
+      setSelectedSkills([]);
+    }
+  };
+
+  const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.checked) {
+      setSelectedSkills(skills.map((skill) => skill._id)); // Select all
+    } else {
+      setSelectedSkills([]); // Unselect all
+    }
+  };
+
+  const handleSelectApplicant = (skillId: string) => {
+    setSelectedSkills(
+      (prev) =>
+        prev.includes(skillId)
+          ? prev.filter((id) => id !== skillId) // Unselect if already selected
+          : [...prev, skillId] // Add to selected list
+    );
+  };
+
+  const handleDeleteAll = () => {
+    if (selectedSkills.length > 1) {
+      setSkillToDelete([...selectedSkills]);
+      setShowDeleteModal(true);
+    }
   };
 
   const columns = useMemo(
     () => [
+      {
+        header: (
+          <input
+            type="checkbox"
+            onChange={handleSelectAll}
+            checked={
+              selectedSkills.length === skills.length && skills.length > 0
+            }
+          />
+        ),
+        accessorKey: "select",
+        cell: (info: any) => (
+          <input
+            type="checkbox"
+            checked={selectedSkills.includes(info.row.original._id)}
+            onChange={() => handleSelectApplicant(info.row.original._id)}
+          />
+        ),
+        enableColumnFilter: false,
+      },
       {
         header: "Sr.no",
         cell: getSerialNumber,
@@ -157,7 +252,7 @@ const AddSkill = () => {
         ),
       },
     ],
-    []
+    [selectedSkills, skills]
   );
 
   const [loader, setLoader] = useState(false);
@@ -299,6 +394,13 @@ const AddSkill = () => {
     }
   };
 
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchAll(event.target.value);
+  };
+
+  const filteredSkills = skills.filter((skill) =>
+    skill.skills.toLowerCase().includes(searchAll.toLowerCase())
+  );
   return (
     <Fragment>
       <DeleteModal
@@ -314,71 +416,96 @@ const AddSkill = () => {
             <Card className="mb-3 my-3">
               <CardBody>
                 <Row className="flex">
-                  <Row className="fw-bold text-dark ms-2 mt-1 h4 d-flex align-items-center">
+                  <Row className="fw-bold text-dark mt-1 h4 d-flex align-items-center">
                     <Col
                       sm={12}
                       md={12}
-                      className="d-flex justify-content-between !mb-2"
+                      className="d-flex justify-content-between ml-2 !mb-2"
                     >
                       {formTitle}
-                      <div className="d-flex justify-content-end">
-                        <input
-                          type="file"
-                          ref={fileInputRef}
-                          accept=".csv,.xlsx,.xls"
-                          style={{ display: "none" }}
-                          onChange={handleFileImport}
-                        />
-                        <BaseButton
-                          color="primary"
-                          className="mx-2 position-relative"
-                          onClick={() => fileInputRef.current?.click()}
-                          disabled={importLoader}
-                        >
-                          {importLoader ? (
-                            <>
-                              <i className="ri-loader-4-line animate-spin align-bottom me-1" />
-                              {isImporting
-                                ? `Importing... ${importProgress}%`
-                                : "Processing..."}
-                            </>
-                          ) : (
-                            <>
-                              <i className="ri-upload-2-line align-bottom me-1" />
-                              Import
-                            </>
-                          )}
-                          {isImporting && (
-                            <div
-                              className="progress position-absolute bottom-0 start-0"
-                              style={{
-                                height: "4px",
-                                width: "100%",
-                                borderRadius: "0 0 4px 4px",
-                              }}
-                            >
+                      <div className="d-flex justify-end">
+                        <div>
+                          <input
+                            id="search-bar-0"
+                            className="form-control search h-10 "
+                            placeholder="Search..."
+                            onChange={handleSearchChange}
+                            value={searchAll}
+                          />
+                        </div>
+                        {selectedSkills.length > 1 && (
+                          <BaseButton
+                            className="btn text-lg bg-danger edit-list ml-2 w-fit border-0"
+                            onClick={handleDeleteAll}
+                          >
+                            <i className="ri-delete-bin-fill align-bottom" />
+                            <ReactTooltip
+                              place="bottom"
+                              variant="error"
+                              content="Delete"
+                              anchorId={`Delete ${selectedSkills.length} Emails`}
+                            />
+                          </BaseButton>
+                        )}
+                        <div className="d-flex justify-content-end">
+                          <input
+                            type="file"
+                            ref={fileInputRef}
+                            accept=".csv,.xlsx,.xls"
+                            style={{ display: "none" }}
+                            onChange={handleFileImport}
+                          />
+                          <BaseButton
+                            color="primary"
+                            className="mx-2 position-relative"
+                            onClick={() => fileInputRef.current?.click()}
+                            disabled={importLoader}
+                          >
+                            {importLoader ? (
+                              <>
+                                <i className="ri-loader-4-line animate-spin align-bottom me-1" />
+                                {isImporting
+                                  ? `Importing... ${importProgress}%`
+                                  : "Processing..."}
+                              </>
+                            ) : (
+                              <>
+                                <i className="ri-upload-2-line align-bottom me-1" />
+                                Import
+                              </>
+                            )}
+                            {isImporting && (
                               <div
-                                className="progress-bar"
-                                role="progressbar"
-                                style={{ width: `${importProgress}%` }}
-                                aria-valuenow={importProgress}
-                                aria-valuemin={0}
-                                aria-valuemax={100}
-                              />
-                            </div>
-                          )}
-                        </BaseButton>
-                        <BaseButton
-                          color="success"
-                          disabled={loader}
-                          type="submit"
-                          loader={loader}
-                          // className="ms-3 px-5 border rounded-5"
-                          onClick={handleOpenBaseModal}
-                        >
-                          <i className="ri-add-line align-bottom me-1" />
-                          {submitButtonText}
-                        </BaseButton>
+                                className="progress position-absolute bottom-0 start-0"
+                                style={{
+                                  height: "4px",
+                                  width: "100%",
+                                  borderRadius: "0 0 4px 4px",
+                                }}
+                              >
+                                <div
+                                  className="progress-bar"
+                                  role="progressbar"
+                                  style={{ width: `${importProgress}%` }}
+                                  aria-valuenow={importProgress}
+                                  aria-valuemin={0}
+                                  aria-valuemax={100}
+                                />
+                              </div>
+                            )}
+                          </BaseButton>
+                          <BaseButton
+                            color="success"
+                            disabled={loader}
+                            type="submit"
+                            loader={loader}
+                            // className="ms-3 px-5 border rounded-5"
+                            onClick={handleOpenBaseModal}
+                          >
+                            <i className="ri-add-line align-bottom me-1" />
+                            {submitButtonText}
+                          </BaseButton>
+                        </div>{" "}
                       </div>
                     </Col>
                   </Row>
@@ -428,7 +555,7 @@ const AddSkill = () => {
                             <TableContainer
                               isHeaderTitle="Skills"
                               columns={columns}
-                              data={skills}
+                              data={filteredSkills}
                               // isGlobalFilter={true}
                               customPageSize={10}
                               theadClass="table-light text-muted"
@@ -437,7 +564,7 @@ const AddSkill = () => {
                               pagination={pagination}
                               setPagination={setPagination}
                               loader={loader}
-                              customPadding="0.3rem 1.75rem"
+                              customPadding="0.3rem 1.5rem"
                             />
                           ) : (
                             <div className="py-4 text-center">

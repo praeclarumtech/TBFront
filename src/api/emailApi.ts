@@ -17,6 +17,9 @@ export const viewAllEmail = async (params: {
   pageSize: number;
   startDate?: string;
   endDate?: string;
+  limit?:number;
+  search?: string;
+  appliedSkills?:string;
 }) => {
   const response = await authServices.get(`${VIEW_ALL_EMAIL}`, { params });
   return response?.data;

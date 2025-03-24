@@ -12,6 +12,37 @@ import Skeleton from "react-loading-skeleton";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
+// Custom plugin to render text in the center
+const centerTextPlugin = {
+  id: "centerText",
+  beforeDraw: (chart: any) => {
+    const { width, height, ctx } = chart;
+    ctx.save();
+
+    const text = "Technology wise\nApplicants"; // Add a line break for better formatting
+    const fontSize = Math.min(width / 18, height / 9, 18);
+
+    ctx.font = `600 ${fontSize}px Arial`; 
+    ctx.textBaseline = "middle";
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#000"; // Slightly darker for better visibility
+
+    const textX = width / 2;
+    const textY = height / 2 - fontSize * 0.6;
+
+    const lines = text.split("\n");
+    lines.forEach((line, index) => {
+      ctx.fillText(
+        line,
+        textX,
+        textY + (index - (lines.length - 1) / 2) * fontSize * 1.2
+      );
+    });
+
+    ctx.restore();
+  },
+};
+
 const DounutChart = () => {
   const [skillStatistics, setSkillStatistics] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -27,7 +58,6 @@ const DounutChart = () => {
       setSkillStatistics(data.data);
       console.log(data);
     } catch (error) {
-      // setError("Failed to load applicants");
       console.error("API Error:", error);
     } finally {
       setIsLoading(false);
@@ -36,9 +66,9 @@ const DounutChart = () => {
 
   const formatLabel = (text: string) => {
     return text
-      .replace(/Applicants$/, "") // Removes Applicants From end
-      .replace(/([A-Z])/g, " $1") // Add space before uppercase letters
-      .replace(/^./, (str: string) => str.toUpperCase()) // Capitalize first letter
+      .replace(/Applicants$/, "")
+      .replace(/([A-Z])/g, " $1")
+      .replace(/^./, (str: string) => str.toUpperCase())
       .trim();
   };
 
@@ -87,7 +117,11 @@ const DounutChart = () => {
         <Skeleton height={300} width={300} borderRadius="50%" />
       ) : (
         <div className="w-full h-[350px] flex items-center justify-center">
-          <Doughnut data={data} options={options} />
+          <Doughnut
+            data={data}
+            options={options}
+            plugins={[centerTextPlugin]}
+          />
         </div>
       )}
     </div>
