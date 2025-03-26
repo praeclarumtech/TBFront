@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Modal, Spin, Badge, Card, Row, Col, Tag } from "antd";
 import { getApplicantDetails } from "api/applicantApi";
@@ -213,6 +212,8 @@ const ViewModal: React.FC<ViewModalProps> = ({ show, onHide, applicantId }) => {
                       : "-"
                   }
                 /> */}
+              </Col>
+              <Col span={12}>
                 <DetailsRow
                   label="Date of Birth"
                   value={
@@ -228,8 +229,6 @@ const ViewModal: React.FC<ViewModalProps> = ({ show, onHide, applicantId }) => {
                       : "-"
                   }
                 />
-              </Col>
-              <Col span={12}>
                 <DetailsRow
                   label="Marital Status"
                   value={
@@ -256,35 +255,31 @@ const ViewModal: React.FC<ViewModalProps> = ({ show, onHide, applicantId }) => {
                     formData.country ? capitalizeWords(formData.country) : "-"
                   }
                 />
-                <DetailsRow
-                  label="Current Address"
-                  value={
-                    formData.currentAddress
-                      ? capitalizeWords(formData.currentAddress)
-                      : "-"
-                  }
-                />
-                <DetailsRow
-                  label="Permanent Address "
-                  value={
-                    formData.permanentAddress
-                      ? capitalizeWords(formData.permanentAddress)
-                      : "-"
-                  }
-                />
-                {/* <DetailsRow
-                  label="Home Pincode"
-                  value={
-                    formData.homePincode ? (
-                      <Tag color="purple">
-                        {formData.homePincode.toString()}
-                      </Tag>
-                    ) : (
-                      "-"
-                    )
-                  }
-                /> */}
               </Col>
+              <DetailsRow
+                label="Current Address"
+                value={
+                  formData.currentAddress ? (
+                    <div className="break-words whitespace-normal overflow-hidden text-ellipsis">
+                      {capitalizeWords(formData.currentAddress)}
+                    </div>
+                  ) : (
+                    "-"
+                  )
+                }
+              />
+              <DetailsRow
+                label="Permanent Address"
+                value={
+                  formData.permanentAddress ? (
+                    <div className="break-words whitespace-normal overflow-hidden text-ellipsis">
+                      {capitalizeWords(formData.permanentAddress)}
+                    </div>
+                  ) : (
+                    "-"
+                  )
+                }
+              />
             </Row>
           </DetailsCard>
 
@@ -402,7 +397,7 @@ const ViewModal: React.FC<ViewModalProps> = ({ show, onHide, applicantId }) => {
                   label="Notice Period"
                   value={`${formData.noticePeriod || "-"} days`}
                 />
-                <DetailsRow
+                {/* <DetailsRow
                   label="Skills"
                   value={
                     formData.appliedSkills.length > 0 ? (
@@ -417,7 +412,30 @@ const ViewModal: React.FC<ViewModalProps> = ({ show, onHide, applicantId }) => {
                       "-"
                     )
                   }
-                />
+                /> */}
+                {/* <DetailsCard title="Skills" icon={<span>💡</span>}> */}
+                <Row gutter={[16, 16]}>
+                  <Col span={24}>
+                    <DetailsRow
+                      label="Skills"
+                      value={
+                        formData.appliedSkills.length > 0 ? (
+                          <div className="flex flex-wrap py-1">
+                            {formData.appliedSkills.map((skill) => (
+                              <Tag color="cyan" key={skill}>
+                                {skill}
+                              </Tag>
+                            ))}
+                          </div>
+                        ) : (
+                          "-"
+                        )
+                      }
+                    />
+                  </Col>
+                </Row>
+                {/* </DetailsCard> */}
+
                 <DetailsRow
                   label="Other Skills"
                   value={formData.otherSkills || "-"}

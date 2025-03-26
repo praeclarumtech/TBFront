@@ -1,22 +1,21 @@
 import { getProfile } from "api/usersApi";
-import {  useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ListGroup, Dropdown, Image } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { User } from "interfaces/dashboard.interface";
 
 export const DesktopNotifications = () => {
   const navigate = useNavigate();
-// const [user, setUser] = useState({});
+  const [user, setUser] = useState<User>({ userName: "", role: "" });
 
   useEffect(() => {
-  console.log("useEffect hook called");
-  const fetchProfile = async () => {
-    const token = sessionStorage.getItem("authUser"); 
-    const response = await getProfile({ token });
-    console.log("profile1", response);
-    console.log("firstname",response?.firstname);
-  };
-  fetchProfile();
-}, []);
+    const fetchProfile = async () => {
+      const token = sessionStorage.getItem("authUser");
+      const response = await getProfile({ token });
+      setUser(response.data);
+    };
+    fetchProfile();
+  }, []);
 
   return (
     <ListGroup
@@ -45,24 +44,38 @@ export const DesktopNotifications = () => {
           aria-labelledby="dropdownUser"
           show
         >
-          <Dropdown.Item as="div" className="px-4 pb-0 pt-2" bsPrefix=" ">
+          {/* <Dropdown.Item as="div" className="px-4 pb-0 pt-2" bsPrefix=" ">
             <div className="lh-1 ">
-              <h5 className="mb-1"> John E. Grainger</h5>
+              <h5 className=" justify-center text-center">
+                {user?.userName}
+              </h5>
+              <span className="text-sm text-muted justify-center text-center">
+                {user?.role?.charAt(0)?.toUpperCase() +
+                  user?.role?.slice(1)?.toLowerCase()}
+              </span>
             </div>
             <div className=" dropdown-divider mt-3 mb-2"></div>
+          </Dropdown.Item> */}
+          <Dropdown.Item
+            as="div"
+            className="px-4 py-2 d-flex flex-column align-items-center justify-content-between"
+          >
+            <h5 className="mb-0 text-center">{user?.userName}</h5>
+            <span className="text-sm text-muted text-center">
+              {user?.role?.toUpperCase()}
+            </span>
+            <div className="dropdown-divider my-0"></div>
           </Dropdown.Item>
           <Dropdown.Item
             eventKey="2"
             onClick={() => {
-              // Clear any auth tokens/session data here if needed
-              navigate("/");
+              navigate("/dashboard");
             }}
           >
             <i className="fe fe-user me-2"></i> Edit Profile
           </Dropdown.Item>
           <Dropdown.Item
             onClick={() => {
-              // Clear any auth tokens/session data here if needed
               navigate("/");
             }}
           >

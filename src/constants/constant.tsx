@@ -155,8 +155,18 @@ const appConstants = Object.freeze({
     { label: "2028", value: 2028 },
     { label: "2029", value: 2029 },
   ],
+
   designationType: [
     { value: "Software Engineer", label: "Software Engineer" },
+    { value: "MERN Stack Developer", label: "MERN Stack Developer" },
+    { value: "MEAN Stack Developer", label: "MEAN Stack Developer" },
+    {
+      value: "DotNet Full Stack Developer",
+      label: ".NET Full Stack Developer",
+    },
+    { value: "Java Developer", label: "Java Developer" },
+    { value: "Python Developer", label: "Python Developer" },
+    { value: "PHP Developer", label: "Php Developer" },
     { value: "Frontend Developer", label: "Frontend Developer" },
     { value: "Backend Developer", label: "Backend Developer" },
     { value: "Full Stack Developer", label: "Full Stack Developer" },
@@ -172,7 +182,7 @@ const appConstants = Object.freeze({
       label: "Technical Support Engineer",
     },
     { value: "Other", label: "Other" },
-    { value: "Na", label: "Na" },
+    { value: "Na", label: "NA" },
   ],
 
   communicationOptions: [

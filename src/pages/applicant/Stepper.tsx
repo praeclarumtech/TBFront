@@ -87,6 +87,7 @@ const StepperForm = () => {
     linkedinUrl: "",
     clientCvUrl: "",
     clientFeedback: "",
+    meta:{},
   });
   const steps = [
     "Personal Details",
@@ -176,6 +177,7 @@ const StepperForm = () => {
       linkedinUrl: formData.linkedinUrl,
       clientCvUrl: formData.clientCvUrl,
       clientFeedback: formData.clientFeedback,
+      meta: formData.meta,
     };
   };
 

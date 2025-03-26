@@ -76,6 +76,7 @@ export const jobApplicantSchema = Yup.object({
     .min(1, "Please select at least one skill."),
   otherSkills: Yup.string(),
   totalExperience: Yup.string(),
+  tech: Yup.string(),
   relevantSkillExperience: Yup.string(),
   referral: Yup.string(),
   portfolioUrl: Yup.string().url("Please enter a valid portfolio URL."),
@@ -130,7 +131,8 @@ export const personalApplicantSchema = Yup.object({
   whatsappNumber: Yup.string()
     .matches(/^[0-9]{10}$/, "Please enter a valid 10-digit WhatsApp number.")
     .required("WhatsApp number is required!"),
-  currentCity: Yup.string().required("Current city is required!"),
+  currentCity: Yup.string(),
+    // .required("Current city is required!"),
   // .matches(/^[A-Za-z\s]+$/, "City name can only contain letters."),
   // currentPincode: Yup.string()
   //   .required("Current pincode is required!")

@@ -12,7 +12,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 import "react-loading-skeleton/dist/skeleton.css";
 import {
-  deleteApplicant,
+  // deleteApplicant,
   // listOfApplicants,
   listOfImportApplicants,
   updateStage,
@@ -20,6 +20,7 @@ import {
   importApplicant,
   ExportApplicant,
   resumeUpload,
+  deleteMultipleApplicant,
 } from "api/applicantApi";
 
 import ViewModal from "../ViewApplicant";
@@ -30,7 +31,10 @@ import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
 
-import { SelectedOption, SelectedOption1 } from "interfaces/applicant.interface";
+import {
+  SelectedOption,
+  SelectedOption1,
+} from "interfaces/applicant.interface";
 import {
   dynamicFind,
   errorHandle,
@@ -44,6 +48,7 @@ import saveAs from "file-saver";
 import BasePopUpModal from "components/BaseComponents/BasePopUpModal";
 import { ViewAppliedSkills } from "api/skillsApi";
 import { FaExclamationTriangle } from "react-icons/fa";
+import debounce from "lodash.debounce";
 // import toast from "react-hot-toast";
 const {
   projectTitle,
@@ -69,16 +74,20 @@ function ImportApplicant() {
   const [selectedApplicantId, setSelectedApplicantId] = useState<string | null>(
     null
   );
+  const [multipleApplicantDelete, setMultipleApplicantsDelete] = useState<
+    string[]
+  >([]);
   const [showModal, setShowModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [recordIdToDelete, setRecordIdToDelete] = useState<string | undefined>(
-    undefined
-  );
+  // const [recordIdToDelete, setRecordIdToDelete] = useState<string | undefined>(
+  //   undefined
+  // );
   const [experienceRange, setExperienceRange] = useState<number[]>([0, 25]);
 
   const [filterNoticePeriod, setFilterNoticePeriod] = useState<number[]>([
     0, 90,
   ]);
+  const [searchAll, setSearchAll] = useState<string>("");
   // const [uploadedFile, setUploadedFile] = useState<FormData | null>(null);
   const [uploadedFile, setUploadedFile] = useState<FormData | null>(null);
   // const [uploadedFile, setUploadedFile] = useState<File | null>(null);
@@ -166,7 +175,7 @@ function ImportApplicant() {
         communicationSkill?: string;
         currentPkg?: string;
         applicantName?: string;
-        searchSkills?: string;
+        searchS?: string;
       } = {
         page: pagination.pageIndex + 1,
         pageSize: pagination.pageSize,
@@ -231,6 +240,11 @@ function ImportApplicant() {
       if (filterGender) {
         params.gender = filterGender.value;
       }
+      const searchValue = searchAll?.trim();
+      if (searchValue) {
+        params.searchS = searchValue;
+        params.appliedSkills = searchValue;
+      }
 
       const res = await listOfImportApplicants(params);
       setApplicant(res?.data?.item || []);
@@ -244,7 +258,11 @@ function ImportApplicant() {
   };
 
   useEffect(() => {
-    fetchApplicants();
+    const delayedSearch = debounce(() => {
+      fetchApplicants();
+    }, 0);
+    delayedSearch();
+    return () => delayedSearch.cancel();
   }, [
     pagination.pageIndex,
     pagination.pageSize,
@@ -328,11 +346,8 @@ function ImportApplicant() {
   //   setAppliedSkills(selectedOptions);
   // };
   const handleAppliedSkillsChange = (selectedOptions: SelectedOption1[]) => {
-     
-      setAppliedSkills(selectedOptions);
-  
-     
-    };
+    setAppliedSkills(selectedOptions);
+  };
 
   const handleCityChange = (selectedOption: SelectedOption) => {
     setFilterCity(selectedOption);
@@ -363,6 +378,9 @@ function ImportApplicant() {
 
   const handleDesignationChange = (selectedOption: SelectedOption) => {
     SetFilterDesignation(selectedOption);
+  };
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchAll(event.target.value);
   };
   const handleDateChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -413,35 +431,66 @@ function ImportApplicant() {
     );
   };
 
-  const openDeleteModal = (id: string) => {
-    setRecordIdToDelete(id);
-    setShowDeleteModal(true);
-  };
+const handleDeleteSingle = (applicantId: string) => {
+  setMultipleApplicantsDelete([applicantId]); // Set the array with the single applicant ID
+  setShowDeleteModal(true); // Show the modal for confirmation
+};
+
 
   const closeDeleteModal = () => {
     setShowDeleteModal(false);
   };
 
-  const handleDelete = () => {
-    if (recordIdToDelete) {
-      deleteApplicantDetails(recordIdToDelete);
+ 
+  const handleDeleteAll = () => {
+    if (selectedApplicants.length > 0) {
+      setMultipleApplicantsDelete(selectedApplicants);
+      setShowDeleteModal(true);
     }
   };
 
-  const deleteApplicantDetails = (_id: string | undefined | null) => {
-    setLoader(true);
-    deleteApplicant(_id)
-      .then(() => {
-        fetchApplicants();
-      })
-      .catch((error: any) => {
-        errorHandle(error);
-      })
-      .finally(() => {
-        setLoader(false);
-        setShowDeleteModal(false);
-      });
+
+
+  // const handleDelete = (recordIdToDelete: any) => {
+  //   if (recordIdToDelete) {
+  //     deleteApplicantDetails(recordIdToDelete);
+  //   } else if (selectedApplicants.length > 0) {
+  //     deleteMultipleApplicantDetails(selectedApplicants);
+  //   }
+  // };
+
+ const deleteMultipleApplicantDetails = (
+   multipleApplicantDelete: string[] | undefined | null
+ ) => {
+   setLoader(true);
+   deleteMultipleApplicant(multipleApplicantDelete)
+     .then(() => {
+       fetchApplicants(); // Refetch applicants after deletion
+       setSelectedApplicants([]); // Clear the selected applicants
+     })
+     .catch((error: any) => {
+       errorHandle(error); // Handle any errors
+     })
+     .finally(() => {
+       setLoader(false); // Hide loader
+       setShowDeleteModal(false); // Close the delete modal
+     });
   };
+  
+  // const deleteApplicantDetails = (_id: string | undefined | null) => {
+  //   setLoader(true);
+  //   deleteApplicant(_id)
+  //     .then(() => {
+  //       fetchApplicants();
+  //     })
+  //     .catch((error: any) => {
+  //       errorHandle(error);
+  //     })
+  //     .finally(() => {
+  //       setLoader(false);
+  //       setShowDeleteModal(false);
+  //     });
+  // };
 
   const handleView = (id: string) => {
     setSelectedApplicantId(id);
@@ -507,8 +556,9 @@ function ImportApplicant() {
     //  const fileExtension = file && file.name.split(".").pop()?.toLowerCase();
     const fileExtension = file?.name?.split(".").pop()?.toLowerCase() ?? "";
     if (["csv", "xlsx", "xls"].includes(fileExtension ?? "")) {
+      console.log("my functin csv called");
       handleFileImport(e);
-    } else if (["doc", "pdf"].includes(fileExtension ?? "")) {
+    } else if (["doc", "pdf","docx"].includes(fileExtension ?? "")) {
       const newEvent = {
         target: {
           files: [file],
@@ -518,85 +568,13 @@ function ImportApplicant() {
     }
   };
 
-  //  const handleResumeUpload = async (
-  //   event: React.ChangeEvent<HTMLInputElement>
-  // ) => {
-  //   const file = event.target.files?.[0];
-  //   if (!file) return;
-  //   const fileExtension = file.name.split(".").pop()?.toLowerCase();
-  //   if (!["doc", "pdf"].includes(fileExtension || "")) {
-  //     toast.error("Please upload a valid Pdf or doc file");
-  //     return;
-  //   }
-
-  //   if (file.size > 5 * 1024 * 1024) {
-  //     // 5MB
-  //     toast(
-  //       "Large file detected. Import may take a few minutes."
-  //       // , {
-  //       // icon: "⚠️",
-  //       // duration: 4000,
-  //       // }
-  //     );
-  //   }
-
-  //   setImportLoader(true);
-  //   setIsImporting(true);
-  //   setImportProgress(0);
-
-  //   try {
-  //     const formData = new FormData();
-  //     formData.append("resume", file);
-
-  //     const response = await resumeUpload(formData, {
-
-  //       onUploadProgress: (progressEvent) => {
-  //         const progress = Math.round(
-  //           (progressEvent.loaded * 100) / (progressEvent.total || 100)
-  //         );
-  //         setImportProgress(progress);
-  //       },
-  //     });
-  //     console.log(response);
-  //     if (response?.success) {
-  //       toast.success(response?.message || "File imported successfully!");
-  //       // await fetchSkills();
-  //     } else {
-  //       throw new Error(response?.message || "Import failed");
-  //     }
-  //   } catch (error: any) {
-  //     console.error("Import error:", error);
-
-  //     if (error.response?.data) {
-  //       // Handle structured API errors
-  //       const errorMessage =
-  //         error.response.data.message || error.response.data.error;
-  //       toast.error(errorMessage || "Failed to import file");
-  //     } else if (error.message) {
-  //       // Handle other errors with messages
-  //       toast.error(error.message);
-  //     } else {
-  //       // Generic error
-  //       toast.error("An unexpected error occurred during import");
-  //     }
-  //   } finally {
-  //     // Reset states
-  //     setImportLoader(false);
-  //     setIsImporting(false);
-  //     setImportProgress(0);
-  //     if (fileInputRef.current) {
-  //       fileInputRef.current.value = "";
-  //     }
-  //   }
-  // };
-
   const handleResumeUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const file = event.target.files?.[0];
     if (!file) return;
     const fileExtension = file.name.split(".").pop()?.toLowerCase();
-    if (!["doc", "pdf"].includes(fileExtension || "")) {
+    if (!["doc", "pdf","docx"].includes(fileExtension || "")) {
       toast.error("Please upload a valid Pdf or doc file");
       return;
     }
@@ -636,7 +614,7 @@ function ImportApplicant() {
         throw new Error(response?.message || "Import failed");
       }
     } catch (error: any) {
-      // console.error("Import error:", error);
+      console.error("Import error:", error);
       errorHandle(error);
 
       if (error.response?.data) {
@@ -661,67 +639,32 @@ function ImportApplicant() {
       }
     }
   };
-
-  // const handleFileImport = async (
-  //   event: React.ChangeEvent<HTMLInputElement>
-  // ) => {
-  //   const file = event.target.files?.[0];
-  //   if (!file) return;
-
-  //   const fileExtension = file.name.split(".").pop()?.toLowerCase();
-  //   if (!["csv", "xlsx", "xls"].includes(fileExtension || "")) {
-  //     toast.error("Please upload a valid CSV or Excel file");
-  //     return;
-  //   }
-
-  //   if (file.size > 5 * 1024 * 1024) {
-  //     // 5MB
-  //     toast("Large file detected. Import may take a few minutes.", {
-  //       // icon: "⚠️",
-  //       icon: <FaExclamationTriangle />,
-  //       // duration: 4000,
-  //       autoClose: 4000,
-  //     });
-  //   }
-
-  //   setImportLoader(true);
-  //   setIsImporting(true);
-  //   setImportProgress(0);
-
-  //   try {
-  //     const formData = new FormData();
-  //     formData.append("csvFile", file);
-  //     setUploadedFile(formData);
-
-  //     const response = await importApplicant(formData, {
-  //       onUploadProgress: (progressEvent) => {
-  //         const progress = Math.round(
-  //           (progressEvent.loaded * 100) / (progressEvent.total || 100)
-  //         );
-  //         setImportProgress(progress);
-  //       },
-  //     });
-  //     console.log("API Response:", response);
-  //     if (response?.success) {
-  //       toast.success(response?.message || "File imported successfully!");
-  //     } else if (!response?.success && response.statusCode === 409) {
-  //       setShowPopupModal(true);
-  //     } else {
-  //       throw new Error(response?.message || "Import failed");
-  //     }
-  //   } catch (error: any) {
-  //     console.error("Import error:", error);
-  //     toast.error(error.message || "Failed to import file");
-  //   } finally {
-  //     fetchApplicants();
-  //     setImportLoader(false);
-  //     setIsImporting(false);
-  //     setImportProgress(0);
-  //     if (fileInputRef.current) {
-  //       fileInputRef.current.value = "";
-  //     }
-  //   }
-  // };
+  const filteredApplicant = applicant.filter((applicants) => {
+    const searchTerm = searchAll.toLowerCase();
+    // Construct full name
+    // const nameObj = applicants.name || {};
+    // const firstName = nameObj.firstName || "";
+    // const middleName = nameObj.middleName || "";
+    // const lastName = nameObj.lastName || "";
+    // const fullName = `${firstName} ${middleName} ${lastName}`
+    // .trim()
+    // .toLowerCase();
+    return (
+      // fullName.includes(searchTerm) || // ✅ Search by full name
+      applicants?.name?.firstName?.toLowerCase().includes(searchTerm) ||
+      applicants?.name?.middleName?.toLowerCase().includes(searchTerm) ||
+      applicants?.name?.lastName?.toLowerCase().includes(searchTerm) ||
+      applicants.subject?.toLowerCase().includes(searchTerm) ||
+      applicants.interviewStage?.toLowerCase().includes(searchTerm) ||
+      applicants.status?.toLowerCase().includes(searchTerm) ||
+      applicants.totalExperience?.toString().includes(searchTerm) ||
+      applicants.totalExperience?.toString().includes(searchTerm) ||
+      (Array.isArray(applicants.appliedSkills) &&
+        applicants.appliedSkills.some((skill: string) =>
+          skill.toLowerCase().includes(searchTerm)
+        ))
+    );
+  });
 
   const handleFileImport = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -734,13 +677,10 @@ function ImportApplicant() {
       toast.error("Please upload a valid CSV or Excel file");
       return;
     }
-
     if (file.size > 5 * 1024 * 1024) {
       // 5MB
       toast("Large file detected. Import may take a few minutes.", {
-        // icon: "⚠️",
         icon: <FaExclamationTriangle />,
-        // duration: 4000,
         autoClose: 4000,
       });
     }
@@ -753,6 +693,7 @@ function ImportApplicant() {
       const formData = new FormData();
       formData.append("csvFile", file);
       setUploadedFile(formData);
+      // console.log("Uploaded file:", formData.get("csvFile"));
 
       const response = await importApplicant(formData, {
         onUploadProgress: (progressEvent) => {
@@ -762,17 +703,22 @@ function ImportApplicant() {
           setImportProgress(progress);
         },
       });
-      // console.log("API Response:", response);
+
+      console.log("API Response:", response);
+
       if (response?.success) {
         toast.success(response?.message || "File imported successfully!");
       } else if (!response?.success && response.statusCode === 409) {
         setShowPopupModal(true);
+
+        toast.error(response.message || "Import failed");
       } else {
-        throw new Error(response?.message || "Import failed");
+        toast.error("Unknown error occurred during import");
       }
     } catch (error: any) {
-      console.error("Import error:", error);
-      toast.error(error.message || "Failed to import file");
+      // console.error("Import error:", error);
+
+      toast.error(error?.message || "Failed to import file");
     } finally {
       fetchApplicants();
       setImportLoader(false);
@@ -831,16 +777,6 @@ function ImportApplicant() {
   const handleModalCancel = () => {
     setShowPopupModal(false);
   };
-
-  // useEffect(() => {
-  //   console.log("Is modal open?", showPopupModal);
-  // }, [showPopupModal]);
-
-  // useEffect(() => {
-  //   handleFileImport
-  // }, []);
-
-  console.log("Is modal open?", showPopupModal);
 
   const handleExportExcel = async () => {
     try {
@@ -1266,14 +1202,14 @@ function ImportApplicant() {
               id={`delete-${cell?.row?.original?.id}`}
               className="btn btn-sm btn-soft-danger remove-list"
               color="danger"
-              onClick={() => openDeleteModal(cell.row.original._id)}
+              onClick={() => handleDeleteSingle(cell.row.original._id)} // Call the single delete function
             >
               <i className="ri-delete-bin-5-fill align-bottom" />
               <ReactTooltip
                 place="bottom"
                 variant="error"
                 content="Delete"
-                anchorId={`delete-${cell?.row?.original?.id}`}
+                anchorId={`delete-${cell?.row?.original?._id}`}
               />
             </BaseButton>
 
@@ -1305,7 +1241,7 @@ function ImportApplicant() {
   return (
     <Fragment>
       <BasePopUpModal
-        isOpen={showPopupModal} // Ensure this is true when there are duplicates
+        isOpen={showPopupModal}
         onRequestClose={() => setShowPopupModal(false)} // Close the modal
         title="Duplicate Records Found"
         message="Do you want to update the existing applicants?"
@@ -1322,13 +1258,19 @@ function ImportApplicant() {
           applicantId={selectedApplicantId}
         />
       )}
+
       <DeleteModal
         show={showDeleteModal}
         onCloseClick={closeDeleteModal}
-        onDeleteClick={handleDelete}
+        onDeleteClick={() =>
+          multipleApplicantDelete.length >= 1
+            ? deleteMultipleApplicantDetails(multipleApplicantDelete)
+            : null
+        }
         // recordId={recordIdToDelete}
         loader={loader}
       />
+
       <Container fluid>
         <Row>
           <div>
@@ -1353,11 +1295,21 @@ function ImportApplicant() {
                         {drawerList("right")}
                       </Drawer>
                     </div>
+                    <div className="col-auto d-flex justify-content-end flex-wrap mr-2">
+                      <div>
+                        <input
+                          id="search-bar-0"
+                          className="form-control search h-10"
+                          placeholder="Search..."
+                          onChange={handleSearchChange}
+                          value={searchAll}
+                        />
+                      </div>
 
-                    <div className="col-auto d-flex justify-content-end mx-0 flex-wrap">
-                      {selectedApplicants.length > 0 && (
-                        <>
-                          {/* <BaseButton
+                      <div className="col-auto d-flex justify-content-end mx-0 flex-wrap">
+                        {selectedApplicants.length > 0 && (
+                          <>
+                            {/* <BaseButton
                              className="btn btn-lg btn-soft-secondary bg-green-900 edit-list mx-1 px-3"
                              onClick={handleSendWhatsApp}
                            >
@@ -1369,81 +1321,95 @@ function ImportApplicant() {
                              />
                            </BaseButton> */}
 
-                          <BaseButton
-                            className="btn text-lg btn-soft-secondary bg-primary edit-list mx-1 "
-                            onClick={handleSendEmail}
-                          >
-                            <i className="ri-mail-close-line align-bottom" />
-                            <ReactTooltip
-                              place="bottom"
-                              variant="info"
-                              content="Email"
-                            />
-                          </BaseButton>
-                        </>
-                      )}
+                            <BaseButton
+                              className="btn text-lg bg-danger edit-list ml-2 w-fit border-0"
+                              onClick={handleDeleteAll}
+                            >
+                              <i className="ri-delete-bin-fill align-bottom" />
+                              <ReactTooltip
+                                place="bottom"
+                                variant="error"
+                                content="Delete"
+                                anchorId={`Delete ${selectedApplicants.length} Emails`}
+                              />
+                            </BaseButton>
 
-                      <input
-                        type="file"
-                        ref={fileInputRef}
-                        accept=".csv,.xlsx,.xls,.xls,doc,pdf"
-                        style={{ display: "none" }}
-                        onChange={handleFileChange}
-                        disabled={isImporting}
-                      />
-                      <BaseButton
-                        color="primary"
-                        className="mx-2 position-relative"
-                        onClick={() => fileInputRef.current?.click()}
-                        disabled={importLoader}
-                      >
-                        {importLoader ? (
-                          <>
-                            <i className="ri-loader-4-line animate-spin align-bottom me-1" />
-                            {isImporting
-                              ? `Importing... ${importProgress}%`
-                              : "Processing..."}
-                          </>
-                        ) : (
-                          <>
-                            <i className="ri-download-2-line align-bottom me-1" />
-                            Import
+                            <BaseButton
+                              className="btn text-lg btn-soft-secondary bg-primary edit-list mx-1 "
+                              onClick={handleSendEmail}
+                            >
+                              <i className="ri-mail-close-line align-bottom" />
+                              <ReactTooltip
+                                place="bottom"
+                                variant="info"
+                                content="Email"
+                              />
+                            </BaseButton>
                           </>
                         )}
-                        {isImporting && (
-                          <div
-                            className="progress position-absolute bottom-0 start-0"
-                            style={{
-                              height: "4px",
-                              width: "100%",
-                              borderRadius: "0 0 4px 4px",
-                            }}
-                          >
+
+                        <input
+                          type="file"
+                          ref={fileInputRef}
+                          accept=".csv,.xlsx,.xls,.xls,.doc,.pdf,.docx"
+                          style={{ display: "none" }}
+                          onChange={handleFileChange}
+                          disabled={isImporting}
+                        />
+                        <BaseButton
+                          color="primary"
+                          className="mx-2 position-relative"
+                          onClick={() => fileInputRef.current?.click()}
+                          disabled={importLoader}
+                        >
+                          {importLoader ? (
+                            <>
+                              <i className="ri-loader-4-line animate-spin align-bottom me-1" />
+                              {isImporting
+                                ? `Importing... ${importProgress}%`
+                                : "Processing..."}
+                            </>
+                          ) : (
+                            <>
+                              <i className="ri-download-2-line align-bottom me-1" />
+                              Import
+                            </>
+                          )}
+                          {isImporting && (
                             <div
-                              className="progress-bar"
-                              role="progressbar"
-                              style={{ width: `${importProgress}%` }}
-                              aria-valuenow={importProgress}
-                              aria-valuemin={0}
-                              aria-valuemax={100}
-                            />
-                          </div>
-                        )}
-                      </BaseButton>
-                      <BaseButton
-                        color="primary"
-                        className="btn btn-soft-secondary bg-green-900 edit-list "
-                        onClick={handleExportExcel}
-                        // disabled={exportLoader}
-                      >
-                        <i className="ri-upload-2-line align-bottom me-1" />
-                        Export
-                      </BaseButton>
+                              className="progress position-absolute bottom-0 start-0"
+                              style={{
+                                height: "4px",
+                                width: "100%",
+                                borderRadius: "0 0 4px 4px",
+                              }}
+                            >
+                              <div
+                                className="progress-bar"
+                                role="progressbar"
+                                style={{ width: `${importProgress}%` }}
+                                aria-valuenow={importProgress}
+                                aria-valuemin={0}
+                                aria-valuemax={100}
+                              />
+                            </div>
+                          )}
+                        </BaseButton>
+                        <BaseButton
+                          color="primary"
+                          className="btn btn-soft-secondary bg-green-900 edit-list "
+                          onClick={handleExportExcel}
+                          // disabled={exportLoader}
+                        >
+                          <i className="ri-upload-2-line align-bottom me-1" />
+                          Export
+                        </BaseButton>
 
-                      {/* <BaseButton color="success" onClick={handleNavigate}>
+                        {/* <BaseButton color="success" onClick={handleNavigate}>
                         <i className="ri-add-line align-bottom me-1" />
                         Add
                       </BaseButton> */}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1461,14 +1427,15 @@ function ImportApplicant() {
                     <Skeleton count={5} />
                   </div>
                 ) : (
-                  <div>
+                  <div className="card-body pt-4">
                     {applicant.length > 0 ? (
+                      // />
                       <TableContainer
                         isHeaderTitle="Import Applicants"
                         columns={columns}
-                        data={applicant}
-                        isGlobalFilter
-                        customPageSize={10}
+                        data={filteredApplicant}
+                        // isGlobalFilter
+                        customPageSize={50}
                         theadClass="table-light text-muted"
                         SearchPlaceholder="Search..."
                         tableClass="!text-nowrap !mb-0 !responsive !table-responsive-sm !table-hover !table-outline-none !mb-0"
@@ -1551,6 +1518,7 @@ const customStyles = {
 
   menu: (provided: any) => ({
     ...provided,
+
     borderRadius: "8px",
   }),
 };
