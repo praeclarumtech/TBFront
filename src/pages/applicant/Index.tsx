@@ -10,7 +10,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "react-loading-skeleton/dist/skeleton.css";
 import {
-  deleteApplicant,
+  // deleteApplicant,
   listOfApplicants,
   updateStage,
   updateStatus,
@@ -50,14 +50,11 @@ import { Close } from "@mui/icons-material";
 const {
   projectTitle,
   Modules,
-
   interviewStageOptions,
-
   statusOptions,
   gendersType,
   stateType,
   anyHandOnOffers,
-
   workPreferenceType,
   designationType,
 } = appConstants;
@@ -73,9 +70,9 @@ const Applicant = () => {
   );
   const [showModal, setShowModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [recordIdToDelete, setRecordIdToDelete] = useState<string | undefined>(
-    undefined
-  );
+  // const [recordIdToDelete, setRecordIdToDelete] = useState<string | undefined>(
+  //   undefined
+  // );
   const [experienceRange, setExperienceRange] = useState<number[]>([0, 25]);
 
   const [filterNoticePeriod, setFilterNoticePeriod] = useState<number[]>([
@@ -140,7 +137,7 @@ const Applicant = () => {
 
   const fetchApplicants = async () => {
     setTableLoader(true);
-    setLoader(true);
+    // setLoader(true);
 
     try {
       const params: {
@@ -247,7 +244,7 @@ const Applicant = () => {
       errorHandle(error);
     } finally {
       setTableLoader(false);
-      setLoader(false);
+      // setLoader(false);
     }
   };
 
@@ -436,6 +433,13 @@ const Applicant = () => {
     }
   };
 
+  // const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   if (event.target.checked) {
+  //     setSelectedApplicants(applicant.map((app) => app._id));
+  //   } else {
+  //     setSelectedApplicants([]);
+  //   }
+  // };
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
       setSelectedApplicants(applicant.map((app) => app._id));
@@ -444,6 +448,13 @@ const Applicant = () => {
     }
   };
 
+  // const handleSelectApplicant = (applicantId: string) => {
+  //   setSelectedApplicants((prev) =>
+  //     prev.includes(applicantId)
+  //       ? prev.filter((id) => id !== applicantId)
+  //       : [...prev, applicantId]
+  //   );
+  // };
   const handleSelectApplicant = (applicantId: string) => {
     setSelectedApplicants((prev) =>
       prev.includes(applicantId)
@@ -452,62 +463,66 @@ const Applicant = () => {
     );
   };
 
-  const openDeleteModal = (id: string) => {
-    setRecordIdToDelete(id);
-    setShowDeleteModal(true);
-  };
+const handleDeleteSingle = (applicantId: string) => {
+  setMultipleApplicantsDelete([applicantId]); // Set the array with the single applicant ID
+  setShowDeleteModal(true); // Show the modal for confirmation
+};
+
+
 
   const closeDeleteModal = () => {
     setShowDeleteModal(false);
   };
 
-  const handleDelete = (recordIdToDelete : any) => {
-    if (recordIdToDelete) {
-      deleteApplicantDetails(recordIdToDelete);
-    }
-  };
+  
+  // const handleDelete = (recordIdToDelete: string) => {
+  //   if (recordIdToDelete) {
+  //     deleteApplicantDetails(recordIdToDelete);
+  //   }
+  // };
 
   const handleDeleteAll = () => {
     if (selectedApplicants.length > 0) {
-      setMultipleApplicantsDelete(selectedApplicants);
-      setShowDeleteModal(true);
+      setMultipleApplicantsDelete(selectedApplicants); // Set the selected applicants for deletion
+      setShowDeleteModal(true); // Show the modal for confirmation
     }
   };
 
-  const deleteMultipleApplicantDetails = (
-    multipleApplicantDelete: string[] | undefined | null
-  ) => {
-    setLoader(true);
-    deleteMultipleApplicant(multipleApplicantDelete)
-      .then(() => {
-        console.log("deleteddddd",multipleApplicantDelete)
-        fetchApplicants();
-        setSelectedApplicants([]);
-      })
-      .catch((error: any) => {
-        errorHandle(error);
-      })
-      .finally(() => {
-        setLoader(false);
-        setShowDeleteModal(false);
-      });
-  };
+ 
+ const deleteMultipleApplicantDetails = (
+   multipleApplicantDelete: string[] | undefined | null
+ ) => {
+   setLoader(true);
+   deleteMultipleApplicant(multipleApplicantDelete)
+     .then(() => {
+       fetchApplicants(); // Refetch applicants after deletion
+       setSelectedApplicants([]); // Clear the selected applicants
+     })
+     .catch((error: any) => {
+       errorHandle(error); // Handle any errors
+     })
+     .finally(() => {
+       setLoader(false); // Hide loader
+       setShowDeleteModal(false); // Close the delete modal
+     });
+ };
 
-  const deleteApplicantDetails = (_id: string | undefined | null) => {
-    setLoader(true);
-    deleteApplicant(_id)
-      .then(() => {
-        console.log("in dedleetetee",_id)
-        fetchApplicants();
-      })
-      .catch((error: any) => {
-        errorHandle(error);
-      })
-      .finally(() => {
-        setLoader(false);
-        setShowDeleteModal(false);
-      });
-  };
+
+  // const deleteApplicantDetails = (_id: string | undefined | null) => {
+  //   setLoader(true);
+  //   deleteApplicant(_id)
+  //     .then(() => {
+  //       console.log("in dedleetetee", _id);
+  //       fetchApplicants();
+  //     })
+  //     .catch((error: any) => {
+  //       errorHandle(error);
+  //     })
+  //     .finally(() => {
+  //       setLoader(false);
+  //       setShowDeleteModal(false);
+  //     });
+  // };
 
   const handleView = (id: string) => {
     setSelectedApplicantId(id);
@@ -547,123 +562,7 @@ const Applicant = () => {
     });
   };
 
-  // const handleFileImport = async (
-  //   event: React.ChangeEvent<HTMLInputElement>
-  // ) => {
-  //   const file = event.target.files?.[0];
-  //   if (!file) return;
-
-  //   const fileExtension = file.name.split(".").pop()?.toLowerCase();
-  //   if (!["csv", "xlsx", "xls"].includes(fileExtension || "")) {
-  //     toast.error("Please upload a valid CSV or Excel file");
-  //     return;
-  //   }
-
-  //   if (file.size > 5 * 1024 * 1024) {
-  //     // 5MB
-  //     toast("Large file detected. Import may take a few minutes.", {
-  //       // icon: "⚠️",
-  //       icon: <FaExclamationTriangle />,
-
-  //       autoClose: 4000,
-  //     });
-  //   }
-
-  //   setImportLoader(true);
-  //   setIsImporting(true);
-  //   setImportProgress(0);
-
-  //   try {
-  //     const formData = new FormData();
-  //     formData.append("csvFile", file);
-  //     setUploadedFile(formData);
-
-  //     const response = await importApplicant(formData, {
-  //       onUploadProgress: (progressEvent) => {
-  //         const progress = Math.round(
-  //           (progressEvent.loaded * 100) / (progressEvent.total || 100)
-  //         );
-  //         setImportProgress(progress);
-  //       },
-  //     });
-  //     // console.log("API Response:", response);
-  //     if (response?.success) {
-  //       toast.success(response?.message || "File imported successfully!");
-  //     } else if (!response?.success && response.statusCode === 409) {
-  //       setShowPopupModal(true);
-  //     } else {
-  //       throw new Error(response?.message || "Import failed");
-  //     }
-  //   } catch (error: any) {
-  //     // console.error("Import error:", error);
-  //     // errorHandle(error)
-  //     toast.error(error.message || "Failed to import file");
-  //   } finally {
-  //     fetchApplicants();
-  //     setImportLoader(false);
-  //     setIsImporting(false);
-  //     setImportProgress(0);
-  //     if (fileInputRef.current) {
-  //       fileInputRef.current.value = "";
-  //     }
-  //   }
-  // };
-
-  // const handleModalConfirm = async () => {
-  //   // console.log("calling confim modal");
-
-  //   if (!uploadedFile) return;
-
-  //   setImportLoader(true);
-  //   setIsImporting(true);
-  //   setImportProgress(0);
-
-  //   try {
-  //     const formData = new FormData();
-  //     formData.append("csvFile", uploadedFile.get("csvFile") as Blob);
-  //     const updateFlag = "true";
-
-  //     const response = await importApplicant(formData, {
-  //       params: { updateFlag },
-  //       onUploadProgress: (progressEvent) => {
-  //         const progress = Math.round(
-  //           (progressEvent.loaded * 100) / (progressEvent.total || 100)
-  //         );
-  //         setImportProgress(progress);
-  //       },
-  //     });
-
-  //     if (response?.success) {
-  //       toast.success("Existing applicants updated successfully!");
-  //       setShowPopupModal(false);
-  //       await fetchApplicants();
-  //     } else {
-  //       throw new Error(response?.message || "Update failed");
-  //     }
-  //   } catch (error: any) {
-  //     // console.error("Update error:", error);
-  //     toast.error(error.message || "Failed to update applicants");
-  //   } finally {
-  //     setImportLoader(false);
-  //     setIsImporting(false);
-  //     setImportProgress(0);
-  //     if (fileInputRef.current) {
-  //       fileInputRef.current.value = "";
-  //     }
-  //   }
-  // };
-
-  // const handleModalCancel = () => {
-  //   setShowPopupModal(false);
-  // };
-
-  // useEffect(() => {
-  //   console.log("Is modal open?", showPopupModal);
-  // }, [showPopupModal]);
-
-  // useEffect(() => {
-  //   handleFileImport
-  // }, []);
+  
 
   const handleExportExcel = async () => {
     try {
@@ -722,20 +621,7 @@ const Applicant = () => {
           </Col>
         </Row>
 
-        {/* <MultiSelect
-          label="Applied Skills"
-          name="appliedSkills"
-          className="select-border mb-1"
-          placeholder="Applied Skills"
-          value={
-            appliedSkills.map((label) =>
-              skillOptions.find((option) => option.label === label)
-            ) || []
-          }
-          isMulti={true}
-          onChange={handleAppliedSkillsChange}
-          options={skillOptions}
-        /> */}
+      
 
         <MultiSelect
           label="Applied Skills"
@@ -1107,11 +993,27 @@ const Applicant = () => {
               />
             </BaseButton>
 
-            <BaseButton
+            {/* <BaseButton
               id={`delete-${cell?.row?.original?.id}`}
               className="btn btn-sm btn-soft-danger remove-list"
               color="danger"
               onClick={() => openDeleteModal(cell.row.original._id)}
+              
+            >
+              <i className="ri-delete-bin-5-fill align-bottom" />
+              <ReactTooltip
+                place="bottom"
+                variant="error"
+                content="Delete"
+                anchorId={`delete-${cell?.row?.original?._id}`}
+              />
+            </BaseButton> */}
+
+            <BaseButton
+              id={`delete-${cell?.row?.original?.id}`}
+              className="btn btn-sm btn-soft-danger remove-list"
+              color="danger"
+              onClick={() => handleDeleteSingle(cell.row.original._id)} // Call the single delete function
             >
               <i className="ri-delete-bin-5-fill align-bottom" />
               <ReactTooltip
@@ -1177,16 +1079,7 @@ const Applicant = () => {
 
   return (
     <Fragment>
-      {/* <BasePopUpModal
-        isOpen={showPopupModal}
-        onRequestClose={() => setShowPopupModal(false)}
-        title="Duplicate Records Found"
-        message="Do you want to update the existing applicants?"
-        confirmAction={handleModalConfirm}
-        cancelAction={handleModalCancel}
-        confirmText="Yes, Update"
-        cancelText="No, Don't Update"
-      /> */}
+
 
       {showModal && selectedApplicantId && (
         <ViewModal
@@ -1195,15 +1088,17 @@ const Applicant = () => {
           applicantId={selectedApplicantId}
         />
       )}
+
+     
+
       <DeleteModal
         show={showDeleteModal}
         onCloseClick={closeDeleteModal}
-        // onDeleteClick={handleDelete}
-        onDeleteClick={() =>
-          selectedApplicants.length > 2
-            ? deleteMultipleApplicantDetails(multipleApplicantDelete) // ✅ Wrap in an arrow function
-            : handleDelete(recordIdToDelete)
-        }
+        onDeleteClick={
+          () =>
+            multipleApplicantDelete.length >= 1
+              ? deleteMultipleApplicantDetails(multipleApplicantDelete):null
+            }
         // recordId={recordIdToDelete}
         loader={loader}
       />

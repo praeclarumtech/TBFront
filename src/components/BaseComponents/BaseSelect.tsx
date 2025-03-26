@@ -36,7 +36,7 @@ const BaseSelect = ({
         styles={styles}
       />
       {touched && error ? (
-        <div className="text-danger error-font">{error}</div>
+        <div className="text-danger error-font text-[13px] ">{error}</div>
       ) : null}
     </>
   );
@@ -78,7 +78,7 @@ const MultiSelect = ({
         placeholder={placeholder}
       />
       {touched && error ? (
-        <div className="text-danger error-font">{error}</div>
+        <div className="text-danger error-font text-[13px]">{error}</div>
       ) : null}
     </>
   );

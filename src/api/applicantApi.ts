@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+// import { toast } from "react-toastify";
 import {
   LIST_APPLICANT,
   CREATE_APPLICANT,
@@ -96,25 +97,27 @@ export const city = async () => {
   return response?.data;
 };
 
+
+
 export const importApplicant = async (
   formData: FormData,
-  config?: {
-    onUploadProgress?: (progressEvent: any) => void;
-    params?: any;
-  }
+  config?: { onUploadProgress?: (progressEvent: any) => void; params?: any }
 ) => {
   const url = `${IMPORT_APPLICANT}`;
 
-  const response = await authServices.post(url, formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-    params: config?.params,
-    ...config,
-    timeout: 300000,
-  });
-  return response?.data;
-};
+
+    const response = await authServices.post(url, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+      params: config?.params,
+      ...config,
+      timeout: 300000,
+    });
+
+    console.log("API response data:", response.data);
+
+    return response?.data;
+  } ;
+  
 
 export const ExportApplicant = async (config?: {
   onDownloadProgress?: (progressEvent: any) => void;
