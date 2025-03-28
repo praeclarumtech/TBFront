@@ -89,22 +89,7 @@ export const jobApplicantSchema = Yup.object({
 });
 
 export const personalApplicantSchema = Yup.object({
-  // dateOfBirth: Yup.date()
-  //   .required("Date of birth is required!")
-  //   .nullable()
-  //   .typeError("Please enter a valid date.")
-  //   .test(
-  //     "is-old-enough",
-  //     "Applicant must be at least 15 years old.",
-  //     (value) => {
-  //       if (value) {
-  //         const birthDate = moment(value);
-  //         const age = moment().diff(birthDate, "years");
-  //         return age >= 15;
-  //       }
-  //       return false;
-  //     }
-  //   ),
+ 
   dateOfBirth: Yup.date()
     .required("Date of birth is required!")
     .nullable()

@@ -115,28 +115,6 @@ export const city = async () => {
   const response = await authServices.get(`${CITY}`);
   return response?.data;
 };
-
-
-
-// export const importApplicant = async (
-//   formData: FormData,
-//   config?: { onUploadProgress?: (progressEvent: any) => void; params?: any }
-// ) => {
-//   const url = `${IMPORT_APPLICANT}`;
-
-//   console.log("API call:");
-//     const response = await authServices.post(url, formData, {
-//       headers: { "Content-Type": "multipart/form-data" },
-//       params: config?.params,
-//       ...config,
-//       timeout: 300000,
-//     });
-
-//     console.log("API response data1:", response.data);
-
-//   return response?.data;
-//   console.log("API response data2:", response.data);
-//   } ;
   
 export const importApplicant = async (
   formData: FormData,
