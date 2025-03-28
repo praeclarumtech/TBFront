@@ -463,18 +463,15 @@ const Applicant = () => {
     );
   };
 
-const handleDeleteSingle = (applicantId: string) => {
-  setMultipleApplicantsDelete([applicantId]); // Set the array with the single applicant ID
-  setShowDeleteModal(true); // Show the modal for confirmation
-};
-
-
+  const handleDeleteSingle = (applicantId: string) => {
+    setMultipleApplicantsDelete([applicantId]); // Set the array with the single applicant ID
+    setShowDeleteModal(true); // Show the modal for confirmation
+  };
 
   const closeDeleteModal = () => {
     setShowDeleteModal(false);
   };
 
-  
   // const handleDelete = (recordIdToDelete: string) => {
   //   if (recordIdToDelete) {
   //     deleteApplicantDetails(recordIdToDelete);
@@ -488,25 +485,23 @@ const handleDeleteSingle = (applicantId: string) => {
     }
   };
 
- 
- const deleteMultipleApplicantDetails = (
-   multipleApplicantDelete: string[] | undefined | null
- ) => {
-   setLoader(true);
-   deleteMultipleApplicant(multipleApplicantDelete)
-     .then(() => {
-       fetchApplicants(); // Refetch applicants after deletion
-       setSelectedApplicants([]); // Clear the selected applicants
-     })
-     .catch((error: any) => {
-       errorHandle(error); // Handle any errors
-     })
-     .finally(() => {
-       setLoader(false); // Hide loader
-       setShowDeleteModal(false); // Close the delete modal
-     });
- };
-
+  const deleteMultipleApplicantDetails = (
+    multipleApplicantDelete: string[] | undefined | null
+  ) => {
+    setLoader(true);
+    deleteMultipleApplicant(multipleApplicantDelete)
+      .then(() => {
+        fetchApplicants(); // Refetch applicants after deletion
+        setSelectedApplicants([]); // Clear the selected applicants
+      })
+      .catch((error: any) => {
+        errorHandle(error); // Handle any errors
+      })
+      .finally(() => {
+        setLoader(false); // Hide loader
+        setShowDeleteModal(false); // Close the delete modal
+      });
+  };
 
   // const deleteApplicantDetails = (_id: string | undefined | null) => {
   //   setLoader(true);
@@ -561,8 +556,6 @@ const handleDeleteSingle = (applicantId: string) => {
       },
     });
   };
-
-  
 
   const handleExportExcel = async () => {
     try {
@@ -620,8 +613,6 @@ const handleDeleteSingle = (applicantId: string) => {
             </BaseButton>
           </Col>
         </Row>
-
-      
 
         <MultiSelect
           label="Applied Skills"
@@ -1079,8 +1070,6 @@ const handleDeleteSingle = (applicantId: string) => {
 
   return (
     <Fragment>
-
-
       {showModal && selectedApplicantId && (
         <ViewModal
           show={showModal}
@@ -1089,16 +1078,14 @@ const handleDeleteSingle = (applicantId: string) => {
         />
       )}
 
-     
-
       <DeleteModal
         show={showDeleteModal}
         onCloseClick={closeDeleteModal}
-        onDeleteClick={
-          () =>
-            multipleApplicantDelete.length >= 1
-              ? deleteMultipleApplicantDetails(multipleApplicantDelete):null
-            }
+        onDeleteClick={() =>
+          multipleApplicantDelete.length >= 1
+            ? deleteMultipleApplicantDetails(multipleApplicantDelete)
+            : null
+        }
         // recordId={recordIdToDelete}
         loader={loader}
       />
