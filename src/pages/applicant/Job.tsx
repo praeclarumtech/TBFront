@@ -9,6 +9,7 @@ import BaseInput from "components/BaseComponents/BaseInput";
 import {
   jobApplicantSchema,
   SelectedOption,
+  SelectedOptionRole,
 } from "interfaces/applicant.interface";
 import BaseTextarea from "components/BaseComponents/BaseTextArea";
 import {
@@ -19,8 +20,6 @@ import {
 import appConstants from "constants/constant";
 import moment from "moment";
 import { ViewAppliedSkills } from "api/skillsApi";
-
-// import React, { useState, useEffect } from "react";
 
 const {
   projectTitle,
@@ -44,13 +43,13 @@ type Role =
   | "DevOps Engineer"
   | "Business Analyst"
   | "Technical Support Engineer"
-  | "Software Engineer" // Added from designationType
-  | "MERN Stack Developer" // Added from designationType
-  | "MEAN Stack Developer" // Added from designationType
-  | "DotNet Full Stack Developer" // Added from designationType
-  | "Java Developer" // Added from designationType
-  | "Python Developer" // Added from designationType
-  | "PHP Developer" // Added from designationType
+  | "Software Engineer"
+  | "MERN Stack Developer" 
+  | "MEAN Stack Developer" 
+  | "DotNet Full Stack Developer" 
+  | "Java Developer" 
+  | "Python Developer" 
+  | "PHP Developer" 
   | "Other"
   | "Na";
 
@@ -73,25 +72,25 @@ const technologyOptions: Record<Role, string[]> = {
   "DevOps Engineer": ["Docker", "Kubernetes", "Terraform", "AWS"],
   "Business Analyst": ["SQL", "Excel", "Tableau", "Power BI"],
   "Technical Support Engineer": ["Zendesk", "Freshdesk", "Jira", "ServiceNow"],
-  "Software Engineer": ["Java", "Python", "C#", "SQL", "Git"], // Added for Software Engineer
+  "Software Engineer": ["Java", "Python", "C#", "SQL", "Git"], 
   "MERN Stack Developer": [
     "MongoDB",
     "Express",
     "React",
-    "Node.js",
+    "NodeJs",
     "JavaScript",
-  ], // Added for MERN Stack Developer
+  ],
   "MEAN Stack Developer": [
     "MongoDB",
     "Express",
     "Angular",
-    "Node.js",
+    "NodeJs",
     "JavaScript",
-  ], // Added for MEAN Stack Developer
-  "DotNet Full Stack Developer": [".NET", "C#", "SQL", "JavaScript", "Angular"], // Added for DotNet Full Stack Developer
-  "Java Developer": ["Java", "Spring Boot", "Hibernate", "SQL", "Maven"], // Added for Java Developer
-  "Python Developer": ["Python", "Django", "Flask", "SQL", "Git"], // Added for Python Developer
-  "PHP Developer": ["PHP", "Laravel", "MySQL", "JavaScript", "HTML/CSS"], // Added for PHP Developer
+  ], 
+  "DotNet Full Stack Developer": [".NET", "C#", "SQL", "JavaScript", "Angular"], 
+  "Java Developer": ["Java", "Spring Boot", "Hibernate", "SQL", "Maven"], 
+  "Python Developer": ["Python", "Django", "Flask", "SQL", "Git"], 
+  "PHP Developer": ["PHP", "Laravel", "MySQL", "JavaScript", "HTML/CSS"], 
   Other: [],
   Na: [],
 };
@@ -105,9 +104,9 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
   const [selectedRole, setSelectedRole] = useState<string>(
     initialValues?.appliedRole || ""
   );
-  // const [selectedRole, setSelectedRole] = useState<string>("");
+  
   const [loading, setLoading] = useState<boolean>(false);
-  const [meta, setTechnologyExperience] = useState<any>({});
+  // const [meta, setTechnologyExperience] = useState<any>({});
 
   const formattedlastFollowUpDate = initialValues.lastFollowUpDate
     ? moment(initialValues.lastFollowUpDate).format("YYYY-MM-DD")
@@ -143,7 +142,8 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
       clientCvUrl: initialValues?.clientCvUrl || "",
       clientFeedback: initialValues?.clientFeedback || "",
       appliedRole: initialValues?.appliedRole || selectedRole || "",
-      meta: initialValues?.meta || "",
+      // meta: initialValues?.meta || "",
+      meta: initialValues?.meta || {},
     },
     validationSchema: jobApplicantSchema,
     onSubmit: (data: any) => {
@@ -154,7 +154,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
       const updatedData = {
         ...data,
         appliedSkills: appliedSkillsNames,
-        meta,
+        // meta,
       };
 
       onNext(updatedData);
@@ -229,36 +229,62 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
   //     console.error("handleRoleChange: selectedOption is null");
   //   }
   // };
-  const handleRoleChange = (selectedOption: SelectedOption | null) => {
-    if (selectedOption) {
-      setSelectedRole(selectedOption.value);
-      validation.setFieldValue("appliedRole", selectedOption.value);
 
-      setTechnologyExperience({});
+  // const handleRoleChange = (SelectedOptionRole: SelectedOptionRole | null) => {
+  //   if (SelectedOptionRole) {
+  //     setSelectedRole(SelectedOptionRole.value);
+  //     validation.setFieldValue("appliedRole", SelectedOptionRole.value);
+
+  //     setTechnologyExperience({});
+  //   } else {
+  //     setSelectedRole("");
+  //     validation.setFieldValue("appliedRole", "");
+
+  //     setTechnologyExperience({});
+  //   }
+  // };
+
+  const handleRoleChange = (SelectedOptionRole: SelectedOptionRole | null) => {
+    if (SelectedOptionRole) {
+      const newRole = SelectedOptionRole.value;
+      setSelectedRole(newRole);
+      validation.setFieldValue("appliedRole", newRole);
+
+      const roleTechnologies = technologyOptions[newRole as Role] || [];
+      const newMeta = roleTechnologies.reduce((acc: any, tech: string) => {
+        acc[tech] = validation.values.meta[tech] || "";
+        return acc;
+      }, {});
+      validation.setFieldValue("meta", newMeta);
     } else {
       setSelectedRole("");
       validation.setFieldValue("appliedRole", "");
-
-      setTechnologyExperience({});
+      validation.setFieldValue("meta", {});
     }
   };
-  const handleTechnologyExperienceChange = (tech: string, value: string) => {
-    setTechnologyExperience((prevState: any) => ({
-      ...prevState,
-      [tech]: value,
-    }));
-  };
 
-  useEffect(() => {
-    if (selectedRole in technologyOptions) {
-      const roleTechnologies = technologyOptions[selectedRole as Role] || [];
-      const updatedMeta = roleTechnologies.reduce((acc: any, tech: string) => {
-        acc[tech] = initialValues?.meta?.[tech] || "";
-        return acc;
-      }, {});
-      setTechnologyExperience(updatedMeta);
-    }
-  }, [selectedRole, initialValues?.meta]);
+  // const handleTechnologyExperienceChange = (tech: string, value: string) => {
+  //   setTechnologyExperience((prevState: any) => ({
+  //     ...prevState,
+  //     [tech]: value,
+  //   }));
+  // };
+ const handleTechnologyExperienceChange = (tech: string, value: string) => {
+   validation.setFieldValue(`meta.${tech}`, value);
+ };
+
+
+  // useEffect(() => {
+  //   if (selectedRole in technologyOptions) {
+  //     const roleTechnologies = technologyOptions[selectedRole as Role] || [];
+  //     const updatedMeta = roleTechnologies.reduce((acc: any, tech: string) => {
+  //       acc[tech] = initialValues?.meta?.[tech] || "";
+  //       return acc;
+  //     }, {});
+  //     setTechnologyExperience(updatedMeta);
+  //   }
+  // }, [selectedRole, initialValues?.meta]);
+
 
   return (
     <Fragment>
@@ -499,7 +525,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     handleChange={(selectedOption: SelectedOption) => {
                       validation.setFieldValue(
                         "currentCompanyDesignation",
-                        selectedOption?.value || ""
+                        selectedOption?.value || "Na"
                       );
                     }}
                     handleBlur={validation.currentCompanyDesignation}
@@ -507,7 +533,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                       dynamicFind(
                         designationType,
                         validation.values.currentCompanyDesignation
-                      ) || ""
+                      ) || 'Na'
                     }
                     touched={validation.touched.currentCompanyDesignation}
                     error={validation.errors.currentCompanyDesignation}
@@ -849,42 +875,37 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                                 className=" "
                                 label={`${tech} Exp.(Yrs)`}
                                 placeholder={`${tech}`}
-                                value={meta[tech] || ""} // Ensure the input value is bound to the state correctly
+                                // value={meta[tech] || ""}
+                                value={validation.values.meta[tech] || ""}
                                 handleChange={(e) => {
                                   let value = e.target.value;
 
-                                  // Allow only numbers and a single decimal point
                                   value = value.replace(/[^0-9.]/g, "");
 
-                                  // Split the value into parts based on the decimal point
                                   const parts = value.split(".");
 
-                                  // Ensure there's only one decimal point
                                   if (parts.length > 2) {
                                     value =
                                       parts[0] + "." + parts.slice(1).join("");
                                   }
 
-                                  // Limit to 2 decimal places if there are more than 2 digits after the decimal point
                                   if (parts[1]?.length > 2) {
                                     value =
                                       parts[0] + "." + parts[1].slice(0, 2);
                                   }
 
-                                  // Only update the field if the value is valid
                                   const numValue = parseFloat(value);
                                   if (
                                     !isNaN(numValue) &&
                                     numValue >= 0 &&
                                     numValue <= 30
                                   ) {
-                                    validation.setFieldValue(tech, value); // Set the value to Formik state
+                                    validation.setFieldValue(tech, value);
                                     handleTechnologyExperienceChange(
                                       tech,
                                       value
-                                    ); // Also update the local state
+                                    );
                                   } else if (value === "" || value === ".") {
-                                    // If the value is empty or just a dot, we accept that too
                                     validation.setFieldValue(tech, value);
                                     handleTechnologyExperienceChange(
                                       tech,
@@ -894,30 +915,33 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                                     // Don't update anything if the value is invalid
                                     return;
                                   }
+                                  validation.setFieldValue(
+                                    `meta.${tech}`,
+                                    value
+                                  );
                                 }}
                                 handleBlur={(e) => {
                                   const value = e.target.value;
 
-                                  // Validate the value on blur
                                   if (value && !isNaN(parseFloat(value))) {
                                     const numValue = parseFloat(value);
                                     if (numValue >= 0 && numValue <= 30) {
                                       validation.setFieldValue(
                                         tech,
                                         numValue.toFixed(2)
-                                      ); // Format to 2 decimal places
+                                      );
                                     } else {
-                                      validation.setFieldValue(tech, ""); // Clear invalid values
+                                      validation.setFieldValue(tech, "");
                                     }
                                   } else {
-                                    validation.setFieldValue(tech, ""); // Clear if value is invalid
+                                    validation.setFieldValue(tech, "");
                                   }
 
-                                  validation.handleBlur(e); // Call the formik blur handler
+                                  validation.handleBlur(e);
                                 }}
-                                // value={validation.values[tech]} // Ensure the input is bound to the form state
-                                touched={validation.touched[tech]} // Used for showing error
-                                error={validation.errors[tech]} // Used for showing validation error
+                                // value={validation.values[tech]}
+                                touched={validation.touched.meta?.[tech]}
+                                error={validation.errors.meta?.[tech]}
                                 passwordToggle={false}
                               />
                             </Col>

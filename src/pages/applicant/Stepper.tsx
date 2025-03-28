@@ -184,7 +184,7 @@ const StepperForm = () => {
   const handleSubmit = async () => {
     setLoading(true);
     const apiData = formatApiData();
-    console.log("apiData", apiData);
+    // console.log("apiData", apiData);
 
     if (!id) {
       createApplicant(apiData)

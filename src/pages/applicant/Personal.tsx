@@ -15,7 +15,10 @@ import {
   InputPlaceHolder,
 } from "utils/commonFunctions";
 import appConstants from "constants/constant";
-import { city as fetchCities } from "../../api/applicantApi";
+import {
+  CheckExistingApplicant,
+  city as fetchCities,
+} from "../../api/applicantApi";
 import {
   personalApplicantSchema,
   SelectedOption,
@@ -34,12 +37,20 @@ const {
 const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
   document.title = Modules.Applicant + " | " + projectTitle;
   const [cities, setCities] = useState<City[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);  
+  const [loading, setLoading] = useState<boolean>(false);
+  // const [isChecking, setIsChecking] = useState(false);
+  // const [existingError, setExistingError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [phoneNumberError, setPhoneNumberError] = useState("");
+  const [whatsappError, setWhatsappError] = useState("");
+
+
+;
 
   useEffect(() => {
     const getCities = async () => {
       try {
-        setLoading(true);  
+        setLoading(true);
         const cityData = await fetchCities();
         if (cityData?.data) {
           setCities(
@@ -52,7 +63,7 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
       } catch (error) {
         errorHandle(error);
       } finally {
-        setLoading(false);  // Set loading to false once fetch is complete
+        setLoading(false);
       }
     };
 
@@ -88,7 +99,8 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
     },
     validationSchema: personalApplicantSchema,
     onSubmit: (data: any) => {
-      setLoading(true); 
+   
+      setLoading(true);
 
       const selectedCity = cities.find(
         (city) => city.value === data.currentCity
@@ -122,9 +134,68 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
       onNext(structuredData);
       onNext(data);
 
-      setLoading(false);  
+      setLoading(false);
     },
   });
+
+  const checkExistingField = async (field: string, value: string) => {
+    // setIsChecking(true);
+
+    if (field === "email") {
+      setEmailError("");
+    } else if (field === "phoneNumber") {
+      setPhoneNumberError("");
+    } else if (field === "whatsappNumber") {
+      setWhatsappError("");
+    }
+
+    // setExistingError("");
+
+    try {
+      const params: {
+        email?: string;
+        phoneNumber?: number;
+        whatsappNumber?: number;
+      } = {};
+
+      if (field === "email") {
+        params.email = value;
+      } else if (field === "phoneNumber") {
+        params.phoneNumber = Number(value);
+      } else if (field === "whatsappNumber") {
+        params.whatsappNumber = Number(value);
+      }
+
+      const response = await CheckExistingApplicant(params);
+
+      if (response?.data?.exists) {
+        if (field === "email") {
+          setEmailError(response?.message || "This email is already in use.");
+        } else if (field === "phoneNumber") {
+          setPhoneNumberError(
+            response?.message || "This phone number is already in use."
+          );
+        } else if (field === "whatsappNumber") {
+          setWhatsappError(
+            response?.message || "This WhatsApp number is already in use."
+          );
+        }
+      } else {
+        if (field === "email") {
+          setEmailError("");
+        } else if (field === "phoneNumber") {
+          setPhoneNumberError("");
+        } else if (field === "whatsappNumber") {
+          setWhatsappError("");
+        }
+      }
+    } catch (error) {
+      // console.error("Error checking existing field:", error);
+      errorHandle(error);
+
+      return "Error while checking this field.";
+    }
+  };
 
   return (
     <Fragment>
@@ -140,7 +211,7 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
               }}
               className="p-3"
             >
-              {loading ? ( 
+              {loading ? (
                 <div className="d-flex justify-content-center my-5">
                   <Spinner animation="border" role="status">
                     <span className="visually-hidden">Loading...</span>
@@ -217,11 +288,37 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
                       name="email"
                       type="text"
                       placeholder={InputPlaceHolder("Email")}
-                      handleChange={validation.handleChange}
+                      // handleChange={async (
+                      //   e: React.ChangeEvent<HTMLInputElement>
+                      // ) => {
+                      //   const emailValue = e.target.value;
+                      //     validation.setFieldValue("email", emailValue);
+
+                      //   setEmailError("");
+                      //   const emailError = await checkExistingField(
+                      //     "email",
+                      //     emailValue
+                      //   );
+                      //   validation.setFieldValue("email", emailValue);
+                      //   validation.setFieldError("email", emailError);
+                      // }}
+                      handleChange={async (
+                        e: React.ChangeEvent<HTMLInputElement>
+                      ) => {
+                        const emailValue = e.target.value;
+                        validation.setFieldValue("email", emailValue);
+
+                        setEmailError("");
+                        const emailError = await checkExistingField(
+                          "email",
+                          emailValue
+                        );
+                        validation.setFieldError("email", emailError);
+                      }}
                       handleBlur={validation.handleBlur}
                       value={validation.values.email}
                       touched={validation.touched.email}
-                      error={validation.errors.email}
+                      error={validation.errors.email || emailError}
                       passwordToggle={false}
                     />
                   </Col>
@@ -232,18 +329,23 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
                       name="phoneNumber"
                       type="text"
                       placeholder={InputPlaceHolder("Phone Number")}
-                      handleChange={(e) => {
-                        const value = e.target.value
-                          .replace(/\D/g, "")
-                          .slice(0, 10);
-                        validation.setFieldValue("phoneNumber", value);
+                      handleChange={async (
+                        e: React.ChangeEvent<HTMLInputElement>
+                      ) => {
+                        const rawValue = e.target.value.replace(/\D/g, "");
+                        const sanitizedValue = rawValue.slice(0, 10);
+                        validation.setFieldValue("phoneNumber", sanitizedValue);
+                        const phoneError = await checkExistingField(
+                          "phoneNumber",
+                          sanitizedValue
+                        );
+                        validation.setFieldError("phoneNumber", phoneError);
                       }}
                       handleBlur={validation.handleBlur}
                       value={validation.values.phoneNumber}
                       touched={validation.touched.phoneNumber}
-                      error={validation.errors.phoneNumber}
+                      error={validation.errors.phoneNumber || phoneNumberError}
                       passwordToggle={false}
-                      maxLength={10}
                     />
                   </Col>
 
@@ -253,18 +355,26 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
                       name="whatsappNumber"
                       type="text"
                       placeholder={InputPlaceHolder("Whatsapp Number")}
-                      handleChange={(e) => {
-                        const value = e.target.value
-                          .replace(/\D/g, "")
-                          .slice(0, 10);
-                        validation.setFieldValue("whatsappNumber", value);
+                      handleChange={async (
+                        e: React.ChangeEvent<HTMLInputElement>
+                      ) => {
+                        const rawValue = e.target.value.replace(/\D/g, "");
+                        const sanitizedValue = rawValue.slice(0, 10);
+                        validation.setFieldValue(
+                          "whatsappNumber",
+                          sanitizedValue
+                        );
+                        const phoneError = await checkExistingField(
+                          "whatsappNumber",
+                          sanitizedValue
+                        );
+                        validation.setFieldError("whatsappNumber", phoneError);
                       }}
                       handleBlur={validation.handleBlur}
                       value={validation.values.whatsappNumber}
                       touched={validation.touched.whatsappNumber}
-                      error={validation.errors.whatsappNumber}
+                      error={validation.errors.whatsappNumber || whatsappError}
                       passwordToggle={false}
-                      maxLength={10}
                     />
                   </Col>
 

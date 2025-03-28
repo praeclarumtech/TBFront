@@ -2,6 +2,7 @@ import moment from "moment";
 import * as Yup from "yup";
 
 export type SelectedOption = { label: string; value: string };
+export type SelectedOptionRole = { label: string; value: string };
 export type SelectedOption1 = { label: string; value: string;id:number };
 export const EducationApplicantSchema = Yup.object({
   qualification: Yup.string().required("Qualification is required!"),
@@ -88,10 +89,16 @@ export const jobApplicantSchema = Yup.object({
 });
 
 export const personalApplicantSchema = Yup.object({
+ 
   dateOfBirth: Yup.date()
     .required("Date of birth is required!")
     .nullable()
     .typeError("Please enter a valid date.")
+    .min(
+      new Date(1960, 0, 1),
+      "Year must be between 1960 and the current year."
+    )
+    .max(new Date(), "Date of birth cannot be in the future.")
     .test(
       "is-old-enough",
       "Applicant must be at least 15 years old.",
@@ -131,8 +138,7 @@ export const personalApplicantSchema = Yup.object({
   whatsappNumber: Yup.string()
     .matches(/^[0-9]{10}$/, "Please enter a valid 10-digit WhatsApp number.")
     .required("WhatsApp number is required!"),
-  currentCity: Yup.string(),
-    // .required("Current city is required!"),
+  currentCity: Yup.string().required("Current city is required!"),
   // .matches(/^[A-Za-z\s]+$/, "City name can only contain letters."),
   // currentPincode: Yup.string()
   //   .required("Current pincode is required!")

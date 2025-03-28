@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // import { toast } from "react-toastify";
+// import { errorHandle } from "utils/commonFunctions";
 import {
   LIST_APPLICANT,
   CREATE_APPLICANT,
@@ -15,6 +16,7 @@ import {
   IMPORT_RESUME,
   IMPORT_APPLICANT_LIST,
   DELETE_MULTIPLE_APPLICANT,
+  EXISTING_APPLICANT,
 } from "./apiRoutes";
 import { authServices } from "./apiServices";
 
@@ -47,6 +49,23 @@ export const listOfApplicants = async (params: {
 export const createApplicant = async (data?: object) => {
   const response = await authServices.post(`${CREATE_APPLICANT}`, data);
   return response?.data;
+   
+};
+
+export const CheckExistingApplicant = async (params: {
+  email?: string;
+  phoneNumber?: number;
+  whatsappNumber?: number;
+}) => {
+  // try {
+    const response = await authServices.get(`${EXISTING_APPLICANT}`, {
+      params, 
+    });
+    return response?.data;
+    // console.log("Response from  CheckExistingApplicant:", response?.data);
+  // } catch (error) {
+  //   console.error("Error in checking existing applicant:", error);
+  // }
 };
 
 export const updateApplicant = async (
@@ -96,16 +115,15 @@ export const city = async () => {
   const response = await authServices.get(`${CITY}`);
   return response?.data;
 };
-
-
-
+  
 export const importApplicant = async (
   formData: FormData,
   config?: { onUploadProgress?: (progressEvent: any) => void; params?: any }
 ) => {
   const url = `${IMPORT_APPLICANT}`;
 
-
+  try {
+    console.log("API call:");
     const response = await authServices.post(url, formData, {
       headers: { "Content-Type": "multipart/form-data" },
       params: config?.params,
@@ -113,11 +131,23 @@ export const importApplicant = async (
       timeout: 300000,
     });
 
-    console.log("API response data:", response.data);
+    return response.data;
+  } catch (error: any) {
+   
+    if (error.response) {
+      console.error("API error response add:", error.response);
+      // errorHandle(error.response);
+      throw new Error(
 
-    return response?.data;
-  } ;
-  
+        error.response.data?.message || "An error occurred while importing."
+        
+      );
+      console.log("1", error.response.data?.message);
+    }
+  }
+};
+
+
 
 export const ExportApplicant = async (config?: {
   onDownloadProgress?: (progressEvent: any) => void;

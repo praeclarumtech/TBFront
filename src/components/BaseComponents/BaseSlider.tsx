@@ -28,7 +28,8 @@ const BaseSlider = ({
   };
 
   const handleMaxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newMax = Math.max(Number(e.target.value), currentValue[0]);
+    // const newMax = Math.max(Number(e.target.value), currentValue[0]);
+    const newMax = Math.max(Number(e.target.value));
     handleChange({ target: { name, value: [currentValue[0], newMax] } });
   };
 

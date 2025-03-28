@@ -338,13 +338,7 @@ function ImportApplicant() {
     setFilterCurrentPkg(e.target.value as number[]);
   };
 
-  //   const handleSearchFilterChange = (e: React.ChangeEvent<any>) =>{
-  //   setSearchFilter(e.target.value as string[]);
-  // }
 
-  // const handleAppliedSkillsChange = (selectedOptions: SelectedOption[]) => {
-  //   setAppliedSkills(selectedOptions);
-  // };
   const handleAppliedSkillsChange = (selectedOptions: SelectedOption1[]) => {
     setAppliedSkills(selectedOptions);
   };
@@ -465,15 +459,15 @@ const handleDeleteSingle = (applicantId: string) => {
    setLoader(true);
    deleteMultipleApplicant(multipleApplicantDelete)
      .then(() => {
-       fetchApplicants(); // Refetch applicants after deletion
-       setSelectedApplicants([]); // Clear the selected applicants
+       fetchApplicants();
+       setSelectedApplicants([]);
      })
      .catch((error: any) => {
-       errorHandle(error); // Handle any errors
+       errorHandle(error);
      })
      .finally(() => {
-       setLoader(false); // Hide loader
-       setShowDeleteModal(false); // Close the delete modal
+       setLoader(false);
+       setShowDeleteModal(false); 
      });
   };
   
@@ -530,25 +524,7 @@ const handleDeleteSingle = (applicantId: string) => {
     });
   };
 
-  // const handleSendWhatsApp = () => {
-  //   const message = applicant
-  //     .filter((app) => selectedApplicants.includes(app._id))
-  //     .map((app) => `Name: ${app.name}, Email: ${app.email}`)
-  //     .join("\n");
-
-  //   // Send WhatsApp message (example: using a WhatsApp API)
-  //   window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, "_blank");
-  // };
-  // const handleFileChange = (e) => {
-  //   const file = e.target.files[0];
-  //   const fileExtension = file.name.split(".").pop()?.toLowerCase();
-  //   if (["csv", "xlsx", "xls"].includes(fileExtension)) {
-  //     handleFileImport(e);
-  //   } else if (["doc", "pdf"].includes(fileExtension)) {
-  //     // handleResumeUpload(file);
-
-  //   }
-  // };
+  
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     //  const file = e.target.files[0];
     const file = e.target.files && e.target.files[0];
@@ -556,7 +532,7 @@ const handleDeleteSingle = (applicantId: string) => {
     //  const fileExtension = file && file.name.split(".").pop()?.toLowerCase();
     const fileExtension = file?.name?.split(".").pop()?.toLowerCase() ?? "";
     if (["csv", "xlsx", "xls"].includes(fileExtension ?? "")) {
-      console.log("my functin csv called");
+      // console.log("my functin csv called");
       handleFileImport(e);
     } else if (["doc", "pdf","docx"].includes(fileExtension ?? "")) {
       const newEvent = {
@@ -618,15 +594,15 @@ const handleDeleteSingle = (applicantId: string) => {
       errorHandle(error);
 
       if (error.response?.data) {
-        // Handle structured API errors
+       
         const errorMessage =
           error.response.data.message || error.response.data.error;
         toast.error(errorMessage || "Failed to import file");
       } else if (error.message) {
-        // Handle other errors with messages
+        
         toast.error(error.message);
       } else {
-        // Generic error
+       
         toast.error("An unexpected error occurred during import");
       }
     } finally {
@@ -694,8 +670,9 @@ const handleDeleteSingle = (applicantId: string) => {
       formData.append("csvFile", file);
       setUploadedFile(formData);
       // console.log("Uploaded file:", formData.get("csvFile"));
-
+      // console.log("functiona call");
       const response = await importApplicant(formData, {
+        
         onUploadProgress: (progressEvent) => {
           const progress = Math.round(
             (progressEvent.loaded * 100) / (progressEvent.total || 100)
@@ -708,7 +685,9 @@ const handleDeleteSingle = (applicantId: string) => {
 
       if (response?.success) {
         toast.success(response?.message || "File imported successfully!");
-      } else if (!response?.success && response.statusCode === 409) {
+      
+      }else if (!response?.success && response.statusCode === 409) {
+        console.log("API Response msg:", response);
         setShowPopupModal(true);
 
         toast.error(response.message || "Import failed");
@@ -731,7 +710,7 @@ const handleDeleteSingle = (applicantId: string) => {
   };
 
   const handleModalConfirm = async () => {
-    console.log("calling confim modal");
+    
 
     if (!uploadedFile) return;
 
@@ -1080,9 +1059,11 @@ const handleDeleteSingle = (applicantId: string) => {
           <div
             className="truncated-text"
             style={truncateText}
-            title={cell.row.original.appliedSkills}
+            // title={cell.row.original.appliedSkills}
+            title={cell.row.original.appliedSkills?.join(", ")}
           >
-            {cell.row.original.appliedSkills}
+            {/* {cell.row.original.appliedSkills} */}
+            {cell.row.original.appliedSkills?.join(", ")}
           </div>
         ),
         enableColumnFilter: false,
