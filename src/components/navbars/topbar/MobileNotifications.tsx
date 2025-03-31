@@ -48,13 +48,18 @@ export const MobileNotifications = () => {
           <Dropdown.Item as="div" className="px-4 pb-0 pt-2" bsPrefix=" ">
             <div className="lh-1 ">
               <h5 className="mb-1">{user?.userName}</h5>
-              <span className="text-sm text-muted text-center">
+              <span className="text-[12px] text-muted text-center">
                 {user?.role?.toUpperCase()}
               </span>
             </div>
             <div className=" dropdown-divider mt-3 mb-2"></div>
           </Dropdown.Item>
-          <Dropdown.Item eventKey="2">
+          <Dropdown.Item
+            eventKey="2"
+            onClick={() => {
+              navigate("/userProfile");
+            }}
+          >
             <i className="fe fe-user me-2"></i> Edit Profile
           </Dropdown.Item>
           <Dropdown.Item

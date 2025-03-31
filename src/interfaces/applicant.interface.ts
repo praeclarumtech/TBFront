@@ -28,6 +28,9 @@ export const jobApplicantSchema = Yup.object({
   lastFollowUpDate: Yup.date(),
   maritalStatus: Yup.string(),
   // maritalStatus: Yup.string().required("Marital status is required."),
+  currentCompanyDesignation: Yup.string().required(
+    "Current Company Designation is required!"
+  ),
   appliedRole: Yup.string().required("Applied role is required!"),
   anyHandOnOffers: Yup.boolean(),
   currentCompanyName: Yup.string()
@@ -138,7 +141,8 @@ export const personalApplicantSchema = Yup.object({
   whatsappNumber: Yup.string()
     .matches(/^[0-9]{10}$/, "Please enter a valid 10-digit WhatsApp number.")
     .required("WhatsApp number is required!"),
-  currentCity: Yup.string().required("Current city is required!"),
+  currentCity: Yup.string()
+    .required("Current city is required!"),
   // .matches(/^[A-Za-z\s]+$/, "City name can only contain letters."),
   // currentPincode: Yup.string()
   //   .required("Current pincode is required!")

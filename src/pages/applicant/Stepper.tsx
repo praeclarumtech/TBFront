@@ -7,6 +7,7 @@ import {
   StepLabel,
   Button,
   Typography,
+  useMediaQuery,
 } from "@mui/material";
 import { Fragment, useEffect, useState } from "react";
 import PersonalDetailsForm from "./Personal";
@@ -28,7 +29,7 @@ const { projectTitle, Modules } = appConstants;
 
 const StepperForm = () => {
   const { id } = useParams();
-
+  const isMobile = useMediaQuery("(max-width: 450px)");
   document.title = Modules.Login + " | " + projectTitle;
 
   const navigate = useNavigate();
@@ -87,7 +88,7 @@ const StepperForm = () => {
     linkedinUrl: "",
     clientCvUrl: "",
     clientFeedback: "",
-    meta:{},
+    meta: {},
   });
   const steps = [
     "Personal Details",
@@ -195,8 +196,18 @@ const StepperForm = () => {
           }
         })
         .catch((error) => {
-          errorHandle(error);
+          // errorHandle(error);
+           const errorMessages = error?.response?.data?.details;
+          if (errorMessages && Array.isArray(errorMessages)) {
+            errorMessages.forEach((errorMessage) => {
+              toast.error(errorMessage);
+            });
+          } else {
+            toast.error("An error occurred while updating the applicant.");
+          }
         })
+       
+      
         .finally(() => {
           setLoading(false);
         });
@@ -209,7 +220,15 @@ const StepperForm = () => {
           }
         })
         .catch((error) => {
-          errorHandle(error);
+          const errorMessages = error?.response?.data?.details;
+          if (errorMessages && Array.isArray(errorMessages)) {
+            errorMessages.forEach((errorMessage) => {
+              toast.error(errorMessage);
+            });
+          } else {
+            toast.error("An error occurred while updating the applicant.");
+          }
+        
         })
         .finally(() => {
           setLoading(false);
@@ -247,8 +266,20 @@ const StepperForm = () => {
             Applicant Form
           </h4>
           <Card.Body>
-            <Box sx={{ width: "100%" }}>
-              <Stepper activeStep={activeStep}>
+            <Box
+              sx={{
+                width: "100%",
+                justifyContent: isMobile ? "center" : "flex-start",
+                // display: "flex",
+                display: isMobile ? "flex" : "",
+                flexDirection: isMobile ? "column" : "row",
+                alignItems: isMobile ? "center" : "unset",
+              }}
+            >
+              <Stepper
+                activeStep={activeStep}
+                orientation={isMobile ? "vertical" : "horizontal"}
+              >
                 {steps.map((label) => (
                   <Step key={label}>
                     <StepLabel>{label}</StepLabel>

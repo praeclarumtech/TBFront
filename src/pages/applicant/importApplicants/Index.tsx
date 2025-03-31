@@ -308,7 +308,8 @@ function ImportApplicant() {
           }))
         );
       } catch (error) {
-        console.error("Error fetching skills", error);
+        errorHandle(error);
+        // console.error("Error fetching skills", error);
       } finally {
         setLoading(false);
       }
@@ -337,7 +338,6 @@ function ImportApplicant() {
   const handleCurrentPkgChange = (e: React.ChangeEvent<any>) => {
     setFilterCurrentPkg(e.target.value as number[]);
   };
-
 
   const handleAppliedSkillsChange = (selectedOptions: SelectedOption1[]) => {
     setAppliedSkills(selectedOptions);
@@ -425,25 +425,21 @@ function ImportApplicant() {
     );
   };
 
-const handleDeleteSingle = (applicantId: string) => {
-  setMultipleApplicantsDelete([applicantId]); // Set the array with the single applicant ID
-  setShowDeleteModal(true); // Show the modal for confirmation
-};
-
+  const handleDeleteSingle = (applicantId: string) => {
+    setMultipleApplicantsDelete([applicantId]);
+    setShowDeleteModal(true);
+  };
 
   const closeDeleteModal = () => {
     setShowDeleteModal(false);
   };
 
- 
   const handleDeleteAll = () => {
     if (selectedApplicants.length > 0) {
       setMultipleApplicantsDelete(selectedApplicants);
       setShowDeleteModal(true);
     }
   };
-
-
 
   // const handleDelete = (recordIdToDelete: any) => {
   //   if (recordIdToDelete) {
@@ -453,24 +449,24 @@ const handleDeleteSingle = (applicantId: string) => {
   //   }
   // };
 
- const deleteMultipleApplicantDetails = (
-   multipleApplicantDelete: string[] | undefined | null
- ) => {
-   setLoader(true);
-   deleteMultipleApplicant(multipleApplicantDelete)
-     .then(() => {
-       fetchApplicants();
-       setSelectedApplicants([]);
-     })
-     .catch((error: any) => {
-       errorHandle(error);
-     })
-     .finally(() => {
-       setLoader(false);
-       setShowDeleteModal(false); 
-     });
+  const deleteMultipleApplicantDetails = (
+    multipleApplicantDelete: string[] | undefined | null
+  ) => {
+    setLoader(true);
+    deleteMultipleApplicant(multipleApplicantDelete)
+      .then(() => {
+        fetchApplicants();
+        setSelectedApplicants([]);
+      })
+      .catch((error: any) => {
+        errorHandle(error);
+      })
+      .finally(() => {
+        setLoader(false);
+        setShowDeleteModal(false);
+      });
   };
-  
+
   // const deleteApplicantDetails = (_id: string | undefined | null) => {
   //   setLoader(true);
   //   deleteApplicant(_id)
@@ -524,7 +520,6 @@ const handleDeleteSingle = (applicantId: string) => {
     });
   };
 
-  
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     //  const file = e.target.files[0];
     const file = e.target.files && e.target.files[0];
@@ -534,7 +529,7 @@ const handleDeleteSingle = (applicantId: string) => {
     if (["csv", "xlsx", "xls"].includes(fileExtension ?? "")) {
       // console.log("my functin csv called");
       handleFileImport(e);
-    } else if (["doc", "pdf","docx"].includes(fileExtension ?? "")) {
+    } else if (["doc", "pdf", "docx"].includes(fileExtension ?? "")) {
       const newEvent = {
         target: {
           files: [file],
@@ -550,7 +545,7 @@ const handleDeleteSingle = (applicantId: string) => {
     const file = event.target.files?.[0];
     if (!file) return;
     const fileExtension = file.name.split(".").pop()?.toLowerCase();
-    if (!["doc", "pdf","docx"].includes(fileExtension || "")) {
+    if (!["doc", "pdf", "docx"].includes(fileExtension || "")) {
       toast.error("Please upload a valid Pdf or doc file");
       return;
     }
@@ -594,15 +589,12 @@ const handleDeleteSingle = (applicantId: string) => {
       errorHandle(error);
 
       if (error.response?.data) {
-       
         const errorMessage =
           error.response.data.message || error.response.data.error;
         toast.error(errorMessage || "Failed to import file");
       } else if (error.message) {
-        
         toast.error(error.message);
       } else {
-       
         toast.error("An unexpected error occurred during import");
       }
     } finally {
@@ -672,7 +664,6 @@ const handleDeleteSingle = (applicantId: string) => {
       // console.log("Uploaded file:", formData.get("csvFile"));
       // console.log("functiona call");
       const response = await importApplicant(formData, {
-        
         onUploadProgress: (progressEvent) => {
           const progress = Math.round(
             (progressEvent.loaded * 100) / (progressEvent.total || 100)
@@ -685,14 +676,13 @@ const handleDeleteSingle = (applicantId: string) => {
 
       if (response?.success) {
         toast.success(response?.message || "File imported successfully!");
-      
-      }else if (!response?.success && response.statusCode === 409) {
+      } else if (!response?.success && response.statusCode === 409) {
         console.log("API Response msg:", response);
         setShowPopupModal(true);
 
         toast.error(response.message || "Import failed");
       } else {
-        toast.error("Unknown error occurred during import");
+        toast.error(response.message || "Unknown error occurred during import");
       }
     } catch (error: any) {
       // console.error("Import error:", error);
@@ -710,8 +700,6 @@ const handleDeleteSingle = (applicantId: string) => {
   };
 
   const handleModalConfirm = async () => {
-    
-
     if (!uploadedFile) return;
 
     setImportLoader(true);
