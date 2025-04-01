@@ -55,10 +55,10 @@ type Role =
 
 const technologyOptions: Record<Role, string[]> = {
   "Frontend Developer": ["React", "MUI", "TypeScript", "JavaScript", "Angular"],
-  "Backend Developer": ["Node.js", "Next.js", "Express", "MongoDB", "GraphQL"],
+  "Backend Developer": ["Nodejs", "Nextjs", "Express", "MongoDB", "GraphQL"],
   "Full Stack Developer": [
     "React",
-    "Node.js",
+    "Nodejs",
     // "Next.js",
     "Express",
     "MongoDB",

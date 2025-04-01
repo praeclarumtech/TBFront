@@ -15,6 +15,7 @@ import EmailVerification from "pages/auth/EmailVerify";
 import UpdatePassword from "pages/auth/UpdatePassword";
 import AddDegree from "pages/master/Degree";
 import ImportApplicantTables from "pages/applicant/importApplicants/Index";
+import Profile from "pages/UserProfile/Profile";
 
 const routes = {
   ROOT: {
@@ -49,6 +50,12 @@ const routes = {
     title: "Dashboard",
     path: "/dashboard",
     element: Dashboard,
+  },
+  USERPROFILE: {
+    title: "User Profile",
+    path: "/userprofile",
+    element:Profile ,
+    
   },
   APPLICANTS: {
     title: "Applicants",

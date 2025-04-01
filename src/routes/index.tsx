@@ -24,6 +24,7 @@ import UpdatePassword from "pages/auth/UpdatePassword";
 import AddSkill from "pages/master/Skills";
 import AddDegree from "pages/master/Degree";
 import ImportApplicantTables from "pages/applicant/importApplicants/Index";
+import Profile from "pages/UserProfile/Profile";
 
 const RenderRouter: React.FC = () => {
   const {
@@ -64,6 +65,14 @@ const RenderRouter: React.FC = () => {
           element={
             <RootLayout>
               <ImportApplicantTables />
+            </RootLayout>
+          }
+        />
+        <Route
+          path={"userProfile"}
+          element={
+            <RootLayout>
+              <Profile />
             </RootLayout>
           }
         />

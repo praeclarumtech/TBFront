@@ -69,7 +69,7 @@ export const DesktopNotifications = () => {
           <Dropdown.Item
             eventKey="2"
             onClick={() => {
-              navigate("/dashboard");
+              navigate("/userProfile");
             }}
           >
             <i className="fe fe-user me-2"></i> Edit Profile
