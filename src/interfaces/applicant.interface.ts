@@ -73,7 +73,7 @@ export const jobApplicantSchema = Yup.object({
     .min(1, "Rating must be between 1 and 10.")
     .max(10, "Rating must be between 1 and 10."),
   comment: Yup.string()
-    .min(10, "Please provide a detailed comment about how you found us.")
+    .min(10, "Please provide a detailed comment about how you found us (minimum 10 characters).")
     .max(150, " Please keep your comment under 150 characters."),
   appliedSkills: Yup.array()
     .required("Skills are required!")

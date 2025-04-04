@@ -8,7 +8,7 @@ import {
   PersonCircle,
 } from "react-bootstrap-icons";
 import DounutChart from "sub-components/report/DounutChart";
-import ProgressBar from "sub-components/report/ProgressBar";
+import ProgressBars from "sub-components/report/ProgressBar";
 import ProgressChart from "sub-components/report/ProgressChart";
 import { getApplicationOnProcess } from "api/reportApi";
 import AreaChart from "sub-components/report/AreaChart";
@@ -35,7 +35,7 @@ const Report = () => {
     try {
       const data = await getApplicationOnProcess();
       // ✅ Check if data exists before setting state
-      setApplicantsOnProcess1(data.data.firstroundApplicants);
+      setApplicantsOnProcess1(data.data.firstInterviewRoundApplicants);
       setApplicantsOnProcess2(data.data.practicalRoundApplicants);
       setApplicantsOnProcess3(data.data.technicalRoundApplicants);
       setApplicantsOnProcess4(data.data.hrRoundApplicants);
@@ -69,10 +69,10 @@ const Report = () => {
                             {/* <Cart /> */}
                             <Icon1Circle size={20} />
                           </div>
-                          <ProgressBar
+                          <ProgressBars
                             value={applicantsOnProcess1}
-                            colour="bg-warning"
-                            lebel="First Interview Round"
+                            colour="warning"
+                            label="First Interview Round"
                             loading={isLoading}
                           />
                         </div>
@@ -81,10 +81,10 @@ const Report = () => {
                             {/* <Truck /> */}
                             <Icon2Circle size={20} />
                           </div>
-                          <ProgressBar
+                          <ProgressBars
                             value={applicantsOnProcess2}
-                            colour="bg-success"
-                            lebel="Practical Round"
+                            colour="success"
+                            label="Practical Round"
                             loading={isLoading}
                           />
                         </div>
@@ -92,10 +92,10 @@ const Report = () => {
                           <div className="icon-shape icon-lg rounded-2 shadow-md bg-light-danger text-danger">
                             <Laptop size={20} />
                           </div>
-                          <ProgressBar
+                          <ProgressBars
                             value={applicantsOnProcess3}
-                            colour="bg-danger"
-                            lebel="Technical Round"
+                            colour="danger"
+                            label="Technical Round"
                             loading={isLoading}
                           />
                         </div>
@@ -103,10 +103,10 @@ const Report = () => {
                           <div className="icon-shape icon-lg rounded-2 shadow-md bg-light-primary text-primary">
                             <Check2Circle size={20} />
                           </div>
-                          <ProgressBar
+                          <ProgressBars
                             value={applicantsOnProcess4}
-                            colour="bg-primary"
-                            lebel="HR Round"
+                            colour="primary"
+                            label="HR Round"
                             loading={isLoading}
                           />
                         </div>
@@ -114,10 +114,10 @@ const Report = () => {
                           <div className="icon-shape icon-lg rounded-2 shadow-md bg-light-info text-info">
                             <PersonCircle size={20} />
                           </div>
-                          <ProgressBar
+                          <ProgressBars
                             value={applicantsOnProcess5}
-                            colour="bg-info"
-                            lebel="Client Round"
+                            colour="info"
+                            label="Client Round"
                             loading={isLoading}
                           />
                         </div>

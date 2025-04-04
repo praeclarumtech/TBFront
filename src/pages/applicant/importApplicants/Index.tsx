@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+// /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Row, Col, Card, Container, CardBody, Spinner } from "react-bootstrap";
 import React, { Fragment, useEffect, useState, useMemo, useRef } from "react";
 import BaseButton from "components/BaseComponents/BaseButton";
@@ -6,7 +6,6 @@ import { BaseSelect, MultiSelect } from "components/BaseComponents/BaseSelect";
 import TableContainer from "components/BaseComponents/TableContainer";
 import { useNavigate } from "react-router-dom";
 import { Tooltip as ReactTooltip } from "react-tooltip";
-
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -21,6 +20,7 @@ import {
   ExportApplicant,
   resumeUpload,
   deleteMultipleApplicant,
+  updateManyApplicants,
 } from "api/applicantApi";
 
 import ViewModal from "../ViewApplicant";
@@ -43,13 +43,21 @@ import {
 import appConstants from "constants/constant";
 import BaseSlider from "components/BaseComponents/BaseSlider";
 import Skeleton from "react-loading-skeleton";
-import { XSquare } from "react-bootstrap-icons";
 import saveAs from "file-saver";
 import BasePopUpModal from "components/BaseComponents/BasePopUpModal";
 import { ViewAppliedSkills } from "api/skillsApi";
 import { FaExclamationTriangle } from "react-icons/fa";
 import debounce from "lodash.debounce";
+import { IconButton } from "@mui/material";
+import { Close } from "@mui/icons-material";
+import BaseModal from "components/BaseComponents/BaseModal";
 // import toast from "react-hot-toast";
+
+interface ValueToEdit {
+  label: string;
+  value: string;
+}
+
 const {
   projectTitle,
   Modules,
@@ -60,7 +68,6 @@ const {
   gendersType,
   stateType,
   anyHandOnOffers,
-
   workPreferenceType,
   designationType,
 } = appConstants;
@@ -132,7 +139,8 @@ function ImportApplicant() {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [showPopupModal, setShowPopupModal] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
-
+  const [showBaseModal, setShowBaseModal] = useState(false);
+  const [valueToEdit, setValueToEdit] = useState<ValueToEdit[]>([]);
   const toggleDrawer =
     (anchor: Anchor, open: boolean) =>
     (event: React.KeyboardEvent | React.MouseEvent) => {
@@ -147,34 +155,363 @@ function ImportApplicant() {
       setState({ ...state, [anchor]: open });
     };
 
-  const fetchApplicants = async () => {
-    setTableLoader(true);
-    setLoader(true);
+  const [multiEditInterViewStage, setMultiEditInterViewStage] =
+    useState<SelectedOption | null>(null);
 
+  const [multiEditStatus, setMultiEditStatus] = useState<SelectedOption | null>(
+    null
+  );
+
+  const [multiEditRole, setMultiEditRole] = useState<SelectedOption | null>(
+    null
+  );
+
+  // const fetchApplicants = async () => {
+  //   setTableLoader(true);
+  //   setLoader(true);
+
+  //   try {
+  //     const params: {
+  //       page: number;
+  //       pageSize: number;
+  //       limit: number;
+  //       totalExperience?: string;
+  //       currentCity?: string;
+  //       appliedSkills?: string;
+  //       startDate?: string;
+  //       endDate?: string;
+  //       noticePeriod?: string;
+  //       status?: string;
+  //       interviewStage?: string;
+  //       gender?: string;
+  //       expectedPkg?: string;
+  //       currentCompanyDesignation?: string;
+  //       state?: string;
+  //       maritalStatus?: string;
+  //       anyHandOnOffers?: string;
+  //       rating?: string;
+  //       workPreference?: string;
+  //       communicationSkill?: string;
+  //       currentPkg?: string;
+  //       applicantName?: string;
+  //       searchS?: string;
+  //     } = {
+  //       page: pagination.pageIndex + 1,
+  //       pageSize: pagination.pageSize,
+  //       limit: 50,
+  //     };
+
+  //     if (experienceRange[0] !== 0 || experienceRange[1] !== 25) {
+  //       params.totalExperience = `${experienceRange[0]}-${experienceRange[1]}`;
+  //     }
+  //     if (filterNoticePeriod[0] !== 0 || filterNoticePeriod[1] !== 90) {
+  //       params.noticePeriod = `${filterNoticePeriod[0]}-${filterNoticePeriod[1]}`;
+  //     }
+  //     if (filterRating[0] !== 0 || filterRating[1] !== 10) {
+  //       params.rating = `${filterRating[0]}-${filterRating[1]}`;
+  //     }
+
+  //     if (filterEngRating[0] !== 0 || filterEngRating[1] !== 10) {
+  //       params.communicationSkill = `${filterEngRating[0]}-${filterEngRating[1]}`;
+  //     }
+  //     if (filterExpectedPkg[0] !== 0 || filterExpectedPkg[1] !== 100) {
+  //       params.expectedPkg = `${filterExpectedPkg[0]}-${filterExpectedPkg[1]}`;
+  //     }
+
+  //     if (filterCurrentPkg[0] !== 0 || filterCurrentPkg[1] !== 100) {
+  //       params.currentPkg = `${filterCurrentPkg[0]}-${filterCurrentPkg[1]}`;
+  //     }
+
+  //     if (filterWorkPreference) {
+  //       params.workPreference = filterWorkPreference.value;
+  //     }
+  //     if (filterAnyHandOnOffers) {
+  //       params.anyHandOnOffers = filterAnyHandOnOffers.value;
+  //     }
+  //     if (filterCity) {
+  //       params.currentCity = filterCity.value;
+  //     }
+  //     if (filterState) {
+  //       params.state = filterState.value;
+  //     }
+  //     if (appliedSkills.length > 0) {
+  //       params.appliedSkills = appliedSkills
+  //         .map((skill) => skill.label)
+  //         .join(",");
+  //     }
+
+  //     if (startDate) {
+  //       params.startDate = startDate;
+  //     }
+  //     if (endDate) {
+  //       params.endDate = endDate;
+  //     }
+  //     if (filterStatus) {
+  //       params.status = filterStatus.value;
+  //     }
+
+  //     if (filterDesignation) {
+  //       params.currentCompanyDesignation = filterDesignation.value;
+  //     }
+  //     if (filterInterviewStage) {
+  //       params.interviewStage = filterInterviewStage.value;
+  //     }
+  //     if (filterGender) {
+  //       params.gender = filterGender.value;
+  //     }
+  //     const searchValue = searchAll?.trim();
+  //     if (searchValue) {
+  //       params.searchS = searchValue;
+  //       params.appliedSkills = searchValue;
+  //     }
+
+  //     const res = await listOfImportApplicants(params);
+  //     setApplicant(res?.data?.item || []);
+  //     setTotalRecords(res?.data?.totalRecords || 0);
+  //   } catch (error) {
+  //     errorHandle(error);
+  //   } finally {
+  //     setTableLoader(false);
+  //     setLoader(false);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   const delayedSearch = debounce(() => {
+  //     fetchApplicants();
+  //   }, 0);
+  //   delayedSearch();
+  //   return () => delayedSearch.cancel();
+  // }, [
+  //   pagination.pageIndex,
+  //   pagination.pageSize,
+  //   appliedSkills,
+  //   startDate,
+  //   endDate,
+  //   filterCity,
+  //   filterGender,
+  //   filterInterviewStage,
+  //   filterStatus,
+  //   experienceRange,
+  //   filterNoticePeriod,
+  //   filterExpectedPkg,
+  //   filterCurrentPkg,
+  //   filterDesignation,
+  //   filterAnyHandOnOffers,
+  //   filterState,
+  //   filterRating,
+  //   filterEngRating,
+  //   filterWorkPreference,
+  // ]);
+
+  // useEffect(() => {
+  //   const fetchSkills = async () => {
+  //     try {
+  //       setLoading(true);
+  //       //  const allSkills: any[] = [];
+  //       const page = 1;
+  //       const pageSize = 50;
+  //       const limit = 200;
+  //       const response = await ViewAppliedSkills({
+  //         page,
+  //         pageSize,
+  //         limit,
+  //       });
+
+  //       const skillData = response?.data?.data || [];
+
+  //       setSkillOptions(
+  //         skillData.map((item: any) => ({
+  //           label: item.skills,
+  //           value: item._id,
+  //         }))
+  //       );
+  //     } catch (error) {
+  //       errorHandle(error);
+  //       // console.error("Error fetching skills", error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchSkills();
+  // }, []);
+
+  {
+    /*helooooooo*/
+  }
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       setTableLoader(true);
+  //       setLoader(true);
+  //       setLoading(true);
+
+  //       // Define `params` with correct TypeScript typing
+  //       const params: {
+  //         page: number;
+  //         pageSize: number;
+  //         limit: number;
+  //         totalExperience?: string;
+  //         noticePeriod?: string;
+  //         rating?: string;
+  //         communicationSkill?: string;
+  //         expectedPkg?: string;
+  //         currentPkg?: string;
+  //         workPreference?: string;
+  //         anyHandOnOffers?: string;
+  //         currentCity?: string;
+  //         state?: string;
+  //         appliedSkills?: string;
+  //         startDate?: string;
+  //         endDate?: string;
+  //         status?: string;
+  //         currentCompanyDesignation?: string;
+  //         interviewStage?: string;
+  //         gender?: string;
+  //         searchS?: string;
+  //       } = {
+  //         page: pagination.pageIndex + 1,
+  //         pageSize: pagination.pageSize,
+  //         limit: 50,
+  //       };
+
+  //       // Apply filters dynamically
+  //       if (experienceRange[0] !== 0 || experienceRange[1] !== 25) {
+  //         params.totalExperience = `${experienceRange[0]}-${experienceRange[1]}`;
+  //       }
+  //       if (filterNoticePeriod[0] !== 0 || filterNoticePeriod[1] !== 90) {
+  //         params.noticePeriod = `${filterNoticePeriod[0]}-${filterNoticePeriod[1]}`;
+  //       }
+  //       if (filterRating[0] !== 0 || filterRating[1] !== 10) {
+  //         params.rating = `${filterRating[0]}-${filterRating[1]}`;
+  //       }
+  //       if (filterEngRating[0] !== 0 || filterEngRating[1] !== 10) {
+  //         params.communicationSkill = `${filterEngRating[0]}-${filterEngRating[1]}`;
+  //       }
+  //       if (filterExpectedPkg[0] !== 0 || filterExpectedPkg[1] !== 100) {
+  //         params.expectedPkg = `${filterExpectedPkg[0]}-${filterExpectedPkg[1]}`;
+  //       }
+  //       if (filterCurrentPkg[0] !== 0 || filterCurrentPkg[1] !== 100) {
+  //         params.currentPkg = `${filterCurrentPkg[0]}-${filterCurrentPkg[1]}`;
+  //       }
+  //       if (filterWorkPreference) {
+  //         params.workPreference = filterWorkPreference.value;
+  //       }
+  //       if (filterAnyHandOnOffers) {
+  //         params.anyHandOnOffers = filterAnyHandOnOffers.value;
+  //       }
+  //       if (filterCity) {
+  //         params.currentCity = filterCity.value;
+  //       }
+  //       if (filterState) {
+  //         params.state = filterState.value;
+  //       }
+  //       if (appliedSkills.length > 0) {
+  //         params.appliedSkills = appliedSkills.map((skill) => skill.label).join(",");
+  //       }
+  //       if (startDate) {
+  //         params.startDate = startDate;
+  //       }
+  //       if (endDate) {
+  //         params.endDate = endDate;
+  //       }
+  //       if (filterStatus) {
+  //         params.status = filterStatus.value;
+  //       }
+  //       if (filterDesignation) {
+  //         params.currentCompanyDesignation = filterDesignation.value;
+  //       }
+  //       if (filterInterviewStage) {
+  //         params.interviewStage = filterInterviewStage.value;
+  //       }
+  //       if (filterGender) {
+  //         params.gender = filterGender.value;
+  //       }
+  //       const searchValue = searchAll?.trim();
+  //       if (searchValue) {
+  //         params.searchS = searchValue;
+  //         params.appliedSkills = searchValue;
+  //       }
+
+  //       // Fetch both applicants and skills in parallel
+  //       const [applicantsResponse, skillsResponse] = await Promise.all([
+  //         listOfImportApplicants(params),
+  //         ViewAppliedSkills({ page: 1, pageSize: 50, limit: 200 }),
+  //       ]);
+
+  //       // Update state after fetching
+  //       setApplicant(applicantsResponse?.data?.item || []);
+  //       setTotalRecords(applicantsResponse?.data?.totalRecords || 0);
+  //       setSkillOptions(
+  //         (skillsResponse?.data?.data || []).map((item: { skills: any; _id: any; }) => ({
+  //           label: item.skills,
+  //           value: item._id,
+  //         }))
+  //       );
+  //     } catch (error) {
+  //       errorHandle(error);
+  //     } finally {
+  //       setTableLoader(false);
+  //       setLoader(false);
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   // Debounce to avoid excessive API calls
+  //   const delayedSearch = debounce(fetchData, 300);
+  //   delayedSearch();
+
+  //   return () => delayedSearch.cancel();
+  // }, [
+  //   pagination.pageIndex,
+  //   pagination.pageSize,
+  //   appliedSkills,
+  //   startDate,
+  //   endDate,
+  //   filterCity,
+  //   filterGender,
+  //   filterInterviewStage,
+  //   filterStatus,
+  //   experienceRange,
+  //   filterNoticePeriod,
+  //   filterExpectedPkg,
+  //   filterCurrentPkg,
+  //   filterDesignation,
+  //   filterAnyHandOnOffers,
+  //   filterState,
+  //   filterRating,
+  //   filterEngRating,
+  //   filterWorkPreference,
+  // ]);
+
+  // Function to fetch applicants
+
+  const fetchApplicants = async () => {
+    // setTableLoader(true);
+    setLoader(true);
     try {
       const params: {
         page: number;
         pageSize: number;
         limit: number;
         totalExperience?: string;
+        noticePeriod?: string;
+        rating?: string;
+        communicationSkill?: string;
+        expectedPkg?: string;
+        currentPkg?: string;
+        workPreference?: string;
+        anyHandOnOffers?: string;
         currentCity?: string;
+        state?: string;
         appliedSkills?: string;
         startDate?: string;
         endDate?: string;
-        noticePeriod?: string;
         status?: string;
+        currentCompanyDesignation?: string;
         interviewStage?: string;
         gender?: string;
-        expectedPkg?: string;
-        currentCompanyDesignation?: string;
-        state?: string;
-        maritalStatus?: string;
-        anyHandOnOffers?: string;
-        rating?: string;
-        workPreference?: string;
-        communicationSkill?: string;
-        currentPkg?: string;
-        applicantName?: string;
         searchS?: string;
       } = {
         page: pagination.pageIndex + 1,
@@ -182,6 +519,7 @@ function ImportApplicant() {
         limit: 50,
       };
 
+      // Apply filters dynamically
       if (experienceRange[0] !== 0 || experienceRange[1] !== 25) {
         params.totalExperience = `${experienceRange[0]}-${experienceRange[1]}`;
       }
@@ -191,18 +529,15 @@ function ImportApplicant() {
       if (filterRating[0] !== 0 || filterRating[1] !== 10) {
         params.rating = `${filterRating[0]}-${filterRating[1]}`;
       }
-
       if (filterEngRating[0] !== 0 || filterEngRating[1] !== 10) {
         params.communicationSkill = `${filterEngRating[0]}-${filterEngRating[1]}`;
       }
       if (filterExpectedPkg[0] !== 0 || filterExpectedPkg[1] !== 100) {
         params.expectedPkg = `${filterExpectedPkg[0]}-${filterExpectedPkg[1]}`;
       }
-
       if (filterCurrentPkg[0] !== 0 || filterCurrentPkg[1] !== 100) {
         params.currentPkg = `${filterCurrentPkg[0]}-${filterCurrentPkg[1]}`;
       }
-
       if (filterWorkPreference) {
         params.workPreference = filterWorkPreference.value;
       }
@@ -220,7 +555,6 @@ function ImportApplicant() {
           .map((skill) => skill.label)
           .join(",");
       }
-
       if (startDate) {
         params.startDate = startDate;
       }
@@ -230,7 +564,6 @@ function ImportApplicant() {
       if (filterStatus) {
         params.status = filterStatus.value;
       }
-
       if (filterDesignation) {
         params.currentCompanyDesignation = filterDesignation.value;
       }
@@ -246,22 +579,62 @@ function ImportApplicant() {
         params.appliedSkills = searchValue;
       }
 
+      // Fetch applicants
       const res = await listOfImportApplicants(params);
       setApplicant(res?.data?.item || []);
       setTotalRecords(res?.data?.totalRecords || 0);
     } catch (error) {
       errorHandle(error);
     } finally {
-      setTableLoader(false);
+      // setTableLoader(false);
       setLoader(false);
     }
   };
 
+  // Function to fetch skills
+  const fetchSkills = async () => {
+    setLoading(true);
+    try {
+      const response = await ViewAppliedSkills({
+        page: 1,
+        pageSize: 50,
+        limit: 200,
+      });
+      const skillData = response?.data?.data || [];
+      setSkillOptions(
+        skillData.map((item: { skills: any; _id: any }) => ({
+          label: item.skills,
+          value: item._id,
+        }))
+      );
+    } catch (error) {
+      errorHandle(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Use `useEffect` to call both APIs together using `Promise.all()`
   useEffect(() => {
-    const delayedSearch = debounce(() => {
-      fetchApplicants();
-    }, 0);
+    const fetchData = async () => {
+      try {
+        setTableLoader(true);
+        setLoader(true);
+        setLoading(true);
+        await Promise.all([fetchApplicants(), fetchSkills()]);
+      } catch (error) {
+        errorHandle(error);
+      } finally {
+        setTableLoader(false);
+        setLoader(false);
+        setLoading(false);
+      }
+    };
+
+    // Debounce API calls
+    const delayedSearch = debounce(fetchData, 300);
     delayedSearch();
+
     return () => delayedSearch.cancel();
   }, [
     pagination.pageIndex,
@@ -284,39 +657,6 @@ function ImportApplicant() {
     filterEngRating,
     filterWorkPreference,
   ]);
-
-  useEffect(() => {
-    const fetchSkills = async () => {
-      try {
-        setLoading(true);
-        //  const allSkills: any[] = [];
-        const page = 1;
-        const pageSize = 50;
-        const limit = 200;
-        const response = await ViewAppliedSkills({
-          page,
-          pageSize,
-          limit,
-        });
-
-        const skillData = response?.data?.data || [];
-
-        setSkillOptions(
-          skillData.map((item: any) => ({
-            label: item.skills,
-            value: item._id,
-          }))
-        );
-      } catch (error) {
-        errorHandle(error);
-        // console.error("Error fetching skills", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchSkills();
-  }, []);
 
   const handleExperienceChange = (e: React.ChangeEvent<any>) => {
     setExperienceRange(e.target.value as number[]);
@@ -432,6 +772,7 @@ function ImportApplicant() {
 
   const closeDeleteModal = () => {
     setShowDeleteModal(false);
+    setSelectedApplicants([]);
   };
 
   const handleDeleteAll = () => {
@@ -744,12 +1085,11 @@ function ImportApplicant() {
   const handleModalCancel = () => {
     setShowPopupModal(false);
   };
-
-  const handleExportExcel = async () => {
+  const handleExportExcel = async (filtered: any) => {
     try {
       toast.info("Preparing file for download...");
-
-      const response = await ExportApplicant();
+      console.log("object,", filtered);
+      const response = await ExportApplicant(filtered);
 
       if (!response) {
         toast.error("Failed to download file");
@@ -767,6 +1107,38 @@ function ImportApplicant() {
     }
   };
 
+  // const handleExportExcel = async (filtered: string[] | string) => {
+  //   try {
+  //     console.log("Exporting with filters:", filtered);
+  //     toast.info("Preparing file for download...");
+
+  //     await new Promise((resolve) => setTimeout(resolve, 3500));
+
+  //     // Ensure `filtered` is properly formatted as a string
+  //     // const queryParams = qs.stringify({
+  //     //   filtered: Array.isArray(filtered) ? filtered.join(",") : filtered,
+  //     // });
+
+  //     // const response = await ExportApplicant([filtered]);
+  //     const response = await ExportApplicant(
+  //       Array.isArray(filtered) ? filtered : [filtered]
+  //     );
+
+  //     if (!response) {
+  //       toast.error("Failed to download file");
+  //       return;
+  //     }
+
+  //     const blob = new Blob([response], { type: "text/csv" });
+  //     saveAs(blob, "Imported_Applicants.csv");
+
+  //     toast.success("File downloaded successfully!");
+  //   } catch (error) {
+  //     console.error("Export error:", error);
+  //     toast.error("Failed to export file");
+  //   }
+  // };
+
   const drawerList = (anchor: Anchor) => (
     <Box
       sx={{
@@ -776,11 +1148,16 @@ function ImportApplicant() {
       }}
       role="presentation"
     >
-      <button type="button" onClick={toggleDrawer("right", false)}>
-        <XSquare size={25} />
-      </button>
+      <div className="mb-4">
+        <IconButton
+          onClick={toggleDrawer("right", false)}
+          sx={{ position: "absolute", top: 8, left: 8, zIndex: 10 }}
+        >
+          <Close />
+        </IconButton>
+      </div>
       <List>
-        <Row className="flex justify-between items-center mb-4">
+        <Row className="flex items-center justify-between mb-4">
           <Col>
             <h3>Apply Filters</h3>
           </Col>
@@ -788,7 +1165,7 @@ function ImportApplicant() {
             <BaseButton
               color="primary"
               onClick={resetFilters}
-              variant="outlined"
+              // variant="outlined"
               sx={{ width: "auto" }}
             >
               Reset Filters
@@ -799,7 +1176,7 @@ function ImportApplicant() {
         <MultiSelect
           label="Applied Skills"
           name="appliedSkills"
-          className="select-border mb-1"
+          className="mb-1 select-border"
           placeholder="Applied Skills"
           value={appliedSkills}
           isMulti={true}
@@ -815,7 +1192,7 @@ function ImportApplicant() {
         <BaseSlider
           label="Experience (in years)"
           name="experience"
-          className="select-border mx-5 mb-1 "
+          className="mx-5 mb-1 select-border "
           value={experienceRange}
           // onChange={handleExperienceChange}
           handleChange={handleExperienceChange}
@@ -829,7 +1206,7 @@ function ImportApplicant() {
         <BaseSelect
           label="City"
           name="city"
-          className="select-border mb-1 "
+          className="mb-1 select-border "
           options={cityOptions}
           placeholder="City"
           handleChange={handleCityChange}
@@ -838,7 +1215,7 @@ function ImportApplicant() {
         <BaseSelect
           label="State"
           name="state"
-          className="select-border mb-1 "
+          className="mb-1 select-border "
           options={stateType}
           placeholder="State"
           handleChange={handleStateChange}
@@ -847,7 +1224,7 @@ function ImportApplicant() {
         <BaseSelect
           label="Interview Stage"
           name="interviewStage"
-          className="select-border mb-1"
+          className="mb-1 select-border"
           options={interviewStageOptions}
           placeholder="Interview Stage"
           handleChange={handleInterviewStageChange}
@@ -856,7 +1233,7 @@ function ImportApplicant() {
         <BaseSelect
           label="Status"
           name="status"
-          className="select-border mb-1"
+          className="mb-1 select-border"
           options={statusOptions}
           placeholder="Status"
           handleChange={handleStatusChange}
@@ -866,7 +1243,7 @@ function ImportApplicant() {
         <BaseSelect
           label="Gender"
           name="gender"
-          className="select-border mb-1"
+          className="mb-1 select-border"
           options={gendersType}
           placeholder="Gender"
           handleChange={handleGenderChange}
@@ -876,7 +1253,7 @@ function ImportApplicant() {
         <BaseSlider
           label="Expected Pkg(LPA)"
           name="expectedPkg"
-          className="select-border mx-5 mb-1  "
+          className="mx-5 mb-1 select-border "
           value={filterExpectedPkg}
           handleChange={handleExpectedPkgChange}
           min={0}
@@ -887,7 +1264,7 @@ function ImportApplicant() {
         <BaseSlider
           label="Current Pkg(LPA)"
           name="currentPkg"
-          className="select-border mx-5 mb-1  "
+          className="mx-5 mb-1 select-border "
           value={filterCurrentPkg}
           handleChange={handleCurrentPkgChange}
           min={0}
@@ -899,7 +1276,7 @@ function ImportApplicant() {
         <BaseSelect
           label="Designation"
           name="designation"
-          className="select-border mb-1"
+          className="mb-1 select-border"
           options={designationType}
           placeholder="Designation"
           handleChange={handleDesignationChange}
@@ -909,7 +1286,7 @@ function ImportApplicant() {
         <BaseSlider
           label="Notice Period (in Days)"
           name="noticePeriod"
-          className="select-border mx-5 mb-1  "
+          className="mx-5 mb-1 select-border "
           value={filterNoticePeriod}
           handleChange={handleNoticePeriodChange}
           min={0}
@@ -922,7 +1299,7 @@ function ImportApplicant() {
         <BaseSelect
           label="Work Preference"
           name="workPreference"
-          className="select-border mb-1"
+          className="mb-1 select-border"
           options={workPreferenceType}
           placeholder="Work Preference"
           handleChange={handleWorkPreferenceChange}
@@ -933,7 +1310,7 @@ function ImportApplicant() {
           label="JavaScript Rating"
           name="rating"
           value={filterRating}
-          className="select-border mx-5 mb-1  "
+          className="mx-5 mb-1 select-border "
           handleChange={handleRatingChange}
           min={0}
           max={10}
@@ -944,7 +1321,7 @@ function ImportApplicant() {
         <BaseSlider
           label="Eng.Communication Rating"
           name="communication"
-          className="select-border mx-5 mb-1  "
+          className="mx-5 mb-1 select-border "
           value={filterEngRating}
           handleChange={handleEngRatingChange}
           min={0}
@@ -955,7 +1332,7 @@ function ImportApplicant() {
         <BaseSelect
           label="Any Hand On Offers"
           name="anyHandOnOffers"
-          className="select-border mb-1"
+          className="mb-1 select-border"
           options={anyHandOnOffers}
           placeholder="Any Hand On Offers"
           handleChange={handleAnyHandOnOffersChange}
@@ -965,7 +1342,7 @@ function ImportApplicant() {
         <BaseInput
           label="Start Date"
           name="startDate"
-          className="select-border mb-1"
+          className="mb-1 select-border"
           type="date"
           placeholder={InputPlaceHolder("Start Date")}
           handleChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -1041,7 +1418,7 @@ function ImportApplicant() {
         enableColumnFilter: false,
       },
       {
-        header: "appliedSkills",
+        header: "applied Skills",
         accessorKey: "appliedSkills",
         cell: (cell: any) => (
           <div
@@ -1137,14 +1514,14 @@ function ImportApplicant() {
       {
         header: "Action",
         cell: (cell: any) => (
-          <div className="hstack gap-2">
+          <div className="gap-2 hstack">
             <BaseButton
               id={`usage-${cell?.row?.original?.id}`}
               color="primary"
               className="btn btn-sm btn-soft-success usage-list"
               onClick={() => handleView(cell.row.original._id)}
             >
-              <i className="ri-eye-fill align-bottom" />
+              <i className="align-bottom ri-eye-fill" />
               <ReactTooltip
                 place="bottom"
                 variant="success"
@@ -1158,7 +1535,7 @@ function ImportApplicant() {
               className="btn btn-sm btn-soft-secondary edit-list"
               onClick={() => handleEdit(cell?.row?.original._id)}
             >
-              <i className="ri-pencil-fill align-bottom" />
+              <i className="align-bottom ri-pencil-fill" />
               <ReactTooltip
                 place="bottom"
                 variant="info"
@@ -1173,7 +1550,7 @@ function ImportApplicant() {
               color="danger"
               onClick={() => handleDeleteSingle(cell.row.original._id)} // Call the single delete function
             >
-              <i className="ri-delete-bin-5-fill align-bottom" />
+              <i className="align-bottom ri-delete-bin-5-fill" />
               <ReactTooltip
                 place="bottom"
                 variant="error"
@@ -1184,11 +1561,11 @@ function ImportApplicant() {
 
             <BaseButton
               id={`email-${cell?.row?.original?.id}`}
-              className="btn btn-sm btn-soft-secondary edit-list"
+              className="btn btn-sm btn-soft-secondary bg-success edit-list"
               // onClick={() => handleEmail(cell?.row?.original._id)}
               onClick={() => handleEmail(cell?.row?.original._id)}
             >
-              <i className="ri-mail-close-line align-bottom" />
+              <i className="align-bottom ri-mail-close-line" />
               <ReactTooltip
                 place="bottom"
                 variant="info"
@@ -1206,6 +1583,78 @@ function ImportApplicant() {
   // const handleNavigate = () => {
   //   navigate("/applicants/add-applicant");
   // };
+
+  const handleCloseClick = () => {
+    setShowBaseModal(false);
+    // setEditingSkill(null);
+    // validation.resetForm();
+    setSelectedApplicants([]);
+    setValueToEdit([]);
+    setMultiEditInterViewStage(null);
+    setMultiEditRole(null);
+    setMultiEditStatus(null);
+  };
+
+  // const handleSubmit = (
+  //   multiEditInterViewStage: React.SetStateAction<SelectedOption | null>
+  // ) => {
+  //   setFilterInterviewStage(multiEditInterViewStage);
+  //   // setFilterStatus(selectedOptionEditStaus);
+  // };
+
+  const handleSubmit = async () => {
+    // [...applicant];
+    if (selectedApplicants.length === 0) {
+      toast.error("Please select applicants to update.");
+      return;
+    }
+    console.log("object", selectedApplicants);
+
+    const applicantIds = selectedApplicants.filter(
+      (id) => typeof id === "string" && id.trim() !== ""
+    );
+    console.log("Applicant IDs:", applicantIds);
+    const updateData: any = {}; // Store updates dynamically
+
+    if (multiEditStatus) {
+      updateData.status = multiEditStatus.value;
+    }
+    if (multiEditInterViewStage) {
+      updateData.interviewStage = multiEditInterViewStage.value;
+    }
+    if (multiEditRole) {
+      updateData.appliedRole = multiEditRole.value;
+    }
+
+    try {
+      await updateManyApplicants(applicantIds, updateData);
+      toast.success("Applicants updated successfully!");
+      setShowBaseModal(false);
+      fetchApplicants(); // Refresh data
+    } catch (error) {
+      console.error("Update Error:", error);
+      toast.error("Something went wrong while updating applicants.");
+    } finally {
+      setSelectedApplicants([]);
+      setValueToEdit([]);
+      setMultiEditInterViewStage(null);
+      setMultiEditRole(null);
+      setMultiEditStatus(null);
+    }
+  };
+
+  const handleOpenBaseModal = () => {
+    // setEditingSkill(null);
+    // validation.resetForm();
+    setShowBaseModal(true);
+  };
+
+  const optionToEdit = [
+    { label: "Status", value: "Status" },
+    { label: "Interview Stage", value: "Interview Stage" },
+    { label: "Last FollowUp Update", value: "Last FollowUp Update" },
+    { label: "Applied Role", value: "Applied Role" },
+  ];
 
   return (
     <Fragment>
@@ -1243,17 +1692,17 @@ function ImportApplicant() {
       <Container fluid>
         <Row>
           <div>
-            <Card className="mb-3 my-3">
+            <Card className="my-3 mb-3">
               <CardBody>
                 <div className="container">
-                  <div className="row justify-content-between align-items-center">
-                    <div className="col-auto d-flex justify-content-start mx-0">
+                  <div className="row align-items-center">
+                    <div className="col-3 col-xs-auto">
                       <button
                         onClick={toggleDrawer("right", true)}
                         // color="primary"
                         className="btn btn-primary"
                       >
-                        <i className="fa fa-filter mx-1 "></i> Filters
+                        <i className="mx-1 fa fa-filter "></i> Filters
                       </button>
                       <Drawer
                         className="!mt-16 "
@@ -1264,25 +1713,25 @@ function ImportApplicant() {
                         {drawerList("right")}
                       </Drawer>
                     </div>
-                    <div className="col-auto d-flex justify-content-end flex-wrap mr-2">
+                    <div className="flex-wrap mt-2 col-9 col-md d-flex flex-column flex-sm-row justify-content-end mt-md-0">
                       <div>
                         <input
                           id="search-bar-0"
-                          className="form-control search h-10"
+                          className="h-10 form-control search"
                           placeholder="Search..."
                           onChange={handleSearchChange}
                           value={searchAll}
                         />
                       </div>
 
-                      <div className="col-auto d-flex justify-content-end mx-0 flex-wrap">
-                        {selectedApplicants.length > 0 && (
-                          <>
-                            {/* <BaseButton
-                             className="btn btn-lg btn-soft-secondary bg-green-900 edit-list mx-1 px-3"
+                      {/* <div className="flex-wrap col-auto mx-0 d-flex justify-content-end"> */}
+                      {selectedApplicants.length > 0 && (
+                        <>
+                          {/* <BaseButton
+                             className="px-3 mx-1 bg-green-900 btn btn-lg btn-soft-secondary edit-list"
                              onClick={handleSendWhatsApp}
                            >
-                             <i className="ri-whatsapp-line align-bottom" />
+                             <i className="align-bottom ri-whatsapp-line" />
                              <ReactTooltip
                                place="bottom"
                                variant="info"
@@ -1290,113 +1739,232 @@ function ImportApplicant() {
                              />
                            </BaseButton> */}
 
-                            <BaseButton
-                              className="btn text-lg bg-danger edit-list ml-2 w-fit border-0"
-                              onClick={handleDeleteAll}
-                            >
-                              <i className="ri-delete-bin-fill align-bottom" />
-                              <ReactTooltip
-                                place="bottom"
-                                variant="error"
-                                content="Delete"
-                                anchorId={`Delete ${selectedApplicants.length} Emails`}
-                              />
-                            </BaseButton>
+                          <BaseButton
+                            // id={`editMode-${cell?.row?.original?.id}`}
+                            className="ml-2 btn btn-soft-secondary edit-list"
+                            // onClick={() => handleEdit(cell?.row?.original._id)}
+                            onClick={handleOpenBaseModal}
+                          >
+                            <i className="align-bottom ri-pencil-fill" /> Edit
+                            <ReactTooltip
+                              place="bottom"
+                              variant="info"
+                              content="Edit"
+                              // anchorId={`editMode-${cell?.row?.original?.id}`}
+                            />
+                          </BaseButton>
 
-                            <BaseButton
-                              className="btn text-lg btn-soft-secondary bg-primary edit-list mx-1 "
-                              onClick={handleSendEmail}
-                            >
-                              <i className="ri-mail-close-line align-bottom" />
-                              <ReactTooltip
-                                place="bottom"
-                                variant="info"
-                                content="Email"
-                              />
-                            </BaseButton>
+                          <BaseButton
+                            className="ml-2 text-lg border-0 btn bg-danger edit-list w-fit"
+                            onClick={handleDeleteAll}
+                          >
+                            <i className="align-bottom ri-delete-bin-fill" />
+                          </BaseButton>
+                          <ReactTooltip
+                            anchorId="delete-button-tooltip"
+                            content="Delete"
+                            place="bottom"
+                            variant="error"
+                          />
+
+                          <BaseButton
+                            className="ml-2 text-lg btn btn-soft-secondary bg-primary edit-list "
+                            onClick={handleSendEmail}
+                          >
+                            <i className="align-bottom ri-mail-close-line" />
+                            <ReactTooltip
+                              place="bottom"
+                              variant="info"
+                              content="Email"
+                            />
+                          </BaseButton>
+                        </>
+                      )}
+
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        accept=".csv,.xlsx,.xls,.xls,doc,pdf"
+                        style={{ display: "none" }}
+                        onChange={handleFileChange}
+                        disabled={isImporting}
+                      />
+                      <BaseButton
+                        color="primary"
+                        className="ml-2 position-relative"
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={importLoader}
+                      >
+                        {importLoader ? (
+                          <>
+                            <i className="align-bottom ri-loader-4-line animate-spin me-1" />
+                            {isImporting
+                              ? `Importing... ${importProgress}%`
+                              : "Processing..."}
+                          </>
+                        ) : (
+                          <>
+                            <i className="align-bottom ri-download-2-line me-1" />
+                            Import
                           </>
                         )}
-
-                        <input
-                          type="file"
-                          ref={fileInputRef}
-                          accept=".csv,.xlsx,.xls,.xls,.doc,.pdf,.docx"
-                          style={{ display: "none" }}
-                          onChange={handleFileChange}
-                          disabled={isImporting}
-                        />
-                        <BaseButton
-                          color="primary"
-                          className="mx-2 position-relative"
-                          onClick={() => fileInputRef.current?.click()}
-                          disabled={importLoader}
-                        >
-                          {importLoader ? (
-                            <>
-                              <i className="ri-loader-4-line animate-spin align-bottom me-1" />
-                              {isImporting
-                                ? `Importing... ${importProgress}%`
-                                : "Processing..."}
-                            </>
-                          ) : (
-                            <>
-                              <i className="ri-download-2-line align-bottom me-1" />
-                              Import
-                            </>
-                          )}
-                          {isImporting && (
+                        {isImporting && (
+                          <div
+                            className="bottom-0 progress position-absolute start-0"
+                            style={{
+                              height: "4px",
+                              width: "100%",
+                              borderRadius: "0 0 4px 4px",
+                            }}
+                          >
                             <div
-                              className="progress position-absolute bottom-0 start-0"
-                              style={{
-                                height: "4px",
-                                width: "100%",
-                                borderRadius: "0 0 4px 4px",
-                              }}
-                            >
-                              <div
-                                className="progress-bar"
-                                role="progressbar"
-                                style={{ width: `${importProgress}%` }}
-                                aria-valuenow={importProgress}
-                                aria-valuemin={0}
-                                aria-valuemax={100}
-                              />
-                            </div>
-                          )}
-                        </BaseButton>
-                        <BaseButton
-                          color="primary"
-                          className="btn btn-soft-secondary bg-green-900 edit-list "
-                          onClick={handleExportExcel}
-                          // disabled={exportLoader}
-                        >
-                          <i className="ri-upload-2-line align-bottom me-1" />
-                          Export
-                        </BaseButton>
+                              className="progress-bar"
+                              role="progressbar"
+                              style={{ width: `${importProgress}%` }}
+                              aria-valuenow={importProgress}
+                              aria-valuemin={0}
+                              aria-valuemax={100}
+                            />
+                          </div>
+                        )}
+                      </BaseButton>
+                      <BaseButton
+                        color="primary"
+                        className="ml-2 bg-green-900 btn btn-soft-secondary edit-list"
+                        // hoverOptions={["Resume", "Csv", "Both"]}
+                        hoverOptions={["Resume", "Csv"]}
+                        onOptionClick={(option) => {
+                          handleExportExcel(
+                            // option === "Both" ? ["Csv", "Resume"] : [option]
+                            // option === "Both" ? both : option
+                            option
+                          );
+                        }}
+                      >
+                        <i className="align-bottom ri-upload-2-line me-1" />
+                        Export
+                      </BaseButton>
 
-                        {/* <BaseButton color="success" onClick={handleNavigate}>
-                        <i className="ri-add-line align-bottom me-1" />
+                      {/* <BaseButton color="success" onClick={handleNavigate}>
+                        <i className="align-bottom ri-add-line me-1" />
                         Add
                       </BaseButton> */}
-                      </div>
                     </div>
                   </div>
                 </div>
+                {/* </div> */}
               </CardBody>
             </Card>
           </div>
         </Row>
+        <BaseModal
+          show={showBaseModal}
+          onCloseClick={handleCloseClick}
+          setShowBaseModal={setShowBaseModal}
+          onSubmitClick={handleSubmit} // Pass function reference
+          submitButtonText="Apply All"
+          closeButtonText="Close"
+          modalTitle="Multi Edit"
+        >
+          <Row>
+            <Col xs={12} md={12} lg={12}>
+              {/* MultiSelect for choosing fields */}
+              <MultiSelect
+                label="Select Field To Edit"
+                name="editMany"
+                className="mb-2 select-border"
+                placeholder="Fields..."
+                value={valueToEdit}
+                isMulti={true}
+                onChange={setValueToEdit}
+                options={optionToEdit}
+              />
+
+              {/* Interview Stage Selection */}
+              {valueToEdit.some((item) => item.value === "Interview Stage") && (
+                <BaseSelect
+                  label="Interview Stage"
+                  name="interviewStage"
+                  className="mb-2 select-border"
+                  options={interviewStageOptions}
+                  placeholder="Interview Stage"
+                  handleChange={
+                    (selectedOption: SelectedOption) =>
+                      setMultiEditInterViewStage(selectedOption) // Correct state update
+                  }
+                  value={multiEditInterViewStage}
+                />
+              )}
+
+              {/* Status Selection */}
+              {valueToEdit.some((item) => item.value === "Status") && (
+                <BaseSelect
+                  label="Applicant Status"
+                  name="status"
+                  className="mb-2 select-border"
+                  options={statusOptions}
+                  placeholder="Select Status"
+                  handleChange={
+                    (selectedOption: SelectedOption) =>
+                      setMultiEditStatus(selectedOption) // Ensure correct state update
+                  }
+                  value={multiEditStatus}
+                />
+              )}
+              {valueToEdit.some((item) => item.value === "Applied Role") && (
+                <BaseSelect
+                  label="Applied Role"
+                  name="appliedRole"
+                  className="select-border"
+                  options={designationType}
+                  placeholder={InputPlaceHolder("Applied Role")}
+                  handleChange={(selectedOption: SelectedOption) =>
+                    setMultiEditRole(selectedOption)
+                  }
+                  value={multiEditRole}
+                  // handleChange={handleRoleChange}
+                  // handleBlur={validation.appliedRole}
+                  // value={
+                  //   dynamicFind(
+                  //     designationType,
+                  //     validation.values.appliedRole
+                  //   ) || ""
+                  // }
+                  // touched={validation.touched.appliedRole}
+                  // error={validation.errors.appliedRole}
+                />
+              )}
+              {/* Last FollowUp Date Selection */}
+              {valueToEdit.some(
+                (item) => item.value === "Last FollowUp Update"
+              ) && (
+                <BaseInput
+                  label="End Date"
+                  name="endDate"
+                  type="text"
+                  placeholder={InputPlaceHolder("End Date")}
+                  handleChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    handleDateChange(e, false)
+                  }
+                  value={endDate || ""}
+                />
+              )}
+            </Col>
+          </Row>
+        </BaseModal>
 
         <Row>
           <Col lg={12}>
             <Card>
-              <div className="card-body pt-0">
+              <div className="pt-0 card-body">
                 {tableLoader ? (
-                  <div className="text-center py-4">
+                  <div className="py-4 text-center">
+                    <Skeleton count={1} className="mb-5 min-h-10" />
+
                     <Skeleton count={5} />
                   </div>
                 ) : (
-                  <div className="card-body pt-4">
+                  <div className="pt-4 card-body">
                     {applicant.length > 0 ? (
                       // />
                       <TableContainer
@@ -1411,7 +1979,7 @@ function ImportApplicant() {
                         totalRecords={totalRecords}
                         pagination={pagination}
                         setPagination={setPagination}
-                        loader={tableLoader}
+                        // loader={tableLoader}
                         customPadding="0.3rem 1.5rem"
                         rowHeight="10px !important"
                       />
@@ -1453,7 +2021,8 @@ const customStyles = {
   control: (provided: any) => ({
     ...provided,
     fontSize: "12px",
-    backgroundColor: "#f0f0f0",
+    // backgroundColor: "#f0f0f0",
+    backfroundColor: "#0000FF",
     borderRadius: "8px",
     borderColor: "transparent",
     // padding: "0.25rem 0.5rem",
@@ -1476,7 +2045,7 @@ const customStyles = {
 
   dropdownIndicator: (provided: any) => ({
     ...provided,
-    color: "#007bff",
+    color: "#secondary",
   }),
 
   clearIndicator: (provided: any) => ({
@@ -1491,4 +2060,5 @@ const customStyles = {
     borderRadius: "8px",
   }),
 };
+
 export default ImportApplicant;

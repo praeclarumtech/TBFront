@@ -293,6 +293,180 @@ const Sidebar: React.FC<SidebarProps> = ({ showMenu, toggleMenu }) => {
 };
 
 export default Sidebar;
+
+// /* eslint-disable @typescript-eslint/no-explicit-any */
+// import { Fragment } from "react";
+// import { Link, useLocation } from "react-router-dom";
+// import { useMediaQuery } from "react-responsive";
+// import { ListGroup, Card, Badge, Accordion } from "react-bootstrap";
+// import SimpleBar from "simplebar-react";
+// import { DashboardMenu } from "routes/DashboardRoutes";
+// import { DashboardMenuProps } from "types";
+// import { CustomToggle } from "./CustomToggle";
+// import { CustomToggleLevelTwo } from "./CustomToggleLevelTwo";
+
+// interface SidebarProps {
+//   showMenu: boolean;
+//   toggleMenu: () => void;
+// }
+
+// const Sidebar: React.FC<SidebarProps> = ({ showMenu, toggleMenu }) => {
+//   const location = useLocation();
+//   const isMobile = useMediaQuery({ maxWidth: 767 });
+
+//   const generateLink = (item: any) => {
+//     return (
+//       <Link
+//         to={item.link || "#"}
+//         className={`nav-link ${
+//           location.pathname === item.link ? "active" : ""
+//         }`}
+//         onClick={() => (isMobile ? toggleMenu() : null)} // Close sidebar when clicked on mobile
+//       >
+//         {item.name || item.title}
+//         {item.badge && (
+//           <Badge className="ms-1" bg={item.badgecolor || "primary"}>
+//             {item.badge}
+//           </Badge>
+//         )}
+//       </Link>
+//     );
+//   };
+
+//   return (
+//     <Fragment>
+//       {/* Background Overlay (Mobile Only) */}
+//       {isMobile && showMenu && (
+//         <div
+//           className="sidebar-overlay"
+//           onClick={toggleMenu} // Close when clicking outside
+//           style={{
+//             position: "fixed",
+//             top: 0,
+//             left: 0,
+//             width: "100%",
+//             height: "100vh",
+//             background: "rgba(0,0,0,0.5)",
+//             zIndex: 1049,
+//           }}
+//         />
+//       )}
+
+//       {/* Sidebar Container */}
+//       <div
+//         className="sidebar"
+//         style={{
+//           width: "256px",
+//           position: "fixed",
+//           top: 0,
+//           bottom: 0,
+//           background: "#fff",
+//           zIndex: 1050,
+//           transition: "transform 0.3s ease-in-out",
+//           transform:
+//             isMobile && showMenu ? "translateX(0)" : "translateX(-100%)",
+//           boxShadow:
+//             isMobile && showMenu ? "2px 0 10px rgba(0,0,0,0.2)" : "none",
+//         }}
+//       >
+//         <SimpleBar style={{ maxHeight: "100vh" }}>
+//           <div className="nav-scroller">
+//             <Link to="/dashboard" className="navbar-brand">
+//               <h4 className="text-white text-3xl font-bold">
+//                 Talent<span className="text-primary">Box</span>
+//               </h4>
+//             </Link>
+//           </div>
+
+//           {/* Dashboard Menu */}
+//           <Accordion
+//             defaultActiveKey="0"
+//             as="ul"
+//             className="navbar-nav flex-column"
+//           >
+//             {DashboardMenu.map((menu: any, index: number) => (
+//               <Fragment key={menu?.id}>
+//                 {menu?.grouptitle ? (
+//                   <Card bsPrefix="nav-item">
+//                     <div className="navbar-heading">{menu?.title}</div>
+//                   </Card>
+//                 ) : menu?.children ? (
+//                   <>
+//                     <CustomToggle eventKey={menu?.id} icon={menu?.icon}>
+//                       {menu?.title}
+//                       {menu?.badge && (
+//                         <Badge
+//                           className="ms-1"
+//                           bg={menu?.badgecolor || "primary"}
+//                         >
+//                           {menu?.badge}
+//                         </Badge>
+//                       )}
+//                     </CustomToggle>
+//                     <Accordion.Collapse
+//                       eventKey={menu?.id}
+//                       as="li"
+//                       bsPrefix="nav-item"
+//                     >
+//                       <ListGroup
+//                         as="ul"
+//                         bsPrefix=""
+//                         className="nav flex-column"
+//                       >
+//                         {menu?.children.map(
+//                           (
+//                             menuLevel1Item: DashboardMenuProps,
+//                             menuLevel1Index: number
+//                           ) => (
+//                             <ListGroup.Item
+//                               key={menuLevel1Item.id}
+//                               as="li"
+//                               bsPrefix="nav-item"
+//                             >
+//                               {generateLink(menuLevel1Item)}
+//                             </ListGroup.Item>
+//                           )
+//                         )}
+//                       </ListGroup>
+//                     </Accordion.Collapse>
+//                   </>
+//                 ) : (
+//                   <Card bsPrefix="nav-item">
+//                     <Link
+//                       to={menu?.link ?? "#"}
+//                       className={`nav-link ${
+//                         location.pathname === menu?.link ? "active" : ""
+//                       }`}
+//                       onClick={() => (isMobile ? toggleMenu() : null)}
+//                     >
+//                       {typeof menu?.icon === "string" ? (
+//                         <i className={`nav-icon fe fe-${menu?.icon} me-2`}></i>
+//                       ) : (
+//                         menu?.icon
+//                       )}
+//                       {menu?.title}
+//                       {menu?.badge && (
+//                         <Badge
+//                           className="ms-1"
+//                           bg={menu?.badgecolor || "primary"}
+//                         >
+//                           {menu?.badge}
+//                         </Badge>
+//                       )}
+//                     </Link>
+//                   </Card>
+//                 )}
+//               </Fragment>
+//             ))}
+//           </Accordion>
+//         </SimpleBar>
+//       </div>
+//     </Fragment>
+//   );
+// };
+
+// export default Sidebar;
+
 // import { Fragment } from "react";
 // import { Link, useLocation } from "react-router-dom";
 // import { useMediaQuery } from "react-responsive";

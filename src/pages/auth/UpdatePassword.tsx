@@ -14,7 +14,6 @@ import { useLocation } from "react-router";
 import appConstants from "constants/constant";
 import { errorHandle, InputPlaceHolder } from "utils/commonFunctions";
 
-
 const {
   projectTitle,
   Modules,
@@ -93,7 +92,7 @@ const UpdatePassword = () => {
                   alt=""
                 /> */}
 
-                <h4 className="text-dark font-bold text-3xl justify-center text-center ">
+                <h4 className="justify-center text-3xl font-bold text-center text-dark ">
                   Talent<span className="text-primary bold ">Box</span>{" "}
                 </h4>
               </Link>
@@ -157,7 +156,9 @@ const UpdatePassword = () => {
                 </div>
                 <span>
                   Don&apos;t have an account?{" "}
-                  <a onClick={() => navigate("/")}>Sign In</a>
+                  <a onClick={() => navigate("/")} className="cursor-pointer text-primary">
+                    Sign In
+                  </a>
                 </span>
               </Form>
             )}

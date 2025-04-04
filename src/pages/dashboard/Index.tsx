@@ -18,9 +18,7 @@ import { useNavigate } from "react-router-dom";
 const { projectTitle, Modules } = appConstants;
 
 const Dashboard = () => {
-
-    const navigate = useNavigate();
-  
+  const navigate = useNavigate();
 
   document.title = Modules.Dashboard + " | " + projectTitle;
   const [totalApplicants, setTotalApplicants] = useState<number | null>(null);
@@ -60,7 +58,7 @@ const Dashboard = () => {
     setIsLoading(true);
     try {
       const data = await getTotalApplicants();
-  
+
       setTotalApplicants(data.data.totalApplicants);
       setHoldApplicants(data.data.holdApplicants);
       setPendingApplicants(data.data.pendingApplicants);
@@ -77,14 +75,20 @@ const Dashboard = () => {
 
   return (
     <Fragment>
-      <div >
+      <div>
         <div className="pb-23"></div>
         <Container fluid className="mt-n23 px-6">
           <Row className="bg-primary mx-n6 mb-n6 mt-n8 pt-3">
             <Col xl={2} lg={4} md={6} xs={6} className="mb-3">
               <StatRightTopIcon
                 title="Total Applicants"
-                icon={<People size={20} onClick={() => navigate("/applicants")} className="cursor-pointer" />}
+                icon={
+                  <People
+                    size={20}
+                    onClick={() => navigate("/applicants")}
+                    className="cursor-pointer"
+                  />
+                }
                 data={totalApplicants}
                 error={error}
                 classes="icon-shape icon-lg rounded-2 bg-light-primary text-primary"
@@ -143,12 +147,12 @@ const Dashboard = () => {
             </Col>
           </Row>
           <Row className="mt-3">
-            <Col xl={6} >
+            <Col xl={12}>
               <ApplicantsDeatils
                 setSelectedTechnology={setSelectedTechnology}
               />
             </Col>
-            <Col xl={6}>
+            <Col xl={12}>
               <RecentApplicants
                 selectedTechnology={selectedTechnology}
                 onResetFilter={handleResetFilter}
@@ -162,5 +166,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
-

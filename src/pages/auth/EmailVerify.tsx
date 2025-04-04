@@ -55,18 +55,18 @@ const EmailVerification = () => {
       <Col md={6} lg={4}>
         <Card className="p-4 smooth-shadow-md">
           <CardBody>
-            <h4 className="text-dark font-bold text-3xl justify-center text-center ">
+            <h4 className="justify-center text-3xl font-bold text-center text-dark ">
               Talent<span className="text-primary bold ">Box</span>{" "}
             </h4>
             <p className="text-center">
-              Please enter the 6-digit code sent to <b>{email}</b>
+              Please enter the 4-digit code sent to <b>{email}</b>
             </p>
-            <Row className="justify-content-center">
+            <Row className="mb-3 justify-content-center">
               {[...Array(4)].map((_, index) => (
                 <Col key={index} xs={2} className="p-1">
                   <input
                     type="text"
-                    className="form-control text-center"
+                    className="text-center form-control"
                     maxLength={1}
                     id={`digit${index + 1}-input`}
                     value={verificationCode[index] || ""}
@@ -75,19 +75,21 @@ const EmailVerification = () => {
                 </Col>
               ))}
             </Row>
-            <BaseButton
-              color="primary"
-              disabled={loader || isDisabledInput}
-              className="w-100 mt-3"
-              onClick={verifyCode}
-              loader={loader}
-            >
-              Verify OTP
-            </BaseButton>
-            <p className="text-center mt-3">
+            <div className="mb-3 d-grid">
+              <BaseButton
+                color="primary"
+                disabled={loader || isDisabledInput}
+                className="w-full px-4 py-2 text-center "
+                onClick={verifyCode}
+                loader={loader}
+              >
+                Verify OTP
+              </BaseButton>
+            </div>
+            <p className="mt-3 text-center">
               Didn’t receive a code?{" "}
               <a
-                className="text-primary cursor-pointer"
+                className="cursor-pointer text-primary"
                 href="/forgot-password"
               >
                 Resend

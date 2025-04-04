@@ -11,8 +11,9 @@ export const getRecentApplications = async (appliedSkills = "") => {
   return response?.data;
 };
 
-export const getApplicantsDetails = async () => {
-    const response = await authServices.get(`${APPLICANTS_DETAILS}`);
+export const getApplicantsDetails = async (selectedFilter = "") => {
+    const response = await authServices.get(`${APPLICANTS_DETAILS}${selectedFilter || "frontend"}`);
+    console.log(response)
     return response?.data;
   };
 

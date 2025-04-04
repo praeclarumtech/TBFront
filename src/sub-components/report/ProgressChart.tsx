@@ -37,7 +37,7 @@ const Charts = () => {
   const labels = Object.keys(statusOfApplication).map(formatLabel);
 
   // Define colors and ensure cycling
-  const colors = ["#E4A11B", "#17a2b8", "#28a745", "#dc3545", "#007bff"];
+  const colors = ["#660099", "#d40000", "#0000FF", "#004225", "#FCE903"];
 
   const perfomanceChartSeries = dataValues;
   const perfomanceChartOptions: ApexOptions = {
@@ -46,25 +46,35 @@ const Charts = () => {
     plotOptions: {
       radialBar: {
         startAngle: 0,
-        endAngle: 270,
+        endAngle: 300,
         hollow: { size: "40%" },
         track: { background: "transparent" },
         dataLabels: {
-          name: { show: false }, // Hide default name labels inside the chart
-          value: { show: false }, // Hide default value labels inside the chart
+          name: { show: true }, // Hide default name labels inside the chart
+          value: {
+            show: true,
+            fontSize: "14px",
+            formatter: (value: number, opts?: any) => {
+              if (opts && typeof opts.seriesIndex === "number") {
+                return String(perfomanceChartSeries[opts.seriesIndex]);
+              }
+
+              return String(value); // Fallback to the actual value
+            },
+          },
         },
       },
     },
-    chart: { type: "radialBar" },
+    chart: { type: "radialBar", height: 320 },
     stroke: { lineCap: "round" },
     responsive: [
       {
         breakpoint: 480,
-        options: { chart: { height: 200 } },
+        options: { chart: { height: 250 } },
       },
       {
         breakpoint: 5000,
-        options: { chart: { height: 220 } },
+        options: { chart: { height: 350 } },
       },
     ],
   };
@@ -74,7 +84,7 @@ const Charts = () => {
       <div className="relative flex flex-col items-center">
         <div className="mb-2 flex flex-wrap items-center gap-x-4 gap-y-1">
           {isLoading ? (
-            <Skeleton height={20} width={375}  />
+            <Skeleton height={20} width={375} />
           ) : (
             <>
               {labels.map((label, index) => (

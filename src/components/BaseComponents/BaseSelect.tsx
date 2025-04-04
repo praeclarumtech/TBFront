@@ -1,4 +1,4 @@
-import { Label } from "reactstrap";
+import { FormFeedback, Label } from "reactstrap";
 import Select from "react-select";
 import { BaseSelectProps, MultiSelectProps } from "interfaces/global.interface";
 const BaseSelect = ({
@@ -24,7 +24,9 @@ const BaseSelect = ({
       )}
       <Select
         name={name}
-        className={className ? className : "select-border"}
+        className={`${className ? className : "select-border"} ${
+          touched && error ? "is-invalid" : ""
+        }`} // Add "is-invalid" class
         options={options?.length > 0 ? options : []}
         placeholder={placeholder}
         value={value}
@@ -35,9 +37,10 @@ const BaseSelect = ({
         menuPlacement="auto"
         styles={styles}
       />
-      {touched && error ? (
-        <div className="text-danger error-font text-[13px] ">{error}</div>
-      ) : null}
+      {touched && error && (
+        <FormFeedback className="d-block">{error}</FormFeedback>
+      )}{" "}
+      {/* Ensure it's visible */}
     </>
   );
 };
@@ -66,7 +69,9 @@ const MultiSelect = ({
       )}
       <Select
         value={value}
-        className={className ? className : "select-border"}
+        className={`${className ? className : "select-border"} ${
+          touched && error ? "is-invalid" : ""
+        }`} // Add "is-invalid" class
         isMulti={isMulti}
         onChange={onChange}
         options={options}
@@ -77,9 +82,10 @@ const MultiSelect = ({
         isDisabled={isDisabled}
         placeholder={placeholder}
       />
-      {touched && error ? (
-        <div className="text-danger error-font text-[13px]">{error}</div>
-      ) : null}
+      {touched && error && (
+        <FormFeedback className="d-block">{error}</FormFeedback>
+      )}{" "}
+      {/* Ensure it's visible */}
     </>
   );
 };

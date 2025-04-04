@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // import { toast } from "react-toastify";
 // import { errorHandle } from "utils/commonFunctions";
+// // @ts-ignore
+// import qs from "qs";
 import {
   LIST_APPLICANT,
   CREATE_APPLICANT,
@@ -17,6 +19,7 @@ import {
   IMPORT_APPLICANT_LIST,
   DELETE_MULTIPLE_APPLICANT,
   EXISTING_APPLICANT,
+  UPDATE_APPLICANT_MANY
 } from "./apiRoutes";
 import { authServices } from "./apiServices";
 
@@ -149,27 +152,39 @@ export const importApplicant = async (
 
 
 
-export const ExportApplicant = async (config?: {
-  onDownloadProgress?: (progressEvent: any) => void;
-}) => {
+export const ExportApplicant = async (
+  params: { filtered?: string },
+  config?: { onDownloadProgress?: (progressEvent: any) => void }
+) => {
   const response = await authServices.get(`${EXPORT_APPLICANT}`, {
     responseType: "blob",
+    params,
     timeout: 300000,
     ...config,
   });
+  
   return response?.data;
 };
 
-export const deleteMultipleApplicant = async (
-  ids: string[] | undefined | null
-) => {
-  if (!ids || ids.length === 0) return;
 
-  const response = await authServices.delete(DELETE_MULTIPLE_APPLICANT, {
-    data: { ids }, // Send IDs inside request body
-  });
-  return response?.data;
-};
+// export const ExportApplicant = async (queryParams: string[]) => {
+//   try {
+//     const response = await authServices.get(`${EXPORT_APPLICANT}${queryParams}`, {
+//       responseType: "blob",
+//       timeout: 300000,
+//     });
+   
+//     return response.data; // ✅ Extract `data` from the response
+//   } catch (error) {
+//     console.error("Error exporting applicants:", error);
+//     throw error;
+//   }
+// };
+
+
+
+
+
 
 export const resumeUpload = async (
   formData: FormData,
@@ -211,5 +226,32 @@ export const listOfImportApplicants = async (params: {
   const response = await authServices.get(`${IMPORT_APPLICANT_LIST}`, {
     params,
   });
+  return response?.data;
+};
+
+
+export const updateManyApplicants = async (
+  applicantIds: string[], 
+  updateData: object
+) => {
+  const response = await authServices.put(UPDATE_APPLICANT_MANY, {
+    applicantIds : applicantIds, 
+    updateData : updateData
+    
+  });
+console.log("object",response)
+  return response?.data;
+};
+
+
+export const deleteMultipleApplicant = async (
+  ids: string[] | undefined | null
+) => {
+  if (!ids || ids.length === 0) return;
+
+  const response = await authServices.delete(DELETE_MULTIPLE_APPLICANT, {
+    data: { ids }, // Send IDs inside request body
+  });
+  console.log("object",response?.data)
   return response?.data;
 };

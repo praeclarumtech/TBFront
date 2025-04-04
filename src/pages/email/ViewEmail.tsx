@@ -100,15 +100,23 @@ const ViewModal = ({ show, onHide, applicantId }: any) => {
     <Badge count={"N/A"} style={{ backgroundColor: "#f50" }} />
   );
 
-  const email_bcc =
-    formData?.email?.email_bcc &&
-    typeof formData.email.email_bcc === "string" &&
-    formData.email.email_bcc.trim() ? (
-      formData.email.email_bcc.trim()
-    ) : (
-      <Badge count={"N/A"} style={{ backgroundColor: "#faad14" }} />
-    );
+  console.log(
+    "heloooooooooooooooooooooooooooooooooooooooooo",
+    formData?.email?.email_bcc
+  );
 
+  const emailBccData = formData?.email?.email_bcc;
+
+  console.log("email_bcc value:", emailBccData); // Debugging log
+
+  const email_bcc =
+    Array.isArray(emailBccData) && emailBccData.length > 0
+      ? emailBccData.join(", ") // If it's an array, join into a string
+      : typeof emailBccData === "string" && emailBccData.trim()
+      ? emailBccData.trim() // If it's a valid non-empty string, use it
+      : "N/A";
+
+  console.log("email_bcc value:", email_bcc);
   return (
     // <Modal show={show} onHide={onHide} size="lg" centered>
     //   <Modal.Header closeButton>
@@ -276,7 +284,16 @@ const ViewModal = ({ show, onHide, applicantId }: any) => {
 
                 <DetailsRow
                   label="Email BCC"
-                  value={<Tag color="yellow">{email_bcc}</Tag>}
+                  value={
+                    email_bcc ? (
+                      <Tag color="yellow">{email_bcc}</Tag>
+                    ) : (
+                      <Badge
+                        count={"N/A"}
+                        style={{ backgroundColor: "#faad14" }}
+                      />
+                    )
+                  }
                 />
 
                 <DetailsRow

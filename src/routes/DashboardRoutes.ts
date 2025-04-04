@@ -22,7 +22,7 @@ export const DashboardMenu: DashboardMenuProps[] = [
   {
     id: uuid(),
     title: "Import Applicants",
-    icon: "upload",
+    icon: "download",
     link: "/import-applicants",
   },
 

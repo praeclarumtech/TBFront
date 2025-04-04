@@ -10,9 +10,8 @@ import {
   Legend,
   ChartOptions,
   Filler,
-  BarElement,
 } from "chart.js";
-import { Bar, getElementAtEvent } from "react-chartjs-2";
+import { Line, getElementAtEvent } from "react-chartjs-2";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { getApplicantsDetails } from "api/dashboardApi";
@@ -21,7 +20,6 @@ ChartJS.register(
   CategoryScale,
   LinearScale,
   PointElement,
-  BarElement,
   LineElement,
   Title,
   Tooltip,
@@ -29,12 +27,11 @@ ChartJS.register(
   Filler
 );
 
-interface BarChartProps {
+interface LineChartProps {
   onBarClick: (label: string) => void;
-  selectedFilter: string;
 }
 
-const BarChart = ({ onBarClick, selectedFilter }: BarChartProps) => {
+const LineChart = ({ onBarClick }: LineChartProps) => {
   const [applicantsDetail, setApplicantsDetail] = useState<
     Record<string, number>
   >({});
@@ -42,14 +39,14 @@ const BarChart = ({ onBarClick, selectedFilter }: BarChartProps) => {
 
   useEffect(() => {
     fetchApplicantsDetails();
-  }, [selectedFilter]);
+  }, []);
 
   const fetchApplicantsDetails = async () => {
     setIsLoading(true);
     try {
-      const response = await getApplicantsDetails(selectedFilter);
-      if (response?.data?.skillCounts) {
-        setApplicantsDetail(response?.data?.skillCounts);
+      const response = await getApplicantsDetails();
+      if (response?.data) {
+        setApplicantsDetail(response.data);
       }
     } catch (error) {
       console.error("API Error:", error);
@@ -69,29 +66,21 @@ const BarChart = ({ onBarClick, selectedFilter }: BarChartProps) => {
   const labels = Object.keys(applicantsDetail).map((key) => formatLabel(key));
   const dataValues = Object.values(applicantsDetail);
 
-  const options: ChartOptions<"bar"> = {
+  const options: ChartOptions<"line"> = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
       legend: {
         position: "bottom",
-        labels: {
-          color: "#ffA500", // Change legend label color
-        },
+        // labels: {
+        //   color: "#ffA500", // Change legend label color
+        // },
       },
       title: { display: false },
     },
     scales: {
       x: { grid: { display: false }, ticks: { color: "#000000" } },
       y: { grid: { display: false }, ticks: { color: "#000000" } },
-    },
-    onHover: (event, chartElement) => {
-      if (!event?.native) return; // Ensure event.native is not null
-
-      const target = event.native.target as HTMLElement | null; // Type assertion to HTMLElement
-      if (target) {
-        target.style.cursor = chartElement.length > 0 ? "pointer" : "default";
-      }
     },
   };
 
@@ -101,24 +90,15 @@ const BarChart = ({ onBarClick, selectedFilter }: BarChartProps) => {
       {
         label: "Applicants",
         data: dataValues,
-        borderColor: "#000000",
-        backgroundColor: [
-          "#d40000",
-          "#ffa500",
-          "#FCE903",
-          "#004225",
-          "#0000FF",
-          "#4b369d",
-          "#70369d",
-          // "#00bcd4",
-          // "#6a0dad",
-          // "#a40000",
-        ],
+        borderColor: "#0dcaf0",
+        backgroundColor: (context: any) => {
+          const ctx = context.chart.ctx;
+          const gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
+          gradient.addColorStop(0, "rgba(13, 202, 240, 0.8)"); // Full color at the start
+          gradient.addColorStop(1, "rgba(13, 202, 240, 0)"); // Fully transparent at the end
+          return gradient;
+        },
         fill: true,
-        barThickness: 50, // Fixed width for bars
-        maxBarThickness: 70,
-        // categoryPercentage: 0.6, // Adjust space between categories (0.0 - 1.0)
-        // barPercentage: 0.6, //
       },
     ],
   };
@@ -128,7 +108,7 @@ const BarChart = ({ onBarClick, selectedFilter }: BarChartProps) => {
       "C++": "C%2B%2B",
       "C#": "C%23",
       NodeJs: "Node.js",
-      ReactJs: "React",
+      ReactJs: "React.Js",
       VueJs: "Vue.js",
       NextJs: "Next.js",
       ExpressJs: "Express.js",
@@ -156,26 +136,18 @@ const BarChart = ({ onBarClick, selectedFilter }: BarChartProps) => {
   const chartRef = useRef<any>(null);
 
   return (
-    <div className="w-full min-h-[390px] flex justify-center items-center">
+    <div className="w-full min-h-[390px] flex justify-center items-center ">
       {isLoading ? (
         <div className="min-h-[410px] w-full">
           <Skeleton className="min-h-[412px]" />
         </div>
       ) : Object.keys(applicantsDetail).length > 0 ? (
-        <div className="w-full overflow-x-auto h-full">
-          {/* Set min-width dynamically: Each bar gets ~50px, adjust as needed */}
-          <div
-            className="h-[410px] min-w-[800px]"
-            style={{ minWidth: `${Math.max(labels.length * 70, 900)}px` }}
-          >
-            <Bar
-              ref={chartRef}
-              data={chartData}
-              options={options}
-              onClick={handleChartClick}
-            />
-          </div>
-        </div>
+        <Line
+          ref={chartRef}
+          data={chartData}
+          options={options}
+          onClick={handleChartClick}
+        />
       ) : (
         <p>No data available</p>
       )}
@@ -183,4 +155,4 @@ const BarChart = ({ onBarClick, selectedFilter }: BarChartProps) => {
   );
 };
 
-export default BarChart;
+export default LineChart;

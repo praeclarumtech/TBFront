@@ -470,6 +470,7 @@ const Applicant = () => {
 
   const closeDeleteModal = () => {
     setShowDeleteModal(false);
+    setSelectedApplicants([]);
   };
 
   // const handleDelete = (recordIdToDelete: string) => {
@@ -557,11 +558,11 @@ const Applicant = () => {
     });
   };
 
-  const handleExportExcel = async () => {
+  const handleExportExcel = async (filtered: string) => {
     try {
       toast.info("Preparing file for download...");
-
-      const response = await ExportApplicant();
+      await new Promise((resolve) => setTimeout(resolve, 3500));
+      const response = await ExportApplicant(filtered ? { filtered } : {});
 
       if (!response) {
         toast.error("Failed to download file");
@@ -640,7 +641,7 @@ const Applicant = () => {
           handleChange={handleExperienceChange}
           min={0}
           max={25}
-          step={1}
+          step={0.1}
           valueLabelDisplay="auto"
           disabled={false}
         />
@@ -1090,17 +1091,17 @@ const Applicant = () => {
         loader={loader}
       />
       <Container fluid>
-        <Row>
+        {/* <Row>
           <div>
             <Card className="mb-3 my-3">
               <CardBody>
                 <div className="container">
-                  <div className="row justify-content-between align-items-center">
-                    <div className="col-auto d-flex justify-content-start mx-0">
+                  <div className="row align-items-center inline-flex items-center ">
+                    <div className="col-3 col-xs-auto">
                       <button
                         onClick={toggleDrawer("right", true)}
                         // color="primary"
-                        className="btn btn-primary"
+                        className="btn btn-primary max-h-16"
                       >
                         <i className="fa fa-filter mx-1 "></i> Filters
                       </button>
@@ -1113,10 +1114,8 @@ const Applicant = () => {
                         {drawerList("right")}
                       </Drawer>
                     </div>
-
-                    {/* Right: WhatsApp, Email, and New Applicant Buttons */}
-
-                    <div className="col-auto d-flex justify-content-end flex-wrap mr-2">
+                    {/* Right: WhatsApp, Email, and New Applicant Buttons 
+                    <div className="col-8 col-md d-flex flex-wrap  justify-content-end gap-2">
                       <div>
                         <input
                           id="search-bar-0"
@@ -1126,22 +1125,105 @@ const Applicant = () => {
                           value={searchAll}
                         />
                       </div>
+                      <div>
+                        {selectedApplicants.length > 0 && (
+                          <>
+                            <BaseButton
+                              className="btn text-lg bg-danger edit-list ml-2 w-fit border-0"
+                              onClick={handleDeleteAll}
+                            >
+                              <i className="ri-delete-bin-fill align-bottom" />
+                              <ReactTooltip
+                                place="bottom"
+                                variant="error"
+                                content="Delete"
+                                anchorId={`Delete ${selectedApplicants.length} Emails`}
+                              />
+                            </BaseButton>
+
+                            <BaseButton
+                              className="btn text-lg btn-soft-secondary bg-primary edit-list ml-2 mr-0"
+                              onClick={handleSendEmail}
+                            >
+                              <i className="ri-mail-close-line align-bottom" />
+                              <ReactTooltip
+                                place="bottom"
+                                variant="info"
+                                content="Email"
+                              />
+                            </BaseButton>
+                          </>
+                        )}
+
+                        <BaseButton
+                          color="primary"
+                          className="btn btn-soft-secondary bg-green-900 edit-list ml-2"
+                          hoverOptions={["Resume", "Manual", "Csv", "All"]}
+                          onOptionClick={(option) => {
+                            handleExportExcel(option === "All" ? "" : option); // Pass an empty string when "All" is selected
+                          }}
+                        >
+                          <i className="ri-upload-2-line align-bottom me-1" />
+                          Export
+                        </BaseButton>
+
+                        <BaseButton
+                          color="success"
+                          onClick={handleNavigate}
+                          className="ml-2"
+                        >
+                          <i className="ri-add-line align-bottom me-1" />
+                          Add
+                        </BaseButton>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardBody>
+            </Card>
+          </div>
+        </Row> */}
+
+        <Row>
+          <div>
+            <Card className="mb-3 my-3">
+              <CardBody>
+                <div className="container">
+                  <div className="row align-items-center">
+                    <div className="col-3 col-xs-auto">
+                      <button
+                        onClick={toggleDrawer("right", true)}
+                        className="btn btn-primary max-h-16"
+                      >
+                        <i className="fa fa-filter mx-1"></i> Filters
+                      </button>
+                      <Drawer
+                        className="!mt-16"
+                        anchor="right"
+                        open={state["right"]}
+                        onClose={toggleDrawer("right", false)}
+                      >
+                        {drawerList("right")}
+                      </Drawer>
+                    </div>
+                    <div className="col-9 col-md d-flex flex-column flex-md-row flex-wrap justify-content-end mt-2 mt-md-0">
+                      {/* Search Bar (Always on top in mobile) */}
+                      <div className="col-12 col-md-auto">
+                        <input
+                          id="search-bar-0"
+                          className="form-control search h-10"
+                          placeholder="Search..."
+                          onChange={handleSearchChange}
+                          value={searchAll}
+                        />
+                      </div>
+
+                      {/* Buttons (Move to next line on small screens) */}
+
                       {selectedApplicants.length > 0 && (
                         <>
-                          {/* <BaseButton
-                            className="btn btn-lg btn-soft-secondary bg-green-900 edit-list mx-1 px-3"
-                            onClick={handleSendWhatsApp}
-                          >
-                            <i className="ri-whatsapp-line align-bottom" />
-                            <ReactTooltip
-                              place="bottom"
-                              variant="info"
-                              content="WhatsApp"
-                            />
-                          </BaseButton> */}
-
                           <BaseButton
-                            className="btn text-lg bg-danger edit-list ml-2 w-fit border-0"
+                            className="btn text-lg bg-danger edit-list border-0 ml-2"
                             onClick={handleDeleteAll}
                           >
                             <i className="ri-delete-bin-fill align-bottom" />
@@ -1154,7 +1236,7 @@ const Applicant = () => {
                           </BaseButton>
 
                           <BaseButton
-                            className="btn text-lg btn-soft-secondary bg-primary edit-list ml-2 mr-0"
+                            className="btn text-lg btn-soft-secondary bg-primary edit-list ml-2"
                             onClick={handleSendEmail}
                           >
                             <i className="ri-mail-close-line align-bottom" />
@@ -1169,15 +1251,21 @@ const Applicant = () => {
 
                       <BaseButton
                         color="primary"
-                        className="btn btn-soft-secondary bg-green-900 edit-list mx-1 "
-                        onClick={handleExportExcel}
-                        // disabled={exportLoader}
+                        className="btn btn-soft-secondary bg-green-900 edit-list ml-2"
+                        hoverOptions={["Resume", "Manual", "Csv", "All"]}
+                        onOptionClick={(option) =>
+                          handleExportExcel(option === "All" ? "" : option)
+                        }
                       >
                         <i className="ri-upload-2-line align-bottom me-1" />
                         Export
                       </BaseButton>
 
-                      <BaseButton color="success" onClick={handleNavigate}>
+                      <BaseButton
+                        color="success"
+                        onClick={handleNavigate}
+                        className="ml-2"
+                      >
                         <i className="ri-add-line align-bottom me-1" />
                         Add
                       </BaseButton>
