@@ -34,6 +34,7 @@ export const updateProfile = async (id?: number, data?: object) => {
 
 export const viewProfile = async (id?: number, data?: object) => {
   const response = await authServices.get(`${VIEWPROFILE}/${id}`, data);
+  console.log("objectttttttttttttttttttttt",response)
   return response?.data;
 };
 

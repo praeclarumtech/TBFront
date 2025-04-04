@@ -301,11 +301,16 @@ const AddDegree = () => {
     fDegree.degree.toLowerCase().includes(searchAll.toLowerCase())
   );
 
+  const closeDeleteModal = () => {
+    setShowDeleteModal(false);
+    setSelectedDegree([]);
+  };
+
   return (
     <Fragment>
       <DeleteModal
         show={showDeleteModal}
-        onCloseClick={() => setShowDeleteModal(false)}
+        onCloseClick={closeDeleteModal}
         onDeleteClick={confirmDelete}
         loader={loader}
       />

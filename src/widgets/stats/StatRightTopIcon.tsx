@@ -29,7 +29,9 @@ export const StatRightTopIcon: React.FC<StatRightProps> = ({
       <Card.Body className="d-flex flex-column justify-content-between">
         {/* Title and Icon */}
         <div className="d-flex justify-content-between align-items-center mb-3">
-          <h5 className="mb-0 text-muted">{title}</h5>
+          <h4 style={{ fontSize: "1.1rem" }} className="mb-0 text-muted">
+            {title}
+          </h4>
           <div className={classes}>{icon}</div>
         </div>
         <div>
@@ -48,4 +50,3 @@ export const StatRightTopIcon: React.FC<StatRightProps> = ({
     </Card>
   );
 };
-  
