@@ -12,6 +12,10 @@ import Skeleton from "react-loading-skeleton";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
+type DounutChartProps = {
+  selectedFilter: string;
+};
+
 // Custom plugin to render text in the center
 const centerTextPlugin = {
   id: "centerText",
@@ -43,19 +47,19 @@ const centerTextPlugin = {
   },
 };
 
-const DounutChart = () => {
+const DounutChart = ({ selectedFilter }: DounutChartProps) => {
   const [skillStatistics, setSkillStatistics] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     fetchSkillStatistics();
-  }, []);
+  }, [selectedFilter]);
 
   const fetchSkillStatistics = async () => {
     setIsLoading(true);
     try {
-      const data = await getSkillStatistics();
-      setSkillStatistics(data.data);
+      const data = await getSkillStatistics(selectedFilter);
+      setSkillStatistics(data.data?.skillCounts);
     } catch (error) {
       console.error("API Error:", error);
     } finally {

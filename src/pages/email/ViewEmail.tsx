@@ -112,8 +112,8 @@ const ViewModal = ({ show, onHide, applicantId }: any) => {
   const email_bcc =
     Array.isArray(emailBccData) && emailBccData.length > 0
       ? emailBccData.join(", ") // If it's an array, join into a string
-      : typeof emailBccData === "string" && emailBccData.trim()
-      ? emailBccData.trim() // If it's a valid non-empty string, use it
+      // : typeof emailBccData === "string" && emailBccData.trim()
+      // ? emailBccData.trim() // If it's a valid non-empty string, use it
       : "N/A";
 
   console.log("email_bcc value:", email_bcc);
@@ -121,7 +121,7 @@ const ViewModal = ({ show, onHide, applicantId }: any) => {
     // <Modal show={show} onHide={onHide} size="lg" centered>
     //   <Modal.Header closeButton>
     //     <Modal.Title>
-    //       <Box className=" flex items-center">
+    //       <Box className="flex items-center ">
     //         <FaEnvelope className="mr-2 text-primary" />
     //         <Typography variant="body1" className="text-gray-600">
     //           <span className=" !text-black">Email</span>
@@ -137,8 +137,8 @@ const ViewModal = ({ show, onHide, applicantId }: any) => {
     //       </>
     //     ) : (
     //       formData && (
-    //         <div className="mx-2 p-3">
-    //           <Box className="mb-4 flex items-center">
+    //         <div className="p-3 mx-2">
+    //           <Box className="flex items-center mb-4">
     //             <FaUserAlt className="mr-2 text-primary" />
     //             <Typography variant="body1" className="text-gray-600">
     //               <span className="  !text-black">Name:</span>
@@ -157,7 +157,7 @@ const ViewModal = ({ show, onHide, applicantId }: any) => {
     //             </Typography>
     //           </Box>
 
-    //           <Box className="mb-4 flex items-center">
+    //           <Box className="flex items-center mb-4">
     //             <FaListAlt className="mr-2 text-primary" />
     //             <Typography variant="body1" className="text-gray-600">
     //               <span className=" !text-black">Applied Skills:</span>
@@ -175,7 +175,7 @@ const ViewModal = ({ show, onHide, applicantId }: any) => {
     //             </Typography>
     //           </Box>
 
-    //           <Box className="mb-4 flex items-center">
+    //           <Box className="flex items-center mb-4">
     //             <FaEnvelope className="mr-2 text-primary" />
     //             <Typography variant="body1" className="text-gray-600">
     //               <span className=" !text-black">To Email:</span>
@@ -183,7 +183,7 @@ const ViewModal = ({ show, onHide, applicantId }: any) => {
     //             </Typography>
     //           </Box>
 
-    //           <Box className="mb-4 flex items-center">
+    //           <Box className="flex items-center mb-4">
     //             <FaRegFileAlt className="mr-2 text-primary" />
     //             <Typography variant="body1" className="text-gray-600">
     //               <span className=" !text-black">Bcc Email:</span>
@@ -191,7 +191,7 @@ const ViewModal = ({ show, onHide, applicantId }: any) => {
     //             </Typography>
     //           </Box>
 
-    //           <Box className="mb-4 flex items-center">
+    //           <Box className="flex items-center mb-4">
     //             <FaEnvelope className="mr-2 text-primary" />
     //             <Typography variant="body1" className="text-gray-600">
     //               <span className="  !text-black">Subject:</span>
@@ -199,7 +199,7 @@ const ViewModal = ({ show, onHide, applicantId }: any) => {
     //             </Typography>
     //           </Box>
 
-    //           <Box className="mb-4 flex items-center">
+    //           <Box className="flex items-center mb-4">
     //             <FaCode className="mr-2 text-primary" />
     //             <Typography variant="body1" className="text-gray-600">
     //               <span className=" !text-black">Description:</span>
@@ -224,7 +224,7 @@ const ViewModal = ({ show, onHide, applicantId }: any) => {
       title={<span className="text-lg font-bold">Email Details</span>}
     >
       {loading ? (
-        // <Spin size="large" className="flex justify-center items-center" />
+        // <Spin size="large" className="flex items-center justify-center" />
         <Skeleton count={5} />
       ) : formData ? (
         <div className="space-y-4">

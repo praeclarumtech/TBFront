@@ -17,7 +17,7 @@ import {
   updateStage,
   updateStatus,
   importApplicant,
-  ExportApplicant,
+  ExportImportedApplicant,
   resumeUpload,
   deleteMultipleApplicant,
   updateManyApplicants,
@@ -1085,44 +1085,12 @@ function ImportApplicant() {
   const handleModalCancel = () => {
     setShowPopupModal(false);
   };
-  const handleExportExcel = async (filtered: any) => {
-    try {
-      toast.info("Preparing file for download...");
-      console.log("object,", filtered);
-      const response = await ExportApplicant(filtered);
 
-      if (!response) {
-        toast.error("Failed to download file");
-        return;
-      }
-
-      const blob = new Blob([response], { type: "text/csv" });
-
-      saveAs(blob, "applicants.csv");
-
-      toast.success("File downloaded successfully!");
-    } catch (error) {
-      console.error("Export error:", error);
-      toast.error("Failed to export file");
-    }
-  };
-
-  // const handleExportExcel = async (filtered: string[] | string) => {
+  // const handleExportExcel = async (filtered: any) => {
   //   try {
-  //     console.log("Exporting with filters:", filtered);
   //     toast.info("Preparing file for download...");
-
-  //     await new Promise((resolve) => setTimeout(resolve, 3500));
-
-  //     // Ensure `filtered` is properly formatted as a string
-  //     // const queryParams = qs.stringify({
-  //     //   filtered: Array.isArray(filtered) ? filtered.join(",") : filtered,
-  //     // });
-
-  //     // const response = await ExportApplicant([filtered]);
-  //     const response = await ExportApplicant(
-  //       Array.isArray(filtered) ? filtered : [filtered]
-  //     );
+  //     console.log("object,", filtered);
+  //     const response = await ExportApplicant(filtered);
 
   //     if (!response) {
   //       toast.error("Failed to download file");
@@ -1130,7 +1098,8 @@ function ImportApplicant() {
   //     }
 
   //     const blob = new Blob([response], { type: "text/csv" });
-  //     saveAs(blob, "Imported_Applicants.csv");
+
+  //     saveAs(blob, "applicants.csv");
 
   //     toast.success("File downloaded successfully!");
   //   } catch (error) {
@@ -1138,6 +1107,38 @@ function ImportApplicant() {
   //     toast.error("Failed to export file");
   //   }
   // };
+
+  const handleExportExcel = async (filtered: string[] | string) => {
+    try {
+      console.log("Exporting with filters:", filtered);
+      toast.info("Preparing file for download...");
+
+      await new Promise((resolve) => setTimeout(resolve, 3500));
+
+      // Ensure `filtered` is properly formatted as a string
+      // const queryParams = qs.stringify({
+      //   filtered: Array.isArray(filtered) ? filtered.join(",") : filtered,
+      // });
+
+      // const response = await ExportApplicant([filtered]);
+      const response = await ExportImportedApplicant(
+        Array.isArray(filtered) ? filtered : [filtered]
+      );
+
+      if (!response) {
+        toast.error("Failed to download file");
+        return;
+      }
+
+      const blob = new Blob([response], { type: "text/csv" });
+      saveAs(blob, "Imported_Applicants.csv");
+
+      toast.success("File downloaded successfully!");
+    } catch (error) {
+      console.error("Export error:", error);
+      toast.error("Failed to export file");
+    }
+  };
 
   const drawerList = (anchor: Anchor) => (
     <Box
@@ -1831,13 +1832,13 @@ function ImportApplicant() {
                       <BaseButton
                         color="primary"
                         className="ml-2 bg-green-900 btn btn-soft-secondary edit-list"
-                        // hoverOptions={["Resume", "Csv", "Both"]}
-                        hoverOptions={["Resume", "Csv"]}
+                        hoverOptions={["Resume", "Csv", "Both"]}
+                        // hoverOptions={["Resume", "Csv"]}
                         onOptionClick={(option) => {
                           handleExportExcel(
-                            // option === "Both" ? ["Csv", "Resume"] : [option]
-                            // option === "Both" ? both : option
-                            option
+                            // option === "Both" ? : [option]
+                            option === "Both" ? "both" : option
+                            // option
                           );
                         }}
                       >
@@ -2021,8 +2022,7 @@ const customStyles = {
   control: (provided: any) => ({
     ...provided,
     fontSize: "12px",
-    // backgroundColor: "#f0f0f0",
-    backfroundColor: "#0000FF",
+    backgroundColor: "#f0f0f0",
     borderRadius: "8px",
     borderColor: "transparent",
     // padding: "0.25rem 0.5rem",

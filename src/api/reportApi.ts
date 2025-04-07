@@ -2,8 +2,8 @@
 import { SKILL_STATISTICS, APPLICATION_ON_PROCESS, STATUS_OF_APPLICATION, APPLICATION } from "./apiRoutes";
 import { authServices } from "./apiServices";
 
-export const getSkillStatistics = async () => {
-    const response = await authServices.get(`${SKILL_STATISTICS}`);
+export const getSkillStatistics = async (selectedFilter = "") => {
+    const response = await authServices.get(`${SKILL_STATISTICS}${selectedFilter || "frontend"}`);
     return response?.data;
   };
 

@@ -558,11 +558,11 @@ const Applicant = () => {
     });
   };
 
-  const handleExportExcel = async (filtered: string) => {
+  const handleExportExcel = async (filtered: string[]) => {
     try {
       toast.info("Preparing file for download...");
       await new Promise((resolve) => setTimeout(resolve, 3500));
-      const response = await ExportApplicant(filtered ? { filtered } : {});
+      const response = await ExportApplicant(filtered);
 
       if (!response) {
         toast.error("Failed to download file");
@@ -599,7 +599,7 @@ const Applicant = () => {
         </IconButton>
       </div>
       <List>
-        <Row className="flex justify-between items-center mb-4">
+        <Row className="flex items-center justify-between mb-4">
           <Col>
             <h3>Apply Filters</h3>
           </Col>
@@ -618,7 +618,7 @@ const Applicant = () => {
         <MultiSelect
           label="Applied Skills"
           name="appliedSkills"
-          className="select-border mb-1"
+          className="mb-1 select-border"
           placeholder="Applied Skills"
           value={appliedSkills}
           isMulti={true}
@@ -635,7 +635,7 @@ const Applicant = () => {
         <BaseSlider
           label="Experience (in years)"
           name="experience"
-          className="select-border mx-5 mb-1 "
+          className="mx-5 mb-1 select-border "
           value={experienceRange}
           // onChange={handleExperienceChange}
           handleChange={handleExperienceChange}
@@ -648,7 +648,7 @@ const Applicant = () => {
         <BaseSelect
           label="City"
           name="city"
-          className="select-border mb-1 "
+          className="mb-1 select-border "
           options={cities}
           placeholder="City"
           handleChange={handleCityChange}
@@ -658,7 +658,7 @@ const Applicant = () => {
         <BaseSelect
           label="State"
           name="state"
-          className="select-border mb-1 "
+          className="mb-1 select-border "
           options={stateType}
           placeholder="State"
           handleChange={handleStateChange}
@@ -667,7 +667,7 @@ const Applicant = () => {
         <BaseSelect
           label="Interview Stage"
           name="interviewStage"
-          className="select-border mb-1"
+          className="mb-1 select-border"
           options={interviewStageOptions}
           placeholder="Interview Stage"
           handleChange={handleInterviewStageChange}
@@ -676,7 +676,7 @@ const Applicant = () => {
         <BaseSelect
           label="Status"
           name="status"
-          className="select-border mb-1"
+          className="mb-1 select-border"
           options={statusOptions}
           placeholder="Status"
           handleChange={handleStatusChange}
@@ -686,7 +686,7 @@ const Applicant = () => {
         <BaseSelect
           label="Gender"
           name="gender"
-          className="select-border mb-1"
+          className="mb-1 select-border"
           options={gendersType}
           placeholder="Gender"
           handleChange={handleGenderChange}
@@ -696,7 +696,7 @@ const Applicant = () => {
         <BaseSlider
           label="Expected Pkg(LPA)"
           name="expectedPkg"
-          className="select-border mx-5 mb-1  "
+          className="mx-5 mb-1 select-border "
           value={filterExpectedPkg}
           handleChange={handleExpectedPkgChange}
           min={0}
@@ -707,7 +707,7 @@ const Applicant = () => {
         <BaseSlider
           label="Current Pkg(LPA)"
           name="currentPkg"
-          className="select-border mx-5 mb-1  "
+          className="mx-5 mb-1 select-border "
           value={filterCurrentPkg}
           handleChange={handleCurrentPkgChange}
           min={0}
@@ -719,7 +719,7 @@ const Applicant = () => {
         <BaseSelect
           label="Designation"
           name="designation"
-          className="select-border mb-1"
+          className="mb-1 select-border"
           options={designationType}
           placeholder="Designation"
           handleChange={handleDesignationChange}
@@ -729,7 +729,7 @@ const Applicant = () => {
         <BaseSlider
           label="Notice Period (in Days)"
           name="noticePeriod"
-          className="select-border mx-5 mb-1  "
+          className="mx-5 mb-1 select-border "
           value={filterNoticePeriod}
           handleChange={handleNoticePeriodChange}
           min={0}
@@ -742,7 +742,7 @@ const Applicant = () => {
         <BaseSelect
           label="Work Preference"
           name="workPreference"
-          className="select-border mb-1"
+          className="mb-1 select-border"
           options={workPreferenceType}
           placeholder="Work Preference"
           handleChange={handleWorkPreferenceChange}
@@ -753,7 +753,7 @@ const Applicant = () => {
           label="JavaScript Rating"
           name="rating"
           value={filterRating}
-          className="select-border mx-5 mb-1  "
+          className="mx-5 mb-1 select-border "
           handleChange={handleRatingChange}
           min={0}
           max={10}
@@ -764,7 +764,7 @@ const Applicant = () => {
         <BaseSlider
           label="Eng.Communication Rating"
           name="communication"
-          className="select-border mx-5 mb-1  "
+          className="mx-5 mb-1 select-border "
           value={filterEngRating}
           handleChange={handleEngRatingChange}
           min={0}
@@ -775,7 +775,7 @@ const Applicant = () => {
         <BaseSelect
           label="Any Hand On Offers"
           name="anyHandOnOffers"
-          className="select-border mb-1"
+          className="mb-1 select-border"
           options={anyHandOnOffers}
           placeholder="Any Hand On Offers"
           handleChange={handleAnyHandOnOffersChange}
@@ -785,7 +785,7 @@ const Applicant = () => {
         <BaseInput
           label="Start Date"
           name="startDate"
-          className="select-border mb-1"
+          className="mb-1 select-border"
           type="date"
           placeholder={InputPlaceHolder("Start Date")}
           handleChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -955,14 +955,14 @@ const Applicant = () => {
       {
         header: "Action",
         cell: (cell: any) => (
-          <div className="hstack gap-2">
+          <div className="gap-2 hstack">
             <BaseButton
               id={`usage-${cell?.row?.original?.id}`}
               color="primary"
               className="btn btn-sm btn-soft-success usage-list"
               onClick={() => handleView(cell.row.original._id)}
             >
-              <i className="ri-eye-fill align-bottom" />
+              <i className="align-bottom ri-eye-fill" />
               <ReactTooltip
                 place="bottom"
                 variant="info"
@@ -976,7 +976,7 @@ const Applicant = () => {
               className="btn btn-sm btn-soft-secondary edit-list"
               onClick={() => handleEdit(cell?.row?.original._id)}
             >
-              <i className="ri-pencil-fill align-bottom" />
+              <i className="align-bottom ri-pencil-fill" />
               <ReactTooltip
                 place="bottom"
                 variant="warning"
@@ -992,7 +992,7 @@ const Applicant = () => {
               onClick={() => openDeleteModal(cell.row.original._id)}
               
             >
-              <i className="ri-delete-bin-5-fill align-bottom" />
+              <i className="align-bottom ri-delete-bin-5-fill" />
               <ReactTooltip
                 place="bottom"
                 variant="error"
@@ -1007,7 +1007,7 @@ const Applicant = () => {
               color="danger"
               onClick={() => handleDeleteSingle(cell.row.original._id)} // Call the single delete function
             >
-              <i className="ri-delete-bin-5-fill align-bottom" />
+              <i className="align-bottom ri-delete-bin-5-fill" />
               <ReactTooltip
                 place="bottom"
                 variant="error"
@@ -1021,7 +1021,7 @@ const Applicant = () => {
               className="btn btn-sm btn-soft-secondary bg-success edit-list"
               onClick={() => handleEmail(cell?.row?.original._id)}
             >
-              <i className="ri-mail-close-line align-bottom" />
+              <i className="align-bottom ri-mail-close-line" />
               <ReactTooltip
                 place="bottom"
                 variant="info"
@@ -1093,17 +1093,17 @@ const Applicant = () => {
       <Container fluid>
         {/* <Row>
           <div>
-            <Card className="mb-3 my-3">
+            <Card className="my-3 mb-3">
               <CardBody>
                 <div className="container">
-                  <div className="row align-items-center inline-flex items-center ">
+                  <div className="inline-flex items-center row align-items-center ">
                     <div className="col-3 col-xs-auto">
                       <button
                         onClick={toggleDrawer("right", true)}
                         // color="primary"
                         className="btn btn-primary max-h-16"
                       >
-                        <i className="fa fa-filter mx-1 "></i> Filters
+                        <i className="mx-1 fa fa-filter "></i> Filters
                       </button>
                       <Drawer
                         className="!mt-16 "
@@ -1115,11 +1115,11 @@ const Applicant = () => {
                       </Drawer>
                     </div>
                     {/* Right: WhatsApp, Email, and New Applicant Buttons 
-                    <div className="col-8 col-md d-flex flex-wrap  justify-content-end gap-2">
+                    <div className="flex-wrap gap-2 col-8 col-md d-flex justify-content-end">
                       <div>
                         <input
                           id="search-bar-0"
-                          className="form-control search h-10"
+                          className="h-10 form-control search"
                           placeholder="Search..."
                           onChange={handleSearchChange}
                           value={searchAll}
@@ -1129,10 +1129,10 @@ const Applicant = () => {
                         {selectedApplicants.length > 0 && (
                           <>
                             <BaseButton
-                              className="btn text-lg bg-danger edit-list ml-2 w-fit border-0"
+                              className="ml-2 text-lg border-0 btn bg-danger edit-list w-fit"
                               onClick={handleDeleteAll}
                             >
-                              <i className="ri-delete-bin-fill align-bottom" />
+                              <i className="align-bottom ri-delete-bin-fill" />
                               <ReactTooltip
                                 place="bottom"
                                 variant="error"
@@ -1142,10 +1142,10 @@ const Applicant = () => {
                             </BaseButton>
 
                             <BaseButton
-                              className="btn text-lg btn-soft-secondary bg-primary edit-list ml-2 mr-0"
+                              className="ml-2 mr-0 text-lg btn btn-soft-secondary bg-primary edit-list"
                               onClick={handleSendEmail}
                             >
-                              <i className="ri-mail-close-line align-bottom" />
+                              <i className="align-bottom ri-mail-close-line" />
                               <ReactTooltip
                                 place="bottom"
                                 variant="info"
@@ -1157,13 +1157,13 @@ const Applicant = () => {
 
                         <BaseButton
                           color="primary"
-                          className="btn btn-soft-secondary bg-green-900 edit-list ml-2"
+                          className="ml-2 bg-green-900 btn btn-soft-secondary edit-list"
                           hoverOptions={["Resume", "Manual", "Csv", "All"]}
                           onOptionClick={(option) => {
                             handleExportExcel(option === "All" ? "" : option); // Pass an empty string when "All" is selected
                           }}
                         >
-                          <i className="ri-upload-2-line align-bottom me-1" />
+                          <i className="align-bottom ri-upload-2-line me-1" />
                           Export
                         </BaseButton>
 
@@ -1172,7 +1172,7 @@ const Applicant = () => {
                           onClick={handleNavigate}
                           className="ml-2"
                         >
-                          <i className="ri-add-line align-bottom me-1" />
+                          <i className="align-bottom ri-add-line me-1" />
                           Add
                         </BaseButton>
                       </div>
@@ -1186,7 +1186,7 @@ const Applicant = () => {
 
         <Row>
           <div>
-            <Card className="mb-3 my-3">
+            <Card className="my-3 mb-3">
               <CardBody>
                 <div className="container">
                   <div className="row align-items-center">
@@ -1195,7 +1195,7 @@ const Applicant = () => {
                         onClick={toggleDrawer("right", true)}
                         className="btn btn-primary max-h-16"
                       >
-                        <i className="fa fa-filter mx-1"></i> Filters
+                        <i className="mx-1 fa fa-filter"></i> Filters
                       </button>
                       <Drawer
                         className="!mt-16"
@@ -1206,12 +1206,12 @@ const Applicant = () => {
                         {drawerList("right")}
                       </Drawer>
                     </div>
-                    <div className="col-9 col-md d-flex flex-column flex-md-row flex-wrap justify-content-end mt-2 mt-md-0">
+                    <div className="flex-wrap mt-2 col-9 col-md d-flex flex-column flex-md-row justify-content-end mt-md-0">
                       {/* Search Bar (Always on top in mobile) */}
                       <div className="col-12 col-md-auto">
                         <input
                           id="search-bar-0"
-                          className="form-control search h-10"
+                          className="h-10 form-control search"
                           placeholder="Search..."
                           onChange={handleSearchChange}
                           value={searchAll}
@@ -1223,10 +1223,10 @@ const Applicant = () => {
                       {selectedApplicants.length > 0 && (
                         <>
                           <BaseButton
-                            className="btn text-lg bg-danger edit-list border-0 ml-2"
+                            className="ml-2 text-lg border-0 btn bg-danger edit-list"
                             onClick={handleDeleteAll}
                           >
-                            <i className="ri-delete-bin-fill align-bottom" />
+                            <i className="align-bottom ri-delete-bin-fill" />
                             <ReactTooltip
                               place="bottom"
                               variant="error"
@@ -1236,10 +1236,10 @@ const Applicant = () => {
                           </BaseButton>
 
                           <BaseButton
-                            className="btn text-lg btn-soft-secondary bg-primary edit-list ml-2"
+                            className="ml-2 text-lg btn btn-soft-secondary bg-primary edit-list"
                             onClick={handleSendEmail}
                           >
-                            <i className="ri-mail-close-line align-bottom" />
+                            <i className="align-bottom ri-mail-close-line" />
                             <ReactTooltip
                               place="bottom"
                               variant="info"
@@ -1251,13 +1251,19 @@ const Applicant = () => {
 
                       <BaseButton
                         color="primary"
-                        className="btn btn-soft-secondary bg-green-900 edit-list ml-2"
-                        hoverOptions={["Resume", "Manual", "Csv", "All"]}
+                        className="ml-2 bg-green-900 btn btn-soft-secondary edit-list"
+                        hoverOptions={[
+                          "Resume",
+                          "Manual",
+                          "Csv",
+                          "both",
+                          "All",
+                        ]}
                         onOptionClick={(option) =>
-                          handleExportExcel(option === "All" ? "" : option)
+                          handleExportExcel(option === "All" ? [] : [option])
                         }
                       >
-                        <i className="ri-upload-2-line align-bottom me-1" />
+                        <i className="align-bottom ri-upload-2-line me-1" />
                         Export
                       </BaseButton>
 
@@ -1266,7 +1272,7 @@ const Applicant = () => {
                         onClick={handleNavigate}
                         className="ml-2"
                       >
-                        <i className="ri-add-line align-bottom me-1" />
+                        <i className="align-bottom ri-add-line me-1" />
                         Add
                       </BaseButton>
                     </div>
@@ -1280,15 +1286,15 @@ const Applicant = () => {
         <Row>
           <Col lg={12}>
             <Card>
-              <div className="card-body pt-0">
+              <div className="pt-0 card-body">
                 {tableLoader ? (
-                  <div className="text-center py-4">
-                    <Skeleton count={1} className="min-h-10 mb-5" />
+                  <div className="py-4 text-center">
+                    <Skeleton count={1} className="mb-5 min-h-10" />
 
                     <Skeleton count={5} />
                   </div>
                 ) : (
-                  <div className="card-body pt-4">
+                  <div className="pt-4 card-body">
                     {applicant.length > 0 ? (
                       <TableContainer
                         isHeaderTitle="Applicants"
