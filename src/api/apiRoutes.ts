@@ -19,7 +19,8 @@ export const UPDATE_APPLICANT_STATUS = "applicants/update/status";
 export const UPDATE_APPLICANT_STAGE = "applicants/update/status";
 export const FILTER_APPLICANT = "applicants/viewApplicant/?";
 export const CITY = "city";
-export const EXPORT_APPLICANT = "applicants/exportCsv?filtered=";
+export const EXPORT_APPLICANT = "applicants/exportCsv?source=";
+export const EXPORT_IMPORT_APPLICANT = "applicants/exportCsv?filtered=";
 export const DELETE_MULTIPLE_APPLICANT = "applicants/deleteManyApplicants"
 export const EXISTING_APPLICANT ="applicants/checkApplicant/?";
 export const IMPORT_APPLICANT = "applicants/importCsv";
@@ -62,10 +63,11 @@ export const DELETE_DEGREE = "degree/delete";
 //Dashboard Module
 export const TOTAL_APPLICANTS = "/dashboard/applicant/count"
 export const RECENT_APPLICANTS = "/applicants/viewAllApplicant?appliedSkills="
-export const APPLICANTS_DETAILS = "/reports/applicants/technologyStatistics?category="
+export const APPLICANTS_DETAILS = "/reports/applicants/categoryWiseSkillCount?category="
 
 //Report Module
-export const SKILL_STATISTICS = "/reports/applicants/technologyStatistics"
+export const SKILL_STATISTICS = "/reports/applicants/categoryWiseSkillCount?category="
 export const APPLICATION_ON_PROCESS = "/reports/applicants/applicationOnProcessCount"
 export const STATUS_OF_APPLICATION = "/reports/applicants/statusByPercentage"
 export const APPLICATION = "/reports/applicants/getApplicationsByDate?calendarType="
+

@@ -1,5 +1,5 @@
 import { Fragment, useState, useEffect } from "react";
-import { Card, Col, Container, Row } from "react-bootstrap";
+import { Card, Col, Container, Dropdown, Row } from "react-bootstrap";
 import {
   Check2Circle,
   Icon1Circle,
@@ -13,8 +13,45 @@ import ProgressChart from "sub-components/report/ProgressChart";
 import { getApplicationOnProcess } from "api/reportApi";
 import AreaChart from "sub-components/report/AreaChart";
 import appConstants from "constants/constant";
+import { capitalizeWords } from "utils/commonFunctions";
 
 const { projectTitle, Modules } = appConstants;
+
+const ActionMenu = ({
+  setSelectedFilter,
+  selectedFilter,
+}: {
+  setSelectedFilter: (filter: string) => void;
+  selectedFilter: string;
+}) => {
+  const handleSelect = (eventKey: string | null) => {
+    if (eventKey) {
+      setSelectedFilter(eventKey); // Update filter when an option is selected
+    }
+  };
+  return (
+    <Dropdown onSelect={handleSelect}>
+      <Dropdown.Toggle variant="outline-primary">
+        {capitalizeWords(selectedFilter) ||
+          // "Select Filters" ||
+          "Frontend"}
+      </Dropdown.Toggle>
+      <Dropdown.Menu align={"end"}>
+        <Dropdown.Item eventKey="Frontend">Frontend</Dropdown.Item>
+        <Dropdown.Item eventKey="Backend">Backend</Dropdown.Item>
+        <Dropdown.Item eventKey="Database">Database</Dropdown.Item>
+        <Dropdown.Item eventKey="Testing">Testing</Dropdown.Item>
+        <Dropdown.Item eventKey="UIUX">Ui/Ux</Dropdown.Item>
+        <Dropdown.Item eventKey="VersionControl">Version Control</Dropdown.Item>
+        <Dropdown.Item eventKey="devops">Development Operations</Dropdown.Item>
+        <Dropdown.Item eventKey="Programming">
+          Programming Language
+        </Dropdown.Item>
+        <Dropdown.Item eventKey="Others">Others</Dropdown.Item>
+      </Dropdown.Menu>
+    </Dropdown>
+  );
+};
 
 const Report = () => {
   document.title = Modules.Reports + " | " + projectTitle;
@@ -25,6 +62,7 @@ const Report = () => {
   const [applicantsOnProcess5, setApplicantsOnProcess5] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [errorS, setErrorS] = useState<string | null>(null);
+  const [selectedFilter, setSelectedFilter] = useState("Frontend");
 
   useEffect(() => {
     fetchApplicantsOnProcess();
@@ -55,17 +93,17 @@ const Report = () => {
         <Container fluid className="px-3 pt-5">
           <Row className="gy-3">
             <Col xs={12}>
-              <Card className="shadow-sm p-3 rounded-4 w-100">
+              <Card className="p-3 shadow-sm rounded-4 w-100">
                 <Card.Body className="d-flex flex-column">
                   <Row>
                     <Col xl={8} lg={6} md={12} sm={12} xs={12}>
-                      <h4 className="fw-bold w-full">
+                      <h4 className="w-full fw-bold">
                         {" "}
                         Application on Process
                       </h4>
                       <div className="mt-5">
-                        <div className="d-flex my-2">
-                          <div className="icon-shape icon-lg rounded-2 shadow-md bg-light-warning text-warning">
+                        <div className="my-2 d-flex">
+                          <div className="shadow-md icon-shape icon-lg rounded-2 bg-light-warning text-warning">
                             {/* <Cart /> */}
                             <Icon1Circle size={20} />
                           </div>
@@ -76,8 +114,8 @@ const Report = () => {
                             loading={isLoading}
                           />
                         </div>
-                        <div className="d-flex my-2">
-                          <div className="icon-shape icon-lg rounded-2 shadow-md bg-light-success text-success">
+                        <div className="my-2 d-flex">
+                          <div className="shadow-md icon-shape icon-lg rounded-2 bg-light-success text-success">
                             {/* <Truck /> */}
                             <Icon2Circle size={20} />
                           </div>
@@ -88,8 +126,8 @@ const Report = () => {
                             loading={isLoading}
                           />
                         </div>
-                        <div className="d-flex my-2">
-                          <div className="icon-shape icon-lg rounded-2 shadow-md bg-light-danger text-danger">
+                        <div className="my-2 d-flex">
+                          <div className="shadow-md icon-shape icon-lg rounded-2 bg-light-danger text-danger">
                             <Laptop size={20} />
                           </div>
                           <ProgressBars
@@ -99,8 +137,8 @@ const Report = () => {
                             loading={isLoading}
                           />
                         </div>
-                        <div className="d-flex my-2">
-                          <div className="icon-shape icon-lg rounded-2 shadow-md bg-light-primary text-primary">
+                        <div className="my-2 d-flex">
+                          <div className="shadow-md icon-shape icon-lg rounded-2 bg-light-primary text-primary">
                             <Check2Circle size={20} />
                           </div>
                           <ProgressBars
@@ -110,8 +148,8 @@ const Report = () => {
                             loading={isLoading}
                           />
                         </div>
-                        <div className="d-flex my-2">
-                          <div className="icon-shape icon-lg rounded-2 shadow-md bg-light-info text-info">
+                        <div className="my-2 d-flex">
+                          <div className="shadow-md icon-shape icon-lg rounded-2 bg-light-info text-info">
                             <PersonCircle size={20} />
                           </div>
                           <ProgressBars
@@ -134,21 +172,27 @@ const Report = () => {
                       <div className="d-flex justify-content-between align-items-center">
                         <h4 className="fw-bold">Status of Application</h4>
                       </div>
-                      <div className="chart-container mt-2">
+                      <div className="mt-2 chart-container">
                         <ProgressChart />
                       </div>
                     </Col>
                   </Row>
                   <Row className="mt-4">
-                    <Col xl={6} lg={6} md={12} sm={12} xs={12} className="mb-4">
-                      <h4 className="fw-bold">Statistics</h4>
+                    <Col xl={6} lg={6} md={12} sm={12} xs={12}>
+                      <div className="justify-between d-flex">
+                        <h4 className="justify-start fw-bold">Statistics</h4>
+                        <ActionMenu
+                          setSelectedFilter={setSelectedFilter}
+                          selectedFilter={selectedFilter}
+                        />
+                      </div>
                       <div className="chart-container">
-                        <DounutChart />
+                        <DounutChart selectedFilter={selectedFilter} />
                       </div>
                     </Col>
                     <Col xl={6} lg={6} md={12} sm={12} xs={12}>
                       <h4 className="fw-bold">Applicants</h4>
-                      <div className="chart-container mt-3">
+                      <div className="mt-3 chart-container">
                         {" "}
                         <AreaChart />
                       </div>

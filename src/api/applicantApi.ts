@@ -19,7 +19,8 @@ import {
   IMPORT_APPLICANT_LIST,
   DELETE_MULTIPLE_APPLICANT,
   EXISTING_APPLICANT,
-  UPDATE_APPLICANT_MANY
+  UPDATE_APPLICANT_MANY,
+  EXPORT_IMPORT_APPLICANT,
 } from "./apiRoutes";
 import { authServices } from "./apiServices";
 
@@ -52,7 +53,6 @@ export const listOfApplicants = async (params: {
 export const createApplicant = async (data?: object) => {
   const response = await authServices.post(`${CREATE_APPLICANT}`, data);
   return response?.data;
-   
 };
 
 export const CheckExistingApplicant = async (params: {
@@ -61,11 +61,11 @@ export const CheckExistingApplicant = async (params: {
   whatsappNumber?: number;
 }) => {
   // try {
-    const response = await authServices.get(`${EXISTING_APPLICANT}`, {
-      params, 
-    });
-    return response?.data;
-    // console.log("Response from  CheckExistingApplicant:", response?.data);
+  const response = await authServices.get(`${EXISTING_APPLICANT}`, {
+    params,
+  });
+  return response?.data;
+  // console.log("Response from  CheckExistingApplicant:", response?.data);
   // } catch (error) {
   //   console.error("Error in checking existing applicant:", error);
   // }
@@ -118,7 +118,7 @@ export const city = async () => {
   const response = await authServices.get(`${CITY}`);
   return response?.data;
 };
-  
+
 export const importApplicant = async (
   formData: FormData,
   config?: { onUploadProgress?: (progressEvent: any) => void; params?: any }
@@ -136,55 +136,50 @@ export const importApplicant = async (
 
     return response.data;
   } catch (error: any) {
-   
     if (error.response) {
       console.error("API error response add:", error.response);
       // errorHandle(error.response);
       throw new Error(
-
         error.response.data?.message || "An error occurred while importing."
-        
       );
       console.log("1", error.response.data?.message);
     }
   }
 };
 
+export const ExportApplicant = async (queryParams: string[]) => {
+  try {
+    const response = await authServices.get(
+      `${EXPORT_APPLICANT}${queryParams}`,
+      {
+        responseType: "blob",
+        timeout: 300000,
+      }
+    );
 
-
-export const ExportApplicant = async (
-  params: { filtered?: string },
-  config?: { onDownloadProgress?: (progressEvent: any) => void }
-) => {
-  const response = await authServices.get(`${EXPORT_APPLICANT}`, {
-    responseType: "blob",
-    params,
-    timeout: 300000,
-    ...config,
-  });
-  
-  return response?.data;
+    return response.data; // ✅ Extract `data` from the response
+  } catch (error) {
+    console.error("Error exporting applicants:", error);
+    throw error;
+  }
 };
 
+export const ExportImportedApplicant = async (queryParams: string[]) => {
+  try {
+    const response = await authServices.get(
+      `${EXPORT_IMPORT_APPLICANT}${queryParams}`,
+      {
+        responseType: "blob",
+        timeout: 300000,
+      }
+    );
 
-// export const ExportApplicant = async (queryParams: string[]) => {
-//   try {
-//     const response = await authServices.get(`${EXPORT_APPLICANT}${queryParams}`, {
-//       responseType: "blob",
-//       timeout: 300000,
-//     });
-   
-//     return response.data; // ✅ Extract `data` from the response
-//   } catch (error) {
-//     console.error("Error exporting applicants:", error);
-//     throw error;
-//   }
-// };
-
-
-
-
-
+    return response.data; // ✅ Extract `data` from the response
+  } catch (error) {
+    console.error("Error exporting applicants:", error);
+    throw error;
+  }
+};
 
 export const resumeUpload = async (
   formData: FormData,
@@ -229,20 +224,17 @@ export const listOfImportApplicants = async (params: {
   return response?.data;
 };
 
-
 export const updateManyApplicants = async (
-  applicantIds: string[], 
+  applicantIds: string[],
   updateData: object
 ) => {
   const response = await authServices.put(UPDATE_APPLICANT_MANY, {
-    applicantIds : applicantIds, 
-    updateData : updateData
-    
+    applicantIds: applicantIds,
+    updateData: updateData,
   });
-console.log("object",response)
+  console.log("object", response);
   return response?.data;
 };
-
 
 export const deleteMultipleApplicant = async (
   ids: string[] | undefined | null
@@ -252,6 +244,6 @@ export const deleteMultipleApplicant = async (
   const response = await authServices.delete(DELETE_MULTIPLE_APPLICANT, {
     data: { ids }, // Send IDs inside request body
   });
-  console.log("object",response?.data)
+  console.log("object", response?.data);
   return response?.data;
 };
