@@ -53,7 +53,7 @@ const SignUp = () => {
       role: "",
     },
     validationSchema: Yup.object({
-      userName: Yup.string().required(RequiredField("User Name")),
+      userName: Yup.string().required(RequiredField("Username")),
       email: Yup.string()
         .required(validationMessages.required("Email"))
         .email(validationMessages.format("Email"))
@@ -145,7 +145,7 @@ const SignUp = () => {
                       label="Username"
                       name="userName"
                       type="text"
-                      placeholder={InputPlaceHolder("UserName")}
+                      placeholder={InputPlaceHolder("Username")}
                       handleChange={validation.handleChange}
                       handleBlur={validation.handleBlur}
                       value={validation.values.userName}

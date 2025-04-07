@@ -90,6 +90,8 @@ export interface BaseButtonProps {
   children?: React.ReactNode;
   variant?: string;
   sx?: any;
+  hoverOptions?: string[];
+  onOptionClick?: (option: string) => void
 }
 
 export interface BaseModalProps {

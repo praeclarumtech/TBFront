@@ -1127,7 +1127,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                   <BaseTextarea
                     label="Practical Feedback"
                     name="practicalFeedback"
-                    className="mb-3"
+                    // className="mb-3"
                     placeholder={InputPlaceHolder(
                       "Describe about Us Practical Task..."
                     )}

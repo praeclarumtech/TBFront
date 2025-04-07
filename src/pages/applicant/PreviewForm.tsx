@@ -75,7 +75,7 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
 
               <Typography>
                 <span className="text-base  !text-black pt-3">
-                  Permanemt Address:
+                  Permanent Address:
                 </span>
                 <span>{" " + capitalizeWords(data?.permanentAddress)}</span>
               </Typography>
@@ -218,7 +218,7 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
               </Typography>
 
               <Typography>
-                <span className="  !text-black pt-3">comment:</span>
+                <span className="  !text-black pt-3">Comment:</span>
                 <span>{" " + capitalizeWords(data?.comment)}</span>
               </Typography>
             </Col>

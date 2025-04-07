@@ -21,8 +21,8 @@ const BaseModal: React.FC<BaseModalProps> = ({
 
       <ModalFooter>
         <BaseButton
-          color="danger" // Changed "denger" to "danger"
-          className=" text-white"
+          color="outline-danger" // Changed "denger" to "danger"
+          // className=" text-white"
           type="button"
           onClick={onCloseClick}
         >

@@ -51,8 +51,17 @@ const RecentApplicants = ({
         enableColumnFilter: false,
       },
       {
-        header: "Technology",
+        header: "applied Skills",
         accessorKey: "appliedSkills",
+        cell: (cell: any) => (
+          <div
+            className="truncated-text"
+            style={truncateText}
+            title={cell.row.original.appliedSkills?.join(", ")}
+          >
+            {cell.row.original.appliedSkills?.join(", ")}
+          </div>
+        ),
         enableColumnFilter: false,
       },
       {
@@ -68,8 +77,14 @@ const RecentApplicants = ({
     <Row className="mt-6">
       <Col>
         <Card className="w-full min-h-[390px]">
-          <Card.Header className="bg-white border-0 d-flex justify-content-between align-items-center p-4 pb-0 min-h-[63px]">
-            <h4 className="h4">{selectedTechnology} Applicants</h4>
+          <Card.Header className="bg-white border-0 d-flex justify-content-between align-items-center p-4  min-h-[63px]">
+            <h4 className="h4">
+              {selectedTechnology === "C%2B%2B"
+                ? "C++"
+                : selectedTechnology || "Recent"}{" "}
+              Applicants
+            </h4>
+
             {selectedTechnology && (
               <Button variant="primary" onClick={onResetFilter}>
                 Reset Filter
@@ -78,8 +93,8 @@ const RecentApplicants = ({
           </Card.Header>
           <Card.Body className="pt-0">
             {isLoading ? (
-              <div className="min-h-[410px] w-full">
-                <Skeleton className="min-h-[412px]" />
+              <div className="min-h-[390px] w-full">
+                <Skeleton className="min-h-[390px]" />
               </div>
             ) : (
               <>
@@ -108,3 +123,15 @@ const RecentApplicants = ({
 };
 
 export default RecentApplicants;
+const truncateText = {
+  // display: "flex",
+  whiteSpace: "nowrap",
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  maxWidth: "150px",
+  fontSize: "14px",
+  // alignItems: "center",
+  // justifyContent: "center",
+  // height: "40px",
+  // textAlign: "left",
+};

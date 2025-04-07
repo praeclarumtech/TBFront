@@ -219,20 +219,44 @@ const AddSkill = () => {
       {
         header: "Action",
         cell: (cell: { row: { original: any } }) => (
-          <div className="hstack gap-2">
+          // <div className="gap-2 hstack">
+          //   <BaseButton
+          //     id={`edit-${cell?.row?.original?._id}`}
+          //     color="primary"
+          //     className="btn btn-sm btn-soft-warning edit-list"
+          //     onClick={() => handleEdit(cell?.row?.original)}
+          //   >
+          //     <i className="align-bottom ri-pencil-fill" />
+          //     <ReactTooltip
+          //       place="bottom"
+          //       variant="warning"
+          //       content="Edit"
+          //       anchorId={`edit-${cell?.row?.original?._id}`}
+          //     />
+          //   </BaseButton>
+          //   <BaseButton
+          //     color="danger"
+          //     id={`delete-${cell?.row?.original?._id}`}
+          //     className="btn btn-sm btn-soft-danger bg-danger"
+          //     onClick={() => handleDelete(cell?.row?.original)}
+          //   >
+          //     <i className="align-bottom ri-delete-bin-fill" />
+          //     <ReactTooltip
+          //       place="bottom"
+          //       variant="error"
+          //       content="Delete"
+          //       anchorId={`delete-${cell?.row?.original?._id}`}
+          //     />
+          //   </BaseButton>
+          // </div>
+          <div className="gap-2 hstack">
             <BaseButton
               id={`edit-${cell?.row?.original?._id}`}
               color="primary"
               className="btn btn-sm btn-soft-warning edit-list"
               onClick={() => handleEdit(cell?.row?.original)}
             >
-              <i className="ri-pencil-fill align-bottom" />
-              <ReactTooltip
-                place="bottom"
-                variant="warning"
-                content="Edit"
-                anchorId={`edit-${cell?.row?.original?._id}`}
-              />
+              <i className="align-bottom ri-pencil-fill" />
             </BaseButton>
             <BaseButton
               color="danger"
@@ -240,14 +264,22 @@ const AddSkill = () => {
               className="btn btn-sm btn-soft-danger bg-danger"
               onClick={() => handleDelete(cell?.row?.original)}
             >
-              <i className="ri-delete-bin-fill align-bottom" />
-              <ReactTooltip
-                place="bottom"
-                variant="error"
-                content="Delete"
-                anchorId={`delete-${cell?.row?.original?._id}`}
-              />
+              <i className="align-bottom ri-delete-bin-fill" />
             </BaseButton>
+
+            {/* Tooltips should be outside buttons */}
+            <ReactTooltip
+              place="bottom"
+              variant="warning"
+              content="Edit"
+              anchorId={`edit-${cell?.row?.original?._id}`}
+            />
+            <ReactTooltip
+              place="bottom"
+              variant="error"
+              content="Delete"
+              anchorId={`delete-${cell?.row?.original?._id}`}
+            />
           </div>
         ),
       },
@@ -257,58 +289,60 @@ const AddSkill = () => {
 
   const [loader, setLoader] = useState(false);
 
- const validation = useFormik({
-   enableReinitialize: true,
-   initialValues: {
-     addSkills: editingSkill ? editingSkill.skills : "",
-   },
-   validationSchema: Yup.object({
-     addSkills: Yup.string().required("Skill name is required"),
-   }),
-   onSubmit: (values) => {
-     setLoader(true);
-     const payload = {
-       _id: editingSkill?._id,
-       skills: values.addSkills,
-     };
+  const validation = useFormik({
+    enableReinitialize: true,
+    initialValues: {
+      addSkills: editingSkill ? editingSkill.skills : "",
+    },
+    validationSchema: Yup.object({
+      addSkills: Yup.string().required("Skill name is required"),
+    }),
+    onSubmit: (values) => {
+      setLoader(true);
+      const payload = {
+        _id: editingSkill?._id,
+        skills: values.addSkills,
+      };
 
       const existingSkill = skills.find(
         (skill) => skill.skills.toLowerCase() === values.addSkills.toLowerCase()
-     );
-     
-       if (existingSkill && !editingSkill) {
-         toast.error("This skill already exists!");
-         setLoader(false);
-         return;
-       }
-     const apiCall = editingSkill ? updateSkill(payload) : createSkill(payload);
+      );
 
-       apiCall
-         .then((res) => {
-           if (res?.success) {
-             toast.success(
-               res?.message ||
-                 `Skill ${editingSkill ? "updated" : "added"} successfully`
-             );
-             setEditingSkill(null); // Reset editing state
-             validation.resetForm(); // Clear form data after submission
-             fetchSkills(); // Refresh data
-             setShowBaseModal(false);
-           } else {
-             toast.error(
-               res?.message ||
-                 `Failed to ${editingSkill ? "update" : "add"} skill`
-             );
-           }
-         })
-         .catch(() => {
-           toast.error("Something went wrong!");
-         })
-         .finally(() => {
-           setLoader(false);
-         });
-   },
- });
+      if (existingSkill && !editingSkill) {
+        toast.error("This skill already exists!");
+        setLoader(false);
+        return;
+      }
+      const apiCall = editingSkill
+        ? updateSkill(payload)
+        : createSkill(payload);
+
+      apiCall
+        .then((res) => {
+          if (res?.success) {
+            toast.success(
+              res?.message ||
+                `Skill ${editingSkill ? "updated" : "added"} successfully`
+            );
+            setEditingSkill(null); // Reset editing state
+            validation.resetForm(); // Clear form data after submission
+            fetchSkills(); // Refresh data
+            setShowBaseModal(false);
+          } else {
+            toast.error(
+              res?.message ||
+                `Failed to ${editingSkill ? "update" : "add"} skill`
+            );
+          }
+        })
+        .catch(() => {
+          toast.error("Something went wrong!");
+        })
+        .finally(() => {
+          setLoader(false);
+        });
+    },
+  });
 
   const formTitle = editingSkill
     ? "Edit Skill"
@@ -403,6 +437,11 @@ const AddSkill = () => {
     setSearchAll(event.target.value);
   };
 
+  const closeDeleteModal = () => {
+    setShowDeleteModal(false);
+    setSelectedSkills([]);
+  };
+
   const filteredSkills = skills.filter((skill) =>
     skill.skills.toLowerCase().includes(searchAll.toLowerCase())
   );
@@ -410,7 +449,7 @@ const AddSkill = () => {
     <Fragment>
       <DeleteModal
         show={showDeleteModal}
-        onCloseClick={() => setShowDeleteModal(false)}
+        onCloseClick={closeDeleteModal}
         onDeleteClick={confirmDelete}
         loader={loader}
       />
@@ -418,21 +457,21 @@ const AddSkill = () => {
       <Container fluid>
         <Row>
           <div>
-            <Card className="mb-3 my-3">
+            <Card className="my-3 mb-3">
               <CardBody>
                 <Row className="flex">
-                  <Row className="fw-bold text-dark mt-1 h4 d-flex align-items-center">
+                  {/* <Row className="mt-1 fw-bold text-dark h4 d-flex align-items-center">
                     <Col
                       sm={12}
                       md={12}
                       className="d-flex justify-content-between ml-2 !mb-2"
                     >
                       {formTitle}
-                      <div className="d-flex justify-end">
+                      <div className="justify-end d-flex">
                         <div>
                           <input
                             id="search-bar-0"
-                            className="form-control search h-10 "
+                            className="h-10 form-control search "
                             placeholder="Search..."
                             onChange={handleSearchChange}
                             value={searchAll}
@@ -440,10 +479,10 @@ const AddSkill = () => {
                         </div>
                         {selectedSkills.length > 1 && (
                           <BaseButton
-                            className="btn text-lg bg-danger edit-list ml-2 w-fit border-0"
+                            className="ml-2 text-lg border-0 btn bg-danger edit-list w-fit"
                             onClick={handleDeleteAll}
                           >
-                            <i className="ri-delete-bin-fill align-bottom" />
+                            <i className="align-bottom ri-delete-bin-fill" />
                             <ReactTooltip
                               place="bottom"
                               variant="error"
@@ -468,20 +507,20 @@ const AddSkill = () => {
                           >
                             {importLoader ? (
                               <>
-                                <i className="ri-loader-4-line animate-spin align-bottom me-1" />
+                                <i className="align-bottom ri-loader-4-line animate-spin me-1" />
                                 {isImporting
                                   ? `Importing... ${importProgress}%`
                                   : "Processing..."}
                               </>
                             ) : (
                               <>
-                                <i className="ri-download-2-line align-bottom me-1" />
+                                <i className="align-bottom ri-download-2-line me-1" />
                                 Import
                               </>
                             )}
                             {isImporting && (
                               <div
-                                className="progress position-absolute bottom-0 start-0"
+                                className="bottom-0 progress position-absolute start-0"
                                 style={{
                                   height: "4px",
                                   width: "100%",
@@ -504,13 +543,115 @@ const AddSkill = () => {
                             disabled={loader}
                             type="submit"
                             loader={loader}
-                            // className="ms-3 px-5 border rounded-5"
+                            // className="px-5 border ms-3 rounded-5"
                             onClick={handleOpenBaseModal}
                           >
-                            <i className="ri-add-line align-bottom me-1" />
+                            <i className="align-bottom ri-add-line me-1" />
                             {submitButtonText}
                           </BaseButton>
                         </div>{" "}
+                      </div>
+                    </Col>
+                  </Row> */}
+
+                  <Row className="mt-1 fw-bold text-dark d-flex align-items-center">
+                    <Col
+                      sm={12}
+                      lg={12}
+                      className="flex-wrap mb-2 ml-2 d-flex justify-content-between align-items-center"
+                    >
+                      <div className="justify-content-start h4">
+                        {formTitle}
+                      </div>
+                      {/* Right Section (Search + Buttons) */}
+                      <div className="flex-wrap d-flex justify-content-end ">
+                        {/* Search Bar */}
+                        <div className="col-sm-auto col-12">
+                          <input
+                            id="search-bar-0"
+                            className="h-10 form-control search"
+                            placeholder="Search..."
+                            onChange={handleSearchChange}
+                            value={searchAll}
+                          />
+                        </div>
+
+                        {/* Delete Button (Only if skills are selected) */}
+                        {selectedSkills.length > 1 && (
+                          <BaseButton
+                            className="ml-2 text-lg border-0 btn bg-danger edit-list w-fit"
+                            onClick={handleDeleteAll}
+                          >
+                            <i className="align-bottom ri-delete-bin-fill" />
+                            <ReactTooltip
+                              place="bottom"
+                              variant="error"
+                              content="Delete"
+                              anchorId={`Delete ${selectedSkills.length} Emails`}
+                            />
+                          </BaseButton>
+                        )}
+
+                        {/* Import & Submit Buttons (Stack only on smaller screens) */}
+                        <div className="flex-wrap d-flex align-items-center">
+                          <input
+                            type="file"
+                            ref={fileInputRef}
+                            accept=".csv,.xlsx,.xls"
+                            style={{ display: "none" }}
+                            onChange={handleFileImport}
+                          />
+                          <BaseButton
+                            color="primary"
+                            className="mx-2 position-relative"
+                            onClick={() => fileInputRef.current?.click()}
+                            disabled={importLoader}
+                          >
+                            {importLoader ? (
+                              <>
+                                <i className="align-bottom ri-loader-4-line animate-spin me-1" />
+                                {isImporting
+                                  ? `Importing... ${importProgress}%`
+                                  : "Processing..."}
+                              </>
+                            ) : (
+                              <>
+                                <i className="align-bottom ri-download-2-line me-1" />
+                                Import
+                              </>
+                            )}
+                            {isImporting && (
+                              <div
+                                className="bottom-0 progress position-absolute start-0"
+                                style={{
+                                  height: "4px",
+                                  width: "100%",
+                                  borderRadius: "0 0 4px 4px",
+                                }}
+                              >
+                                <div
+                                  className="progress-bar"
+                                  role="progressbar"
+                                  style={{ width: `${importProgress}%` }}
+                                  aria-valuenow={importProgress}
+                                  aria-valuemin={0}
+                                  aria-valuemax={100}
+                                />
+                              </div>
+                            )}
+                          </BaseButton>
+
+                          <BaseButton
+                            color="success"
+                            disabled={loader}
+                            type="submit"
+                            loader={loader}
+                            onClick={handleOpenBaseModal}
+                          >
+                            <i className="align-bottom ri-add-line me-1" />
+                            {submitButtonText}
+                          </BaseButton>
+                        </div>
                       </div>
                     </Col>
                   </Row>
@@ -551,8 +692,8 @@ const AddSkill = () => {
                   <Row>
                     <Col lg={12}>
                       {isLoading ? (
-                        <div className="text-center py-4">
-                          <Skeleton count={1} className="min-h-10 mb-5"/>
+                        <div className="py-4 text-center">
+                          <Skeleton count={1} className="mb-5 min-h-10" />
                           <Skeleton count={5} />
                         </div>
                       ) : (
@@ -571,6 +712,7 @@ const AddSkill = () => {
                               setPagination={setPagination}
                               loader={loader}
                               customPadding="0.3rem 1.5rem"
+                              rowHeight="10px !important"
                             />
                           ) : (
                             <div className="py-4 text-center">

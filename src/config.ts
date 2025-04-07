@@ -8,14 +8,14 @@ interface Config {
 
 const config: Config = {
   api: {
-    API_URL: "https://tbapi-jtu7.onrender.com/api/",
-    // API_URL: "http://192.168.1.5:3000/api/",
+    // API_URL: "https://tbapi-jtu7.onrender.com/api/",
+    API_URL: "http://192.168.1.11:3000/api/",
   },
 };
 export const configImage: Config = {
   api: {
-    API_URL: "https://tbapi-jtu7.onrender.com/api/",
-    // API_URL: "http://192.168.1.5:3000/api/",
+    // API_URL: "https://tbapi-jtu7.onrender.com/api/",
+    API_URL: "http://192.168.1.11:3000/api/",
   },
 };
 

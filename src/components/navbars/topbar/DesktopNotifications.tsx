@@ -60,10 +60,13 @@ export const DesktopNotifications = () => {
             as="div"
             className="px-4 py-2 d-flex flex-column align-items-center justify-content-between"
           >
-            <h5 className="mb-0 text-center">{user?.userName}</h5>
-            <span className="text-sm text-muted text-center">
-              {user?.role?.toUpperCase()}
-            </span>
+            <div className="inline-flex items-center space-x-2">
+              <h5 className="mb-0">{user?.userName}</h5>
+              <span className="text-sm text-muted">
+                {user?.role?.toUpperCase()}
+              </span>
+            </div>
+
             <div className="dropdown-divider my-0"></div>
           </Dropdown.Item>
           <Dropdown.Item

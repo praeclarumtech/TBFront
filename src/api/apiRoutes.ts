@@ -2,7 +2,7 @@
 export const LOGIN = "user/login";
 export const REGISTER = "user/register";
 export const UPDATEPROFILE = "user/updateProfile";
-export const VIEWPROFILE = "user/viewProfile";
+export const VIEWPROFILE = "user/viewProfileByID";
 export const CHANGEPASSWORD = "user/changePassword";
 export const VERIFY_OTP = "user/sendEmail/verifyOtp";
 export const SEND_OTP = "user/sendEmail";
@@ -19,12 +19,15 @@ export const UPDATE_APPLICANT_STATUS = "applicants/update/status";
 export const UPDATE_APPLICANT_STAGE = "applicants/update/status";
 export const FILTER_APPLICANT = "applicants/viewApplicant/?";
 export const CITY = "city";
-export const EXPORT_APPLICANT = "applicants/exportCsv/";
+export const EXPORT_APPLICANT = "applicants/exportCsv?filtered=";
 export const DELETE_MULTIPLE_APPLICANT = "applicants/deleteManyApplicants"
 export const EXISTING_APPLICANT ="applicants/checkApplicant/?";
 export const IMPORT_APPLICANT = "applicants/importCsv";
 export const IMPORT_RESUME = "applicants/upload-resume";
 export const IMPORT_APPLICANT_LIST = "applicants/viewResumeAndCsvApplicant";
+export const UPDATE_APPLICANT_MANY = "applicants/updateManyApplicant"
+
+ 
 
 //Email module
 export const SEND_EMAIL = "email/applicant/sendEmail";
@@ -59,7 +62,7 @@ export const DELETE_DEGREE = "degree/delete";
 //Dashboard Module
 export const TOTAL_APPLICANTS = "/dashboard/applicant/count"
 export const RECENT_APPLICANTS = "/applicants/viewAllApplicant?appliedSkills="
-export const APPLICANTS_DETAILS = "/reports/applicants/technologyStatistics"
+export const APPLICANTS_DETAILS = "/reports/applicants/technologyStatistics?category="
 
 //Report Module
 export const SKILL_STATISTICS = "/reports/applicants/technologyStatistics"

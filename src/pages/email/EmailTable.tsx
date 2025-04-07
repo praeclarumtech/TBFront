@@ -418,28 +418,12 @@ const EmailTable = () => {
         />
       )}
       {/* Header Section with Filter and Compose Button */}
-      <div className="mt-3 mb-4">
+      {/* <div className="mt-3 mb-4">
         <div className="card mb-3">
           <div className="card-body">
             <div className="container">
               <div className="row justify-content-between">
                 <div className="col-auto d-flex justify-content-start">
-                  {/* <button
-                    type="button"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setFiltersVisible(!filtersVisible);
-                    }}
-                    className="btn btn-primary"
-                  >
-                    {filtersVisible ? (
-                      "Hide Filters"
-                    ) : (
-                      <>
-                        <i className="fa fa-filter mx-1 "></i> Filters
-                      </>
-                    )}
-                  </button> */}
                   <button
                     onClick={toggleDrawer("right", true)}
                     // color="primary"
@@ -458,7 +442,7 @@ const EmailTable = () => {
                 </div>
 
                 <div className="col-auto d-flex justify-content-end">
-                  <div>
+                  <div className="col-auto d-flex justify-content-start">
                     <input
                       id="search-bar-0"
                       className="form-control search h-10"
@@ -468,72 +452,100 @@ const EmailTable = () => {
                     />
                   </div>
                   {selectedApplicants.length > 1 && (
-                    <BaseButton
-                      className="btn text-lg bg-danger edit-list ml-2 w-fit border-0"
+                    <div>
+                      <BaseButton
+                        className="btn text-lg bg-danger edit-list ml-2 w-fit border-0"
+                        onClick={handleDeleteAll}
+                      >
+                        <i className="ri-delete-bin-fill align-bottom" />
+                        <ReactTooltip
+                          place="bottom"
+                          variant="error"
+                          content="Delete"
+                          anchorId={`Delete ${selectedApplicants.length} Emails`}
+                        />
+                      </BaseButton>
+                    </div>
+                  )}
+
+                  // Compose Email Button 
+                  <div className="col-auto d-flex justify-content-end">
+                    <button
+                      onClick={() => navigate("/email/compose")}
+                      className="btn btn-success ml-2"
+                    >
+                      Compose Email
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            
+          </div>
+        </div>
+      </div> */}
+
+      <div className="mt-3 mb-4">
+        <div className="card mb-3">
+          <div className="card-body">
+            <div className="container">
+              <div className="row gy-2 gx-2 align-items-center justify-content-between">
+                {/* Filters Button */}
+                <div className="col-3 col-xs-auto">
+                  <button
+                    onClick={toggleDrawer("right", true)}
+                    className="btn btn-primary w-100 w-md-auto"
+                  >
+                    <i className="fa fa-filter mx-1"></i> Filters
+                  </button>
+                  <Drawer
+                    className="!mt-16"
+                    anchor="right"
+                    open={state["right"]}
+                    onClose={toggleDrawer("right", false)}
+                  >
+                    {drawerList("right")}
+                  </Drawer>
+                </div>
+
+                {/* Search Input & Buttons */}
+                <div className="col-8 col-md d-flex flex-wrap align-items-center justify-content-end gap-2">
+                  {/* Search Bar */}
+                  <input
+                    id="search-bar-0"
+                    className="form-control h-10 px-2 border rounded w-[150px] min-w-[150px] max-w-[250px]"
+                    placeholder="Search..."
+                    onChange={handleSearchChange}
+                    value={searchAll}
+                  />
+
+                  {/* Delete Button (Visible when multiple applicants selected) */}
+                  {selectedApplicants.length > 1 && (
+                    <button
+                      className="btn text-lg bg-danger edit-list w-fit border-0 text-white"
                       onClick={handleDeleteAll}
                     >
-                      <i className="ri-delete-bin-fill align-bottom" />
+                      <i className="ri-delete-bin-5-fill align-bottom" />
                       <ReactTooltip
                         place="bottom"
                         variant="error"
                         content="Delete"
                         anchorId={`Delete ${selectedApplicants.length} Emails`}
                       />
-                    </BaseButton>
+                    </button>
                   )}
 
                   {/* Compose Email Button */}
                   <button
                     onClick={() => navigate("/email/compose")}
-                    className="btn btn-success ml-2"
+                    className="btn btn-success"
                   >
                     Compose Email
                   </button>
                 </div>
               </div>
             </div>
-
-            {/* {filtersVisible && (
-              <div className="mt-3 w-100">
-                <div className="row g-3">
-                  <div className="col-xl-2 col-sm-6 col-md-4 col-lg-2">
-                    <BaseInput
-                      label="Start Date"
-                      name="startDate"
-                      className="select-border mb-1"
-                      type="date"
-                      placeholder={InputPlaceHolder("Start Date")}
-                      handleChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        handleDateChange(e, true)
-                      }
-                      value={startDate || ""}
-                    />
-                  </div>
-                  <div className="col-xl-2 col-sm-6 col-md-4 col-lg-2">
-                    <BaseInput
-                      label="End Date"
-                      name="endDate"
-                      type="date"
-                      placeholder={InputPlaceHolder("End Date")}
-                      handleChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        handleDateChange(e, false)
-                      }
-                      value={endDate || ""}
-                    />
-                  </div>
-                  <div className="col-xl-2 col-sm-6 col-md-6 col-lg-2">
-                    <label className="form-label">&nbsp;</label>
-                    <button
-                      onClick={resetFilters}
-                      className="btn btn-primary w-100"
-                      disabled={loading}
-                    >
-                      Reset Filters
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )} */}
           </div>
         </div>
       </div>
