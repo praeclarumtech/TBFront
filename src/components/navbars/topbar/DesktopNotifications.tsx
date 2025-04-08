@@ -3,16 +3,28 @@ import { useEffect, useState } from "react";
 import { ListGroup, Dropdown, Image } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { User } from "interfaces/dashboard.interface";
+import appEnv from "config/appEnv";
 
 export const DesktopNotifications = () => {
   const navigate = useNavigate();
-  const [user, setUser] = useState<User>({ userName: "", role: "" });
-
+  const [user, setUser] = useState<User>({
+    userName: "",
+    role: "",
+    profilePicture: " ",
+  });
+  const [imagePreview, setImagePreview] = useState<string>(
+    "/images/avatar/avatar.png"
+  );
   useEffect(() => {
     const fetchProfile = async () => {
       const token = sessionStorage.getItem("authUser");
       const response = await getProfile({ token });
       setUser(response.data);
+      setImagePreview(
+        response?.data?.profilePicture
+          ? `${appEnv.API_ENDPOINT}/uploads/profile/${response?.data?.profilePicture}`
+          : "/images/avatar/avatar.png"
+      );
     };
     fetchProfile();
   }, []);
@@ -33,7 +45,9 @@ export const DesktopNotifications = () => {
           <div className="avatar avatar-md avatar-indicators avatar-online">
             <Image
               alt="avatar"
-              src="/images/avatar/avatar-1.jpg"
+              crossOrigin="anonymous"
+              // ||/images/avatar/avatar-1.jpg
+              src={imagePreview}
               className="rounded-circle"
             />
           </div>

@@ -1,4 +1,3 @@
-// import node module libraries
 import { Fragment } from "react";
 import { Form } from "react-bootstrap";
 
@@ -8,8 +7,8 @@ interface FormSelectProps {
   name?: string;
   className?: string;
   options: { value: string; label: string }[];
+  value: string;
   onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-  defaultChecked?: boolean;
 }
 
 export const FormSelect: React.FC<FormSelectProps> = ({
@@ -18,32 +17,28 @@ export const FormSelect: React.FC<FormSelectProps> = ({
   name,
   className,
   options,
+  value,
   onChange,
-  defaultChecked,
 }) => {
   return (
     <Fragment>
       <Form.Select
         id={id}
         name={name}
+        value={value}
         onChange={onChange}
         className={className}
-        defaultChecked={defaultChecked}
       >
-        {placeholder ? (
+        {placeholder && (
           <option value="" className="text-muted">
             {placeholder}
           </option>
-        ) : (
-          ""
         )}
-        {options.map((item, index) => {
-          return (
-            <option key={index} value={item.value} className="text-dark">
-              {item.label}
-            </option>
-          );
-        })}
+        {options.map((item, index) => (
+          <option key={index} value={item.value} className="text-dark">
+            {item.label}
+          </option>
+        ))}
       </Form.Select>
     </Fragment>
   );
