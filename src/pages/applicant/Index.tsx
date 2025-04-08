@@ -523,7 +523,7 @@ const Applicant = () => {
 
   const handleView = (id: string, source: string) => {
     setSelectedApplicantId(id);
-    setSourcePage(source)
+    setSourcePage(source);
     setShowModal(true);
   };
 
@@ -1256,14 +1256,20 @@ const Applicant = () => {
                         color="primary"
                         className="ml-2 bg-green-900 btn btn-soft-secondary edit-list"
                         hoverOptions={[
-                          "Resume",
                           "Manual",
+                          "Resume",
                           "Csv",
-                          "both",
+                          "Both (Resume, Csv)",
                           "All",
                         ]}
                         onOptionClick={(option) =>
-                          handleExportExcel(option === "All" ? [] : [option])
+                          handleExportExcel(
+                            option === "All"
+                              ? []
+                              : option === "Both (Resume, Csv)"
+                              ? ["both"]
+                              : [option]
+                          )
                         }
                       >
                         <i className="align-bottom ri-upload-2-line me-1" />

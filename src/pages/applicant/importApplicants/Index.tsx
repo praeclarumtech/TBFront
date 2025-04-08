@@ -1002,7 +1002,6 @@ function ImportApplicant() {
         },
       });
 
-
       if (response?.success) {
         toast.success(response?.message || "File imported successfully!");
       } else if (!response?.success && response.statusCode === 409) {
@@ -1751,6 +1750,22 @@ function ImportApplicant() {
                       />
                       <BaseButton
                         color="primary"
+                        className="ml-2 bg-green-900 btn btn-soft-secondary edit-list"
+                        hoverOptions={["Resume", "Csv", "Both"]}
+                        // hoverOptions={["Resume", "Csv"]}
+                        onOptionClick={(option) => {
+                          handleExportExcel(
+                            // option === "Both" ? : [option]
+                            option === "Both" ? "both" : option
+                            // option
+                          );
+                        }}
+                      >
+                        <i className="align-bottom ri-upload-2-line me-1" />
+                        Export
+                      </BaseButton>
+                      <BaseButton
+                        color="primary"
                         className="ml-2 position-relative"
                         onClick={() => fileInputRef.current?.click()}
                         disabled={importLoader}
@@ -1787,22 +1802,6 @@ function ImportApplicant() {
                             />
                           </div>
                         )}
-                      </BaseButton>
-                      <BaseButton
-                        color="primary"
-                        className="ml-2 bg-green-900 btn btn-soft-secondary edit-list"
-                        hoverOptions={["Resume", "Csv", "Both"]}
-                        // hoverOptions={["Resume", "Csv"]}
-                        onOptionClick={(option) => {
-                          handleExportExcel(
-                            // option === "Both" ? : [option]
-                            option === "Both" ? "both" : option
-                            // option
-                          );
-                        }}
-                      >
-                        <i className="align-bottom ri-upload-2-line me-1" />
-                        Export
                       </BaseButton>
 
                       {/* <BaseButton color="success" onClick={handleNavigate}>

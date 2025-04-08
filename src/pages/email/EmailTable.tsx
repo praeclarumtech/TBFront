@@ -294,7 +294,7 @@ const EmailTable = () => {
 
   const handleDeleteAll = () => {
     if (selectedApplicants.length > 0) {
-      // console.log("Emails to Delete:-", multipleEmailDelete);
+      console.log("Emails to Delete:-", multipleEmailDelete);
       setMultipleEmailDelete([...selectedApplicants]);
       setShowDeleteModal(true);
     }
