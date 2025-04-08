@@ -2,7 +2,7 @@
 export const LOGIN = "user/login";
 export const REGISTER = "user/register";
 export const UPDATEPROFILE = "user/updateProfile";
-export const VIEWPROFILE = "user/viewProfileByID";
+export const VIEWPROFILE = "user/viewProfileById";
 export const CHANGEPASSWORD = "user/changePassword";
 export const VERIFY_OTP = "user/sendEmail/verifyOtp";
 export const SEND_OTP = "user/sendEmail";

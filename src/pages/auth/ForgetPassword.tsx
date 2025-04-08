@@ -118,7 +118,12 @@ const ForgetPassword = () => {
                 </div>
                 <span className="text-gray-600">
                   Don&apos;t have an account?{" "}
-                  <a onClick={() => navigate("/")} className="text-primary cursor-pointer">Sign In</a>
+                  <a
+                    onClick={() => navigate("/sign-up")}
+                    className="text-primary cursor-pointer"
+                  >
+                    Sign Up
+                  </a>
                 </span>
               </Form>
             )}

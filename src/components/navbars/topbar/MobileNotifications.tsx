@@ -1,24 +1,34 @@
-import {  useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { ListGroup, Dropdown, Image } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import { User } from "interfaces/dashboard.interface";
 import { getProfile } from "api/usersApi";
+import appEnv from "config/appEnv";
 
 export const MobileNotifications = () => {
   const navigate = useNavigate();
-  
-   const [user, setUser] = useState<User>({ userName: "", role: "" });
-  
-    useEffect(() => {
-     
-      const fetchProfile = async () => {
-        const token = sessionStorage.getItem("authUser");
-        const response = await getProfile({ token });
-        setUser(response.data);
-        
-      };
-      fetchProfile();
-    }, []);
+
+  const [user, setUser] = useState<User>({
+    userName: "",
+    role: "",
+    profilePicture: " ",
+  });
+  const [imagePreview, setImagePreview] = useState<string>(
+    "/images/avatar/avatar.png"
+  );
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const token = sessionStorage.getItem("authUser");
+      const response = await getProfile({ token });
+      setUser(response.data);
+      setImagePreview(
+        response?.data?.profilePicture
+          ? `${appEnv.API_ENDPOINT}/uploads/profile/${response?.data?.profilePicture}`
+          : "/images/avatar/avatar.png"
+      );
+    };
+    fetchProfile();
+  }, []);
   return (
     <ListGroup
       as="ul"
@@ -35,7 +45,8 @@ export const MobileNotifications = () => {
           <div className="avatar avatar-md avatar-indicators avatar-online">
             <Image
               alt="avatar"
-              src="/images/avatar/avatar-1.jpg"
+              crossOrigin="anonymous"
+              src={imagePreview}
               className="rounded-circle"
             />
           </div>
