@@ -13,8 +13,12 @@ export const GET_PROFILE = "user/getProfileByToken";
 export const LIST_APPLICANT = "applicants/viewAllApplicant";
 export const CREATE_APPLICANT = "applicants/addApplicant";
 export const UPDATE_APPLICANT = "applicants/updateApplicant";
+export const UPDATE_IMPORTED_APPLICANT = "applicants/updateImportedApplicant";
 export const VIEW_APPLICANT = "applicants/viewApplicant";
+export const VIEW_IMPORTED_APPLICANT = "applicants/viewImportedApplicantById";
 export const DELETE_APPLICANT = "applicants/deleteApplicant";
+export const DELETE_IMPORTED_APPLICANT = "/applicants/deleteManyImportedApplicants"
+export const DELETE_IMPORTED_MULTIPLE_APPLICANT = "/applicants/deleteManyImportedApplicants"
 export const UPDATE_APPLICANT_STATUS = "applicants/update/status";
 export const UPDATE_APPLICANT_STAGE = "applicants/update/status";
 export const FILTER_APPLICANT = "applicants/viewApplicant/?";
@@ -63,10 +67,14 @@ export const DELETE_DEGREE = "degree/delete";
 //Dashboard Module
 export const TOTAL_APPLICANTS = "/dashboard/applicant/count"
 export const RECENT_APPLICANTS = "/applicants/viewAllApplicant?appliedSkills="
-export const APPLICANTS_DETAILS = "/reports/applicants/categoryWiseSkillCount?category="
+// export const APPLICANTS_DETAILS = "/reports/applicants/categoryWiseSkillCount?category="
+export const APPLICANTS_DETAILS = "/reports/applicants/technologyStatistics?category="
 
+
+// http://localhost:3000/api/reports/applicants/technologyStatistics
 //Report Module
-export const SKILL_STATISTICS = "/reports/applicants/categoryWiseSkillCount?category="
+// export const SKILL_STATISTICS = "/reports/applicants/categoryWiseSkillCount?category="
+export const SKILL_STATISTICS = "/reports/applicants/technologyStatistics?category="
 export const APPLICATION_ON_PROCESS = "/reports/applicants/applicationOnProcessCount"
 export const STATUS_OF_APPLICATION = "/reports/applicants/statusByPercentage"
 export const APPLICATION = "/reports/applicants/getApplicationsByDate?calendarType="

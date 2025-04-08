@@ -113,6 +113,7 @@ const Applicant = () => {
   });
 
   const [skillOptions, setSkillOptions] = useState<SelectedOption1[]>([]);
+  const [sourcePage, setSourcePage] = useState("main");
 
   const [loading, setLoading] = useState<boolean>(false);
   const [cities, setCities] = useState<City[]>([]);
@@ -520,8 +521,9 @@ const Applicant = () => {
   //     });
   // };
 
-  const handleView = (id: string) => {
+  const handleView = (id: string, source: string) => {
     setSelectedApplicantId(id);
+    setSourcePage(source);
     setShowModal(true);
   };
 
@@ -960,7 +962,7 @@ const Applicant = () => {
               id={`usage-${cell?.row?.original?.id}`}
               color="primary"
               className="btn btn-sm btn-soft-success usage-list"
-              onClick={() => handleView(cell.row.original._id)}
+              onClick={() => handleView(cell.row.original._id, "main")}
             >
               <i className="align-bottom ri-eye-fill" />
               <ReactTooltip
@@ -1076,6 +1078,7 @@ const Applicant = () => {
           show={showModal}
           onHide={handleCloseModal}
           applicantId={selectedApplicantId}
+          source={sourcePage}
         />
       )}
 
@@ -1253,14 +1256,20 @@ const Applicant = () => {
                         color="primary"
                         className="ml-2 bg-green-900 btn btn-soft-secondary edit-list"
                         hoverOptions={[
-                          "Resume",
                           "Manual",
+                          "Resume",
                           "Csv",
-                          "both",
+                          "Both (Resume, Csv)",
                           "All",
                         ]}
                         onOptionClick={(option) =>
-                          handleExportExcel(option === "All" ? [] : [option])
+                          handleExportExcel(
+                            option === "All"
+                              ? []
+                              : option === "Both (Resume, Csv)"
+                              ? ["both"]
+                              : [option]
+                          )
                         }
                       >
                         <i className="align-bottom ri-upload-2-line me-1" />

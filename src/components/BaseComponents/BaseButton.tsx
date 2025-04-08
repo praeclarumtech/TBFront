@@ -177,7 +177,7 @@ const BaseButton: React.FC<BaseButtonProps> = ({
       {isDropdownOpen && hoverOptions.length > 0 && (
         <div
           ref={dropdownRef}
-          className="absolute bg-white w-36 left-[-20px] top-full mt-2 mr-2 shadow-lg rounded-xl z-[9999] animate-fadeIn"
+          className="absolute bg-white w-48 left-[-20px] top-full mt-2 mr-2 shadow-lg rounded-xl z-[9999] animate-fadeIn"
         >
           {hoverOptions.map((option) => (
             <button

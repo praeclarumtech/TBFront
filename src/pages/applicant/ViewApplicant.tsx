@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { Modal, Spin, Badge, Card, Row, Col, Tag } from "antd";
-import { getApplicantDetails } from "api/applicantApi";
+import {
+  getApplicantDetails,
+  getImportedApplicantDetails,
+} from "api/applicantApi";
 import { errorHandle } from "utils/commonFunctions";
 import { UserOutlined } from "@ant-design/icons";
 
@@ -8,6 +11,7 @@ interface ViewModalProps {
   show: boolean;
   onHide: () => void;
   applicantId?: string;
+  source: string;
 }
 
 interface ApplicantDetails {
@@ -120,7 +124,12 @@ const DetailsCard = ({
   </Card>
 );
 
-const ViewModal: React.FC<ViewModalProps> = ({ show, onHide, applicantId }) => {
+const ViewModal: React.FC<ViewModalProps> = ({
+  show,
+  onHide,
+  applicantId,
+  source,
+}) => {
   const [formData, setFormData] = useState<ApplicantDetails | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -128,7 +137,12 @@ const ViewModal: React.FC<ViewModalProps> = ({ show, onHide, applicantId }) => {
     if (!applicantId) return;
 
     setLoading(true);
-    getApplicantDetails(applicantId)
+    const apiCall =
+      source === "import"
+        ? getImportedApplicantDetails(applicantId)
+        : getApplicantDetails(applicantId);
+
+    apiCall
       .then((res) => {
         if (res.success) {
           setFormData(res.data);
@@ -136,7 +150,7 @@ const ViewModal: React.FC<ViewModalProps> = ({ show, onHide, applicantId }) => {
       })
       .catch((error) => errorHandle(error))
       .finally(() => setLoading(false));
-  }, [applicantId]);
+  }, [applicantId, source]);
 
   if (!show) return null;
 
@@ -150,7 +164,7 @@ const ViewModal: React.FC<ViewModalProps> = ({ show, onHide, applicantId }) => {
       title={<span className="text-lg font-bold">Applicant Details</span>}
     >
       {loading ? (
-        <Spin size="large" className="flex justify-center items-center" />
+        <Spin size="large" className="flex items-center justify-center" />
       ) : formData ? (
         <div className="space-y-4">
           {/* Personal Details */}
@@ -212,6 +226,18 @@ const ViewModal: React.FC<ViewModalProps> = ({ show, onHide, applicantId }) => {
                       : "-"
                   }
                 /> */}
+                <DetailsRow
+                  label="Current Address"
+                  value={
+                    formData.currentAddress ? (
+                      <div className="overflow-hidden break-words whitespace-normal text-ellipsis">
+                        {capitalizeWords(formData.currentAddress)}
+                      </div>
+                    ) : (
+                      "-"
+                    )
+                  }
+                />
               </Col>
               <Col span={12}>
                 <DetailsRow
@@ -255,31 +281,19 @@ const ViewModal: React.FC<ViewModalProps> = ({ show, onHide, applicantId }) => {
                     formData.country ? capitalizeWords(formData.country) : "-"
                   }
                 />
+                <DetailsRow
+                  label="Permanent Address"
+                  value={
+                    formData.permanentAddress ? (
+                      <div className="overflow-hidden break-words whitespace-normal text-ellipsis">
+                        {capitalizeWords(formData.permanentAddress)}
+                      </div>
+                    ) : (
+                      "-"
+                    )
+                  }
+                />
               </Col>
-              <DetailsRow
-                label="Current Address"
-                value={
-                  formData.currentAddress ? (
-                    <div className="break-words whitespace-normal overflow-hidden text-ellipsis">
-                      {capitalizeWords(formData.currentAddress)}
-                    </div>
-                  ) : (
-                    "-"
-                  )
-                }
-              />
-              <DetailsRow
-                label="Permanent Address"
-                value={
-                  formData.permanentAddress ? (
-                    <div className="break-words whitespace-normal overflow-hidden text-ellipsis">
-                      {capitalizeWords(formData.permanentAddress)}
-                    </div>
-                  ) : (
-                    "-"
-                  )
-                }
-              />
             </Row>
           </DetailsCard>
 

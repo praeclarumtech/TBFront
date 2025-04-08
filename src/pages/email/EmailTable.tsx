@@ -159,14 +159,14 @@ const EmailTable = () => {
     {
       header: "Action",
       cell: (cell: { row: { original: any } }) => (
-        <div className="hstack gap-2">
+        <div className="gap-2 hstack">
           <BaseButton
             id={`usage-${cell?.row?.original?.id}`}
             color="primary"
             className="btn btn-sm btn-soft-success usage-list"
             onClick={() => handleView(cell.row.original._id)}
           >
-            <i className="ri-eye-fill align-bottom" />
+            <i className="align-bottom ri-eye-fill" />
             <ReactTooltip
               place="bottom"
               variant="success"
@@ -180,7 +180,7 @@ const EmailTable = () => {
             className="btn btn-sm btn-soft-danger bg-danger"
             onClick={() => handleDelete(cell?.row?.original?._id)}
           >
-            <i className="ri-delete-bin-fill align-bottom" />
+            <i className="align-bottom ri-delete-bin-fill" />
             <ReactTooltip
               place="bottom"
               variant="error"
@@ -351,7 +351,7 @@ const EmailTable = () => {
         </IconButton>
       </div>
       <List>
-        <Row className="flex justify-between items-center mb-4">
+        <Row className="flex items-center justify-between mb-4">
           <Col>
             <h3>Apply Filters</h3>
           </Col>
@@ -370,7 +370,7 @@ const EmailTable = () => {
         <BaseInput
           label="Start Date"
           name="startDate"
-          className="select-border mb-1"
+          className="mb-1 select-border"
           type="date"
           placeholder={InputPlaceHolder("Start Date")}
           handleChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -419,7 +419,7 @@ const EmailTable = () => {
       )}
       {/* Header Section with Filter and Compose Button */}
       {/* <div className="mt-3 mb-4">
-        <div className="card mb-3">
+        <div className="mb-3 card">
           <div className="card-body">
             <div className="container">
               <div className="row justify-content-between">
@@ -429,7 +429,7 @@ const EmailTable = () => {
                     // color="primary"
                     className="btn btn-primary"
                   >
-                    <i className="fa fa-filter mx-1 "></i> Filters
+                    <i className="mx-1 fa fa-filter "></i> Filters
                   </button>
                   <Drawer
                     className="!mt-16 "
@@ -445,7 +445,7 @@ const EmailTable = () => {
                   <div className="col-auto d-flex justify-content-start">
                     <input
                       id="search-bar-0"
-                      className="form-control search h-10"
+                      className="h-10 form-control search"
                       placeholder="Search..."
                       onChange={handleSearchChange}
                       value={searchAll}
@@ -454,10 +454,10 @@ const EmailTable = () => {
                   {selectedApplicants.length > 1 && (
                     <div>
                       <BaseButton
-                        className="btn text-lg bg-danger edit-list ml-2 w-fit border-0"
+                        className="ml-2 text-lg border-0 btn bg-danger edit-list w-fit"
                         onClick={handleDeleteAll}
                       >
-                        <i className="ri-delete-bin-fill align-bottom" />
+                        <i className="align-bottom ri-delete-bin-fill" />
                         <ReactTooltip
                           place="bottom"
                           variant="error"
@@ -472,7 +472,7 @@ const EmailTable = () => {
                   <div className="col-auto d-flex justify-content-end">
                     <button
                       onClick={() => navigate("/email/compose")}
-                      className="btn btn-success ml-2"
+                      className="ml-2 btn btn-success"
                     >
                       Compose Email
                     </button>
@@ -487,7 +487,7 @@ const EmailTable = () => {
       </div> */}
 
       <div className="mt-3 mb-4">
-        <div className="card mb-3">
+        <div className="mb-3 card">
           <div className="card-body">
             <div className="container">
               <div className="row gy-2 gx-2 align-items-center justify-content-between">
@@ -497,7 +497,7 @@ const EmailTable = () => {
                     onClick={toggleDrawer("right", true)}
                     className="btn btn-primary w-100 w-md-auto"
                   >
-                    <i className="fa fa-filter mx-1"></i> Filters
+                    <i className="mx-1 fa fa-filter"></i> Filters
                   </button>
                   <Drawer
                     className="!mt-16"
@@ -510,7 +510,7 @@ const EmailTable = () => {
                 </div>
 
                 {/* Search Input & Buttons */}
-                <div className="col-8 col-md d-flex flex-wrap align-items-center justify-content-end gap-2">
+                <div className="flex-wrap gap-2 col-8 col-md d-flex align-items-center justify-content-end">
                   {/* Search Bar */}
                   <input
                     id="search-bar-0"
@@ -523,10 +523,10 @@ const EmailTable = () => {
                   {/* Delete Button (Visible when multiple applicants selected) */}
                   {selectedApplicants.length > 1 && (
                     <button
-                      className="btn text-lg bg-danger edit-list w-fit border-0 text-white"
+                      className="text-lg text-white border-0 btn bg-danger edit-list w-fit"
                       onClick={handleDeleteAll}
                     >
-                      <i className="ri-delete-bin-5-fill align-bottom" />
+                      <i className="align-bottom ri-delete-bin-5-fill" />
                       <ReactTooltip
                         place="bottom"
                         variant="error"
@@ -553,8 +553,8 @@ const EmailTable = () => {
       <div className="card">
         <div className="card-body">
           {loading ? (
-            <div className="text-center py-4">
-              <Skeleton count={1} className="min-h-10 mb-5" />
+            <div className="py-4 text-center">
+              <Skeleton count={1} className="mb-5 min-h-10" />
 
               <Skeleton count={5} />
             </div>

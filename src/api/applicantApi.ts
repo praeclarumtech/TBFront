@@ -1,3 +1,4 @@
+import {  DELETE_IMPORTED_APPLICANT } from './apiRoutes';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // import { toast } from "react-toastify";
 // import { errorHandle } from "utils/commonFunctions";
@@ -21,6 +22,8 @@ import {
   EXISTING_APPLICANT,
   UPDATE_APPLICANT_MANY,
   EXPORT_IMPORT_APPLICANT,
+  VIEW_IMPORTED_APPLICANT,
+  DELETE_IMPORTED_MULTIPLE_APPLICANT,
 } from "./apiRoutes";
 import { authServices } from "./apiServices";
 
@@ -79,13 +82,31 @@ export const updateApplicant = async (
   return response?.data;
 };
 
+export const updateImportedApplicant = async (
+  data: object,
+  id: string | undefined | null
+) => {
+  const response = await authServices.put(`${UPDATE_APPLICANT}/${id}`, data);
+  return response?.data;
+};
+
 export const getApplicantDetails = async (id: string | undefined | null) => {
   const response = await authServices.get(`${VIEW_APPLICANT}/${id}`);
   return response?.data;
 };
 
+export const getImportedApplicantDetails = async (id: string | undefined | null) => {
+  const response = await authServices.get(`${VIEW_IMPORTED_APPLICANT}/${id}`);
+  return response?.data;
+};
+
 export const deleteApplicant = async (_id: string | undefined | null) => {
   const response = await authServices.delete(`${DELETE_APPLICANT}/${_id}`);
+  return response?.data;
+};
+
+export const deleteImportedApplicant = async (_id: string | undefined | null) => {
+  const response = await authServices.delete(`${DELETE_IMPORTED_APPLICANT}/${_id}`);
   return response?.data;
 };
 
@@ -126,7 +147,6 @@ export const importApplicant = async (
   const url = `${IMPORT_APPLICANT}`;
 
   try {
-    console.log("API call:");
     const response = await authServices.post(url, formData, {
       headers: { "Content-Type": "multipart/form-data" },
       params: config?.params,
@@ -232,7 +252,7 @@ export const updateManyApplicants = async (
     applicantIds: applicantIds,
     updateData: updateData,
   });
-  console.log("object", response);
+  // console.log("object", response);
   return response?.data;
 };
 
@@ -242,6 +262,19 @@ export const deleteMultipleApplicant = async (
   if (!ids || ids.length === 0) return;
 
   const response = await authServices.delete(DELETE_MULTIPLE_APPLICANT, {
+    data: { ids }, // Send IDs inside request body
+  });
+  console.log("object", response?.data);
+  return response?.data;
+};
+
+
+export const deleteImportedMultipleApplicant = async (
+  ids: string[] | undefined | null
+) => {
+  if (!ids || ids.length === 0) return;
+
+  const response = await authServices.delete(DELETE_IMPORTED_MULTIPLE_APPLICANT, {
     data: { ids }, // Send IDs inside request body
   });
   console.log("object", response?.data);

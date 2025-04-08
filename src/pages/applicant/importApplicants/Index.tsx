@@ -19,8 +19,9 @@ import {
   importApplicant,
   ExportImportedApplicant,
   resumeUpload,
-  deleteMultipleApplicant,
+  // deleteMultipleApplicant,
   updateManyApplicants,
+  deleteImportedMultipleApplicant,
 } from "api/applicantApi";
 
 import ViewModal from "../ViewApplicant";
@@ -141,6 +142,8 @@ function ImportApplicant() {
   const [loading, setLoading] = useState<boolean>(false);
   const [showBaseModal, setShowBaseModal] = useState(false);
   const [valueToEdit, setValueToEdit] = useState<ValueToEdit[]>([]);
+  const [sourcePage, setSourcePage] = useState("import");
+
   const toggleDrawer =
     (anchor: Anchor, open: boolean) =>
     (event: React.KeyboardEvent | React.MouseEvent) => {
@@ -488,7 +491,7 @@ function ImportApplicant() {
   // Function to fetch applicants
 
   const fetchApplicants = async () => {
-    // setTableLoader(true);
+    setTableLoader(true);
     setLoader(true);
     try {
       const params: {
@@ -586,7 +589,7 @@ function ImportApplicant() {
     } catch (error) {
       errorHandle(error);
     } finally {
-      // setTableLoader(false);
+      setTableLoader(false);
       setLoader(false);
     }
   };
@@ -794,7 +797,7 @@ function ImportApplicant() {
     multipleApplicantDelete: string[] | undefined | null
   ) => {
     setLoader(true);
-    deleteMultipleApplicant(multipleApplicantDelete)
+    deleteImportedMultipleApplicant(multipleApplicantDelete)
       .then(() => {
         fetchApplicants();
         setSelectedApplicants([]);
@@ -808,23 +811,9 @@ function ImportApplicant() {
       });
   };
 
-  // const deleteApplicantDetails = (_id: string | undefined | null) => {
-  //   setLoader(true);
-  //   deleteApplicant(_id)
-  //     .then(() => {
-  //       fetchApplicants();
-  //     })
-  //     .catch((error: any) => {
-  //       errorHandle(error);
-  //     })
-  //     .finally(() => {
-  //       setLoader(false);
-  //       setShowDeleteModal(false);
-  //     });
-  // };
-
-  const handleView = (id: string) => {
+  const handleView = (id: string, source: "import") => {
     setSelectedApplicantId(id);
+    setSourcePage(source);
     setShowModal(true);
   };
 
@@ -833,7 +822,7 @@ function ImportApplicant() {
   };
 
   const handleEdit = (applicantId: string) => {
-    navigate(`/applicants/edit-applicant/${applicantId}`);
+    navigate(`/applicants/edit-applicant/${applicantId}?from=import-applicant`);
   };
 
   const handleEmail = (applicantId: string) => {
@@ -1013,12 +1002,10 @@ function ImportApplicant() {
         },
       });
 
-      console.log("API Response:", response);
-
       if (response?.success) {
         toast.success(response?.message || "File imported successfully!");
       } else if (!response?.success && response.statusCode === 409) {
-        console.log("API Response msg:", response);
+        // console.log("API Response msg:", response);
         setShowPopupModal(true);
 
         toast.error(response.message || "Import failed");
@@ -1026,8 +1013,6 @@ function ImportApplicant() {
         toast.error(response.message || "Unknown error occurred during import");
       }
     } catch (error: any) {
-      // console.error("Import error:", error);
-
       toast.error(error?.message || "Failed to import file");
     } finally {
       fetchApplicants();
@@ -1086,41 +1071,12 @@ function ImportApplicant() {
     setShowPopupModal(false);
   };
 
-  // const handleExportExcel = async (filtered: any) => {
-  //   try {
-  //     toast.info("Preparing file for download...");
-  //     console.log("object,", filtered);
-  //     const response = await ExportApplicant(filtered);
-
-  //     if (!response) {
-  //       toast.error("Failed to download file");
-  //       return;
-  //     }
-
-  //     const blob = new Blob([response], { type: "text/csv" });
-
-  //     saveAs(blob, "applicants.csv");
-
-  //     toast.success("File downloaded successfully!");
-  //   } catch (error) {
-  //     console.error("Export error:", error);
-  //     toast.error("Failed to export file");
-  //   }
-  // };
-
   const handleExportExcel = async (filtered: string[] | string) => {
     try {
-      console.log("Exporting with filters:", filtered);
+      // console.log("Exporting with filters:", filtered);
       toast.info("Preparing file for download...");
 
       await new Promise((resolve) => setTimeout(resolve, 3500));
-
-      // Ensure `filtered` is properly formatted as a string
-      // const queryParams = qs.stringify({
-      //   filtered: Array.isArray(filtered) ? filtered.join(",") : filtered,
-      // });
-
-      // const response = await ExportApplicant([filtered]);
       const response = await ExportImportedApplicant(
         Array.isArray(filtered) ? filtered : [filtered]
       );
@@ -1132,11 +1088,12 @@ function ImportApplicant() {
 
       const blob = new Blob([response], { type: "text/csv" });
       saveAs(blob, "Imported_Applicants.csv");
-
       toast.success("File downloaded successfully!");
     } catch (error) {
       console.error("Export error:", error);
       toast.error("Failed to export file");
+    } finally {
+      fetchApplicants();
     }
   };
 
@@ -1520,7 +1477,7 @@ function ImportApplicant() {
               id={`usage-${cell?.row?.original?.id}`}
               color="primary"
               className="btn btn-sm btn-soft-success usage-list"
-              onClick={() => handleView(cell.row.original._id)}
+              onClick={() => handleView(cell.row.original._id, "import")}
             >
               <i className="align-bottom ri-eye-fill" />
               <ReactTooltip
@@ -1609,12 +1566,12 @@ function ImportApplicant() {
       toast.error("Please select applicants to update.");
       return;
     }
-    console.log("object", selectedApplicants);
+    // console.log("object", selectedApplicants);
 
     const applicantIds = selectedApplicants.filter(
       (id) => typeof id === "string" && id.trim() !== ""
     );
-    console.log("Applicant IDs:", applicantIds);
+    // console.log("Applicant IDs:", applicantIds);
     const updateData: any = {}; // Store updates dynamically
 
     if (multiEditStatus) {
@@ -1631,11 +1588,11 @@ function ImportApplicant() {
       await updateManyApplicants(applicantIds, updateData);
       toast.success("Applicants updated successfully!");
       setShowBaseModal(false);
-      fetchApplicants(); // Refresh data
     } catch (error) {
       console.error("Update Error:", error);
       toast.error("Something went wrong while updating applicants.");
     } finally {
+      fetchApplicants();
       setSelectedApplicants([]);
       setValueToEdit([]);
       setMultiEditInterViewStage(null);
@@ -1675,6 +1632,7 @@ function ImportApplicant() {
           show={showModal}
           onHide={handleCloseModal}
           applicantId={selectedApplicantId}
+          source={sourcePage}
         />
       )}
 
@@ -1792,6 +1750,22 @@ function ImportApplicant() {
                       />
                       <BaseButton
                         color="primary"
+                        className="ml-2 bg-green-900 btn btn-soft-secondary edit-list"
+                        hoverOptions={["Resume", "Csv", "Both"]}
+                        // hoverOptions={["Resume", "Csv"]}
+                        onOptionClick={(option) => {
+                          handleExportExcel(
+                            // option === "Both" ? : [option]
+                            option === "Both" ? "both" : option
+                            // option
+                          );
+                        }}
+                      >
+                        <i className="align-bottom ri-upload-2-line me-1" />
+                        Export
+                      </BaseButton>
+                      <BaseButton
+                        color="primary"
                         className="ml-2 position-relative"
                         onClick={() => fileInputRef.current?.click()}
                         disabled={importLoader}
@@ -1828,22 +1802,6 @@ function ImportApplicant() {
                             />
                           </div>
                         )}
-                      </BaseButton>
-                      <BaseButton
-                        color="primary"
-                        className="ml-2 bg-green-900 btn btn-soft-secondary edit-list"
-                        hoverOptions={["Resume", "Csv", "Both"]}
-                        // hoverOptions={["Resume", "Csv"]}
-                        onOptionClick={(option) => {
-                          handleExportExcel(
-                            // option === "Both" ? : [option]
-                            option === "Both" ? "both" : option
-                            // option
-                          );
-                        }}
-                      >
-                        <i className="align-bottom ri-upload-2-line me-1" />
-                        Export
                       </BaseButton>
 
                       {/* <BaseButton color="success" onClick={handleNavigate}>
@@ -1942,7 +1900,7 @@ function ImportApplicant() {
                 <BaseInput
                   label="End Date"
                   name="endDate"
-                  type="text"
+                  type="date"
                   placeholder={InputPlaceHolder("End Date")}
                   handleChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                     handleDateChange(e, false)
@@ -1980,7 +1938,7 @@ function ImportApplicant() {
                         totalRecords={totalRecords}
                         pagination={pagination}
                         setPagination={setPagination}
-                        // loader={tableLoader}
+                        loader={tableLoader}
                         customPadding="0.3rem 1.5rem"
                         rowHeight="10px !important"
                       />

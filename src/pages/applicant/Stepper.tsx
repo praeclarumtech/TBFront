@@ -14,12 +14,14 @@ import PersonalDetailsForm from "./Personal";
 import EducationalDetailsForm from "./Education";
 import JobDetailsForm from "./Job";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import PreviewForm from "./PreviewForm";
 import {
   createApplicant,
   getApplicantDetails,
+  getImportedApplicantDetails,
   updateApplicant,
+  updateImportedApplicant,
 } from "api/applicantApi";
 import { useParams } from "react-router-dom";
 import appConstants from "constants/constant";
@@ -29,6 +31,9 @@ const { projectTitle, Modules } = appConstants;
 
 const StepperForm = () => {
   const { id } = useParams();
+  const { search } = useLocation();
+  const queryParams = new URLSearchParams(search);
+  const moduleName = queryParams.get("from");
   const isMobile = useMediaQuery("(max-width: 450px)");
   document.title = Modules.Login + " | " + projectTitle;
 
@@ -192,34 +197,11 @@ const StepperForm = () => {
         .then((res: any) => {
           if (res.success) {
             toast.success(res.message);
-            navigate("/applicants");
+            navigate("/import-applicants");
           }
         })
         .catch((error) => {
           // errorHandle(error);
-           const errorMessages = error?.response?.data?.details;
-          if (errorMessages && Array.isArray(errorMessages)) {
-            errorMessages.forEach((errorMessage) => {
-              toast.error(errorMessage);
-            });
-          } else {
-            toast.error("An error occurred while updating the applicant.");
-          }
-        })
-       
-      
-        .finally(() => {
-          setLoading(false);
-        });
-    } else {
-      updateApplicant(apiData, id)
-        .then((res: any) => {
-          if (res.success) {
-            toast.success(res.message);
-            navigate("/applicants");
-          }
-        })
-        .catch((error) => {
           const errorMessages = error?.response?.data?.details;
           if (errorMessages && Array.isArray(errorMessages)) {
             errorMessages.forEach((errorMessage) => {
@@ -228,28 +210,99 @@ const StepperForm = () => {
           } else {
             toast.error("An error occurred while updating the applicant.");
           }
-        
         })
+
         .finally(() => {
           setLoading(false);
         });
+    } else {
+      if (moduleName === "import-applicant") {
+        updateImportedApplicant(apiData, id)
+          .then((res: any) => {
+            if (res.success) {
+              toast.success(res.message);
+              navigate("/import-applicants");
+            }
+          })
+          .catch((error) => {
+            const errorMessages = error?.response?.data?.details;
+            if (errorMessages && Array.isArray(errorMessages)) {
+              errorMessages.forEach((errorMessage) => {
+                toast.error(errorMessage);
+              });
+            } else {
+              toast.error("An error occurred while updating the applicant.");
+            }
+          })
+          .finally(() => {
+            setLoading(false);
+          });
+      } else {
+        updateApplicant(apiData, id)
+          .then((res: any) => {
+            if (res.success) {
+              toast.success(res.message);
+              navigate("/applicants");
+            }
+          })
+          .catch((error) => {
+            const errorMessages = error?.response?.data?.details;
+            if (errorMessages && Array.isArray(errorMessages)) {
+              errorMessages.forEach((errorMessage) => {
+                toast.error(errorMessage);
+              });
+            } else {
+              toast.error("An error occurred while updating the applicant.");
+            }
+          })
+          .finally(() => {
+            setLoading(false);
+          });
+      }
     }
   };
 
   const getApplicant = (id: string | undefined | null) => {
     if (id !== undefined) {
-      getApplicantDetails(id)
-        .then((res: any) => {
-          if (res.success) {
-            setFormData(res.data);
-          }
-        })
-        .catch((error) => {
-          errorHandle(error);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
+      if (moduleName === "import-applicant") {
+        getImportedApplicantDetails(id)
+          .then((res: any) => {
+            if (res.success) {
+              setFormData(res.data);
+            }
+          })
+          .catch((error) => {
+            errorHandle(error);
+          })
+          .finally(() => {
+            setLoading(false);
+          });
+      } else {
+        getApplicantDetails(id)
+          .then((res: any) => {
+            if (res.success) {
+              setFormData(res.data);
+            }
+          })
+          .catch((error) => {
+            errorHandle(error);
+          })
+          .finally(() => {
+            setLoading(false);
+          });
+      }
+      // getApplicantDetails(id)
+      //   .then((res: any) => {
+      //     if (res.success) {
+      //       setFormData(res.data);
+      //     }
+      //   })
+      //   .catch((error) => {
+      //     errorHandle(error);
+      //   })
+      //   .finally(() => {
+      //     setLoading(false);
+      //   });
     }
   };
 
@@ -262,7 +315,7 @@ const StepperForm = () => {
       <div className="pt-3 page-content"></div>
       <Container fluid>
         <Card>
-          <h4 className="m-2 p-1 text-dark justify-center content-start text-2xl text-center font-bold text-blue-900">
+          <h4 className="content-start justify-center p-1 m-2 text-2xl font-bold text-center text-blue-900 text-dark">
             Applicant Form
           </h4>
           <Card.Body>

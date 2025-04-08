@@ -18,7 +18,6 @@ import {
   RequiredField,
 } from "utils/commonFunctions";
 
-
 const {
   projectTitle,
   Modules,
@@ -123,11 +122,11 @@ const SignUp = () => {
             <Card.Body className="p-6">
               <div className="mb-4">
                 {/* <Link to="/"> */}
-                <h4 className="text-dark font-bold text-3xl justify-center text-center ">
+                <h4 className="justify-center text-3xl font-bold text-center text-dark ">
                   Talent<span className="text-primary bold ">Box</span>{" "}
                 </h4>
                 {/* </Link> */}
-                <p className="mb-6 justify-center text-center">
+                <p className="justify-center mb-6 text-center">
                   Please enter your user information.
                 </p>
               </div>
@@ -250,10 +249,12 @@ const SignUp = () => {
                         {ButtonEnums.Submit}
                       </BaseButton>
                     </div>
-                    <div className="d-md-flex justify-content-between mt-4">
+                    <div className="mt-4 d-md-flex justify-content-between">
                       <div className="mb-2 mb-md-0">
                         <div onClick={() => navigate("/")} className="fs-5">
-                          Already member? <a className="text-primary cursor-pointer">Login</a>{" "}
+                          {/* Already member? <a className="cursor-pointer text-primary">Login</a>{" "} */}
+                          Already Have an Account?{" "}
+                          <a className="cursor-pointer text-primary">Login</a>{" "}
                         </div>
                       </div>
                       <div>
@@ -261,7 +262,9 @@ const SignUp = () => {
                           onClick={() => navigate("/forgot-password")}
                           className=" fs-5"
                         >
-                          <a className="text-primary cursor-pointer">Forgot your password?</a>
+                          <a className="cursor-pointer text-primary">
+                            Forgot your password?
+                          </a>
                         </div>
                       </div>
                     </div>
