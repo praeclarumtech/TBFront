@@ -112,7 +112,7 @@ const AddSkill = () => {
   // };
 
   const confirmDelete = async () => {
-    console.log("Attempting to delete skills:", skillToDelete);
+    // console.log("Attempting to delete skills:", skillToDelete);
 
     if (!skillToDelete || skillToDelete.length === 0) {
       toast.error("No skills selected for deletion.");

@@ -31,16 +31,19 @@ const ActionMenu = ({
           "Frontend"}
       </Dropdown.Toggle>
       <Dropdown.Menu align={"end"}>
-        <Dropdown.Item eventKey="frontend">Frontend</Dropdown.Item>
-        <Dropdown.Item eventKey="backend">Backend</Dropdown.Item>
-        <Dropdown.Item eventKey="fullstack">Fullstack</Dropdown.Item>
-        <Dropdown.Item eventKey="testing">Testing</Dropdown.Item>
+        <Dropdown.Item eventKey="Frontend">Frontend</Dropdown.Item>
+        <Dropdown.Item eventKey="Backend">Backend</Dropdown.Item>
+        <Dropdown.Item eventKey="Database">Database</Dropdown.Item>
+        <Dropdown.Item eventKey="Testing">Testing</Dropdown.Item>
+        {/* <Dropdown.Item eventKey="UIUX">Ui/Ux</Dropdown.Item> */}
         <Dropdown.Item eventKey="uiux">Ui/Ux</Dropdown.Item>
-        <Dropdown.Item eventKey="versioncontrol">Version Control</Dropdown.Item>
+
+        <Dropdown.Item eventKey="VersionControl">Version Control</Dropdown.Item>
         <Dropdown.Item eventKey="devops">Development Operations</Dropdown.Item>
-        <Dropdown.Item eventKey="programming">
+        <Dropdown.Item eventKey="Programming">
           Programming Language
         </Dropdown.Item>
+        {/* <Dropdown.Item eventKey="Others">Others</Dropdown.Item> */}
         <Dropdown.Item eventKey="others">Others</Dropdown.Item>
       </Dropdown.Menu>
     </Dropdown>
@@ -53,13 +56,12 @@ const ApplicantsDetails = ({
   setSelectedTechnology: (tech: string | null) => void;
 }) => {
   const [selectedFilter, setSelectedFilter] = useState<string>("");
-  console.log("HElooooooooooooooooooooo", selectedFilter);
 
   return (
     <Row className="mt-6">
       <Col>
         <Card className=" w-full min-h-[400px]">
-          <Card.Header className="bg-white border-0 d-flex justify-content-between align-items-center p-4">
+          <Card.Header className="p-4 bg-white border-0 d-flex justify-content-between align-items-center">
             <h4 className="h4">Skills Statistics</h4>
             <ActionMenu
               setSelectedFilter={setSelectedFilter}

@@ -113,6 +113,7 @@ const Applicant = () => {
   });
 
   const [skillOptions, setSkillOptions] = useState<SelectedOption1[]>([]);
+  const [sourcePage, setSourcePage] = useState("main");
 
   const [loading, setLoading] = useState<boolean>(false);
   const [cities, setCities] = useState<City[]>([]);
@@ -520,8 +521,9 @@ const Applicant = () => {
   //     });
   // };
 
-  const handleView = (id: string) => {
+  const handleView = (id: string, source: string) => {
     setSelectedApplicantId(id);
+    setSourcePage(source)
     setShowModal(true);
   };
 
@@ -960,7 +962,7 @@ const Applicant = () => {
               id={`usage-${cell?.row?.original?.id}`}
               color="primary"
               className="btn btn-sm btn-soft-success usage-list"
-              onClick={() => handleView(cell.row.original._id)}
+              onClick={() => handleView(cell.row.original._id, "main")}
             >
               <i className="align-bottom ri-eye-fill" />
               <ReactTooltip
@@ -1076,6 +1078,7 @@ const Applicant = () => {
           show={showModal}
           onHide={handleCloseModal}
           applicantId={selectedApplicantId}
+          source={sourcePage}
         />
       )}
 

@@ -114,9 +114,7 @@ const AddDegree = () => {
     setLoader(true);
 
     try {
-      await Promise.all(
-        degreeToDelete.map((id: any) => deleteDegree({ _id: id }))
-      );
+      await deleteDegree({ _id: degreeToDelete._id });
 
       toast.success("Selected degrees deleted successfully");
       fetchDegrees();
@@ -189,14 +187,14 @@ const AddDegree = () => {
       {
         header: "Action",
         cell: (cell: { row: { original: any } }) => (
-          <div className="hstack gap-2">
+          <div className="gap-2 hstack">
             <BaseButton
               id={`edit-${cell?.row?.original?._id}`}
               color="primary"
               className="btn btn-sm btn-soft-warning edit-list"
               onClick={() => handleEdit(cell?.row?.original)}
             >
-              <i className="ri-pencil-fill align-bottom" />
+              <i className="align-bottom ri-pencil-fill" />
               <ReactTooltip
                 place="bottom"
                 variant="warning"
@@ -210,7 +208,7 @@ const AddDegree = () => {
               className="btn btn-sm btn-soft-danger bg-danger"
               onClick={() => handleDelete(cell?.row?.original)}
             >
-              <i className="ri-delete-bin-fill align-bottom" />
+              <i className="align-bottom ri-delete-bin-fill" />
               <ReactTooltip
                 place="bottom"
                 variant="error"
@@ -318,21 +316,21 @@ const AddDegree = () => {
       <Container fluid>
         <Row>
           <div>
-            <Card className="mb-3 my-3">
+            <Card className="my-3 mb-3">
               <CardBody>
                 <Row className="flex">
                   <Row className="fw-bold text-dark h4 d-flex align-items-center">
                     <Col
                       sm={12}
                       md={12}
-                      className="d-flex align-items-center justify-between ml-2"
+                      className="justify-between ml-2 d-flex align-items-center"
                     >
                       {formTitle}
-                      <div className="d-flex justify-end">
+                      <div className="justify-end d-flex">
                         <div>
                           <input
                             id="search-bar-0"
-                            className="form-control search h-10 gap-2"
+                            className="h-10 gap-2 form-control search"
                             placeholder="Search..."
                             onChange={handleSearchChange}
                             value={searchAll}
@@ -341,10 +339,10 @@ const AddDegree = () => {
                         <div className="d-flex justify-content-end">
                           {selectedDegree.length > 1 && (
                             <BaseButton
-                              className="btn text-lg bg-danger edit-list ml-2 w-fit border-0"
+                              className="ml-2 text-lg border-0 btn bg-danger edit-list w-fit"
                               onClick={handleDeleteAll}
                             >
-                              <i className="ri-delete-bin-fill align-bottom" />
+                              <i className="align-bottom ri-delete-bin-fill" />
                               <ReactTooltip
                                 place="bottom"
                                 variant="error"
@@ -358,11 +356,11 @@ const AddDegree = () => {
                             disabled={loader}
                             type="submit"
                             loader={loader}
-                            // className="ms-3 px-5 border rounded-5"
+                            // className="px-5 border ms-3 rounded-5"
                             className="mx-2"
                             onClick={handleOpenBaseModal}
                           >
-                            <i className="ri-add-line align-bottom mx-1" />
+                            <i className="mx-1 align-bottom ri-add-line" />
                             {submitButtonText}
                           </BaseButton>
                         </div>
@@ -402,8 +400,8 @@ const AddDegree = () => {
                   <Row className="mt-3">
                     <Col lg={12}>
                       {isLoading ? (
-                        <div className="text-center py-4">
-                          <Skeleton count={1} className="min-h-10 mb-5" />
+                        <div className="py-4 text-center">
+                          <Skeleton count={1} className="mb-5 min-h-10" />
 
                           <Skeleton count={5} />
                         </div>

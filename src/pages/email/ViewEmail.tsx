@@ -100,23 +100,21 @@ const ViewModal = ({ show, onHide, applicantId }: any) => {
     <Badge count={"N/A"} style={{ backgroundColor: "#f50" }} />
   );
 
-  console.log(
-    "heloooooooooooooooooooooooooooooooooooooooooo",
-    formData?.email?.email_bcc
-  );
+  // console.log(
+  //   "heloooooooooooooooooooooooooooooooooooooooooo",
+  //   formData?.email?.email_bcc
+  // );
 
   const emailBccData = formData?.email?.email_bcc;
 
-  console.log("email_bcc value:", emailBccData); // Debugging log
+  // console.log("email_bcc value:", emailBccData); // Debugging log
 
   const email_bcc =
     Array.isArray(emailBccData) && emailBccData.length > 0
-      ? emailBccData.join(", ") // If it's an array, join into a string
-      // : typeof emailBccData === "string" && emailBccData.trim()
-      // ? emailBccData.trim() // If it's a valid non-empty string, use it
+      ? emailBccData.join(", ") 
       : "N/A";
 
-  console.log("email_bcc value:", email_bcc);
+  // console.log("email_bcc value:", email_bcc);
   return (
     // <Modal show={show} onHide={onHide} size="lg" centered>
     //   <Modal.Header closeButton>
