@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Col, Row, Card, Spinner } from "react-bootstrap";
 import { useEffect, useState } from "react";
-// import { FormSelect } from "../../widgets/form-select/FormSelect";
 import { Container } from "react-bootstrap";
 import { useMounted } from "hooks/useMounted";
 import appConstants from "constants/constant";
@@ -16,11 +15,15 @@ import { dynamicFind, InputPlaceHolder } from "utils/commonFunctions";
 import { BaseSelect } from "components/BaseComponents/BaseSelect";
 import { SelectedOption } from "interfaces/applicant.interface";
 import BaseButton from "components/BaseComponents/BaseButton";
+import { useNavigate } from "react-router";
 
 const Profile = () => {
   const hasMounted = useMounted();
   const [profileData, setProfileData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState("");
+  const [touched, setTouched] = useState(false);
+  const [loadingImage, setLoadingImage] = useState<boolean>(false);
   const [formData, setFormData] = useState<ProfileFormData>({
     profilePicture: "",
     userName: "",
@@ -36,14 +39,24 @@ const Profile = () => {
   const [imagePreview, setImagePreview] = useState<string>(
     "/images/avatar/avatar.png"
   );
-  const [isEditMode, setIsEditMode] = useState(false);
-  const id = Number(sessionStorage.getItem("id"));
+  const navigate = useNavigate();
 
+  const id = sessionStorage.getItem("id");
   useEffect(() => {
     const fetchProfile = async () => {
       const token = sessionStorage.getItem("authUser");
-      const response = await getProfile({ token });
-      setProfileData(response.data);
+      setLoading(true);
+      try {
+        const response = await getProfile({ token });
+        setProfileData(response?.data);
+      } catch (error) {
+        // console.log(error);
+         toast.error(
+           error instanceof Error ? error.message : "An error occurred"
+         );
+      } finally {
+        setLoading(false);
+      }
     };
     fetchProfile();
   }, []);
@@ -62,6 +75,13 @@ const Profile = () => {
         designation: profileData.designation || "",
       });
 
+      // setImagePreview(
+      //   profileData.profilePicture
+      //     ? `${appEnv.API_ENDPOINT}/uploads/profile/${
+      //         profileData.profilePicture
+      //       }?${Date.now()}`
+      //     : "/images/avatar/avatar.png"
+      // );
       setImagePreview(
         profileData.profilePicture
           ? `${appEnv.API_ENDPOINT}/uploads/profile/${profileData.profilePicture}`
@@ -69,7 +89,6 @@ const Profile = () => {
       );
     }
   }, [profileData]);
-  // console.log("profle picture", profileData?.profilePicture);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -78,28 +97,37 @@ const Profile = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (error) {
+      toast.error("Please correct the errors before submitting.");
+      return;
+    }
+
     const formDataToSend = new FormData();
 
     for (const key in formData) {
-      if (Object.prototype.hasOwnProperty.call(formData, key)) {
-        if (key === "profilePicture" && formData[key] instanceof File) {
-          formDataToSend.append("profilePicture", formData[key]);
-        } else {
+      if (key === "profilePicture") {
+        if (formData[key] instanceof File) {
           formDataToSend.append(key, formData[key]);
+        } else if (formData[key] === "") {
+          formDataToSend.append(key, "null");
         }
+      } else {
+        formDataToSend.append(key, String(formData[key]));
       }
     }
 
     try {
       setLoading(true);
-      if (id === null) {
-        toast.error("User ID not found");
+
+      if (!id) {
+        toast.error("User ID is missing or invalid.");
         return;
       }
       const response = await updateProfile(id, formDataToSend);
+
       if (response) {
         toast.success(response?.message || "Profile updated successfully!");
-        setIsEditMode(false);
+
         setLoading(false);
 
         setImagePreview(
@@ -107,37 +135,19 @@ const Profile = () => {
             ? `${appEnv.API_ENDPOINT}/uploads/profile/${response.data.profilePicture}`
             : imagePreview
         );
+        // setImagePreview(
+        //   response?.data?.profilePicture
+        //     ? `${appEnv.API_ENDPOINT}/uploads/profile/${
+        //         response.data.profilePicture
+        //       }?${Date.now()}`
+        //     : "/images/avatar/avatar.png"
+        // );
       }
     } catch (error) {
-      // console.error("Error updating profile:", error);
       toast.error(error instanceof Error ? error.message : "An error occurred");
+    } finally {
+      setLoading(false);
     }
-  };
-  useEffect(() => {
-    // console.log("Image preview:", imagePreview);
-  }, [imagePreview]);
-
-  const handleCancel = () => {
-    setFormData({
-      profilePicture: profileData?.profilePicture || "",
-      userName: profileData?.userName || "",
-      firstName: profileData?.firstName || "",
-      lastName: profileData?.lastName || "",
-      email: profileData?.email || "",
-      phoneNumber: profileData?.phoneNumber || "",
-      gender: profileData?.gender || "",
-      dateOfBirth: moment(formData.dateOfBirth).isValid()
-        ? formData.dateOfBirth
-        : "",
-      designation: profileData?.designation || "",
-    });
-
-    setImagePreview(
-      profileData?.profilePicture
-        ? `${profileData.profilePicture}`
-        : "/images/avatar/avatar.png"
-    );
-    setIsEditMode(false);
   };
 
   const handleProfilePicChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -147,9 +157,11 @@ const Profile = () => {
         ...prevState,
         profilePicture: file,
       }));
+      setLoadingImage(true);
       const fileReader = new FileReader();
       fileReader.onloadend = () => {
         setImagePreview(fileReader.result as string);
+        setLoadingImage(false);
       };
       fileReader.readAsDataURL(file);
     }
@@ -162,7 +174,37 @@ const Profile = () => {
     }));
     setImagePreview("/images/avatar/avatar.png");
   };
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const date = e.target.value;
 
+    const year = date.split("-")[0];
+
+    if (year.length === 4) {
+      if (Number(year) < 1960 || Number(year) > 2009) {
+        setError("Please enter a year between 1960 and 2009.");
+        return;
+      }
+
+      const userAge = moment().diff(moment(date, "YYYY-MM-DD"), "years");
+      if (userAge < 15) {
+        setError("You must be at least 15 years old.");
+        return;
+      }
+
+      setError("");
+
+      setFormData({
+        ...formData,
+        dateOfBirth: date,
+      });
+    } else {
+      setError("Year must be a 4-digit number.");
+    }
+  };
+
+  const handleBlur = () => {
+    setTouched(true);
+  };
   return (
     <Container fluid className="p-6">
       <Row className="mb-8">
@@ -176,19 +218,30 @@ const Profile = () => {
               </div>
             ) : (
               <Card.Body>
-                <div className="w-full max-w-4xl mx-auto px-4 py-8">
-                  <h2 className="text-2xl font-semibold mb-6 text-center">
+                <div className="w-full max-w-4xl mx-auto px-4 py-4">
+                  <h5 className="text-2xl font-semibold mb-4 text-start justify-start ">
                     Profile
-                  </h2>
+                  </h5>
                   {hasMounted && (
                     <form onSubmit={handleSubmit}>
-                      <div className="flex flex-col items-center mb-6">
-                        <img
-                          src={imagePreview}
-                          crossOrigin="anonymous"
-                          alt="Profile Preview"
-                          className="rounded-full w-28 h-28 object-cover mb-4"
-                        />
+                      <div className="flex flex-col items-center mb-4">
+                        <div>
+                          {loadingImage ? (
+                            <Spinner animation="border" role="status">
+                              <span className="visually-hidden">
+                                Loading image...
+                              </span>
+                            </Spinner>
+                          ) : (
+                            <img
+                              src={imagePreview}
+                              crossOrigin="anonymous"
+                              alt="Profile Preview"
+                              className="rounded-full w-28 h-28 object-cover mb-4 border-4 border-blue-500"
+                            />
+                          )}
+                        </div>
+
                         <div className="space-x-2">
                           <input
                             type="file"
@@ -200,7 +253,6 @@ const Profile = () => {
                           <button
                             type="button"
                             className="text-sm px-4 py-1.5 bg-gray-200 rounded-md"
-                            disabled={!isEditMode}
                             onClick={() =>
                               document
                                 .getElementById("profilePicInput")
@@ -220,25 +272,37 @@ const Profile = () => {
                       </div>
 
                       {/* Username */}
-                      <div className="mb-4">
-                        <BaseInput
-                          label="Username"
-                          name="userName"
-                          type="text"
-                          placeholder={InputPlaceHolder("Username")}
-                          handleChange={handleInputChange}
-                          value={formData.userName}
-                          disabled
-                          passwordToggle={false}
-                        />
-                      </div>
-
-                      <Row className="mb-4 ">
+                      <Row className="md:mb-4 lg:mb-4 xl:mb-4 ">
+                        <Col md={6} sm={12} xl={6} lg={6}>
+                          <BaseInput
+                            label="Username"
+                            name="userName"
+                            type="text"
+                            placeholder={InputPlaceHolder("Username")}
+                            handleChange={handleInputChange}
+                            value={formData.userName}
+                            disabled
+                            passwordToggle={false}
+                          />
+                        </Col>
+                        <Col md={6} sm={12} xl={6} lg={6}>
+                          <BaseInput
+                            label="Email"
+                            name="email"
+                            type="email"
+                            placeholder={InputPlaceHolder("Email")}
+                            handleChange={handleInputChange}
+                            value={formData?.email}
+                            disabled
+                          />
+                        </Col>
+                      </Row>
+                      <Row className="md:mb-4 lg:mb-4 xl:mb-4 ">
                         <Col md={6} sm={12} xl={6} lg={6}>
                           <BaseInput
                             label="First Name"
                             name="firstName"
-                            className="sm:mb-4"
+                            className=""
                             type="text"
                             placeholder={InputPlaceHolder("First Name")}
                             handleChange={(e) => {
@@ -249,7 +313,6 @@ const Profile = () => {
                               setFormData({ ...formData, firstName: value });
                             }}
                             value={formData.firstName}
-                            disabled={!isEditMode}
                             passwordToggle={false}
                           />
                         </Col>
@@ -259,48 +322,61 @@ const Profile = () => {
                             name="lastName"
                             type="text"
                             placeholder={InputPlaceHolder("Last Name")}
-                            handleChange={handleInputChange}
-                            value={formData.lastName}
-                            disabled={!isEditMode}
+                            handleChange={(e) => {
+                              const value = e.target.value.replace(
+                                /[^A-Za-z\s]/g,
+                                ""
+                              );
+                              setFormData({ ...formData, lastName: value });
+                            }}
+                            value={formData?.lastName}
                           />
-                          {/* </div> */}
                         </Col>
                       </Row>
 
-                      {/* Email */}
-                      <div className="mb-4">
-                        <BaseInput
-                          label="Email"
-                          name="email"
-                          type="email"
-                          placeholder={InputPlaceHolder("Email")}
-                          handleChange={handleInputChange}
-                          value={formData?.email}
-                          disabled
-                        />
-                      </div>
-
                       {/* Phone */}
-                      <div className="mb-4">
-                        <BaseInput
-                          label="Phone Number"
-                          name="phoneNumber"
-                          type="text"
-                          placeholder={InputPlaceHolder("Phone Number")}
-                          handleChange={(e) => {
-                            const rawValue = e.target.value.replace(/\D/g, "");
-                            const sanitizedValue = rawValue.slice(0, 10);
-                            setFormData({
-                              ...formData,
-                              phoneNumber: sanitizedValue,
-                            });
-                          }}
-                          value={formData?.phoneNumber}
-                          disabled
-                        />
-                      </div>
+                      <Row className="md:mb-4 lg:mb-4 xl:mb-4 ">
+                        <Col md={6} sm={12} xl={6} lg={6}>
+                          <BaseInput
+                            label="Phone Number"
+                            name="phoneNumber"
+                            type="text"
+                            placeholder={InputPlaceHolder("Phone Number")}
+                            handleChange={(e) => {
+                              const rawValue = e.target.value.replace(
+                                /\D/g,
+                                ""
+                              );
+                              const sanitizedValue = rawValue.slice(0, 10);
+                              setFormData({
+                                ...formData,
+                                phoneNumber: sanitizedValue,
+                              });
+                            }}
+                            value={formData?.phoneNumber}
+                            // disabled
+                          />
+                        </Col>
+                        <Col md={6} sm={12} xl={6} lg={6}>
+                          <BaseInput
+                            label="Designation"
+                            name="designation"
+                            type="text"
+                            placeholder={InputPlaceHolder("Designation")}
+                            handleChange={(e) => {
+                              const value = e.target.value.replace(
+                                /[^A-Za-z\s]/g,
+                                ""
+                              );
+                              setFormData({ ...formData, designation: value });
+                            }}
+                            value={formData.designation}
+                            passwordToggle={false}
+                          />
+                        </Col>
+                      </Row>
 
-                      <Row className="mb-4">
+                      <Row className="md:mb-4 lg:mb-4 xl:mb-4 ">
                         <Col md={6} sm={12} xl={6} lg={6}>
                           <BaseSelect
                             label="Gender"
@@ -317,7 +393,6 @@ const Profile = () => {
                             value={
                               dynamicFind(gendersType, formData.gender) || ""
                             }
-                            isDisabled={!isEditMode}
                           />
                         </Col>
                         <Col md={6} sm={12} xl={6} lg={6}>
@@ -326,62 +401,47 @@ const Profile = () => {
                             name="dateOfBirth"
                             type="date"
                             placeholder={InputPlaceHolder("Date Of Birth")}
-                            handleChange={handleInputChange}
+                            // handleChange={(e) => {
+                            //   const date = e.target.value;
+                            //   setFormData({
+                            //     ...formData,
+                            //     dateOfBirth: date,
+                            //   });
+                            // }}
+                            handleChange={handleDateChange}
                             value={
-                              moment(formData?.dateOfBirth).format(
-                                "YYYY-MM-DD"
-                              ) || ""
+                              formData.dateOfBirth
+                                ? moment(formData.dateOfBirth).format(
+                                    "YYYY-MM-DD"
+                                  )
+                                : ""
                             }
-                            disabled={!isEditMode}
+                            min="1960-01-01"
+                            // max="2099-12-31"
+                            touched={touched}
+                            error={error}
+                            handleBlur={handleBlur}
                           />
                         </Col>
                       </Row>
 
-                      {/* Designation */}
-                      <div className="mb-4">
-                        <BaseInput
-                          label="Designation"
-                          name="designation"
-                          type="text"
-                          placeholder={InputPlaceHolder("Designation")}
-                          handleChange={(e) => {
-                            const value = e.target.value.replace(
-                              /[^A-Za-z\s]/g,
-                              ""
-                            );
-                            setFormData({ ...formData, designation: value });
-                          }}
-                          value={formData.designation}
-                          disabled={!isEditMode}
-                          passwordToggle={false}
-                        />
-                      </div>
-
-                      {/* Action Buttons */}
                       <div className="flex justify-end gap-4 mt-6">
-                        {!isEditMode ? (
+                        <>
                           <BaseButton
-                            variant="primary"
-                            className="bg-primary text-white"
-                            onClick={() => setIsEditMode(true)}
+                            variant="danger"
+                            onClick={() => navigate("/dashboard")}
                           >
-                            Update Profile
+                            Back
                           </BaseButton>
-                        ) : (
-                          <>
-                            <BaseButton variant="danger" onClick={handleCancel}>
-                              Cancel
-                            </BaseButton>
-                            <BaseButton
-                              type="submit"
-                              className="bg-primary text-white"
-                              variant="primary"
-                              disabled={loading}
-                            >
-                              {loading ? "Saving..." : "Save Changes"}
-                            </BaseButton>
-                          </>
-                        )}
+                          <BaseButton
+                            type="submit"
+                            className="bg-primary text-white"
+                            variant="primary"
+                            disabled={loading}
+                          >
+                            {loading ? "Updating..." : "Save Changes"}
+                          </BaseButton>
+                        </>
                       </div>
                     </form>
                   )}
