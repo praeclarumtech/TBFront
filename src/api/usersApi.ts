@@ -27,7 +27,7 @@ export const register = async (data: object) => {
   return response?.data;
 };
 
-export const updateProfile = async (id?: number, data?: object) => {
+export const updateProfile = async (id?: string, data?: object) => {
   const response = await authServices.put(`${UPDATEPROFILE}/${id}`, data);
   return response?.data;
 };
