@@ -1,8 +1,6 @@
 import SignUp from "pages/auth/SignUp";
 import Dashboard from "pages/dashboard/Index";
 import LayoutVertical from "pages/dashboard/LayoutVertical";
-import ApiDemo from "pages/dashboard/pages/ApiDemo";
-import Settings from "pages/dashboard/pages/Settings";
 import ApplicantTables from "pages/applicant/Index";
 import StepperForm from "pages/applicant/Stepper";
 import EmailTable from "pages/email/EmailTable";
@@ -132,20 +130,6 @@ const routes = {
     title: "Layout Vertical",
     path: "/layout_vertical",
     element: LayoutVertical,
-  },
-  PAGES: {
-    title: "Pages",
-    path: "/pages",
-    children: [
-      {
-        path: "settings",
-        element: Settings,
-      },
-      {
-        path: "api-demo",
-        element: ApiDemo,
-      },
-    ],
   },
 };
 
