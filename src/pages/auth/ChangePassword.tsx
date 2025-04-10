@@ -10,6 +10,7 @@ import appConstants from "constants/constant";
 import { errorHandle, InputPlaceHolder } from "utils/commonFunctions";
 import { jwtDecode } from "jwt-decode";
 import BaseModal from "components/BaseComponents/BaseModal";
+import Loader from "components/BaseComponents/Loader";
 
 const { projectTitle, SUCCESS, passwordRegex, validationMessages, OK } =
   appConstants;
@@ -96,6 +97,9 @@ const ChangePassword = ({ showModal, setShowModal }: ChangePasswordProps) => {
         .finally(() => setLoader(false));
     },
   });
+  if (loader) {
+    return <Loader />;
+  }
 
   return (
     <BaseModal
