@@ -310,7 +310,7 @@ const StepperForm = () => {
           <Card.Body>
             <Box
               sx={{
-                width: "100%", width: "100%",
+                width: "100%",
                 justifyContent: isMobile ? "center" : "flex-start",
                 // display: "flex",
                 display: isMobile ? "flex" : "",
