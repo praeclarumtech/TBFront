@@ -1,10 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import TableContainer from "components/BaseComponents/TableContainer";
-import { Col, Row, Card, Button } from "react-bootstrap";
+import { Col, Row, Card } from "react-bootstrap";
 import { getRecentApplications } from "api/dashboardApi";
 import appConstants from "constants/constant";
-import { getSerialNumber } from "utils/commonFunctions";
+import { errorHandle, getSerialNumber } from "utils/commonFunctions";
 import Skeleton from "react-loading-skeleton";
+import { ExportApplicant } from "api/applicantApi";
+import { toast } from "react-toastify";
+import saveAs from "file-saver";
+import BaseButton from "components/BaseComponents/BaseButton";
 
 const { handleResponse } = appConstants;
 
@@ -31,6 +35,29 @@ const RecentApplicants = ({
       console.log("Error loading recent applicants");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleExportExcel = async (filtered: string[]) => {
+    try {
+      toast.info("Preparing file for download...");
+      await new Promise((resolve) => setTimeout(resolve, 3500));
+      const response = await ExportApplicant(filtered);
+
+      if (!response) {
+        toast.error("Failed to download file");
+        return;
+      }
+
+      const blob = new Blob([response], { type: "text/csv" });
+
+      saveAs(blob, `${filtered}-applicants.csv`);
+
+      toast.success("File downloaded successfully!");
+    } catch (error) {
+      // console.error("Export error:", error);
+      errorHandle(error);
+      // toast.error("Failed to export file");
     }
   };
 
@@ -86,9 +113,18 @@ const RecentApplicants = ({
             </h4>
 
             {selectedTechnology && (
-              <Button variant="primary" onClick={onResetFilter}>
-                Reset Filter
-              </Button>
+              <div className="d-flex justify-end gap-2">
+                <BaseButton color="primary" onClick={onResetFilter}>
+                  Reset Filter
+                </BaseButton>
+                <BaseButton
+                  color="success"
+                  onClick={() => handleExportExcel([selectedTechnology])}
+                >
+                  <i className="ri-upload-2-line me-1" />
+                  Export
+                </BaseButton>
+              </div>
             )}
           </Card.Header>
           <Card.Body className="pt-0">

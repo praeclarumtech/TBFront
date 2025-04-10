@@ -414,12 +414,15 @@ const AddDegree = () => {
                               data={filteredDegree}
                               isGlobalFilter={false}
                               customPageSize={10}
-                              theadClass="table-light text-muted"
+                              tableClass="!text-nowrap !mb-0 !responsive !table-responsive-sm !table-hover !table-outline-none !mb-0"
+                              theadClass="table-light text-muted "
                               SearchPlaceholder="Search..."
                               totalRecords={totalRecords}
                               pagination={pagination}
                               setPagination={setPagination}
                               loader={loader}
+                              customPadding="0.3rem 1.5rem "
+                              rowHeight="10px !important"
                             />
                           ) : (
                             <div className="py-4 text-center">

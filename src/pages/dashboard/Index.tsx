@@ -3,17 +3,24 @@ import { Container, Col, Row } from "react-bootstrap";
 import { StatRightTopIcon } from "widgets";
 import RecentApplicants from "sub-components/dashboard/RecentApplicants";
 import {
-  People,
-  ClockHistory,
-  GraphUp,
-  Check2Circle,
-  XCircle,
-  ExclamationCircle,
+  // People,
+  // ClockHistory,
+  // GraphUp,
+  // Check2Circle,
+  // XCircle,
+  // ExclamationCircle,
+  PeopleFill,
+  ExclamationCircleFill,
+  XCircleFill,
+  ClockFill,
+  // ExclamationDiamondFill,
+  HCircleFill,
 } from "react-bootstrap-icons";
 import ApplicantsDeatils from "sub-components/dashboard/ApplicantsDetails";
 import { getTotalApplicants } from "api/dashboardApi";
 import appConstants from "constants/constant";
 import { useNavigate } from "react-router-dom";
+import { CheckCircleFilled } from "@ant-design/icons";
 
 const { projectTitle, Modules } = appConstants;
 
@@ -83,22 +90,23 @@ const Dashboard = () => {
               <StatRightTopIcon
                 title="Total Applicants"
                 icon={
-                  <People
-                    size={20}
+                  <PeopleFill
+                    size={25}
+                    strokeWidth={2.5}
                     onClick={() => navigate("/applicants")}
-                    className="cursor-pointer"
+                    className="cursor-pointer fw-bold"
                   />
                 }
                 data={totalApplicants}
                 error={error}
-                classes="icon-shape icon-lg rounded-2 bg-light-primary text-primary"
+                classes="icon-shape icon-lg rounded-2 bg-light-primary text-primary fw-bold"
                 isLoading={isLoading}
               />
             </Col>
             <Col xl={2} lg={4} md={6} xs={6} className="mb-3">
               <StatRightTopIcon
                 title="In Process"
-                icon={<ClockHistory size={20} />}
+                icon={<ClockFill size={25} style={{ fontWeight: "bold" }} />}
                 data={inProcessApplicants}
                 error={error}
                 classes="icon-shape icon-lg rounded-2 bg-light-info text-info"
@@ -108,7 +116,8 @@ const Dashboard = () => {
             <Col xl={2} lg={4} md={6} xs={6} className="mb-3">
               <StatRightTopIcon
                 title="On Hold"
-                icon={<GraphUp size={20} />}
+                // icon={<GraphUp size={25} />}
+                icon = {<HCircleFill size={25} style={{ fontWeight: "bold" }}/>}
                 data={holdApplicants}
                 error={error}
                 classes="icon-shape icon-lg rounded-2 bg-light-warning text-warning"
@@ -118,7 +127,7 @@ const Dashboard = () => {
             <Col xl={2} lg={4} md={6} xs={6} className="mb-3">
               <StatRightTopIcon
                 title="Total Pending"
-                icon={<ExclamationCircle size={20} />}
+                icon={<ExclamationCircleFill size={25} style={{ fontWeight: "bold" }}/>}
                 data={pendingApplicants}
                 error={error}
                 classes="icon-shape icon-lg rounded-2 bg-light-warning text-warning"
@@ -128,7 +137,9 @@ const Dashboard = () => {
             <Col xl={2} lg={4} md={6} xs={6} className="mb-3">
               <StatRightTopIcon
                 title="Selected"
-                icon={<Check2Circle size={20} />}
+                icon={
+                  <CheckCircleFilled style={{ fontSize: 25,fontWeight: "bold" }} />
+                }
                 data={selectedApplicants}
                 error={error}
                 classes="icon-shape icon-lg rounded-2 bg-light-success text-success"
@@ -138,7 +149,7 @@ const Dashboard = () => {
             <Col xl={2} lg={4} md={6} xs={6} className="mb-3">
               <StatRightTopIcon
                 title="Rejected"
-                icon={<XCircle size={20} />}
+                icon={<XCircleFill size={25} style={{ fontWeight: "bold" }} />}
                 data={rejectedApplicants}
                 error={error}
                 classes="icon-shape icon-lg rounded-2 bg-light-danger text-danger"
