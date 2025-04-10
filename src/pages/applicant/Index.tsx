@@ -57,6 +57,7 @@ const {
   anyHandOnOffers,
   workPreferenceType,
   designationType,
+  addedByOptions,
 } = appConstants;
 
 type Anchor = "top" | "right" | "bottom";
@@ -121,7 +122,7 @@ const Applicant = () => {
   const [multipleApplicantDelete, setMultipleApplicantsDelete] = useState<
     string[]
   >([]);
-
+  const [addedBy, setAddedBy] = useState<SelectedOption[]>([]);
   const toggleDrawer =
     (anchor: Anchor, open: boolean) =>
     (event: React.KeyboardEvent | React.MouseEvent) => {
@@ -166,6 +167,7 @@ const Applicant = () => {
         applicantName?: string;
         searchSkills?: string;
         searchS?: string;
+        addedBy?: string;
         // name?: string;
       } = {
         page: pagination.pageIndex + 1,
@@ -212,6 +214,9 @@ const Applicant = () => {
           .map((skill) => skill.label)
           .join(",");
       }
+      if (addedBy) {
+        params.addedBy = addedBy.map((role: any) => role.value).join(",");
+      }
 
       if (startDate) {
         params.startDate = startDate;
@@ -251,6 +256,7 @@ const Applicant = () => {
 
   useEffect(() => {
     const delayedSearch = debounce(() => {
+      console.log("your api is calling");
       fetchApplicants();
     }, 0);
 
@@ -276,6 +282,7 @@ const Applicant = () => {
     filterRating,
     filterEngRating,
     filterWorkPreference,
+    addedBy,
   ]);
 
   useEffect(() => {
@@ -377,6 +384,10 @@ const Applicant = () => {
     setSearchAll(event.target.value);
   };
 
+  const handleAppliedRoleChange = (selectedOption: SelectedOption[]) => {
+    setAddedBy(selectedOption);
+  };
+
   const resetFilters = () => {
     setAppliedSkills([]);
     setStartDate("");
@@ -396,7 +407,7 @@ const Applicant = () => {
     setFilterRating([0, 10]);
     setFilterEngRating([0, 10]);
     setFilterState(null);
-
+    setAddedBy([]);
     fetchApplicants();
   };
 
@@ -505,21 +516,6 @@ const Applicant = () => {
       });
   };
 
-  // const deleteApplicantDetails = (_id: string | undefined | null) => {
-  //   setLoader(true);
-  //   deleteApplicant(_id)
-  //     .then(() => {
-  //       console.log("in dedleetetee", _id);
-  //       fetchApplicants();
-  //     })
-  //     .catch((error: any) => {
-  //       errorHandle(error);
-  //     })
-  //     .finally(() => {
-  //       setLoader(false);
-  //       setShowDeleteModal(false);
-  //     });
-  // };
 
   const handleView = (id: string, source: string) => {
     setSelectedApplicantId(id);
@@ -595,13 +591,13 @@ const Applicant = () => {
       <div className="mb-4">
         <IconButton
           onClick={toggleDrawer("right", false)}
-          sx={{ position: "absolute", top: 8, left: 8, zIndex: 10 }}
+          sx={{ position: "absolute", top: 8, right: 8, zIndex: 10 }}
         >
           <Close />
         </IconButton>
       </div>
       <List>
-        <Row className="flex items-center justify-between mb-4">
+        <Row className="flex items-center justify-between mb-4 mt-2">
           <Col>
             <h3>Apply Filters</h3>
           </Col>
@@ -804,6 +800,17 @@ const Applicant = () => {
             handleDateChange(e, false)
           }
           value={endDate || ""}
+        />
+        <MultiSelect
+          label="Added By"
+          name="addedBy"
+          className="select-border"
+          options={addedByOptions}
+          isMulti={true}
+          // placeholder={InputPlaceHolder("Added By")}
+          placeholder="Added By"
+          onChange={handleAppliedRoleChange}
+          value={addedBy}
         />
       </List>
 
@@ -1071,6 +1078,8 @@ const Applicant = () => {
     );
   });
 
+  const isMobile = window.innerWidth <= 767;
+
   return (
     <Fragment>
       {showModal && selectedApplicantId && (
@@ -1094,109 +1103,20 @@ const Applicant = () => {
         loader={loader}
       />
       <Container fluid>
-        {/* <Row>
-          <div>
-            <Card className="my-3 mb-3">
-              <CardBody>
-                <div className="container">
-                  <div className="inline-flex items-center row align-items-center ">
-                    <div className="col-3 col-xs-auto">
-                      <button
-                        onClick={toggleDrawer("right", true)}
-                        // color="primary"
-                        className="btn btn-primary max-h-16"
-                      >
-                        <i className="mx-1 fa fa-filter "></i> Filters
-                      </button>
-                      <Drawer
-                        className="!mt-16 "
-                        anchor="right"
-                        open={state["right"]}
-                        onClose={toggleDrawer("right", false)}
-                      >
-                        {drawerList("right")}
-                      </Drawer>
-                    </div>
-                    {/* Right: WhatsApp, Email, and New Applicant Buttons 
-                    <div className="flex-wrap gap-2 col-8 col-md d-flex justify-content-end">
-                      <div>
-                        <input
-                          id="search-bar-0"
-                          className="h-10 form-control search"
-                          placeholder="Search..."
-                          onChange={handleSearchChange}
-                          value={searchAll}
-                        />
-                      </div>
-                      <div>
-                        {selectedApplicants.length > 0 && (
-                          <>
-                            <BaseButton
-                              className="ml-2 text-lg border-0 btn bg-danger edit-list w-fit"
-                              onClick={handleDeleteAll}
-                            >
-                              <i className="align-bottom ri-delete-bin-fill" />
-                              <ReactTooltip
-                                place="bottom"
-                                variant="error"
-                                content="Delete"
-                                anchorId={`Delete ${selectedApplicants.length} Emails`}
-                              />
-                            </BaseButton>
-
-                            <BaseButton
-                              className="ml-2 mr-0 text-lg btn btn-soft-secondary bg-primary edit-list"
-                              onClick={handleSendEmail}
-                            >
-                              <i className="align-bottom ri-mail-close-line" />
-                              <ReactTooltip
-                                place="bottom"
-                                variant="info"
-                                content="Email"
-                              />
-                            </BaseButton>
-                          </>
-                        )}
-
-                        <BaseButton
-                          color="primary"
-                          className="ml-2 bg-green-900 btn btn-soft-secondary edit-list"
-                          hoverOptions={["Resume", "Manual", "Csv", "All"]}
-                          onOptionClick={(option) => {
-                            handleExportExcel(option === "All" ? "" : option); // Pass an empty string when "All" is selected
-                          }}
-                        >
-                          <i className="align-bottom ri-upload-2-line me-1" />
-                          Export
-                        </BaseButton>
-
-                        <BaseButton
-                          color="success"
-                          onClick={handleNavigate}
-                          className="ml-2"
-                        >
-                          <i className="align-bottom ri-add-line me-1" />
-                          Add
-                        </BaseButton>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </CardBody>
-            </Card>
-          </div>
-        </Row> */}
-
         <Row>
           <div>
             <Card className="my-3 mb-3">
               <CardBody>
                 <div className="container">
                   <div className="row align-items-center">
-                    <div className="col-3 col-xs-auto">
+                    {/* Filter Button */}
+                    <div className="mb-2 col-12 col-md-3 mb-md-0 d-flex justify-content-start">
                       <button
                         onClick={toggleDrawer("right", true)}
-                        className="btn btn-primary max-h-16"
+                        className="btn btn-primary d-block d-md-inline-block"
+                        style={{
+                          width: isMobile ? "150px" : "auto",
+                        }}
                       >
                         <i className="mx-1 fa fa-filter"></i> Filters
                       </button>
@@ -1209,52 +1129,45 @@ const Applicant = () => {
                         {drawerList("right")}
                       </Drawer>
                     </div>
-                    <div className="flex-wrap mt-2 col-9 col-md d-flex flex-column flex-md-row justify-content-end mt-md-0">
-                      {/* Search Bar (Always on top in mobile) */}
-                      <div className="col-12 col-md-auto">
-                        <input
-                          id="search-bar-0"
-                          className="h-10 form-control search"
-                          placeholder="Search..."
-                          onChange={handleSearchChange}
-                          value={searchAll}
-                        />
-                      </div>
 
-                      {/* Buttons (Move to next line on small screens) */}
+                    {/* Search & Buttons */}
+                    <div
+                      className="flex-wrap gap-2 col-12 col-md-9 d-flex justify-content-end"
+                      // style={{
+                      //   position: isMobile ? "absolute" : "static",
+                      //   right: isMobile ? "0px" : "auto",
+                      //   top: isMobile ? "10px" : "auto",
+                      // }}
+                    >
+                      <input
+                        id="search-bar-0"
+                        className="h-10 form-control search w-100 w-md-auto"
+                        placeholder="Search..."
+                        onChange={handleSearchChange}
+                        value={searchAll}
+                      />
 
                       {selectedApplicants.length > 0 && (
                         <>
                           <BaseButton
-                            className="ml-2 text-lg border-0 btn bg-danger edit-list"
+                            className="border-0 btn bg-danger"
                             onClick={handleDeleteAll}
                           >
-                            <i className="align-bottom ri-delete-bin-fill" />
-                            <ReactTooltip
-                              place="bottom"
-                              variant="error"
-                              content="Delete"
-                              anchorId={`Delete ${selectedApplicants.length} Emails`}
-                            />
+                            <i className="ri-delete-bin-fill" />
                           </BaseButton>
 
                           <BaseButton
-                            className="ml-2 text-lg btn btn-soft-secondary bg-primary edit-list"
+                            className="btn bg-primary"
                             onClick={handleSendEmail}
                           >
-                            <i className="align-bottom ri-mail-close-line" />
-                            <ReactTooltip
-                              place="bottom"
-                              variant="info"
-                              content="Email"
-                            />
+                            <i className="ri-mail-close-line" />
                           </BaseButton>
                         </>
                       )}
 
                       <BaseButton
                         color="primary"
-                        className="ml-2 bg-green-900 btn btn-soft-secondary edit-list"
+                        className="bg-green-900"
                         hoverOptions={[
                           "Manual",
                           "Resume",
@@ -1272,16 +1185,12 @@ const Applicant = () => {
                           )
                         }
                       >
-                        <i className="align-bottom ri-upload-2-line me-1" />
+                        <i className="ri-upload-2-line me-1" />
                         Export
                       </BaseButton>
 
-                      <BaseButton
-                        color="success"
-                        onClick={handleNavigate}
-                        className="ml-2"
-                      >
-                        <i className="align-bottom ri-add-line me-1" />
+                      <BaseButton color="success" onClick={handleNavigate}>
+                        <i className="ri-add-line me-1" />
                         Add
                       </BaseButton>
                     </div>
@@ -1291,6 +1200,8 @@ const Applicant = () => {
             </Card>
           </div>
         </Row>
+
+        {/*///////////////////////////////////////////////////////////////////////////////////////////*/}
 
         <Row>
           <Col lg={12}>

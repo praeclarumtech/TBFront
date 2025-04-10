@@ -159,8 +159,8 @@ const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
               paddingBottom: "20px",
               overflowY: "auto",
               height: "calc(100vh - 104px)",
-              backgroundColor:
-                isMobile && !showMenu ? "rgba(0, 0, 0, 0.5)" : "transparent",
+              overflow:
+                isMobile && !showMenu ? "hidden" : "auto",
               transition: " 0.5s ease-in-out",
             }}
           >

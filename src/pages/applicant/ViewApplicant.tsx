@@ -448,12 +448,34 @@ const ViewModal: React.FC<ViewModalProps> = ({
                     />
                   </Col>
                 </Row>
+                <Row gutter={[16, 16]}>
+                  <Col span={24}>
+                    <DetailsRow
+                      label="Other Skills"
+                      value={
+                        formData.otherSkills.length > 0 ? (
+                          <div className="flex flex-wrap gap-1">
+                            {formData.otherSkills
+                              .split(",")
+                              .map((skill, index) => (
+                                <Tag key={index} color="purple">
+                                  {skill.trim()}
+                                </Tag>
+                              ))}
+                          </div>
+                        ) : (
+                          "-"
+                        )
+                      }
+                    />
+                    {/* <DetailsRow
+                      label=""
+                      value={formData.otherSkills || "-"}
+                    /> */}
+                  </Col>
+                </Row>
                 {/* </DetailsCard> */}
 
-                <DetailsRow
-                  label="Other Skills"
-                  value={formData.otherSkills || "-"}
-                />
                 <DetailsRow
                   label="Work Preference"
                   value={

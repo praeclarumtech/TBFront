@@ -65,7 +65,7 @@ const ProgressBars: React.FC<ProgressBarsProps> = ({
             now={percentage}
             max={totalApplicants}
             variant={colour}
-            className="!h-[10px] hover:shadow-2xl hover:brightness-125 hover:scale-105 hover:ml-2"
+            className="!h-[10px] hover:cursor-pointer"
           />
           <div className="d-flex justify-between mt-1">
             <div className="justify-start">{label}</div>

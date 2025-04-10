@@ -48,6 +48,7 @@ export const listOfApplicants = async (params: {
   rating?: string;
   workPreference?: string;
   searchS?: string;
+  appliedRole?: string;
 }) => {
   const response = await authServices.get(`${LIST_APPLICANT}`, { params });
   return response?.data;

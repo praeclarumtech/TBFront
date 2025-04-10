@@ -489,6 +489,12 @@ const appConstants = Object.freeze({
     { label: "Karnataka", value: "karnataka" },
   ],
   countriesType: [{ label: "India", value: "india" }],
+
+  addedByOptions : [
+    { label: "Resume", value: "Resume" },
+    { label: "Manual", value: "Manual" },
+    { label: "CSV", value: "Csv" },
+  ],
 });
 
 export default appConstants;
