@@ -291,18 +291,7 @@ const StepperForm = () => {
             setLoading(false);
           });
       }
-      // getApplicantDetails(id)
-      //   .then((res: any) => {
-      //     if (res.success) {
-      //       setFormData(res.data);
-      //     }
-      //   })
-      //   .catch((error) => {
-      //     errorHandle(error);
-      //   })
-      //   .finally(() => {
-      //     setLoading(false);
-      //   });
+      
     }
   };
 

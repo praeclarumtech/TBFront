@@ -37,7 +37,7 @@ export const viewProfile = async (id?: string, data?: object) => {
   return response?.data;
 };
 
-export const changePassword = async (id?: number, data?: object) => {
+export const changePassword = async (id?: string, data?: object) => {
   const response = await authServices.post(`${CHANGEPASSWORD}/${id}`, data);
   return response?.data;
 };

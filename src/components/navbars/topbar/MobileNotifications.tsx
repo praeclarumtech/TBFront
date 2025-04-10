@@ -74,6 +74,14 @@ export const MobileNotifications = () => {
             <i className="fe fe-user me-2"></i> Edit Profile
           </Dropdown.Item>
           <Dropdown.Item
+            eventKey="2"
+            onClick={() => {
+              navigate("/change-password");
+            }}
+          >
+            <i className="fe fe-lock me-2"></i> Change Password
+          </Dropdown.Item>
+          <Dropdown.Item
             onClick={() => {
               // Clear any auth tokens/session data here if needed
               navigate("/");

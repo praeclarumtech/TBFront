@@ -16,6 +16,7 @@ import { BaseSelect } from "components/BaseComponents/BaseSelect";
 import { SelectedOption } from "interfaces/applicant.interface";
 import BaseButton from "components/BaseComponents/BaseButton";
 import { useNavigate } from "react-router";
+// import { statusCode } from '../../interfaces/global.interface';
 
 const Profile = () => {
   const hasMounted = useMounted();
@@ -51,9 +52,9 @@ const Profile = () => {
         setProfileData(response?.data);
       } catch (error) {
         // console.log(error);
-         toast.error(
-           error instanceof Error ? error.message : "An error occurred"
-         );
+        toast.error(
+          error instanceof Error ? error.message : "An error occurred"
+        );
       } finally {
         setLoading(false);
       }
@@ -98,11 +99,17 @@ const Profile = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (error) {
-      toast.error("Please correct the errors before submitting.");
+      toast.error("Kindly correct the errors before submitting the changes.");
       return;
     }
+    // const profilePicture = event.target.files?.[0];
+    // if (!profilePicture) return;
+
+    
 
     const formDataToSend = new FormData();
+
+    console.log("profile data", formData);
 
     for (const key in formData) {
       if (key === "profilePicture") {
@@ -127,7 +134,7 @@ const Profile = () => {
 
       if (response) {
         toast.success(response?.message || "Profile updated successfully!");
-
+        console.log(" function of error", response?.message);
         setLoading(false);
 
         setImagePreview(
@@ -144,14 +151,23 @@ const Profile = () => {
         // );
       }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "An error occurred");
+      // if (error && statusCode === 400) {
+        console.log(" function of error", error);
+        toast.error(error instanceof Error ? error.message : "An error occurred");
+      // }
     } finally {
       setLoading(false);
     }
   };
 
   const handleProfilePicChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+    const file = e?.target?.files?.[0];
+    // const fileExtension = file?.name?.split(".").pop()?.toLowerCase();
+
+    // if (![".png", ".jpg", ".jpeg"].includes(fileExtension || "")) {
+    //   toast.error("Invalid file type. Only JPG, JPEG, and PNG are allowed.");
+    //   return;
+    // }
     if (file) {
       setFormData((prevState) => ({
         ...prevState,
@@ -181,7 +197,7 @@ const Profile = () => {
 
     if (year.length === 4) {
       if (Number(year) < 1960 || Number(year) > 2009) {
-        setError("Please enter a year between 1960 and 2009.");
+        setError("Please enter a year between 1960 to 2009.");
         return;
       }
 
@@ -207,7 +223,7 @@ const Profile = () => {
   };
   return (
     <Container fluid className="p-6">
-      <Row className="mb-8">
+      <Row className="my-8">
         <Col xl={12} lg={12} md={12} xs={12}>
           <Card>
             {loading ? (
@@ -245,7 +261,8 @@ const Profile = () => {
                         <div className="space-x-2">
                           <input
                             type="file"
-                            accept="image/*"
+                              // accept="image/*"
+                              accept=".png, .jpg, .jpeg"
                             className="hidden"
                             id="profilePicInput"
                             onChange={handleProfilePicChange}
@@ -275,6 +292,7 @@ const Profile = () => {
                       <Row className="md:mb-4 lg:mb-4 xl:mb-4 ">
                         <Col md={6} sm={12} xl={6} lg={6}>
                           <BaseInput
+                            className="sm:mb-4"
                             label="Username"
                             name="userName"
                             type="text"
@@ -287,6 +305,7 @@ const Profile = () => {
                         </Col>
                         <Col md={6} sm={12} xl={6} lg={6}>
                           <BaseInput
+                            className="sm:mb-4"
                             label="Email"
                             name="email"
                             type="email"
@@ -302,7 +321,7 @@ const Profile = () => {
                           <BaseInput
                             label="First Name"
                             name="firstName"
-                            className=""
+                            className="sm:mb-4"
                             type="text"
                             placeholder={InputPlaceHolder("First Name")}
                             handleChange={(e) => {
@@ -319,6 +338,7 @@ const Profile = () => {
                         <Col md={6} sm={12} xl={6} lg={6}>
                           <BaseInput
                             label="Last Name"
+                            className="sm:mb-4"
                             name="lastName"
                             type="text"
                             placeholder={InputPlaceHolder("Last Name")}
@@ -338,6 +358,7 @@ const Profile = () => {
                       <Row className="md:mb-4 lg:mb-4 xl:mb-4 ">
                         <Col md={6} sm={12} xl={6} lg={6}>
                           <BaseInput
+                            className="sm:mb-4"
                             label="Phone Number"
                             name="phoneNumber"
                             type="text"
@@ -359,6 +380,7 @@ const Profile = () => {
                         </Col>
                         <Col md={6} sm={12} xl={6} lg={6}>
                           <BaseInput
+                            className="sm:mb-4"
                             label="Designation"
                             name="designation"
                             type="text"
@@ -397,17 +419,12 @@ const Profile = () => {
                         </Col>
                         <Col md={6} sm={12} xl={6} lg={6}>
                           <BaseInput
+                            className="sm:mb-4"
                             label="Date Of Birth"
                             name="dateOfBirth"
                             type="date"
                             placeholder={InputPlaceHolder("Date Of Birth")}
-                            // handleChange={(e) => {
-                            //   const date = e.target.value;
-                            //   setFormData({
-                            //     ...formData,
-                            //     dateOfBirth: date,
-                            //   });
-                            // }}
+                          
                             handleChange={handleDateChange}
                             value={
                               formData.dateOfBirth
