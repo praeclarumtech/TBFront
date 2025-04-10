@@ -25,6 +25,7 @@ import AddSkill from "pages/master/Skills";
 import AddDegree from "pages/master/Degree";
 import ImportApplicantTables from "pages/applicant/importApplicants/Index";
 import Profile from "pages/UserProfile/Profile";
+import ChangePassword from 'pages/auth/ChangePassword';
 
 const RenderRouter: React.FC = () => {
   const {
@@ -73,6 +74,14 @@ const RenderRouter: React.FC = () => {
           element={
             <RootLayout>
               <Profile />
+            </RootLayout>
+          }
+        />
+        <Route
+          path={"change-password"}
+          element={
+            <RootLayout>
+              <ChangePassword/>
             </RootLayout>
           }
         />

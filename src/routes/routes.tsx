@@ -14,6 +14,7 @@ import UpdatePassword from "pages/auth/UpdatePassword";
 import AddDegree from "pages/master/Degree";
 import ImportApplicantTables from "pages/applicant/importApplicants/Index";
 import Profile from "pages/UserProfile/Profile";
+import ChangePassword from "pages/auth/ChangePassword";
 
 const routes = {
   ROOT: {
@@ -39,6 +40,11 @@ const routes = {
     path: "/update-password",
     element: UpdatePassword,
   },
+  CHANGE_PASSWORD: {
+    title: "change Password",
+    path: "/change-password",
+    element: ChangePassword,
+  },
   SIGN_UP: {
     title: "Sign Up",
     path: "/sign-up",
@@ -52,8 +58,7 @@ const routes = {
   USERPROFILE: {
     title: "User Profile",
     path: "/userprofile",
-    element:Profile ,
-    
+    element: Profile,
   },
   APPLICANTS: {
     title: "Applicants",

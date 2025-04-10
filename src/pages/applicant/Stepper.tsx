@@ -291,18 +291,7 @@ const StepperForm = () => {
             setLoading(false);
           });
       }
-      // getApplicantDetails(id)
-      //   .then((res: any) => {
-      //     if (res.success) {
-      //       setFormData(res.data);
-      //     }
-      //   })
-      //   .catch((error) => {
-      //     errorHandle(error);
-      //   })
-      //   .finally(() => {
-      //     setLoading(false);
-      //   });
+      
     }
   };
 
@@ -321,7 +310,7 @@ const StepperForm = () => {
           <Card.Body>
             <Box
               sx={{
-                width: "100%",
+                width: "100%", width: "100%",
                 justifyContent: isMobile ? "center" : "flex-start",
                 // display: "flex",
                 display: isMobile ? "flex" : "",
