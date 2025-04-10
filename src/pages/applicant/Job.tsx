@@ -29,71 +29,8 @@ const {
   anyHandOnOffers,
   workPreferenceType,
   // skillOptions,
+  technologyOptions,
 } = appConstants;
-
-type Role =
-  | "Frontend Developer"
-  | "Backend Developer"
-  | "Full Stack Developer"
-  | "Data Analyst"
-  | "Data Scientist"
-  | "Product Manager"
-  | "UX/UI Designer"
-  | "QA Engineer"
-  | "DevOps Engineer"
-  | "Business Analyst"
-  | "Technical Support Engineer"
-  | "Software Engineer"
-  | "MERN Stack Developer" 
-  | "MEAN Stack Developer" 
-  | "DotNet Full Stack Developer" 
-  | "Java Developer" 
-  | "Python Developer" 
-  | "PHP Developer" 
-  | "Other"
-  | "Na";
-
-const technologyOptions: Record<Role, string[]> = {
-  "Frontend Developer": ["React", "MUI", "TypeScript", "JavaScript", "Angular"],
-  "Backend Developer": ["Nodejs", "Nextjs", "Express", "MongoDB", "GraphQL"],
-  "Full Stack Developer": [
-    "React",
-    "Nodejs",
-    // "Next.js",
-    "Express",
-    "MongoDB",
-    "GraphQL",
-  ],
-  "Data Analyst": ["Python", "R", "SQL", "Power BI", "Excel"],
-  "Data Scientist": ["Python", "R", "Pandas", "Matplotlib"],
-  "Product Manager": ["Jira", "Trello", "Confluence", "Asana"],
-  "UX/UI Designer": ["Figma", "Sketch", "Adobe XD", "InVision"],
-  "QA Engineer": ["Selenium", "Jest", "Mocha", "JUnit", "Cypress"],
-  "DevOps Engineer": ["Docker", "Kubernetes", "Terraform", "AWS"],
-  "Business Analyst": ["SQL", "Excel", "Tableau", "Power BI"],
-  "Technical Support Engineer": ["Zendesk", "Freshdesk", "Jira", "ServiceNow"],
-  "Software Engineer": ["Java", "Python", "C#", "SQL", "Git"], 
-  "MERN Stack Developer": [
-    "MongoDB",
-    "Express",
-    "React",
-    "NodeJs",
-    "JavaScript",
-  ],
-  "MEAN Stack Developer": [
-    "MongoDB",
-    "Express",
-    "Angular",
-    "NodeJs",
-    "JavaScript",
-  ], 
-  "DotNet Full Stack Developer": [".NET", "C#", "SQL", "JavaScript", "Angular"], 
-  "Java Developer": ["Java", "Spring Boot", "Hibernate", "SQL", "Maven"], 
-  "Python Developer": ["Python", "Django", "Flask", "SQL", "Git"], 
-  "PHP Developer": ["PHP", "Laravel", "MySQL", "JavaScript", "HTML/CSS"], 
-  Other: [],
-  Na: [],
-};
 
 const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
   document.title = Modules.Applicant + " | " + projectTitle;
@@ -104,7 +41,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
   const [selectedRole, setSelectedRole] = useState<string>(
     initialValues?.appliedRole || ""
   );
-  
+
   const [loading, setLoading] = useState<boolean>(false);
   // const [meta, setTechnologyExperience] = useState<any>({});
 
@@ -250,11 +187,15 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
       setSelectedRole(newRole);
       validation.setFieldValue("appliedRole", newRole);
 
-      const roleTechnologies = technologyOptions[newRole as Role] || [];
-      const newMeta = roleTechnologies.reduce((acc: any, tech: string) => {
-        acc[tech] = validation.values.meta[tech] || "";
-        return acc;
-      }, {});
+      const roleTechnologies =
+        technologyOptions[newRole as keyof typeof technologyOptions] || [];
+      const newMeta = roleTechnologies.reduce(
+        (acc: Record<string, string>, tech: string) => {
+          acc[tech] = validation.values.meta[tech] || "";
+          return acc;
+        },
+        {}
+      );
       validation.setFieldValue("meta", newMeta);
     } else {
       setSelectedRole("");
@@ -269,10 +210,9 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
   //     [tech]: value,
   //   }));
   // };
- const handleTechnologyExperienceChange = (tech: string, value: string) => {
-   validation.setFieldValue(`meta.${tech}`, value);
- };
-
+  const handleTechnologyExperienceChange = (tech: string, value: string) => {
+    validation.setFieldValue(`meta.${tech}`, value);
+  };
 
   // useEffect(() => {
   //   if (selectedRole in technologyOptions) {
@@ -284,7 +224,6 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
   //     setTechnologyExperience(updatedMeta);
   //   }
   // }, [selectedRole, initialValues?.meta]);
-
 
   return (
     <Fragment>
@@ -533,7 +472,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                       dynamicFind(
                         designationType,
                         validation.values.currentCompanyDesignation
-                      ) || 'Na'
+                      ) || "Na"
                     }
                     touched={validation.touched.currentCompanyDesignation}
                     error={validation.errors.currentCompanyDesignation}
@@ -839,18 +778,19 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     <div className="mb-4 ">
                       <h5>Technologies for {selectedRole}:</h5>
                       <div className="d-flex flex-wrap space-x-2  ">
-                        {technologyOptions[selectedRole as Role].map(
-                          (tech: string) => (
-                            <Col
-                              xs={12}
-                              sm={2}
-                              md={2}
-                              lg={2}
-                              xl={2}
-                              className="mb-3"
-                              key={tech}
-                            >
-                              {/* <BaseInput
+                        {technologyOptions[
+                          selectedRole as keyof typeof technologyOptions
+                        ].map((tech: string) => (
+                          <Col
+                            xs={12}
+                            sm={2}
+                            md={2}
+                            lg={2}
+                            xl={2}
+                            className="mb-3"
+                            key={tech}
+                          >
+                            {/* <BaseInput
                                 name={tech}
                                 type="text"
                                 className=" "
@@ -869,84 +809,73 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                                 }}
                               /> */}
 
-                              <BaseInput
-                                name={tech}
-                                type="text"
-                                className=" "
-                                label={`${tech} Exp.(Yrs)`}
-                                placeholder={`${tech}`}
-                                // value={meta[tech] || ""}
-                                value={validation.values.meta[tech] || ""}
-                                handleChange={(e) => {
-                                  let value = e.target.value;
+                            <BaseInput
+                              name={tech}
+                              type="text"
+                              className=" "
+                              label={`${tech} Exp.(Yrs)`}
+                              placeholder={`${tech}`}
+                              // value={meta[tech] || ""}
+                              value={validation.values.meta[tech] || ""}
+                              handleChange={(e) => {
+                                let value = e.target.value;
 
-                                  value = value.replace(/[^0-9.]/g, "");
+                                value = value.replace(/[^0-9.]/g, "");
 
-                                  const parts = value.split(".");
+                                const parts = value.split(".");
 
-                                  if (parts.length > 2) {
-                                    value =
-                                      parts[0] + "." + parts.slice(1).join("");
-                                  }
+                                if (parts.length > 2) {
+                                  value =
+                                    parts[0] + "." + parts.slice(1).join("");
+                                }
 
-                                  if (parts[1]?.length > 2) {
-                                    value =
-                                      parts[0] + "." + parts[1].slice(0, 2);
-                                  }
+                                if (parts[1]?.length > 2) {
+                                  value = parts[0] + "." + parts[1].slice(0, 2);
+                                }
 
+                                const numValue = parseFloat(value);
+                                if (
+                                  !isNaN(numValue) &&
+                                  numValue >= 0 &&
+                                  numValue <= 30
+                                ) {
+                                  validation.setFieldValue(tech, value);
+                                  handleTechnologyExperienceChange(tech, value);
+                                } else if (value === "" || value === ".") {
+                                  validation.setFieldValue(tech, value);
+                                  handleTechnologyExperienceChange(tech, value);
+                                } else {
+                                  // Don't update anything if the value is invalid
+                                  return;
+                                }
+                                validation.setFieldValue(`meta.${tech}`, value);
+                              }}
+                              handleBlur={(e) => {
+                                const value = e.target.value;
+
+                                if (value && !isNaN(parseFloat(value))) {
                                   const numValue = parseFloat(value);
-                                  if (
-                                    !isNaN(numValue) &&
-                                    numValue >= 0 &&
-                                    numValue <= 30
-                                  ) {
-                                    validation.setFieldValue(tech, value);
-                                    handleTechnologyExperienceChange(
+                                  if (numValue >= 0 && numValue <= 30) {
+                                    validation.setFieldValue(
                                       tech,
-                                      value
+                                      numValue.toFixed(2)
                                     );
-                                  } else if (value === "" || value === ".") {
-                                    validation.setFieldValue(tech, value);
-                                    handleTechnologyExperienceChange(
-                                      tech,
-                                      value
-                                    );
-                                  } else {
-                                    // Don't update anything if the value is invalid
-                                    return;
-                                  }
-                                  validation.setFieldValue(
-                                    `meta.${tech}`,
-                                    value
-                                  );
-                                }}
-                                handleBlur={(e) => {
-                                  const value = e.target.value;
-
-                                  if (value && !isNaN(parseFloat(value))) {
-                                    const numValue = parseFloat(value);
-                                    if (numValue >= 0 && numValue <= 30) {
-                                      validation.setFieldValue(
-                                        tech,
-                                        numValue.toFixed(2)
-                                      );
-                                    } else {
-                                      validation.setFieldValue(tech, "");
-                                    }
                                   } else {
                                     validation.setFieldValue(tech, "");
                                   }
+                                } else {
+                                  validation.setFieldValue(tech, "");
+                                }
 
-                                  validation.handleBlur(e);
-                                }}
-                                // value={validation.values[tech]}
-                                touched={validation.touched.meta?.[tech]}
-                                error={validation.errors.meta?.[tech]}
-                                passwordToggle={false}
-                              />
-                            </Col>
-                          )
-                        )}
+                                validation.handleBlur(e);
+                              }}
+                              // value={validation.values[tech]}
+                              touched={validation.touched.meta?.[tech]}
+                              error={validation.errors.meta?.[tech]}
+                              passwordToggle={false}
+                            />
+                          </Col>
+                        ))}
                       </div>
                     </div>
                   )}

@@ -25,7 +25,7 @@ import AddSkill from "pages/master/Skills";
 import AddDegree from "pages/master/Degree";
 import ImportApplicantTables from "pages/applicant/importApplicants/Index";
 import Profile from "pages/UserProfile/Profile";
-import ChangePassword from 'pages/auth/ChangePassword';
+import ChangePassword from "pages/auth/ChangePassword";
 
 const RenderRouter: React.FC = () => {
   const {
@@ -39,6 +39,7 @@ const RenderRouter: React.FC = () => {
     EMAIL,
     REPORT,
     MASTER,
+    CHANGE_PASSWORD,
   } = routes;
 
   const router = createBrowserRouter(
@@ -78,10 +79,10 @@ const RenderRouter: React.FC = () => {
           }
         />
         <Route
-          path={"change-password"}
+          path={CHANGE_PASSWORD.path}
           element={
             <RootLayout>
-              <ChangePassword/>
+              <ChangePassword showModal={true} setShowModal={() => {}} />
             </RootLayout>
           }
         />
