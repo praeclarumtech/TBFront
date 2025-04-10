@@ -45,7 +45,7 @@ import debounce from "lodash.debounce";
 
 const { handleResponse } = appConstants;
 import { ViewAppliedSkills } from "api/skillsApi";
-import { IconButton } from "@mui/material";
+import { IconButton, useMediaQuery } from "@mui/material";
 import { Close } from "@mui/icons-material";
 const {
   projectTitle,
@@ -122,6 +122,7 @@ const Applicant = () => {
     string[]
   >([]);
 
+const isDesktop = useMediaQuery('(min-width: 768px)');
   const toggleDrawer =
     (anchor: Anchor, open: boolean) =>
     (event: React.KeyboardEvent | React.MouseEvent) => {
@@ -434,13 +435,7 @@ const Applicant = () => {
     }
   };
 
-  // const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   if (event.target.checked) {
-  //     setSelectedApplicants(applicant.map((app) => app._id));
-  //   } else {
-  //     setSelectedApplicants([]);
-  //   }
-  // };
+
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
       setSelectedApplicants(applicant.map((app) => app._id));
@@ -449,13 +444,7 @@ const Applicant = () => {
     }
   };
 
-  // const handleSelectApplicant = (applicantId: string) => {
-  //   setSelectedApplicants((prev) =>
-  //     prev.includes(applicantId)
-  //       ? prev.filter((id) => id !== applicantId)
-  //       : [...prev, applicantId]
-  //   );
-  // };
+
   const handleSelectApplicant = (applicantId: string) => {
     setSelectedApplicants((prev) =>
       prev.includes(applicantId)
@@ -465,8 +454,8 @@ const Applicant = () => {
   };
 
   const handleDeleteSingle = (applicantId: string) => {
-    setMultipleApplicantsDelete([applicantId]); // Set the array with the single applicant ID
-    setShowDeleteModal(true); // Show the modal for confirmation
+    setMultipleApplicantsDelete([applicantId]); 
+    setShowDeleteModal(true); 
   };
 
   const closeDeleteModal = () => {
@@ -474,16 +463,12 @@ const Applicant = () => {
     setSelectedApplicants([]);
   };
 
-  // const handleDelete = (recordIdToDelete: string) => {
-  //   if (recordIdToDelete) {
-  //     deleteApplicantDetails(recordIdToDelete);
-  //   }
-  // };
+  
 
   const handleDeleteAll = () => {
     if (selectedApplicants.length > 0) {
-      setMultipleApplicantsDelete(selectedApplicants); // Set the selected applicants for deletion
-      setShowDeleteModal(true); // Show the modal for confirmation
+      setMultipleApplicantsDelete(selectedApplicants);
+      setShowDeleteModal(true); 
     }
   };
 
@@ -493,33 +478,19 @@ const Applicant = () => {
     setLoader(true);
     deleteMultipleApplicant(multipleApplicantDelete)
       .then(() => {
-        fetchApplicants(); // Refetch applicants after deletion
-        setSelectedApplicants([]); // Clear the selected applicants
+        fetchApplicants(); 
+        setSelectedApplicants([]); 
       })
       .catch((error: any) => {
-        errorHandle(error); // Handle any errors
+        errorHandle(error); 
       })
       .finally(() => {
-        setLoader(false); // Hide loader
-        setShowDeleteModal(false); // Close the delete modal
+        setLoader(false); 
+        setShowDeleteModal(false); 
       });
   };
 
-  // const deleteApplicantDetails = (_id: string | undefined | null) => {
-  //   setLoader(true);
-  //   deleteApplicant(_id)
-  //     .then(() => {
-  //       console.log("in dedleetetee", _id);
-  //       fetchApplicants();
-  //     })
-  //     .catch((error: any) => {
-  //       errorHandle(error);
-  //     })
-  //     .finally(() => {
-  //       setLoader(false);
-  //       setShowDeleteModal(false);
-  //     });
-  // };
+  
 
   const handleView = (id: string, source: string) => {
     setSelectedApplicantId(id);
@@ -586,9 +557,10 @@ const Applicant = () => {
   const drawerList = (anchor: Anchor) => (
     <Box
       sx={{
-        width: anchor === "top" || anchor === "bottom" ? "auto" : 400,
+        // width: anchor === "top" || anchor === "bottom" ? "auto" : 400,
         padding: "16px",
         marginTop: anchor === "top" ? "64px" : 0,
+        width: isDesktop ? 400 : 250,
       }}
       role="presentation"
     >
@@ -987,21 +959,7 @@ const Applicant = () => {
               />
             </BaseButton>
 
-            {/* <BaseButton
-              id={`delete-${cell?.row?.original?.id}`}
-              className="btn btn-sm btn-soft-danger remove-list"
-              color="danger"
-              onClick={() => openDeleteModal(cell.row.original._id)}
-              
-            >
-              <i className="align-bottom ri-delete-bin-5-fill" />
-              <ReactTooltip
-                place="bottom"
-                variant="error"
-                content="Delete"
-                anchorId={`delete-${cell?.row?.original?._id}`}
-              />
-            </BaseButton> */}
+          
 
             <BaseButton
               id={`delete-${cell?.row?.original?.id}`}
@@ -1045,15 +1003,7 @@ const Applicant = () => {
   const filteredApplicant = applicant.filter((applicants) => {
     const searchTerm = searchAll.toLowerCase();
 
-    // Construct full name
-    // const nameObj = applicants.name || {};
-    // const firstName = nameObj.firstName || "";
-    // const middleName = nameObj.middleName || "";
-    // const lastName = nameObj.lastName || "";
-    // const fullName = `${firstName} ${middleName} ${lastName}`
-    //   .trim()
-    //   .toLowerCase();
-
+   
     return (
       // fullName.includes(searchTerm) || // ✅ Search by full name
       applicants?.name?.firstName?.toLowerCase().includes(searchTerm) ||
@@ -1094,98 +1044,7 @@ const Applicant = () => {
         loader={loader}
       />
       <Container fluid>
-        {/* <Row>
-          <div>
-            <Card className="my-3 mb-3">
-              <CardBody>
-                <div className="container">
-                  <div className="inline-flex items-center row align-items-center ">
-                    <div className="col-3 col-xs-auto">
-                      <button
-                        onClick={toggleDrawer("right", true)}
-                        // color="primary"
-                        className="btn btn-primary max-h-16"
-                      >
-                        <i className="mx-1 fa fa-filter "></i> Filters
-                      </button>
-                      <Drawer
-                        className="!mt-16 "
-                        anchor="right"
-                        open={state["right"]}
-                        onClose={toggleDrawer("right", false)}
-                      >
-                        {drawerList("right")}
-                      </Drawer>
-                    </div>
-                    {/* Right: WhatsApp, Email, and New Applicant Buttons 
-                    <div className="flex-wrap gap-2 col-8 col-md d-flex justify-content-end">
-                      <div>
-                        <input
-                          id="search-bar-0"
-                          className="h-10 form-control search"
-                          placeholder="Search..."
-                          onChange={handleSearchChange}
-                          value={searchAll}
-                        />
-                      </div>
-                      <div>
-                        {selectedApplicants.length > 0 && (
-                          <>
-                            <BaseButton
-                              className="ml-2 text-lg border-0 btn bg-danger edit-list w-fit"
-                              onClick={handleDeleteAll}
-                            >
-                              <i className="align-bottom ri-delete-bin-fill" />
-                              <ReactTooltip
-                                place="bottom"
-                                variant="error"
-                                content="Delete"
-                                anchorId={`Delete ${selectedApplicants.length} Emails`}
-                              />
-                            </BaseButton>
-
-                            <BaseButton
-                              className="ml-2 mr-0 text-lg btn btn-soft-secondary bg-primary edit-list"
-                              onClick={handleSendEmail}
-                            >
-                              <i className="align-bottom ri-mail-close-line" />
-                              <ReactTooltip
-                                place="bottom"
-                                variant="info"
-                                content="Email"
-                              />
-                            </BaseButton>
-                          </>
-                        )}
-
-                        <BaseButton
-                          color="primary"
-                          className="ml-2 bg-green-900 btn btn-soft-secondary edit-list"
-                          hoverOptions={["Resume", "Manual", "Csv", "All"]}
-                          onOptionClick={(option) => {
-                            handleExportExcel(option === "All" ? "" : option); // Pass an empty string when "All" is selected
-                          }}
-                        >
-                          <i className="align-bottom ri-upload-2-line me-1" />
-                          Export
-                        </BaseButton>
-
-                        <BaseButton
-                          color="success"
-                          onClick={handleNavigate}
-                          className="ml-2"
-                        >
-                          <i className="align-bottom ri-add-line me-1" />
-                          Add
-                        </BaseButton>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </CardBody>
-            </Card>
-          </div>
-        </Row> */}
+      
 
         <Row>
           <div>

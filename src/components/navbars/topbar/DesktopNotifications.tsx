@@ -84,13 +84,21 @@ export const DesktopNotifications = () => {
             <div className="dropdown-divider my-0"></div>
           </Dropdown.Item>
           <Dropdown.Item
-            eventKey="2"
+            eventKey="1"
             onClick={() => {
               navigate("/userProfile");
             }}
           >
             <i className="fe fe-user me-2"></i> Edit Profile
           </Dropdown.Item>
+          <Dropdown.Item
+            onClick={() => {
+              navigate("/change-password");
+            }}
+          >
+            <i className="fe fe-lock me-2"></i>Change Password
+          </Dropdown.Item>
+          
           <Dropdown.Item
             onClick={() => {
               navigate("/");

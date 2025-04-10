@@ -1,4 +1,4 @@
-// /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Row, Col, Card, Container, CardBody, Spinner } from "react-bootstrap";
 import React, { Fragment, useEffect, useState, useMemo, useRef } from "react";
 import BaseButton from "components/BaseComponents/BaseButton";
@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import { IconButton, useMediaQuery } from "@mui/material";
 import "react-loading-skeleton/dist/skeleton.css";
 import {
   // deleteApplicant,
@@ -49,7 +49,7 @@ import BasePopUpModal from "components/BaseComponents/BasePopUpModal";
 import { ViewAppliedSkills } from "api/skillsApi";
 import { FaExclamationTriangle } from "react-icons/fa";
 import debounce from "lodash.debounce";
-import { IconButton } from "@mui/material";
+
 import { Close } from "@mui/icons-material";
 import BaseModal from "components/BaseComponents/BaseModal";
 // import toast from "react-hot-toast";
@@ -143,7 +143,7 @@ function ImportApplicant() {
   const [showBaseModal, setShowBaseModal] = useState(false);
   const [valueToEdit, setValueToEdit] = useState<ValueToEdit[]>([]);
   const [sourcePage, setSourcePage] = useState("import");
-
+const isDesktop = useMediaQuery('(min-width: 768px)');
   const toggleDrawer =
     (anchor: Anchor, open: boolean) =>
     (event: React.KeyboardEvent | React.MouseEvent) => {
@@ -169,327 +169,7 @@ function ImportApplicant() {
     null
   );
 
-  // const fetchApplicants = async () => {
-  //   setTableLoader(true);
-  //   setLoader(true);
-
-  //   try {
-  //     const params: {
-  //       page: number;
-  //       pageSize: number;
-  //       limit: number;
-  //       totalExperience?: string;
-  //       currentCity?: string;
-  //       appliedSkills?: string;
-  //       startDate?: string;
-  //       endDate?: string;
-  //       noticePeriod?: string;
-  //       status?: string;
-  //       interviewStage?: string;
-  //       gender?: string;
-  //       expectedPkg?: string;
-  //       currentCompanyDesignation?: string;
-  //       state?: string;
-  //       maritalStatus?: string;
-  //       anyHandOnOffers?: string;
-  //       rating?: string;
-  //       workPreference?: string;
-  //       communicationSkill?: string;
-  //       currentPkg?: string;
-  //       applicantName?: string;
-  //       searchS?: string;
-  //     } = {
-  //       page: pagination.pageIndex + 1,
-  //       pageSize: pagination.pageSize,
-  //       limit: 50,
-  //     };
-
-  //     if (experienceRange[0] !== 0 || experienceRange[1] !== 25) {
-  //       params.totalExperience = `${experienceRange[0]}-${experienceRange[1]}`;
-  //     }
-  //     if (filterNoticePeriod[0] !== 0 || filterNoticePeriod[1] !== 90) {
-  //       params.noticePeriod = `${filterNoticePeriod[0]}-${filterNoticePeriod[1]}`;
-  //     }
-  //     if (filterRating[0] !== 0 || filterRating[1] !== 10) {
-  //       params.rating = `${filterRating[0]}-${filterRating[1]}`;
-  //     }
-
-  //     if (filterEngRating[0] !== 0 || filterEngRating[1] !== 10) {
-  //       params.communicationSkill = `${filterEngRating[0]}-${filterEngRating[1]}`;
-  //     }
-  //     if (filterExpectedPkg[0] !== 0 || filterExpectedPkg[1] !== 100) {
-  //       params.expectedPkg = `${filterExpectedPkg[0]}-${filterExpectedPkg[1]}`;
-  //     }
-
-  //     if (filterCurrentPkg[0] !== 0 || filterCurrentPkg[1] !== 100) {
-  //       params.currentPkg = `${filterCurrentPkg[0]}-${filterCurrentPkg[1]}`;
-  //     }
-
-  //     if (filterWorkPreference) {
-  //       params.workPreference = filterWorkPreference.value;
-  //     }
-  //     if (filterAnyHandOnOffers) {
-  //       params.anyHandOnOffers = filterAnyHandOnOffers.value;
-  //     }
-  //     if (filterCity) {
-  //       params.currentCity = filterCity.value;
-  //     }
-  //     if (filterState) {
-  //       params.state = filterState.value;
-  //     }
-  //     if (appliedSkills.length > 0) {
-  //       params.appliedSkills = appliedSkills
-  //         .map((skill) => skill.label)
-  //         .join(",");
-  //     }
-
-  //     if (startDate) {
-  //       params.startDate = startDate;
-  //     }
-  //     if (endDate) {
-  //       params.endDate = endDate;
-  //     }
-  //     if (filterStatus) {
-  //       params.status = filterStatus.value;
-  //     }
-
-  //     if (filterDesignation) {
-  //       params.currentCompanyDesignation = filterDesignation.value;
-  //     }
-  //     if (filterInterviewStage) {
-  //       params.interviewStage = filterInterviewStage.value;
-  //     }
-  //     if (filterGender) {
-  //       params.gender = filterGender.value;
-  //     }
-  //     const searchValue = searchAll?.trim();
-  //     if (searchValue) {
-  //       params.searchS = searchValue;
-  //       params.appliedSkills = searchValue;
-  //     }
-
-  //     const res = await listOfImportApplicants(params);
-  //     setApplicant(res?.data?.item || []);
-  //     setTotalRecords(res?.data?.totalRecords || 0);
-  //   } catch (error) {
-  //     errorHandle(error);
-  //   } finally {
-  //     setTableLoader(false);
-  //     setLoader(false);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   const delayedSearch = debounce(() => {
-  //     fetchApplicants();
-  //   }, 0);
-  //   delayedSearch();
-  //   return () => delayedSearch.cancel();
-  // }, [
-  //   pagination.pageIndex,
-  //   pagination.pageSize,
-  //   appliedSkills,
-  //   startDate,
-  //   endDate,
-  //   filterCity,
-  //   filterGender,
-  //   filterInterviewStage,
-  //   filterStatus,
-  //   experienceRange,
-  //   filterNoticePeriod,
-  //   filterExpectedPkg,
-  //   filterCurrentPkg,
-  //   filterDesignation,
-  //   filterAnyHandOnOffers,
-  //   filterState,
-  //   filterRating,
-  //   filterEngRating,
-  //   filterWorkPreference,
-  // ]);
-
-  // useEffect(() => {
-  //   const fetchSkills = async () => {
-  //     try {
-  //       setLoading(true);
-  //       //  const allSkills: any[] = [];
-  //       const page = 1;
-  //       const pageSize = 50;
-  //       const limit = 200;
-  //       const response = await ViewAppliedSkills({
-  //         page,
-  //         pageSize,
-  //         limit,
-  //       });
-
-  //       const skillData = response?.data?.data || [];
-
-  //       setSkillOptions(
-  //         skillData.map((item: any) => ({
-  //           label: item.skills,
-  //           value: item._id,
-  //         }))
-  //       );
-  //     } catch (error) {
-  //       errorHandle(error);
-  //       // console.error("Error fetching skills", error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   fetchSkills();
-  // }, []);
-
-  {
-    /*helooooooo*/
-  }
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       setTableLoader(true);
-  //       setLoader(true);
-  //       setLoading(true);
-
-  //       // Define `params` with correct TypeScript typing
-  //       const params: {
-  //         page: number;
-  //         pageSize: number;
-  //         limit: number;
-  //         totalExperience?: string;
-  //         noticePeriod?: string;
-  //         rating?: string;
-  //         communicationSkill?: string;
-  //         expectedPkg?: string;
-  //         currentPkg?: string;
-  //         workPreference?: string;
-  //         anyHandOnOffers?: string;
-  //         currentCity?: string;
-  //         state?: string;
-  //         appliedSkills?: string;
-  //         startDate?: string;
-  //         endDate?: string;
-  //         status?: string;
-  //         currentCompanyDesignation?: string;
-  //         interviewStage?: string;
-  //         gender?: string;
-  //         searchS?: string;
-  //       } = {
-  //         page: pagination.pageIndex + 1,
-  //         pageSize: pagination.pageSize,
-  //         limit: 50,
-  //       };
-
-  //       // Apply filters dynamically
-  //       if (experienceRange[0] !== 0 || experienceRange[1] !== 25) {
-  //         params.totalExperience = `${experienceRange[0]}-${experienceRange[1]}`;
-  //       }
-  //       if (filterNoticePeriod[0] !== 0 || filterNoticePeriod[1] !== 90) {
-  //         params.noticePeriod = `${filterNoticePeriod[0]}-${filterNoticePeriod[1]}`;
-  //       }
-  //       if (filterRating[0] !== 0 || filterRating[1] !== 10) {
-  //         params.rating = `${filterRating[0]}-${filterRating[1]}`;
-  //       }
-  //       if (filterEngRating[0] !== 0 || filterEngRating[1] !== 10) {
-  //         params.communicationSkill = `${filterEngRating[0]}-${filterEngRating[1]}`;
-  //       }
-  //       if (filterExpectedPkg[0] !== 0 || filterExpectedPkg[1] !== 100) {
-  //         params.expectedPkg = `${filterExpectedPkg[0]}-${filterExpectedPkg[1]}`;
-  //       }
-  //       if (filterCurrentPkg[0] !== 0 || filterCurrentPkg[1] !== 100) {
-  //         params.currentPkg = `${filterCurrentPkg[0]}-${filterCurrentPkg[1]}`;
-  //       }
-  //       if (filterWorkPreference) {
-  //         params.workPreference = filterWorkPreference.value;
-  //       }
-  //       if (filterAnyHandOnOffers) {
-  //         params.anyHandOnOffers = filterAnyHandOnOffers.value;
-  //       }
-  //       if (filterCity) {
-  //         params.currentCity = filterCity.value;
-  //       }
-  //       if (filterState) {
-  //         params.state = filterState.value;
-  //       }
-  //       if (appliedSkills.length > 0) {
-  //         params.appliedSkills = appliedSkills.map((skill) => skill.label).join(",");
-  //       }
-  //       if (startDate) {
-  //         params.startDate = startDate;
-  //       }
-  //       if (endDate) {
-  //         params.endDate = endDate;
-  //       }
-  //       if (filterStatus) {
-  //         params.status = filterStatus.value;
-  //       }
-  //       if (filterDesignation) {
-  //         params.currentCompanyDesignation = filterDesignation.value;
-  //       }
-  //       if (filterInterviewStage) {
-  //         params.interviewStage = filterInterviewStage.value;
-  //       }
-  //       if (filterGender) {
-  //         params.gender = filterGender.value;
-  //       }
-  //       const searchValue = searchAll?.trim();
-  //       if (searchValue) {
-  //         params.searchS = searchValue;
-  //         params.appliedSkills = searchValue;
-  //       }
-
-  //       // Fetch both applicants and skills in parallel
-  //       const [applicantsResponse, skillsResponse] = await Promise.all([
-  //         listOfImportApplicants(params),
-  //         ViewAppliedSkills({ page: 1, pageSize: 50, limit: 200 }),
-  //       ]);
-
-  //       // Update state after fetching
-  //       setApplicant(applicantsResponse?.data?.item || []);
-  //       setTotalRecords(applicantsResponse?.data?.totalRecords || 0);
-  //       setSkillOptions(
-  //         (skillsResponse?.data?.data || []).map((item: { skills: any; _id: any; }) => ({
-  //           label: item.skills,
-  //           value: item._id,
-  //         }))
-  //       );
-  //     } catch (error) {
-  //       errorHandle(error);
-  //     } finally {
-  //       setTableLoader(false);
-  //       setLoader(false);
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   // Debounce to avoid excessive API calls
-  //   const delayedSearch = debounce(fetchData, 300);
-  //   delayedSearch();
-
-  //   return () => delayedSearch.cancel();
-  // }, [
-  //   pagination.pageIndex,
-  //   pagination.pageSize,
-  //   appliedSkills,
-  //   startDate,
-  //   endDate,
-  //   filterCity,
-  //   filterGender,
-  //   filterInterviewStage,
-  //   filterStatus,
-  //   experienceRange,
-  //   filterNoticePeriod,
-  //   filterExpectedPkg,
-  //   filterCurrentPkg,
-  //   filterDesignation,
-  //   filterAnyHandOnOffers,
-  //   filterState,
-  //   filterRating,
-  //   filterEngRating,
-  //   filterWorkPreference,
-  // ]);
-
-  // Function to fetch applicants
-
+  
   const fetchApplicants = async () => {
     setTableLoader(true);
     setLoader(true);
@@ -1100,7 +780,8 @@ function ImportApplicant() {
   const drawerList = (anchor: Anchor) => (
     <Box
       sx={{
-        width: anchor === "top" || anchor === "bottom" ? "auto" : 400,
+        // width: anchor === "top" || anchor === "bottom" ? "auto" : 400,
+        width: isDesktop ? 400 : 250,
         padding: "16px",
         marginTop: anchor === "top" ? "64px" : 0,
       }}
