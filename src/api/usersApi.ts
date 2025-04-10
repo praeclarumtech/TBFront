@@ -21,7 +21,6 @@ export const getProfile = async (data: object) => {
   return response?.data;
 };
 
-
 export const register = async (data: object) => {
   const response = await authServices.post(`${REGISTER}`, data);
   return response?.data;
@@ -37,7 +36,10 @@ export const viewProfile = async (id?: string, data?: object) => {
   return response?.data;
 };
 
-export const changePassword = async (id?: string, data?: object) => {
+export const changePassword = async (
+  id: string,
+  data: { oldPassword: string; newPassword: string; confirmPassword: string }
+) => {
   const response = await authServices.post(`${CHANGEPASSWORD}/${id}`, data);
   return response?.data;
 };

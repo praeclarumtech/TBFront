@@ -3,7 +3,7 @@ import * as Yup from "yup";
 
 export type SelectedOption = { label: string; value: string };
 export type SelectedOptionRole = { label: string; value: string };
-export type SelectedOption1 = { label: string; value: string;id:number };
+export type SelectedOption1 = { label: string; value: string; id: number };
 export const EducationApplicantSchema = Yup.object({
   qualification: Yup.string(),
   // .required("Qualification is required!"),
@@ -76,7 +76,10 @@ export const jobApplicantSchema = Yup.object({
     .min(1, "Rating must be between 1 and 10.")
     .max(10, "Rating must be between 1 and 10."),
   comment: Yup.string()
-    .min(10, "Please provide a detailed comment about how you found us (minimum 10 characters).")
+    .min(
+      10,
+      "Please provide a detailed comment about how you found us (minimum 10 characters)."
+    )
     .max(150, " Please keep your comment under 150 characters."),
   appliedSkills: Yup.array(),
     // .required("Skills are required!")
@@ -96,7 +99,6 @@ export const jobApplicantSchema = Yup.object({
 });
 
 export const personalApplicantSchema = Yup.object({
- 
   dateOfBirth: Yup.date()
     // .required("Date of birth is required!")
     .nullable()
@@ -176,3 +178,25 @@ export interface appliedSkills {
   label: string;
   value: string;
 }
+export type Role = [
+  "Frontend Developer",
+  "Backend Developer",
+  "Full Stack Developer",
+  "Data Analyst",
+  "Data Scientist",
+  "Product Manager",
+  "UX/UI Designer",
+  "QA Engineer",
+  "DevOps Engineer",
+  "Business Analyst",
+  "Technical Support Engineer",
+  "Software Engineer",
+  "MERN Stack Developer",
+  "MEAN Stack Developer",
+  "DotNet Full Stack Developer",
+  "Java Developer",
+  "Python Developer",
+  "PHP Developer",
+  "Other",
+  "Na"
+];

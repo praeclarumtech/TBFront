@@ -41,7 +41,7 @@ const routes = {
     element: UpdatePassword,
   },
   CHANGE_PASSWORD: {
-    title: "change Password",
+    title: "Change Password",
     path: "/change-password",
     element: ChangePassword,
   },

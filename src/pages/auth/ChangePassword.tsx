@@ -1,42 +1,41 @@
-
-import { Row, Col, Card, Form } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
+import { Row, Col, Form } from "react-bootstrap";
 import * as Yup from "yup";
-import { Container } from "react-bootstrap";
 import { useMounted } from "hooks/useMounted";
 import { changePassword } from "api/usersApi";
 import { toast } from "react-toastify";
 import BaseInput from "components/BaseComponents/BaseInput";
-import BaseButton from "components/BaseComponents/BaseButton";
 import { useFormik } from "formik";
-import { useState } from "react";
-
+import { SetStateAction, Dispatch, useState } from "react";
 import appConstants from "constants/constant";
 import { errorHandle, InputPlaceHolder } from "utils/commonFunctions";
+import { jwtDecode } from "jwt-decode";
+import BaseModal from "components/BaseComponents/BaseModal";
+import Loader from "components/BaseComponents/Loader";
 
-const {
-  projectTitle,
-  Modules,
-  SUCCESS,
-  passwordRegex,
-  validationMessages,
-} = appConstants;
+const { projectTitle, SUCCESS, passwordRegex, validationMessages, OK } =
+  appConstants;
 
-const UpdatePassword = () => {
-  document.title = Modules.UpdatePassword + " | " + projectTitle;
+interface ChangePasswordProps {
+  showModal: boolean;
+  setShowModal: Dispatch<SetStateAction<boolean>>;
+}
+
+const ChangePassword = ({ showModal, setShowModal }: ChangePasswordProps) => {
+  document.title = "Change Password | " + projectTitle;
   const hasMounted = useMounted();
-  const navigate = useNavigate();
-  const id = sessionStorage.getItem("id");
-
-  const [passwordShow, setPasswordShow] = useState<boolean>(false);
-  const [confirmPassword, setConfirmPassword] = useState<boolean>(false);
   const [loader, setLoader] = useState<boolean>(false);
+  const [showOldPassword, setShowOldPassword] = useState<boolean>(false);
+  const [showNewPassword, setShowNewPassword] = useState<boolean>(false);
+  const [showConfirmPassword, setShowConfirmPassword] =
+    useState<boolean>(false);
+
+  const token = sessionStorage.getItem("authUser");
+  const user = token ? jwtDecode(token) : null;
 
   const validation = useFormik({
     enableReinitialize: true,
     initialValues: {
       oldPassword: "",
-      id: id,
       newPassword: "",
       confirmPassword: "",
     },
@@ -45,39 +44,50 @@ const UpdatePassword = () => {
         validationMessages.required("Old Password")
       ),
       newPassword: Yup.string()
-        .required(validationMessages.required("Password"))
-        .min(8, validationMessages.passwordLength("Password", 8))
+        .required(validationMessages.required("New Password"))
+        .min(8, validationMessages.passwordLength("New Password", 8))
         .matches(
           passwordRegex,
-          validationMessages.passwordComplexity("Password")
+          validationMessages.passwordComplexity("New Password")
         ),
       confirmPassword: Yup.string()
         .required(validationMessages.required("Confirm Password"))
         .oneOf(
           [Yup.ref("newPassword")],
-          "Password and confirm password should be the same."
+          "Password and confirm password should be same."
         ),
     }),
-
     onSubmit: (values) => {
-      const payload = {
+      setLoader(true);
+      if (!user || typeof user !== "object" || !("id" in user)) {
+        toast.error("Invalid user data");
+        setLoader(false);
+        return;
+      }
+
+      if (!user || typeof user !== "object" || !("id" in user)) {
+        toast.error("Invalid user data");
+        setLoader(false);
+        return;
+      }
+
+      if (typeof user.id !== "string") {
+        toast.error("Invalid user ID format");
+        setLoader(false);
+        return;
+      }
+
+      changePassword(user.id, {
         oldPassword: values.oldPassword,
         newPassword: values.newPassword,
         confirmPassword: values.confirmPassword,
-      };
-     if (id === null) {
-       toast.error("Invalid user ID");
-       return;
-     }
-      setLoader(true);
-    
-      changePassword(id, payload)
+      })
         .then((res) => {
-          if (res?.statusCode === 200 && res?.success === SUCCESS) {
-            navigate("/change-password");
+          if (res?.statusCode === OK && res?.success === SUCCESS) {
             toast.success(res?.message);
-          }
-          else {
+            setShowModal(false);
+            validation.resetForm();
+          } else {
             toast.error(res?.message);
           }
         })
@@ -87,117 +97,83 @@ const UpdatePassword = () => {
         .finally(() => setLoader(false));
     },
   });
+  if (loader) {
+    return <Loader />;
+  }
 
   return (
-  
-    <Container fluid className="p-4">
-      <Row className="my-8 align-items-center justify-content-center">
-        <Col xl={6} lg={6} md={6} xs={6}>
-          <Card>
-            <Card.Body className="p-6 m-5">
-              <div className="mb-4 ">
-                <Link to="/dashboard">
-                  {/* <Image
-                  src="/images/brand/logo/logo-primary.svg"
-                  className="mb-2"
-                  alt=""
-                /> */}
+    <BaseModal
+      show={showModal}
+      onCloseClick={() => setShowModal(false)}
+      setShowBaseModal={setShowModal}
+      onSubmitClick={validation.handleSubmit} // Pass function reference
+      submitButtonText="Change Password"
+      closeButtonText="Close"
+      modalTitle="Change Password"
+    >
+      <Row className="align-items-center justify-content-center g-0">
+        <Col lg={12} md={8} xs={12} className="py-8 py-xl-0">
+          {hasMounted && (
+            <Form
+              onSubmit={(e) => {
+                e.preventDefault();
+                validation.handleSubmit();
+                return false;
+              }}
+            >
+              <Form.Group className="mb-3" controlId="oldPassword">
+                <BaseInput
+                  label="Current Password"
+                  name="oldPassword"
+                  type={showOldPassword ? "text" : "password"}
+                  placeholder={InputPlaceHolder("current password")}
+                  handleChange={validation.handleChange}
+                  handleBlur={validation.handleBlur}
+                  value={validation.values.oldPassword}
+                  touched={validation.touched.oldPassword}
+                  error={validation.errors.oldPassword}
+                  passwordToggle={true}
+                  onclick={() => setShowOldPassword(!showOldPassword)}
+                />
+              </Form.Group>
 
-                  <h4 className="justify-center text-3xl font-bold text-center text-dark ">
-                    Talent<span className="text-primary bold ">Box</span>{" "}
-                  </h4>
-                </Link>
-                <p className="mb-6 text-center justify-center items-center">
-                  Update Your Password using the old Password
-                </p>
-              </div>
-              {hasMounted && (
-                <Form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    validation.handleSubmit();
-                    return false;
-                  }}
-                >
-                  <Form.Group className="mb-3" controlId="email">
-                    <BaseInput
-                      label={"Old Password"}
-                      name="oldPassword"
-                      type="password"
-                      placeholder={InputPlaceHolder("Old password")}
-                      handleChange={validation.handleChange}
-                      handleBlur={validation.handleBlur}
-                      value={validation.values.oldPassword}
-                      touched={validation.touched.oldPassword}
-                      error={validation.errors.oldPassword}
-                      passwordToggle={true}
-                      onclick={() => setPasswordShow(!passwordShow)}
-                    />
-                  </Form.Group>
-                  <Form.Group className="mb-3" controlId="email">
-                    <BaseInput
-                      label={"New Password"}
-                      name="newPassword"
-                      type="password"
-                      placeholder={InputPlaceHolder("new password")}
-                      handleChange={validation.handleChange}
-                      handleBlur={validation.handleBlur}
-                      value={validation.values.newPassword}
-                      touched={validation.touched.newPassword}
-                      error={validation.errors.newPassword}
-                      passwordToggle={true}
-                      onclick={() => setPasswordShow(!passwordShow)}
-                    />
-                  </Form.Group>
+              <Form.Group className="mb-3" controlId="newPassword">
+                <BaseInput
+                  label="New Password"
+                  name="newPassword"
+                  type={showNewPassword ? "text" : "password"}
+                  placeholder={InputPlaceHolder("new password")}
+                  handleChange={validation.handleChange}
+                  handleBlur={validation.handleBlur}
+                  value={validation.values.newPassword}
+                  touched={validation.touched.newPassword}
+                  error={validation.errors.newPassword}
+                  passwordToggle={true}
+                  onclick={() => setShowNewPassword(!showNewPassword)}
+                />
+              </Form.Group>
 
-                  <Form.Group className="mb-3" controlId="email">
-                    <BaseInput
-                      label={"Confirm Passeord"}
-                      name="confirmPassword"
-                      type="password"
-                      // type={confirmPassword ? "text" : "password"}
-                      placeholder={InputPlaceHolder("confirm passeord")}
-                      handleChange={validation.handleChange}
-                      handleBlur={validation.handleBlur}
-                      value={validation.values.confirmPassword}
-                      touched={validation.touched.confirmPassword}
-                      error={validation.errors.confirmPassword}
-                      passwordToggle={true}
-                      onclick={() => {
-                        setConfirmPassword(!confirmPassword);
-                      }}
-                    />
-                  </Form.Group>
-
-                  <div className="mb-3 d-grid">
-                    <BaseButton
-                      color="primary"
-                      disabled={loader}
-                      className="w-100 mb-3"
-                      type="submit"
-                      loader={loader}
-                    >
-                      Update Password{" "}
-                    </BaseButton>
-
-                    {/* <span> */}
-                    <BaseButton
-                      color="danger"
-                      onClick={() => navigate("/dashboard")}
-                      className=" w-100 cursor-pointer  text-center justify-center   text-white "
-                    >
-                      Back
-                    </BaseButton>
-                  </div>
-                  {/* </span> */}
-                </Form>
-              )}
-            </Card.Body>
-          </Card>
+              <Form.Group className="mb-3" controlId="confirmPassword">
+                <BaseInput
+                  label="Confirm New Password"
+                  name="confirmPassword"
+                  type={showConfirmPassword ? "text" : "password"}
+                  placeholder={InputPlaceHolder("confirm new password")}
+                  handleChange={validation.handleChange}
+                  handleBlur={validation.handleBlur}
+                  value={validation.values.confirmPassword}
+                  touched={validation.touched.confirmPassword}
+                  error={validation.errors.confirmPassword}
+                  passwordToggle={true}
+                  onclick={() => setShowConfirmPassword(!showConfirmPassword)}
+                />
+              </Form.Group>
+            </Form>
+          )}
         </Col>
       </Row>
-    </Container>
+    </BaseModal>
   );
 };
 
-export default UpdatePassword;
+export default ChangePassword;
