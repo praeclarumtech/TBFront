@@ -60,7 +60,7 @@ interface ApplicantDetails {
   clientCvUrl: string;
   clientFeedback: string;
   permanentAddress: string;
-  addedFrom: string;
+  addedBy: string;
   linkedinUrl: string;
   feedback: string;
   practicalFeedback: string;
@@ -94,7 +94,7 @@ const DetailsRow = ({
   icon?: JSX.Element;
   // className?: string;
 }) => (
-  <p className="mb-[0.8rem] whitespace-nowrap">
+  <p className="mb-[0.8rem]">
     {icon}
     <strong>{label}:</strong> {value || "-"}
   </p>
@@ -147,12 +147,15 @@ const ViewModal: React.FC<ViewModalProps> = ({
         if (res.success) {
           setFormData(res.data);
         }
+        console.log("first:-", formData?.addedBy);
       })
       .catch((error) => errorHandle(error))
       .finally(() => setLoading(false));
   }, [applicantId, source]);
 
   if (!show) return null;
+
+  console.log("first:-", formData?.addedBy);
 
   return (
     <Modal
@@ -669,7 +672,7 @@ const ViewModal: React.FC<ViewModalProps> = ({
                 />
                 <DetailsRow
                   label="Applicant Add By"
-                  value={formData?.addedFrom || "-"}
+                  value={formData?.addedBy || "-"}
                 />
                 <DetailsRow
                   label="Client Feedback"

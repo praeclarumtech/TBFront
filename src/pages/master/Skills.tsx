@@ -2,7 +2,8 @@
 import { Row, Col, Card, Container, CardBody } from "react-bootstrap";
 import { Fragment, useMemo, useState, useEffect, useRef } from "react";
 // import { read, utils } from "xlsx";
-import toast from "react-hot-toast";
+// import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 import BaseButton from "components/BaseComponents/BaseButton";
 import TableContainer from "components/BaseComponents/TableContainer";
 import { Tooltip as ReactTooltip } from "react-tooltip";
@@ -304,15 +305,16 @@ const AddSkill = () => {
         skills: values.addSkills,
       };
 
-      const existingSkill = skills.find(
-        (skill) => skill.skills.toLowerCase() === values.addSkills.toLowerCase()
-      );
+      // const existingSkill = skills.find(
+      //   (skill) => skill.skills.toLowerCase() === values.addSkills.toLowerCase()
+      // );
 
-      if (existingSkill && !editingSkill) {
-        toast.error("This skill already exists!");
-        setLoader(false);
-        return;
-      }
+      // if (existingSkill && !editingSkill) {
+      //   toast.error("This skill already exists!");
+      //   console.log("firstthis is running");
+      //   setLoader(false);
+      //   return;
+      // }
       const apiCall = editingSkill
         ? updateSkill(payload)
         : createSkill(payload);
@@ -376,13 +378,13 @@ const AddSkill = () => {
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) {
-      // 5MB
-      toast("Large file detected. Import may take a few minutes.", {
-        icon: "⚠️",
-        duration: 4000,
-      });
-    }
+    // if (file.size > 5 * 1024 * 1024) {
+    //   // 5MB
+    //   toast("Large file detected. Import may take a few minutes.", {
+    //     icon: "⚠️",
+    //     duration: 4000,
+    //   });
+    // }
 
     setImportLoader(true);
     setIsImporting(true);
@@ -578,18 +580,33 @@ const AddSkill = () => {
 
                         {/* Delete Button (Only if skills are selected) */}
                         {selectedSkills.length > 1 && (
-                          <BaseButton
-                            className="ml-2 text-lg border-0 btn bg-danger edit-list w-fit"
-                            onClick={handleDeleteAll}
-                          >
-                            <i className="align-bottom ri-delete-bin-fill" />
-                            <ReactTooltip
-                              place="bottom"
-                              variant="error"
-                              content="Delete"
-                              anchorId={`Delete ${selectedSkills.length} Emails`}
-                            />
-                          </BaseButton>
+                          <>
+                            <BaseButton
+                              className="ml-2 text-lg border-0 btn bg-danger edit-list w-fit"
+                              onClick={handleDeleteAll}
+                            >
+                              <i className="align-bottom ri-delete-bin-fill" />
+                              <ReactTooltip
+                                place="bottom"
+                                variant="error"
+                                content="Delete"
+                                anchorId={`Delete ${selectedSkills.length} Emails`}
+                              />
+                            </BaseButton>
+
+                            <BaseButton
+                              className="ml-2 text-lg border-0 btn bg-primary edit-list w-fit"
+                              onClick={handleDeleteAll}
+                            >
+                              Add to Chart
+                              <ReactTooltip
+                                place="bottom"
+                                variant="error"
+                                content="Delete"
+                                anchorId={`Delete ${selectedSkills.length} Emails`}
+                              />
+                            </BaseButton>
+                          </>
                         )}
 
                         {/* Import & Submit Buttons (Stack only on smaller screens) */}
