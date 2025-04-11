@@ -81,30 +81,6 @@ const AddDegree = () => {
     setShowDeleteModal(true);
   };
 
-  // const confirmDelete = () => {
-  //   if (!degreeToDelete) return;
-
-  //   setLoader(true);
-  //   deleteDegree({ _id: degreeToDelete._id })
-  //     .then((res: { success: any; message: any }) => {
-  //       if (res?.success) {
-  //         toast.success(res?.message || "Degree deleted successfully");
-  //         fetchDegrees();
-  //       } else {
-  //         toast.error(res?.message || "Failed to delete degree");
-  //       }
-  //     })
-  //     .catch((error: any) => {
-  //       toast.error("Something went wrong!");
-  //       console.error(error);
-  //     })
-  //     .finally(() => {
-  //       setLoader(false);
-  //       setShowDeleteModal(false);
-  //       setDegreeToDelete(null);
-  //     });
-  // };
-
   const confirmDelete = async () => {
     if (!degreeToDelete || degreeToDelete.length === 0) {
       toast.error("No degrees selected for deletion.");

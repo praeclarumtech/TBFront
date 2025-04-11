@@ -34,7 +34,8 @@ export const jobApplicantSchema = Yup.object({
   // .required(
   //   "Current Company Designation is required!"
   // ),
-  appliedRole: Yup.string().required("Applied role is required!"),
+  appliedRole: Yup.string(),
+  // .required("Applied role is required!"),
   anyHandOnOffers: Yup.boolean(),
   currentCompanyName: Yup.string()
     .trim()

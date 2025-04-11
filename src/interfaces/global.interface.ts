@@ -104,6 +104,7 @@ export interface BaseModalProps {
   closeButtonText?: string;
   submitButtonText?: string;
   setShowBaseModal: React.Dispatch<React.SetStateAction<boolean>>;
+  size?: 'sm' | 'lg' | 'xl'; 
 }
 export interface MultiSelectProps {
   label?: string;

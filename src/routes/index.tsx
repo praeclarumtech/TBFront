@@ -26,6 +26,7 @@ import AddDegree from "pages/master/Degree";
 import ImportApplicantTables from "pages/applicant/importApplicants/Index";
 import Profile from "pages/UserProfile/Profile";
 import ChangePassword from "pages/auth/ChangePassword";
+import UpdateSkill from "pages/master/UpdateSkill";
 
 const RenderRouter: React.FC = () => {
   const {
@@ -157,6 +158,15 @@ const RenderRouter: React.FC = () => {
               </RootLayout>
             }
           />
+               <Route
+            path="add-role-skill"
+            element={
+              <RootLayout>
+                <UpdateSkill/>
+              </RootLayout>
+            }
+          />
+
         </Route>
       </Route>
     )

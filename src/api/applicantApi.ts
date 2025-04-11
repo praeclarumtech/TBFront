@@ -1,4 +1,4 @@
-import {  DELETE_IMPORTED_APPLICANT } from './apiRoutes';
+import {  DELETE_IMPORTED_APPLICANT, UPDATE_IMPORTED_APPLICANT } from './apiRoutes';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // import { toast } from "react-toastify";
 // import { errorHandle } from "utils/commonFunctions";
@@ -87,7 +87,7 @@ export const updateImportedApplicant = async (
   data: object,
   id: string | undefined | null
 ) => {
-  const response = await authServices.put(`${UPDATE_APPLICANT}/${id}`, data);
+  const response = await authServices.put(`${UPDATE_IMPORTED_APPLICANT}/${id}`, data);
   return response?.data;
 };
 

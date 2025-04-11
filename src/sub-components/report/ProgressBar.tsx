@@ -20,21 +20,17 @@ const ProgressBars: React.FC<ProgressBarsProps> = ({
   const [percentage, setPercentage] = useState(0);
   const [totalApplicants, setTotalApplicants] = useState(0);
 
-  // const [isLoading, setIsLoading] = useState(loading);
   useEffect(() => {
     fetchTotalApplicants();
   }, []);
 
   const fetchTotalApplicants = async () => {
-    // setIsLoading(true);
     try {
       const data = await getTotalApplicants();
 
       setTotalApplicants(data.data.totalApplicants);
     } catch (error) {
       console.error("API Error:", error);
-    } finally {
-      // setIsLoading(false);
     }
   };
 
@@ -49,25 +45,20 @@ const ProgressBars: React.FC<ProgressBarsProps> = ({
   // const range = (percentage / totalApplicants) * 100;
 
   return (
-    <div className="h-2 w-3/4 bg-light rounded-lg mx-2 my-2">
+    <div className="w-3/4 h-2 mx-2 my-2 rounded-lg bg-light">
       {loading ? (
         <div className="mt-n1">
           <Skeleton width="100%" />
         </div>
       ) : (
         <>
-          {/* <div
-            className={`flex h-full rounded transition-all ease-in-out duration-300 ${colour} hover:shadow-2xl hover:brightness-125 hover:scale-105`}
-            style={{ width: `${range}%`, maxWidth: "100%" }}
-          ></div> */}
-
           <ProgressBar
             now={percentage}
             max={totalApplicants}
             variant={colour}
             className="!h-[10px] hover:cursor-pointer"
           />
-          <div className="d-flex justify-between mt-1">
+          <div className="justify-between mt-1 d-flex">
             <div className="justify-start">{label}</div>
             <div className="justify-end">{percentage}</div>
           </div>

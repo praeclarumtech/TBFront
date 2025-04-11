@@ -147,7 +147,6 @@ const ViewModal: React.FC<ViewModalProps> = ({
         if (res.success) {
           setFormData(res.data);
         }
-        console.log("first:-", formData?.addedBy);
       })
       .catch((error) => errorHandle(error))
       .finally(() => setLoading(false));
@@ -155,7 +154,6 @@ const ViewModal: React.FC<ViewModalProps> = ({
 
   if (!show) return null;
 
-  console.log("first:-", formData?.addedBy);
 
   return (
     <Modal
@@ -414,23 +412,7 @@ const ViewModal: React.FC<ViewModalProps> = ({
                   label="Notice Period"
                   value={`${formData.noticePeriod || "-"} days`}
                 />
-                {/* <DetailsRow
-                  label="Skills"
-                  value={
-                    formData.appliedSkills.length > 0 ? (
-                      <>
-                        {formData.appliedSkills.map((skill) => (
-                          <Tag color="cyan" key={skill}>
-                            {skill}
-                          </Tag>
-                        ))}
-                      </>
-                    ) : (
-                      "-"
-                    )
-                  }
-                /> */}
-                {/* <DetailsCard title="Skills" icon={<span>💡</span>}> */}
+
                 <Row gutter={[16, 16]}>
                   <Col span={24}>
                     <DetailsRow
@@ -471,10 +453,6 @@ const ViewModal: React.FC<ViewModalProps> = ({
                         )
                       }
                     />
-                    {/* <DetailsRow
-                      label=""
-                      value={formData.otherSkills || "-"}
-                    /> */}
                   </Col>
                 </Row>
                 {/* </DetailsCard> */}

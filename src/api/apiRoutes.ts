@@ -31,7 +31,6 @@ export const IMPORT_APPLICANT = "applicants/importCsv";
 export const IMPORT_RESUME = "applicants/upload-resume";
 export const IMPORT_APPLICANT_LIST = "applicants/viewResumeAndCsvApplicant";
 export const UPDATE_APPLICANT_MANY = "applicants/updateManyApplicant"
-
  
 
 //Email module
@@ -56,6 +55,14 @@ export const UPDATE_SKILL = "skill/update";
 export const DELETE_SKILL = "skill/delete";
 export const IMPORT_SKILLS = "skill/importCsv";
 
+//Role module
+export const ADD_ROLE_AND_SKILL = "/appliedRole/addAppliedRoleAndSkills"
+export const VIEW_ROLE_AND_SKILL = "appliedRole/ViewAllSkillAndAppliedRole"
+export const UPDATE_ROLE_AND_SKILL = "/appliedRole/updateAppliedRoleAndSkill"
+export const DELETE_ROLE_AND_SKILL = "/appliedRole/deleteAppliedRoleAndSkill"
+export const VIEW_ROLE_AND_SKILL_ID = "/appliedRole/viewskillAndAppliedRoleById"
+
+
 //Degree module
 export const CREATE_DEGREE = "degree/addDegree";
 export const VIEW_DEGREE = "degree/viewById";
@@ -71,7 +78,9 @@ export const RECENT_APPLICANTS = "/applicants/viewAllApplicant?appliedSkills="
 export const APPLICANTS_DETAILS = "/reports/applicants/technologyStatistics?category="
 
 
-// http://localhost:3000/api/reports/applicants/technologyStatistics
+
+
+
 //Report Module
 // export const SKILL_STATISTICS = "/reports/applicants/categoryWiseSkillCount?category="
 export const SKILL_STATISTICS = "/reports/applicants/technologyStatistics?category="
