@@ -11,15 +11,13 @@ import "react-toastify/dist/ReactToastify.css";
 import { IconButton, useMediaQuery } from "@mui/material";
 import "react-loading-skeleton/dist/skeleton.css";
 import {
-  // deleteApplicant,
-  // listOfApplicants,
+ 
   listOfImportApplicants,
   updateStage,
   updateStatus,
   importApplicant,
   ExportImportedApplicant,
   resumeUpload,
-  // deleteMultipleApplicant,
   updateManyApplicants,
   deleteImportedMultipleApplicant,
 } from "api/applicantApi";
@@ -52,7 +50,6 @@ import debounce from "lodash.debounce";
 
 import { Close } from "@mui/icons-material";
 import BaseModal from "components/BaseComponents/BaseModal";
-// import toast from "react-hot-toast";
 
 interface ValueToEdit {
   label: string;
@@ -62,7 +59,6 @@ interface ValueToEdit {
 const {
   projectTitle,
   Modules,
-  // skillOptions,
   interviewStageOptions,
   cityOptions,
   statusOptions,
@@ -87,18 +83,14 @@ function ImportApplicant() {
   >([]);
   const [showModal, setShowModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  // const [recordIdToDelete, setRecordIdToDelete] = useState<string | undefined>(
-  //   undefined
-  // );
+
   const [experienceRange, setExperienceRange] = useState<number[]>([0, 25]);
 
   const [filterNoticePeriod, setFilterNoticePeriod] = useState<number[]>([
     0, 90,
   ]);
   const [searchAll, setSearchAll] = useState<string>("");
-  // const [uploadedFile, setUploadedFile] = useState<FormData | null>(null);
   const [uploadedFile, setUploadedFile] = useState<FormData | null>(null);
-  // const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [filterStatus, setFilterStatus] = useState<SelectedOption | null>(null);
   const [filterInterviewStage, setFilterInterviewStage] =
     useState<SelectedOption | null>(null);
@@ -133,7 +125,6 @@ function ImportApplicant() {
   });
 
   const [skillOptions, setSkillOptions] = useState<any[]>([]);
-  // const [showDropdown, setShowDropdown] = useState(false);
   const [importLoader, setImportLoader] = useState(false);
   const [importProgress, setImportProgress] = useState(0);
   const [isImporting, setIsImporting] = useState(false);
@@ -143,7 +134,7 @@ function ImportApplicant() {
   const [showBaseModal, setShowBaseModal] = useState(false);
   const [valueToEdit, setValueToEdit] = useState<ValueToEdit[]>([]);
   const [sourcePage, setSourcePage] = useState("import");
-const isDesktop = useMediaQuery('(min-width: 768px)');
+  const isDesktop = useMediaQuery("(min-width: 768px)");
   const toggleDrawer =
     (anchor: Anchor, open: boolean) =>
     (event: React.KeyboardEvent | React.MouseEvent) => {
@@ -169,7 +160,6 @@ const isDesktop = useMediaQuery('(min-width: 768px)');
     null
   );
 
-  
   const fetchApplicants = async () => {
     setTableLoader(true);
     setLoader(true);
@@ -465,13 +455,6 @@ const isDesktop = useMediaQuery('(min-width: 768px)');
     }
   };
 
-  // const handleDelete = (recordIdToDelete: any) => {
-  //   if (recordIdToDelete) {
-  //     deleteApplicantDetails(recordIdToDelete);
-  //   } else if (selectedApplicants.length > 0) {
-  //     deleteMultipleApplicantDetails(selectedApplicants);
-  //   }
-  // };
 
   const deleteMultipleApplicantDetails = (
     multipleApplicantDelete: string[] | undefined | null
@@ -531,13 +514,10 @@ const isDesktop = useMediaQuery('(min-width: 768px)');
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //  const file = e.target.files[0];
     const file = e.target.files && e.target.files[0];
-    //  const fileExtension = file.name.split(".").pop()?.toLowerCase();
-    //  const fileExtension = file && file.name.split(".").pop()?.toLowerCase();
+
     const fileExtension = file?.name?.split(".").pop()?.toLowerCase() ?? "";
     if (["csv", "xlsx", "xls"].includes(fileExtension ?? "")) {
-      // console.log("my functin csv called");
       handleFileImport(e);
     } else if (["doc", "pdf", "docx"].includes(fileExtension ?? "")) {
       const newEvent = {
@@ -561,13 +541,10 @@ const isDesktop = useMediaQuery('(min-width: 768px)');
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      // 5MB
+    
       toast(
         "Large file detected. Import may take a few minutes."
-        // , {
-        // icon: "⚠️",
-        // duration: 4000,
-        // }
+ 
       );
     }
 
@@ -619,16 +596,8 @@ const isDesktop = useMediaQuery('(min-width: 768px)');
   };
   const filteredApplicant = applicant.filter((applicants) => {
     const searchTerm = searchAll.toLowerCase();
-    // Construct full name
-    // const nameObj = applicants.name || {};
-    // const firstName = nameObj.firstName || "";
-    // const middleName = nameObj.middleName || "";
-    // const lastName = nameObj.lastName || "";
-    // const fullName = `${firstName} ${middleName} ${lastName}`
-    // .trim()
-    // .toLowerCase();
+   
     return (
-      // fullName.includes(searchTerm) || // ✅ Search by full name
       applicants?.name?.firstName?.toLowerCase().includes(searchTerm) ||
       applicants?.name?.middleName?.toLowerCase().includes(searchTerm) ||
       applicants?.name?.lastName?.toLowerCase().includes(searchTerm) ||
@@ -787,35 +756,35 @@ const isDesktop = useMediaQuery('(min-width: 768px)');
       }}
       role="presentation"
     >
-      <div className="mb-4">
-        <IconButton
-          onClick={toggleDrawer("right", false)}
-          sx={{ position: "absolute", top: 8, left: 8, zIndex: 10 }}
-        >
-          <Close />
-        </IconButton>
-      </div>
-      <List>
-        <Row className="flex items-center justify-between mb-4">
+      <div
+        style={{
+          position: "sticky",
+          top: 0,
+          background: "#fff",
+          zIndex: 100,
+          paddingBottom: "8px",
+          paddingTop: "8px",
+        }}
+      >
+        <Row className="flex items-center justify-between">
           <Col>
             <h3>Apply Filters</h3>
           </Col>
           <Col className="text-end">
-            <BaseButton
-              color="primary"
-              onClick={resetFilters}
-              // variant="outlined"
-              sx={{ width: "auto" }}
+            <IconButton
+              onClick={toggleDrawer("right", false)}
+              sx={{ position: "absolute", top: 0, right: 0, zIndex: 10 }}
             >
-              Reset Filters
-            </BaseButton>
+              <Close />
+            </IconButton>
           </Col>
         </Row>
-
+      </div>
+      <List>
         <MultiSelect
           label="Applied Skills"
           name="appliedSkills"
-          className="mb-1 select-border"
+          className="mb-2 select-border"
           placeholder="Applied Skills"
           value={appliedSkills}
           isMulti={true}
@@ -831,7 +800,7 @@ const isDesktop = useMediaQuery('(min-width: 768px)');
         <BaseSlider
           label="Experience (in years)"
           name="experience"
-          className="mx-5 mb-1 select-border "
+          className="mx-5 mb-2 select-border "
           value={experienceRange}
           // onChange={handleExperienceChange}
           handleChange={handleExperienceChange}
@@ -845,7 +814,7 @@ const isDesktop = useMediaQuery('(min-width: 768px)');
         <BaseSelect
           label="City"
           name="city"
-          className="mb-1 select-border "
+          className="mb-2 select-border "
           options={cityOptions}
           placeholder="City"
           handleChange={handleCityChange}
@@ -854,7 +823,7 @@ const isDesktop = useMediaQuery('(min-width: 768px)');
         <BaseSelect
           label="State"
           name="state"
-          className="mb-1 select-border "
+          className="mb-2 select-border "
           options={stateType}
           placeholder="State"
           handleChange={handleStateChange}
@@ -863,7 +832,7 @@ const isDesktop = useMediaQuery('(min-width: 768px)');
         <BaseSelect
           label="Interview Stage"
           name="interviewStage"
-          className="mb-1 select-border"
+          className="mb-2 select-border"
           options={interviewStageOptions}
           placeholder="Interview Stage"
           handleChange={handleInterviewStageChange}
@@ -872,7 +841,7 @@ const isDesktop = useMediaQuery('(min-width: 768px)');
         <BaseSelect
           label="Status"
           name="status"
-          className="mb-1 select-border"
+          className="mb-2 select-border"
           options={statusOptions}
           placeholder="Status"
           handleChange={handleStatusChange}
@@ -882,7 +851,7 @@ const isDesktop = useMediaQuery('(min-width: 768px)');
         <BaseSelect
           label="Gender"
           name="gender"
-          className="mb-1 select-border"
+          className="mb-2 select-border"
           options={gendersType}
           placeholder="Gender"
           handleChange={handleGenderChange}
@@ -892,7 +861,7 @@ const isDesktop = useMediaQuery('(min-width: 768px)');
         <BaseSlider
           label="Expected Pkg(LPA)"
           name="expectedPkg"
-          className="mx-5 mb-1 select-border "
+          className="mx-5 mb-2 select-border "
           value={filterExpectedPkg}
           handleChange={handleExpectedPkgChange}
           min={0}
@@ -903,7 +872,7 @@ const isDesktop = useMediaQuery('(min-width: 768px)');
         <BaseSlider
           label="Current Pkg(LPA)"
           name="currentPkg"
-          className="mx-5 mb-1 select-border "
+          className="mx-5 mb-2 select-border "
           value={filterCurrentPkg}
           handleChange={handleCurrentPkgChange}
           min={0}
@@ -915,7 +884,7 @@ const isDesktop = useMediaQuery('(min-width: 768px)');
         <BaseSelect
           label="Designation"
           name="designation"
-          className="mb-1 select-border"
+          className="mb-2 select-border"
           options={designationType}
           placeholder="Designation"
           handleChange={handleDesignationChange}
@@ -925,7 +894,7 @@ const isDesktop = useMediaQuery('(min-width: 768px)');
         <BaseSlider
           label="Notice Period (in Days)"
           name="noticePeriod"
-          className="mx-5 mb-1 select-border "
+          className="mx-5 mb-2 select-border "
           value={filterNoticePeriod}
           handleChange={handleNoticePeriodChange}
           min={0}
@@ -938,7 +907,7 @@ const isDesktop = useMediaQuery('(min-width: 768px)');
         <BaseSelect
           label="Work Preference"
           name="workPreference"
-          className="mb-1 select-border"
+          className="mb-2 select-border"
           options={workPreferenceType}
           placeholder="Work Preference"
           handleChange={handleWorkPreferenceChange}
@@ -949,7 +918,7 @@ const isDesktop = useMediaQuery('(min-width: 768px)');
           label="JavaScript Rating"
           name="rating"
           value={filterRating}
-          className="mx-5 mb-1 select-border "
+          className="mx-5 mb-2 select-border "
           handleChange={handleRatingChange}
           min={0}
           max={10}
@@ -960,7 +929,7 @@ const isDesktop = useMediaQuery('(min-width: 768px)');
         <BaseSlider
           label="Eng.Communication Rating"
           name="communication"
-          className="mx-5 mb-1 select-border "
+          className="mx-5 mb-2 select-border "
           value={filterEngRating}
           handleChange={handleEngRatingChange}
           min={0}
@@ -971,7 +940,7 @@ const isDesktop = useMediaQuery('(min-width: 768px)');
         <BaseSelect
           label="Any Hand On Offers"
           name="anyHandOnOffers"
-          className="mb-1 select-border"
+          className="mb-2 select-border"
           options={anyHandOnOffers}
           placeholder="Any Hand On Offers"
           handleChange={handleAnyHandOnOffersChange}
@@ -981,7 +950,7 @@ const isDesktop = useMediaQuery('(min-width: 768px)');
         <BaseInput
           label="Start Date"
           name="startDate"
-          className="mb-1 select-border"
+          className="mb-2 select-border"
           type="date"
           placeholder={InputPlaceHolder("Start Date")}
           handleChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -1002,6 +971,28 @@ const isDesktop = useMediaQuery('(min-width: 768px)');
       </List>
 
       <Divider />
+      <div
+        style={{
+          position: "sticky",
+          bottom: 0,
+          background: "#fff",
+          zIndex: 100,
+          paddingTop: "8px",
+          paddingBottom: "8px",
+        }}
+      >
+        <Row>
+          <Col className="text-end">
+            <BaseButton
+              color="primary"
+              onClick={resetFilters}
+              sx={{ width: "auto" }}
+            >
+              Reset Filters
+            </BaseButton>
+          </Col>
+        </Row>
+      </div>
     </Box>
   );
 
@@ -1219,27 +1210,17 @@ const isDesktop = useMediaQuery('(min-width: 768px)');
     [applicant, selectedApplicants]
   );
 
-  // const handleNavigate = () => {
-  //   navigate("/applicants/add-applicant");
-  // };
+
 
   const handleCloseClick = () => {
     setShowBaseModal(false);
-    // setEditingSkill(null);
-    // validation.resetForm();
+    
     setSelectedApplicants([]);
     setValueToEdit([]);
     setMultiEditInterViewStage(null);
     setMultiEditRole(null);
     setMultiEditStatus(null);
   };
-
-  // const handleSubmit = (
-  //   multiEditInterViewStage: React.SetStateAction<SelectedOption | null>
-  // ) => {
-  //   setFilterInterviewStage(multiEditInterViewStage);
-  //   // setFilterStatus(selectedOptionEditStaus);
-  // };
 
   const handleSubmit = async () => {
     // [...applicant];

@@ -13,7 +13,6 @@ export const getRecentApplications = async (appliedSkills = "") => {
 
 export const getApplicantsDetails = async (selectedFilter = "") => {
     const response = await authServices.get(`${APPLICANTS_DETAILS}${selectedFilter || "Frontend"}`);
-    console.log(response)
     return response?.data;
   };
 

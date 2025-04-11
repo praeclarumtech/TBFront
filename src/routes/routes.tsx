@@ -15,6 +15,7 @@ import AddDegree from "pages/master/Degree";
 import ImportApplicantTables from "pages/applicant/importApplicants/Index";
 import Profile from "pages/UserProfile/Profile";
 import ChangePassword from "pages/auth/ChangePassword";
+import UpdateSkill from "pages/master/UpdateSkill";
 
 const routes = {
   ROOT: {
@@ -129,6 +130,12 @@ const routes = {
         path: "/master/degree",
         element: AddDegree,
       },
+      {
+        title: "Add Role And Skill",
+        path: "/master/add-role-skill",
+        element: UpdateSkill,
+      },
+
     ],
   },
   LAYOUT_VERTICAL: {

@@ -12,17 +12,18 @@ const BaseModal: React.FC<BaseModalProps> = ({
   submitButtonText,
   closeButtonText,
   setShowBaseModal,
+  size,
 }) => {
   const toggle = () => setShowBaseModal(!show);
   return (
-    <Modal fade={true} isOpen={show} toggle={toggle} centered>
+    <Modal fade={true} isOpen={show} toggle={toggle} centered size={size} >
       <ModalHeader toggle={toggle}>{modalTitle}</ModalHeader>
       <ModalBody>{children}</ModalBody>
 
       <ModalFooter>
         <BaseButton
           color="outline-danger" // Changed "denger" to "danger"
-          // className=" text-white"
+          // className="text-white "
           type="button"
           onClick={onCloseClick}
         >
@@ -34,7 +35,7 @@ const BaseModal: React.FC<BaseModalProps> = ({
           disabled={loader}
           type="submit"
           loader={loader}
-          className="ms-3 px-5 "
+          className="px-5 ms-3 "
           onClick={onSubmitClick}
         >
           {submitButtonText}

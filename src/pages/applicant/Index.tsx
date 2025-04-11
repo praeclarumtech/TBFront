@@ -123,7 +123,7 @@ const Applicant = () => {
     string[]
   >([]);
   const [addedBy, setAddedBy] = useState<SelectedOption[]>([]);
-const isDesktop = useMediaQuery('(min-width: 768px)');
+  const isDesktop = useMediaQuery("(min-width: 768px)");
   const toggleDrawer =
     (anchor: Anchor, open: boolean) =>
     (event: React.KeyboardEvent | React.MouseEvent) => {
@@ -446,7 +446,6 @@ const isDesktop = useMediaQuery('(min-width: 768px)');
     }
   };
 
-
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
       setSelectedApplicants(applicant.map((app) => app._id));
@@ -454,7 +453,6 @@ const isDesktop = useMediaQuery('(min-width: 768px)');
       setSelectedApplicants([]);
     }
   };
-
 
   const handleSelectApplicant = (applicantId: string) => {
     setSelectedApplicants((prev) =>
@@ -465,8 +463,8 @@ const isDesktop = useMediaQuery('(min-width: 768px)');
   };
 
   const handleDeleteSingle = (applicantId: string) => {
-    setMultipleApplicantsDelete([applicantId]); 
-    setShowDeleteModal(true); 
+    setMultipleApplicantsDelete([applicantId]);
+    setShowDeleteModal(true);
   };
 
   const closeDeleteModal = () => {
@@ -474,12 +472,10 @@ const isDesktop = useMediaQuery('(min-width: 768px)');
     setSelectedApplicants([]);
   };
 
-  
-
   const handleDeleteAll = () => {
     if (selectedApplicants.length > 0) {
       setMultipleApplicantsDelete(selectedApplicants);
-      setShowDeleteModal(true); 
+      setShowDeleteModal(true);
     }
   };
 
@@ -489,18 +485,17 @@ const isDesktop = useMediaQuery('(min-width: 768px)');
     setLoader(true);
     deleteMultipleApplicant(multipleApplicantDelete)
       .then(() => {
-        fetchApplicants(); 
-        setSelectedApplicants([]); 
+        fetchApplicants();
+        setSelectedApplicants([]);
       })
       .catch((error: any) => {
-        errorHandle(error); 
+        errorHandle(error);
       })
       .finally(() => {
-        setLoader(false); 
-        setShowDeleteModal(false); 
+        setLoader(false);
+        setShowDeleteModal(false);
       });
   };
-
 
   const handleView = (id: string, source: string) => {
     setSelectedApplicantId(id);
@@ -574,31 +569,31 @@ const isDesktop = useMediaQuery('(min-width: 768px)');
       }}
       role="presentation"
     >
-      <div className="mb-4">
-        <IconButton
-          onClick={toggleDrawer("right", false)}
-          sx={{ position: "absolute", top: 8, right: 8, zIndex: 10 }}
-        >
-          <Close />
-        </IconButton>
-      </div>
-      <List>
-        <Row className="flex items-center justify-between mt-2 mb-4">
+      <div
+        style={{
+          position: "sticky",
+          top: 0,
+          background: "#fff",
+          zIndex: 100,
+          paddingBottom: "8px",
+          paddingTop: "8px",
+        }}
+      >
+        <Row className="flex items-center justify-between">
           <Col>
             <h3>Apply Filters</h3>
           </Col>
           <Col className="text-end">
-            <BaseButton
-              color="primary"
-              onClick={resetFilters}
-              variant="outlined"
-              sx={{ width: "auto" }}
+            <IconButton
+              onClick={toggleDrawer("right", false)}
+              sx={{ position: "absolute", top: 0, right: 0, zIndex: 10 }}
             >
-              Reset Filters
-            </BaseButton>
+              <Close />
+            </IconButton>
           </Col>
         </Row>
-
+      </div>
+      <List>
         <MultiSelect
           label="Applied Skills"
           name="appliedSkills"
@@ -801,6 +796,28 @@ const isDesktop = useMediaQuery('(min-width: 768px)');
       </List>
 
       <Divider />
+      <div
+        style={{
+          position: "sticky",
+          bottom: 0,
+          background: "#fff",
+          zIndex: 100,
+          paddingTop: "8px",
+          paddingBottom: "8px",
+        }}
+      >
+        <Row>
+          <Col className="text-end">
+            <BaseButton
+              color="primary"
+              onClick={resetFilters}
+              sx={{ width: "auto" }}
+            >
+              Reset Filters
+            </BaseButton>
+          </Col>
+        </Row>
+      </div>
     </Box>
   );
 
@@ -980,8 +997,6 @@ const isDesktop = useMediaQuery('(min-width: 768px)');
               />
             </BaseButton>
 
-          
-
             <BaseButton
               id={`delete-${cell?.row?.original?.id}`}
               className="btn btn-sm btn-soft-danger remove-list"
@@ -1024,7 +1039,6 @@ const isDesktop = useMediaQuery('(min-width: 768px)');
   const filteredApplicant = applicant.filter((applicants) => {
     const searchTerm = searchAll.toLowerCase();
 
-   
     return (
       // fullName.includes(searchTerm) || // ✅ Search by full name
       applicants?.name?.firstName?.toLowerCase().includes(searchTerm) ||
@@ -1067,99 +1081,6 @@ const isDesktop = useMediaQuery('(min-width: 768px)');
         loader={loader}
       />
       <Container fluid>
-        {/* <Row>
-          <div>
-            <Card className="my-3 mb-3">
-              <CardBody>
-                <div className="container">
-                  <div className="inline-flex items-center row align-items-center ">
-                    <div className="col-3 col-xs-auto">
-                      <button
-                        onClick={toggleDrawer("right", true)}
-                        // color="primary"
-                        className="btn btn-primary max-h-16"
-                      >
-                        <i className="mx-1 fa fa-filter "></i> Filters
-                      </button>
-                      <Drawer
-                        className="!mt-16 "
-                        anchor="right"
-                        open={state["right"]}
-                        onClose={toggleDrawer("right", false)}
-                      >
-                        {drawerList("right")}
-                      </Drawer>
-                    </div>
-                    {/* Right: WhatsApp, Email, and New Applicant Buttons 
-                    <div className="flex-wrap gap-2 col-8 col-md d-flex justify-content-end">
-                      <div>
-                        <input
-                          id="search-bar-0"
-                          className="h-10 form-control search"
-                          placeholder="Search..."
-                          onChange={handleSearchChange}
-                          value={searchAll}
-                        />
-                      </div>
-                      <div>
-                        {selectedApplicants.length > 0 && (
-                          <>
-                            <BaseButton
-                              className="ml-2 text-lg border-0 btn bg-danger edit-list w-fit"
-                              onClick={handleDeleteAll}
-                            >
-                              <i className="align-bottom ri-delete-bin-fill" />
-                              <ReactTooltip
-                                place="bottom"
-                                variant="error"
-                                content="Delete"
-                                anchorId={`Delete ${selectedApplicants.length} Emails`}
-                              />
-                            </BaseButton>
-
-                            <BaseButton
-                              className="ml-2 mr-0 text-lg btn btn-soft-secondary bg-primary edit-list"
-                              onClick={handleSendEmail}
-                            >
-                              <i className="align-bottom ri-mail-close-line" />
-                              <ReactTooltip
-                                place="bottom"
-                                variant="info"
-                                content="Email"
-                              />
-                            </BaseButton>
-                          </>
-                        )}
-
-                        <BaseButton
-                          color="primary"
-                          className="ml-2 bg-green-900 btn btn-soft-secondary edit-list"
-                          hoverOptions={["Resume", "Manual", "Csv", "All"]}
-                          onOptionClick={(option) => {
-                            handleExportExcel(option === "All" ? "" : option); // Pass an empty string when "All" is selected
-                          }}
-                        >
-                          <i className="align-bottom ri-upload-2-line me-1" />
-                          Export
-                        </BaseButton>
-
-                        <BaseButton
-                          color="success"
-                          onClick={handleNavigate}
-                          className="ml-2"
-                        >
-                          <i className="align-bottom ri-add-line me-1" />
-                          Add
-                        </BaseButton>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </CardBody>
-            </Card>
-          </div>
-        </Row> */}
-
         <Row>
           <div>
             <Card className="my-3 mb-3">
@@ -1188,14 +1109,7 @@ const isDesktop = useMediaQuery('(min-width: 768px)');
                     </div>
 
                     {/* Search & Buttons */}
-                    <div
-                      className="flex-wrap gap-2 col-12 col-md-9 d-flex justify-content-end"
-                      // style={{
-                      //   position: isMobile ? "absolute" : "static",
-                      //   right: isMobile ? "0px" : "auto",
-                      //   top: isMobile ? "10px" : "auto",
-                      // }}
-                    >
+                    <div className="flex-wrap gap-2 col-12 col-md-9 d-flex justify-content-end">
                       <input
                         id="search-bar-0"
                         className="h-10 form-control search w-100 w-md-auto"
@@ -1257,8 +1171,6 @@ const isDesktop = useMediaQuery('(min-width: 768px)');
             </Card>
           </div>
         </Row>
-
-        {/*///////////////////////////////////////////////////////////////////////////////////////////*/}
 
         <Row>
           <Col lg={12}>

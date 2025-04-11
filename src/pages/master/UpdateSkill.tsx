@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Row, Col, Card, Container, CardBody } from "react-bootstrap";
-import { Fragment, useMemo, useState, useEffect, useRef } from "react";
-// import { read, utils } from "xlsx";
-// import toast from "react-hot-toast";
+import { Fragment, useMemo, useState, useEffect} from "react";
+
 import { toast } from "react-toastify";
 import BaseButton from "components/BaseComponents/BaseButton";
 import TableContainer from "components/BaseComponents/TableContainer";
@@ -10,29 +9,29 @@ import { Tooltip as ReactTooltip } from "react-tooltip";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import BaseInput from "components/BaseComponents/BaseInput";
-import {
-  createSkill,
-  updateSkill,
-  viewAllSkill,
-  deleteSkill,
-  importSkills,
-} from "api/skillsApi";
-// import { toast } from "react-toastify";
 import DeleteModal from "components/BaseComponents/DeleteModal";
 import BaseModal from "components/BaseComponents/BaseModal";
 import appConstants from "constants/constant";
 import { getSerialNumber, InputPlaceHolder } from "utils/commonFunctions";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import {
+  addRoleSkill,
+  deleteRoleSkill,
+  updateRoleSkill,
+  viewRoleSkill,
+} from "api/roleApi";
+import ViewRoleSkill from "./ViewRoleSkill";
 
 const { projectTitle, Modules, handleResponse } = appConstants;
 
-const AddSkill = () => {
+const UpdateSkill = () => {
   document.title = Modules.SKill + " | " + projectTitle;
-  const [skills, setSkills] = useState<any[]>([]);
+  const [roleSkill, setRoleSkills] = useState<any[]>([]);
+
   const [editingSkill, setEditingSkill] = useState<any>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [skillToDelete, setSkillToDelete] = useState<any>([]);
+  const [roleAndSkillToDelete, setRoleAndSkillToDelete] = useState<any>([]);
   const [showBaseModal, setShowBaseModal] = useState(false);
   const [totalRecords, setTotalRecords] = useState(0);
   const [pagination, setPagination] = useState({
@@ -41,24 +40,25 @@ const AddSkill = () => {
     limit: 50,
   });
   const [isLoading, setIsLoading] = useState(false);
-  const [importLoader, setImportLoader] = useState(false);
-  const [importProgress, setImportProgress] = useState(0);
-  const [isImporting, setIsImporting] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+ 
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [searchAll, setSearchAll] = useState<string>("");
+  const [selectedId, setSelectedId] = useState<string | null>(
+    null
+  );
+  const [showViewModal, setShowViewModal] = useState(false);
 
-  const fetchSkills = async () => {
+  const fetchRoleSkills = async () => {
     setIsLoading(true);
     try {
-      const res = await viewAllSkill({
+      const res = await viewRoleSkill({
         page: pagination.pageIndex + 1,
         pageSize: pagination.pageSize,
         limit: 50,
       });
 
       if (res?.success) {
-        setSkills(res.data.data || []);
+        setRoleSkills(res?.data?.data || []);
         setTotalRecords(res.data?.pagination?.totalRecords || 0);
       } else {
         toast.error(res?.message || "Failed to fetch skills");
@@ -72,24 +72,26 @@ const AddSkill = () => {
   };
 
   useEffect(() => {
-    fetchSkills();
+    fetchRoleSkills();
   }, [pagination.pageIndex, pagination.pageSize]);
 
-  const handleEdit = (skill: any) => {
-    setEditingSkill(skill);
+  const handleEdit = (roleSkill: any) => {
+    setEditingSkill(roleSkill);
     validation.setValues({
-      addSkills: skill.skills,
+      addSkill: roleSkill.skill || "",
+      addRole: roleSkill.appliedRole || "",
     });
     setShowBaseModal(true);
   };
 
   const handleDelete = (skill: any) => {
-    setSkillToDelete(skill);
+    setRoleAndSkillToDelete(skill);
+    console.log(skill);
     setShowDeleteModal(true);
   };
 
   const confirmDelete = async () => {
-    if (!skillToDelete || skillToDelete.length === 0) {
+    if (!roleAndSkillToDelete || roleAndSkillToDelete.length === 0) {
       toast.error("No skills selected for deletion.");
       return;
     }
@@ -98,9 +100,9 @@ const AddSkill = () => {
 
     try {
       // If deleting multiple skills
-      if (Array.isArray(skillToDelete)) {
-        const deleteRequests = skillToDelete.map((id) =>
-          deleteSkill({ _id: id })
+      if (Array.isArray(roleAndSkillToDelete)) {
+        const deleteRequests = roleAndSkillToDelete.map((id) =>
+          deleteRoleSkill({ _id: id })
         );
 
         // Wait for all delete requests to finish
@@ -114,30 +116,29 @@ const AddSkill = () => {
         }
       }
       // If deleting a single skill
-      else if (skillToDelete._id) {
-        const res = await deleteSkill({ _id: skillToDelete._id });
+      else if (roleAndSkillToDelete._id) {
+        const res = await deleteRoleSkill({ _id: roleAndSkillToDelete._id });
         if (res?.success) {
           toast.success("Skill deleted successfully");
         } else {
           toast.error("Failed to delete skill");
         }
       }
-
-      fetchSkills(); // Refresh data
+      fetchRoleSkills();
     } catch (error) {
       toast.error("Something went wrong!");
       console.error(error);
     } finally {
       setLoader(false);
       setShowDeleteModal(false);
-      setSkillToDelete([]);
+      setRoleAndSkillToDelete([]);
       setSelectedSkills([]);
     }
   };
 
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      setSelectedSkills(skills.map((skill) => skill._id)); // Select all
+      setSelectedSkills(roleSkill.map((skill) => skill._id)); // Select all
     } else {
       setSelectedSkills([]); // Unselect all
     }
@@ -154,7 +155,7 @@ const AddSkill = () => {
 
   const handleDeleteAll = () => {
     if (selectedSkills.length > 1) {
-      setSkillToDelete([...selectedSkills]);
+      //   setSkillToDelete([...selectedSkills]);
       setShowDeleteModal(true);
     }
   };
@@ -167,7 +168,7 @@ const AddSkill = () => {
             type="checkbox"
             onChange={handleSelectAll}
             checked={
-              selectedSkills.length === skills.length && skills.length > 0
+              selectedSkills.length === roleSkill.length && roleSkill.length > 0
             }
           />
         ),
@@ -187,47 +188,36 @@ const AddSkill = () => {
         enableColumnFilter: false,
       },
       {
+        header: "Role",
+        accessorKey: "appliedRole",
+        enableColumnFilter: false,
+      },
+      {
         header: "Skill",
-        accessorKey: "skills",
+        accessorKey: "skill",
         enableColumnFilter: false,
       },
       {
         header: "Action",
         cell: (cell: { row: { original: any } }) => (
-          // <div className="gap-2 hstack">
-          //   <BaseButton
-          //     id={`edit-${cell?.row?.original?._id}`}
-          //     color="primary"
-          //     className="btn btn-sm btn-soft-warning edit-list"
-          //     onClick={() => handleEdit(cell?.row?.original)}
-          //   >
-          //     <i className="align-bottom ri-pencil-fill" />
-          //     <ReactTooltip
-          //       place="bottom"
-          //       variant="warning"
-          //       content="Edit"
-          //       anchorId={`edit-${cell?.row?.original?._id}`}
-          //     />
-          //   </BaseButton>
-          //   <BaseButton
-          //     color="danger"
-          //     id={`delete-${cell?.row?.original?._id}`}
-          //     className="btn btn-sm btn-soft-danger bg-danger"
-          //     onClick={() => handleDelete(cell?.row?.original)}
-          //   >
-          //     <i className="align-bottom ri-delete-bin-fill" />
-          //     <ReactTooltip
-          //       place="bottom"
-          //       variant="error"
-          //       content="Delete"
-          //       anchorId={`delete-${cell?.row?.original?._id}`}
-          //     />
-          //   </BaseButton>
-          // </div>
           <div className="gap-2 hstack">
             <BaseButton
-              id={`edit-${cell?.row?.original?._id}`}
+              id={`usage-${cell?.row?.original?.id}`}
               color="primary"
+              className="btn btn-sm btn-soft-success usage-list"
+              onClick={() => handleView(cell.row.original)}
+            >
+              <i className="align-bottom ri-eye-fill" />
+              <ReactTooltip
+                place="bottom"
+                variant="info"
+                content="View"
+                anchorId={`usage-${cell?.row?.original?.id}`}
+              />
+            </BaseButton>
+            <BaseButton
+              id={`edit-${cell?.row?.original?._id}`}
+              color="secondary"
               className="btn btn-sm btn-soft-warning edit-list"
               onClick={() => handleEdit(cell?.row?.original)}
             >
@@ -259,60 +249,77 @@ const AddSkill = () => {
         ),
       },
     ],
-    [selectedSkills, skills]
+    [selectedSkills, roleSkill]
   );
 
   const [loader, setLoader] = useState(false);
 
+  const handleView = (id: string) => {
+    setSelectedId(id);
+    console.log("Seconf ID sndingggggg", id);
+    setShowViewModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowViewModal(false);
+  };
+
   const validation = useFormik({
     enableReinitialize: true,
     initialValues: {
-      addSkills: editingSkill ? editingSkill.skills : "",
+      addRole: editingSkill ? editingSkill.appliedRole : "",
+      addSkill: editingSkill ? editingSkill.skill : "",
     },
     validationSchema: Yup.object({
-      addSkills: Yup.string().required("Skill name is required"),
+      addRole: Yup.string().required("Role is required"),
+      addSkill: Yup.string().required("Skill is required"),
     }),
     onSubmit: (values) => {
       setLoader(true);
       const payload = {
-        _id: editingSkill?._id,
-        skills: values.addSkills,
+        _id: editingSkill?._id, // Pass only if edit
+        appliedRole: values.addRole,
+        skill: values.addSkill,
       };
 
+      const existingData = roleSkill.find(
+        (item) =>
+          item.appliedRole.toLowerCase() === values.addRole.toLowerCase() &&
+          item.skill.toLowerCase() === values.addSkill.toLowerCase()
+      );
+
+      if (existingData && !editingSkill) {
+        toast.error("This Role-Skill already exists!");
+        setLoader(false);
+        return;
+      }
+
       const apiCall = editingSkill
-        ? updateSkill(payload)
-        : createSkill(payload);
+        ? updateRoleSkill(payload)
+        : addRoleSkill(payload);
 
       apiCall
         .then((res) => {
           if (res?.success) {
             toast.success(
-              res?.message ||
-                `Skill ${editingSkill ? "updated" : "added"} successfully`
+              `Role-Skill ${editingSkill ? "updated" : "added"} successfully`
             );
-            setEditingSkill(null); // Reset editing state
-            validation.resetForm(); // Clear form data after submission
-            fetchSkills(); // Refresh data
+            setEditingSkill(null);
+            validation.resetForm();
+            fetchRoleSkills();
             setShowBaseModal(false);
           } else {
-            toast.error(
-              res?.message ||
-                `Failed to ${editingSkill ? "update" : "add"} skill`
-            );
+            toast.error(res?.message || "Something went wrong");
           }
         })
-        .catch(() => {
-          toast.error("Something went wrong!");
-        })
-        .finally(() => {
-          setLoader(false);
-        });
+        .catch(() => toast.error("API Error"))
+        .finally(() => setLoader(false));
     },
   });
 
   const formTitle = editingSkill
     ? "Edit Skill"
-    : "Add DropDown Items of Skills";
+    : "Add or Update Role and Skills";
   const submitButtonText = "Add";
 
   const handleOpenBaseModal = () => {
@@ -331,74 +338,6 @@ const AddSkill = () => {
     validation.resetForm();
   };
 
-  const handleFileImport = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    const fileExtension = file.name.split(".").pop()?.toLowerCase();
-    if (!["csv", "xlsx", "xls"].includes(fileExtension || "")) {
-      toast.error("Please upload a valid CSV or Excel file");
-      return;
-    }
-
-    // if (file.size > 5 * 1024 * 1024) {
-    //   // 5MB
-    //   toast("Large file detected. Import may take a few minutes.", {
-    //     icon: "⚠️",
-    //     duration: 4000,
-    //   });
-    // }
-
-    setImportLoader(true);
-    setIsImporting(true);
-    setImportProgress(0);
-
-    try {
-      const formData = new FormData();
-      formData.append("csvFile", file);
-
-      const response = await importSkills(formData, {
-        onUploadProgress: (progressEvent) => {
-          const progress = Math.round(
-            (progressEvent.loaded * 100) / (progressEvent.total || 100)
-          );
-          setImportProgress(progress);
-        },
-      });
-
-      if (response?.success) {
-        toast.success(response?.message || "File imported successfully!");
-        await fetchSkills();
-      } else {
-        throw new Error(response?.message || "Import failed");
-      }
-    } catch (error: any) {
-      console.error("Import error:", error);
-
-      if (error.response?.data) {
-        // Handle structured API errors
-        const errorMessage =
-          error.response.data.message || error.response.data.error;
-        toast.error(errorMessage || "Failed to import file");
-      } else if (error.message) {
-        // Handle other errors with messages
-        toast.error(error.message);
-      } else {
-        // Generic error
-        toast.error("An unexpected error occurred during import");
-      }
-    } finally {
-      // Reset states
-      setImportLoader(false);
-      setIsImporting(false);
-      setImportProgress(0);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
-    }
-  };
-
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchAll(event.target.value);
   };
@@ -408,11 +347,21 @@ const AddSkill = () => {
     setSelectedSkills([]);
   };
 
-  const filteredSkills = skills.filter((skill) =>
-    skill.skills.toLowerCase().includes(searchAll.toLowerCase())
+  const filteredRoleSkills = roleSkill.filter(
+    (skill) =>
+      skill.appliedRole.toLowerCase().includes(searchAll.toLowerCase()) ||
+      skill.skill.toLowerCase().includes(searchAll.toLowerCase())
   );
+
   return (
     <Fragment>
+      {showViewModal && selectedId && (
+        <ViewRoleSkill
+          show={showViewModal}
+          onHide={handleCloseModal}
+          applicantId={selectedId}
+        />
+      )}
       <DeleteModal
         show={showDeleteModal}
         onCloseClick={closeDeleteModal}
@@ -436,7 +385,7 @@ const AddSkill = () => {
                         {formTitle}
                       </div>
                       {/* Right Section (Search + Buttons) */}
-                      <div className="flex-wrap d-flex justify-content-end ">
+                      <div className="flex-wrap mr-2 d-flex justify-content-end ">
                         {/* Search Bar */}
                         <div className="col-sm-auto col-12">
                           <input
@@ -450,90 +399,29 @@ const AddSkill = () => {
 
                         {/* Delete Button (Only if skills are selected) */}
                         {selectedSkills.length > 1 && (
-                          <>
-                            <BaseButton
-                              className="ml-2 text-lg border-0 btn bg-danger edit-list w-fit"
-                              onClick={handleDeleteAll}
-                            >
-                              <i className="align-bottom ri-delete-bin-fill" />
-                              <ReactTooltip
-                                place="bottom"
-                                variant="error"
-                                content="Delete"
-                                anchorId={`Delete ${selectedSkills.length} Emails`}
-                              />
-                            </BaseButton>
-
-                            <BaseButton
-                              className="ml-2 text-lg border-0 btn bg-primary edit-list w-fit"
-                              onClick={handleDeleteAll}
-                            >
-                              Add to Chart
-                              <ReactTooltip
-                                place="bottom"
-                                variant="error"
-                                content="Delete"
-                                anchorId={`Delete ${selectedSkills.length} Emails`}
-                              />
-                            </BaseButton>
-                          </>
+                          <BaseButton
+                            className="ml-2 text-lg border-0 btn bg-danger edit-list w-fit"
+                            onClick={handleDeleteAll}
+                          >
+                            <i className="align-bottom ri-delete-bin-fill" />
+                            <ReactTooltip
+                              place="bottom"
+                              variant="error"
+                              content="Delete"
+                              anchorId={`Delete ${selectedSkills.length} Emails`}
+                            />
+                          </BaseButton>
                         )}
 
                         {/* Import & Submit Buttons (Stack only on smaller screens) */}
-                        <div className="flex-wrap d-flex align-items-center">
-                          <input
-                            type="file"
-                            ref={fileInputRef}
-                            accept=".csv,.xlsx,.xls"
-                            style={{ display: "none" }}
-                            onChange={handleFileImport}
-                          />
-                          <BaseButton
-                            color="primary"
-                            className="mx-2 position-relative"
-                            onClick={() => fileInputRef.current?.click()}
-                            disabled={importLoader}
-                          >
-                            {importLoader ? (
-                              <>
-                                <i className="align-bottom ri-loader-4-line animate-spin me-1" />
-                                {isImporting
-                                  ? `Importing... ${importProgress}%`
-                                  : "Processing..."}
-                              </>
-                            ) : (
-                              <>
-                                <i className="align-bottom ri-download-2-line me-1" />
-                                Import
-                              </>
-                            )}
-                            {isImporting && (
-                              <div
-                                className="bottom-0 progress position-absolute start-0"
-                                style={{
-                                  height: "4px",
-                                  width: "100%",
-                                  borderRadius: "0 0 4px 4px",
-                                }}
-                              >
-                                <div
-                                  className="progress-bar"
-                                  role="progressbar"
-                                  style={{ width: `${importProgress}%` }}
-                                  aria-valuenow={importProgress}
-                                  aria-valuemin={0}
-                                  aria-valuemax={100}
-                                />
-                              </div>
-                            )}
-                          </BaseButton>
-
+                        <div className="flex-wrap gap-2 d-flex align-items-center">
                           <BaseButton
                             color="success"
                             disabled={loader}
                             type="submit"
                             loader={loader}
                             onClick={handleOpenBaseModal}
+                            className="ml-2"
                           >
                             <i className="align-bottom ri-add-line me-1" />
                             {submitButtonText}
@@ -553,22 +441,43 @@ const AddSkill = () => {
                       editingSkill ? "Update Skill" : "Add Skill"
                     }
                     closeButtonText="Close"
+                    size="lg"
                   >
-                    <Row>
-                      <Col xs={9} md={5} lg={9}>
+                    <Row className="inline-block d-flex">
+                      <Col xs={12} md={8} lg={6}>
+                        <BaseInput
+                          label="Role Name"
+                          name="addRole"
+                          className="bg-gray-100"
+                          type="text"
+                          placeholder={InputPlaceHolder("Role to be Added")}
+                          handleChange={validation.handleChange}
+                          handleBlur={validation.handleBlur}
+                          value={validation.values.addRole}
+                          touched={!!validation.touched.addRole}
+                          error={
+                            typeof validation.errors.addRole === "string"
+                              ? validation.errors.addRole
+                              : undefined
+                          }
+                          //   value={"lol"}
+                          passwordToggle={false}
+                        />
+                      </Col>
+                      <Col xs={12} md={8} lg={6}>
                         <BaseInput
                           label="Skill Name"
-                          name="addSkills"
+                          name="addSkill"
                           className="bg-gray-100"
                           type="text"
                           placeholder={InputPlaceHolder("Skill to be Added")}
                           handleChange={validation.handleChange}
                           handleBlur={validation.handleBlur}
-                          value={validation.values.addSkills}
-                          touched={!!validation.touched.addSkills}
+                          value={validation.values.addSkill}
+                          touched={!!validation.touched.addSkill}
                           error={
-                            typeof validation.errors.addSkills === "string"
-                              ? validation.errors.addSkills
+                            typeof validation.errors.addSkill === "string"
+                              ? validation.errors.addSkill
                               : undefined
                           }
                           passwordToggle={false}
@@ -584,12 +493,12 @@ const AddSkill = () => {
                           <Skeleton count={5} />
                         </div>
                       ) : (
-                        <div>
-                          {skills?.length > 0 ? (
+                        <>
+                          {filteredRoleSkills?.length > 0 ? (
                             <TableContainer
-                              isHeaderTitle="Skills"
+                              //   isHeaderTitle="Roles and Skills"
                               columns={columns}
-                              data={filteredSkills}
+                              data={filteredRoleSkills}
                               // isGlobalFilter={true}
                               customPageSize={50}
                               theadClass="table-light text-muted"
@@ -607,7 +516,7 @@ const AddSkill = () => {
                               {handleResponse?.dataNotFound}
                             </div>
                           )}
-                        </div>
+                        </>
                       )}
                     </Col>
                   </Row>
@@ -621,4 +530,4 @@ const AddSkill = () => {
   );
 };
 
-export default AddSkill;
+export default UpdateSkill;

@@ -66,4 +66,10 @@ export const DashboardMenu: DashboardMenuProps[] = [
     icon: "plus",
     link: "/master/degree",
   },
+  {
+    id: uuid(),
+    title: "Add Role And Skill",
+    icon: "plus",
+    link: "/master/add-role-skill",
+  },
 ];
