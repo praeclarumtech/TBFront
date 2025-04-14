@@ -27,6 +27,7 @@ import ImportApplicantTables from "pages/applicant/importApplicants/Index";
 import Profile from "pages/UserProfile/Profile";
 import ChangePassword from "pages/auth/ChangePassword";
 import UpdateSkill from "pages/master/UpdateSkill";
+import FindAndReplace from "pages/master/FindAndReplace";
 
 const RenderRouter: React.FC = () => {
   const {
@@ -158,15 +159,22 @@ const RenderRouter: React.FC = () => {
               </RootLayout>
             }
           />
-               <Route
+          <Route
             path="add-role-skill"
             element={
               <RootLayout>
-                <UpdateSkill/>
+                <UpdateSkill />
               </RootLayout>
             }
           />
-
+          <Route
+            path="Find-Fields"
+            element={
+              <RootLayout>
+                <FindAndReplace />
+              </RootLayout>
+            }
+          />
         </Route>
       </Route>
     )

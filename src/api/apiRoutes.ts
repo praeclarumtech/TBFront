@@ -76,6 +76,7 @@ export const TOTAL_APPLICANTS = "/dashboard/applicant/count"
 export const RECENT_APPLICANTS = "/applicants/viewAllApplicant?appliedSkills="
 // export const APPLICANTS_DETAILS = "/reports/applicants/categoryWiseSkillCount?category="
 export const APPLICANTS_DETAILS = "/reports/applicants/technologyStatistics?category="
+export const REPORT_ON_SKILL = "reports/applicants/applicantSkillStatistics"
 
 
 
@@ -88,3 +89,9 @@ export const APPLICATION_ON_PROCESS = "/reports/applicants/applicationOnProcessC
 export const STATUS_OF_APPLICATION = "/reports/applicants/statusByPercentage"
 export const APPLICATION = "/reports/applicants/getApplicationsByDate?calendarType="
 
+
+
+//Find And Replace
+
+export const FIND_AND_REPLACE_ALL = "appliedRole/skillOrAppliedRoleReplaceAll"
+export const FIND = "/appliedRole/findSkillOrAppliedRole"

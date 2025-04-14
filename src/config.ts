@@ -3,7 +3,7 @@ interface ApiConfig {
 }
 
 interface Config {
-  api: ApiConfig;
+  api: ApiConfig; 
 }
 
 const config: Config = {
