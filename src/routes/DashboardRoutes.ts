@@ -72,4 +72,10 @@ export const DashboardMenu: DashboardMenuProps[] = [
     icon: "plus",
     link: "/master/add-role-skill",
   },
+  {
+    id: uuid(),
+    title: "Find And Replace Fields",
+    icon: "plus",
+    link: "/master/Find-Fields",
+  },
 ];

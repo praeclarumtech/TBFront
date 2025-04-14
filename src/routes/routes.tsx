@@ -16,6 +16,7 @@ import ImportApplicantTables from "pages/applicant/importApplicants/Index";
 import Profile from "pages/UserProfile/Profile";
 import ChangePassword from "pages/auth/ChangePassword";
 import UpdateSkill from "pages/master/UpdateSkill";
+import FindAndReplace from "pages/master/FindAndReplace";
 
 const routes = {
   ROOT: {
@@ -135,7 +136,11 @@ const routes = {
         path: "/master/add-role-skill",
         element: UpdateSkill,
       },
-
+      {
+        title: "Find And Replace Fields",
+        path: "/master/Find-Fields",
+        element: FindAndReplace,
+      },
     ],
   },
   LAYOUT_VERTICAL: {

@@ -17,7 +17,7 @@ const BaseModal: React.FC<BaseModalProps> = ({
   const toggle = () => setShowBaseModal(!show);
   return (
     <Modal fade={true} isOpen={show} toggle={toggle} centered size={size} >
-      <ModalHeader toggle={toggle}>{modalTitle}</ModalHeader>
+      <ModalHeader toggle={toggle} className="fw-bold">{modalTitle}</ModalHeader>
       <ModalBody>{children}</ModalBody>
 
       <ModalFooter>

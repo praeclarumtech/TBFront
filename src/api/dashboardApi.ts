@@ -1,4 +1,4 @@
-import { TOTAL_APPLICANTS,RECENT_APPLICANTS,APPLICANTS_DETAILS } from "./apiRoutes";
+import { TOTAL_APPLICANTS,RECENT_APPLICANTS,APPLICANTS_DETAILS, REPORT_ON_SKILL } from "./apiRoutes";
 import { authServices } from "./apiServices";
 
 export const getTotalApplicants = async () => {
@@ -17,4 +17,9 @@ export const getApplicantsDetails = async (selectedFilter = "") => {
   };
 
 
+
+export const getChartDetails = async (ids: string[]) => {
+  const response = await authServices.post(`${REPORT_ON_SKILL}`, {"skillIds" : ids});
+  return response?.data;
+};
 

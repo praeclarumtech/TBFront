@@ -11,7 +11,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { IconButton, useMediaQuery } from "@mui/material";
 import "react-loading-skeleton/dist/skeleton.css";
 import {
- 
   listOfImportApplicants,
   updateStage,
   updateStatus,
@@ -1361,9 +1360,7 @@ function ImportApplicant() {
                            </BaseButton> */}
 
                           <BaseButton
-                            // id={`editMode-${cell?.row?.original?.id}`}
                             className="ml-2 btn btn-soft-secondary edit-list"
-                            // onClick={() => handleEdit(cell?.row?.original._id)}
                             onClick={handleOpenBaseModal}
                           >
                             <i className="align-bottom ri-pencil-fill" /> Edit
@@ -1371,7 +1368,6 @@ function ImportApplicant() {
                               place="bottom"
                               variant="info"
                               content="Edit"
-                              // anchorId={`editMode-${cell?.row?.original?.id}`}
                             />
                           </BaseButton>
 

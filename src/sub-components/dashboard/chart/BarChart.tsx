@@ -1,21 +1,19 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
   PointElement,
+  BarElement,
   LineElement,
   Title,
   Tooltip,
   Legend,
-  ChartOptions,
   Filler,
-  BarElement,
+  ChartOptions,
 } from "chart.js";
 import { Bar, getElementAtEvent } from "react-chartjs-2";
 import Skeleton from "react-loading-skeleton";
-import "react-loading-skeleton/dist/skeleton.css";
-import { getApplicantsDetails } from "api/dashboardApi";
 
 ChartJS.register(
   CategoryScale,
@@ -31,69 +29,22 @@ ChartJS.register(
 
 interface BarChartProps {
   onBarClick: (label: string) => void;
-  selectedFilter: string;
+  selectedFilter: Record<string, number>; // assuming object like { JavaScript: 20, Python: 15 }
+  isloading: boolean;
 }
 
-const BarChart = ({ onBarClick, selectedFilter }: BarChartProps) => {
-  const [applicantsDetail, setApplicantsDetail] = useState<
-    Record<string, number>
-  >({});
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+const BarChart = ({ onBarClick, selectedFilter, isloading }: BarChartProps) => {
+  const chartRef = useRef<any>(null);
 
-  useEffect(() => {
-    fetchApplicantsDetails();
-  }, [selectedFilter]);
-
-  const fetchApplicantsDetails = async () => {
-    setIsLoading(true);
-    try {
-      const response = await getApplicantsDetails(selectedFilter);
-      if (response?.data?.skillCounts) {
-        setApplicantsDetail(response?.data?.skillCounts);
-      }
-    } catch (error) {
-      console.error("API Error:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const formatLabel = (text: string) => {
-    return text
+  const formatLabel = (text: string) =>
+    text
       .replace(/Applicants$/, "")
       .replace(/([A-Z])/g, " $1")
       .trim()
       .replace(/\b\w/g, (char) => char.toUpperCase());
-  };
 
-  const labels = Object.keys(applicantsDetail).map((key) => formatLabel(key));
-  const dataValues = Object.values(applicantsDetail);
-
-  const options: ChartOptions<"bar"> = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        position: "bottom",
-        labels: {
-          color: "#ffA500", // Change legend label color
-        },
-      },
-      title: { display: false },
-    },
-    scales: {
-      x: { grid: { display: false }, ticks: { color: "#000000" } },
-      y: { grid: { display: false }, ticks: { color: "#000000" } },
-    },
-    onHover: (event, chartElement) => {
-      if (!event?.native) return; // Ensure event.native is not null
-
-      const target = event.native.target as HTMLElement | null; // Type assertion to HTMLElement
-      if (target) {
-        target.style.cursor = chartElement.length > 0 ? "pointer" : "default";
-      }
-    },
-  };
+  const labels = Object.keys(selectedFilter ?? {}).map(formatLabel);
+  const dataValues = Object.values(selectedFilter ?? {});
 
   const chartData = {
     labels,
@@ -110,17 +61,40 @@ const BarChart = ({ onBarClick, selectedFilter }: BarChartProps) => {
           "#0000FF",
           "#4b369d",
           "#70369d",
-          // "#00bcd4",
-          // "#6a0dad",
-          // "#a40000",
         ],
         fill: true,
-        barThickness: 50, // Fixed width for bars
+        barThickness: 50,
         maxBarThickness: 70,
-        // categoryPercentage: 0.6, // Adjust space between categories (0.0 - 1.0)
-        // barPercentage: 0.6, //
       },
     ],
+  };
+
+  const options: ChartOptions<"bar"> = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: "bottom",
+        labels: { color: "#000000" },
+      },
+      title: { display: false },
+    },
+    scales: {
+      x: {
+        grid: { display: false },
+        ticks: { color: "#000000" },
+      },
+      y: {
+        grid: { display: false },
+        ticks: { color: "#000000" },
+      },
+    },
+    onHover: (event, chartElement) => {
+      const target = event?.native?.target as HTMLElement | null;
+      if (target) {
+        target.style.cursor = chartElement.length > 0 ? "pointer" : "default";
+      }
+    },
   };
 
   const formatClickedLabel = (label: string) => {
@@ -133,7 +107,6 @@ const BarChart = ({ onBarClick, selectedFilter }: BarChartProps) => {
       NextJs: "Next.js",
       ExpressJs: "Express.js",
     };
-
     return labelMap[label] || label;
   };
 
@@ -144,28 +117,29 @@ const BarChart = ({ onBarClick, selectedFilter }: BarChartProps) => {
     if (elements.length > 0) {
       const index = elements[0].index;
       let selectedLabel = labels[index];
-
-      selectedLabel = selectedLabel.replace(/\s+/g, "");
-
-      selectedLabel = formatClickedLabel(selectedLabel);
-
+      selectedLabel = formatClickedLabel(selectedLabel.replace(/\s+/g, ""));
       onBarClick(selectedLabel);
     }
   };
 
-  const chartRef = useRef<any>(null);
+  if (!labels.length || !dataValues.length) {
+    return (
+      <div className="py-4 text-center">
+        <b>No data available. Please Go and Select Skills to Show </b>
+      </div>
+    );
+  }
 
   return (
-    <div className="w-full min-h-[390px] flex justify-center items-center">
-      {isLoading ? (
-        <div className="min-h-[410px] w-full">
-          <Skeleton className="min-h-[412px]" />
-        </div>
-      ) : Object.keys(applicantsDetail).length > 0 ? (
-        <div className="w-full overflow-x-auto h-full">
-          {/* Set min-width dynamically: Each bar gets ~50px, adjust as needed */}
+    <div className="w-full min-h-[571px] flex justify-center items-center">
+      <div className="w-full h-[570px] overflow-x-scroll overflow-y-auto  ">
+        {isloading ? (
+          <div className="h-[500px] w-[600px]">
+            <Skeleton />
+          </div>
+        ) : (
           <div
-            className="h-[410px] min-w-[800px]"
+            className="h-[530px] min-w-[800px]"
             style={{ minWidth: `${Math.max(labels.length * 70, 900)}px` }}
           >
             <Bar
@@ -175,10 +149,8 @@ const BarChart = ({ onBarClick, selectedFilter }: BarChartProps) => {
               onClick={handleChartClick}
             />
           </div>
-        </div>
-      ) : (
-        <p>No data available</p>
-      )}
+        )}
+      </div>
     </div>
   );
 };

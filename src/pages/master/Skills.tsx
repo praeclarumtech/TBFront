@@ -24,10 +24,12 @@ import appConstants from "constants/constant";
 import { getSerialNumber, InputPlaceHolder } from "utils/commonFunctions";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import { useNavigate } from "react-router-dom";
 
 const { projectTitle, Modules, handleResponse } = appConstants;
 
 const AddSkill = () => {
+  const navigate = useNavigate();
   document.title = Modules.SKill + " | " + projectTitle;
   const [skills, setSkills] = useState<any[]>([]);
   const [editingSkill, setEditingSkill] = useState<any>(null);
@@ -194,36 +196,6 @@ const AddSkill = () => {
       {
         header: "Action",
         cell: (cell: { row: { original: any } }) => (
-          // <div className="gap-2 hstack">
-          //   <BaseButton
-          //     id={`edit-${cell?.row?.original?._id}`}
-          //     color="primary"
-          //     className="btn btn-sm btn-soft-warning edit-list"
-          //     onClick={() => handleEdit(cell?.row?.original)}
-          //   >
-          //     <i className="align-bottom ri-pencil-fill" />
-          //     <ReactTooltip
-          //       place="bottom"
-          //       variant="warning"
-          //       content="Edit"
-          //       anchorId={`edit-${cell?.row?.original?._id}`}
-          //     />
-          //   </BaseButton>
-          //   <BaseButton
-          //     color="danger"
-          //     id={`delete-${cell?.row?.original?._id}`}
-          //     className="btn btn-sm btn-soft-danger bg-danger"
-          //     onClick={() => handleDelete(cell?.row?.original)}
-          //   >
-          //     <i className="align-bottom ri-delete-bin-fill" />
-          //     <ReactTooltip
-          //       place="bottom"
-          //       variant="error"
-          //       content="Delete"
-          //       anchorId={`delete-${cell?.row?.original?._id}`}
-          //     />
-          //   </BaseButton>
-          // </div>
           <div className="gap-2 hstack">
             <BaseButton
               id={`edit-${cell?.row?.original?._id}`}
@@ -411,6 +383,15 @@ const AddSkill = () => {
   const filteredSkills = skills.filter((skill) =>
     skill.skills.toLowerCase().includes(searchAll.toLowerCase())
   );
+
+  const handleSkills = (applicantId: string[]) => {
+    if (applicantId.length > 0) {
+      // navigate(`/dashboard/${applicantId || "0"}`);
+      console.log("this is in skillll",applicantId)
+      navigate(`/dashboard`, { state: { applicantIds: applicantId } });
+    }
+  };
+
   return (
     <Fragment>
       <DeleteModal
@@ -466,7 +447,7 @@ const AddSkill = () => {
 
                             <BaseButton
                               className="ml-2 text-lg border-0 btn bg-primary edit-list w-fit"
-                              onClick={handleDeleteAll}
+                              onClick={() => handleSkills(selectedSkills)}
                             >
                               Add to Chart
                               <ReactTooltip
