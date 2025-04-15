@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Row, Col, Card, Container, CardBody } from "react-bootstrap";
-import { Fragment, useMemo, useState, useEffect} from "react";
+import { Fragment, useMemo, useState, useEffect } from "react";
 
 import { toast } from "react-toastify";
 import BaseButton from "components/BaseComponents/BaseButton";
@@ -12,7 +12,11 @@ import BaseInput from "components/BaseComponents/BaseInput";
 import DeleteModal from "components/BaseComponents/DeleteModal";
 import BaseModal from "components/BaseComponents/BaseModal";
 import appConstants from "constants/constant";
-import { getSerialNumber, InputPlaceHolder } from "utils/commonFunctions";
+import {
+  errorHandle,
+  getSerialNumber,
+  InputPlaceHolder,
+} from "utils/commonFunctions";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import {
@@ -22,14 +26,29 @@ import {
   viewRoleSkill,
 } from "api/roleApi";
 import ViewRoleSkill from "./ViewRoleSkill";
+import { ViewAppliedSkills } from "api/skillsApi";
+import { SelectedOption1 } from "interfaces/applicant.interface";
+import { MultiSelect } from "components/BaseComponents/BaseSelect";
 
 const { projectTitle, Modules, handleResponse } = appConstants;
 
 const UpdateSkill = () => {
   document.title = Modules.SKill + " | " + projectTitle;
   const [roleSkill, setRoleSkills] = useState<any[]>([]);
+  const [skillOptions, setSkillOptions] = useState<SelectedOption1[]>([]);
+
+  // const [editingSkill, setEditingSkill] = useState<any>({
+  //   _id: "",
+  //   addRole: "",
+  //   addSkill: {
+  //     label: "",
+  //     value: "",
+  //     id: "",
+  //   },
+  // });
 
   const [editingSkill, setEditingSkill] = useState<any>(null);
+
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [roleAndSkillToDelete, setRoleAndSkillToDelete] = useState<any>([]);
   const [showBaseModal, setShowBaseModal] = useState(false);
@@ -40,12 +59,10 @@ const UpdateSkill = () => {
     limit: 50,
   });
   const [isLoading, setIsLoading] = useState(false);
- 
+
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [searchAll, setSearchAll] = useState<string>("");
-  const [selectedId, setSelectedId] = useState<string | null>(
-    null
-  );
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [showViewModal, setShowViewModal] = useState(false);
 
   const fetchRoleSkills = async () => {
@@ -58,6 +75,8 @@ const UpdateSkill = () => {
       });
 
       if (res?.success) {
+        console.log("fetch skills");
+
         setRoleSkills(res?.data?.data || []);
         setTotalRecords(res.data?.pagination?.totalRecords || 0);
       } else {
@@ -75,12 +94,19 @@ const UpdateSkill = () => {
     fetchRoleSkills();
   }, [pagination.pageIndex, pagination.pageSize]);
 
-  const handleEdit = (roleSkill: any) => {
-    setEditingSkill(roleSkill);
+  const handleEdit = (id: any) => {
+    const selectedSkillOptions = skillOptions.filter((opt) =>
+      id.skill.includes(opt.label)
+    );
+
+    setEditingSkill(id);
+
     validation.setValues({
-      addSkill: roleSkill.skill || "",
-      addRole: roleSkill.appliedRole || "",
+      _id: id._id || "",
+      addRole: id.appliedRole || "",
+      addSkill: selectedSkillOptions,
     });
+
     setShowBaseModal(true);
   };
 
@@ -155,7 +181,7 @@ const UpdateSkill = () => {
 
   const handleDeleteAll = () => {
     if (selectedSkills.length > 1) {
-      //   setSkillToDelete([...selectedSkills]);
+      setRoleAndSkillToDelete([...selectedSkills]);
       setShowDeleteModal(true);
     }
   };
@@ -256,7 +282,6 @@ const UpdateSkill = () => {
 
   const handleView = (id: string) => {
     setSelectedId(id);
-    console.log("Seconf ID sndingggggg", id);
     setShowViewModal(true);
   };
 
@@ -267,25 +292,47 @@ const UpdateSkill = () => {
   const validation = useFormik({
     enableReinitialize: true,
     initialValues: {
+      _id: editingSkill ? editingSkill._id : "",
       addRole: editingSkill ? editingSkill.appliedRole : "",
-      addSkill: editingSkill ? editingSkill.skill : "",
+
+      addSkill: editingSkill
+        ? skillOptions.filter((opt) => editingSkill.skill.includes(opt.label))
+        : [],
     },
     validationSchema: Yup.object({
       addRole: Yup.string().required("Role is required"),
-      addSkill: Yup.string().required("Skill is required"),
+      addSkill: Yup.array()
+        .min(1, "Select at least one skill")
+        .of(
+          Yup.object().shape({
+            label: Yup.string().required(),
+            value: Yup.string().required(),
+          })
+        )
+        .required("Skill is required"),
     }),
     onSubmit: (values) => {
       setLoader(true);
+
       const payload = {
-        _id: editingSkill?._id, // Pass only if edit
+        _id: values._id,
         appliedRole: values.addRole,
-        skill: values.addSkill,
+        skillIds: values.addSkill.map((item: SelectedOption1) =>
+          String(item.id)
+        ),
       };
+
+      const normalize = (arr: (string | number)[]) =>
+        arr.map(String).sort().join(",");
+
+      const currentSkillIds = values.addSkill.map(
+        (item: SelectedOption1) => item.id
+      );
 
       const existingData = roleSkill.find(
         (item) =>
           item.appliedRole.toLowerCase() === values.addRole.toLowerCase() &&
-          item.skill.toLowerCase() === values.addSkill.toLowerCase()
+          normalize(item.skillIds || []) === normalize(currentSkillIds)
       );
 
       if (existingData && !editingSkill) {
@@ -293,7 +340,7 @@ const UpdateSkill = () => {
         setLoader(false);
         return;
       }
-
+      console.log({ payload });
       const apiCall = editingSkill
         ? updateRoleSkill(payload)
         : addRoleSkill(payload);
@@ -316,7 +363,7 @@ const UpdateSkill = () => {
         .finally(() => setLoader(false));
     },
   });
-
+  console.log(validation.values);
   const formTitle = editingSkill
     ? "Edit Skill"
     : "Add or Update Role and Skills";
@@ -352,6 +399,51 @@ const UpdateSkill = () => {
       skill.appliedRole.toLowerCase().includes(searchAll.toLowerCase()) ||
       skill.skill.toLowerCase().includes(searchAll.toLowerCase())
   );
+
+  const fetchSkills = async () => {
+    try {
+      setIsLoading(true);
+      //  const allSkills: any[] = [];
+      const page = 1;
+      const pageSize = 50;
+      const limit = 200;
+      const response = await ViewAppliedSkills({
+        page,
+        pageSize,
+        limit,
+      });
+
+      const skillData = response?.data?.data || [];
+
+      setSkillOptions(
+        skillData.map((item: any) => ({
+          label: item.skills,
+          value: item.skills, // match what you'll use in selected
+          id: item._id, // if needed
+        }))
+      );
+    } catch (error) {
+      errorHandle(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    console.log("helooooooooooooooooooooooooooooooooo");
+
+    fetchSkills();
+  }, []);
+
+ 
+  const handleAppliedSkillsChange = (selectedOptions: SelectedOption1[]) => {
+    console.log("skills", selectedOptions);
+
+    const selectedSkillIds = selectedOptions.map((option) => option.id);
+    console.log("Selected Skill IDs:", selectedSkillIds);
+
+    validation.setFieldValue("addSkill", selectedOptions);
+  };
 
   return (
     <Fragment>
@@ -465,22 +557,23 @@ const UpdateSkill = () => {
                         />
                       </Col>
                       <Col xs={12} md={8} lg={6}>
-                        <BaseInput
-                          label="Skill Name"
+                        <MultiSelect
+                          label="Applied Skills"
                           name="addSkill"
-                          className="bg-gray-100"
-                          type="text"
-                          placeholder={InputPlaceHolder("Skill to be Added")}
+                          className="mb-1 bg-gray-100 select-border"
+                          placeholder="Applied Skills"
+                          value={validation.values.addSkill}
+                          isMulti={true}
                           handleChange={validation.handleChange}
                           handleBlur={validation.handleBlur}
-                          value={validation.values.addSkill}
-                          touched={!!validation.touched.addSkill}
+                          onChange={handleAppliedSkillsChange}
+                          options={skillOptions}
                           error={
                             typeof validation.errors.addSkill === "string"
                               ? validation.errors.addSkill
                               : undefined
                           }
-                          passwordToggle={false}
+                          touched={!!validation.touched.addSkill}
                         />
                       </Col>
                     </Row>
@@ -496,13 +589,10 @@ const UpdateSkill = () => {
                         <>
                           {filteredRoleSkills?.length > 0 ? (
                             <TableContainer
-                              //   isHeaderTitle="Roles and Skills"
                               columns={columns}
                               data={filteredRoleSkills}
-                              // isGlobalFilter={true}
                               customPageSize={50}
                               theadClass="table-light text-muted"
-                              // SearchPlaceholder="Search..."
                               totalRecords={totalRecords}
                               pagination={pagination}
                               setPagination={setPagination}

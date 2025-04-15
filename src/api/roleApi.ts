@@ -3,8 +3,13 @@ import { ADD_ROLE_AND_SKILL, VIEW_ROLE_AND_SKILL, UPDATE_ROLE_AND_SKILL, DELETE_
 import { authServices } from "./apiServices";
 
 
-export const addRoleSkill = async (data?: object) => {
-  const response = await authServices.post(`${ADD_ROLE_AND_SKILL}`, data);
+export const addRoleSkill = async (data:{ 
+
+  appliedRole: string;
+  skillIds: string[]; // Depending on whether it accepts single or multiple skills
+}) => {
+  const { appliedRole, skillIds } = data;
+  const response = await authServices.post(`${ADD_ROLE_AND_SKILL}`, {appliedRole, skillIds});
   return response?.data;
 };
 
@@ -15,9 +20,17 @@ export const viewRoleSkill = async (
   return response?.data;
 };
 
-export const updateRoleSkill = async (data: { _id: string; skill: string; appliedRole:string }) => {
-  const { _id, skill, appliedRole} = data;
-  const response = await authServices.put(`${UPDATE_ROLE_AND_SKILL}/${_id}`, { skill, appliedRole });
+// Update the API function to match the endpoint requirements
+export const updateRoleSkill = async (data: { 
+  _id: string;
+  appliedRole: string;
+  skillIds: string[]; // Depending on whether it accepts single or multiple skills
+}) => {
+  const { _id, appliedRole, skillIds } = data;
+  const response = await authServices.put(
+    `${UPDATE_ROLE_AND_SKILL}/${_id}`, 
+    { appliedRole, skillIds }
+  );
   return response?.data;
 };
 
