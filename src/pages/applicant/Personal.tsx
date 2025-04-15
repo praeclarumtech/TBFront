@@ -5,7 +5,7 @@ import { useFormik } from "formik";
 import { Fragment } from "react";
 import BaseButton from "components/BaseComponents/BaseButton";
 import { BaseSelect } from "components/BaseComponents/BaseSelect";
-import { Form, Link } from "react-router-dom";
+import { Form, Link} from "react-router-dom";
 import BaseInput from "components/BaseComponents/BaseInput";
 import moment from "moment";
 import BaseTextarea from "components/BaseComponents/BaseTextArea";
@@ -34,7 +34,7 @@ const {
   stateType,
 } = appConstants;
 
-const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
+const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
   document.title = Modules.CreateApplicantForm + " | " + projectTitle;
   const [cities, setCities] = useState<City[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -583,7 +583,11 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
               )}
               <div className="d-flex flex-column flex-md-row justify-content-end gap-3 mt-4">
                 <Link
-                  to="/applicants"
+                  to={
+                    module === "import-applicant"
+                      ? "/import-applicants"
+                      : "/applicants"
+                  }
                   style={styleButton}
                   className="d-flex align-items-center justify-content-center"
                 >
@@ -607,8 +611,8 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
 };
 
 const styleButton = {
-  backgroundColor: "red",
-  color: "white",
+  backgroundColor: "white",
+  color: "red",
   borderRadius: "5px",
   padding: "8px 20px",
   fontSize: "16px",

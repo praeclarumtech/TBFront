@@ -344,6 +344,7 @@ const StepperForm = () => {
                       <PersonalDetailsForm
                         onNext={handleNext}
                         initialValues={formData}
+                        module= {moduleName}
                       />
                     )}
                     {activeStep === 1 && (

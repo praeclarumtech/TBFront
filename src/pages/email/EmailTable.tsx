@@ -270,6 +270,7 @@ const EmailTable = () => {
       setEmailToDelete([]);
     } catch (error) {
       errorHandle(error);
+      toast.error("Something went wrong!");
     } finally {
       setDeleteLoader(false);
     }
@@ -285,6 +286,7 @@ const EmailTable = () => {
       setSelectedApplicants([]); // Clear selection
     } catch (error) {
       errorHandle(error);
+      toast.error("Something went wrong!");
     } finally {
       setDeleteLoader(false);
     }
