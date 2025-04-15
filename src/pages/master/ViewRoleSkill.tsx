@@ -6,8 +6,11 @@ import Skeleton from "react-loading-skeleton";
 import { MailTwoTone } from "@ant-design/icons";
 import { Modal, Badge, Card, Row, Col, Tag } from "antd";
 import { viewRoleSkillById } from "api/roleApi";
+import appConstants from "constants/constant";
+const { projectTitle, Modules } = appConstants;
 
 const ViewRoleSkill = ({ show, onHide, applicantId }: any) => {
+  document.title = Modules.RoleAndSkill + " | " + projectTitle;
   const [formData, setFormData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
 

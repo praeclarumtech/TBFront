@@ -21,6 +21,7 @@ import {
 import ViewModal from "./ViewApplicant";
 import BaseInput from "components/BaseComponents/BaseInput";
 import DeleteModal from "components/BaseComponents/DeleteModal";
+// import BaseModal from "components/BaseComponents/BaseModal";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
@@ -43,11 +44,13 @@ import saveAs from "file-saver";
 
 import debounce from "lodash.debounce";
 
-const { handleResponse } = appConstants;
 import { ViewAppliedSkills } from "api/skillsApi";
 import { IconButton, useMediaQuery } from "@mui/material";
 import { Close } from "@mui/icons-material";
+import BaseModal from "components/BaseComponents/BaseModal";
+import CheckboxMultiSelect from "components/BaseComponents/CheckboxMultiSelect";
 const {
+  exportableFieldOption,
   projectTitle,
   Modules,
   interviewStageOptions,
@@ -58,6 +61,7 @@ const {
   workPreferenceType,
   designationType,
   addedByOptions,
+  // exportableFields,
 } = appConstants;
 
 type Anchor = "top" | "right" | "bottom";
@@ -71,9 +75,7 @@ const Applicant = () => {
   );
   const [showModal, setShowModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  // const [recordIdToDelete, setRecordIdToDelete] = useState<string | undefined>(
-  //   undefined
-  // );
+
   const [experienceRange, setExperienceRange] = useState<number[]>([0, 25]);
 
   const [filterNoticePeriod, setFilterNoticePeriod] = useState<number[]>([
@@ -105,7 +107,7 @@ const Applicant = () => {
   const [totalRecords, setTotalRecords] = useState(0);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
-    pageSize: 10,
+    pageSize: 50,
   });
   const [tableLoader, setTableLoader] = useState(false);
   const [selectedApplicants, setSelectedApplicants] = useState<string[]>([]);
@@ -123,6 +125,12 @@ const Applicant = () => {
     string[]
   >([]);
   const [addedBy, setAddedBy] = useState<SelectedOption[]>([]);
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [exportOption, setExportOption] = useState("");
+  const [exportableFields, setExportableFields] = useState<SelectedOption[]>(
+    []
+  );
+
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const toggleDrawer =
     (anchor: Anchor, open: boolean) =>
@@ -257,7 +265,7 @@ const Applicant = () => {
 
   useEffect(() => {
     const delayedSearch = debounce(() => {
-      console.log("your api is calling");
+      // console.log("your api is calling");
       fetchApplicants();
     }, 0);
 
@@ -536,11 +544,24 @@ const Applicant = () => {
     });
   };
 
-  const handleExportExcel = async (filtered: string[]) => {
+  const handleExportExcel = async (source: string) => {
     try {
       toast.info("Preparing file for download...");
+
+      const selectedColumns = exportableFields.map((field) => field.value);
+      const payload = {
+        ids: selectedApplicants,
+        fields: selectedColumns,
+      };
+      // console.log("payload function", payload.fields);
+
+      const queryParams = {
+        source,
+      };
+
       await new Promise((resolve) => setTimeout(resolve, 3500));
-      const response = await ExportApplicant(filtered);
+
+      const response = await ExportApplicant(queryParams, payload);
 
       if (!response) {
         toast.error("Failed to download file");
@@ -548,15 +569,41 @@ const Applicant = () => {
       }
 
       const blob = new Blob([response], { type: "text/csv" });
-
-      saveAs(blob, "applicants.csv");
-
+      saveAs(blob, "Imported_Applicants.csv");
+      setShowExportModal(false);
+      setSelectedApplicants([]);
       toast.success("File downloaded successfully!");
     } catch (error) {
-      // console.error("Export error:", error);
+      // toast.error(error);
       errorHandle(error);
-      // toast.error("Failed to export file");
+    } finally {
+      fetchApplicants();
     }
+  };
+
+  const handleColumnSelected = (
+    selectedOptions: any[] | ((prevState: SelectedOption[]) => SelectedOption[])
+  ) => {
+    if (!selectedApplicants || selectedApplicants.length === 0) {
+      toast.error("Please select applicants before choosing columns.");
+      return;
+    }
+
+    setExportableFields(selectedOptions);
+
+    if (Array.isArray(selectedOptions)) {
+      console.log(
+        "Selected values:",
+        selectedOptions.map((opt: { value: any }) => opt.value)
+      );
+
+      setExportableFields(selectedOptions);
+      setExportOption("");
+    }
+  };
+
+  const handleExportModalShow = () => {
+    setShowExportModal(true);
   };
 
   const drawerList = (anchor: Anchor) => (
@@ -932,6 +979,7 @@ const Applicant = () => {
       {
         header: "Applicant Status",
         accessorKey: "status",
+
         cell: (cell: any) => (
           <BaseSelect
             name="status"
@@ -1040,7 +1088,6 @@ const Applicant = () => {
     const searchTerm = searchAll.toLowerCase();
 
     return (
-      // fullName.includes(searchTerm) || // ✅ Search by full name
       applicants?.name?.firstName?.toLowerCase().includes(searchTerm) ||
       applicants?.name?.middleName?.toLowerCase().includes(searchTerm) ||
       applicants?.name?.lastName?.toLowerCase().includes(searchTerm) ||
@@ -1057,9 +1104,86 @@ const Applicant = () => {
   });
 
   const isMobile = window.innerWidth <= 767;
-
+  const ModalTitle = () => (
+    <div className="flex items-center">
+      <i className="fas fa-file-export mr-2" style={{ fontSize: 24 }}></i>
+      <span style={{ fontSize: 24, fontWeight: 600 }}>Export Applicants</span>
+    </div>
+  );
+  const handleExportOptionChange = (option: string) => {
+    setExportOption(option);
+    setExportableFields([]);
+  };
   return (
     <Fragment>
+      <BaseModal
+        show={showExportModal}
+        onSubmitClick={() => handleExportExcel(exportOption)}
+        onCloseClick={() => setShowExportModal(false)}
+        loader={false}
+        submitButtonText="Export"
+        closeButtonText="Close"
+        setShowBaseModal={setShowExportModal}
+        modalTitle={<ModalTitle />}
+        children={
+          <div>
+            <Row>
+              <div>
+                <h5>Choose the columns you want to export:</h5>
+                <CheckboxMultiSelect
+                  label="Select columns"
+                  name="selectedColumns"
+                  className="mb-2 select-border"
+                  placeholder="Fields..."
+                  value={exportableFields}
+                  isMulti={true}
+                  showSelectAll={false}
+                  onChange={handleColumnSelected}
+                  options={exportableFieldOption}
+                  isDisabled={exportOption !== ""}
+                />
+                {exportableFields.length > 0 && exportOption === "" && (
+                  <button
+                    className="btn btn-sm btn-outline-secondary mt-2"
+                    onClick={() => setExportableFields([])}
+                  >
+                    Reset Column Selection
+                  </button>
+                )}
+              </div>
+            </Row>
+
+            <Row className="mt-4">
+              <div>
+                <h5>Select export option:</h5>
+                {["Manual", "Resume", "Csv", "both"].map((option) => (
+                  <div key={option}>
+                    <input
+                      className="m-2"
+                      type="radio"
+                      id={option}
+                      name="exportOption"
+                      disabled={exportableFields.length > 0}
+                      checked={exportOption === option}
+                      onChange={() => handleExportOptionChange(option)}
+                    />
+                    <label htmlFor={option}>{option}</label>
+                  </div>
+                ))}
+                {exportOption && exportableFields.length === 0 && (
+                  <button
+                    className="btn btn-sm btn-outline-secondary mt-2"
+                    onClick={() => setExportOption("")}
+                  >
+                    Reset Export Option
+                  </button>
+                )}
+              </div>
+            </Row>
+          </div>
+        }
+      />
+
       {showModal && selectedApplicantId && (
         <ViewModal
           show={showModal}
@@ -1138,23 +1262,8 @@ const Applicant = () => {
 
                       <BaseButton
                         color="primary"
-                        className="bg-green-900"
-                        hoverOptions={[
-                          "Manual",
-                          "Resume",
-                          "Csv",
-                          "Both (Resume, Csv)",
-                          "All",
-                        ]}
-                        onOptionClick={(option) =>
-                          handleExportExcel(
-                            option === "All"
-                              ? []
-                              : option === "Both (Resume, Csv)"
-                              ? ["both"]
-                              : [option]
-                          )
-                        }
+                        className="ml-2 bg-green-900 btn btn-soft-secondary edit-list"
+                        onClick={() => handleExportModalShow()}
                       >
                         <i className="ri-upload-2-line me-1" />
                         Export
@@ -1202,8 +1311,9 @@ const Applicant = () => {
                         rowHeight="10px !important"
                       />
                     ) : (
-                      <div className="py-4 text-center">
-                        {handleResponse?.dataNotFound}
+                      <div className="text-center">
+                        <i className="ri-search-line d-block fs-1 text-success"></i>
+                        {"Total Record: " + totalRecords}
                       </div>
                     )}
                   </div>

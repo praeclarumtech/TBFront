@@ -1,3 +1,4 @@
+
 import {  DELETE_IMPORTED_APPLICANT, UPDATE_IMPORTED_APPLICANT } from './apiRoutes';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // import { toast } from "react-toastify";
@@ -69,10 +70,7 @@ export const CheckExistingApplicant = async (params: {
     params,
   });
   return response?.data;
-  // console.log("Response from  CheckExistingApplicant:", response?.data);
-  // } catch (error) {
-  //   console.error("Error in checking existing applicant:", error);
-  // }
+ 
 };
 
 export const updateApplicant = async (
@@ -147,7 +145,7 @@ export const importApplicant = async (
 ) => {
   const url = `${IMPORT_APPLICANT}`;
 
-  try {
+  
     const response = await authServices.post(url, formData, {
       headers: { "Content-Type": "multipart/form-data" },
       params: config?.params,
@@ -156,50 +154,48 @@ export const importApplicant = async (
     });
 
     return response.data;
-  } catch (error: any) {
-    if (error.response) {
-      console.error("API error response add:", error.response);
-      // errorHandle(error.response);
-      throw new Error(
-        error.response.data?.message || "An error occurred while importing."
-      );
-      console.log("1", error.response.data?.message);
+  
+};
+
+
+export const ExportApplicant = async (
+  queryParams: {  source: string },
+  payload: { ids: string[]; fields: string[] }
+) => {
+  const {  source } = queryParams;
+  const response = await authServices.post(
+    `${EXPORT_APPLICANT}?source=${encodeURIComponent(source)}`,
+    payload,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      responseType: "blob",
+      timeout: 300000,
     }
-  }
+  );
+  return response.data;
 };
 
-export const ExportApplicant = async (queryParams: string[]) => {
-  try {
-    const response = await authServices.get(
-      `${EXPORT_APPLICANT}${queryParams}`,
-      {
-        responseType: "blob",
-        timeout: 300000,
-      }
-    );
+export const ExportImportedApplicant = async (
+  queryParams: { filtered: string },
+  payload: { ids: string[]; fields: string[] }
+) => {
+  const { filtered } = queryParams;
 
-    return response.data; // ✅ Extract `data` from the response
-  } catch (error) {
-    console.error("Error exporting applicants:", error);
-    throw error;
-  }
-};
+  const response = await authServices.post(
+    `${EXPORT_IMPORT_APPLICANT}?filtered=${encodeURIComponent(filtered)}`,
+    payload,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      responseType: "blob", 
+      timeout: 300000,
+    }
+  );
 
-export const ExportImportedApplicant = async (queryParams: string[]) => {
-  try {
-    const response = await authServices.get(
-      `${EXPORT_IMPORT_APPLICANT}${queryParams}`,
-      {
-        responseType: "blob",
-        timeout: 300000,
-      }
-    );
-
-    return response.data; // ✅ Extract `data` from the response
-  } catch (error) {
-    console.error("Error exporting applicants:", error);
-    throw error;
-  }
+  return response.data;
 };
 
 export const resumeUpload = async (

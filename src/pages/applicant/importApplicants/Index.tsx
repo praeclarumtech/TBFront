@@ -19,6 +19,7 @@ import {
   resumeUpload,
   updateManyApplicants,
   deleteImportedMultipleApplicant,
+  // ExportApplicant,
 } from "api/applicantApi";
 
 import ViewModal from "../ViewApplicant";
@@ -49,6 +50,7 @@ import debounce from "lodash.debounce";
 
 import { Close } from "@mui/icons-material";
 import BaseModal from "components/BaseComponents/BaseModal";
+import CheckboxMultiSelect from "components/BaseComponents/CheckboxMultiSelect";
 
 interface ValueToEdit {
   label: string;
@@ -58,6 +60,8 @@ interface ValueToEdit {
 const {
   projectTitle,
   Modules,
+  // skillOptions,
+  exportableFieldOption,
   interviewStageOptions,
   cityOptions,
   statusOptions,
@@ -70,7 +74,7 @@ const {
 
 type Anchor = "top" | "right" | "bottom";
 function ImportApplicant() {
-  document.title = Modules.Applicant + " | " + projectTitle;
+  document.title = Modules.ImportApplicant + " | " + projectTitle;
   const navigate = useNavigate();
   const [loader, setLoader] = useState(false);
   const [applicant, setApplicant] = useState<any[]>([]);
@@ -80,6 +84,7 @@ function ImportApplicant() {
   const [multipleApplicantDelete, setMultipleApplicantsDelete] = useState<
     string[]
   >([]);
+
   const [showModal, setShowModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
@@ -89,7 +94,9 @@ function ImportApplicant() {
     0, 90,
   ]);
   const [searchAll, setSearchAll] = useState<string>("");
+
   const [uploadedFile, setUploadedFile] = useState<FormData | null>(null);
+
   const [filterStatus, setFilterStatus] = useState<SelectedOption | null>(null);
   const [filterInterviewStage, setFilterInterviewStage] =
     useState<SelectedOption | null>(null);
@@ -110,12 +117,15 @@ function ImportApplicant() {
   const [filterCity, setFilterCity] = useState<SelectedOption | null>(null);
   const [filterState, setFilterState] = useState<SelectedOption | null>(null);
   const [appliedSkills, setAppliedSkills] = useState<SelectedOption[]>([]);
+  const [exportableFields, setExportableFields] = useState<SelectedOption[]>(
+    []
+  );
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [totalRecords, setTotalRecords] = useState(0);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
-    pageSize: 10,
+    pageSize: 50,
   });
   const [tableLoader, setTableLoader] = useState(false);
   const [selectedApplicants, setSelectedApplicants] = useState<string[]>([]);
@@ -134,6 +144,10 @@ function ImportApplicant() {
   const [valueToEdit, setValueToEdit] = useState<ValueToEdit[]>([]);
   const [sourcePage, setSourcePage] = useState("import");
   const isDesktop = useMediaQuery("(min-width: 768px)");
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [exportOption, setExportOption] = useState<string>("");
+
+
   const toggleDrawer =
     (anchor: Anchor, open: boolean) =>
     (event: React.KeyboardEvent | React.MouseEvent) => {
@@ -191,7 +205,6 @@ function ImportApplicant() {
         limit: 50,
       };
 
-      // Apply filters dynamically
       if (experienceRange[0] !== 0 || experienceRange[1] !== 25) {
         params.totalExperience = `${experienceRange[0]}-${experienceRange[1]}`;
       }
@@ -251,7 +264,6 @@ function ImportApplicant() {
         params.appliedSkills = searchValue;
       }
 
-      // Fetch applicants
       const res = await listOfImportApplicants(params);
       setApplicant(res?.data?.item || []);
       setTotalRecords(res?.data?.totalRecords || 0);
@@ -263,7 +275,6 @@ function ImportApplicant() {
     }
   };
 
-  // Function to fetch skills
   const fetchSkills = async () => {
     setLoading(true);
     try {
@@ -286,14 +297,16 @@ function ImportApplicant() {
     }
   };
 
-  // Use `useEffect` to call both APIs together using `Promise.all()`
   useEffect(() => {
+    const fetchApplicantsDebounced = debounce(fetchApplicants, 300);
+
     const fetchData = async () => {
       try {
         setTableLoader(true);
         setLoader(true);
         setLoading(true);
-        await Promise.all([fetchApplicants(), fetchSkills()]);
+        // await Promise.all([ fetchSkills()]);
+        await Promise.all([fetchSkills(), fetchApplicantsDebounced()]);
       } catch (error) {
         errorHandle(error);
       } finally {
@@ -303,10 +316,8 @@ function ImportApplicant() {
       }
     };
 
-    // Debounce API calls
     const delayedSearch = debounce(fetchData, 300);
     delayedSearch();
-
     return () => delayedSearch.cancel();
   }, [
     pagination.pageIndex,
@@ -453,7 +464,24 @@ function ImportApplicant() {
       setShowDeleteModal(true);
     }
   };
+  
+  const handleColumnSelected = (
+    selectedOptions: any[] | ((prevState: SelectedOption[]) => SelectedOption[])
+  ) => {
+    // console.log("id1", selectedApplicants);
+    if (!selectedApplicants || selectedApplicants.length === 0) {
+      toast.error("Please select applicants before choosing columns.");
+      return;
+    }
+ 
+    setExportableFields(selectedOptions);
 
+    if (Array.isArray(selectedOptions)) {
+    
+      setExportableFields(selectedOptions);
+      setExportOption("");
+    }
+  };
 
   const deleteMultipleApplicantDetails = (
     multipleApplicantDelete: string[] | undefined | null
@@ -514,7 +542,6 @@ function ImportApplicant() {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files && e.target.files[0];
-
     const fileExtension = file?.name?.split(".").pop()?.toLowerCase() ?? "";
     if (["csv", "xlsx", "xls"].includes(fileExtension ?? "")) {
       handleFileImport(e);
@@ -540,11 +567,7 @@ function ImportApplicant() {
     }
 
     if (file.size > 5 * 1024 * 1024) {
-    
-      toast(
-        "Large file detected. Import may take a few minutes."
- 
-      );
+      toast("Large file detected. Import may take a few minutes.");
     }
 
     setImportLoader(true);
@@ -563,7 +586,7 @@ function ImportApplicant() {
           setImportProgress(progress);
         },
       });
-      // console.log(response);
+
       if (response?.success) {
         toast.success(response?.message || "File imported successfully!");
         await fetchApplicants();
@@ -571,7 +594,7 @@ function ImportApplicant() {
         throw new Error(response?.message || "Import failed");
       }
     } catch (error: any) {
-      console.error("Import error:", error);
+     
       errorHandle(error);
 
       if (error.response?.data) {
@@ -584,7 +607,6 @@ function ImportApplicant() {
         toast.error("An unexpected error occurred during import");
       }
     } finally {
-      // Reset states
       setImportLoader(false);
       setIsImporting(false);
       setImportProgress(0);
@@ -595,7 +617,7 @@ function ImportApplicant() {
   };
   const filteredApplicant = applicant.filter((applicants) => {
     const searchTerm = searchAll.toLowerCase();
-   
+
     return (
       applicants?.name?.firstName?.toLowerCase().includes(searchTerm) ||
       applicants?.name?.middleName?.toLowerCase().includes(searchTerm) ||
@@ -639,8 +661,7 @@ function ImportApplicant() {
       const formData = new FormData();
       formData.append("csvFile", file);
       setUploadedFile(formData);
-      // console.log("Uploaded file:", formData.get("csvFile"));
-      // console.log("functiona call");
+
       const response = await importApplicant(formData, {
         onUploadProgress: (progressEvent) => {
           const progress = Math.round(
@@ -653,7 +674,6 @@ function ImportApplicant() {
       if (response?.success) {
         toast.success(response?.message || "File imported successfully!");
       } else if (!response?.success && response.statusCode === 409) {
-        // console.log("API Response msg:", response);
         setShowPopupModal(true);
 
         toast.error(response.message || "Import failed");
@@ -703,7 +723,7 @@ function ImportApplicant() {
         throw new Error(response?.message || "Update failed");
       }
     } catch (error: any) {
-      console.error("Update error:", error);
+ 
       toast.error(error.message || "Failed to update applicants");
     } finally {
       setImportLoader(false);
@@ -719,31 +739,57 @@ function ImportApplicant() {
     setShowPopupModal(false);
   };
 
-  const handleExportExcel = async (filtered: string[] | string) => {
-    try {
-      // console.log("Exporting with filters:", filtered);
-      toast.info("Preparing file for download...");
+const handleSelectedRowToExport = async (
+  filtered: string, 
+  // ids: string[]
+) => {
+  try {
+    toast.info("Preparing file for download...");
 
-      await new Promise((resolve) => setTimeout(resolve, 3500));
-      const response = await ExportImportedApplicant(
-        Array.isArray(filtered) ? filtered : [filtered]
-      );
+    const selectedColumns = exportableFields.map((field) => field.value);
 
-      if (!response) {
-        toast.error("Failed to download file");
-        return;
-      }
 
-      const blob = new Blob([response], { type: "text/csv" });
-      saveAs(blob, "Imported_Applicants.csv");
-      toast.success("File downloaded successfully!");
-    } catch (error) {
-      console.error("Export error:", error);
-      toast.error("Failed to export file");
-    } finally {
-      fetchApplicants();
+    const payload = {
+      ids: selectedApplicants,
+      fields: selectedColumns,
+    };
+
+   
+    const queryParams = {
+      filtered,
+    };
+
+    await new Promise((resolve) => setTimeout(resolve, 3500));
+
+    const response = await ExportImportedApplicant(queryParams, payload);
+
+    if (!response) {
+      toast.error("Failed to download file");
+      return;
     }
+    const blob = new Blob([response], { type: "text/csv" });
+    saveAs(blob, "Imported_Applicants.csv");
+
+    setShowExportModal(false);
+       setSelectedApplicants([]);
+    toast.success("File downloaded successfully!");
+  } catch (error) {
+   
+    errorHandle(error);
+  } finally {
+    fetchApplicants();
+  }
+};
+
+  
+  const handleExportModalShow = () => {
+    setShowExportModal(true);
   };
+
+ const handleExportOptionChange = (option: string) => {
+   setExportOption(option);
+   setExportableFields([]); 
+ };
 
   const drawerList = (anchor: Anchor) => (
     <Box
@@ -800,8 +846,7 @@ function ImportApplicant() {
           label="Experience (in years)"
           name="experience"
           className="mx-5 mb-2 select-border "
-          value={experienceRange}
-          // onChange={handleExperienceChange}
+          value={experienceRange}      
           handleChange={handleExperienceChange}
           min={0}
           max={25}
@@ -1177,7 +1222,7 @@ function ImportApplicant() {
               id={`delete-${cell?.row?.original?.id}`}
               className="btn btn-sm btn-soft-danger remove-list"
               color="danger"
-              onClick={() => handleDeleteSingle(cell.row.original._id)} // Call the single delete function
+              onClick={() => handleDeleteSingle(cell.row.original._id)}
             >
               <i className="align-bottom ri-delete-bin-5-fill" />
               <ReactTooltip
@@ -1191,7 +1236,7 @@ function ImportApplicant() {
             <BaseButton
               id={`email-${cell?.row?.original?.id}`}
               className="btn btn-sm btn-soft-secondary bg-success edit-list"
-              // onClick={() => handleEmail(cell?.row?.original._id)}
+            
               onClick={() => handleEmail(cell?.row?.original._id)}
             >
               <i className="align-bottom ri-mail-close-line" />
@@ -1209,11 +1254,9 @@ function ImportApplicant() {
     [applicant, selectedApplicants]
   );
 
-
-
   const handleCloseClick = () => {
     setShowBaseModal(false);
-    
+
     setSelectedApplicants([]);
     setValueToEdit([]);
     setMultiEditInterViewStage(null);
@@ -1222,18 +1265,16 @@ function ImportApplicant() {
   };
 
   const handleSubmit = async () => {
-    // [...applicant];
     if (selectedApplicants.length === 0) {
       toast.error("Please select applicants to update.");
       return;
     }
-    // console.log("object", selectedApplicants);
 
     const applicantIds = selectedApplicants.filter(
       (id) => typeof id === "string" && id.trim() !== ""
     );
-    // console.log("Applicant IDs:", applicantIds);
-    const updateData: any = {}; // Store updates dynamically
+
+    const updateData: any = {};
 
     if (multiEditStatus) {
       updateData.status = multiEditStatus.value;
@@ -1250,8 +1291,7 @@ function ImportApplicant() {
       toast.success("Applicants updated successfully!");
       setShowBaseModal(false);
     } catch (error) {
-      console.error("Update Error:", error);
-      toast.error("Something went wrong while updating applicants.");
+      errorHandle(error);
     } finally {
       fetchApplicants();
       setSelectedApplicants([]);
@@ -1263,8 +1303,6 @@ function ImportApplicant() {
   };
 
   const handleOpenBaseModal = () => {
-    // setEditingSkill(null);
-    // validation.resetForm();
     setShowBaseModal(true);
   };
 
@@ -1275,11 +1313,86 @@ function ImportApplicant() {
     { label: "Applied Role", value: "Applied Role" },
   ];
 
+  const ModalTitle = () => (
+    <div className="flex items-center">
+      <i className="fas fa-file-export mr-2" style={{ fontSize: 24 }}></i>
+      <span style={{ fontSize: 24, fontWeight: 600 }}>Export Applicants</span>
+    </div>
+  );
+
   return (
     <Fragment>
+      <BaseModal
+        show={showExportModal}
+        onSubmitClick={() => handleSelectedRowToExport(exportOption)}
+        onCloseClick={() => setShowExportModal(false)}
+        loader={false}
+        submitButtonText="Export"
+        closeButtonText="Close"
+        setShowBaseModal={setShowExportModal}
+        modalTitle={<ModalTitle />}
+        children={
+          <div>
+            <Row>
+              <div>
+                <h5>Choose the columns you want to export:</h5>
+                <CheckboxMultiSelect
+                  label="Select columns"
+                  name="selectedColumns"
+                  className="mb-2 select-border"
+                  placeholder="Fields..."
+                  value={exportableFields}
+                  isMulti={true}
+                  showSelectAll={false}
+                  onChange={handleColumnSelected}
+                  options={exportableFieldOption}
+                  isDisabled={exportOption !== ""}
+                />
+                {exportableFields.length > 0 && exportOption === "" && (
+                  <button
+                    className="btn btn-sm btn-outline-secondary mt-2"
+                    onClick={() => setExportableFields([])}
+                  >
+                    Reset Column Selection
+                  </button>
+                )}
+              </div>
+            </Row>
+
+            <Row className="mt-4">
+              <div>
+                <h5>Select export option:</h5>
+                {["Resume", "Csv", "both"].map((option) => (
+                  <div key={option}>
+                    <input
+                      className="m-2"
+                      type="radio"
+                      id={option}
+                      name="exportOption"
+                      disabled={exportableFields.length > 0}
+                      checked={exportOption === option}
+                      onChange={() => handleExportOptionChange(option)}
+                    />
+                    <label htmlFor={option}>{option}</label>
+                  </div>
+                ))}
+                {exportOption && exportableFields.length === 0 && (
+                  <button
+                    className="btn btn-sm btn-outline-secondary mt-2"
+                    onClick={() => setExportOption("")}
+                  >
+                    Reset Export Option
+                  </button>
+                )}
+              </div>
+            </Row>
+          </div>
+        }
+      />
+
       <BasePopUpModal
         isOpen={showPopupModal}
-        onRequestClose={() => setShowPopupModal(false)} // Close the modal
+        onRequestClose={() => setShowPopupModal(false)}
         title="Duplicate Records Found"
         message="Do you want to update the existing applicants?"
         confirmAction={handleModalConfirm}
@@ -1316,11 +1429,13 @@ function ImportApplicant() {
               <CardBody>
                 <div className="container">
                   <div className="row align-items-center">
-                    <div className="col-3 col-xs-auto">
+                    {/* <div className="col-3 col-xs-auto"> */}
+                    <div className="mb-2 col-12 col-md-3 mb-md-0 d-flex justify-content-start">
                       <button
                         onClick={toggleDrawer("right", true)}
                         // color="primary"
-                        className="btn btn-primary"
+                        // className="btn btn-primary"
+                        className="btn btn-primary d-block d-md-inline-block"
                       >
                         <i className="mx-1 fa fa-filter "></i> Filters
                       </button>
@@ -1333,32 +1448,21 @@ function ImportApplicant() {
                         {drawerList("right")}
                       </Drawer>
                     </div>
-                    <div className="flex-wrap mt-2 col-9 col-md d-flex flex-column flex-sm-row justify-content-end mt-md-0">
-                      <div>
-                        <input
-                          id="search-bar-0"
-                          className="h-10 form-control search"
-                          placeholder="Search..."
-                          onChange={handleSearchChange}
-                          value={searchAll}
-                        />
-                      </div>
+                    {/* <div className="flex-wrap mt-2 col-9 col-md d-flex flex-column flex-sm-row justify-content-end mt-md-0"> */}
+                    <div className="flex-wrap gap-2 col-12 col-md-9 d-flex justify-content-end">
+                      {/* <div> */}
+                      <input
+                        id="search-bar-0"
+                        // className="h-10 form-control search"
+                        className="h-10 form-control search w-100 w-md-auto"
+                        placeholder="Search..."
+                        onChange={handleSearchChange}
+                        value={searchAll}
+                      />
+                      {/* </div> */}
 
-                      {/* <div className="flex-wrap col-auto mx-0 d-flex justify-content-end"> */}
                       {selectedApplicants.length > 0 && (
                         <>
-                          {/* <BaseButton
-                             className="px-3 mx-1 bg-green-900 btn btn-lg btn-soft-secondary edit-list"
-                             onClick={handleSendWhatsApp}
-                           >
-                             <i className="align-bottom ri-whatsapp-line" />
-                             <ReactTooltip
-                               place="bottom"
-                               variant="info"
-                               content="WhatsApp"
-                             />
-                           </BaseButton> */}
-
                           <BaseButton
                             className="ml-2 btn btn-soft-secondary edit-list"
                             onClick={handleOpenBaseModal}
@@ -1372,7 +1476,7 @@ function ImportApplicant() {
                           </BaseButton>
 
                           <BaseButton
-                            className="ml-2 text-lg border-0 btn bg-danger edit-list w-fit"
+                            className="me-1 text-lg border-0 btn bg-danger edit-list w-fit"
                             onClick={handleDeleteAll}
                           >
                             <i className="align-bottom ri-delete-bin-fill" />
@@ -1406,20 +1510,13 @@ function ImportApplicant() {
                         onChange={handleFileChange}
                         disabled={isImporting}
                       />
+
                       <BaseButton
                         color="primary"
                         className="ml-2 bg-green-900 btn btn-soft-secondary edit-list"
-                        hoverOptions={["Resume", "Csv", "Both"]}
-                        // hoverOptions={["Resume", "Csv"]}
-                        onOptionClick={(option) => {
-                          handleExportExcel(
-                            // option === "Both" ? : [option]
-                            option === "Both" ? "both" : option
-                            // option
-                          );
-                        }}
+                        onClick={() => handleExportModalShow()}
                       >
-                        <i className="align-bottom ri-upload-2-line me-1" />
+                        <i className="ri-upload-2-line me-1" />
                         Export
                       </BaseButton>
                       <BaseButton
@@ -1478,7 +1575,7 @@ function ImportApplicant() {
           show={showBaseModal}
           onCloseClick={handleCloseClick}
           setShowBaseModal={setShowBaseModal}
-          onSubmitClick={handleSubmit} // Pass function reference
+          onSubmitClick={handleSubmit}
           submitButtonText="Apply All"
           closeButtonText="Close"
           modalTitle="Multi Edit"
@@ -1505,9 +1602,8 @@ function ImportApplicant() {
                   className="mb-2 select-border"
                   options={interviewStageOptions}
                   placeholder="Interview Stage"
-                  handleChange={
-                    (selectedOption: SelectedOption) =>
-                      setMultiEditInterViewStage(selectedOption) // Correct state update
+                  handleChange={(selectedOption: SelectedOption) =>
+                    setMultiEditInterViewStage(selectedOption)
                   }
                   value={multiEditInterViewStage}
                 />
@@ -1521,9 +1617,8 @@ function ImportApplicant() {
                   className="mb-2 select-border"
                   options={statusOptions}
                   placeholder="Select Status"
-                  handleChange={
-                    (selectedOption: SelectedOption) =>
-                      setMultiEditStatus(selectedOption) // Ensure correct state update
+                  handleChange={(selectedOption: SelectedOption) =>
+                    setMultiEditStatus(selectedOption)
                   }
                   value={multiEditStatus}
                 />
@@ -1539,16 +1634,6 @@ function ImportApplicant() {
                     setMultiEditRole(selectedOption)
                   }
                   value={multiEditRole}
-                  // handleChange={handleRoleChange}
-                  // handleBlur={validation.appliedRole}
-                  // value={
-                  //   dynamicFind(
-                  //     designationType,
-                  //     validation.values.appliedRole
-                  //   ) || ""
-                  // }
-                  // touched={validation.touched.appliedRole}
-                  // error={validation.errors.appliedRole}
                 />
               )}
               {/* Last FollowUp Date Selection */}
@@ -1601,11 +1686,12 @@ function ImportApplicant() {
                         rowHeight="10px !important"
                       />
                     ) : (
-                      // <<div className="py-4 text-center">
-                      //   <i className="ri-search-line d-block fs-1 text-success"></i>
-                      //   No applicants found.
-                      // </div>>
-                      <></>
+                      <>
+                        <div className="text-center">
+                          <i className="ri-search-line d-block fs-1 text-success"></i>
+                          {"Total Record: " + totalRecords}
+                        </div>
+                      </>
                     )}
                   </div>
                 )}

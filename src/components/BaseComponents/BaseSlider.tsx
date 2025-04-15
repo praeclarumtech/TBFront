@@ -70,6 +70,7 @@ const BaseSlider = ({
                 borderRadius: "50%",
                 width: "15px",
                 height: "15px",
+                color:"#212B36",
               },
               "& .MuiSlider-rail": {
                 opacity: 0.3,

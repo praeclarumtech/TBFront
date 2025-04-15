@@ -100,7 +100,7 @@ export interface BaseModalProps {
   onCloseClick?: () => void;
   loader?: boolean;
   children?: React.ReactNode;
-  modalTitle?: string;
+  modalTitle?: string|React.ReactNode; 
   closeButtonText?: string;
   submitButtonText?: string;
   setShowBaseModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -121,6 +121,24 @@ export interface MultiSelectProps {
   isDisabled?: boolean;
   placeholder?: string;
   handleChange?: (selectedOption: any) => void;
+
+}
+export interface MultiSelectCheckBoxProps {
+  label?: string;
+  value: any;
+  isMulti?: boolean;
+  onChange: (selectedOption: any) => void;
+  options: any[];
+  styles?: any;
+  touched?: boolean;
+  error?: string;
+  name: string;
+  handleBlur?: (event: React.FocusEvent<HTMLElement>) => void;
+  className?: string;
+  isDisabled?: boolean;
+  placeholder?: string;
+  handleChange?: (selectedOption: any) => void;
+  showSelectAll?: boolean;
 }
 
 export interface BaseSelectProps {

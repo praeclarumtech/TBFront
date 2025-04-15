@@ -106,10 +106,11 @@ const ChangePassword = ({ showModal, setShowModal }: ChangePasswordProps) => {
       show={showModal}
       onCloseClick={() => setShowModal(false)}
       setShowBaseModal={setShowModal}
-      onSubmitClick={validation.handleSubmit} // Pass function reference
+      onSubmitClick={validation.handleSubmit} 
       submitButtonText="Change Password"
       closeButtonText="Close"
       modalTitle="Change Password"
+      loader={loader}
     >
       <Row className="align-items-center justify-content-center g-0">
         <Col lg={12} md={8} xs={12} className="py-8 py-xl-0">
