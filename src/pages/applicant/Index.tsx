@@ -485,6 +485,7 @@ const Applicant = () => {
     setLoader(true);
     deleteMultipleApplicant(multipleApplicantDelete)
       .then(() => {
+        toast.success("Applicants Delete Successfully!.");
         fetchApplicants();
         setSelectedApplicants([]);
       })

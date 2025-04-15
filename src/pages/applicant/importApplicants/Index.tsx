@@ -454,13 +454,13 @@ function ImportApplicant() {
     }
   };
 
-
   const deleteMultipleApplicantDetails = (
     multipleApplicantDelete: string[] | undefined | null
   ) => {
     setLoader(true);
     deleteImportedMultipleApplicant(multipleApplicantDelete)
       .then(() => {
+        toast.success("Applicants Delete Successfully!.");
         fetchApplicants();
         setSelectedApplicants([]);
       })
@@ -540,11 +540,7 @@ function ImportApplicant() {
     }
 
     if (file.size > 5 * 1024 * 1024) {
-    
-      toast(
-        "Large file detected. Import may take a few minutes."
- 
-      );
+      toast("Large file detected. Import may take a few minutes.");
     }
 
     setImportLoader(true);
@@ -595,7 +591,7 @@ function ImportApplicant() {
   };
   const filteredApplicant = applicant.filter((applicants) => {
     const searchTerm = searchAll.toLowerCase();
-   
+
     return (
       applicants?.name?.firstName?.toLowerCase().includes(searchTerm) ||
       applicants?.name?.middleName?.toLowerCase().includes(searchTerm) ||
@@ -1209,11 +1205,9 @@ function ImportApplicant() {
     [applicant, selectedApplicants]
   );
 
-
-
   const handleCloseClick = () => {
     setShowBaseModal(false);
-    
+
     setSelectedApplicants([]);
     setValueToEdit([]);
     setMultiEditInterViewStage(null);

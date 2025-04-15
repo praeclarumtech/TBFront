@@ -291,7 +291,6 @@ const StepperForm = () => {
             setLoading(false);
           });
       }
-      
     }
   };
 
@@ -299,14 +298,17 @@ const StepperForm = () => {
     getApplicant(id);
   }, [id]);
 
+  const isEditMode = Boolean(id);
+  const titleForm = isEditMode ? "Update Applicant" : "Create Applicant";
   return (
     <Fragment>
       <div className="pt-3 page-content"></div>
       <Container fluid>
         <Card>
-          <h4 className="content-start justify-center p-1 m-2 text-2xl font-bold text-center text-blue-900 text-dark">
-            Applicant Form
-          </h4>
+          <h5 className="content-start justify-center p-1 m-2 text-2xl font-bold text-center text-blue-900 text-dark">
+            {titleForm}
+          </h5>
+
           <Card.Body>
             <Box
               sx={{
