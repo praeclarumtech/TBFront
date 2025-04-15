@@ -6,6 +6,9 @@ import {
 } from "api/applicantApi";
 import { errorHandle } from "utils/commonFunctions";
 import { UserOutlined } from "@ant-design/icons";
+import appConstants from "constants/constant";
+
+const { projectTitle, Modules } = appConstants;
 
 interface ViewModalProps {
   show: boolean;
@@ -130,6 +133,7 @@ const ViewModal: React.FC<ViewModalProps> = ({
   applicantId,
   source,
 }) => {
+  document.title = Modules.PreviewApplicantsDetails + " | " + projectTitle;
   const [formData, setFormData] = useState<ApplicantDetails | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -153,7 +157,6 @@ const ViewModal: React.FC<ViewModalProps> = ({
   }, [applicantId, source]);
 
   if (!show) return null;
-
 
   return (
     <Modal

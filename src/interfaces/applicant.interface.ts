@@ -5,7 +5,8 @@ export type SelectedOption = { label: string; value: string };
 export type SelectedOptionRole = { label: string; value: string };
 export type SelectedOption1 = { label: string; value: string; id: number };
 export const EducationApplicantSchema = Yup.object({
-  qualification: Yup.string(),
+  // qualification: Yup.string(),
+
   // .required("Qualification is required!"),
   specialization: Yup.string()
     // .required("Specialization Name is required!")
@@ -83,8 +84,8 @@ export const jobApplicantSchema = Yup.object({
     )
     .max(150, " Please keep your comment under 150 characters."),
   appliedSkills: Yup.array(),
-    // .required("Skills are required!")
-    // .min(1, "Please select at least one skill."),
+  // .required("Skills are required!")
+  // .min(1, "Please select at least one skill."),
   otherSkills: Yup.string(),
   totalExperience: Yup.string(),
   tech: Yup.string(),
@@ -109,18 +110,18 @@ export const personalApplicantSchema = Yup.object({
       "Year must be between 1960 and the current year."
     )
     .max(new Date(), "Date of birth cannot be in the future."),
-    // .test(
-    //   "is-old-enough",
-    //   "Applicant must be at least 15 years old.",
-    //   (value) => {
-    //     if (value) {
-    //       const birthDate = moment(value);
-    //       const age = moment().diff(birthDate, "years");
-    //       return age >= 15;
-    //     }
-    //     return false;
-    //   }
-    // ),
+  // .test(
+  //   "is-old-enough",
+  //   "Applicant must be at least 15 years old.",
+  //   (value) => {
+  //     if (value) {
+  //       const birthDate = moment(value);
+  //       const age = moment().diff(birthDate, "years");
+  //       return age >= 15;
+  //     }
+  //     return false;
+  //   }
+  // ),
   firstName: Yup.string()
     // .required("First name is required!")
     .max(15, "First name cannot exceed 15 characters.")
@@ -138,18 +139,20 @@ export const personalApplicantSchema = Yup.object({
     .min(2, "Middle name must be at least 2 characters.")
     .matches(/^[A-Za-z\s]+$/, "Middle name can only contain letters.")
     .nullable(),
-  email: Yup.string()
-    .trim()
-    .email("Please enter a valid email address."),
-    // .required("Email address is required!"),
-  phoneNumber: Yup.string()
-    .matches(/^[0-9]{10}$/, "Please enter a valid 10-digit phone number."),
-    // .required("Phone number is required!"),
-  whatsappNumber: Yup.string()
-    .matches(/^[0-9]{10}$/, "Please enter a valid 10-digit WhatsApp number."),
-    // .required("WhatsApp number is required!"),
+  email: Yup.string().trim().email("Please enter a valid email address."),
+  // .required("Email address is required!"),
+  phoneNumber: Yup.string().matches(
+    /^[0-9]{10}$/,
+    "Please enter a valid 10-digit phone number."
+  ),
+  // .required("Phone number is required!"),
+  whatsappNumber: Yup.string().matches(
+    /^[0-9]{10}$/,
+    "Please enter a valid 10-digit WhatsApp number."
+  ),
+  // .required("WhatsApp number is required!"),
   currentCity: Yup.string(),
-    // .required("Current city is required!"),
+  // .required("Current city is required!"),
   // .matches(/^[A-Za-z\s]+$/, "City name can only contain letters."),
   // currentPincode: Yup.string()
   //   .required("Current pincode is required!")

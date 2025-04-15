@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Row, Col, Container, Spinner} from "react-bootstrap";
+import { Row, Col, Container, Spinner } from "react-bootstrap";
 import { useFormik } from "formik";
 import { Fragment, useState } from "react";
 import BaseButton from "components/BaseComponents/BaseButton";
@@ -16,8 +16,8 @@ import appConstants from "constants/constant";
 const { projectTitle, Modules, passingYearType, qualification } = appConstants;
 
 const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
-  document.title = Modules.Applicant + " | " + projectTitle;
-  const [loading, setLoading] = useState<boolean>(false);  
+  document.title = Modules.CreateApplicantForm + " | " + projectTitle;
+  const [loading, setLoading] = useState<boolean>(false);
   const validation: any = useFormik({
     enableReinitialize: true,
     initialValues: {
@@ -29,9 +29,9 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
     },
     validationSchema: EducationApplicantSchema,
     onSubmit: (data) => {
-      setLoading(true); 
+      setLoading(true);
       onNext(data);
-      setLoading(true); 
+      setLoading(true);
     },
   });
 
@@ -79,6 +79,7 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                       }
                       touched={validation.touched.qualification}
                       error={validation.errors.qualification}
+                      isRequired={true}
                     />
                   </Col>
 
@@ -89,7 +90,10 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                       type="text"
                       placeholder={InputPlaceHolder("Specialization")}
                       handleChange={(e) => {
-                        const value = e.target.value.replace(/[^A-Za-z\s]/g, "");
+                        const value = e.target.value.replace(
+                          /[^A-Za-z\s]/g,
+                          ""
+                        );
                         validation.setFieldValue("specialization", value);
                       }}
                       handleBlur={validation.handleBlur}
@@ -97,6 +101,7 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                       touched={validation.touched.specialization}
                       error={validation.errors.specialization}
                       passwordToggle={false}
+                      isRequired={true}
                     />
                   </Col>
                   <Col xs={12} md={4} lg={4}>
@@ -106,7 +111,10 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                       type="text"
                       placeholder={InputPlaceHolder("College Name")}
                       handleChange={(e) => {
-                        const value = e.target.value.replace(/[^A-Za-z\s]/g, "");
+                        const value = e.target.value.replace(
+                          /[^A-Za-z\s]/g,
+                          ""
+                        );
                         validation.setFieldValue("collegeName", value);
                       }}
                       handleBlur={validation.handleBlur}
@@ -123,7 +131,9 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                       name="passingYear"
                       className="select-border"
                       options={passingYearType}
-                      placeholder="Passing Year"
+                      placeholder={
+                        InputPlaceHolder("Passing Year") || "Passing Year"
+                      }
                       handleChange={(selectedOption: SelectedOption) => {
                         validation.setFieldValue(
                           "passingYear",
@@ -139,6 +149,7 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                       }
                       touched={validation.touched.passingYear}
                       error={validation.errors.passingYear}
+                      isRequired={true}
                     />
                   </Col>
 
@@ -163,7 +174,11 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
 
                         const numValue = parseFloat(value);
 
-                        if (!isNaN(numValue) && numValue >= 1 && numValue <= 10) {
+                        if (
+                          !isNaN(numValue) &&
+                          numValue >= 1 &&
+                          numValue <= 10
+                        ) {
                           validation.setFieldValue("cgpa", value);
                         } else if (value === "" || value === ".") {
                           validation.setFieldValue("cgpa", value);
@@ -177,7 +192,10 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                         if (value && !isNaN(parseFloat(value))) {
                           const numValue = parseFloat(value);
                           if (numValue >= 1 && numValue <= 10) {
-                            validation.setFieldValue("cgpa", numValue.toFixed(2));
+                            validation.setFieldValue(
+                              "cgpa",
+                              numValue.toFixed(2)
+                            );
                           } else {
                             validation.setFieldValue("cgpa", "");
                           }

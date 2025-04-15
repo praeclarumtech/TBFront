@@ -33,7 +33,8 @@ const {
 } = appConstants;
 
 const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
-  document.title = Modules.Applicant + " | " + projectTitle;
+  document.title = Modules.CreateApplicantForm + " | " + projectTitle;
+  document.title = Modules.CreateApplicantForm + " | " + projectTitle;
 
   const [skillOptions, setSkillOptions] = useState<any[]>([]);
   const [selectedMulti, setSelectedMulti] = useState<any>([]);
@@ -258,6 +259,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     touched={validation.touched.appliedSkills}
                     error={validation.errors.appliedSkills}
                     handleBlur={validation.handleBlur}
+                    isRequired={true}
                   />
                 </Col>
                 <Col xs={12} sm={12} md={6} lg={6} className="mb-3">
@@ -325,6 +327,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     touched={validation.touched.totalExperience}
                     error={validation.errors.totalExperience}
                     passwordToggle={false}
+                    isRequired={true}
                   />
                 </Col>
                 <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
@@ -452,6 +455,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     touched={validation.touched.currentCompanyName}
                     error={validation.errors.currentCompanyName}
                     passwordToggle={false}
+                    isRequired={true}
                   />
                 </Col>
                 <Col xs={12} sm={6} md={6} lg={4} className="mb-3">
@@ -533,6 +537,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     touched={validation.touched.currentPkg}
                     error={validation.errors.currentPkg}
                     passwordToggle={false}
+                    isRequired={true}
                   />
                 </Col>
                 <Col xs={12} sm={4} md={6} lg={4} className="mb-3 mb-sm-0">
@@ -590,6 +595,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     touched={validation.touched.expectedPkg}
                     error={validation.errors.expectedPkg}
                     passwordToggle={false}
+                    isRequired={true}
                   />
                 </Col>
                 <Col xs={12} sm={4} md={6} lg={4} className="mb-3 mb-sm-0">
@@ -704,6 +710,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     touched={validation.touched.noticePeriod}
                     error={validation.errors.noticePeriod}
                     passwordToggle={false}
+                    isRequired={true}
                   />
                 </Col>
                 <Col xs={12} sm={6} md={6} lg={4} className="mb-3">
@@ -728,6 +735,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     }
                     touched={validation.touched.workPreference}
                     error={validation.errors.workPreference}
+                    isRequired={true}
                   />
                 </Col>
                 <Col xs={12} sm={6} md={6} lg={4} className="mb-3">
@@ -750,6 +758,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     touched={validation.touched.preferredLocations}
                     error={validation.errors.preferredLocations}
                     passwordToggle={false}
+                    isRequired={true}
                   />
                 </Col>
 
@@ -770,6 +779,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     }
                     touched={validation.touched.appliedRole}
                     error={validation.errors.appliedRole}
+                    isRequired={true}
                   />
                 </Col>
                 {selectedRole &&
@@ -917,6 +927,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     }
                     touched={validation.touched.anyHandOnOffers}
                     error={validation.errors.anyHandOnOffers}
+                    isRequired={true}
                   />
                 </Col>
                 <Col xs={12} sm={4} md={4} lg={4} className="mb-3">
@@ -977,6 +988,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     error={validation.errors.resumeUrl}
                     passwordToggle={false}
                     title="Please Upload Resume on Google Drive and share pulic url (Only PDF files allowed)"
+                    isRequired={true}
                   />
                 </Col>
                 <Col xs={12} md={6} lg={4} sm={12} className="mb-3">
@@ -1084,6 +1096,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     error={validation.errors.comment}
                     passwordToggle={false}
                     multiline
+                    isRequired={true}
                     rows={2}
                     cols={50}
                   />

@@ -1,5 +1,3 @@
-
-
 import { useEffect } from "react";
 import { useMounted } from "hooks/useMounted";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -11,8 +9,11 @@ import * as Yup from "yup";
 import BaseInput from "components/BaseComponents/BaseInput";
 import { errorHandle, InputPlaceHolder } from "utils/commonFunctions";
 import BaseTextarea from "components/BaseComponents/BaseTextArea";
+import appConstants from "constants/constant";
+const { projectTitle, Modules } = appConstants;
 
 const EmailForm = () => {
+  document.title = Modules.ComposeEmails + " | " + projectTitle;
   const hasMounted = useMounted();
   const navigate = useNavigate();
   const location = useLocation();
@@ -51,6 +52,7 @@ const EmailForm = () => {
     validateOnChange: true,
     validateOnMount: true,
     onSubmit: async (values) => {
+      //  toast.success("Email sent successfully!");
       try {
         const emailToArray = values.email_to
           .split(",")
@@ -64,19 +66,17 @@ const EmailForm = () => {
           email_to: emailToArray,
           email_bcc: emailBccArray,
         });
-
-        toast.success("Email sent successfully!", {
-          closeOnClick: true,
-          autoClose: 3000,
-        });
+        toast.success("Email sent successfully!");
         validation.resetForm();
-        navigate("/email");
+        setTimeout(() => {
+          navigate("/email");
+        }, 3000);
       } catch (err) {
         toast.error("Failed to send email. Please try again.", {
           closeOnClick: true,
           autoClose: 5000,
         });
-        errorHandle( err);
+        errorHandle(err);
       }
     },
   });
@@ -127,7 +127,6 @@ const EmailForm = () => {
                           // error={ validation.errors.email_to}
                           // touched={validation.touched.email_to}
                         />
-                       
                       </div>
                       <div>
                         <BaseInput
@@ -202,7 +201,6 @@ const EmailForm = () => {
                         rows={4}
                         cols={50}
                       />
-                   
                     </div>
 
                     <div className="flex justify-end items-center gap-4">

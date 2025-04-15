@@ -23,6 +23,7 @@ import { Col, Row } from "react-bootstrap";
 import React from "react";
 import IconButton from "@mui/material/IconButton";
 import { Close } from "@mui/icons-material";
+import { toast } from "react-toastify";
 
 const { projectTitle, Modules } = appConstants;
 
@@ -263,8 +264,10 @@ const EmailTable = () => {
     setDeleteLoader(true);
     try {
       await deleteEmail(emailToDelete); // Pass the array of selected emails
+      toast.success("Emails Delete Successfully!.");
       fetchEmails(); // Refresh email list
       setShowDeleteModal(false);
+      setEmailToDelete([]);
     } catch (error) {
       errorHandle(error);
     } finally {
@@ -276,6 +279,7 @@ const EmailTable = () => {
     setDeleteLoader(true);
     try {
       await deleteMultipleEmail(multipleEmailDelete); // Pass the array of selected emails
+      toast.success("Email Delete Successfully!.");
       fetchEmails(); // Refresh email list
       setShowDeleteModal(false);
       setSelectedApplicants([]); // Clear selection
@@ -417,74 +421,6 @@ const EmailTable = () => {
           applicantId={selectedApplicantId}
         />
       )}
-      {/* Header Section with Filter and Compose Button */}
-      {/* <div className="mt-3 mb-4">
-        <div className="mb-3 card">
-          <div className="card-body">
-            <div className="container">
-              <div className="row justify-content-between">
-                <div className="col-auto d-flex justify-content-start">
-                  <button
-                    onClick={toggleDrawer("right", true)}
-                    // color="primary"
-                    className="btn btn-primary"
-                  >
-                    <i className="mx-1 fa fa-filter "></i> Filters
-                  </button>
-                  <Drawer
-                    className="!mt-16 "
-                    anchor="right"
-                    open={state["right"]}
-                    onClose={toggleDrawer("right", false)}
-                  >
-                    {drawerList("right")}
-                  </Drawer>
-                </div>
-
-                <div className="col-auto d-flex justify-content-end">
-                  <div className="col-auto d-flex justify-content-start">
-                    <input
-                      id="search-bar-0"
-                      className="h-10 form-control search"
-                      placeholder="Search..."
-                      onChange={handleSearchChange}
-                      value={searchAll}
-                    />
-                  </div>
-                  {selectedApplicants.length > 1 && (
-                    <div>
-                      <BaseButton
-                        className="ml-2 text-lg border-0 btn bg-danger edit-list w-fit"
-                        onClick={handleDeleteAll}
-                      >
-                        <i className="align-bottom ri-delete-bin-fill" />
-                        <ReactTooltip
-                          place="bottom"
-                          variant="error"
-                          content="Delete"
-                          anchorId={`Delete ${selectedApplicants.length} Emails`}
-                        />
-                      </BaseButton>
-                    </div>
-                  )}
-
-                  // Compose Email Button 
-                  <div className="col-auto d-flex justify-content-end">
-                    <button
-                      onClick={() => navigate("/email/compose")}
-                      className="ml-2 btn btn-success"
-                    >
-                      Compose Email
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            
-          </div>
-        </div>
-      </div> */}
 
       <div className="mt-3 mb-4">
         <div className="mb-3 card">
