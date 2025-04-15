@@ -151,37 +151,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
     setSelectedMulti(selectedMulti);
   };
 
-  // const handleRoleChange = (selectedOption: SelectedOption) => {
-  //   setSelectedRole(selectedOption.value);
-  //   validation.setFieldValue("appliedRole", selectedOption.value);
-
-  //   setTechnologyExperience({});
-  // };
-  // const handleRoleChange = (selectedOption: SelectedOption | null) => {
-  //   if (selectedOption) {
-  //     setSelectedRole(selectedOption.value);
-  //     validation.setFieldValue("appliedRole", selectedOption.value);
-
-  //     setTechnologyExperience({});
-  //   } else {
-  //     console.error("handleRoleChange: selectedOption is null");
-  //   }
-  // };
-
-  // const handleRoleChange = (SelectedOptionRole: SelectedOptionRole | null) => {
-  //   if (SelectedOptionRole) {
-  //     setSelectedRole(SelectedOptionRole.value);
-  //     validation.setFieldValue("appliedRole", SelectedOptionRole.value);
-
-  //     setTechnologyExperience({});
-  //   } else {
-  //     setSelectedRole("");
-  //     validation.setFieldValue("appliedRole", "");
-
-  //     setTechnologyExperience({});
-  //   }
-  // };
-
+ 
   const handleRoleChange = (SelectedOptionRole: SelectedOptionRole | null) => {
     if (SelectedOptionRole) {
       const newRole = SelectedOptionRole.value;
@@ -205,26 +175,12 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
     }
   };
 
-  // const handleTechnologyExperienceChange = (tech: string, value: string) => {
-  //   setTechnologyExperience((prevState: any) => ({
-  //     ...prevState,
-  //     [tech]: value,
-  //   }));
-  // };
+ 
   const handleTechnologyExperienceChange = (tech: string, value: string) => {
     validation.setFieldValue(`meta.${tech}`, value);
   };
 
-  // useEffect(() => {
-  //   if (selectedRole in technologyOptions) {
-  //     const roleTechnologies = technologyOptions[selectedRole as Role] || [];
-  //     const updatedMeta = roleTechnologies.reduce((acc: any, tech: string) => {
-  //       acc[tech] = initialValues?.meta?.[tech] || "";
-  //       return acc;
-  //     }, {});
-  //     setTechnologyExperience(updatedMeta);
-  //   }
-  // }, [selectedRole, initialValues?.meta]);
+  
 
   return (
     <Fragment>
@@ -889,21 +845,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                       </div>
                     </div>
                   )}
-                {/* {(selectedRole === "Other" || selectedRole === "Na") && (
-                  <Col xs={12} sm={4} md={3} lg={1} className="mb-3">
-                    <BaseInput
-                      type="text"
-                      name="otherTechnologies"
-                      label="Other Technologies"
-                      placeholder={InputPlaceHolder("Other Technologies")}
-                      value={validation.values.otherSkills}
-                      handleChange={(e) =>
-                        validation.setFieldValue("otherSkills", e.target.value)
-                      }
-                      handleBlur={validation.handleBlur}
-                    />
-                  </Col>
-                )} */}
+               
 
                 <Col xs={12} sm={4} md={4} lg={4} className="mb-3">
                   <BaseSelect
