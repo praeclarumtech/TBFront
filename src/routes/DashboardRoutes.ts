@@ -78,4 +78,10 @@ export const DashboardMenu: DashboardMenuProps[] = [
     icon: "plus",
     link: "/master/Find-Fields",
   },
+  {
+    id: uuid(),
+    title: "Add Email Template",
+    icon: "plus",
+    link: "/master/email-template",
+  },
 ];

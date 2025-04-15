@@ -28,6 +28,7 @@ import Profile from "pages/UserProfile/Profile";
 import ChangePassword from "pages/auth/ChangePassword";
 import UpdateSkill from "pages/master/UpdateSkill";
 import FindAndReplace from "pages/master/FindAndReplace";
+import AddEmailTemplate from "pages/master/EmailTemplate";
 
 const RenderRouter: React.FC = () => {
   const {
@@ -172,6 +173,16 @@ const RenderRouter: React.FC = () => {
             element={
               <RootLayout>
                 <FindAndReplace />
+              </RootLayout>
+            }
+          />
+        
+
+          <Route
+            path="email-template"
+            element={
+              <RootLayout>
+                <AddEmailTemplate />
               </RootLayout>
             }
           />
