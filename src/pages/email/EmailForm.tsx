@@ -70,7 +70,7 @@ const EmailForm = () => {
         validation.resetForm();
         setTimeout(() => {
           navigate("/email");
-        }, [3000]);
+        }, 3000);
       } catch (err) {
         toast.error("Failed to send email. Please try again.", {
           closeOnClick: true,
