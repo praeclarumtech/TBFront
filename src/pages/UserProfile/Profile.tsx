@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { Container } from "react-bootstrap";
 import { useMounted } from "hooks/useMounted";
 import appConstants from "constants/constant";
-const { gendersType } = appConstants;
 import { updateProfile, getProfile } from "../../api/usersApi";
 import moment from "moment";
 import { ProfileFormData } from "interfaces/user.interface";
@@ -18,7 +17,9 @@ import BaseButton from "components/BaseComponents/BaseButton";
 import { useNavigate } from "react-router";
 // import { statusCode } from '../../interfaces/global.interface';
 
+const { projectTitle, Modules, gendersType } = appConstants;
 const Profile = () => {
+  document.title = Modules.Profile + " | " + projectTitle;
   const hasMounted = useMounted();
   const [profileData, setProfileData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -105,8 +106,6 @@ const Profile = () => {
     // const profilePicture = event.target.files?.[0];
     // if (!profilePicture) return;
 
-    
-
     const formDataToSend = new FormData();
 
     console.log("profile data", formData);
@@ -152,8 +151,8 @@ const Profile = () => {
       }
     } catch (error) {
       // if (error && statusCode === 400) {
-        console.log(" function of error", error);
-        toast.error(error instanceof Error ? error.message : "An error occurred");
+      console.log(" function of error", error);
+      toast.error(error instanceof Error ? error.message : "An error occurred");
       // }
     } finally {
       setLoading(false);
@@ -261,8 +260,8 @@ const Profile = () => {
                         <div className="space-x-2">
                           <input
                             type="file"
-                              // accept="image/*"
-                              accept=".png, .jpg, .jpeg"
+                            // accept="image/*"
+                            accept=".png, .jpg, .jpeg"
                             className="hidden"
                             id="profilePicInput"
                             onChange={handleProfilePicChange}
@@ -424,7 +423,6 @@ const Profile = () => {
                             name="dateOfBirth"
                             type="date"
                             placeholder={InputPlaceHolder("Date Of Birth")}
-                          
                             handleChange={handleDateChange}
                             value={
                               formData.dateOfBirth

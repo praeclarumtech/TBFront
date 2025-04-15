@@ -317,14 +317,6 @@ const AddSkill = () => {
       return;
     }
 
-    // if (file.size > 5 * 1024 * 1024) {
-    //   // 5MB
-    //   toast("Large file detected. Import may take a few minutes.", {
-    //     icon: "⚠️",
-    //     duration: 4000,
-    //   });
-    // }
-
     setImportLoader(true);
     setIsImporting(true);
     setImportProgress(0);

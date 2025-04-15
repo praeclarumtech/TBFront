@@ -12,8 +12,14 @@ import { jwtDecode } from "jwt-decode";
 import BaseModal from "components/BaseComponents/BaseModal";
 import Loader from "components/BaseComponents/Loader";
 
-const { projectTitle, SUCCESS, passwordRegex, validationMessages, OK } =
-  appConstants;
+const {
+  projectTitle,
+  SUCCESS,
+  passwordRegex,
+  validationMessages,
+  OK,
+  Modules,
+} = appConstants;
 
 interface ChangePasswordProps {
   showModal: boolean;
@@ -21,7 +27,7 @@ interface ChangePasswordProps {
 }
 
 const ChangePassword = ({ showModal, setShowModal }: ChangePasswordProps) => {
-  document.title = "Change Password | " + projectTitle;
+  document.title = Modules.ChangePassword + " | " + projectTitle;
   const hasMounted = useMounted();
   const [loader, setLoader] = useState<boolean>(false);
   const [showOldPassword, setShowOldPassword] = useState<boolean>(false);

@@ -105,7 +105,7 @@ const Applicant = () => {
   const [totalRecords, setTotalRecords] = useState(0);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
-    pageSize: 10,
+    pageSize: 50,
   });
   const [tableLoader, setTableLoader] = useState(false);
   const [selectedApplicants, setSelectedApplicants] = useState<string[]>([]);
@@ -290,18 +290,13 @@ const Applicant = () => {
     const fetchSkills = async () => {
       try {
         setLoading(true);
-        //  const allSkills: any[] = [];
-        const page = 1;
-        const pageSize = 50;
-        const limit = 200;
         const response = await ViewAppliedSkills({
-          page,
-          pageSize,
-          limit,
+          page: 1,
+          pageSize: 50,
+          limit: 200,
         });
 
         const skillData = response?.data?.data || [];
-
         setSkillOptions(
           skillData.map((item: any) => ({
             label: item.skills,
@@ -518,21 +513,24 @@ const Applicant = () => {
     );
     if (selectedApplicant) {
       navigate("/email/compose", {
-        state: { email_to: selectedApplicant.email },
+        state: {
+          email_to: selectedApplicant.email,
+          name: selectedApplicant.name,
+        },
       });
     }
   };
-
   const handleSendEmail = () => {
     const emails = applicant
       .filter((app) => selectedApplicants.includes(app._id))
-      .map((app) => app.email);
+      .map((app) => ({ email: app.email, name: app.name }));
     navigate("/email/compose", {
       state: {
-        email_to: emails.join(", "),
+        email_to: emails.map((app) => app.email).join(", "),
         email_bcc: "",
         subject: "",
         description: "",
+        name: emails.map((app) => app.name),
       },
     });
   };

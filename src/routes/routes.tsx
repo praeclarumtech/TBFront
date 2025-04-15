@@ -17,6 +17,7 @@ import Profile from "pages/UserProfile/Profile";
 import ChangePassword from "pages/auth/ChangePassword";
 import UpdateSkill from "pages/master/UpdateSkill";
 import FindAndReplace from "pages/master/FindAndReplace";
+import AddEmailTemplate from "pages/master/EmailTemplate";
 
 const routes = {
   ROOT: {
@@ -140,6 +141,11 @@ const routes = {
         title: "Find And Replace Fields",
         path: "/master/Find-Fields",
         element: FindAndReplace,
+      },
+      {
+        title: "Email Template",
+        path: "/master/email-template",
+        element: AddEmailTemplate,
       },
     ],
   },

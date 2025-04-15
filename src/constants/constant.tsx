@@ -103,6 +103,24 @@ const appConstants = Object.freeze({
     ChangePassword: "Change Password",
   },
 
+  ROLES: {
+    ADMIN: {
+      id: "ADMIN",
+      name: "admin",
+      title: "Admin",
+    },
+    HR: {
+      id: "HR",
+      name: "hr",
+      title: "HR",
+    },
+    USER: {
+      id: "USER",
+      name: "user",
+      title: "User",
+    },
+  },
+
   Modules: {
     Login: "Login",
     Register: "Register",
@@ -119,6 +137,8 @@ const appConstants = Object.freeze({
     CreateApplicantForm: "Applicant Form",
     PreviewApplicantsDetails: "Preview Applicants Details",
     ComposeEmails: "Compose Email",
+    ChangePassword: "Change Password",
+    EmailTemplate: "Email Template",
   },
   qualification: [
     { label: "Bachelors", value: "Bachelors" },
@@ -157,6 +177,48 @@ const appConstants = Object.freeze({
     { label: "2027", value: 2027 },
     { label: "2028", value: 2028 },
     { label: "2029", value: 2029 },
+  ],
+  CandidateTemplateOptions: [
+    {
+      label: "Application Received",
+      value: "APPLICATION_RECEIVED",
+    },
+    {
+      label: "Shortlisted for Interview",
+      value: "SHORTLISTED_FOR_INTERVIEW",
+    },
+    {
+      label: "Interview Invitation",
+      value: "INTERVIEW_INVITATION",
+    },
+    {
+      label: "Interview Reschedule",
+      value: "INTERVIEW_RESCHEDULE",
+    },
+    {
+      label: "Job Offer",
+      value: "JOB_OFFER",
+    },
+    {
+      label: "Offer Acceptance Confirmation",
+      value: "OFFER_ACCEPTANCE_CONFIRMATION",
+    },
+    {
+      label: "Rejection After Interview",
+      value: "REJECTION_AFTER_INTERVIEW",
+    },
+    {
+      label: "General Rejection",
+      value: "GENERAL_REJECTION",
+    },
+    {
+      label: "Onboarding Reminder",
+      value: "ONBOARDING_REMINDER",
+    },
+    {
+      label: "Thank You for Interview",
+      value: "THANK_YOU_FOR_INTERVIEW",
+    },
   ],
 
   designationType: [
