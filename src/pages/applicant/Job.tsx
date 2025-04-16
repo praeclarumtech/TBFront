@@ -283,7 +283,6 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     touched={validation.touched.totalExperience}
                     error={validation.errors.totalExperience}
                     passwordToggle={false}
-                    isRequired={true}
                   />
                 </Col>
                 <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
@@ -346,6 +345,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     touched={validation.touched.relevantSkillExperience}
                     error={validation.errors.relevantSkillExperience}
                     passwordToggle={false}
+                    isRequired={true}
                   />
                 </Col>
                 <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
@@ -370,6 +370,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     }
                     touched={validation.touched.rating}
                     error={validation.errors.rating}
+                    isRequired={true}
                   />
                 </Col>
                 <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
@@ -394,6 +395,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     }
                     touched={validation.touched.communicationSkill}
                     error={validation.errors.communicationSkill}
+                    isRequired={true}
                   />
                 </Col>
                 <Col xs={12} sm={6} md={6} lg={4} className="mb-3 mb-sm-0">
@@ -436,6 +438,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     }
                     touched={validation.touched.currentCompanyDesignation}
                     error={validation.errors.currentCompanyDesignation}
+                    isRequired={true}
                   />
                 </Col>
                 <Col xs={12} sm={4} md={6} lg={4} className="mb-3">

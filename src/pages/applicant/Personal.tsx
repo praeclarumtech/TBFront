@@ -366,6 +366,7 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
                       touched={validation.touched.whatsappNumber}
                       error={validation.errors.whatsappNumber || whatsappError}
                       passwordToggle={false}
+                      isRequired={true}
                     />
                   </Col>
 
@@ -383,6 +384,7 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
                       error={validation.errors.dateOfBirth}
                       passwordToggle={false}
                       min={minDateOfBirth}
+                      isRequired={true}
                     />
                   </Col>
                   <Col xs={12} md={6} lg={4}>
@@ -511,6 +513,7 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
                       }
                       touched={validation.touched.country}
                       error={validation.errors.country}
+                      isRequired={true}
                     />
                   </Col>
 
