@@ -165,6 +165,7 @@ const StepperForm = () => {
       portfolioUrl: formData.portfolioUrl,
       practicalUrl: formData.practicalUrl,
       feedback: formData.practicalFeedback,
+      practicalFeedback: formData.practicalFeedback,
       comment: formData.comment,
       communicationSkill: formData.communicationSkill,
       currentCompanyDesignation: formData.currentCompanyDesignation,

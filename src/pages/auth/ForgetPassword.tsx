@@ -102,6 +102,7 @@ const ForgetPassword = () => {
                     touched={validation.touched.email}
                     error={validation.errors.email}
                     passwordToggle={false}
+                    isRequired={true}
                   />
                 </Form.Group>
 

@@ -140,6 +140,7 @@ const ChangePassword = ({ showModal, setShowModal }: ChangePasswordProps) => {
                   error={validation.errors.oldPassword}
                   passwordToggle={true}
                   onclick={() => setShowOldPassword(!showOldPassword)}
+                  isRequired={true}
                 />
               </Form.Group>
 
@@ -156,6 +157,7 @@ const ChangePassword = ({ showModal, setShowModal }: ChangePasswordProps) => {
                   error={validation.errors.newPassword}
                   passwordToggle={true}
                   onclick={() => setShowNewPassword(!showNewPassword)}
+                  isRequired={true}
                 />
               </Form.Group>
 
@@ -172,6 +174,7 @@ const ChangePassword = ({ showModal, setShowModal }: ChangePasswordProps) => {
                   error={validation.errors.confirmPassword}
                   passwordToggle={true}
                   onclick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  isRequired={true}
                 />
               </Form.Group>
             </Form>

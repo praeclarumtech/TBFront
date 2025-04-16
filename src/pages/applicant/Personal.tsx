@@ -597,7 +597,7 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
                 <BaseButton
                   color="primary"
                   type="submit"
-                  className="d-flex align-items-center justify-content-center"
+                  className="d-flex w-full align-items-center justify-content-center"
                 >
                   Next
                 </BaseButton>

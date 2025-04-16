@@ -215,7 +215,7 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
               </Typography>
               <Typography>
                 <span className="  !text-black pt-3">Any Hand On Offers?:</span>
-                <span>{" " + data?.anyHandOnOffers ? "Yes" : "Not"}</span>
+                <span>{" " + (data?.anyHandOnOffers ? "Yes" : "No")}</span>
               </Typography>
 
               <Typography>

@@ -126,8 +126,8 @@ const SignUp = () => {
                   Talent<span className="text-primary bold ">Box</span>{" "}
                 </h4>
                 {/* </Link> */}
-                <p className="justify-center mb-6 text-center">
-                  Please enter your user information.
+                <p className="justify-center mb-6 text-center text-base ">
+                Create An Account
                 </p>
               </div>
 
@@ -151,6 +151,7 @@ const SignUp = () => {
                       touched={validation.touched.userName}
                       error={validation.errors.userName}
                       passwordToggle={false}
+                      isRequired={true}
                     />
                   </Form.Group>
 
@@ -166,6 +167,7 @@ const SignUp = () => {
                       touched={validation.touched.email}
                       error={validation.errors.email}
                       passwordToggle={false}
+                      isRequired={true}
                     />
                   </Form.Group>
 
@@ -188,6 +190,7 @@ const SignUp = () => {
                       }
                       touched={validation.touched.role}
                       error={validation.errors.role}
+                      isRequired={true}
                     />
                   </Form.Group>
 
@@ -205,6 +208,7 @@ const SignUp = () => {
                       passwordToggle={true}
                       onclick={() => setPasswordShow(!passwordShow)}
                       disabled={false}
+                      isRequired={true}
                     />
                   </Form.Group>
 
@@ -224,6 +228,7 @@ const SignUp = () => {
                         setConfirmPassword(!confirmPassword);
                       }}
                       disabled={false}
+                      isRequired={true}
                     />
                   </Form.Group>
 
@@ -245,6 +250,7 @@ const SignUp = () => {
                         className="w-100"
                         type="submit"
                         loader={loader}
+                       
                       >
                         {ButtonEnums.Submit}
                       </BaseButton>

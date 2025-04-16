@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import { useMounted } from "hooks/useMounted";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -43,7 +44,7 @@ const quillModules = {
 const { projectTitle, Modules } = appConstants;
 
 const EmailForm = () => {
-  document.title = Modules.Email + " | " + projectTitle;
+  document.title = Modules.ComposeEmails + " | " + projectTitle;
   const hasMounted = useMounted();
   const navigate = useNavigate();
   const location = useLocation();
