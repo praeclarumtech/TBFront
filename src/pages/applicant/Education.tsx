@@ -115,13 +115,13 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
               className="p-3"
             >
               {loading ? (
-                <div className="d-flex justify-content-center my-5">
+                <div className="my-5 d-flex justify-content-center">
                   <Spinner animation="border" role="status">
                     <span className="visually-hidden">Loading...</span>
                   </Spinner>
                 </div>
               ) : (
-                <Row className="g-3 mb-4">
+                <Row className="mb-4 g-3">
                   <Col xs={12} md={6}>
                     <BaseSelect
                       label="Qualification"
@@ -169,7 +169,7 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                       isRequired={true}
                     />
                   </Col>
-                  <Col xs={12} md={4} lg={4}>
+                  <Col xs={12} md={6} lg={4}>
                     <BaseInput
                       label="College Name"
                       name="collegeName"
@@ -190,7 +190,7 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     />
                   </Col>
 
-                  <Col xs={12} md={4} lg={4}>
+                  <Col xs={12} md={6} lg={4}>
                     <BaseSelect
                       label="Passing Year"
                       name="passingYear"
@@ -218,7 +218,7 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     />
                   </Col>
 
-                  <Col xs={12} md={4} lg={4}>
+                  <Col xs={12} md={8} lg={4}>
                     <BaseInput
                       label="CGPA"
                       name="cgpa"
@@ -277,7 +277,7 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                   </Col>
                 </Row>
               )}
-              <div className="d-flex flex-column flex-md-row justify-content-end gap-3 mt-4">
+              <div className="gap-3 mt-4 d-flex flex-column flex-md-row justify-content-end">
                 <BaseButton
                   className="order-1 order-md-0"
                   type="submit"

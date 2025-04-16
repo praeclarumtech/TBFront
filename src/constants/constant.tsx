@@ -555,11 +555,9 @@ const appConstants = Object.freeze({
   ],
   countriesType: [{ label: "India", value: "india" }],
   findAndReplaceOptions: [
-    { label: "Skill", value: "skill" },
+    { label: "Skills", value: "skills" },
     { label: "Role", value: "appliedRole" },
-    { label: "Skills", value: "appliedSkills" },
-    { label: "Current Designation", value: "currentCompanyDesignation" },
-    { label: "Qualification", value: "qualification" },
+    { label: "Qualification", value: "degree" },
   ],
   addedByOptions: [
     { label: "Resume", value: "Resume" },

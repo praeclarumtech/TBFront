@@ -568,7 +568,6 @@ function ImportApplicant() {
       }
     } catch (error: any) {
       console.error("Import error:", error);
-      errorHandle(error);
 
       if (error.response?.data) {
         const errorMessage =
@@ -715,27 +714,67 @@ function ImportApplicant() {
     setShowPopupModal(false);
   };
 
+  // const handleExportExcel = async (filtered: string[] | string) => {
+  //   try {
+  //     // console.log("Exporting with filters:", filtered);
+  //     toast.info("Preparing file for download...");
+
+  //     await new Promise((resolve) => setTimeout(resolve, 3500));
+  //     const response = await ExportImportedApplicant(
+  //       Array.isArray(filtered) ? filtered : [filtered]
+  //     );
+
+  //     if (!response?.data) {
+  //       toast.error("No Data Available to Export");
+  //       return;
+  //     }
+
+  //     const blob = new Blob([response], { type: "text/csv" });
+  //     saveAs(blob, "Imported_Applicants.csv");
+  //     toast.success("File downloaded successfully!");
+  //   } catch (error) {
+  //     console.error("Export error:", error);
+  //     toast.error("Failed to export file");
+  //   } finally {
+  //     fetchApplicants();
+  //   }
+  // };
+
   const handleExportExcel = async (filtered: string[] | string) => {
     try {
-      // console.log("Exporting with filters:", filtered);
       toast.info("Preparing file for download...");
-
       await new Promise((resolve) => setTimeout(resolve, 3500));
+
       const response = await ExportImportedApplicant(
         Array.isArray(filtered) ? filtered : [filtered]
       );
 
-      if (!response) {
-        toast.error("Failed to download file");
+      // Read the Blob content
+      const text = await response.text();
+      let parsed;
+
+      try {
+        // Try to parse it as JSON
+        parsed = JSON.parse(text);
+      } catch {
+        // Not JSON = valid CSV
+        const blob = new Blob([text], { type: "text/csv" });
+        saveAs(blob, "Imported_Applicants.csv");
+        toast.success("File downloaded successfully!");
         return;
       }
 
-      const blob = new Blob([response], { type: "text/csv" });
-      saveAs(blob, "Imported_Applicants.csv");
-      toast.success("File downloaded successfully!");
-    } catch (error) {
+      // If it is JSON, check for an error message
+      if (parsed?.statusCode === 404 || parsed?.success === false) {
+        toast.error(parsed.message || "No data available to export");
+      } else if (parsed?.statuscode === 500 || parsed?.success === false) {
+        toast.error(parsed.message || "No data available to export");
+      } else {
+        toast.error("Unexpected JSON response during export.");
+      }
+    } catch (error: any) {
       console.error("Export error:", error);
-      toast.error("Failed to export file");
+      toast.error(error || "Something went wrong.");
     } finally {
       fetchApplicants();
     }

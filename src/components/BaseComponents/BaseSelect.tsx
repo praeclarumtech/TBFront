@@ -21,7 +21,7 @@ const BaseSelect = ({
       {label && (
         <Label
           htmlFor={name}
-          className="form-label  text-gray-700 font-semibold"
+          className="font-semibold text-gray-700 form-label"
         >
           {label}
           {isRequired && <span className="text-red-500">*</span>}
@@ -39,7 +39,7 @@ const BaseSelect = ({
         onBlur={handleBlur}
         isClearable
         isDisabled={isDisabled}
-        menuPlacement="auto"
+        menuPlacement="bottom"
         styles={styles}
       />
       {touched && error && (
@@ -71,7 +71,7 @@ const MultiSelect = ({
       {label && (
         <Label
           htmlFor={name}
-          className="form-label  text-gray-700 font-semibold"
+          className="font-semibold text-gray-700 form-label"
         >
           {label}
           {isRequired && <span className="text-red-500">*</span>}
