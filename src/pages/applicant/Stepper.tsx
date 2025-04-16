@@ -198,7 +198,10 @@ const StepperForm = () => {
         .then((res: any) => {
           if (res.success) {
             toast.success(res.message);
-            navigate("/import-applicants");
+             setTimeout(() => {
+               navigate("/import-applicants");
+             }, 3000);
+           
           }
         })
         .catch((error) => {
@@ -222,7 +225,10 @@ const StepperForm = () => {
           .then((res: any) => {
             if (res.success) {
               toast.success(res.message);
-              navigate("/import-applicants");
+             
+               setTimeout(() => {
+               navigate("/import-applicants");
+               }, 3000);
             }
           })
           .catch((error) => {
@@ -243,7 +249,10 @@ const StepperForm = () => {
           .then((res: any) => {
             if (res.success) {
               toast.success(res.message);
-              navigate("/applicants");
+            
+               setTimeout(() => {
+                navigate("/applicants");
+               }, 3000);
             }
           })
           .catch((error) => {

@@ -247,8 +247,23 @@ const Applicant = () => {
       const res = await listOfApplicants(params);
       setApplicant(res?.data?.item || []);
       setTotalRecords(res?.data?.totalRecords || 0);
-    } catch (error) {
-      errorHandle(error);
+    } 
+       catch (error: any) {
+        const details = error?.response?.data?.details;
+        if (Array.isArray(details)) {
+          details.forEach((msg: string) => {
+            toast.error(msg, {
+              closeOnClick: true,
+              autoClose: 5000,
+            });
+          });
+        } else {
+          toast.error("Failed to fetch applicants.. Please try again.", {
+            closeOnClick: true,
+            autoClose: 5000,
+          });
+        }
+      
     } finally {
       setTableLoader(false);
       // setLoader(false);
@@ -303,8 +318,22 @@ const Applicant = () => {
             value: item._id,
           }))
         );
-      } catch (error) {
-        errorHandle(error);
+      } catch (error: any) {
+        const details = error?.response?.data?.details;
+        if (Array.isArray(details)) {
+          details.forEach((msg: string) => {
+            toast.error(msg, {
+              closeOnClick: true,
+              autoClose: 5000,
+            });
+          });
+        } else {
+          toast.error("Failed to fetch skills.. Please try again.", {
+            closeOnClick: true,
+            autoClose: 5000,
+          });
+        }
+      
       } finally {
         setLoading(false);
       }
@@ -420,8 +449,22 @@ const Applicant = () => {
             }))
           );
         }
-      } catch (error) {
-        errorHandle(error);
+      }  catch (error: any) {
+        const details = error?.response?.data?.details;
+        if (Array.isArray(details)) {
+          details.forEach((msg: string) => {
+            toast.error(msg, {
+              closeOnClick: true,
+              autoClose: 5000,
+            });
+          });
+        } else {
+          toast.error("Failed to fetch cities.. Please try again.", {
+            closeOnClick: true,
+            autoClose: 5000,
+          });
+        }
+      
       }
     };
 

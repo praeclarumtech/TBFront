@@ -15,7 +15,6 @@ import BaseInput from "components/BaseComponents/BaseInput";
 import appConstants from "constants/constant";
 import {
   dynamicFind,
-  errorHandle,
   InputPlaceHolder,
 } from "utils/commonFunctions";
 import { BaseSelect } from "components/BaseComponents/BaseSelect";
@@ -23,6 +22,7 @@ import { SelectedOption } from "interfaces/applicant.interface";
 import "react-quill/dist/quill.snow.css";
 import ReactQuill from "react-quill";
 import { Label } from "reactstrap";
+
 
 const quillModules = {
   toolbar: [
@@ -49,7 +49,7 @@ const EmailForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const initialEmail = location.state?.email_to || "";
-  const initialName = location.state?.name || "";
+  // const initialName = location.state?.name || "";
 
   const [templateTypes, setTemplateTypes] = useState<SelectedOption[]>([]);
 
@@ -106,7 +106,6 @@ const EmailForm = () => {
       email_bcc: "",
       subject: "",
       description: "",
-      name: initialName || "",
     },
     validationSchema: Yup.object({
       email_to: Yup.string()
@@ -144,21 +143,33 @@ const EmailForm = () => {
           .map((email) => email.trim());
 
         await sendEmail({
-          ...values,
+        
           email_to: emailToArray,
           email_bcc: emailBccArray,
+          subject: values.subject,
+          description: values.description,
         });
+        
         toast.success("Email sent successfully!");
         validation.resetForm();
         setTimeout(() => {
           navigate("/email");
         }, 3000);
-      } catch (err) {
-        toast.error("Failed to send email. Please try again.", {
-          closeOnClick: true,
-          autoClose: 5000,
-        });
-        errorHandle(err);
+      } catch (error: any) {
+        const details = error?.response?.data?.details;
+        if (Array.isArray(details)) {
+          details.forEach((msg: string) => {
+            toast.error(msg, {
+              closeOnClick: true,
+              autoClose: 5000,
+            });
+          });
+        } else {
+          toast.error("Failed to send email. Please try again.", {
+            closeOnClick: true,
+            autoClose: 5000,
+          });
+        }
       }
     },
   });

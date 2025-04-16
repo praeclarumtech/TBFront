@@ -174,6 +174,11 @@ export const personalApplicantSchema = Yup.object({
   // .required("State is required!"),
 });
 
+export interface Qualification {
+  label: string;
+  value: string;
+}
+
 export interface City {
   label: string;
   value: string;

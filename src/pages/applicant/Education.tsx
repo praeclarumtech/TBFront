@@ -1,36 +1,101 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Row, Col, Container, Spinner } from "react-bootstrap";
 import { useFormik } from "formik";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import BaseButton from "components/BaseComponents/BaseButton";
 import { BaseSelect } from "components/BaseComponents/BaseSelect";
 import { Form } from "react-router-dom";
 import BaseInput from "components/BaseComponents/BaseInput";
 import {
   EducationApplicantSchema,
+  Qualification,
   SelectedOption,
 } from "interfaces/applicant.interface";
-import { dynamicFind, InputPlaceHolder } from "utils/commonFunctions";
+import {
+  dynamicFind,
+  InputPlaceHolder,
+} from "utils/commonFunctions";
 import appConstants from "constants/constant";
+import { viewAllDegree } from "api/apiDegree";
+import { toast } from "react-toastify";
 
-const { projectTitle, Modules, passingYearType, qualification } = appConstants;
+const { projectTitle, Modules, passingYearType } = appConstants;
 
 const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
   document.title = Modules.CreateApplicantForm + " | " + projectTitle;
   const [loading, setLoading] = useState<boolean>(false);
+  const [qualification, setQualification] = useState<Qualification[]>([]);
+  
+
+  useEffect(() => {
+    const getQualification = async () => {
+      try {
+        setLoading(true);
+        const qualificationData = await viewAllDegree();
+        const degreeList = qualificationData?.data?.data;
+        if (Array.isArray(degreeList)) {
+          setQualification(
+            degreeList.map((item: { degree: string; _id: string }) => ({
+              label: item.degree,
+              value: item._id,
+            }))
+          );
+        }
+      }  catch (error: any) {
+        const details = error?.response?.data?.details;
+        if (Array.isArray(details)) {
+          details.forEach((msg: string) => {
+            toast.error(msg, {
+              closeOnClick: true,
+              autoClose: 5000,
+            });
+          });
+        } else {
+          toast.error("Failed to fetch qualifications.. Please try again.", {
+            closeOnClick: true,
+            autoClose: 5000,
+          });
+        }
+      
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getQualification();
+  }, []);
+
+  const initialQualificationValue =
+    qualification.find((q) => q.label === initialValues?.qualification)
+      ?.value || "";
+
+  
   const validation: any = useFormik({
     enableReinitialize: true,
     initialValues: {
-      qualification: initialValues?.qualification || "",
+      qualification: initialQualificationValue,
       specialization: initialValues?.specialization || "",
       passingYear: initialValues?.passingYear || "",
       cgpa: initialValues?.cgpa || "",
       collegeName: initialValues?.collegeName || "",
     },
     validationSchema: EducationApplicantSchema,
+
+ 
+
     onSubmit: (data) => {
       setLoading(true);
-      onNext(data);
+      const selectedDegree = qualification.find(
+        (q) => q.value === data.qualification
+      )?.label;
+
+      const submissionData = {
+        ...data,
+        qualification: selectedDegree || data.qualification, 
+      };
+
+      // onNext(data);
+      onNext(submissionData);
       setLoading(true);
     },
   });
