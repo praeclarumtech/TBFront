@@ -247,23 +247,21 @@ const Applicant = () => {
       const res = await listOfApplicants(params);
       setApplicant(res?.data?.item || []);
       setTotalRecords(res?.data?.totalRecords || 0);
-    } 
-       catch (error: any) {
-        const details = error?.response?.data?.details;
-        if (Array.isArray(details)) {
-          details.forEach((msg: string) => {
-            toast.error(msg, {
-              closeOnClick: true,
-              autoClose: 5000,
-            });
-          });
-        } else {
-          toast.error("Failed to fetch applicants.. Please try again.", {
+    } catch (error: any) {
+      const details = error?.response?.data?.details;
+      if (Array.isArray(details)) {
+        details.forEach((msg: string) => {
+          toast.error(msg, {
             closeOnClick: true,
             autoClose: 5000,
           });
-        }
-      
+        });
+      } else {
+        toast.error("Failed to fetch applicants.. Please try again.", {
+          closeOnClick: true,
+          autoClose: 5000,
+        });
+      }
     } finally {
       setTableLoader(false);
       // setLoader(false);
@@ -333,7 +331,6 @@ const Applicant = () => {
             autoClose: 5000,
           });
         }
-      
       } finally {
         setLoading(false);
       }
@@ -449,7 +446,7 @@ const Applicant = () => {
             }))
           );
         }
-      }  catch (error: any) {
+      } catch (error: any) {
         const details = error?.response?.data?.details;
         if (Array.isArray(details)) {
           details.forEach((msg: string) => {
@@ -464,7 +461,6 @@ const Applicant = () => {
             autoClose: 5000,
           });
         }
-      
       }
     };
 
@@ -559,6 +555,7 @@ const Applicant = () => {
         state: {
           email_to: selectedApplicant.email,
           name: selectedApplicant.name,
+          fromPage: location.pathname,
         },
       });
     }

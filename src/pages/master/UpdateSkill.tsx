@@ -36,17 +36,6 @@ const UpdateSkill = () => {
   document.title = Modules.SKill + " | " + projectTitle;
   const [roleSkill, setRoleSkills] = useState<any[]>([]);
   const [skillOptions, setSkillOptions] = useState<SelectedOption1[]>([]);
-
-  // const [editingSkill, setEditingSkill] = useState<any>({
-  //   _id: "",
-  //   addRole: "",
-  //   addSkill: {
-  //     label: "",
-  //     value: "",
-  //     id: "",
-  //   },
-  // });
-
   const [editingSkill, setEditingSkill] = useState<any>(null);
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -65,6 +54,64 @@ const UpdateSkill = () => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [showViewModal, setShowViewModal] = useState(false);
 
+  const fetchSkills = async () => {
+    try {
+      setIsLoading(true);
+      //  const allSkills: any[] = [];
+      const page = 1;
+      const pageSize = 50;
+      const limit = 200;
+      const response = await ViewAppliedSkills({
+        page,
+        pageSize,
+        limit,
+      });
+
+      const skillData = response?.data?.data || [];
+
+      setSkillOptions(
+        skillData.map((item: any) => ({
+          label: item.skills,
+          value: item.skills, // match what you'll use in selected
+          id: item._id, // if needed
+        }))
+      );
+    } catch (error) {
+      errorHandle(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchSkills();
+  }, []);
+
+  // const fetchRoleSkills = async () => {
+  //   setIsLoading(true);
+  //   try {
+  //     const res = await viewRoleSkill({
+  //       page: pagination.pageIndex + 1,
+  //       pageSize: pagination.pageSize,
+  //       limit: 50,
+  //     });
+
+  //     if (res?.success) {
+  //       // const roleSkills = res?.data?.data || [];
+
+  //       setRoleSkills(res?.data?.data || []);
+  //       setTotalRecords(res.data?.pagination?.totalRecords || 0);
+  //     } else {
+  //       toast.error(res?.message || "Failed to fetch skills");
+  //     }
+  //   } catch (error) {
+  //     toast.error("Something went wrong!");
+  //     console.error(error);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
   const fetchRoleSkills = async () => {
     setIsLoading(true);
     try {
@@ -75,9 +122,30 @@ const UpdateSkill = () => {
       });
 
       if (res?.success) {
-        console.log("fetch skills");
+        const roleSkills = res?.data?.data || [];
 
-        setRoleSkills(res?.data?.data || []);
+        const skillMap = skillOptions.reduce(
+          (acc: Record<string, string>, item: any) => {
+            acc[item.id] = item.label; // Make sure you're using the correct key: 'id' or '_id'
+            return acc;
+          },
+          {}
+        );
+
+        // Check the skillMap
+
+        // Enrich roleSkills with skill names from skillMap
+        const enrichedRoleSkills = roleSkills.map((item: any) => ({
+          ...item,
+          skill: item.skill.map(
+            (id: string) => skillMap[id] || "Unknown Skill",
+            (label: string) => skillMap[label],
+            (skill: string) => skillMap[skill]
+          ), // Map skill IDs to skill names
+        }));
+
+
+        setRoleSkills(enrichedRoleSkills);
         setTotalRecords(res.data?.pagination?.totalRecords || 0);
       } else {
         toast.error(res?.message || "Failed to fetch skills");
@@ -98,11 +166,11 @@ const UpdateSkill = () => {
     const selectedSkillOptions = skillOptions.filter((opt) =>
       id.skill.includes(opt.label)
     );
-
+    console.log("lolllll", id);
     setEditingSkill(id);
 
     validation.setValues({
-      _id: id._id || "",
+      _id: id.skill || "",
       addRole: id.appliedRole || "",
       addSkill: selectedSkillOptions,
     });
@@ -112,7 +180,6 @@ const UpdateSkill = () => {
 
   const handleDelete = (skill: any) => {
     setRoleAndSkillToDelete(skill);
-    console.log(skill);
     setShowDeleteModal(true);
   };
 
@@ -343,7 +410,6 @@ const UpdateSkill = () => {
         setLoader(false);
         return;
       }
-      console.log({ payload });
       const apiCall = editingSkill
         ? updateRoleSkill(payload)
         : addRoleSkill(payload);
@@ -352,7 +418,8 @@ const UpdateSkill = () => {
         .then((res) => {
           if (res?.success) {
             toast.success(
-              `Role-Skill ${editingSkill ? "updated" : "added"} successfully`
+              // `Role-Skill ${editingSkill ? "updated" : "added"} successfully`
+              res?.message
             );
             setEditingSkill(null);
             validation.resetForm();
@@ -362,11 +429,10 @@ const UpdateSkill = () => {
             toast.error(res?.message || "Something went wrong");
           }
         })
-        .catch(() => toast.error("API Error"))
+        .catch((error) => toast.error(error?.message || "Something went wrong"))
         .finally(() => setLoader(false));
     },
   });
-  console.log(validation.values);
   const formTitle = editingSkill
     ? "Edit Skill"
     : "Add or Update Role and Skills";
@@ -403,48 +469,7 @@ const UpdateSkill = () => {
       skill.skill.toLowerCase().includes(searchAll.toLowerCase())
   );
 
-  const fetchSkills = async () => {
-    try {
-      setIsLoading(true);
-      //  const allSkills: any[] = [];
-      const page = 1;
-      const pageSize = 50;
-      const limit = 200;
-      const response = await ViewAppliedSkills({
-        page,
-        pageSize,
-        limit,
-      });
-
-      const skillData = response?.data?.data || [];
-
-      setSkillOptions(
-        skillData.map((item: any) => ({
-          label: item.skills,
-          value: item.skills, // match what you'll use in selected
-          id: item._id, // if needed
-        }))
-      );
-    } catch (error) {
-      errorHandle(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    console.log("helooooooooooooooooooooooooooooooooo");
-
-    fetchSkills();
-  }, []);
-
- 
   const handleAppliedSkillsChange = (selectedOptions: SelectedOption1[]) => {
-    console.log("skills", selectedOptions);
-
-    const selectedSkillIds = selectedOptions.map((option) => option.id);
-    console.log("Selected Skill IDs:", selectedSkillIds);
-
     validation.setFieldValue("addSkill", selectedOptions);
   };
 
@@ -512,9 +537,7 @@ const UpdateSkill = () => {
                         <div className="flex-wrap gap-2 d-flex align-items-center">
                           <BaseButton
                             color="success"
-                            disabled={loader}
                             type="submit"
-                            loader={loader}
                             onClick={handleOpenBaseModal}
                             className="ml-2"
                           >

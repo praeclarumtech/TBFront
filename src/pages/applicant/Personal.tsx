@@ -5,7 +5,7 @@ import { useFormik } from "formik";
 import { Fragment } from "react";
 import BaseButton from "components/BaseComponents/BaseButton";
 import { BaseSelect } from "components/BaseComponents/BaseSelect";
-import { Form, Link} from "react-router-dom";
+import { Form, Link } from "react-router-dom";
 import BaseInput from "components/BaseComponents/BaseInput";
 import moment from "moment";
 import BaseTextarea from "components/BaseComponents/BaseTextArea";
@@ -591,10 +591,10 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
                       ? "/import-applicants"
                       : "/applicants"
                   }
-                  style={styleButton}
+                  // style={styleButton}
                   className="d-flex align-items-center justify-content-center"
                 >
-                  Cancel
+                  <BaseButton className="btn btn-outline-danger" color="white">Cancel</BaseButton>
                 </Link>
 
                 <BaseButton
@@ -613,14 +613,14 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
   );
 };
 
-const styleButton = {
-  backgroundColor: "white",
-  color: "red",
-  borderRadius: "5px",
-  padding: "8px 20px",
-  fontSize: "16px",
-  cursor: "pointer",
-  alignItems: "center",
-  justifyContent: "center",
-};
+// const styleButton = {
+//   backgroundColor: "white",
+//   color: "red",
+//   borderRadius: "5px",
+//   padding: "8px 20px",
+//   fontSize: "16px",
+//   cursor: "pointer",
+//   alignItems: "center",
+//   justifyContent: "center",
+// };
 export default PersonalDetailsForm;

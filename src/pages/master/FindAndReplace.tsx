@@ -25,115 +25,6 @@ const FindAndReplace = () => {
 
   const [editingSkill, setEditingSkill] = useState<any>(null);
 
-  // const handleEdit = (roleSkill: any) => {
-  //   setEditingSkill(roleSkill);
-  //   validation.setValues({
-  //     findValue: "",
-  //     ReplaceValue: "",
-  //     field: findAndReplaceOption?.value || "",
-  //   });
-  //   setShowBaseModal(true);
-  // };
-
-  console.log("hellllllllooooo ji", findAndReplaceOptions);
-
-  // const columns = useMemo(
-  //   () => [
-  //     {
-  //       header: (
-  //         <input
-  //           type="checkbox"
-  //           onChange={handleSelectAll}
-  //           checked={
-  //             selectedSkills.length === roleSkill.length && roleSkill.length > 0
-  //           }
-  //         />
-  //       ),
-  //       accessorKey: "select",
-  //       cell: (info: any) => (
-  //         <input
-  //           type="checkbox"
-  //           checked={selectedSkills.includes(info.row.original._id)}
-  //           onChange={() => handleSelectApplicant(info.row.original._id)}
-  //         />
-  //       ),
-  //       enableColumnFilter: false,
-  //     },
-  //     {
-  //       header: "Sr.no",
-  //       cell: getSerialNumber,
-  //       enableColumnFilter: false,
-  //     },
-  //     {
-  //       header: "Role",
-  //       accessorKey: "appliedRole",
-  //       enableColumnFilter: false,
-  //     },
-  //     {
-  //       header: "Skill",
-  //       accessorKey: "skill",
-  //       enableColumnFilter: false,
-  //     },
-  //     {
-  //       header: "Action",
-  //       cell: (cell: { row: { original: any } }) => (
-  //         <div className="gap-2 hstack">
-  //           <BaseButton
-  //             id={`usage-${cell?.row?.original?.id}`}
-  //             color="primary"
-  //             className="btn btn-sm btn-soft-success usage-list"
-  //             onClick={() => handleView(cell.row.original)}
-  //           >
-  //             <i className="align-bottom ri-eye-fill" />
-  //             <ReactTooltip
-  //               place="bottom"
-  //               variant="info"
-  //               content="View"
-  //               anchorId={`usage-${cell?.row?.original?.id}`}
-  //             />
-  //           </BaseButton>
-  //           <BaseButton
-  //             id={`edit-${cell?.row?.original?._id}`}
-  //             color="secondary"
-  //             className="btn btn-sm btn-soft-warning edit-list"
-  //             onClick={() => handleEdit(cell?.row?.original)}
-  //           >
-  //             <i className="align-bottom ri-pencil-fill" />
-  //           </BaseButton>
-  //           <BaseButton
-  //             color="danger"
-  //             id={`delete-${cell?.row?.original?._id}`}
-  //             className="btn btn-sm btn-soft-danger bg-danger"
-  //             onClick={() => handleDelete(cell?.row?.original)}
-  //           >
-  //             <i className="align-bottom ri-delete-bin-fill" />
-  //           </BaseButton>
-
-  //           {/* Tooltips should be outside buttons */}
-  //           <ReactTooltip
-  //             place="bottom"
-  //             variant="warning"
-  //             content="Edit"
-  //             anchorId={`edit-${cell?.row?.original?._id}`}
-  //           />
-  //           <ReactTooltip
-  //             place="bottom"
-  //             variant="error"
-  //             content="Delete"
-  //             anchorId={`delete-${cell?.row?.original?._id}`}
-  //           />
-  //         </div>
-  //       ),
-  //     },
-  //   ],
-  //   [selectedSkills, roleSkill]
-  // );
-
-  // const handleView = (id: string) => {
-  //   setSelectedId(id);
-  //   setShowViewModal(true);
-  // };
-
   const validation = useFormik({
     enableReinitialize: true,
     initialValues: {
@@ -159,7 +50,8 @@ const FindAndReplace = () => {
         .then((res) => {
           if (res?.success) {
             toast.success(
-              `Your Field ${payload.find} is Succesfully replace with ${payload.replaceWith}`
+              // `Your Field ${payload.find} is Succesfully replace with ${payload.replaceWith}`
+              res?.message
             );
             setEditingSkill(null);
             validation.resetForm();
@@ -188,16 +80,14 @@ const FindAndReplace = () => {
       findAndReplaceAll(payload)
         .then((res) => {
           if (res?.success) {
-            toast.success(
-              `Your field "${payload.find}" was successfully replaced with "${payload.replaceWith}"`
-            );
+            toast.success(res?.message);
             setEditingSkill(null);
             validation.resetForm();
           } else {
             toast.error(res?.message || "Something went wrong");
           }
         })
-        .catch(() => toast.error("API Error"));
+        .catch((error) => toast.error(error || "Somthing went wrong"));
       // .finally(() => setLoader(false));
     } else {
       // Validation errors exist
@@ -242,9 +132,9 @@ const FindAndReplace = () => {
           } else {
             if (res?.success) {
               toast.success(
-                `Your field "${payload.find}" was found successfully`
+                // `Your field "${payload.find}" was found successfully`
+                res?.message
               );
-              console.log("first", res);
               setEditingSkill(null);
               validation.resetForm();
             } else {
@@ -260,12 +150,6 @@ const FindAndReplace = () => {
 
   return (
     <Fragment>
-      {/* <DeleteModal
-        show={showDeleteModal}
-        // onCloseClick={closeDeleteModal}
-        onDeleteClick={confirmDelete}
-        loader={loader}
-      /> */}
       <div className="pt-1 page-content"></div>
       <Container fluid>
         <Row>
@@ -281,50 +165,6 @@ const FindAndReplace = () => {
                     >
                       <div className="justify-content-start h4 fw-bold">
                         {formTitle}
-                      </div>
-                      {/* Right Section (Search + Buttons) */}
-                      <div className="flex-wrap mr-2 d-flex justify-content-end ">
-                        {/* Search Bar */}
-                        {/* <div className="col-sm-auto col-12">
-                          <input
-                            id="search-bar-0"
-                            className="h-10 form-control search"
-                            placeholder="Search..."
-                            onChange={handleSearchChange}
-                            value={searchAll}
-                          />
-                        </div> */}
-
-                        {/* Delete Button (Only if skills are selected)
-                        {selectedSkills.length > 1 && (
-                          <BaseButton
-                            className="ml-2 text-lg border-0 btn bg-danger edit-list w-fit"
-                            onClick={handleDeleteAll}
-                          >
-                            <i className="align-bottom ri-delete-bin-fill" />
-                            <ReactTooltip
-                              place="bottom"
-                              variant="error"
-                              content="Delete"
-                              anchorId={`Delete ${selectedSkills.length} Emails`}
-                            />
-                          </BaseButton>
-                        )} */}
-
-                        {/* Import & Submit Buttons (Stack only on smaller screens) */}
-                        {/* <div className="flex-wrap gap-2 d-flex align-items-center">
-                          <BaseButton
-                            color="success"
-                            disabled={loader}
-                            type="submit"
-                            loader={loader}
-                            onClick={handleOpenBaseModal}
-                            className="ml-2"
-                          >
-                            <i className="align-bottom ri-add-line me-1" />
-                            {submitButtonText}
-                          </BaseButton>
-                        </div> */}
                       </div>
                     </Col>
                   </Row>
@@ -372,12 +212,14 @@ const FindAndReplace = () => {
                                 : undefined
                             }
                             passwordToggle={false}
+                            disabled={!validation.values.field}
                           />
                         </Col>
                         <Col xs={2} md={2} lg={2}>
                           <BaseButton
                             className="!p-0 mt-[35px] ml-n5"
                             onClick={handleFind}
+                            disabled={!validation.values.findValue}
                           >
                             <FindInPage />
                           </BaseButton>
@@ -390,7 +232,7 @@ const FindAndReplace = () => {
                       </Row>
                       <Row className="mt-3 mb-3">
                         <Col xs={10} md={8} lg={8}>
-                          <BaseInput  
+                          <BaseInput
                             label="Replace"
                             name="ReplaceValue"
                             className="bg-gray-100"
@@ -406,12 +248,17 @@ const FindAndReplace = () => {
                                 : undefined
                             }
                             passwordToggle={false}
+                            disabled={
+                              !validation.values.field &&
+                              !validation.values.findValue
+                            }
                           />
                         </Col>
                         <Col xs={2} md={2} lg={2}>
                           <BaseButton
                             className="!p-0  mt-[35px] ml-n5"
                             onClick={replaceAll}
+                            disabled={!validation.values.ReplaceValue}
                           >
                             <FindReplace />
                           </BaseButton>

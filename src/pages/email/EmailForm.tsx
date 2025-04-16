@@ -13,16 +13,12 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import BaseInput from "components/BaseComponents/BaseInput";
 import appConstants from "constants/constant";
-import {
-  dynamicFind,
-  InputPlaceHolder,
-} from "utils/commonFunctions";
+import { dynamicFind, InputPlaceHolder } from "utils/commonFunctions";
 import { BaseSelect } from "components/BaseComponents/BaseSelect";
 import { SelectedOption } from "interfaces/applicant.interface";
 import "react-quill/dist/quill.snow.css";
 import ReactQuill from "react-quill";
 import { Label } from "reactstrap";
-
 
 const quillModules = {
   toolbar: [
@@ -49,6 +45,7 @@ const EmailForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const initialEmail = location.state?.email_to || "";
+  const fromPage = location.state?.fromPage || "/email";
   // const initialName = location.state?.name || "";
 
   const [templateTypes, setTemplateTypes] = useState<SelectedOption[]>([]);
@@ -102,20 +99,19 @@ const EmailForm = () => {
   const validation = useFormik({
     initialValues: {
       email_template: "",
-      email_to: initialEmail || "",
+      email_to: initialEmail,
       email_bcc: "",
       subject: "",
       description: "",
     },
     validationSchema: Yup.object({
       email_to: Yup.string()
+        .required("Recipient email is required")
         .test("valid-emails", "Invalid email address", (value) => {
           const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
           const emails = value?.split(",").map((email) => email.trim());
           return emails?.every((email) => emailRegex.test(email));
-        })
-        .required("Recipient email is required"),
-
+        }),
       email_bcc: Yup.string().test(
         "valid-emails",
         "Invalid email address",
@@ -128,6 +124,7 @@ const EmailForm = () => {
       ),
 
       subject: Yup.string().required("Subject is required"),
+      description: Yup.string().required("Description is required"),
     }),
     validateOnBlur: true,
     validateOnChange: true,
@@ -143,13 +140,12 @@ const EmailForm = () => {
           .map((email) => email.trim());
 
         await sendEmail({
-        
           email_to: emailToArray,
           email_bcc: emailBccArray,
           subject: values.subject,
           description: values.description,
         });
-        
+
         toast.success("Email sent successfully!");
         validation.resetForm();
         setTimeout(() => {
@@ -183,18 +179,21 @@ const EmailForm = () => {
       <div className="mt-6 mx-9">
         <div className="w-100">
           <div className="bg-white rounded-lg shadow">
-            <div className="p-8 relative">
+            <div className="relative p-8">
               <button
-                className="absolute left-5 top-5 text-gray-600 hover:text-gray-800 flex items-center"
-                onClick={() => navigate("/email")}
+                className="absolute flex items-center text-gray-600 left-5 top-5 hover:text-gray-800"
+                onClick={() =>
+                  // navigate(fromPage === "/applicants" ? "/applicants" : "/email")
+                  navigate(fromPage)
+                }
               >
-                <i className="fa fa-arrow-left mr-2"></i>
+                <i className="mr-2 fa fa-arrow-left"></i>
                 Back
               </button>
 
-              <div className="flex justify-center items-center mb-6">
+              <div className="flex items-center justify-center mb-6">
                 <div>
-                  <i className="fa fa-envelope text-5xl text-primary"></i>
+                  <i className="text-5xl fa fa-envelope text-primary"></i>
                 </div>
               </div>
 
@@ -239,7 +238,16 @@ const EmailForm = () => {
                           handleChange={validation.handleChange}
                           handleBlur={validation.handleBlur}
                           value={validation.values.email_to}
-                          title={validation.values.email_to}
+                          error={
+                            typeof validation.errors.email_to === "string"
+                              ? validation.errors.email_to
+                              : undefined
+                          }
+                          touched={
+                            typeof validation.touched.email_to === "boolean"
+                              ? validation.touched.email_to
+                              : undefined
+                          }
                         />
                       </div>
                       <div>
@@ -260,12 +268,6 @@ const EmailForm = () => {
                           error={validation.errors.email_bcc}
                           touched={validation.touched.email_bcc}
                         />
-                        {/* {validation.touched.email_bcc &&
-                          validation.errors.email_bcc && (
-                            <div className="text-red-500 text-sm mt-1">
-                              {validation.errors.email_bcc}
-                            </div>
-                          )} */}
                       </div>
                     </div>
 
@@ -287,12 +289,6 @@ const EmailForm = () => {
                         error={validation.errors.subject}
                         touched={validation.touched.subject}
                       />
-                      {/* {validation.touched.subject &&
-                        validation.errors.subject && (
-                          <div className="text-red-500 text-sm mt-1">
-                            {validation.errors.subject}
-                          </div>
-                        )} */}
                     </div>
 
                     <div className="mb-3">
@@ -313,11 +309,11 @@ const EmailForm = () => {
                       />
                     </div>
 
-                    <div className="flex justify-end items-center gap-4">
+                    <div className="flex items-center justify-end gap-4">
                       <button
                         type="submit"
                         disabled={validation.isSubmitting}
-                        className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary-dark flex items-center gap-2 disabled:opacity-50"
+                        className="flex items-center gap-2 px-4 py-2 text-white rounded-md bg-primary hover:bg-primary-dark disabled:opacity-50"
                       >
                         {validation.isSubmitting ? (
                           <>

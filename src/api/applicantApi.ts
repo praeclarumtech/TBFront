@@ -265,7 +265,6 @@ export const deleteMultipleApplicant = async (
   const response = await authServices.delete(DELETE_MULTIPLE_APPLICANT, {
     data: { ids }, // Send IDs inside request body
   });
-  console.log("object", response?.data);
   return response?.data;
 };
 
@@ -278,6 +277,5 @@ export const deleteImportedMultipleApplicant = async (
   const response = await authServices.delete(DELETE_IMPORTED_MULTIPLE_APPLICANT, {
     data: { ids }, // Send IDs inside request body
   });
-  console.log("object", response?.data);
   return response?.data;
 };
