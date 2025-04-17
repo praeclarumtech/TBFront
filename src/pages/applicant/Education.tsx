@@ -11,10 +11,7 @@ import {
   Qualification,
   SelectedOption,
 } from "interfaces/applicant.interface";
-import {
-  dynamicFind,
-  InputPlaceHolder,
-} from "utils/commonFunctions";
+import { dynamicFind, InputPlaceHolder } from "utils/commonFunctions";
 import appConstants from "constants/constant";
 import { viewAllDegree } from "api/apiDegree";
 import { toast } from "react-toastify";
@@ -25,7 +22,6 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
   document.title = Modules.CreateApplicantForm + " | " + projectTitle;
   const [loading, setLoading] = useState<boolean>(false);
   const [qualification, setQualification] = useState<Qualification[]>([]);
-  
 
   useEffect(() => {
     const getQualification = async () => {
@@ -41,7 +37,7 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
             }))
           );
         }
-      }  catch (error: any) {
+      } catch (error: any) {
         const details = error?.response?.data?.details;
         if (Array.isArray(details)) {
           details.forEach((msg: string) => {
@@ -56,7 +52,6 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
             autoClose: 5000,
           });
         }
-      
       } finally {
         setLoading(false);
       }
@@ -87,8 +82,6 @@ const initialQualificationValue = (() => {
       collegeName: initialValues?.collegeName || "",
     },
     validationSchema: EducationApplicantSchema,
-
- 
 
     onSubmit: (data) => {
       setLoading(true);
@@ -177,10 +170,10 @@ const initialQualificationValue = (() => {
                   </Col>
                   <Col xs={12} md={6} lg={4}>
                     <BaseInput
-                      label="College Name"
+                      label="College Name (Optional)"
                       name="collegeName"
                       type="text"
-                      placeholder={InputPlaceHolder("College Name")}
+                      placeholder={InputPlaceHolder("College Name (Optional)")}
                       handleChange={(e) => {
                         const value = e.target.value.replace(
                           /[^A-Za-z\s]/g,
@@ -226,10 +219,10 @@ const initialQualificationValue = (() => {
 
                   <Col xs={12} md={8} lg={4}>
                     <BaseInput
-                      label="CGPA"
+                      label="CGPA (Optional)"
                       name="cgpa"
                       type="text"
-                      placeholder={InputPlaceHolder("CGPA")}
+                      placeholder={InputPlaceHolder("CGPA (Optional)")}
                       handleChange={(e) => {
                         let value = e.target.value;
                         value = value.replace(/[^0-9.]/g, "");
@@ -285,7 +278,7 @@ const initialQualificationValue = (() => {
               )}
               <div className="gap-3 mt-4 d-flex flex-column flex-md-row justify-content-end">
                 <BaseButton
-                  className="order-1 order-md-0"
+                  className="order-1 w-full order-md-0"
                   type="submit"
                   onClick={() => {
                     onBack(validation.values);
@@ -295,7 +288,7 @@ const initialQualificationValue = (() => {
                 </BaseButton>
                 <BaseButton
                   color="primary"
-                  className="order-0 order-md-1"
+                  className="w-full order-0 order-md-1"
                   type="submit"
                 >
                   Next

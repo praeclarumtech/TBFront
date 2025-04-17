@@ -22,7 +22,7 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
       <div>
         <Typography
           variant="h6"
-          className="justify-center text-center font-bold "
+          className="justify-center font-bold text-center "
         >
           Preview Your Details
         </Typography>
@@ -31,12 +31,12 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
           variant="h6"
           className="mx-5 font-bold text-2xl !text-blue-600"
         >
-          <i className="fa fa-user mr-1 "> </i>
+          <i className="mr-1 fa fa-user "> </i>
           <span>Personal Details:</span>
         </Typography>
 
         <hr className="!text-blue-900 font-bold " />
-        <div className="mx-2 p-3">
+        <div className="p-3 mx-2">
           <Row className="mx-2">
             <Col xs={12} md={6} className="mb-3">
               <Typography variant="body1" className="text-gray-600">
@@ -115,13 +115,13 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
         </div>
 
         <Typography variant="h6" className="mx-5  text-2xl !text-blue-600">
-          <i className="fa fa-book  mr-1 "> </i>
+          <i className="mr-1 fa fa-book "> </i>
           Educational Details:
         </Typography>
-        <hr className="text-blue-900  " />
-        <div className="mx-2 p-2">
+        <hr className="text-blue-900 " />
+        <div className="p-2 mx-2">
           <Row className="mx-2">
-            <Col xs={12} md={6} className="mb-3  ">
+            <Col xs={12} md={6} className="mb-3 ">
               <Typography>
                 <span className="  !text-black pt-3">Qualification:</span>
                 <span>{data?.qualification}</span>
@@ -154,11 +154,11 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
         </div>
 
         <Typography variant="h6" className="mx-5  text-2xl !text-blue-600">
-          <i className="fa fa-suitcase  mr-1 "> </i>
+          <i className="mr-1 fa fa-suitcase "> </i>
           Job Details:
         </Typography>
-        <hr className="text-blue-900  " />
-        <div className="mx-2 p-3">
+        <hr className="text-blue-900 " />
+        <div className="p-3 mx-2">
           <Row className="mx-2">
             <Col xs={12} md={6} className="mb-3">
               <Typography>
@@ -274,7 +274,7 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
             </Col>
             <Col xs={12}>
               <Typography className="mt-2">
-                <span className="  text-black">Resume URL:</span>
+                <span className="text-black ">Resume URL:</span>
                 <a
                   href={data?.resumeUrl}
                   target="_blank"
@@ -285,7 +285,7 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
                 </a>
               </Typography>
               <Typography className="mt-2">
-                <span className="  text-black">Portfolio URL:</span>
+                <span className="text-black ">Portfolio URL:</span>
                 <a
                   href={data?.portfolioUrl}
                   target="_blank"
@@ -296,7 +296,7 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
                 </a>
               </Typography>
               <Typography className="mt-2">
-                <span className="  text-black">Linkedin URL:</span>
+                <span className="text-black ">Linkedin URL:</span>
                 <a
                   href={data?.linkedinUrl}
                   target="_blank"
@@ -307,7 +307,7 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
                 </a>
               </Typography>
               <Typography className="mt-2">
-                <span className=" text-black">Client Cv URL:</span>
+                <span className="text-black ">Client Cv URL:</span>
                 <a
                   href={data?.clientCvUrl}
                   target="_blank"
@@ -319,7 +319,7 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
                 </a>
               </Typography>
               <Typography className="mt-2">
-                <span className="  text-black">Practical URL:</span>
+                <span className="text-black ">Practical URL:</span>
                 <a
                   href={data?.practicalUrl}
                   target="_blank"
@@ -331,15 +331,22 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
               </Typography>
             </Col>
           </Row>
+          <div className="gap-3 mx-2 mt-4 d-flex flex-column flex-md-row justify-content-end">
+            <BaseButton
+              variant=" order-1 w-full order-md-0"
+              onClick={() => onEdit(2)}
+            >
+              Back
+            </BaseButton>
+            <BaseButton
+              variant="w-full order-0 order-md-1"
+              color="primary"
+              onClick={onSubmit}
+            >
+              {loading ? "Submitting..." : "Submit Application"}
+            </BaseButton>
+          </div>
         </div>
-      </div>
-      <div className="d-flex justify-content-between m-3">
-        <BaseButton variant="contained" onClick={() => onEdit(2)}>
-          Back
-        </BaseButton>
-        <BaseButton variant="contained" color="primary" onClick={onSubmit}>
-          {loading ? "Submitting..." : "Submit Application"}
-        </BaseButton>
       </div>
     </>
   );

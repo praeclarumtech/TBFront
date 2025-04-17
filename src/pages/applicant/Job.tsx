@@ -152,7 +152,6 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
     setSelectedMulti(selectedMulti);
   };
 
- 
   // const handleRoleChange = (SelectedOptionRole: SelectedOptionRole | null) => {
   //   if (SelectedOptionRole) {
   //     const newRole = SelectedOptionRole.value;
@@ -176,7 +175,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
   //   }
   // };
 
-   const handleRoleChange = (SelectedOptionRole: SelectedOptionRole | null) => {
+  const handleRoleChange = (SelectedOptionRole: SelectedOptionRole | null) => {
     if (SelectedOptionRole) {
       const newRole = SelectedOptionRole.value;
       validation.setFieldValue("appliedRole", newRole);
@@ -197,7 +196,6 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
     }
   };
 
- 
   // const handleTechnologyExperienceChange = (tech: string, value: string) => {
   //   validation.setFieldValue(`meta.${tech}`, value);
   // };
@@ -244,10 +242,10 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                 </Col>
                 <Col xs={12} sm={12} md={6} lg={6} className="mb-3">
                   <BaseInput
-                    label="Other Skills"
+                    label="Other Skills (Optional)"
                     name="otherSkills"
                     type="text"
-                    placeholder={InputPlaceHolder("Other Skills")}
+                    placeholder={InputPlaceHolder("Other Skills (Optional)")}
                     handleChange={validation.handleChange}
                     handleBlur={validation.handleBlur}
                     value={validation.values.otherSkills}
@@ -258,10 +256,12 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                 </Col>
                 <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
                   <BaseInput
-                    label="Total Experience(Year)"
+                    label="Total Experience(Year) (Optional)"
                     name="totalExperience"
                     type="text"
-                    placeholder={InputPlaceHolder("Total Experience")}
+                    placeholder={InputPlaceHolder(
+                      "Total Experience (Optional)"
+                    )}
                     handleChange={(e) => {
                       let value = e.target.value;
                       value = value.replace(/[^0-9.]/g, "");
@@ -583,10 +583,10 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                 </Col>
                 <Col xs={12} sm={4} md={6} lg={4} className="mb-3 mb-sm-0">
                   <BaseInput
-                    label="Negotiation (₹)"
+                    label="Negotiation (₹) (Optional)"
                     name="negotiation"
                     type="text"
-                    placeholder={InputPlaceHolder("Negotiation (₹)")}
+                    placeholder={InputPlaceHolder("Negotiation (₹) (Optional)")}
                     handleChange={(e) => {
                       let value = e.target.value;
                       value = value.replace(/[^0-9.]/g, "");
@@ -770,7 +770,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                   selectedRole !== "Na" && (
                     <div className="mb-4 ">
                       <h5>Technologies for {selectedRole}:</h5>
-                      <div className="d-flex flex-wrap space-x-2  ">
+                      <div className="flex-wrap space-x-2 d-flex ">
                         {technologyOptions[
                           selectedRole as keyof typeof technologyOptions
                         ].map((tech: string) => (
@@ -786,7 +786,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                             <BaseInput
                                 name={tech}
                                 type="text"
-                                className=" "
+                                className=""
                                 label={`${tech} Exp.(Yrs)`}
                                 placeholder={` ${tech}`}
                                 value={meta[tech] || ""}
@@ -805,7 +805,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                             <BaseInput
                               name={tech}
                               type="text"
-                              className=" "
+                              className=""
                               label={`${tech} Exp.(Yrs)`}
                               placeholder={`${tech}`}
                               // value={meta[tech] || ""}
@@ -878,7 +878,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                   validation.values.appliedRole !== "Na" && (
                     <div className="mb-4 ">
                       <h5>Technologies for {validation.values.appliedRole}:</h5>
-                      <div className="d-flex flex-wrap space-x-2  ">
+                      <div className="flex-wrap space-x-2 d-flex ">
                         {technologyOptions[
                           validation.values
                             .appliedRole as keyof typeof technologyOptions
@@ -975,10 +975,10 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                 </Col>
                 <Col xs={12} sm={4} md={4} lg={4} className="mb-3">
                   <BaseInput
-                    label="Referral"
+                    label="Referral (Optional)"
                     name="referral"
                     type="text"
-                    placeholder={InputPlaceHolder("Referral")}
+                    placeholder={InputPlaceHolder("Referral (Optional)")}
                     handleChange={(e) => {
                       const value = e.target.value.replace(/[^A-Za-z\s]/g, "");
                       validation.setFieldValue("referral", value);
@@ -990,12 +990,14 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     passwordToggle={false}
                   />
                 </Col>
-                <Col xs={12} sm={4} md={4} lg={4} className="mb-3  mb-sm-0">
+                <Col xs={12} sm={4} md={4} lg={4} className="mb-3 mb-sm-0">
                   <BaseInput
-                    label="Last Follow Up Date"
+                    label="Last Follow Up Date (Optional)"
                     name="lastFollowUpDate"
                     type="date"
-                    placeholder={InputPlaceHolder("Last Follow UpDate")}
+                    placeholder={InputPlaceHolder(
+                      "Last Follow UpDate (Optional)"
+                    )}
                     handleChange={validation.handleChange}
                     handleBlur={validation.handleBlur}
                     value={validation.values.lastFollowUpDate}
@@ -1006,10 +1008,10 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                 </Col>
                 <Col xs={12} md={8} lg={4} sm={12} className="mb-3">
                   <BaseInput
-                    label="Portfolio Url"
+                    label="Portfolio Url (Optional)"
                     name="portfolioUrl"
                     type="url"
-                    placeholder={InputPlaceHolder("Portfolio Url")}
+                    placeholder={InputPlaceHolder("Portfolio Url (Optional)")}
                     handleChange={validation.handleChange}
                     handleBlur={validation.handleBlur}
                     value={validation.values.portfolioUrl}
@@ -1036,10 +1038,10 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                 </Col>
                 <Col xs={12} md={6} lg={4} sm={12} className="mb-3">
                   <BaseInput
-                    label="Linkedin Url"
+                    label="Linkedin Url (Optional)"
                     name="linkedinUrl"
                     type="url"
-                    placeholder={InputPlaceHolder("Linkedin URL")}
+                    placeholder={InputPlaceHolder("Linkedin URL (Optional)")}
                     handleChange={validation.handleChange}
                     handleBlur={validation.handleBlur}
                     value={validation.values.linkedinUrl}
@@ -1050,10 +1052,10 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                 </Col>
                 <Col xs={12} md={12} lg={4} sm={12} className="mb-3">
                   <BaseInput
-                    label="Client Cv Url"
+                    label="Client Cv Url (Optional)"
                     name="clientCvUrl"
                     type="url"
-                    placeholder={InputPlaceHolder("Client Cv Url")}
+                    placeholder={InputPlaceHolder("Client Cv Url (Optional)")}
                     handleChange={validation.handleChange}
                     handleBlur={validation.handleBlur}
                     value={validation.values.clientCvUrl}
@@ -1070,11 +1072,11 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                   className="!md:mb-3 !mb-3 mb-sm-0"
                 >
                   <BaseTextarea
-                    label="Client Feedback"
+                    label="Client Feedback (Optional)"
                     name="clientFeedback"
                     className="mb-3"
                     placeholder={InputPlaceHolder(
-                      "Describe about Us Practical Task..."
+                      "Describe about Us Practical Task... (Optional)"
                     )}
                     handleChange={validation.handleChange}
                     handleBlur={validation.handleBlur}
@@ -1088,11 +1090,11 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                 </Col>
                 <Col xs={12} md={12} lg={4} sm={12} className="!mb-3  mb-sm-0">
                   <BaseInput
-                    label="Practical Url"
+                    label="Practical Url (Optional)"
                     name="practicalUrl"
                     type="url"
                     className="mb-3"
-                    placeholder={InputPlaceHolder("Practical Url")}
+                    placeholder={InputPlaceHolder("Practical Url (Optional)")}
                     handleChange={validation.handleChange}
                     handleBlur={validation.handleBlur}
                     value={validation.values.practicalUrl}
@@ -1109,11 +1111,11 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                   className="!md:mb-3 !mb-3  mb-sm-0"
                 >
                   <BaseTextarea
-                    label="Practical Feedback"
+                    label="Practical Feedback (Optional)"
                     name="practicalFeedback"
                     // className="mb-3"
                     placeholder={InputPlaceHolder(
-                      "Describe about Us Practical Task..."
+                      "Describe about Us Practical Task... (Optional)"
                     )}
                     handleChange={validation.handleChange}
                     handleBlur={validation.handleBlur}
@@ -1146,10 +1148,10 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                 </Col>
               </Row>
             )}
-            <div className="d-flex flex-column flex-md-row justify-content-end gap-3 mt-4">
+            <div className="gap-3 mt-4 d-flex flex-column flex-md-row justify-content-end">
               {" "}
               <BaseButton
-                className="order-1 order-md-0"
+                className="order-1 w-full order-md-0"
                 type="submit"
                 onClick={() => {
                   onBack(validation.values);
@@ -1159,7 +1161,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
               </BaseButton>
               <BaseButton
                 color="primary"
-                className="order-0 order-md-1"
+                className="w-full order-0 order-md-1"
                 type="submit"
               >
                 Next

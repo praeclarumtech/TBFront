@@ -5,7 +5,7 @@ import { useFormik } from "formik";
 import { Fragment } from "react";
 import BaseButton from "components/BaseComponents/BaseButton";
 import { BaseSelect } from "components/BaseComponents/BaseSelect";
-import { Form, Link } from "react-router-dom";
+import { Form, useNavigate } from "react-router-dom";
 import BaseInput from "components/BaseComponents/BaseInput";
 import moment from "moment";
 import BaseTextarea from "components/BaseComponents/BaseTextArea";
@@ -43,6 +43,7 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
   const [emailError, setEmailError] = useState("");
   const [phoneNumberError, setPhoneNumberError] = useState("");
   const [whatsappError, setWhatsappError] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getCities = async () => {
@@ -190,6 +191,14 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
       errorHandle(error);
 
       return "Error while checking this field.";
+    }
+  };
+
+  const handleCancel = () => {
+    if (module === "import-applicant") {
+      navigate("/import-applicants");
+    } else {
+      navigate("/applicants");
     }
   };
 
@@ -411,11 +420,11 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
                   </Col>
                   <Col xs={12} md={6} lg={4}>
                     <BaseSelect
-                      label="Marital Status"
+                      label="Marital Status (Optional)"
                       name="maritalStatus"
                       className="select-border"
                       options={maritalStatusType}
-                      placeholder="Marital Status"
+                      placeholder="Marital Status (Optional)"
                       handleChange={(selectedOption: SelectedOption) => {
                         validation.setFieldValue(
                           "maritalStatus",
@@ -567,10 +576,12 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
 
                   <Col xs={12} md={12} lg={12}>
                     <BaseTextarea
-                      label="Permanent Address"
+                      label="Permanent Address (Optional)"
                       name="permanentAddress"
                       className="select-border"
-                      placeholder={InputPlaceHolder("Permanent Address")}
+                      placeholder={InputPlaceHolder(
+                        "Permanent Address (Optional)"
+                      )}
                       handleChange={validation.handleChange}
                       handleBlur={validation.handleBlur}
                       value={validation.values.permanentAddress}
@@ -585,17 +596,31 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
                 </Row>
               )}
               <div className="gap-3 mt-4 d-flex flex-column flex-md-row justify-content-end">
-                <Link
+                {/* <Link
                   to={
                     module === "import-applicant"
                       ? "/import-applicants"
                       : "/applicants"
                   }
                   // style={styleButton}
-                  className="d-flex align-items-center justify-content-center"
+                  className="w-full d-flex align-items-center justify-content-center"
                 >
-                  <BaseButton className="btn btn-outline-danger" color="white">Cancel</BaseButton>
-                </Link>
+                  <BaseButton
+                    className="w-full btn btn-outline-danger"
+                    color="white"
+                    
+                  >
+                    Cancel
+                  </BaseButton>
+                </Link> */}
+
+                <BaseButton
+                  className="w-full btn btn-outline-danger"
+                  color="white"
+                  onClick={handleCancel}
+                >
+                  Cancel
+                </BaseButton>
 
                 <BaseButton
                   color="primary"
