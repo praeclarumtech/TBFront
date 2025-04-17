@@ -61,7 +61,7 @@ type InputType =
   | "url"
   | "date";
 export interface BaseInputProps {
-  label?: string;
+  label?: string | JSX.Element;
   name: string;
   type: InputType;
   className?: string;
@@ -77,6 +77,7 @@ export interface BaseInputProps {
   title?: string;
   onclick?: () => void;
   min?: string;
+  isRequired?: boolean;
 }
 
 export interface BaseButtonProps {
@@ -91,7 +92,7 @@ export interface BaseButtonProps {
   variant?: string;
   sx?: any;
   hoverOptions?: string[];
-  onOptionClick?: (option: string) => void
+  onOptionClick?: (option: string) => void;
 }
 
 export interface BaseModalProps {
@@ -104,7 +105,7 @@ export interface BaseModalProps {
   closeButtonText?: string;
   submitButtonText?: string;
   setShowBaseModal: React.Dispatch<React.SetStateAction<boolean>>;
-  size?: 'sm' | 'lg' | 'xl'; 
+  size?: "sm" | "lg" | "xl";
 }
 export interface MultiSelectProps {
   label?: string;
@@ -139,6 +140,7 @@ export interface MultiSelectCheckBoxProps {
   placeholder?: string;
   handleChange?: (selectedOption: any) => void;
   showSelectAll?: boolean;
+  isRequired?: boolean;
 }
 
 export interface BaseSelectProps {
@@ -154,6 +156,7 @@ export interface BaseSelectProps {
   error?: string;
   isDisabled?: boolean;
   styles?: any;
+  isRequired?: boolean;
 }
 
 export interface BaseTextareaProps {
@@ -172,6 +175,7 @@ export interface BaseTextareaProps {
   cols?: number;
   passwordToggle?: boolean;
   multiline?: boolean;
+  isRequired?: boolean;
 }
 
 export interface BreadCrumbProps {

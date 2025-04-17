@@ -95,3 +95,10 @@ export const APPLICATION = "/reports/applicants/getApplicationsByDate?calendarTy
 
 export const FIND_AND_REPLACE_ALL = "appliedRole/skillOrAppliedRoleReplaceAll"
 export const FIND = "/appliedRole/findSkillOrAppliedRole"
+//Email Template module
+export const CREATE_EMAIL_TEMPLATE = "createEmailTemplate";
+export const UPDATE_EMAIL_TEMPLATE = "updateEmailTemplate";
+export const DELETE_EMAIL_TEMPLATE = "deleteEmailTemplate";
+export const VIEW_EMAIL_TEMPLATE = "getAllEmailTemplates";
+export const GET_EMAIL_TEMPLATE_BY_ID = "getEmailTemplateById";
+export const GET_EMAIL_TEMPLATE_BY_TYPE = "templateByType";

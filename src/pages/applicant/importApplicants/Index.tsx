@@ -489,6 +489,7 @@ function ImportApplicant() {
     setLoader(true);
     deleteImportedMultipleApplicant(multipleApplicantDelete)
       .then(() => {
+        toast.success("Applicants Delete Successfully!.");
         fetchApplicants();
         setSelectedApplicants([]);
       })
@@ -594,8 +595,7 @@ function ImportApplicant() {
         throw new Error(response?.message || "Import failed");
       }
     } catch (error: any) {
-     
-      errorHandle(error);
+      console.error("Import error:", error);
 
       if (error.response?.data) {
         const errorMessage =

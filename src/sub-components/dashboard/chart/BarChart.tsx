@@ -122,6 +122,16 @@ const BarChart = ({ onBarClick, selectedFilter, isloading }: BarChartProps) => {
     }
   };
 
+  if (isloading) {
+    return (
+      <div className="w-full h-[570px] flex justify-center items-center">
+        <div className="h-[500px] w-[600px]">
+          <Skeleton height="100%" />
+        </div>
+      </div>
+    );
+  }
+
   if (!labels.length || !dataValues.length) {
     return (
       <div className="py-4 text-center">
@@ -133,23 +143,17 @@ const BarChart = ({ onBarClick, selectedFilter, isloading }: BarChartProps) => {
   return (
     <div className="w-full min-h-[571px] flex justify-center items-center">
       <div className="w-full h-[570px] overflow-x-scroll overflow-y-auto  ">
-        {isloading ? (
-          <div className="h-[500px] w-[600px]">
-            <Skeleton />
-          </div>
-        ) : (
-          <div
-            className="h-[530px] min-w-[800px]"
-            style={{ minWidth: `${Math.max(labels.length * 70, 900)}px` }}
-          >
-            <Bar
-              ref={chartRef}
-              data={chartData}
-              options={options}
-              onClick={handleChartClick}
-            />
-          </div>
-        )}
+        <div
+          className="h-[530px] min-w-[800px]"
+          style={{ minWidth: `${Math.max(labels.length * 70, 900)}px` }}
+        >
+          <Bar
+            ref={chartRef}
+            data={chartData}
+            options={options}
+            onClick={handleChartClick}
+          />
+        </div>
       </div>
     </div>
   );

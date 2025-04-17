@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Col, Row } from "react-bootstrap";
-
+import appConstants from "constants/constant";
 import BaseButton from "components/BaseComponents/BaseButton";
 import { Typography } from "@mui/material";
-
+const { projectTitle, Modules } = appConstants;
 const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
+  document.title = Modules.PreviewApplicantsDetails + " | " + projectTitle;
   const capitalizeWords = (str: string) => {
     if (typeof str !== "string") {
       return "";
@@ -214,7 +215,7 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
               </Typography>
               <Typography>
                 <span className="  !text-black pt-3">Any Hand On Offers?:</span>
-                <span>{" " + data?.anyHandOnOffers ? "Yes" : "Not"}</span>
+                <span>{" " + (data?.anyHandOnOffers ? "Yes" : "No")}</span>
               </Typography>
 
               <Typography>

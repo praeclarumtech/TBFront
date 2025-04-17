@@ -1,39 +1,117 @@
-
-
-import { useEffect } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useEffect, useState } from "react";
 import { useMounted } from "hooks/useMounted";
 import { useLocation, useNavigate } from "react-router-dom";
-import { sendEmail } from "api/emailApi";
+import {
+  getEmailTemplateByType,
+  sendEmail,
+  viewEmailTemplate,
+} from "api/emailApi";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import BaseInput from "components/BaseComponents/BaseInput";
-import { errorHandle, InputPlaceHolder } from "utils/commonFunctions";
-import BaseTextarea from "components/BaseComponents/BaseTextArea";
+import appConstants from "constants/constant";
+import { dynamicFind, InputPlaceHolder } from "utils/commonFunctions";
+import { BaseSelect } from "components/BaseComponents/BaseSelect";
+import { SelectedOption } from "interfaces/applicant.interface";
+import "react-quill/dist/quill.snow.css";
+import ReactQuill from "react-quill";
+import { Label } from "reactstrap";
+
+const quillModules = {
+  toolbar: [
+    [{ header: [1, 2, 3, 4, 5, 6, false] }],
+    [{ font: [] }],
+    [{ size: ["small", false, "large", "huge"] }],
+    ["bold", "italic", "underline", "strike"],
+    [{ color: [] }, { background: [] }],
+    [{ script: "sub" }, { script: "super" }],
+    [{ list: "ordered" }, { list: "bullet" }],
+    [{ indent: "-1" }, { indent: "+1" }],
+    [{ align: [] }],
+    ["blockquote", "code-block"],
+    ["link", "image", "video"],
+    ["clean"],
+  ],
+};
+
+const { projectTitle, Modules } = appConstants;
 
 const EmailForm = () => {
+  document.title = Modules.ComposeEmails + " | " + projectTitle;
   const hasMounted = useMounted();
   const navigate = useNavigate();
   const location = useLocation();
   const initialEmail = location.state?.email_to || "";
+  const fromPage = location.state?.fromPage || "/email";
+  // const initialName = location.state?.name || "";
+
+  const [templateTypes, setTemplateTypes] = useState<SelectedOption[]>([]);
+
+  const getTemplateType = async () => {
+    const response = await viewEmailTemplate();
+    const types = response.data.templates.map((template: any) => template.type);
+    return types;
+  };
+
+  useEffect(() => {
+    const fetchTypes = async () => {
+      try {
+        const types = await getTemplateType();
+        const mappedTypes = types.map((type: string) => ({
+          label: type,
+          value: type,
+        }));
+        setTemplateTypes(mappedTypes);
+      } catch (error) {
+        console.error("Error fetching template types:", error);
+      }
+    };
+
+    fetchTypes();
+    validation.validateForm();
+  }, []);
+
+  const handleTemplateChange = async (selectedOption: SelectedOption) => {
+    const selectedType = selectedOption?.value;
+    validation.setFieldValue("email_template", selectedType);
+
+    if (selectedType) {
+      try {
+        const templateData = await getEmailTemplateByType(selectedType);
+
+        validation.setFieldValue(
+          "description",
+          templateData.data.description || ""
+        );
+        validation.setFieldValue("subject", templateData.data.subject || "");
+      } catch (error) {
+        console.error("Error fetching email template:", error);
+      }
+    } else {
+      validation.setFieldValue("description", "");
+      validation.setFieldValue("subject", "");
+    }
+  };
 
   const validation = useFormik({
     initialValues: {
-      email_to: initialEmail || "",
+      email_template: "",
+      email_to: initialEmail,
       email_bcc: "",
       subject: "",
       description: "",
     },
     validationSchema: Yup.object({
       email_to: Yup.string()
+        .required("Recipient email is required")
         .test("valid-emails", "Invalid email address", (value) => {
           const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
           const emails = value?.split(",").map((email) => email.trim());
           return emails?.every((email) => emailRegex.test(email));
-        })
-        .required("Recipient email is required"),
-
+        }),
       email_bcc: Yup.string().test(
         "valid-emails",
         "Invalid email address",
@@ -46,11 +124,13 @@ const EmailForm = () => {
       ),
 
       subject: Yup.string().required("Subject is required"),
+      description: Yup.string().required("Description is required"),
     }),
     validateOnBlur: true,
     validateOnChange: true,
     validateOnMount: true,
     onSubmit: async (values) => {
+      //  toast.success("Email sent successfully!");
       try {
         const emailToArray = values.email_to
           .split(",")
@@ -60,23 +140,32 @@ const EmailForm = () => {
           .map((email) => email.trim());
 
         await sendEmail({
-          ...values,
           email_to: emailToArray,
           email_bcc: emailBccArray,
+          subject: values.subject,
+          description: values.description,
         });
 
-        toast.success("Email sent successfully!", {
-          closeOnClick: true,
-          autoClose: 3000,
-        });
+        toast.success("Email sent successfully!");
         validation.resetForm();
-        navigate("/email");
-      } catch (err) {
-        toast.error("Failed to send email. Please try again.", {
-          closeOnClick: true,
-          autoClose: 5000,
-        });
-        errorHandle( err);
+        setTimeout(() => {
+          navigate("/email");
+        }, 3000);
+      } catch (error: any) {
+        const details = error?.response?.data?.details;
+        if (Array.isArray(details)) {
+          details.forEach((msg: string) => {
+            toast.error(msg, {
+              closeOnClick: true,
+              autoClose: 5000,
+            });
+          });
+        } else {
+          toast.error("Failed to send email. Please try again.", {
+            closeOnClick: true,
+            autoClose: 5000,
+          });
+        }
       }
     },
   });
@@ -90,24 +179,49 @@ const EmailForm = () => {
       <div className="mt-6 mx-9">
         <div className="w-100">
           <div className="bg-white rounded-lg shadow">
-            <div className="p-8 relative">
+            <div className="relative p-8">
               <button
-                className="absolute left-5 top-5 text-gray-600 hover:text-gray-800 flex items-center"
-                onClick={() => navigate("/email")}
+                className="absolute flex items-center text-gray-600 left-5 top-5 hover:text-gray-800"
+                onClick={() =>
+                  // navigate(fromPage === "/applicants" ? "/applicants" : "/email")
+                  navigate(fromPage)
+                }
               >
-                <i className="fa fa-arrow-left mr-2"></i>
+                <i className="mr-2 fa fa-arrow-left"></i>
                 Back
               </button>
 
-              <div className="flex justify-center items-center mb-6">
+              <div className="flex items-center justify-center mb-6">
                 <div>
-                  <i className="fa fa-envelope text-5xl text-primary"></i>
+                  <i className="text-5xl fa fa-envelope text-primary"></i>
                 </div>
               </div>
 
               <div>
                 {hasMounted && (
                   <form onSubmit={validation.handleSubmit} noValidate>
+                    <div className="grid grid-cols-2 gap-6 mb-3">
+                      <div>
+                        <BaseSelect
+                          label="Select Email Template"
+                          name="email_template"
+                          className="select-border"
+                          options={templateTypes}
+                          placeholder={InputPlaceHolder("Email Template")}
+                          handleChange={handleTemplateChange}
+                          handleBlur={validation.handleBlur}
+                          value={
+                            dynamicFind(
+                              templateTypes,
+                              validation.values.email_template
+                            ) || ""
+                          }
+                          touched={validation.touched.email_template}
+                          error={validation.errors.email_template}
+                        />
+                      </div>
+                    </div>
+
                     <div className="grid grid-cols-2 gap-6 mb-3">
                       <div>
                         <BaseInput
@@ -124,10 +238,17 @@ const EmailForm = () => {
                           handleChange={validation.handleChange}
                           handleBlur={validation.handleBlur}
                           value={validation.values.email_to}
-                          // error={ validation.errors.email_to}
-                          // touched={validation.touched.email_to}
+                          error={
+                            typeof validation.errors.email_to === "string"
+                              ? validation.errors.email_to
+                              : undefined
+                          }
+                          touched={
+                            typeof validation.touched.email_to === "boolean"
+                              ? validation.touched.email_to
+                              : undefined
+                          }
                         />
-                       
                       </div>
                       <div>
                         <BaseInput
@@ -147,12 +268,6 @@ const EmailForm = () => {
                           error={validation.errors.email_bcc}
                           touched={validation.touched.email_bcc}
                         />
-                        {/* {validation.touched.email_bcc &&
-                          validation.errors.email_bcc && (
-                            <div className="text-red-500 text-sm mt-1">
-                              {validation.errors.email_bcc}
-                            </div>
-                          )} */}
                       </div>
                     </div>
 
@@ -174,42 +289,31 @@ const EmailForm = () => {
                         error={validation.errors.subject}
                         touched={validation.touched.subject}
                       />
-                      {/* {validation.touched.subject &&
-                        validation.errors.subject && (
-                          <div className="text-red-500 text-sm mt-1">
-                            {validation.errors.subject}
-                          </div>
-                        )} */}
                     </div>
 
                     <div className="mb-3">
-                      <BaseTextarea
-                        label="Description"
-                        name="description"
-                        placeholder={InputPlaceHolder("Description")}
-                        handleChange={validation.handleChange}
-                        handleBlur={validation.handleBlur}
+                      <Label htmlFor="description" className="form-label">
+                        Description
+                      </Label>
+                      <ReactQuill
+                        className="bg-white [&_.ql-editor]:min-h-[200px] [&_.ql-editor]:max-h-[300px]"
+                        theme="snow"
                         value={validation.values.description}
-                        // touched={validation.touched.description}
-                        // error={validation.errors.description}
-                        className={`w-full p-2 rounded-md ${
-                          validation.touched.description &&
-                          validation.errors.description
-                            ? "border-red-500 border-2"
-                            : ""
-                        }`}
-                        multiline
-                        rows={4}
-                        cols={50}
+                        onChange={(content) =>
+                          validation.setFieldValue("description", content)
+                        }
+                        onBlur={() =>
+                          validation.setFieldTouched("description", true)
+                        }
+                        modules={quillModules}
                       />
-                   
                     </div>
 
-                    <div className="flex justify-end items-center gap-4">
+                    <div className="flex items-center justify-end gap-4">
                       <button
                         type="submit"
                         disabled={validation.isSubmitting}
-                        className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary-dark flex items-center gap-2 disabled:opacity-50"
+                        className="flex items-center gap-2 px-4 py-2 text-white rounded-md bg-primary hover:bg-primary-dark disabled:opacity-50"
                       >
                         {validation.isSubmitting ? (
                           <>

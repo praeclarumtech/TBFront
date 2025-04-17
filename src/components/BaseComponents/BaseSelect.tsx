@@ -14,12 +14,17 @@ const BaseSelect = ({
   error,
   isDisabled,
   styles,
+  isRequired,
 }: BaseSelectProps) => {
   return (
     <>
       {label && (
-        <Label htmlFor={name} className="form-label">
+        <Label
+          htmlFor={name}
+          className="font-semibold text-gray-700 form-label"
+        >
           {label}
+          {isRequired && <span className="text-red-500">*</span>}
         </Label>
       )}
       <Select
@@ -34,7 +39,7 @@ const BaseSelect = ({
         onBlur={handleBlur}
         isClearable
         isDisabled={isDisabled}
-        menuPlacement="auto"
+        menuPlacement="bottom"
         styles={styles}
       />
       {touched && error && (
@@ -59,19 +64,24 @@ const MultiSelect = ({
   className,
   isDisabled,
   placeholder,
+  isRequired,
 }: MultiSelectProps) => {
   return (
     <>
       {label && (
-        <Label htmlFor={name} className="form-label">
+        <Label
+          htmlFor={name}
+          className="font-semibold text-gray-700 form-label"
+        >
           {label}
+          {isRequired && <span className="text-red-500">*</span>}
         </Label>
       )}
       <Select
         value={value}
         className={`${className ? className : "select-border"} ${
           touched && error ? "is-invalid" : ""
-        }`} // Add "is-invalid" class
+        }`}
         isMulti={isMulti}
         onChange={onChange}
         options={options}

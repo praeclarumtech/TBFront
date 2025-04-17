@@ -205,7 +205,10 @@ const AddDegree = () => {
       degreeName: "",
     },
     validationSchema: Yup.object({
-      degreeName: Yup.string().required("Degree name is required"),
+      degreeName: Yup.string()
+        .min(1, "Skill Name must be at least 1.")
+        .max(50, "Skill name must be between 1 to 50 characters.")
+        .required("Degree name is required"),
     }),
 
     onSubmit: (values) => {

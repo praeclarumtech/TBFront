@@ -23,6 +23,7 @@ import { Col, Row } from "react-bootstrap";
 import React from "react";
 import IconButton from "@mui/material/IconButton";
 import { Close } from "@mui/icons-material";
+import { toast } from "react-toastify";
 
 const { projectTitle, Modules } = appConstants;
 
@@ -263,10 +264,13 @@ const EmailTable = () => {
     setDeleteLoader(true);
     try {
       await deleteEmail(emailToDelete); // Pass the array of selected emails
+      toast.success("Emails Delete Successfully!.");
       fetchEmails(); // Refresh email list
       setShowDeleteModal(false);
+      setEmailToDelete([]);
     } catch (error) {
       errorHandle(error);
+      toast.error("Something went wrong!");
     } finally {
       setDeleteLoader(false);
     }
@@ -276,11 +280,13 @@ const EmailTable = () => {
     setDeleteLoader(true);
     try {
       await deleteMultipleEmail(multipleEmailDelete); // Pass the array of selected emails
+      toast.success("Email Delete Successfully!.");
       fetchEmails(); // Refresh email list
       setShowDeleteModal(false);
       setSelectedApplicants([]); // Clear selection
     } catch (error) {
       errorHandle(error);
+      toast.error("Something went wrong!");
     } finally {
       setDeleteLoader(false);
     }

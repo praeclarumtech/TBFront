@@ -25,10 +25,10 @@ export const StatRightTopIcon: React.FC<StatRightProps> = ({
   isLoading, // Check if data is still loading
 }) => {
   return (
-    <Card className="shadow-sm rounded-4 w-full">
+    <Card className="w-full shadow-sm rounded-4">
       <Card.Body className="d-flex flex-column justify-content-between">
         {/* Title and Icon */}
-        <div className="d-flex justify-content-between align-items-center mb-3">
+        <div className="mb-3 d-flex justify-content-between align-items-center">
           <h4 style={{ fontSize: "1.1rem" }} className="mb-0 text-muted">
             {title}
           </h4>

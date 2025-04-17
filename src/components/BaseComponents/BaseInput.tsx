@@ -1,5 +1,3 @@
-
-
 import { useState } from "react";
 import { Label, Input, FormFeedback } from "reactstrap";
 import BaseButton from "./BaseButton";
@@ -18,6 +16,7 @@ const BaseInput = ({
   error,
   maxLength,
   disabled,
+  isRequired,
 }: BaseInputProps) => {
   const [passwordShow, setPasswordShow] = useState(false);
 
@@ -28,8 +27,12 @@ const BaseInput = ({
   return (
     <>
       {label && (
-        <Label htmlFor={name} className="form-label">
+        <Label
+          htmlFor={name}
+          className="form-label text-gray-700 font-semibold"
+        >
           {label}
+          {isRequired && <span className="text-red-500">*</span>}
         </Label>
       )}
 
@@ -39,7 +42,10 @@ const BaseInput = ({
             <Input
               name={name}
               type={type}
-              className={className ? className : "form-control"}
+              // className={className ? className : "form-control"}
+              className={`${className ? className : "select-border"} ${
+                touched && error ? "is-invalid" : ""
+              }`}
               placeholder={placeholder}
               onChange={handleChange}
               onBlur={handleBlur}

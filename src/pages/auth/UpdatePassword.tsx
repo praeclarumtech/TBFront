@@ -122,6 +122,7 @@ const UpdatePassword = () => {
                     error={validation.errors.newPassword}
                     passwordToggle={true}
                     onclick={() => setPasswordShow(!passwordShow)}
+                    isRequired={true}
                   />
                 </Form.Group>
 
@@ -140,6 +141,7 @@ const UpdatePassword = () => {
                     onclick={() => {
                       setConfirmPassword(!confirmPassword);
                     }}
+                    isRequired={true}
                   />
                 </Form.Group>
 
@@ -156,7 +158,10 @@ const UpdatePassword = () => {
                 </div>
                 <span>
                   Don&apos;t have an account?{" "}
-                  <a onClick={() => navigate("/")} className="cursor-pointer text-primary">
+                  <a
+                    onClick={() => navigate("/")}
+                    className="cursor-pointer text-primary"
+                  >
                     Sign In
                   </a>
                 </span>

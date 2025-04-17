@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { BaseTextareaProps } from "interfaces/global.interface";
 import { Label, Input, FormFeedback } from "reactstrap";
 
@@ -16,19 +15,21 @@ const BaseTextarea = ({
   disabled,
   rows = 4,
   cols = 50,
+  isRequired,
 }: BaseTextareaProps) => {
   return (
     <>
       {label && (
-        <Label htmlFor={name} className="form-label">
+        <Label htmlFor={name} className="form-label text-black font-semibold">
           {label}
+          {isRequired && <span className="text-red-500">*</span>}
         </Label>
       )}
 
       <Input
         name={name}
         type="textarea"
-        className={className || "form-control"}
+        className={className || "form-control  "}
         placeholder={placeholder}
         onChange={handleChange}
         onBlur={handleBlur}

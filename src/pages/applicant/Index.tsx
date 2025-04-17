@@ -255,8 +255,21 @@ const Applicant = () => {
       const res = await listOfApplicants(params);
       setApplicant(res?.data?.item || []);
       setTotalRecords(res?.data?.totalRecords || 0);
-    } catch (error) {
-      errorHandle(error);
+    } catch (error: any) {
+      const details = error?.response?.data?.details;
+      if (Array.isArray(details)) {
+        details.forEach((msg: string) => {
+          toast.error(msg, {
+            closeOnClick: true,
+            autoClose: 5000,
+          });
+        });
+      } else {
+        toast.error("Failed to fetch applicants.. Please try again.", {
+          closeOnClick: true,
+          autoClose: 5000,
+        });
+      }
     } finally {
       setTableLoader(false);
       // setLoader(false);
@@ -298,26 +311,34 @@ const Applicant = () => {
     const fetchSkills = async () => {
       try {
         setLoading(true);
-        //  const allSkills: any[] = [];
-        const page = 1;
-        const pageSize = 50;
-        const limit = 200;
         const response = await ViewAppliedSkills({
-          page,
-          pageSize,
-          limit,
+          page: 1,
+          pageSize: 50,
+          limit: 200,
         });
 
         const skillData = response?.data?.data || [];
-
         setSkillOptions(
           skillData.map((item: any) => ({
             label: item.skills,
             value: item._id,
           }))
         );
-      } catch (error) {
-        errorHandle(error);
+      } catch (error: any) {
+        const details = error?.response?.data?.details;
+        if (Array.isArray(details)) {
+          details.forEach((msg: string) => {
+            toast.error(msg, {
+              closeOnClick: true,
+              autoClose: 5000,
+            });
+          });
+        } else {
+          toast.error("Failed to fetch skills.. Please try again.", {
+            closeOnClick: true,
+            autoClose: 5000,
+          });
+        }
       } finally {
         setLoading(false);
       }
@@ -433,8 +454,21 @@ const Applicant = () => {
             }))
           );
         }
-      } catch (error) {
-        errorHandle(error);
+      } catch (error: any) {
+        const details = error?.response?.data?.details;
+        if (Array.isArray(details)) {
+          details.forEach((msg: string) => {
+            toast.error(msg, {
+              closeOnClick: true,
+              autoClose: 5000,
+            });
+          });
+        } else {
+          toast.error("Failed to fetch cities.. Please try again.", {
+            closeOnClick: true,
+            autoClose: 5000,
+          });
+        }
       }
     };
 
@@ -493,6 +527,7 @@ const Applicant = () => {
     setLoader(true);
     deleteMultipleApplicant(multipleApplicantDelete)
       .then(() => {
+        toast.success("Applicants Delete Successfully!.");
         fetchApplicants();
         setSelectedApplicants([]);
       })
@@ -525,21 +560,25 @@ const Applicant = () => {
     );
     if (selectedApplicant) {
       navigate("/email/compose", {
-        state: { email_to: selectedApplicant.email },
+        state: {
+          email_to: selectedApplicant.email,
+          name: selectedApplicant.name,
+          fromPage: location.pathname,
+        },
       });
     }
   };
-
   const handleSendEmail = () => {
     const emails = applicant
       .filter((app) => selectedApplicants.includes(app._id))
-      .map((app) => app.email);
+      .map((app) => ({ email: app.email, name: app.name }));
     navigate("/email/compose", {
       state: {
-        email_to: emails.join(", "),
+        email_to: emails.map((app) => app.email).join(", "),
         email_bcc: "",
         subject: "",
         description: "",
+        name: emails.map((app) => app.name),
       },
     });
   };

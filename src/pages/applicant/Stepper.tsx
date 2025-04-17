@@ -165,6 +165,7 @@ const StepperForm = () => {
       portfolioUrl: formData.portfolioUrl,
       practicalUrl: formData.practicalUrl,
       feedback: formData.practicalFeedback,
+      practicalFeedback: formData.practicalFeedback,
       comment: formData.comment,
       communicationSkill: formData.communicationSkill,
       currentCompanyDesignation: formData.currentCompanyDesignation,
@@ -197,7 +198,10 @@ const StepperForm = () => {
         .then((res: any) => {
           if (res.success) {
             toast.success(res.message);
-            navigate("/import-applicants");
+             setTimeout(() => {
+               navigate("/import-applicants");
+             }, 3000);
+           
           }
         })
         .catch((error) => {
@@ -221,7 +225,10 @@ const StepperForm = () => {
           .then((res: any) => {
             if (res.success) {
               toast.success(res.message);
-              navigate("/import-applicants");
+             
+               setTimeout(() => {
+               navigate("/import-applicants");
+               }, 3000);
             }
           })
           .catch((error) => {
@@ -242,7 +249,10 @@ const StepperForm = () => {
           .then((res: any) => {
             if (res.success) {
               toast.success(res.message);
-              navigate("/applicants");
+            
+               setTimeout(() => {
+                navigate("/applicants");
+               }, 3000);
             }
           })
           .catch((error) => {
@@ -291,7 +301,6 @@ const StepperForm = () => {
             setLoading(false);
           });
       }
-      
     }
   };
 
@@ -299,14 +308,17 @@ const StepperForm = () => {
     getApplicant(id);
   }, [id]);
 
+  const isEditMode = Boolean(id);
+  const titleForm = isEditMode ? "Update Applicant" : "Create Applicant";
   return (
     <Fragment>
       <div className="pt-3 page-content"></div>
       <Container fluid>
         <Card>
-          <h4 className="content-start justify-center p-1 m-2 text-2xl font-bold text-center text-blue-900 text-dark">
-            Applicant Form
-          </h4>
+          <h5 className="content-start justify-center p-1 m-2 text-2xl font-bold text-center text-blue-900 text-dark">
+            {titleForm}
+          </h5>
+
           <Card.Body>
             <Box
               sx={{
@@ -342,6 +354,7 @@ const StepperForm = () => {
                       <PersonalDetailsForm
                         onNext={handleNext}
                         initialValues={formData}
+                        module= {moduleName}
                       />
                     )}
                     {activeStep === 1 && (

@@ -242,7 +242,10 @@ const AddSkill = () => {
       addSkills: editingSkill ? editingSkill.skills : "",
     },
     validationSchema: Yup.object({
-      addSkills: Yup.string().required("Skill name is required"),
+      addSkills: Yup.string()
+        .min(1, "Skill Name must be at least 1.")
+        .max(50, "Skill name must be between 1 to 50 characters.")
+        .required("Skill name is required"),
     }),
     onSubmit: (values) => {
       setLoader(true);
@@ -314,14 +317,6 @@ const AddSkill = () => {
       return;
     }
 
-    // if (file.size > 5 * 1024 * 1024) {
-    //   // 5MB
-    //   toast("Large file detected. Import may take a few minutes.", {
-    //     icon: "⚠️",
-    //     duration: 4000,
-    //   });
-    // }
-
     setImportLoader(true);
     setIsImporting(true);
     setImportProgress(0);
@@ -387,7 +382,7 @@ const AddSkill = () => {
   const handleSkills = (applicantId: string[]) => {
     if (applicantId.length > 0) {
       // navigate(`/dashboard/${applicantId || "0"}`);
-      console.log("this is in skillll",applicantId)
+      console.log("this is in skillll", applicantId);
       navigate(`/dashboard`, { state: { applicantIds: applicantId } });
     }
   };

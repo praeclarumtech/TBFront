@@ -14,8 +14,12 @@ import { errorHandle } from "utils/commonFunctions";
 import Skeleton from "react-loading-skeleton";
 import { MailTwoTone } from "@ant-design/icons";
 import { Modal, Badge, Card, Row, Col, Tag } from "antd";
+import appConstants from "constants/constant";
+
+const { projectTitle, Modules } = appConstants;
 
 const ViewModal = ({ show, onHide, applicantId }: any) => {
+  document.title = Modules.Email + " | " + projectTitle;
   const [formData, setFormData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -85,7 +89,7 @@ const ViewModal = ({ show, onHide, applicantId }: any) => {
     icon?: JSX.Element;
     // className?: string;
   }) => (
-    <p className="mb-[0.8rem] whitespace-nowrap">
+    <p className="mb-[0.8rem]">
       {icon}
       <strong>{label}:</strong> {value || "-"}
     </p>
@@ -111,7 +115,7 @@ const ViewModal = ({ show, onHide, applicantId }: any) => {
 
   const email_bcc =
     Array.isArray(emailBccData) && emailBccData.length > 0
-      ? emailBccData.join(", ") 
+      ? emailBccData.join(", ")
       : "N/A";
 
   // console.log("email_bcc value:", email_bcc);
@@ -232,7 +236,7 @@ const ViewModal = ({ show, onHide, applicantId }: any) => {
             icon={<MailTwoTone className="text-blue-500" />}
           >
             <Row gutter={[16, 16]}>
-              <Col span={12}>
+              <Col span={24}>
                 <DetailsRow
                   label="Full Name"
                   value={

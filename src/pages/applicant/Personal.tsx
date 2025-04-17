@@ -34,8 +34,8 @@ const {
   stateType,
 } = appConstants;
 
-const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
-  document.title = Modules.Applicant + " | " + projectTitle;
+const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
+  document.title = Modules.CreateApplicantForm + " | " + projectTitle;
   const [cities, setCities] = useState<City[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   // const [isChecking, setIsChecking] = useState(false);
@@ -43,9 +43,6 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
   const [emailError, setEmailError] = useState("");
   const [phoneNumberError, setPhoneNumberError] = useState("");
   const [whatsappError, setWhatsappError] = useState("");
-
-
-;
 
   useEffect(() => {
     const getCities = async () => {
@@ -99,7 +96,6 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
     },
     validationSchema: personalApplicantSchema,
     onSubmit: (data: any) => {
-   
       setLoading(true);
 
       const selectedCity = cities.find(
@@ -224,6 +220,7 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
                       label="First Name"
                       name="firstName"
                       type="text"
+                      className="select-border"
                       placeholder={InputPlaceHolder("First Name")}
                       handleChange={(e) => {
                         const value = e.target.value.replace(
@@ -237,6 +234,7 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
                       touched={validation.touched.firstName}
                       error={validation.errors.firstName}
                       passwordToggle={false}
+                      isRequired={true}
                     />
                   </Col>
 
@@ -245,6 +243,7 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
                       label="Middle Name"
                       name="middleName"
                       type="text"
+                      className="select-border"
                       placeholder={InputPlaceHolder("Middle Name")}
                       handleChange={(e) => {
                         const value = e.target.value.replace(
@@ -279,6 +278,7 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
                       touched={validation.touched.lastName}
                       error={validation.errors.lastName}
                       passwordToggle={false}
+                      isRequired={true}
                     />
                   </Col>
 
@@ -287,21 +287,8 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
                       label="Email"
                       name="email"
                       type="text"
+                      className="select-border"
                       placeholder={InputPlaceHolder("Email")}
-                      // handleChange={async (
-                      //   e: React.ChangeEvent<HTMLInputElement>
-                      // ) => {
-                      //   const emailValue = e.target.value;
-                      //     validation.setFieldValue("email", emailValue);
-
-                      //   setEmailError("");
-                      //   const emailError = await checkExistingField(
-                      //     "email",
-                      //     emailValue
-                      //   );
-                      //   validation.setFieldValue("email", emailValue);
-                      //   validation.setFieldError("email", emailError);
-                      // }}
                       handleChange={async (
                         e: React.ChangeEvent<HTMLInputElement>
                       ) => {
@@ -320,6 +307,7 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
                       touched={validation.touched.email}
                       error={validation.errors.email || emailError}
                       passwordToggle={false}
+                      isRequired={true}
                     />
                   </Col>
 
@@ -328,6 +316,7 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
                       label="Phone Number"
                       name="phoneNumber"
                       type="text"
+                      className="select-border"
                       placeholder={InputPlaceHolder("Phone Number")}
                       handleChange={async (
                         e: React.ChangeEvent<HTMLInputElement>
@@ -346,6 +335,7 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
                       touched={validation.touched.phoneNumber}
                       error={validation.errors.phoneNumber || phoneNumberError}
                       passwordToggle={false}
+                      isRequired={true}
                     />
                   </Col>
 
@@ -354,6 +344,7 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
                       label="Whatsapp Number"
                       name="whatsappNumber"
                       type="text"
+                      className="select-border"
                       placeholder={InputPlaceHolder("Whatsapp Number")}
                       handleChange={async (
                         e: React.ChangeEvent<HTMLInputElement>
@@ -375,6 +366,7 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
                       touched={validation.touched.whatsappNumber}
                       error={validation.errors.whatsappNumber || whatsappError}
                       passwordToggle={false}
+                      isRequired={true}
                     />
                   </Col>
 
@@ -383,6 +375,7 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
                       label="Date Of Birth"
                       name="dateOfBirth"
                       type="date"
+                      className="select-border"
                       placeholder={InputPlaceHolder("Date Of Birth")}
                       handleChange={validation.handleChange}
                       handleBlur={validation.handleBlur}
@@ -391,6 +384,7 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
                       error={validation.errors.dateOfBirth}
                       passwordToggle={false}
                       min={minDateOfBirth}
+                      isRequired={true}
                     />
                   </Col>
                   <Col xs={12} md={6} lg={4}>
@@ -412,6 +406,7 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
                       }
                       touched={validation.touched.gender}
                       error={validation.errors.gender}
+                      isRequired={true}
                     />
                   </Col>
                   <Col xs={12} md={6} lg={4}>
@@ -439,25 +434,6 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
                     />
                   </Col>
                   <Col xs={12} md={6} lg={4}>
-                    {/* <BaseSelect
-                    label="City"
-                    name="currentCity"
-                    className="select-border"
-                    options={cities}
-                    placeholder={InputPlaceHolder("City")}
-                    handleChange={(selectedOption: SelectedOption) => {
-                      validation.setFieldValue(
-                        "currentCity",
-                        selectedOption?.value || ""
-                      );
-                    }}
-                    handleBlur={validation.handleBlur}
-                    value={
-                      dynamicFind(cities, validation.values.currentCity) || ""
-                    }
-                    touched={validation.touched.currentCity}
-                    error={validation.errors.currentCity}
-                  /> */}
                     <BaseSelect
                       label="City"
                       name="currentCity"
@@ -476,6 +452,7 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
                       }
                       touched={validation.touched.currentCity}
                       error={validation.errors.currentCity}
+                      isRequired={true}
                     />
                   </Col>
                   <Col xs={12} md={6} lg={4}>
@@ -497,6 +474,7 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
                       }
                       touched={validation.touched.state}
                       error={validation.errors.state}
+                      isRequired={true}
                     />
                   </Col>
 
@@ -535,6 +513,7 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
                       }
                       touched={validation.touched.country}
                       error={validation.errors.country}
+                      isRequired={true}
                     />
                   </Col>
 
@@ -542,6 +521,7 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
                     <BaseTextarea
                       label="Current Address"
                       name="currentAddress"
+                      className="select-border"
                       placeholder={InputPlaceHolder("Current Address")}
                       handleChange={validation.handleChange}
                       handleBlur={validation.handleBlur}
@@ -552,6 +532,7 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
                       multiline
                       rows={2}
                       cols={50}
+                      isRequired={true}
                     />
                   </Col>
 
@@ -588,6 +569,7 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
                     <BaseTextarea
                       label="Permanent Address"
                       name="permanentAddress"
+                      className="select-border"
                       placeholder={InputPlaceHolder("Permanent Address")}
                       handleChange={validation.handleChange}
                       handleBlur={validation.handleBlur}
@@ -604,17 +586,21 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
               )}
               <div className="d-flex flex-column flex-md-row justify-content-end gap-3 mt-4">
                 <Link
-                  to="/applicants"
-                  style={styleButton}
+                  to={
+                    module === "import-applicant"
+                      ? "/import-applicants"
+                      : "/applicants"
+                  }
+                  // style={styleButton}
                   className="d-flex align-items-center justify-content-center"
                 >
-                  Cancel
+                  <BaseButton className="btn btn-outline-danger" color="white">Cancel</BaseButton>
                 </Link>
 
                 <BaseButton
                   color="primary"
                   type="submit"
-                  className="d-flex align-items-center justify-content-center"
+                  className="d-flex w-full align-items-center justify-content-center"
                 >
                   Next
                 </BaseButton>
@@ -627,14 +613,14 @@ const PersonalDetailsForm = ({ onNext, initialValues }: any) => {
   );
 };
 
-const styleButton = {
-  backgroundColor: "red",
-  color: "white",
-  borderRadius: "5px",
-  padding: "8px 20px",
-  fontSize: "16px",
-  cursor: "pointer",
-  alignItems: "center",
-  justifyContent: "center",
-};
+// const styleButton = {
+//   backgroundColor: "white",
+//   color: "red",
+//   borderRadius: "5px",
+//   padding: "8px 20px",
+//   fontSize: "16px",
+//   cursor: "pointer",
+//   alignItems: "center",
+//   justifyContent: "center",
+// };
 export default PersonalDetailsForm;

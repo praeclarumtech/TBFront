@@ -62,7 +62,7 @@ export const DashboardMenu: DashboardMenuProps[] = [
   },
   {
     id: uuid(),
-    title: "Add Degree",
+    title: "Add Qualification",
     icon: "plus",
     link: "/master/degree",
   },
@@ -77,5 +77,11 @@ export const DashboardMenu: DashboardMenuProps[] = [
     title: "Find And Replace Fields",
     icon: "plus",
     link: "/master/Find-Fields",
+  },
+  {
+    id: uuid(),
+    title: "Add Email Template",
+    icon: "plus",
+    link: "/master/email-template",
   },
 ];

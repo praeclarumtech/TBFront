@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Row, Col, Card, Container, CardBody } from "react-bootstrap";
-import { Fragment, useMemo, useState, useEffect} from "react";
+import { Fragment, useMemo, useState, useEffect } from "react";
 
 import { toast } from "react-toastify";
 import BaseButton from "components/BaseComponents/BaseButton";
@@ -12,7 +12,11 @@ import BaseInput from "components/BaseComponents/BaseInput";
 import DeleteModal from "components/BaseComponents/DeleteModal";
 import BaseModal from "components/BaseComponents/BaseModal";
 import appConstants from "constants/constant";
-import { getSerialNumber, InputPlaceHolder } from "utils/commonFunctions";
+import {
+  errorHandle,
+  getSerialNumber,
+  InputPlaceHolder,
+} from "utils/commonFunctions";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import {
@@ -22,14 +26,18 @@ import {
   viewRoleSkill,
 } from "api/roleApi";
 import ViewRoleSkill from "./ViewRoleSkill";
+import { ViewAppliedSkills } from "api/skillsApi";
+import { SelectedOption1 } from "interfaces/applicant.interface";
+import { MultiSelect } from "components/BaseComponents/BaseSelect";
 
 const { projectTitle, Modules, handleResponse } = appConstants;
 
 const UpdateSkill = () => {
   document.title = Modules.SKill + " | " + projectTitle;
   const [roleSkill, setRoleSkills] = useState<any[]>([]);
-
+  const [skillOptions, setSkillOptions] = useState<SelectedOption1[]>([]);
   const [editingSkill, setEditingSkill] = useState<any>(null);
+
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [roleAndSkillToDelete, setRoleAndSkillToDelete] = useState<any>([]);
   const [showBaseModal, setShowBaseModal] = useState(false);
@@ -40,13 +48,69 @@ const UpdateSkill = () => {
     limit: 50,
   });
   const [isLoading, setIsLoading] = useState(false);
- 
+
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [searchAll, setSearchAll] = useState<string>("");
-  const [selectedId, setSelectedId] = useState<string | null>(
-    null
-  );
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [showViewModal, setShowViewModal] = useState(false);
+
+  const fetchSkills = async () => {
+    try {
+      setIsLoading(true);
+      //  const allSkills: any[] = [];
+      const page = 1;
+      const pageSize = 50;
+      const limit = 200;
+      const response = await ViewAppliedSkills({
+        page,
+        pageSize,
+        limit,
+      });
+
+      const skillData = response?.data?.data || [];
+
+      setSkillOptions(
+        skillData.map((item: any) => ({
+          label: item.skills,
+          value: item.skills, // match what you'll use in selected
+          id: item._id, // if needed
+        }))
+      );
+    } catch (error) {
+      errorHandle(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchSkills();
+  }, []);
+
+  // const fetchRoleSkills = async () => {
+  //   setIsLoading(true);
+  //   try {
+  //     const res = await viewRoleSkill({
+  //       page: pagination.pageIndex + 1,
+  //       pageSize: pagination.pageSize,
+  //       limit: 50,
+  //     });
+
+  //     if (res?.success) {
+  //       // const roleSkills = res?.data?.data || [];
+
+  //       setRoleSkills(res?.data?.data || []);
+  //       setTotalRecords(res.data?.pagination?.totalRecords || 0);
+  //     } else {
+  //       toast.error(res?.message || "Failed to fetch skills");
+  //     }
+  //   } catch (error) {
+  //     toast.error("Something went wrong!");
+  //     console.error(error);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
   const fetchRoleSkills = async () => {
     setIsLoading(true);
@@ -58,7 +122,30 @@ const UpdateSkill = () => {
       });
 
       if (res?.success) {
-        setRoleSkills(res?.data?.data || []);
+        const roleSkills = res?.data?.data || [];
+
+        const skillMap = skillOptions.reduce(
+          (acc: Record<string, string>, item: any) => {
+            acc[item.id] = item.label; // Make sure you're using the correct key: 'id' or '_id'
+            return acc;
+          },
+          {}
+        );
+
+        // Check the skillMap
+
+        // Enrich roleSkills with skill names from skillMap
+        const enrichedRoleSkills = roleSkills.map((item: any) => ({
+          ...item,
+          skill: item.skill.map(
+            (id: string) => skillMap[id] || "Unknown Skill",
+            (label: string) => skillMap[label],
+            (skill: string) => skillMap[skill]
+          ), // Map skill IDs to skill names
+        }));
+
+
+        setRoleSkills(enrichedRoleSkills);
         setTotalRecords(res.data?.pagination?.totalRecords || 0);
       } else {
         toast.error(res?.message || "Failed to fetch skills");
@@ -75,18 +162,24 @@ const UpdateSkill = () => {
     fetchRoleSkills();
   }, [pagination.pageIndex, pagination.pageSize]);
 
-  const handleEdit = (roleSkill: any) => {
-    setEditingSkill(roleSkill);
+  const handleEdit = (id: any) => {
+    const selectedSkillOptions = skillOptions.filter((opt) =>
+      id.skill.includes(opt.label)
+    );
+    console.log("lolllll", id);
+    setEditingSkill(id);
+
     validation.setValues({
-      addSkill: roleSkill.skill || "",
-      addRole: roleSkill.appliedRole || "",
+      _id: id.skill || "",
+      addRole: id.appliedRole || "",
+      addSkill: selectedSkillOptions,
     });
+
     setShowBaseModal(true);
   };
 
   const handleDelete = (skill: any) => {
     setRoleAndSkillToDelete(skill);
-    console.log(skill);
     setShowDeleteModal(true);
   };
 
@@ -155,7 +248,7 @@ const UpdateSkill = () => {
 
   const handleDeleteAll = () => {
     if (selectedSkills.length > 1) {
-      //   setSkillToDelete([...selectedSkills]);
+      setRoleAndSkillToDelete([...selectedSkills]);
       setShowDeleteModal(true);
     }
   };
@@ -256,7 +349,6 @@ const UpdateSkill = () => {
 
   const handleView = (id: string) => {
     setSelectedId(id);
-    console.log("Seconf ID sndingggggg", id);
     setShowViewModal(true);
   };
 
@@ -267,25 +359,50 @@ const UpdateSkill = () => {
   const validation = useFormik({
     enableReinitialize: true,
     initialValues: {
+      _id: editingSkill ? editingSkill._id : "",
       addRole: editingSkill ? editingSkill.appliedRole : "",
-      addSkill: editingSkill ? editingSkill.skill : "",
+
+      addSkill: editingSkill
+        ? skillOptions.filter((opt) => editingSkill.skill.includes(opt.label))
+        : [],
     },
     validationSchema: Yup.object({
-      addRole: Yup.string().required("Role is required"),
-      addSkill: Yup.string().required("Skill is required"),
+      addRole: Yup.string()
+        .min(1, "Skill Name must be at least 1.")
+        .max(50, "Skill name must be between 1 to 50 characters.")
+        .required("Role is required"),
+      addSkill: Yup.array()
+        .min(1, "Select at least one skill")
+        .of(
+          Yup.object().shape({
+            label: Yup.string().required(),
+            value: Yup.string().required(),
+          })
+        )
+        .required("Skill is required"),
     }),
     onSubmit: (values) => {
       setLoader(true);
+
       const payload = {
-        _id: editingSkill?._id, // Pass only if edit
+        _id: values._id,
         appliedRole: values.addRole,
-        skill: values.addSkill,
+        skillIds: values.addSkill.map((item: SelectedOption1) =>
+          String(item.id)
+        ),
       };
+
+      const normalize = (arr: (string | number)[]) =>
+        arr.map(String).sort().join(",");
+
+      const currentSkillIds = values.addSkill.map(
+        (item: SelectedOption1) => item.id
+      );
 
       const existingData = roleSkill.find(
         (item) =>
           item.appliedRole.toLowerCase() === values.addRole.toLowerCase() &&
-          item.skill.toLowerCase() === values.addSkill.toLowerCase()
+          normalize(item.skillIds || []) === normalize(currentSkillIds)
       );
 
       if (existingData && !editingSkill) {
@@ -293,7 +410,6 @@ const UpdateSkill = () => {
         setLoader(false);
         return;
       }
-
       const apiCall = editingSkill
         ? updateRoleSkill(payload)
         : addRoleSkill(payload);
@@ -302,7 +418,8 @@ const UpdateSkill = () => {
         .then((res) => {
           if (res?.success) {
             toast.success(
-              `Role-Skill ${editingSkill ? "updated" : "added"} successfully`
+              // `Role-Skill ${editingSkill ? "updated" : "added"} successfully`
+              res?.message
             );
             setEditingSkill(null);
             validation.resetForm();
@@ -312,11 +429,10 @@ const UpdateSkill = () => {
             toast.error(res?.message || "Something went wrong");
           }
         })
-        .catch(() => toast.error("API Error"))
+        .catch((error) => toast.error(error?.message || "Something went wrong"))
         .finally(() => setLoader(false));
     },
   });
-
   const formTitle = editingSkill
     ? "Edit Skill"
     : "Add or Update Role and Skills";
@@ -352,6 +468,10 @@ const UpdateSkill = () => {
       skill.appliedRole.toLowerCase().includes(searchAll.toLowerCase()) ||
       skill.skill.toLowerCase().includes(searchAll.toLowerCase())
   );
+
+  const handleAppliedSkillsChange = (selectedOptions: SelectedOption1[]) => {
+    validation.setFieldValue("addSkill", selectedOptions);
+  };
 
   return (
     <Fragment>
@@ -417,9 +537,7 @@ const UpdateSkill = () => {
                         <div className="flex-wrap gap-2 d-flex align-items-center">
                           <BaseButton
                             color="success"
-                            disabled={loader}
                             type="submit"
-                            loader={loader}
                             onClick={handleOpenBaseModal}
                             className="ml-2"
                           >
@@ -465,22 +583,23 @@ const UpdateSkill = () => {
                         />
                       </Col>
                       <Col xs={12} md={8} lg={6}>
-                        <BaseInput
-                          label="Skill Name"
+                        <MultiSelect
+                          label="Applied Skills"
                           name="addSkill"
-                          className="bg-gray-100"
-                          type="text"
-                          placeholder={InputPlaceHolder("Skill to be Added")}
+                          className="mb-1 bg-gray-100 select-border"
+                          placeholder="Applied Skills"
+                          value={validation.values.addSkill}
+                          isMulti={true}
                           handleChange={validation.handleChange}
                           handleBlur={validation.handleBlur}
-                          value={validation.values.addSkill}
-                          touched={!!validation.touched.addSkill}
+                          onChange={handleAppliedSkillsChange}
+                          options={skillOptions}
                           error={
                             typeof validation.errors.addSkill === "string"
                               ? validation.errors.addSkill
                               : undefined
                           }
-                          passwordToggle={false}
+                          touched={!!validation.touched.addSkill}
                         />
                       </Col>
                     </Row>
@@ -496,13 +615,10 @@ const UpdateSkill = () => {
                         <>
                           {filteredRoleSkills?.length > 0 ? (
                             <TableContainer
-                              //   isHeaderTitle="Roles and Skills"
                               columns={columns}
                               data={filteredRoleSkills}
-                              // isGlobalFilter={true}
                               customPageSize={50}
                               theadClass="table-light text-muted"
-                              // SearchPlaceholder="Search..."
                               totalRecords={totalRecords}
                               pagination={pagination}
                               setPagination={setPagination}

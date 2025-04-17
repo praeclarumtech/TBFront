@@ -103,6 +103,24 @@ const appConstants = Object.freeze({
     ChangePassword: "Change Password",
   },
 
+  ROLES: {
+    ADMIN: {
+      id: "ADMIN",
+      name: "admin",
+      title: "Admin",
+    },
+    HR: {
+      id: "HR",
+      name: "hr",
+      title: "HR",
+    },
+    USER: {
+      id: "USER",
+      name: "user",
+      title: "User",
+    },
+  },
+
   Modules: {
     Login: "Login",
     Register: "Register",
@@ -121,6 +139,10 @@ const appConstants = Object.freeze({
     FindAndReplace: "Find And Replace",
     RoleAndSkill: "Role And Skill",
     
+    CreateApplicantForm: "Applicant Form",
+    PreviewApplicantsDetails: "Preview Applicants Details",
+    ComposeEmails: "Compose Email",
+    EmailTemplate: "Email Template",
   },
   qualification: [
     { label: "Bachelors", value: "Bachelors" },
@@ -159,6 +181,48 @@ const appConstants = Object.freeze({
     { label: "2027", value: 2027 },
     { label: "2028", value: 2028 },
     { label: "2029", value: 2029 },
+  ],
+  CandidateTemplateOptions: [
+    {
+      label: "Application Received",
+      value: "APPLICATION_RECEIVED",
+    },
+    {
+      label: "Shortlisted for Interview",
+      value: "SHORTLISTED_FOR_INTERVIEW",
+    },
+    {
+      label: "Interview Invitation",
+      value: "INTERVIEW_INVITATION",
+    },
+    {
+      label: "Interview Reschedule",
+      value: "INTERVIEW_RESCHEDULE",
+    },
+    {
+      label: "Job Offer",
+      value: "JOB_OFFER",
+    },
+    {
+      label: "Offer Acceptance Confirmation",
+      value: "OFFER_ACCEPTANCE_CONFIRMATION",
+    },
+    {
+      label: "Rejection After Interview",
+      value: "REJECTION_AFTER_INTERVIEW",
+    },
+    {
+      label: "General Rejection",
+      value: "GENERAL_REJECTION",
+    },
+    {
+      label: "Onboarding Reminder",
+      value: "ONBOARDING_REMINDER",
+    },
+    {
+      label: "Thank You for Interview",
+      value: "THANK_YOU_FOR_INTERVIEW",
+    },
   ],
 
   exportableFieldOption: [
@@ -295,7 +359,7 @@ const appConstants = Object.freeze({
   gendersType: [
     { label: "Male", value: "male" },
     { label: "Female", value: "female" },
-    { label: "Other", value: "other" },
+    // { label: "Other", value: "other" },
   ],
   maritalStatusType: [
     { label: "Single", value: "Single" },
@@ -550,11 +614,9 @@ const appConstants = Object.freeze({
   ],
   countriesType: [{ label: "India", value: "india" }],
   findAndReplaceOptions: [
-    { label: "Skill", value: "skill" },
+    { label: "Skills", value: "skills" },
     { label: "Role", value: "appliedRole" },
-    { label: "Skills", value: "appliedSkills" },
-    { label: "Current Designation", value: "currentCompanyDesignation" },
-    { label: "Qualification", value: "qualification" },
+    { label: "Qualification", value: "degree" },
   ],
   addedByOptions: [
     { label: "Resume", value: "Resume" },

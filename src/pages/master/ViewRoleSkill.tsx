@@ -83,7 +83,7 @@ const ViewRoleSkill = ({ show, onHide, applicantId }: any) => {
       footer={null}
       width={600}
       centered
-        title={<span className="text-lg font-bold">Detailed Info</span>}
+      title={<span className="text-lg font-bold">Detailed Info</span>}
     >
       {loading ? (
         <Skeleton count={5} />
@@ -109,11 +109,12 @@ const ViewRoleSkill = ({ show, onHide, applicantId }: any) => {
                     )
                   }
                 />
+
                 <DetailsRow
                   label="Skills"
                   value={
-                    formData?.data?.skill ? (
-                      <Tag color="cyan">{formData?.data?.skill}</Tag>
+                    formData?.data?.skill?.length > 0 ? (
+                      <Tag color="cyan">{formData.data.skill.join(", ")}</Tag>
                     ) : (
                       <Badge
                         count={"N/A"}

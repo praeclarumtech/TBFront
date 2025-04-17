@@ -43,6 +43,7 @@ const Dashboard = () => {
   const [selectedTechnology, setSelectedTechnology] = useState<string | null>(
     null
   );
+  const [chartLoading, setChartLoading] = useState<boolean>(true);
   const location = useLocation();
   const applicantIds = location.state?.applicantIds || [];
 
@@ -77,14 +78,14 @@ const Dashboard = () => {
   const [chartData, setChartData] = useState<any>([]);
   const fetchChart = async () => {
     if (!applicantIds) return;
-    setIsLoading(true);
+    setChartLoading(true);
     try {
       const data = await getChartDetails(applicantIds);
       setChartData(data?.data);
     } catch (error) {
       setError("error");
     } finally {
-      setIsLoading(false);
+      setChartLoading(false);
     }
   };
 
@@ -177,7 +178,7 @@ const Dashboard = () => {
               <ApplicantsDeatils
                 setSelectedTechnology={setSelectedTechnology}
                 setData={chartData}
-                isloading={isLoading}
+                isloading={chartLoading}
               />
             </Col>
             <Col xl={12}>
