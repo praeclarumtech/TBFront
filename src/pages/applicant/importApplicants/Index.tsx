@@ -464,7 +464,7 @@ function ImportApplicant() {
       setShowDeleteModal(true);
     }
   };
-  
+
   const handleColumnSelected = (
     selectedOptions: any[] | ((prevState: SelectedOption[]) => SelectedOption[])
   ) => {
@@ -473,11 +473,10 @@ function ImportApplicant() {
       toast.error("Please select applicants before choosing columns.");
       return;
     }
- 
+
     setExportableFields(selectedOptions);
 
     if (Array.isArray(selectedOptions)) {
-    
       setExportableFields(selectedOptions);
       setExportOption("");
     }
@@ -661,8 +660,9 @@ function ImportApplicant() {
       const formData = new FormData();
       formData.append("csvFile", file);
       setUploadedFile(formData);
-
+      const updateFlag = "true";
       const response = await importApplicant(formData, {
+        params: { updateFlag },
         onUploadProgress: (progressEvent) => {
           const progress = Math.round(
             (progressEvent.loaded * 100) / (progressEvent.total || 100)
@@ -723,7 +723,6 @@ function ImportApplicant() {
         throw new Error(response?.message || "Update failed");
       }
     } catch (error: any) {
- 
       toast.error(error.message || "Failed to update applicants");
     } finally {
       setImportLoader(false);
@@ -739,57 +738,53 @@ function ImportApplicant() {
     setShowPopupModal(false);
   };
 
-const handleSelectedRowToExport = async (
-  filtered: string, 
-  // ids: string[]
-) => {
-  try {
-    toast.info("Preparing file for download...");
+  const handleSelectedRowToExport = async (
+    filtered: string
+    // ids: string[]
+  ) => {
+    try {
+      toast.info("Preparing file for download...");
 
-    const selectedColumns = exportableFields.map((field) => field.value);
+      const selectedColumns = exportableFields.map((field) => field.value);
 
+      const payload = {
+        ids: selectedApplicants,
+        fields: selectedColumns,
+      };
 
-    const payload = {
-      ids: selectedApplicants,
-      fields: selectedColumns,
-    };
+      const queryParams = {
+        filtered,
+      };
 
-   
-    const queryParams = {
-      filtered,
-    };
+      await new Promise((resolve) => setTimeout(resolve, 3500));
 
-    await new Promise((resolve) => setTimeout(resolve, 3500));
+      const response = await ExportImportedApplicant(queryParams, payload);
 
-    const response = await ExportImportedApplicant(queryParams, payload);
+      if (!response) {
+        toast.error("Failed to download file");
+        return;
+      }
+      const blob = new Blob([response], { type: "text/csv" });
+      saveAs(blob, "Imported_Applicants.csv");
 
-    if (!response) {
-      toast.error("Failed to download file");
-      return;
+      setShowExportModal(false);
+      setSelectedApplicants([]);
+      toast.success("File downloaded successfully!");
+    } catch (error) {
+      errorHandle(error);
+    } finally {
+      fetchApplicants();
     }
-    const blob = new Blob([response], { type: "text/csv" });
-    saveAs(blob, "Imported_Applicants.csv");
+  };
 
-    setShowExportModal(false);
-       setSelectedApplicants([]);
-    toast.success("File downloaded successfully!");
-  } catch (error) {
-   
-    errorHandle(error);
-  } finally {
-    fetchApplicants();
-  }
-};
-
-  
   const handleExportModalShow = () => {
     setShowExportModal(true);
   };
 
- const handleExportOptionChange = (option: string) => {
-   setExportOption(option);
-   setExportableFields([]); 
- };
+  const handleExportOptionChange = (option: string) => {
+    setExportOption(option);
+    setExportableFields([]);
+  };
 
   const drawerList = (anchor: Anchor) => (
     <Box
@@ -846,7 +841,7 @@ const handleSelectedRowToExport = async (
           label="Experience (in years)"
           name="experience"
           className="mx-5 mb-2 select-border "
-          value={experienceRange}      
+          value={experienceRange}
           handleChange={handleExperienceChange}
           min={0}
           max={25}
@@ -1236,7 +1231,6 @@ const handleSelectedRowToExport = async (
             <BaseButton
               id={`email-${cell?.row?.original?.id}`}
               className="btn btn-sm btn-soft-secondary bg-success edit-list"
-            
               onClick={() => handleEmail(cell?.row?.original._id)}
             >
               <i className="align-bottom ri-mail-close-line" />

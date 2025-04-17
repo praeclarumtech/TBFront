@@ -198,10 +198,9 @@ const StepperForm = () => {
         .then((res: any) => {
           if (res.success) {
             toast.success(res.message);
-             setTimeout(() => {
-               navigate("/import-applicants");
-             }, 3000);
-           
+            setTimeout(() => {
+              navigate("/import-applicants");
+            }, 3000);
           }
         })
         .catch((error) => {
@@ -225,10 +224,10 @@ const StepperForm = () => {
           .then((res: any) => {
             if (res.success) {
               toast.success(res.message);
-             
-               setTimeout(() => {
-               navigate("/import-applicants");
-               }, 3000);
+
+              setTimeout(() => {
+                navigate("/import-applicants");
+              }, 3000);
             }
           })
           .catch((error) => {
@@ -249,10 +248,10 @@ const StepperForm = () => {
           .then((res: any) => {
             if (res.success) {
               toast.success(res.message);
-            
-               setTimeout(() => {
+
+              setTimeout(() => {
                 navigate("/applicants");
-               }, 3000);
+              }, 1000);
             }
           })
           .catch((error) => {
@@ -354,7 +353,7 @@ const StepperForm = () => {
                       <PersonalDetailsForm
                         onNext={handleNext}
                         initialValues={formData}
-                        module= {moduleName}
+                        module={moduleName}
                       />
                     )}
                     {activeStep === 1 && (
