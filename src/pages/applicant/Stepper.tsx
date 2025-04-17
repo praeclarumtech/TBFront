@@ -199,7 +199,7 @@ const StepperForm = () => {
           if (res.success) {
             toast.success(res.message);
             setTimeout(() => {
-              navigate("/import-applicants");
+              navigate("/applicants");
             }, 3000);
           }
         })
