@@ -137,7 +137,7 @@ const UpdateSkill = () => {
         // Enrich roleSkills with skill names from skillMap
         const enrichedRoleSkills = roleSkills.map((item: any) => ({
           ...item,
-          skill: item.skill.map(
+          skill: item?.skill?.map(
             (id: string) => skillMap[id] || "Unknown Skill"
           ), // Map skill IDs to skill names
         }));
