@@ -166,7 +166,7 @@ const EmailForm = () => {
 
         // Replace base64 image tags in the HTML
         let cleanedHtml = rawHtml;
-        attachments.forEach((att, index) => {
+        attachments.forEach((att) => {
           cleanedHtml = cleanedHtml.replace(
             /<img[^>]+src="data:image\/[^;]+;base64[^"]+"[^>]*>/,
             `<img src="cid:${att.cid}" alt="Image" />`
