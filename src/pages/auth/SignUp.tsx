@@ -1,5 +1,5 @@
 import { Row, Col, Card, Form } from "react-bootstrap";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
@@ -232,7 +232,7 @@ const SignUp = () => {
                     />
                   </Form.Group>
 
-                  <div className="mb-3">
+                  {/* <div className="mb-3">
                     <Form.Check type="checkbox" id="check-api-checkbox">
                       <Form.Check.Input type="checkbox" />
                       <Form.Check.Label>
@@ -240,7 +240,7 @@ const SignUp = () => {
                         and <Link to="#"> Privacy Policy.</Link>
                       </Form.Check.Label>
                     </Form.Check>
-                  </div>
+                  </div> */}
 
                   <div>
                     <div className="d-grid">

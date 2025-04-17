@@ -23,8 +23,13 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
           </div>
         </div>
         <div className="d-flex gap-2 justify-content-center mt-4 mb-2">
-          <Button color="light" size="btn w-sm" onClick={onCloseClick}>
-            Close
+          <Button
+            color="light"
+            size="btn w-sm"
+            onClick={onCloseClick}
+            className="px-8"
+          >
+            No
           </Button>
           <Button color="danger" size="btn w-sm" onClick={onDeleteClick}>
             Yes, Delete It!

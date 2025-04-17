@@ -39,9 +39,9 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
   const [skillOptions, setSkillOptions] = useState<any[]>([]);
   const [selectedMulti, setSelectedMulti] = useState<any>([]);
   // const [selectedMultiRole, setSelectedMultiRole] = useState<any>([]);
-  const [selectedRole, setSelectedRole] = useState<string>(
-    initialValues?.appliedRole || ""
-  );
+  // const [selectedRole, setSelectedRole] = useState<string>(
+  //   initialValues?.appliedRole || ""
+  // );
 
   const [loading, setLoading] = useState<boolean>(false);
   // const [meta, setTechnologyExperience] = useState<any>({});
@@ -79,7 +79,8 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
       linkedinUrl: initialValues?.linkedinUrl || "",
       clientCvUrl: initialValues?.clientCvUrl || "",
       clientFeedback: initialValues?.clientFeedback || "",
-      appliedRole: initialValues?.appliedRole || selectedRole || "",
+      // appliedRole: initialValues?.appliedRole || selectedRole || "",
+      appliedRole: initialValues?.appliedRole || "",
       // meta: initialValues?.meta || "",
       meta: initialValues?.meta || {},
     },
@@ -152,10 +153,32 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
   };
 
  
-  const handleRoleChange = (SelectedOptionRole: SelectedOptionRole | null) => {
+  // const handleRoleChange = (SelectedOptionRole: SelectedOptionRole | null) => {
+  //   if (SelectedOptionRole) {
+  //     const newRole = SelectedOptionRole.value;
+  //     setSelectedRole(newRole);
+  //     validation.setFieldValue("appliedRole", newRole);
+
+  //     const roleTechnologies =
+  //       technologyOptions[newRole as keyof typeof technologyOptions] || [];
+  //     const newMeta = roleTechnologies.reduce(
+  //       (acc: Record<string, string>, tech: string) => {
+  //         acc[tech] = validation.values.meta[tech] || "";
+  //         return acc;
+  //       },
+  //       {}
+  //     );
+  //     validation.setFieldValue("meta", newMeta);
+  //   } else {
+  //     setSelectedRole("");
+  //     validation.setFieldValue("appliedRole", "");
+  //     validation.setFieldValue("meta", {});
+  //   }
+  // };
+
+   const handleRoleChange = (SelectedOptionRole: SelectedOptionRole | null) => {
     if (SelectedOptionRole) {
       const newRole = SelectedOptionRole.value;
-      setSelectedRole(newRole);
       validation.setFieldValue("appliedRole", newRole);
 
       const roleTechnologies =
@@ -169,18 +192,19 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
       );
       validation.setFieldValue("meta", newMeta);
     } else {
-      setSelectedRole("");
       validation.setFieldValue("appliedRole", "");
       validation.setFieldValue("meta", {});
     }
   };
 
  
-  const handleTechnologyExperienceChange = (tech: string, value: string) => {
-    validation.setFieldValue(`meta.${tech}`, value);
-  };
+  // const handleTechnologyExperienceChange = (tech: string, value: string) => {
+  //   validation.setFieldValue(`meta.${tech}`, value);
+  // };
 
-  
+  // const handleTechnologyExperienceChange = (tech: string, value: string) => {
+  //   validation.setFieldValue(`meta.${tech}`, value);
+  // };
 
   return (
     <Fragment>
@@ -741,7 +765,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     isRequired={true}
                   />
                 </Col>
-                {selectedRole &&
+                {/* {selectedRole &&
                   selectedRole !== "Other" &&
                   selectedRole !== "Na" && (
                     <div className="mb-4 ">
@@ -759,7 +783,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                             className="mb-3"
                             key={tech}
                           >
-                            {/* <BaseInput
+                            <BaseInput
                                 name={tech}
                                 type="text"
                                 className=" "
@@ -776,7 +800,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                                     e.target.value
                                   );
                                 }}
-                              /> */}
+                              />
 
                             <BaseInput
                               name={tech}
@@ -848,7 +872,81 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                       </div>
                     </div>
                   )}
-               
+                */}
+                {validation.values.appliedRole &&
+                  validation.values.appliedRole !== "Other" &&
+                  validation.values.appliedRole !== "Na" && (
+                    <div className="mb-4 ">
+                      <h5>Technologies for {validation.values.appliedRole}:</h5>
+                      <div className="d-flex flex-wrap space-x-2  ">
+                        {technologyOptions[
+                          validation.values
+                            .appliedRole as keyof typeof technologyOptions
+                        ].map((tech: string) => (
+                          <Col
+                            xs={12}
+                            sm={2}
+                            md={2}
+                            lg={2}
+                            xl={2}
+                            className="mb-3"
+                            key={tech}
+                          >
+                            <BaseInput
+                              name={`meta.${tech}`}
+                              type="text"
+                              label={`${tech} Exp.(Yrs)`}
+                              placeholder={tech}
+                              value={validation.values.meta[tech] || ""}
+                              handleChange={(e) => {
+                                let value = e.target.value.replace(
+                                  /[^0-9.]/g,
+                                  ""
+                                );
+                                const parts = value.split(".");
+                                if (parts.length > 2)
+                                  value =
+                                    parts[0] + "." + parts.slice(1).join("");
+                                if (parts[1]?.length > 2)
+                                  value = parts[0] + "." + parts[1].slice(0, 2);
+                                const numValue = parseFloat(value);
+                                if (
+                                  !isNaN(numValue) &&
+                                  numValue >= 0 &&
+                                  numValue <= 30
+                                ) {
+                                  validation.setFieldValue(
+                                    `meta.${tech}`,
+                                    value
+                                  );
+                                } else if (value === "" || value === ".") {
+                                  validation.setFieldValue(
+                                    `meta.${tech}`,
+                                    value
+                                  );
+                                }
+                              }}
+                              handleBlur={(e) => {
+                                const value = e.target.value;
+                                if (value && !isNaN(parseFloat(value))) {
+                                  const numValue = parseFloat(value);
+                                  validation.setFieldValue(
+                                    `meta.${tech}`,
+                                    numValue.toFixed(2)
+                                  );
+                                } else {
+                                  validation.setFieldValue(`meta.${tech}`, "");
+                                }
+                                validation.handleBlur(e);
+                              }}
+                              touched={validation.touched.meta?.[tech]}
+                              error={validation.errors.meta?.[tech]}
+                            />
+                          </Col>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                 <Col xs={12} sm={4} md={4} lg={4} className="mb-3">
                   <BaseSelect

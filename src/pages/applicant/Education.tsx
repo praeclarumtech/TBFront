@@ -65,9 +65,16 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
     getQualification();
   }, []);
 
-  const initialQualificationValue =
-    qualification.find((q) => q.label === initialValues?.qualification)
-      ?.value || "";
+ 
+const initialQualificationValue = (() => {
+  const match = qualification.find(
+    (q) =>
+      q.label === initialValues?.qualification ||
+      q.value === initialValues?.qualification
+  );
+  return match?.value || "";
+})();
+
 
   
   const validation: any = useFormik({
@@ -85,15 +92,14 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
 
     onSubmit: (data) => {
       setLoading(true);
-      const selectedDegree = qualification.find(
-        (q) => q.value === data.qualification
-      )?.label;
-
-      const submissionData = {
-        ...data,
-        qualification: selectedDegree || data.qualification, 
-      };
-
+    
+     const selectedDegree = qualification.find(
+       (q) => q.value === data.qualification
+     )?.label;
+     const submissionData = {
+       ...data,
+       qualification: selectedDegree || data.qualification,
+     };
       // onNext(data);
       onNext(submissionData);
       setLoading(true);
