@@ -89,7 +89,18 @@ export const jobApplicantSchema = Yup.object({
   otherSkills: Yup.string(),
   totalExperience: Yup.string(),
   tech: Yup.string(),
-  relevantSkillExperience: Yup.string(),
+  relevantSkillExperience: Yup.string().matches(/^\d+(\.\d{1,2})?$/, "Enter a valid number for relevant experience.")
+  // .required("Relevant experience is required.")
+  .test(
+    "relevant-less-than-total",
+    "Relevant experience cannot be more than total experience.",
+    function (value) {
+      const { totalExperience } = this.parent;
+      const total = parseFloat(totalExperience);
+      const relevant = parseFloat(value ?? "0");
+      return isNaN(total) || isNaN(relevant) || relevant <= total;
+    }
+  ),
   referral: Yup.string(),
   portfolioUrl: Yup.string().url("Please enter a valid portfolio URL."),
   resumeUrl: Yup.string().url(),
