@@ -22,6 +22,7 @@ import {
 } from "api/emailApi";
 import "react-quill/dist/quill.snow.css";
 import ReactQuill from "react-quill";
+import sanitizeHtml from "sanitize-html";
 const { projectTitle, Modules, handleResponse } = appConstants;
 
 import "react-quill/dist/quill.snow.css";
@@ -269,7 +270,6 @@ const AddEmailTemplate = () => {
     [selectedEmailTemplates, emailTemplates]
   );
 
-
   const validation = useFormik({
     enableReinitialize: true,
     initialValues: {
@@ -284,11 +284,50 @@ const AddEmailTemplate = () => {
     }),
     onSubmit: (values) => {
       setLoader(true);
+
+      const rawHtml = values.description; // from React Quill
+      const cleanedHtml = sanitizeHtml(rawHtml, {
+        allowedTags: [
+          "p",
+          "b",
+          "i",
+          "u",
+          "strong",
+          "em",
+          "br",
+          "ul",
+          "ol",
+          "li",
+          "a",
+          "img",
+          "span",
+          "blockquote",
+          "code",
+        ],
+        allowedAttributes: {
+          a: ["href", "target"],
+          img: ["src", "alt", "width", "height", "style"],
+          span: ["style"],
+          "*": ["style"],
+        },
+        allowedStyles: {
+          "*": {
+            color: [/^.*$/],
+            "background-color": [/^.*$/],
+            "text-align": [/^.*$/],
+            "font-weight": [/^.*$/],
+            "text-decoration": [/^.*$/],
+            "font-style": [/^.*$/],
+            "font-size": [/^.*$/],
+          },
+        },
+      });
+
       const payload = {
         _id: editingEmailTemplate?._id,
         type: values.type,
         subject: values.subject,
-        description: values.description,
+        description: cleanedHtml,
       };
 
       const apiCall = editingEmailTemplate
@@ -352,7 +391,7 @@ const AddEmailTemplate = () => {
     setShowDeleteModal(false);
     setSelectedEmailTemplates([]);
   };
-console.log(emailTemplates);
+  console.log(emailTemplates);
 
   const filteredEmailTemplates = emailTemplates.filter((emailTemplate) =>
     emailTemplate.type.toLowerCase().includes(searchAll.toLowerCase())

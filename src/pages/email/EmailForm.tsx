@@ -32,7 +32,6 @@ const quillModules = {
     [{ indent: "-1" }, { indent: "+1" }],
     [{ align: [] }],
     ["blockquote", "code-block"],
-    ["link", "image", "video"],
     ["clean"],
   ],
 };
@@ -96,6 +95,28 @@ const EmailForm = () => {
     }
   };
 
+  function extractBase64Images(html: string) {
+    const regex = /<img[^>]+src="(data:image\/[^;]+;base64[^"]+)"[^>]*>/g;
+    const matches = [];
+    let match;
+    while ((match = regex.exec(html))) {
+      matches.push(match[1]); // base64 string
+    }
+    return matches;
+  }
+
+  function base64ToFile(base64: string, filename: string) {
+    const arr = base64.split(",");
+    const mime = arr[0].match(/:(.*?);/)?.[1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new File([u8arr], filename, { type: mime });
+  }
+
   const validation = useFormik({
     initialValues: {
       email_template: "",
@@ -130,21 +151,56 @@ const EmailForm = () => {
     validateOnChange: true,
     validateOnMount: true,
     onSubmit: async (values) => {
-      //  toast.success("Email sent successfully!");
+
       try {
+        const rawHtml = values.description;
+
+        const base64Images = extractBase64Images(rawHtml);
+        const attachments = base64Images.map((base64, index) => {
+          const file = base64ToFile(base64, `image_${index + 1}.png`);
+          return {
+            file,
+            cid: `image${index + 1}@cid`, // This must match <img src="cid:image1@cid">
+          };
+        });
+
+        // Replace base64 image tags in the HTML
+        let cleanedHtml = rawHtml;
+        attachments.forEach((att) => {
+          cleanedHtml = cleanedHtml.replace(
+            /<img[^>]+src="data:image\/[^;]+;base64[^"]+"[^>]*>/,
+            `<img src="cid:${att.cid}" alt="Image" />`
+          );
+        });
         const emailToArray = values.email_to
           .split(",")
-          .map((email: string) => email.trim());
-        const emailBccArray = values.email_bcc
-          .split(",")
-          .map((email) => email.trim());
+          .map((email: string) => email.trim())
+          .filter((email: string) => email.length > 0);
 
-        await sendEmail({
-          email_to: emailToArray,
-          email_bcc: emailBccArray,
-          subject: values.subject,
-          description: values.description,
+        const emailBccArray = values.email_bcc
+          ? values.email_bcc
+              .split(",")
+              .map((email: string) => email.trim())
+              .filter((email) => email.length > 0)
+          : [];
+
+        const formData = new FormData();
+
+        emailToArray.forEach((email: string) => {
+          formData.append("email_to[]", email);
         });
+
+        emailBccArray.forEach((email: string) => {
+          formData.append("email_bcc[]", email);
+        });
+
+        formData.append("subject", values.subject);
+        formData.append("description", values.description);
+        attachments.forEach((attachment) => {
+          formData.append("attachments", attachment.file);
+        });
+
+        await sendEmail(formData);
 
         toast.success("Email sent successfully!");
         validation.resetForm();
