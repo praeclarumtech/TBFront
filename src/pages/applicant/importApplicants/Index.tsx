@@ -660,7 +660,7 @@ function ImportApplicant() {
       const formData = new FormData();
       formData.append("csvFile", file);
       setUploadedFile(formData);
-      const updateFlag = "true";
+      const updateFlag ="false";
       const response = await importApplicant(formData, {
         params: { updateFlag },
         onUploadProgress: (progressEvent) => {
@@ -716,7 +716,10 @@ function ImportApplicant() {
       });
 
       if (response?.success) {
-        toast.success("Existing applicants updated successfully!");
+
+        toast.success(
+          response?.message ||"Existing applicants updated successfully!"
+        );
         setShowPopupModal(false);
         await fetchApplicants();
       } else {
