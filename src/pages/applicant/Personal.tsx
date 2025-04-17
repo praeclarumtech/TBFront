@@ -208,7 +208,7 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
               className="p-3"
             >
               {loading ? (
-                <div className="d-flex justify-content-center my-5">
+                <div className="my-5 d-flex justify-content-center">
                   <Spinner animation="border" role="status">
                     <span className="visually-hidden">Loading...</span>
                   </Spinner>
@@ -240,11 +240,11 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
 
                   <Col xs={12} md={6} lg={4}>
                     <BaseInput
-                      label="Middle Name"
+                      label="Middle Name (Optional)"
                       name="middleName"
                       type="text"
                       className="select-border"
-                      placeholder={InputPlaceHolder("Middle Name")}
+                      placeholder={InputPlaceHolder("Middle Name (Optional)")}
                       handleChange={(e) => {
                         const value = e.target.value.replace(
                           /[^A-Za-z\s]/g,
@@ -584,7 +584,7 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
                   </Col>
                 </Row>
               )}
-              <div className="d-flex flex-column flex-md-row justify-content-end gap-3 mt-4">
+              <div className="gap-3 mt-4 d-flex flex-column flex-md-row justify-content-end">
                 <Link
                   to={
                     module === "import-applicant"
@@ -600,7 +600,7 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
                 <BaseButton
                   color="primary"
                   type="submit"
-                  className="d-flex w-full align-items-center justify-content-center"
+                  className="w-full d-flex align-items-center justify-content-center"
                 >
                   Next
                 </BaseButton>

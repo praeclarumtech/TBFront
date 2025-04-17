@@ -138,12 +138,9 @@ const UpdateSkill = () => {
         const enrichedRoleSkills = roleSkills.map((item: any) => ({
           ...item,
           skill: item.skill.map(
-            (id: string) => skillMap[id] || "Unknown Skill",
-            (label: string) => skillMap[label],
-            (skill: string) => skillMap[skill]
+            (id: string) => skillMap[id] || "Unknown Skill"
           ), // Map skill IDs to skill names
         }));
-
 
         setRoleSkills(enrichedRoleSkills);
         setTotalRecords(res.data?.pagination?.totalRecords || 0);
@@ -166,7 +163,6 @@ const UpdateSkill = () => {
     const selectedSkillOptions = skillOptions.filter((opt) =>
       id.skill.includes(opt.label)
     );
-    console.log("lolllll", id);
     setEditingSkill(id);
 
     validation.setValues({
@@ -434,8 +430,8 @@ const UpdateSkill = () => {
     },
   });
   const formTitle = editingSkill
-    ? "Edit Skill"
-    : "Add or Update Role and Skills";
+    ? "Update Role and Skills"
+    : "Add Role and Skills";
   const submitButtonText = "Add";
 
   const handleOpenBaseModal = () => {
