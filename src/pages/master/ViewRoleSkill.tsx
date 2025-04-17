@@ -3,31 +3,54 @@ import { useEffect, useState } from "react";
 import { errorHandle } from "utils/commonFunctions";
 
 import Skeleton from "react-loading-skeleton";
-import { MailTwoTone } from "@ant-design/icons";
+import { EyeFilled } from "@ant-design/icons";
 import { Modal, Badge, Card, Row, Col, Tag } from "antd";
 import { viewRoleSkillById } from "api/roleApi";
+import { ViewAppliedSkills } from "api/skillsApi";
 
 const ViewRoleSkill = ({ show, onHide, applicantId }: any) => {
   const [formData, setFormData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
-
+  
   useEffect(() => {
-    if (!applicantId) return;
+    const loadDetails = async () => {
+      if (!applicantId) return;
+      setLoading(true);
 
-    setLoading(true);
+      try {
+        // 1. Fetch all skills
+        const skillsRes = await ViewAppliedSkills({
+          page: 1,
+          pageSize: 50,
+          limit: 200,
+        });
+        const allSkills = skillsRes?.data?.data || [];
 
-    viewRoleSkillById(applicantId)
-      .then((res) => {
-        if (res.success) {
-          setFormData(res);
+        // 2. Fetch role and skill IDs
+        const roleSkillRes = await viewRoleSkillById(applicantId);
+        const roleData = roleSkillRes?.data;
+        if (roleSkillRes?.success && roleData) {
+          // ✅ Map skill IDs to names
+          const mappedSkills = roleData.skill?.map((skillId: string) => {
+            const match = allSkills.find((skill: any) => skill._id === skillId);
+            return match ? match.skills : "Unknown Skill";
+          });
+
+          const fullData = {
+            ...roleData,
+            skill: mappedSkills,
+          };
+
+          setFormData(fullData);
         }
-      })
-      .catch((error) => {
+      } catch (error) {
         errorHandle(error);
-      })
-      .finally(() => {
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+
+    loadDetails();
   }, [applicantId]);
 
   if (!show) return null;
@@ -89,15 +112,15 @@ const ViewRoleSkill = ({ show, onHide, applicantId }: any) => {
           {/* Personal Details */}
           <DetailsCard
             title="View Role And Skill"
-            icon={<MailTwoTone className="text-blue-500" />}
+            icon={<EyeFilled className="text-blue-500" />}
           >
             <Row gutter={[16, 16]}>
               <Col span={12}>
                 <DetailsRow
                   label="Role"
                   value={
-                    formData?.data?.appliedRole ? (
-                      <Tag color="purple">{formData?.data?.appliedRole}</Tag>
+                    formData?.appliedRole ? (
+                      <Tag color="purple">{formData?.appliedRole}</Tag>
                     ) : (
                       <Badge
                         count={"N/A"}
@@ -106,20 +129,27 @@ const ViewRoleSkill = ({ show, onHide, applicantId }: any) => {
                     )
                   }
                 />
-
-                <DetailsRow
-                  label="Skills"
-                  value={
-                    formData?.data?.skill?.length > 0 ? (
-                      <Tag color="cyan">{formData.data.skill.join(", ")}</Tag>
-                    ) : (
-                      <Badge
-                        count={"N/A"}
-                        style={{ backgroundColor: "#faad14" }}
-                      />
-                    )
-                  }
-                />
+                <Row gutter={[16, 16]}>
+                  <Col span={24}>
+                    <DetailsRow
+                      label="Skills"
+                      value={
+                        formData?.skill?.length > 0 ? (
+                          <div className="flex flex-wrap py-1">
+                            {formData.skill.map((skills: string) => (
+                              <Tag color="cyan">{skills}</Tag>
+                            ))}
+                          </div>
+                        ) : (
+                          <Badge
+                            count={"N/A"}
+                            style={{ backgroundColor: "#faad14" }}
+                          />
+                        )
+                      }
+                    />
+                  </Col>
+                </Row>
               </Col>
             </Row>
           </DetailsCard>
