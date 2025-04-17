@@ -1,5 +1,5 @@
 
-import {  DELETE_IMPORTED_APPLICANT, UPDATE_IMPORTED_APPLICANT } from './apiRoutes';
+import {  DELETE_IMPORTED_APPLICANT, UPDATE_IMPORTED_APPLICANT, UPDATE_IMPORTED_APPLICANTS_STATUS } from './apiRoutes';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // import { toast } from "react-toastify";
 // import { errorHandle } from "utils/commonFunctions";
@@ -129,6 +129,33 @@ export const updateStage = async (
 
   return response?.data;
 };
+///
+export const updateImportedApplicantsStatus = async (data: { status: string }, id: string) => {
+  const response = await authServices.put(
+    `${UPDATE_IMPORTED_APPLICANTS_STATUS}/${id}`,
+    data
+  );
+
+  return response?.data;
+};
+
+export const updateImportedApplicantsStage = async (
+  data: { interviewStage: string },
+  id: string
+) => {
+  const response = await authServices.put(
+    `${UPDATE_IMPORTED_APPLICANTS_STATUS}/${id}`,
+    data
+  );
+
+  return response?.data;
+};
+
+
+
+
+
+////
 export const filterApplicants = async () => {
   const response = await authServices.get(`${FILTER_APPLICANT}`);
   return response?.data;

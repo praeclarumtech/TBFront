@@ -12,14 +12,13 @@ import { IconButton, useMediaQuery } from "@mui/material";
 import "react-loading-skeleton/dist/skeleton.css";
 import {
   listOfImportApplicants,
-  updateStage,
-  updateStatus,
   importApplicant,
   ExportImportedApplicant,
   resumeUpload,
   updateManyApplicants,
   deleteImportedMultipleApplicant,
-  // ExportApplicant,
+  updateImportedApplicantsStage,
+  updateImportedApplicantsStatus,
 } from "api/applicantApi";
 
 import ViewModal from "../ViewApplicant";
@@ -521,7 +520,10 @@ function ImportApplicant() {
     );
     if (selectedApplicant) {
       navigate("/email/compose", {
-        state: { email_to: selectedApplicant.email },
+        state: {
+          email_to: selectedApplicant.email,
+          fromPage: location.pathname,
+        },
       });
     }
   };
@@ -536,6 +538,7 @@ function ImportApplicant() {
         email_bcc: "",
         subject: "",
         description: "",
+        fromPage: location.pathname,
       },
     });
   };
@@ -1132,7 +1135,7 @@ function ImportApplicant() {
                 updatedApplicant[applicantIndex].interviewStage =
                   selectedOption.value;
                 setApplicant(updatedApplicant);
-                updateStage(
+                updateImportedApplicantsStage(
                   { interviewStage: selectedOption.value },
                   cell.row.original._id
                 )
@@ -1166,7 +1169,7 @@ function ImportApplicant() {
               if (applicantIndex > -1) {
                 updatedApplicant[applicantIndex].status = selectedOption.value;
                 setApplicant(updatedApplicant);
-                updateStatus(
+                updateImportedApplicantsStatus(
                   { status: selectedOption.value },
                   cell.row.original._id
                 )
