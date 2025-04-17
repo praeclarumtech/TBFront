@@ -190,7 +190,11 @@ const EmailForm = () => {
                 <i className="mr-2 fa fa-arrow-left"></i>
                 Back
               </button>
-
+              <div className="justify-center mt-1 mb-3 text-center   " >
+                <h4 className="text-base font-bold">
+                  Send Email to Applicant
+                </h4>
+              </div>
               <div className="flex items-center justify-center mb-6">
                 <div>
                   <i className="text-5xl fa fa-envelope text-primary"></i>
