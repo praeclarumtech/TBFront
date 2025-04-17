@@ -146,7 +146,6 @@ function ImportApplicant() {
   const [showExportModal, setShowExportModal] = useState(false);
   const [exportOption, setExportOption] = useState<string>("");
 
-
   const toggleDrawer =
     (anchor: Anchor, open: boolean) =>
     (event: React.KeyboardEvent | React.MouseEvent) => {
@@ -663,7 +662,7 @@ function ImportApplicant() {
       const formData = new FormData();
       formData.append("csvFile", file);
       setUploadedFile(formData);
-      const updateFlag ="false";
+      const updateFlag = "false";
       const response = await importApplicant(formData, {
         params: { updateFlag },
         onUploadProgress: (progressEvent) => {
@@ -676,7 +675,18 @@ function ImportApplicant() {
 
       if (response?.success) {
         toast.success(response?.message || "File imported successfully!");
-      } else if (!response?.success && response.statusCode === 409) {
+      } else if (!response?.success && response.statusCode === 400) {
+        // setShowPopupModal(true);
+        const messages = response?.message;
+        if (messages && Array.isArray(messages)) {
+          messages.forEach((messages) => {
+            toast.error(messages);
+          });
+        }
+        toast.error(response.message || "Import failed");
+      }
+
+      if (!response?.success && response.statusCode === 409) {
         setShowPopupModal(true);
 
         toast.error(response.message || "Import failed");
@@ -719,9 +729,8 @@ function ImportApplicant() {
       });
 
       if (response?.success) {
-
         toast.success(
-          response?.message ||"Existing applicants updated successfully!"
+          response?.message || "Existing applicants updated successfully!"
         );
         setShowPopupModal(false);
         await fetchApplicants();
@@ -766,22 +775,49 @@ function ImportApplicant() {
 
       const response = await ExportImportedApplicant(queryParams, payload);
 
-      if (!response) {
-        toast.error("Failed to download file");
+    
+      // Read the Blob content
+      const text = await response.text();
+      let parsed;
+
+      try {
+        // Try to parse it as JSON
+        parsed = JSON.parse(text);
+      } catch {
+        // Not JSON = valid CSV
+        const blob = new Blob([text], { type: "text/csv" });
+        saveAs(blob, "Imported_Applicants.csv");
+        setShowExportModal(false);
+        setSelectedApplicants([]);
+        toast.success("File downloaded successfully!");
         return;
       }
-      const blob = new Blob([response], { type: "text/csv" });
-      saveAs(blob, "Imported_Applicants.csv");
 
+      // If it is JSON, check for an error message
+      if (parsed?.statusCode === 404 || parsed?.success === false) {
+        setShowExportModal(false);
+        setSelectedApplicants([]);
+         setExportOption("");
+        toast.error(parsed.message || "No data available to export");
+      } else if (parsed?.statuscode === 500 || parsed?.success === false) {
+        setShowExportModal(false);
+        setSelectedApplicants([]);
+         setExportOption("");
+        toast.error(parsed.message || "No data available to export");
+      } else {
+        toast.error("Unexpected JSON response during export.");
+      }
+    } catch (error) {
+      console.log("errors3", error);
       setShowExportModal(false);
       setSelectedApplicants([]);
-      toast.success("File downloaded successfully!");
-    } catch (error) {
+       setExportOption("");
       errorHandle(error);
     } finally {
       fetchApplicants();
     }
   };
+
 
   const handleExportModalShow = () => {
     setShowExportModal(true);

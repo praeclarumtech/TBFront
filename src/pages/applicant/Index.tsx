@@ -602,23 +602,66 @@ const Applicant = () => {
 
       const response = await ExportApplicant(queryParams, payload);
 
-      if (!response) {
-        toast.error("Failed to download file");
-        return;
-      }
+  //     if (!response) {
+  //       toast.error("Failed to download file");
+  //       return;
+  //     }
 
-      const blob = new Blob([response], { type: "text/csv" });
-      saveAs(blob, "Imported_Applicants.csv");
-      setShowExportModal(false);
-      setSelectedApplicants([]);
-      toast.success("File downloaded successfully!");
-    } catch (error) {
-      // toast.error(error);
-      errorHandle(error);
-    } finally {
-      fetchApplicants();
-    }
-  };
+  //     const blob = new Blob([response], { type: "text/csv" });
+  //     saveAs(blob, "Imported_Applicants.csv");
+  //     setShowExportModal(false);
+  //     setSelectedApplicants([]);
+  //     toast.success("File downloaded successfully!");
+  //   } catch (error) {
+  //     // toast.error(error);
+  //     errorHandle(error);
+  //   } finally {
+  //     fetchApplicants();
+  //   }
+  // };
+
+  // Read the Blob content
+        const text = await response.text();
+        let parsed;
+  
+        try {
+          // Try to parse it as JSON
+          parsed = JSON.parse(text);
+        } catch {
+          // Not JSON = valid CSV
+          const blob = new Blob([text], { type: "text/csv" });
+          saveAs(blob, "Imported_Applicants.csv");
+          setShowExportModal(false);
+          setSelectedApplicants([]);
+          toast.success("File downloaded successfully!");
+          return;
+        }
+  
+        // If it is JSON, check for an error message
+        if (parsed?.statusCode === 404 || parsed?.success === false) {
+          setShowExportModal(false);
+          setSelectedApplicants([]);
+           setExportOption("");
+          toast.error(parsed.message || "No data available to export");
+        } else if (parsed?.statuscode === 500 || parsed?.success === false) {
+          setShowExportModal(false);
+          setSelectedApplicants([]);
+           setExportOption("");
+          toast.error(parsed.message || "No data available to export");
+        } else {
+          toast.error("Unexpected JSON response during export.");
+        }
+      } catch (error) {
+        console.log("errors3", error);
+        setShowExportModal(false);
+        setSelectedApplicants([]);
+         setExportOption("");
+        errorHandle(error);
+      } finally {
+        fetchApplicants();
+      }
+    };
+
 
   const handleColumnSelected = (
     selectedOptions: any[] | ((prevState: SelectedOption[]) => SelectedOption[])
