@@ -550,9 +550,9 @@ const UpdateSkill = () => {
                     onCloseClick={handleCloseClick}
                     setShowBaseModal={setShowBaseModal}
                     onSubmitClick={handleSubmit}
-                    modalTitle={editingSkill ? "Edit Skill" : "Add Skill"}
+                    modalTitle={editingSkill ? "Edit Role and Skills" : "Add Role and Skills"}
                     submitButtonText={
-                      editingSkill ? "Update Skill" : "Add Skill"
+                      editingSkill ? "Update Role and Skills " : "Add Role and Skills"
                     }
                     closeButtonText="Close"
                     size="lg"
