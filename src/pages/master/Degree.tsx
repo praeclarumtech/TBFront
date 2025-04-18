@@ -156,7 +156,7 @@ const AddDegree = () => {
         enableColumnFilter: false,
       },
       {
-        header: "Degree",
+        header: "Qualification",
         accessorKey: "degree",
         enableColumnFilter: false,
       },
@@ -237,7 +237,7 @@ const AddDegree = () => {
           } else {
             toast.error(
               res?.message ||
-                `Failed to ${editingDegree ? "update" : "add"} degree`
+                `Failed to ${editingDegree ? "update" : "add"} Qualification`
             );
           }
         })
@@ -251,7 +251,9 @@ const AddDegree = () => {
     },
   });
 
-  const formTitle = editingDegree ? "Edit Degree" : "Add Degree";
+  const formTitle = editingDegree
+    ? "Qualification"
+    : "Qualification";
   const submitButtonText = "Add";
 
   const handleOpenBaseModal = () => {
@@ -352,20 +354,26 @@ const AddDegree = () => {
                     setShowBaseModal={setShowBaseModal}
                     onCloseClick={handleCloseClick}
                     onSubmitClick={handleSubmit}
-                    modalTitle={editingDegree ? "Edit Degree" : "Add Degree"}
+                    modalTitle={
+                      editingDegree ? "Edit Qualification" : "Add Qualification"
+                    }
                     submitButtonText={
-                      editingDegree ? "Update Degree" : "Add Degree"
+                      editingDegree
+                        ? "Update Qualification"
+                        : "Add Qualification"
                     }
                     closeButtonText="Close"
                   >
                     <Row>
                       <Col xs={9} md={5} lg={9}>
                         <BaseInput
-                          label="Degree Name"
+                          label="Qualification Name"
                           name="degreeName"
                           className="bg-gray-100"
                           type="text"
-                          placeholder={InputPlaceHolder("Degree to be Added")}
+                          placeholder={InputPlaceHolder(
+                            "Qualification to be Added"
+                          )}
                           handleChange={validation.handleChange}
                           handleBlur={validation.handleBlur}
                           value={validation.values.degreeName}
@@ -388,7 +396,7 @@ const AddDegree = () => {
                         <div>
                           {degrees?.length > 0 ? (
                             <TableContainer
-                              isHeaderTitle="Degrees"
+                              // isHeaderTitle="Qualification"
                               columns={columns}
                               data={filteredDegree}
                               isGlobalFilter={false}
