@@ -77,13 +77,7 @@ const Profile = () => {
         designation: profileData.designation || "",
       });
 
-      // setImagePreview(
-      //   profileData.profilePicture
-      //     ? `${appEnv.API_ENDPOINT}/uploads/profile/${
-      //         profileData.profilePicture
-      //       }?${Date.now()}`
-      //     : "/images/avatar/avatar.png"
-      // );
+     
       setImagePreview(
         profileData.profilePicture
           ? `${appEnv.API_ENDPOINT}/uploads/profile/${profileData.profilePicture}`
@@ -141,13 +135,7 @@ const Profile = () => {
             ? `${appEnv.API_ENDPOINT}/uploads/profile/${response.data.profilePicture}`
             : imagePreview
         );
-        // setImagePreview(
-        //   response?.data?.profilePicture
-        //     ? `${appEnv.API_ENDPOINT}/uploads/profile/${
-        //         response.data.profilePicture
-        //       }?${Date.now()}`
-        //     : "/images/avatar/avatar.png"
-        // );
+     
       }
     } catch (error) {
       // if (error && statusCode === 400) {
@@ -222,7 +210,7 @@ const Profile = () => {
   };
   return (
     <Container fluid className="p-6">
-      <Row className="my-8">
+      <Row className="my-1">
         <Col xl={12} lg={12} md={12} xs={12}>
           <Card>
             {loading ? (
@@ -288,10 +276,16 @@ const Profile = () => {
                       </div>
 
                       {/* Username */}
-                      <Row className="md:mb-4 lg:mb-4 xl:mb-4 ">
-                        <Col md={6} sm={12} xl={6} lg={6}>
+                      <Row>
+                        <Col
+                          md={6}
+                          sm={12}
+                          xl={6}
+                          lg={6}
+                          className="md:mb-4 lg:mb-4 xl:mb-4 mb-3  "
+                        >
                           <BaseInput
-                            className="sm:mb-4"
+                            
                             label="Username"
                             name="userName"
                             type="text"
@@ -302,9 +296,15 @@ const Profile = () => {
                             passwordToggle={false}
                           />
                         </Col>
-                        <Col md={6} sm={12} xl={6} lg={6}>
+                        <Col
+                          md={6}
+                          sm={12}
+                          xl={6}
+                          lg={6}
+                          className="md:mb-4 lg:mb-4 xl:mb-4 sm:mb-4 mb-3 "
+                        >
                           <BaseInput
-                            className="sm:mb-4"
+                            className=""
                             label="Email"
                             name="email"
                             type="email"
@@ -315,12 +315,18 @@ const Profile = () => {
                           />
                         </Col>
                       </Row>
-                      <Row className="md:mb-4 lg:mb-4 xl:mb-4 ">
-                        <Col md={6} sm={12} xl={6} lg={6}>
+                      <Row>
+                        <Col
+                          md={6}
+                          sm={12}
+                          xl={6}
+                          lg={6}
+                          className="md:mb-4 lg:mb-4 xl:mb-4 mb-3 "
+                        >
                           <BaseInput
                             label="First Name"
                             name="firstName"
-                            className="sm:mb-4"
+                            className=""
                             type="text"
                             placeholder={InputPlaceHolder("First Name")}
                             handleChange={(e) => {
@@ -334,10 +340,16 @@ const Profile = () => {
                             passwordToggle={false}
                           />
                         </Col>
-                        <Col md={6} sm={12} xl={6} lg={6}>
+                        <Col
+                          md={6}
+                          sm={12}
+                          xl={6}
+                          lg={6}
+                          className="md:mb-4 lg:mb-4 xl:mb-4 mb-3  "
+                        >
                           <BaseInput
                             label="Last Name"
-                            className="sm:mb-4"
+                            className=""
                             name="lastName"
                             type="text"
                             placeholder={InputPlaceHolder("Last Name")}
@@ -354,10 +366,15 @@ const Profile = () => {
                       </Row>
 
                       {/* Phone */}
-                      <Row className="md:mb-4 lg:mb-4 xl:mb-4 ">
-                        <Col md={6} sm={12} xl={6} lg={6}>
+                      <Row>
+                        <Col
+                          md={6}
+                          sm={12}
+                          xl={6}
+                          lg={6}
+                          className=" mb-3 md:mb-4 lg:mb-4 xl:mb-4  "
+                        >
                           <BaseInput
-                            className="sm:mb-4"
                             label="Phone Number"
                             name="phoneNumber"
                             type="text"
@@ -377,9 +394,14 @@ const Profile = () => {
                             // disabled
                           />
                         </Col>
-                        <Col md={6} sm={12} xl={6} lg={6}>
+                        <Col
+                          md={6}
+                          sm={12}
+                          xl={6}
+                          lg={6}
+                          className="md:mb-4 lg:mb-4 xl:mb-4 mb-3  "
+                        >
                           <BaseInput
-                            className="sm:mb-4"
                             label="Designation"
                             name="designation"
                             type="text"
@@ -397,12 +419,18 @@ const Profile = () => {
                         </Col>
                       </Row>
 
-                      <Row className="md:mb-4 lg:mb-4 xl:mb-4 ">
-                        <Col md={6} sm={12} xl={6} lg={6}>
+                      <Row>
+                        <Col
+                          md={6}
+                          sm={12}
+                          xl={6}
+                          lg={6}
+                          className="md:mb-4 lg:mb-4 xl:mb-4 mb-3  "
+                        >
                           <BaseSelect
                             label="Gender"
                             name="gender"
-                            className="sm:mb-4 select-border"
+                            className=" select-border"
                             options={gendersType}
                             placeholder={InputPlaceHolder("Gender")}
                             handleChange={(selectedOption: SelectedOption) => {
@@ -416,9 +444,14 @@ const Profile = () => {
                             }
                           />
                         </Col>
-                        <Col md={6} sm={12} xl={6} lg={6}>
+                        <Col
+                          md={6}
+                          sm={12}
+                          xl={6}
+                          lg={6}
+                          className="md:mb-4 lg:mb-4 xl:mb-4 mb-4  "
+                        >
                           <BaseInput
-                            className="sm:mb-4"
                             label="Date Of Birth"
                             name="dateOfBirth"
                             type="date"
@@ -440,7 +473,7 @@ const Profile = () => {
                         </Col>
                       </Row>
 
-                      <div className="flex justify-end gap-4 mt-6">
+                      <div className="flex justify-end gap-4 ">
                         <>
                           <BaseButton
                             variant="danger"

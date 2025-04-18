@@ -423,6 +423,7 @@ const EmailTable = () => {
           applicantId={selectedApplicantId}
         />
       )}
+   
 
       <div className="mt-3 mb-4">
         <div className="mb-3 card">

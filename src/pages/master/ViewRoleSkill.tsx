@@ -11,7 +11,7 @@ import { ViewAppliedSkills } from "api/skillsApi";
 const ViewRoleSkill = ({ show, onHide, applicantId }: any) => {
   const [formData, setFormData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  
+
   useEffect(() => {
     const loadDetails = async () => {
       if (!applicantId) return;

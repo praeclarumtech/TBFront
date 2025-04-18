@@ -23,8 +23,8 @@ export const UPDATE_APPLICANT_STATUS = "applicants/update/status";
 export const UPDATE_APPLICANT_STAGE = "applicants/update/status";
 export const FILTER_APPLICANT = "applicants/viewApplicant/?";
 export const CITY = "city";
-export const EXPORT_APPLICANT = "applicants/exportCsv?source=";
-export const EXPORT_IMPORT_APPLICANT = "applicants/exportCsv?filtered=";
+export const EXPORT_APPLICANT = "applicants/exportCsv/";
+export const EXPORT_IMPORT_APPLICANT = "applicants/exportCsv/";
 export const DELETE_MULTIPLE_APPLICANT = "applicants/deleteManyApplicants"
 export const EXISTING_APPLICANT ="applicants/checkApplicant/?";
 export const IMPORT_APPLICANT = "applicants/importCsv";
