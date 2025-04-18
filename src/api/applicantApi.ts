@@ -187,7 +187,7 @@ export const importApplicant = async (
 
 export const ExportApplicant = async (
   queryParams: {  source: string },
-  payload: { ids: string[]; fields: string[] }
+  payload: { ids: string[]; fields: string[]; main: boolean }
 ) => {
   const {  source } = queryParams;
   const response = await authServices.post(
