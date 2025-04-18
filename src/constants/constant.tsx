@@ -637,7 +637,7 @@ const appConstants = Object.freeze({
     { label: "Delhi", value: "delhi" },
     { label: "West Bengal", value: "west_bengal" },
     { label: "Tamil Nadu", value: "tamil_nadu" },
-    { label: "Karnataka", value: "karnataka" },
+    // { label: "Karnataka", value: "karnataka" },
     { label: "Telangana", value: "telangana" },
     { label: "Gujarat", value: "gujarat" },
     { label: "Maharashtra", value: "maharashtra" },

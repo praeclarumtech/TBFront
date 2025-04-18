@@ -21,6 +21,11 @@ import {
   updateImportedApplicantsStatus,
 } from "api/applicantApi";
 
+import {
+  city as fetchCities,
+  state as fetchState,
+} from "../../../api/applicantApi";
+
 import ViewModal from "../ViewApplicant";
 import BaseInput from "components/BaseComponents/BaseInput";
 import DeleteModal from "components/BaseComponents/DeleteModal";
@@ -30,6 +35,7 @@ import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
 
 import {
+  City,
   SelectedOption,
   SelectedOption1,
 } from "interfaces/applicant.interface";
@@ -62,10 +68,10 @@ const {
   // skillOptions,
   exportableFieldOption,
   interviewStageOptions,
-  cityOptions,
+  // cityOptions,
   statusOptions,
   gendersType,
-  stateType,
+  // stateType,
   anyHandOnOffers,
   workPreferenceType,
   designationType,
@@ -131,7 +137,9 @@ function ImportApplicant() {
   const [state, setState] = React.useState({
     right: false,
   });
-
+  const [cities, setCities] = useState<City[]>([]);
+  const [states, setStates] = useState<City[]>([]);
+  
   const [skillOptions, setSkillOptions] = useState<any[]>([]);
   const [importLoader, setImportLoader] = useState(false);
   const [importProgress, setImportProgress] = useState(0);
@@ -228,10 +236,10 @@ function ImportApplicant() {
         params.anyHandOnOffers = filterAnyHandOnOffers.value;
       }
       if (filterCity) {
-        params.currentCity = filterCity.value;
+        params.currentCity = filterCity.label;
       }
       if (filterState) {
-        params.state = filterState.value;
+        params.state = filterState.label;
       }
       if (appliedSkills.length > 0) {
         params.appliedSkills = appliedSkills
@@ -364,11 +372,117 @@ function ImportApplicant() {
     setAppliedSkills(selectedOptions);
   };
 
-  const handleCityChange = (selectedOption: SelectedOption) => {
-    setFilterCity(selectedOption);
-  };
-  const handleStateChange = (selectedOption: SelectedOption) => {
+  // const handleCityChange = (selectedOption: SelectedOption) => {
+  //   setFilterCity(selectedOption);
+  // };
+
+
+  // const handleStateChange = (selectedOption: SelectedOption) => {
+  //   setFilterState(selectedOption);
+  // };
+
+  useEffect(() => {
+      const getCities = async () => {
+        try {
+          const cityData = await fetchCities();
+  
+          if (cityData?.data) {
+            setCities(
+              cityData.data.map((city: { city_name: string; _id: string }) => ({
+                label: city.city_name,
+                value: city._id,
+              }))
+            );
+          }
+        } catch (error: any) {
+          const details = error?.response?.data?.details;
+          if (Array.isArray(details)) {
+            details.forEach((msg: string) => {
+              toast.error(msg, {
+                closeOnClick: true,
+                autoClose: 5000,
+              });
+            });
+          } else {
+            toast.error("Failed to fetch cities.. Please try again.", {
+              closeOnClick: true,
+              autoClose: 5000,
+            });
+          }
+        }
+      };
+  
+      getCities();
+    }, []);
+
+
+      useEffect(() => {
+         const getStates = async () => {
+           try {
+                 setLoading(true);
+                 const stateData = await fetchState();
+                 if (stateData?.data) {
+                   setStates(
+                     stateData.data.map(
+                       (state: {
+                         state_name: string;
+                         _id: string;
+                         country_id: string;
+                       }) => ({
+                         label: state.state_name,
+                         value: state._id,
+                         country_id: state.country_id,
+                       })
+                     )
+                   );
+                 }
+           } catch (error: any) {
+             const details = error?.response?.data?.details;
+             if (Array.isArray(details)) {
+               details.forEach((msg: string) => {
+                 toast.error(msg, {
+                   closeOnClick: true,
+                   autoClose: 5000,
+                 });
+               });
+             } else {
+               toast.error("Failed to fetch cities.. Please try again.", {
+                 closeOnClick: true,
+                 autoClose: 5000,
+               });
+             }
+           }
+         };
+    
+         getStates();
+       }, []);
+    
+
+
+ const handleStateChange = (selectedOption: SelectedOption) => {
     setFilterState(selectedOption);
+
+     if (selectedOption) {
+      const selectedStateId = selectedOption.value;
+      const selectedState = states.find((state) => state.value === selectedStateId);
+
+      if (selectedState) {
+        // console.log("Selected city name:", selectedCity.label);
+      }
+
+    };
+  };
+ const handleCityChange = (selectedOption: SelectedOption) => {
+    setFilterCity(selectedOption);
+
+    if (selectedOption) {
+      const selectedCityId = selectedOption.value;
+      const selectedCity = cities.find((city) => city.value === selectedCityId);
+
+      if (selectedCity) {
+        // console.log("Selected city name:", selectedCity.label);
+      }
+    }
   };
 
   const handleGenderChange = (selectedOption: SelectedOption) => {
@@ -914,16 +1028,17 @@ function ImportApplicant() {
           label="City"
           name="city"
           className="mb-2 select-border "
-          options={cityOptions}
+          options={cities}
           placeholder="City"
           handleChange={handleCityChange}
           value={filterCity}
         />
+
         <BaseSelect
           label="State"
           name="state"
           className="mb-2 select-border "
-          options={stateType}
+          options={states}
           placeholder="State"
           handleChange={handleStateChange}
           value={filterState}
@@ -1163,7 +1278,7 @@ function ImportApplicant() {
         enableColumnFilter: false,
       },
       {
-        header: "Experience",
+        header: "Total Experience",
         accessorKey: "totalExperience",
         enableColumnFilter: false,
       },

@@ -44,7 +44,7 @@ const EmailForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const initialEmail = location.state?.email_to || "";
-  const fromPage = location.state?.fromPage || "/email";
+  // const fromPage = location.state?.fromPage || "/email";
   // const initialName = location.state?.name || "";
 
   const [templateTypes, setTemplateTypes] = useState<SelectedOption[]>([]);
@@ -205,7 +205,12 @@ const EmailForm = () => {
         toast.success("Email sent successfully!");
         validation.resetForm();
         setTimeout(() => {
-          navigate("/email");
+          // navigate("/email");
+           if (initialEmail) {
+             navigate("/applicants");
+           } else {
+             navigate("/email");
+           }
         }, 3000);
       } catch (error: any) {
         const details = error?.response?.data?.details;
@@ -238,18 +243,23 @@ const EmailForm = () => {
             <div className="relative p-8">
               <button
                 className="absolute flex items-center text-gray-600 left-5 top-5 hover:text-gray-800"
-                onClick={() =>
-                  // navigate(fromPage === "/applicants" ? "/applicants" : "/email")
-                  navigate(fromPage)
-                }
+                // onClick={() =>
+                //   // navigate(fromPage === "/applicants" ? "/applicants" : "/email")
+                //   navigate(fromPage)
+                // }
+                onClick={() => {
+                  if (initialEmail) {
+                    navigate("/applicants");
+                  } else {
+                    navigate("/email");
+                  }
+                }}
               >
                 <i className="mr-2 fa fa-arrow-left"></i>
                 Back
               </button>
-              <div className="justify-center mt-1 mb-3 text-center   " >
-                <h4 className="text-base font-bold">
-                  Send Email to Applicant
-                </h4>
+              <div className="justify-center mt-1 mb-3 text-center   ">
+                <h4 className="text-base font-bold">Send Email to Applicant</h4>
               </div>
               <div className="flex items-center justify-center mb-6">
                 <div>

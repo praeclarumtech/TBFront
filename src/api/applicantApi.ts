@@ -1,5 +1,5 @@
 
-import {  DELETE_IMPORTED_APPLICANT, UPDATE_IMPORTED_APPLICANT, UPDATE_IMPORTED_APPLICANTS_STATUS } from './apiRoutes';
+import {  DELETE_IMPORTED_APPLICANT, STATE, UPDATE_IMPORTED_APPLICANT, UPDATE_IMPORTED_APPLICANTS_STATUS } from './apiRoutes';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // import { toast } from "react-toastify";
 // import { errorHandle } from "utils/commonFunctions";
@@ -51,7 +51,13 @@ export const listOfApplicants = async (params: {
   searchS?: string;
   appliedRole?: string;
 }) => {
-  const response = await authServices.get(`${LIST_APPLICANT}`, { params });
+  const response = await authServices.get(`${LIST_APPLICANT}`, {
+    params,
+    paramsSerializer: (params) => {
+      return new URLSearchParams(params).toString().replace(/\+/g, "%20");
+    },
+  });
+  
   return response?.data;
 };
 
@@ -165,6 +171,10 @@ export const city = async () => {
   const response = await authServices.get(`${CITY}`);
   return response?.data;
 };
+export const state = async () => {
+  const response = await authServices.get(`${STATE}`);
+  return response?.data;
+};
 
 export const importApplicant = async (
   formData: FormData,
@@ -264,6 +274,9 @@ export const listOfImportApplicants = async (params: {
 }) => {
   const response = await authServices.get(`${IMPORT_APPLICANT_LIST}`, {
     params,
+    paramsSerializer: (params) => {
+      return new URLSearchParams(params).toString().replace(/\+/g, "%20");
+    },
   });
   return response?.data;
 };
