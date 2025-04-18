@@ -138,7 +138,6 @@ const appConstants = Object.freeze({
     ChangePassword: "ChangePassword",
     FindAndReplace: "Find And Replace",
     RoleAndSkill: "Role And Skill",
-    
     CreateApplicantForm: "Applicant Form",
     PreviewApplicantsDetails: "Preview Applicants Details",
     ComposeEmails: "Compose Email",
@@ -301,7 +300,7 @@ const appConstants = Object.freeze({
     { value: "Data Analyst", label: "Data Analyst" },
     { value: "Data Scientist", label: "Data Scientist" },
     { value: "DevOps Engineer", label: "DevOps Engineer" },
-    { value: "DotNet Developer", label: "DotNet Developer" },
+    // { value: "DotNet DeveloperDotNet Developer", label: "DotNet Developer" },
     {
       value: "DotNet Full Stack Developer",
       label: ".NET Full Stack Developer",
@@ -322,7 +321,7 @@ const appConstants = Object.freeze({
     { value: "Nodejs Developer", label: "Nodejs Developer" },
 
     { value: "PHP Developer", label: "Php Developer" },
-    { value: "PLACEMENT_EXECUTIVE", label: "Placement executive" },
+    // { value: "PLACEMENT_EXECUTIVEPLACEMENT_EXECUTIVE", label: "Placement executive" },
     { value: "Product Manager", label: "Product Manager" },
     { value: "Programmer Analyst", label: "Programmer Analyst" },
     { value: "Project Engineer", label: "Project Engineer" },
@@ -671,7 +670,6 @@ const appConstants = Object.freeze({
     { label: "Manual", value: "Manual" },
     { label: "CSV", value: "Csv" },
   ],
- 
 
   technologyOptions: {
     "Frontend Developer": [
@@ -692,7 +690,7 @@ const appConstants = Object.freeze({
     "Data Analyst": ["Python", "R", "SQL", "Power BI", "Excel"],
     "Data Scientist": ["Python", "R", "Pandas", "Matplotlib"],
     "Product Manager": ["Jira", "Trello", "Confluence", "Asana"],
-    "UX/UI Designer": ["Figma", "Sketch", "Adobe XD", "InVision"],
+    "UI_UX Designer": ["Figma", "Sketch", "Adobe XD", "InVision"],
     "QA Engineer": ["Selenium", "Jest", "Mocha", "JUnit", "Cypress"],
     "DevOps Engineer": ["Docker", "Kubernetes", "Terraform", "AWS"],
     "Business Analyst": ["SQL", "Excel", "Tableau", "Power BI"],
@@ -718,12 +716,13 @@ const appConstants = Object.freeze({
       "JavaScript",
     ],
     "DotNet Full Stack Developer": [
-      ".NET",
+      "DotNET",
       "C#",
       "SQL",
       "JavaScript",
       "Angular",
     ],
+    // "DotNet Developer": ["DotNET", "C#", "SQL", "JavaScript"],
     "Java Developer": ["Java", "Spring Boot", "Hibernate", "SQL", "Maven"],
     "Python Developer": ["Python", "Django", "Flask", "SQL", "Git"],
     "PHP Developer": ["PHP", "Laravel", "MySQL", "JavaScript", "HTML/CSS"],
@@ -740,12 +739,12 @@ const appConstants = Object.freeze({
       "Microservices",
       "Kubernetes",
       "Java",
-      ".NET",
+      "DotNET",
     ],
     "Junior Software Engineer": ["HTML", "JavaScript", "Git"],
-    "Blockchain Developer": ["Solidity", "Ethereum", "Web3.js"],
+    "Blockchain Developer": ["Solidity", "Ethereum", "Web3js"],
     "Project Engineer": ["AutoCAD", "MS Project", "Primavera"],
-    "UI_UX Designer": ["Figma", "Adobe XD", "InVision"],
+    // "UI_UX Designer": ["Figma", "Adobe XD", "InVision"],
     "Senior UI Engineer": ["React", "CSS-in-JS", "Storybook"],
     "Application developer": ["Java", "SQL", "Spring", "JSP"],
     "Technical Analyst": ["Excel", "Power BI", "SQL"],
