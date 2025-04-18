@@ -18,6 +18,7 @@ import appConstants from "constants/constant";
 import {
   CheckExistingApplicant,
   city as fetchCities,
+  state as fetchState
 } from "../../api/applicantApi";
 import {
   personalApplicantSchema,
@@ -31,12 +32,13 @@ const {
   gendersType,
   countriesType,
   maritalStatusType,
-  stateType,
+  // stateType,
 } = appConstants;
 
 const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
   document.title = Modules.CreateApplicantForm + " | " + projectTitle;
   const [cities, setCities] = useState<City[]>([]);
+    const [states, setStates] = useState<City[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   // const [isChecking, setIsChecking] = useState(false);
   // const [existingError, setExistingError] = useState("");
@@ -45,6 +47,14 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
   const [whatsappError, setWhatsappError] = useState("");
   const navigate = useNavigate();
 
+  const [formReady, setFormReady] = useState(false);
+
+useEffect(() => {
+  if (cities.length && states.length && countriesType.length) {
+    setFormReady(true);
+  }
+}, [cities, states]);
+  
   useEffect(() => {
     const getCities = async () => {
       try {
@@ -68,8 +78,42 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
     getCities();
   }, []);
 
+ useEffect(() => {
+   const getState = async () => {
+     try {
+       setLoading(true);
+       const stateData = await fetchState();
+       if (stateData?.data) {
+         setStates(
+           stateData.data.map(
+             (state: {
+               state_name: string;
+               _id: string;
+               country_id: string;
+             }) => ({
+               label: state.state_name,
+               value: state._id,
+               country_id: state.country_id,
+             })
+           )
+         );
+       }
+     } catch (error) {
+       errorHandle(error);
+     } finally {
+       setLoading(false);
+     }
+   };
+
+   getState();
+ }, []);
+
   const initialCityValue =
     cities.find((city) => city.label === initialValues.currentCity)?.value ||
+    "";
+
+  const initialStateValue =
+    states.find((state) => state.label === initialValues.state)?.value ||
     "";
 
   const minDateOfBirth = moment().subtract(15, "years").format("YYYY-MM-DD");
@@ -77,9 +121,18 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
     ? moment(initialValues.dateOfBirth).format("YYYY-MM-DD")
     : "";
 
+  const capitalizeWords = (str: string) => {
+    return str
+      .toLowerCase()
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
+
+  
   const validation: any = useFormik({
     enableReinitialize: true,
-    initialValues: {
+    initialValues:formReady ?{
       firstName: initialValues.name.firstName || "",
       middleName: initialValues.name.middleName || "",
       lastName: initialValues.name.lastName || "",
@@ -88,13 +141,17 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
       email: initialValues.email || "",
       gender: initialValues.gender || "",
       dateOfBirth: formattedDateOfBirth,
-      state: initialValues.state || "",
-      country: initialValues.country || "",
+      // state: initialValues.state || "",
+      state: initialStateValue,
+      // country: initialValues.country || "",
+      country: initialValues.country
+        ? capitalizeWords(initialValues.country)
+        : "",
       currentCity: initialCityValue,
       currentAddress: initialValues.currentAddress || "",
       maritalStatus: initialValues?.maritalStatus || "",
       permanentAddress: initialValues?.permanentAddress || "",
-    },
+    }: {},
     validationSchema: personalApplicantSchema,
     onSubmit: (data: any) => {
       setLoading(true);
@@ -106,6 +163,14 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
       if (selectedCity) {
         data.currentCity = selectedCity.label;
       }
+
+        const selectedState = states.find(
+          (state) => state.value === data.state
+        );
+
+        if (selectedState) {
+          data.state = selectedState.label;
+        }
 
       const structuredData = {
         name: {
@@ -469,7 +534,7 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
                       label="State"
                       name="state"
                       className="select-border"
-                      options={stateType}
+                      options={states}
                       placeholder={InputPlaceHolder("State")}
                       handleChange={(selectedOption: SelectedOption) => {
                         validation.setFieldValue(
@@ -479,12 +544,13 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
                       }}
                       handleBlur={validation.handleBlur}
                       value={
-                        dynamicFind(stateType, validation.values.state) || ""
+                        dynamicFind(states, validation.values.state) || ""
                       }
                       touched={validation.touched.state}
                       error={validation.errors.state}
                       isRequired={true}
                     />
+                  
                   </Col>
 
                   {/* <Col xs={12} md={6} lg={3}>
@@ -600,7 +666,8 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
                   to={
                     module === "import-applicant"
                       ? "/import-applicants"
-                      : "/applicants"
+                      : "/import country from './../../../../tbbackend/TBAPI/src/models/countryModel';
+applicants"
                   }
                   // style={styleButton}
                   className="w-full d-flex align-items-center justify-content-center"

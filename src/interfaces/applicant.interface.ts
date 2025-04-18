@@ -150,7 +150,23 @@ export const personalApplicantSchema = Yup.object({
     .min(2, "Middle name must be at least 2 characters.")
     .matches(/^[A-Za-z\s]+$/, "Middle name can only contain letters.")
     .nullable(),
-  email: Yup.string().trim().email("Please enter a valid email address."),
+  // email: Yup.string().trim().email("Please enter a valid email address."),
+  email: Yup.string()
+    .email("Please enter a valid email address.")
+    // .required("Email is required")
+    .test(
+      "valid-multiple-emails",
+      "Emails must not exceed 100 characters.",
+      (value) => {
+        if (!value) return false;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const emails = value.split(",").map((e) => e.trim());
+
+        return emails.every(
+          (email) => emailRegex.test(email) && email.length <= 100
+        );
+      }
+    ),
   // .required("Email address is required!"),
   phoneNumber: Yup.string().matches(
     /^[0-9]{10}$/,
