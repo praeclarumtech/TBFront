@@ -691,7 +691,7 @@ const appConstants = Object.freeze({
     "Data Analyst": ["Python", "R", "SQL", "Power BI", "Excel"],
     "Data Scientist": ["Python", "R", "Pandas", "Matplotlib"],
     "Product Manager": ["Jira", "Trello", "Confluence", "Asana"],
-    "UX/UI Designer": ["Figma", "Sketch", "Adobe XD", "InVision"],
+    "UI_UX Designer": ["Figma", "Sketch", "Adobe XD", "InVision"],
     "QA Engineer": ["Selenium", "Jest", "Mocha", "JUnit", "Cypress"],
     "DevOps Engineer": ["Docker", "Kubernetes", "Terraform", "AWS"],
     "Business Analyst": ["SQL", "Excel", "Tableau", "Power BI"],
