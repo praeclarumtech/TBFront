@@ -783,6 +783,23 @@ function ImportApplicant() {
       try {
         // Try to parse it as JSON
         parsed = JSON.parse(text);
+        
+        if (parsed?.statuscode === 409 || parsed?.success === false) {
+        setShowExportModal(false);
+        setSelectedApplicants([]);
+         setExportOption("");
+       
+        //   toast.error(parsed.message || "No data available to export");
+
+       const messages = parsed?.message;
+       if (messages && Array.isArray(messages)) {
+         messages.forEach((msg) => {
+           toast.error(msg);
+         });
+       }
+          // return;
+      }
+
       } catch {
         // Not JSON = valid CSV
         const blob = new Blob([text], { type: "text/csv" });
@@ -802,9 +819,10 @@ function ImportApplicant() {
       } else if (parsed?.statuscode === 500 || parsed?.success === false) {
         setShowExportModal(false);
         setSelectedApplicants([]);
-         setExportOption("");
+        setExportOption("");
         toast.error(parsed.message || "No data available to export");
-      } else {
+      }
+      else {
         toast.error("Unexpected JSON response during export.");
       }
     } catch (error) {

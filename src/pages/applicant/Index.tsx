@@ -48,9 +48,9 @@ import { ViewAppliedSkills } from "api/skillsApi";
 import { IconButton, useMediaQuery } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import BaseModal from "components/BaseComponents/BaseModal";
-import CheckboxMultiSelect from "components/BaseComponents/CheckboxMultiSelect";
+// import CheckboxMultiSelect from "components/BaseComponents/CheckboxMultiSelect";
 const {
-  exportableFieldOption,
+  // exportableFieldOption,
   projectTitle,
   Modules,
   interviewStageOptions,
@@ -591,7 +591,7 @@ const Applicant = () => {
       const payload = {
         ids: selectedApplicants,
         fields: selectedColumns,
-        main:true,
+        main:true
       };
       // console.log("payload function", payload.fields);
 
@@ -664,26 +664,26 @@ const Applicant = () => {
     };
 
 
-  const handleColumnSelected = (
-    selectedOptions: any[] | ((prevState: SelectedOption[]) => SelectedOption[])
-  ) => {
-    if (!selectedApplicants || selectedApplicants.length === 0) {
-      toast.error("Please select applicants before choosing columns.");
-      return;
-    }
+  // const handleColumnSelected = (
+  //   selectedOptions: any[] | ((prevState: SelectedOption[]) => SelectedOption[])
+  // ) => {
+  //   if (!selectedApplicants || selectedApplicants.length === 0) {
+  //     toast.error("Please select applicants before choosing columns.");
+  //     return;
+  //   }
 
-    setExportableFields(selectedOptions);
+  //   setExportableFields(selectedOptions);
 
-    if (Array.isArray(selectedOptions)) {
-      console.log(
-        "Selected values:",
-        selectedOptions.map((opt: { value: any }) => opt.value)
-      );
+  //   if (Array.isArray(selectedOptions)) {
+  //     console.log(
+  //       "Selected values:",
+  //       selectedOptions.map((opt: { value: any }) => opt.value)
+  //     );
 
-      setExportableFields(selectedOptions);
-      setExportOption("");
-    }
-  };
+  //     setExportableFields(selectedOptions);
+  //     setExportOption("");
+  //   }
+  // };
 
   const handleExportModalShow = () => {
     setShowExportModal(true);
@@ -1211,7 +1211,7 @@ const Applicant = () => {
         children={
           <div>
             <Row>
-              <div>
+              {/* <div>
                 <h5>Choose the columns you want to export:</h5>
                 <CheckboxMultiSelect
                   label="Select columns"
@@ -1233,7 +1233,7 @@ const Applicant = () => {
                     Reset Column Selection
                   </button>
                 )}
-              </div>
+              </div> */}
             </Row>
 
             <Row className="mt-4">
