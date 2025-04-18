@@ -32,6 +32,7 @@ const RecentApplicants = ({
       const data = await getRecentApplications(selectedTechnology || undefined); // Pass filter
       setRecentApplicants(data?.data?.item || []);
     } catch (error) {
+      errorHandle(error);
       console.log("Error loading recent applicants");
     } finally {
       setIsLoading(false);
@@ -42,7 +43,7 @@ const RecentApplicants = ({
     try {
       toast.info("Preparing file for download...");
       await new Promise((resolve) => setTimeout(resolve, 3500));
-      const response = await ExportApplicant(filtered);
+    const response = await ExportApplicant({ source: filtered[0] });
 
       if (!response) {
         toast.error("Failed to download file");

@@ -122,7 +122,7 @@ export interface MultiSelectProps {
   isDisabled?: boolean;
   placeholder?: string;
   handleChange?: (selectedOption: any) => void;
-
+  isRequired?: boolean;
 }
 export interface MultiSelectCheckBoxProps {
   label?: string;
