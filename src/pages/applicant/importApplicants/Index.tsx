@@ -235,12 +235,22 @@ function ImportApplicant() {
       if (filterAnyHandOnOffers) {
         params.anyHandOnOffers = filterAnyHandOnOffers.value;
       }
-      if (filterCity) {
-        params.currentCity = filterCity.label;
+      // if (filterCity) {
+      //   params.currentCity = filterCity.label;
+      // }
+      // if (filterState) {
+      //   params.state = filterState.label;
+      // }
+ if (filterCity) {
+        // params.currentCity = filterCity.label;
+         params.currentCity = encodeURIComponent(filterCity.label);
       }
       if (filterState) {
-        params.state = filterState.label;
+        // params.state = filterState.label;
+          params.state = encodeURIComponent(filterState.label);
       }
+
+
       if (appliedSkills.length > 0) {
         params.appliedSkills = appliedSkills
           .map((skill) => skill.label)

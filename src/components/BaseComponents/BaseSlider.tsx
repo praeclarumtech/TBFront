@@ -40,7 +40,10 @@ const BaseSlider = ({
   return (
     <>
       {label && (
-        <Label htmlFor={name} className="form-label">
+        <Label
+          htmlFor={name}
+          className="form-label  text-gray-700 font-semibold"
+        >
           {label}
         </Label>
       )}
@@ -70,7 +73,7 @@ const BaseSlider = ({
                 borderRadius: "50%",
                 width: "15px",
                 height: "15px",
-                color:"#212B36",
+                color: "#212B36",
               },
               "& .MuiSlider-rail": {
                 opacity: 0.3,
