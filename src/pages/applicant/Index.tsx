@@ -26,7 +26,10 @@ import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
-import { city as fetchCities } from "../../api/applicantApi";
+import {
+  city as fetchCities,
+  state as fetchState,
+} from "../../api/applicantApi";
 import {
   City,
   SelectedOption,
@@ -56,7 +59,7 @@ const {
   interviewStageOptions,
   statusOptions,
   gendersType,
-  stateType,
+  // stateType,
   anyHandOnOffers,
   workPreferenceType,
   designationType,
@@ -130,7 +133,7 @@ const Applicant = () => {
   const [exportableFields, setExportableFields] = useState<SelectedOption[]>(
     []
   );
-
+  const [states, setStates] = useState<City[]>([]);
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const toggleDrawer =
     (anchor: Anchor, open: boolean) =>
@@ -215,7 +218,7 @@ const Applicant = () => {
         params.currentCity = filterCity.label;
       }
       if (filterState) {
-        params.state = filterState.value;
+        params.state = filterState.label;
       }
 
       if (appliedSkills.length > 0) {
@@ -374,8 +377,20 @@ const Applicant = () => {
 
   const handleStateChange = (selectedOption: SelectedOption) => {
     setFilterState(selectedOption);
+
+     if (selectedOption) {
+      const selectedStateId = selectedOption.value;
+      const selectedState = states.find((state) => state.value === selectedStateId);
+
+      if (selectedState) {
+        // console.log("Selected city name:", selectedCity.label);
+      }
+
+    };
   };
 
+
+    
   const handleGenderChange = (selectedOption: SelectedOption) => {
     setFilterGender(selectedOption);
   };
@@ -488,6 +503,49 @@ const Applicant = () => {
     }
   };
 
+   useEffect(() => {
+     const getStates = async () => {
+       try {
+             setLoading(true);
+             const stateData = await fetchState();
+             if (stateData?.data) {
+               setStates(
+                 stateData.data.map(
+                   (state: {
+                     state_name: string;
+                     _id: string;
+                     country_id: string;
+                   }) => ({
+                     label: state.state_name,
+                     value: state._id,
+                     country_id: state.country_id,
+                   })
+                 )
+               );
+             }
+       } catch (error: any) {
+         const details = error?.response?.data?.details;
+         if (Array.isArray(details)) {
+           details.forEach((msg: string) => {
+             toast.error(msg, {
+               closeOnClick: true,
+               autoClose: 5000,
+             });
+           });
+         } else {
+           toast.error("Failed to fetch cities.. Please try again.", {
+             closeOnClick: true,
+             autoClose: 5000,
+           });
+         }
+       }
+     };
+
+     getStates();
+   }, []);
+
+
+  
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
       setSelectedApplicants(applicant.map((app) => app._id));
@@ -768,7 +826,7 @@ const Applicant = () => {
           label="State"
           name="state"
           className="mb-1 select-border "
-          options={stateType}
+          options={states}
           placeholder="State"
           handleChange={handleStateChange}
           value={filterState}
@@ -1017,7 +1075,7 @@ const Applicant = () => {
         enableColumnFilter: false,
       },
       {
-        header: "Experience",
+        header: "Total Experience",
         accessorKey: "totalExperience",
         enableColumnFilter: false,
       },

@@ -256,7 +256,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                 </Col>
                 <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
                   <BaseInput
-                    label="Total Experience(Year) (Optional)"
+                    label="Total Experience(Year)"
                     name="totalExperience"
                     type="text"
                     placeholder={InputPlaceHolder(
@@ -307,6 +307,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     touched={validation.touched.totalExperience}
                     error={validation.errors.totalExperience}
                     passwordToggle={false}
+                    isRequired={true}
                   />
                 </Col>
                 <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
