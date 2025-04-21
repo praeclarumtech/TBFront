@@ -215,10 +215,12 @@ const Applicant = () => {
         params.anyHandOnOffers = filterAnyHandOnOffers.value;
       }
       if (filterCity) {
-        params.currentCity = filterCity.label;
+        // params.currentCity = filterCity.label;
+         params.currentCity = encodeURIComponent(filterCity.label);
       }
       if (filterState) {
-        params.state = filterState.label;
+        // params.state = filterState.label;
+          params.state = encodeURIComponent(filterState.label);
       }
 
       if (appliedSkills.length > 0) {
