@@ -54,7 +54,7 @@ const AddDegree = () => {
         setDegrees(res.data.data || []);
         setTotalRecords(res.data?.pagination?.totalRecords || 0);
       } else {
-        toast.error(res?.message || "Failed to fetch degrees");
+        toast.error(res?.message || "Failed to fetch qualification!");
       }
     } catch (error) {
       toast.error("Something went wrong!");
@@ -83,7 +83,7 @@ const AddDegree = () => {
 
   const confirmDelete = async () => {
     if (!degreeToDelete || degreeToDelete.length === 0) {
-      toast.error("No degrees selected for deletion.");
+      toast.error("No Qualification selected for deletion.");
       return;
     }
 
@@ -92,10 +92,10 @@ const AddDegree = () => {
     try {
       await deleteDegree({ _id: degreeToDelete._id });
 
-      toast.success("Selected degrees deleted successfully");
+      toast.success("Selected qualification deleted successfully");
       fetchDegrees();
     } catch (error) {
-      toast.error("Failed to delete one or more degrees.");
+      toast.error("Failed to delete one or more qualification.");
       console.error(error);
     } finally {
       setLoader(false);
@@ -206,9 +206,9 @@ const AddDegree = () => {
     },
     validationSchema: Yup.object({
       degreeName: Yup.string()
-        .min(1, "Skill Name must be at least 1.")
-        .max(50, "Skill name must be between 1 to 50 characters.")
-        .required("Degree name is required"),
+        .min(1, "Qualification Name must be at least 1.")
+        .max(50, "Qualification name must be between 1 to 50 characters.")
+        .required("Qualification name is required"),
     }),
 
     onSubmit: (values) => {
@@ -227,7 +227,9 @@ const AddDegree = () => {
           if (res?.success) {
             toast.success(
               res?.message ||
-                `Degree ${editingDegree ? "updated" : "added"} successfully`
+                `Qualification  ${
+                  editingDegree ? "updated" : "added"
+                } successfully`
             );
 
             setEditingDegree(null);
@@ -242,7 +244,8 @@ const AddDegree = () => {
           }
         })
         .catch((error: any) => {
-          toast.error("Something went wrong!");
+          toast.error(error);
+          // toast.error("Something went wrong!");
           console.error(error);
         })
         .finally(() => {
