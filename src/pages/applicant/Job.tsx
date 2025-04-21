@@ -190,16 +190,21 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
       console.log("selected", SelectedOptionRole);
 
       // const newRole = SelectedOptionRole.value;
-      const newRole = SelectedOptionRole.label;
-      console.log("selected role label", newRole);
+      // const newRole = SelectedOptionRole.label;
 
-      validation.setFieldValue("appliedRole", newRole);
+    const newRoleId = SelectedOptionRole.value;
+    const newRoleLabel = SelectedOptionRole.label;
+
+      // console.log("selected role label", newRole);
+
+      // validation.setFieldValue("appliedRole", newRole);
+ validation.setFieldValue("appliedRole", newRoleId);
 
       try {
         const response = await authServices.get(
           `/appliedRole/viewSkillsByAppliedRole`,
           {
-            params: { appliedRole: newRole },
+            params: { appliedRole: newRoleLabel },
           }
         );
         console.log("viewSkillsByAppliedRole response", response);
@@ -247,11 +252,19 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
         setRoleOptions(roles);
         console.log("roles", roles);
         if (initialValues.appliedRole) {
-          const selected = roles.find(
-            (role: { label: any; }) => role.label === initialValues.appliedRole
+          // const selected = roles.find(
+          //   (role: { label: any; }) => role.label === initialValues.appliedRole
+          // );
+          const role = roles.find(
+            (r: { label: string }) => r.label === initialValues.appliedRole
           );
-          if (selected) {
-            handleRoleChange(selected); // trigger skill loading
+          // if (selected) {
+          //   handleRoleChange(selected); // trigger skill loading
+          // }
+          if (role) {
+            // Set appliedRole to the ID (value)
+            validation.setFieldValue("appliedRole", role.value);
+            handleRoleChange(role); // Load skills for initial role
           }
         }
       } catch (error) {
@@ -921,7 +934,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                   validation.values.appliedRole !== "Other" &&
                   validation.values.appliedRole !== "Na" && (
                     <div className="mb-4 ">
-                      <h5>Skills for {validation.values.appliedRole}:</h5>
+                      {/* <h5>Skills for {validation.values.appliedRole}:</h5> */}
                       <div className="flex-wrap space-x-2 d-flex ">
                         {roleSkills.map((matchedSkillLabels: string) => (
                           <Col
