@@ -720,7 +720,7 @@ function ImportApplicant() {
         throw new Error(response?.message || "Import failed");
       }
     } catch (error: any) {
-      console.error("Import error:", error);
+      // console.error("Import error:", error);
 
       if (error.response?.data) {
         const errorMessage =
@@ -927,7 +927,7 @@ function ImportApplicant() {
       } catch {
         // Not JSON = valid CSV
         const blob = new Blob([text], { type: "text/csv" });
-        saveAs(blob, "Imported_Applicants.csv");
+        saveAs(blob, "Export_Applicants_data.csv");
         setShowExportModal(false);
         setSelectedApplicants([]);
         toast.success("File downloaded successfully!");
@@ -950,7 +950,6 @@ function ImportApplicant() {
         toast.error("Unexpected JSON response during export.");
       }
     } catch (error) {
-      console.log("errors3", error);
       setShowExportModal(false);
       setSelectedApplicants([]);
        setExportOption("");
