@@ -798,6 +798,7 @@ function ImportApplicant() {
       });
 
       if (response?.success) {
+      console.log("succss", response?.message);
         toast.success(response?.message || "File imported successfully!");
       } else if (!response?.success && response.statusCode === 400) {
         // setShowPopupModal(true);
@@ -927,7 +928,7 @@ function ImportApplicant() {
       } catch {
         // Not JSON = valid CSV
         const blob = new Blob([text], { type: "text/csv" });
-        saveAs(blob, "Imported_Applicants.csv");
+        saveAs(blob, "Export_Applicants_data.csv");
         setShowExportModal(false);
         setSelectedApplicants([]);
         toast.success("File downloaded successfully!");
