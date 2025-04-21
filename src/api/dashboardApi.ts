@@ -1,4 +1,4 @@
-import { TOTAL_APPLICANTS,RECENT_APPLICANTS,APPLICANTS_DETAILS, REPORT_ON_SKILL } from "./apiRoutes";
+import { TOTAL_APPLICANTS,RECENT_APPLICANTS,APPLICANTS_DETAILS, REPORT_ON_SKILL, SKILL_EXPORT } from "./apiRoutes";
 import { authServices } from "./apiServices";
 
 export const getTotalApplicants = async () => {
@@ -23,3 +23,20 @@ export const getChartDetails = async (ids: string[]) => {
   return response?.data;
 };
 
+
+export const ExportSkilledApplicant = async (
+  queryParams: {  skills: string },
+) => {
+  const {  skills } = queryParams;
+  const response = await authServices.post(
+    `${SKILL_EXPORT}?skills=${encodeURIComponent(skills)}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      responseType: "blob",
+      timeout: 300000,
+    }
+  );
+  return response.data;
+};

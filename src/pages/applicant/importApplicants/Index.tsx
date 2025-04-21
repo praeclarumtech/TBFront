@@ -139,7 +139,7 @@ function ImportApplicant() {
   });
   const [cities, setCities] = useState<City[]>([]);
   const [states, setStates] = useState<City[]>([]);
-  
+
   const [skillOptions, setSkillOptions] = useState<any[]>([]);
   const [importLoader, setImportLoader] = useState(false);
   const [importProgress, setImportProgress] = useState(0);
@@ -204,6 +204,8 @@ function ImportApplicant() {
         currentCompanyDesignation?: string;
         interviewStage?: string;
         gender?: string;
+        applicantName?: string;
+        searchSkills?: string;
         searchS?: string;
       } = {
         page: pagination.pageIndex + 1,
@@ -241,15 +243,14 @@ function ImportApplicant() {
       // if (filterState) {
       //   params.state = filterState.label;
       // }
- if (filterCity) {
+      if (filterCity) {
         // params.currentCity = filterCity.label;
-         params.currentCity = encodeURIComponent(filterCity.label);
+        params.currentCity = encodeURIComponent(filterCity.label);
       }
       if (filterState) {
         // params.state = filterState.label;
-          params.state = encodeURIComponent(filterState.label);
+        params.state = encodeURIComponent(filterState.label);
       }
-
 
       if (appliedSkills.length > 0) {
         params.appliedSkills = appliedSkills
@@ -276,12 +277,12 @@ function ImportApplicant() {
       }
       const searchValue = searchAll?.trim();
       if (searchValue) {
-        params.searchS = searchValue;
+        params.applicantName = searchValue;
         params.appliedSkills = searchValue;
       }
 
       const res = await listOfImportApplicants(params);
-      setApplicant(res?.data?.item || []);
+      setApplicant(res?.data?.item || res?.data?.results || []);
       setTotalRecords(res?.data?.totalRecords || 0);
     } catch (error) {
       errorHandle(error);
@@ -355,6 +356,7 @@ function ImportApplicant() {
     filterRating,
     filterEngRating,
     filterWorkPreference,
+    searchAll,
   ]);
 
   const handleExperienceChange = (e: React.ChangeEvent<any>) => {
@@ -386,103 +388,100 @@ function ImportApplicant() {
   //   setFilterCity(selectedOption);
   // };
 
-
   // const handleStateChange = (selectedOption: SelectedOption) => {
   //   setFilterState(selectedOption);
   // };
 
   useEffect(() => {
-      const getCities = async () => {
-        try {
-          const cityData = await fetchCities();
-  
-          if (cityData?.data) {
-            setCities(
-              cityData.data.map((city: { city_name: string; _id: string }) => ({
-                label: city.city_name,
-                value: city._id,
-              }))
-            );
-          }
-        } catch (error: any) {
-          const details = error?.response?.data?.details;
-          if (Array.isArray(details)) {
-            details.forEach((msg: string) => {
-              toast.error(msg, {
-                closeOnClick: true,
-                autoClose: 5000,
-              });
-            });
-          } else {
-            toast.error("Failed to fetch cities.. Please try again.", {
+    const getCities = async () => {
+      try {
+        const cityData = await fetchCities();
+
+        if (cityData?.data) {
+          setCities(
+            cityData.data.map((city: { city_name: string; _id: string }) => ({
+              label: city.city_name,
+              value: city._id,
+            }))
+          );
+        }
+      } catch (error: any) {
+        const details = error?.response?.data?.details;
+        if (Array.isArray(details)) {
+          details.forEach((msg: string) => {
+            toast.error(msg, {
               closeOnClick: true,
               autoClose: 5000,
             });
-          }
+          });
+        } else {
+          toast.error("Failed to fetch cities.. Please try again.", {
+            closeOnClick: true,
+            autoClose: 5000,
+          });
         }
-      };
-  
-      getCities();
-    }, []);
+      }
+    };
 
+    getCities();
+  }, []);
 
-      useEffect(() => {
-         const getStates = async () => {
-           try {
-                 setLoading(true);
-                 const stateData = await fetchState();
-                 if (stateData?.data) {
-                   setStates(
-                     stateData.data.map(
-                       (state: {
-                         state_name: string;
-                         _id: string;
-                         country_id: string;
-                       }) => ({
-                         label: state.state_name,
-                         value: state._id,
-                         country_id: state.country_id,
-                       })
-                     )
-                   );
-                 }
-           } catch (error: any) {
-             const details = error?.response?.data?.details;
-             if (Array.isArray(details)) {
-               details.forEach((msg: string) => {
-                 toast.error(msg, {
-                   closeOnClick: true,
-                   autoClose: 5000,
-                 });
-               });
-             } else {
-               toast.error("Failed to fetch cities.. Please try again.", {
-                 closeOnClick: true,
-                 autoClose: 5000,
-               });
-             }
-           }
-         };
-    
-         getStates();
-       }, []);
-    
+  useEffect(() => {
+    const getStates = async () => {
+      try {
+        setLoading(true);
+        const stateData = await fetchState();
+        if (stateData?.data) {
+          setStates(
+            stateData.data.map(
+              (state: {
+                state_name: string;
+                _id: string;
+                country_id: string;
+              }) => ({
+                label: state.state_name,
+                value: state._id,
+                country_id: state.country_id,
+              })
+            )
+          );
+        }
+      } catch (error: any) {
+        const details = error?.response?.data?.details;
+        if (Array.isArray(details)) {
+          details.forEach((msg: string) => {
+            toast.error(msg, {
+              closeOnClick: true,
+              autoClose: 5000,
+            });
+          });
+        } else {
+          toast.error("Failed to fetch cities.. Please try again.", {
+            closeOnClick: true,
+            autoClose: 5000,
+          });
+        }
+      }
+    };
 
+    getStates();
+  }, []);
 
- const handleStateChange = (selectedOption: SelectedOption) => {
+  const handleStateChange = (selectedOption: SelectedOption) => {
     setFilterState(selectedOption);
 
-     if (selectedOption) {
+    if (selectedOption) {
       const selectedStateId = selectedOption.value;
-      const selectedState = states.find((state) => state.value === selectedStateId);
+      const selectedState = states.find(
+        (state) => state.value === selectedStateId
+      );
 
       if (selectedState) {
         // console.log("Selected city name:", selectedCity.label);
       }
-
-    };
+    }
   };
- const handleCityChange = (selectedOption: SelectedOption) => {
+  const handleCityChange = (selectedOption: SelectedOption) => {
     setFilterCity(selectedOption);
 
     if (selectedOption) {
@@ -899,7 +898,6 @@ function ImportApplicant() {
 
       const response = await ExportImportedApplicant(queryParams, payload);
 
-    
       // Read the Blob content
       const text = await response.text();
       let parsed;
@@ -907,23 +905,22 @@ function ImportApplicant() {
       try {
         // Try to parse it as JSON
         parsed = JSON.parse(text);
-        
+
         if (parsed?.statuscode === 409 || parsed?.success === false) {
-        setShowExportModal(false);
-        setSelectedApplicants([]);
-         setExportOption("");
-       
-        //   toast.error(parsed.message || "No data available to export");
+          setShowExportModal(false);
+          setSelectedApplicants([]);
+          setExportOption("");
 
-       const messages = parsed?.message;
-       if (messages && Array.isArray(messages)) {
-         messages.forEach((msg) => {
-           toast.error(msg);
-         });
-       }
+          //   toast.error(parsed.message || "No data available to export");
+
+          const messages = parsed?.message;
+          if (messages && Array.isArray(messages)) {
+            messages.forEach((msg) => {
+              toast.error(msg);
+            });
+          }
           // return;
-      }
-
+        }
       } catch {
         // Not JSON = valid CSV
         const blob = new Blob([text], { type: "text/csv" });
@@ -938,27 +935,25 @@ function ImportApplicant() {
       if (parsed?.statusCode === 404 || parsed?.success === false) {
         setShowExportModal(false);
         setSelectedApplicants([]);
-         setExportOption("");
+        setExportOption("");
         toast.error(parsed.message || "No data available to export");
       } else if (parsed?.statuscode === 500 || parsed?.success === false) {
         setShowExportModal(false);
         setSelectedApplicants([]);
         setExportOption("");
         toast.error(parsed.message || "No data available to export");
-      }
-      else {
+      } else {
         toast.error("Unexpected JSON response during export.");
       }
     } catch (error) {
       setShowExportModal(false);
       setSelectedApplicants([]);
-       setExportOption("");
+      setExportOption("");
       errorHandle(error);
     } finally {
       fetchApplicants();
     }
   };
-
 
   const handleExportModalShow = () => {
     setShowExportModal(true);
@@ -1323,7 +1318,9 @@ function ImportApplicant() {
                   cell.row.original._id
                 )
                   .then(() => {
-                    toast.success("Applicant status updated successfully!");
+                    toast.success(
+                      "Applicant Interview Stage updated successfully!"
+                    );
                   })
                   .catch((error: any) => {
                     errorHandle(error);
@@ -1498,7 +1495,7 @@ function ImportApplicant() {
 
   const ModalTitle = () => (
     <div className="flex items-center">
-      <i className="fas fa-file-export mr-2" style={{ fontSize: 24 }}></i>
+      <i className="mr-2 fas fa-file-export" style={{ fontSize: 24 }}></i>
       <span style={{ fontSize: 24, fontWeight: 600 }}>Export Applicants</span>
     </div>
   );
@@ -1533,7 +1530,7 @@ function ImportApplicant() {
                 />
                 {exportableFields.length > 0 && exportOption === "" && (
                   <button
-                    className="btn btn-sm btn-outline-secondary mt-2"
+                    className="mt-2 btn btn-sm btn-outline-secondary"
                     onClick={() => setExportableFields([])}
                   >
                     Reset Column Selection
@@ -1561,7 +1558,7 @@ function ImportApplicant() {
                 ))}
                 {exportOption && exportableFields.length === 0 && (
                   <button
-                    className="btn btn-sm btn-outline-secondary mt-2"
+                    className="mt-2 btn btn-sm btn-outline-secondary"
                     onClick={() => setExportOption("")}
                   >
                     Reset Export Option
@@ -1659,7 +1656,7 @@ function ImportApplicant() {
                           </BaseButton>
 
                           <BaseButton
-                            className="me-1 text-lg border-0 btn bg-danger edit-list w-fit"
+                            className="text-lg border-0 me-1 btn bg-danger edit-list w-fit"
                             onClick={handleDeleteAll}
                           >
                             <i className="align-bottom ri-delete-bin-fill" />

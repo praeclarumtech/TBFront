@@ -18,18 +18,50 @@ export const sendEmail = async (data?: object) => {
   return response?.data;
 };
 
+// export const viewAllEmail = async (params: {
+//   page: number;
+//   pageSize: number;
+//   startDate?: string;
+//   endDate?: string;
+//   limit?: number;
+//   search?: string;
+//   appliedSkills?: string;
+//   email_To?: string;
+// }) => {
+  
+//   const response = await authServices.get(`${VIEW_ALL_EMAIL}`, { params });
+//   return response?.data;
+// };
+
+
+
 export const viewAllEmail = async (params: {
-  page: number;
-  pageSize: number;
+  page?: number;
+  pageSize?: number;
   startDate?: string;
   endDate?: string;
   limit?: number;
   search?: string;
   appliedSkills?: string;
+  email_to?: string;
+  name?: string
 }) => {
-  const response = await authServices.get(`${VIEW_ALL_EMAIL}`, { params });
+  let finalParams = { ...params };
+
+  if (params.email_to || params.appliedSkills || params.name) {
+    const {  limit, ...rest } = params;
+    finalParams = { ...rest };
+  }
+
+  const response = await authServices.get(`${VIEW_ALL_EMAIL}`, { params: finalParams });
+  console.log("res",response)
   return response?.data;
 };
+
+
+
+
+
 
 export const deleteEmail = async (ids: string[]) => {
   const response = await authServices.delete(`${DELETE_EMAIL}`, {

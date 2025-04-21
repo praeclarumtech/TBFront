@@ -77,6 +77,7 @@ export const DELETE_DEGREE = "degree/delete";
 //Dashboard Module
 export const TOTAL_APPLICANTS = "/dashboard/applicant/count"
 export const RECENT_APPLICANTS = "/applicants/viewAllApplicant?appliedSkills="
+export const SKILL_EXPORT = "applicants/exportCsv";
 // export const APPLICANTS_DETAILS = "/reports/applicants/categoryWiseSkillCount?category="
 export const APPLICANTS_DETAILS = "/reports/applicants/technologyStatistics?category="
 export const REPORT_ON_SKILL = "reports/applicants/applicantSkillStatistics"

@@ -1,5 +1,9 @@
-
-import {  DELETE_IMPORTED_APPLICANT, STATE, UPDATE_IMPORTED_APPLICANT, UPDATE_IMPORTED_APPLICANTS_STATUS } from './apiRoutes';
+import {
+  DELETE_IMPORTED_APPLICANT,
+  STATE,
+  UPDATE_IMPORTED_APPLICANT,
+  UPDATE_IMPORTED_APPLICANTS_STATUS,
+} from "./apiRoutes";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // import { toast } from "react-toastify";
 // import { errorHandle } from "utils/commonFunctions";
@@ -29,8 +33,9 @@ import {
 import { authServices } from "./apiServices";
 
 export const listOfApplicants = async (params: {
-  page: number;
-  pageSize: number;
+  page?: number;
+  pageSize?: number;
+  limit?: number;
   totalExperience?: string;
   city?: string;
   appliedSkills?: string;
@@ -48,16 +53,21 @@ export const listOfApplicants = async (params: {
   anyHandOnOffers?: string;
   rating?: string;
   workPreference?: string;
-  searchS?: string;
+  search?: string;
   appliedRole?: string;
+  applicantName?: string;
+  searchSkills?: string;
 }) => {
+  // If applicantName or searchSkills are present, remove pagination and limit parameters
+  if (params.applicantName || params.searchSkills) {
+    const { page, pageSize, limit, ...searchParams } = params;
+    params = { ...searchParams };
+  }
+
   const response = await authServices.get(`${LIST_APPLICANT}`, {
     params,
-    // paramsSerializer: (params) => {
-    //   return new URLSearchParams(params).toString().replace(/\+/g, "%20");
-    // },
   });
-  
+
   return response?.data;
 };
 
@@ -76,7 +86,6 @@ export const CheckExistingApplicant = async (params: {
     params,
   });
   return response?.data;
- 
 };
 
 export const updateApplicant = async (
@@ -91,7 +100,10 @@ export const updateImportedApplicant = async (
   data: object,
   id: string | undefined | null
 ) => {
-  const response = await authServices.put(`${UPDATE_IMPORTED_APPLICANT}/${id}`, data);
+  const response = await authServices.put(
+    `${UPDATE_IMPORTED_APPLICANT}/${id}`,
+    data
+  );
   return response?.data;
 };
 
@@ -100,7 +112,9 @@ export const getApplicantDetails = async (id: string | undefined | null) => {
   return response?.data;
 };
 
-export const getImportedApplicantDetails = async (id: string | undefined | null) => {
+export const getImportedApplicantDetails = async (
+  id: string | undefined | null
+) => {
   const response = await authServices.get(`${VIEW_IMPORTED_APPLICANT}/${id}`);
   return response?.data;
 };
@@ -110,8 +124,12 @@ export const deleteApplicant = async (_id: string | undefined | null) => {
   return response?.data;
 };
 
-export const deleteImportedApplicant = async (_id: string | undefined | null) => {
-  const response = await authServices.delete(`${DELETE_IMPORTED_APPLICANT}/${_id}`);
+export const deleteImportedApplicant = async (
+  _id: string | undefined | null
+) => {
+  const response = await authServices.delete(
+    `${DELETE_IMPORTED_APPLICANT}/${_id}`
+  );
   return response?.data;
 };
 
@@ -135,8 +153,11 @@ export const updateStage = async (
 
   return response?.data;
 };
-///
-export const updateImportedApplicantsStatus = async (data: { status: string }, id: string) => {
+
+export const updateImportedApplicantsStatus = async (
+  data: { status: string },
+  id: string
+) => {
   const response = await authServices.put(
     `${UPDATE_IMPORTED_APPLICANTS_STATUS}/${id}`,
     data
@@ -157,11 +178,6 @@ export const updateImportedApplicantsStage = async (
   return response?.data;
 };
 
-
-
-
-
-////
 export const filterApplicants = async () => {
   const response = await authServices.get(`${FILTER_APPLICANT}`);
   return response?.data;
@@ -182,24 +198,21 @@ export const importApplicant = async (
 ) => {
   const url = `${IMPORT_APPLICANT}`;
 
-  
-    const response = await authServices.post(url, formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-      params: config?.params,
-      ...config,
-      timeout: 300000,
-    });
+  const response = await authServices.post(url, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+    params: config?.params,
+    ...config,
+    timeout: 300000,
+  });
 
-    return response.data;
-  
+  return response.data;
 };
 
-
 export const ExportApplicant = async (
-  queryParams: {  source: string },
+  queryParams: { source: string },
   payload?: { ids: string[]; fields: string[]; main: boolean }
 ) => {
-  const {  source } = queryParams;
+  const { source } = queryParams;
   const response = await authServices.post(
     `${EXPORT_APPLICANT}?source=${encodeURIComponent(source)}`,
     payload,
@@ -227,7 +240,7 @@ export const ExportImportedApplicant = async (
       headers: {
         "Content-Type": "application/json",
       },
-      responseType: "blob", 
+      responseType: "blob",
       timeout: 300000,
     }
   );
@@ -252,8 +265,9 @@ export const resumeUpload = async (
 };
 
 export const listOfImportApplicants = async (params: {
-  page: number;
-  pageSize: number;
+  page?: number;
+  pageSize?: number;
+  limit?: number;
   totalExperience?: string;
   city?: string;
   appliedSkills?: string;
@@ -271,13 +285,21 @@ export const listOfImportApplicants = async (params: {
   anyHandOnOffers?: string;
   rating?: string;
   workPreference?: string;
+  search?: string;
+  appliedRole?: string;
+  applicantName?: string;
+  searchSkills?: string;
 }) => {
+  // If applicantName or searchSkills are present, remove pagination and limit parameters
+  if (params.applicantName || params.searchSkills) {
+    const { page, pageSize, limit, ...searchParams } = params;
+    params = { ...searchParams };
+  }
+
   const response = await authServices.get(`${IMPORT_APPLICANT_LIST}`, {
     params,
-    // paramsSerializer: (params) => {
-    //   return new URLSearchParams(params).toString().replace(/\+/g, "%20");
-    // },
   });
+
   return response?.data;
 };
 
@@ -304,14 +326,16 @@ export const deleteMultipleApplicant = async (
   return response?.data;
 };
 
-
 export const deleteImportedMultipleApplicant = async (
   ids: string[] | undefined | null
 ) => {
   if (!ids || ids.length === 0) return;
 
-  const response = await authServices.delete(DELETE_IMPORTED_MULTIPLE_APPLICANT, {
-    data: { ids }, // Send IDs inside request body
-  });
+  const response = await authServices.delete(
+    DELETE_IMPORTED_MULTIPLE_APPLICANT,
+    {
+      data: { ids }, // Send IDs inside request body
+    }
+  );
   return response?.data;
 };

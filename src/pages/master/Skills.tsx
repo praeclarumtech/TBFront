@@ -53,11 +53,23 @@ const AddSkill = () => {
   const fetchSkills = async () => {
     setIsLoading(true);
     try {
-      const res = await viewAllSkill({
+      const params: {
+        search?: string;
+        page?: number;
+        pageSize?: number;
+        limit?: number;
+      } = {
         page: pagination.pageIndex + 1,
         pageSize: pagination.pageSize,
         limit: 50,
-      });
+      };
+
+      const searchValue = searchAll?.trim();
+      if (searchValue) {
+        params.search = searchValue;
+      }
+
+      const res = await viewAllSkill(params);
 
       if (res?.success) {
         setSkills(res.data.data || []);
@@ -75,7 +87,7 @@ const AddSkill = () => {
 
   useEffect(() => {
     fetchSkills();
-  }, [pagination.pageIndex, pagination.pageSize]);
+  }, [pagination.pageIndex, pagination.pageSize, searchAll]);
 
   const handleEdit = (skill: any) => {
     setEditingSkill(skill);
@@ -368,6 +380,7 @@ const AddSkill = () => {
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchAll(event.target.value);
+    console.log("first", searchAll);
   };
 
   const closeDeleteModal = () => {

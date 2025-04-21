@@ -459,11 +459,18 @@ const UpdateSkill = () => {
     setSelectedSkills([]);
   };
 
-  const filteredRoleSkills = roleSkill.filter(
-    (skill) =>
-      skill.appliedRole.toLowerCase().includes(searchAll.toLowerCase()) ||
-      skill.skill.toLowerCase().includes(searchAll.toLowerCase())
-  );
+  const filteredRoleSkills = roleSkill.filter((skill) => {
+    const searchTerm = searchAll.toLowerCase();
+
+    const appliedRole = (skill.appliedRole || "").toLowerCase();
+    const skills = Array.isArray(skill.skill) ? skill.skill : [];
+
+    const matchesSkill = skills.some((s: any) =>
+      s.toLowerCase().includes(searchTerm)
+    );
+
+    return appliedRole.includes(searchTerm) || matchesSkill;
+  });
 
   const handleAppliedSkillsChange = (selectedOptions: SelectedOption1[]) => {
     validation.setFieldValue("addSkill", selectedOptions);
@@ -550,9 +557,15 @@ const UpdateSkill = () => {
                     onCloseClick={handleCloseClick}
                     setShowBaseModal={setShowBaseModal}
                     onSubmitClick={handleSubmit}
-                    modalTitle={editingSkill ? "Edit Role and Skills" : "Add Role and Skills"}
+                    modalTitle={
+                      editingSkill
+                        ? "Edit Role and Skills"
+                        : "Add Role and Skills"
+                    }
                     submitButtonText={
-                      editingSkill ? "Update Role and Skills " : "Add Role and Skills"
+                      editingSkill
+                        ? "Update Role and Skills "
+                        : "Add Role and Skills"
                     }
                     closeButtonText="Close"
                     size="lg"

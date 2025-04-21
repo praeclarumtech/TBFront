@@ -204,6 +204,8 @@ const EmailTable = () => {
         endDate?: string;
         search?: string;
         appliedSkills?: string;
+        email_to?: string;
+        name?: string;
       } = {
         page: pagination.pageIndex + 1,
         pageSize: pagination.pageSize,
@@ -216,9 +218,11 @@ const EmailTable = () => {
       }
       const searchValue = searchAll?.trim();
       if (searchValue) {
-        params.search = searchValue;
+        params.email_to = decodeURIComponent(searchValue);
         params.appliedSkills = searchValue;
+        params.name = searchValue;
       }
+      
 
       const response = await viewAllEmail(params);
 
@@ -243,7 +247,13 @@ const EmailTable = () => {
     delayedSearch();
 
     return () => delayedSearch.cancel();
-  }, [pagination.pageIndex, pagination.pageSize, startDate, endDate]); // Runs when `searchAll` changes
+  }, [
+    pagination.pageIndex,
+    pagination.pageSize,
+    startDate,
+    endDate,
+    searchAll,
+  ]); // Runs when `searchAll` changes
 
   const handleDelete = (id: string) => {
     setEmailToDelete([id]);
@@ -423,7 +433,6 @@ const EmailTable = () => {
           applicantId={selectedApplicantId}
         />
       )}
-   
 
       <div className="mt-3 mb-4">
         <div className="mb-3 card">
