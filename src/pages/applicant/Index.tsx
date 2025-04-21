@@ -793,7 +793,6 @@ const Applicant = () => {
           onChange={handleAppliedSkillsChange}
           options={skillOptions}
         />
-
         {loading && (
           <div style={{ marginTop: "10px" }}>
             <Spinner animation="border" size="sm" />
@@ -822,7 +821,6 @@ const Applicant = () => {
           handleChange={handleCityChange}
           value={filterCity}
         />
-
         <BaseSelect
           label="State"
           name="state"
@@ -850,7 +848,6 @@ const Applicant = () => {
           handleChange={handleStatusChange}
           value={filterStatus}
         />
-
         <BaseSelect
           label="Gender"
           name="gender"
@@ -860,7 +857,6 @@ const Applicant = () => {
           handleChange={handleGenderChange}
           value={filterGender}
         />
-
         <BaseSlider
           label="Expected Pkg(LPA)"
           name="expectedPkg"
@@ -883,7 +879,6 @@ const Applicant = () => {
           step={1}
           valueLabelDisplay="auto"
         />
-
         <BaseSelect
           label="Designation"
           name="designation"
@@ -893,7 +888,6 @@ const Applicant = () => {
           handleChange={handleDesignationChange}
           value={filterDesignation}
         />
-
         <BaseSlider
           label="Notice Period (in Days)"
           name="noticePeriod"
@@ -906,7 +900,6 @@ const Applicant = () => {
           valueLabelDisplay="auto"
           disabled={false}
         />
-
         <BaseSelect
           label="Work Preference"
           name="workPreference"
@@ -916,7 +909,6 @@ const Applicant = () => {
           handleChange={handleWorkPreferenceChange}
           value={filterWorkPreference}
         />
-
         <BaseSlider
           label="JavaScript Rating"
           name="rating"
@@ -928,7 +920,6 @@ const Applicant = () => {
           step={1}
           valueLabelDisplay="auto"
         />
-
         <BaseSlider
           label="Eng.Communication Rating"
           name="communication"
@@ -940,6 +931,17 @@ const Applicant = () => {
           step={1}
           valueLabelDisplay="auto"
         />
+           <MultiSelect
+          key="addedBy"
+          label="Added By"
+          name="addedBy"
+          className="select-border mb-3"
+          options={addedByOptions}
+          isMulti={true}
+          placeholder="Added By"
+          onChange={handleAppliedRoleChange}
+          value={addedBy}
+        />
         <BaseSelect
           label="Any Hand On Offers"
           name="anyHandOnOffers"
@@ -949,39 +951,35 @@ const Applicant = () => {
           handleChange={handleAnyHandOnOffersChange}
           value={filterAnyHandOnOffers}
         />
-
-        <BaseInput
-          label="Start Date"
-          name="startDate"
-          className="mb-1 select-border"
-          type="date"
-          placeholder={InputPlaceHolder("Start Date")}
-          handleChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            handleDateChange(e, true)
-          }
-          value={startDate || ""}
-        />
-        <BaseInput
-          label="End Date"
-          name="endDate"
-          type="date"
-          placeholder={InputPlaceHolder("End Date")}
-          handleChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            handleDateChange(e, false)
-          }
-          value={endDate || ""}
-        />
-        <MultiSelect
-          label="Added By"
-          name="addedBy"
-          className="select-border"
-          options={addedByOptions}
-          isMulti={true}
-          // placeholder={InputPlaceHolder("Added By")}
-          placeholder="Added By"
-          onChange={handleAppliedRoleChange}
-          value={addedBy}
-        />
+      
+        <Row className="mb-3">
+          <Col xs={6}>
+            <BaseInput
+              label="Start Date"
+              name="startDate"
+              className="mb-1 select-border"
+              type="date"
+              placeholder={InputPlaceHolder("Start Date")}
+              handleChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                handleDateChange(e, true)
+              }
+              value={startDate || ""}
+            />
+          </Col>
+          <Col xs={6}>
+            <BaseInput
+              label="End Date"
+              name="endDate"
+              type="date"
+              placeholder={InputPlaceHolder("End Date")}
+              handleChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                handleDateChange(e, false)
+              }
+              value={endDate || ""}
+            />
+          </Col>
+        </Row>
+       
       </List>
 
       <Divider />

@@ -153,7 +153,7 @@ export const personalApplicantSchema = Yup.object({
   // email: Yup.string().trim().email("Please enter a valid email address."),
   email: Yup.string()
     .email("Please enter a valid email address.")
-    // .required("Email is required")
+    .required("Email is required")
     .test(
       "valid-multiple-emails",
       "Emails must not exceed 100 characters.",

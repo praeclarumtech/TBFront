@@ -53,7 +53,7 @@ useEffect(() => {
   if (cities.length && states.length && countriesType.length) {
     setFormReady(true);
   }
-}, [cities, states]);
+}, [cities, states, countriesType]);
   
   useEffect(() => {
     const getCities = async () => {
@@ -258,6 +258,10 @@ useEffect(() => {
       return "Error while checking this field.";
     }
   };
+
+const dynamicFind1 = (options: any[], value: string) =>
+  options.find((option) => option.value === value || option.label === value);
+
 
   const handleCancel = () => {
     if (module === "import-applicant") {
@@ -543,14 +547,11 @@ useEffect(() => {
                         );
                       }}
                       handleBlur={validation.handleBlur}
-                      value={
-                        dynamicFind(states, validation.values.state) || ""
-                      }
+                      value={dynamicFind(states, validation.values.state) || ""}
                       touched={validation.touched.state}
                       error={validation.errors.state}
                       isRequired={true}
                     />
-                  
                   </Col>
 
                   {/* <Col xs={12} md={6} lg={3}>
@@ -582,8 +583,12 @@ useEffect(() => {
                         );
                       }}
                       handleBlur={validation.handleBlur}
+                      // value={
+                      //   dynamicFind(countriesType, validation.values.country) ||
+                      //   ""
+                      // }
                       value={
-                        dynamicFind(countriesType, validation.values.country) ||
+                        dynamicFind1(countriesType, validation.values.country) ||
                         ""
                       }
                       touched={validation.touched.country}
