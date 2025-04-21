@@ -1169,7 +1169,8 @@ function ImportApplicant() {
           handleChange={handleAnyHandOnOffersChange}
           value={filterAnyHandOnOffers}
         />
-
+<Row className="mb-3">
+          <Col xs={6}>
         <BaseInput
           label="Start Date"
           name="startDate"
@@ -1181,6 +1182,8 @@ function ImportApplicant() {
           }
           value={startDate || ""}
         />
+             </Col>
+          <Col xs={6}>
         <BaseInput
           label="End Date"
           name="endDate"
@@ -1191,6 +1194,8 @@ function ImportApplicant() {
           }
           value={endDate || ""}
         />
+        </Col>
+                </Row>
       </List>
 
       <Divider />

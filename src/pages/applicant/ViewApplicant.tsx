@@ -632,10 +632,13 @@ const ViewModal: React.FC<ViewModalProps> = ({
                 />
                 <DetailsRow
                   label="Last Follow-up"
-                  value={new Date(
+                  value={
                     formData.lastFollowUpDate
-                  ).toLocaleDateString()}
+                      ? new Date(formData.lastFollowUpDate).toLocaleDateString()
+                      : "-"
+                  }
                 />
+
                 <DetailsRow
                   label="
                   Comment"
