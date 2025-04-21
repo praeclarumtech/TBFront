@@ -649,7 +649,7 @@ const Applicant = () => {
       const payload = {
         ids: selectedApplicants,
         fields: selectedColumns,
-        main:true
+        // main:true
       };
       // console.log("payload function", payload.fields);
 

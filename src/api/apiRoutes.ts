@@ -34,6 +34,7 @@ export const IMPORT_RESUME = "applicants/upload-resume";
 export const IMPORT_APPLICANT_LIST = "applicants/viewResumeAndCsvApplicant";
 export const UPDATE_APPLICANT_MANY = "applicants/updateManyApplicant"
 export const UPDATE_IMPORTED_APPLICANTS_STATUS = "applicants/update/importApplicantstatus"
+export const APPLIED_ROLE_SKILLS = "/appliedRole/viewSkillsByAppliedRole"
  
 
 //Email module

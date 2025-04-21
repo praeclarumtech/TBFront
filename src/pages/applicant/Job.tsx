@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Row, Col, Container, Spinner } from "react-bootstrap";
 import { useFormik } from "formik";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import BaseButton from "components/BaseComponents/BaseButton";
 import { BaseSelect, MultiSelect } from "components/BaseComponents/BaseSelect";
 import { Form } from "react-router-dom";
@@ -9,7 +9,7 @@ import BaseInput from "components/BaseComponents/BaseInput";
 import {
   jobApplicantSchema,
   SelectedOption,
-  SelectedOptionRole,
+  // SelectedOptionRole,
 } from "interfaces/applicant.interface";
 import BaseTextarea from "components/BaseComponents/BaseTextArea";
 import {
@@ -20,6 +20,8 @@ import {
 import appConstants from "constants/constant";
 import moment from "moment";
 import { ViewAppliedSkills } from "api/skillsApi";
+import { authServices } from "api/apiServices";
+import { viewRoleSkill } from "api/roleApi";
 
 const {
   projectTitle,
@@ -29,22 +31,19 @@ const {
   anyHandOnOffers,
   workPreferenceType,
   // skillOptions,
-  technologyOptions,
+  // technologyOptions,
 } = appConstants;
 
+
 const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
-  document.title = Modules.CreateApplicantForm + " | " + projectTitle;
   document.title = Modules.CreateApplicantForm + " | " + projectTitle;
 
   const [skillOptions, setSkillOptions] = useState<any[]>([]);
   const [selectedMulti, setSelectedMulti] = useState<any>([]);
-  // const [selectedMultiRole, setSelectedMultiRole] = useState<any>([]);
-  // const [selectedRole, setSelectedRole] = useState<string>(
-  //   initialValues?.appliedRole || ""
-  // );
-
+  const [roleOptions, setRoleOptions] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  // const [meta, setTechnologyExperience] = useState<any>({});
+  const [roleSkills, setRoleSkills] = useState<string[]>([]);
+
 
   const formattedlastFollowUpDate = initialValues.lastFollowUpDate
     ? moment(initialValues.lastFollowUpDate).format("YYYY-MM-DD")
@@ -97,12 +96,25 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
       };
 
       onNext(updatedData);
+      console.log("submited data", updatedData);
       // console.log("job Data:", updatedData);
       // onNext(data);
 
       setLoading(false);
     },
   });
+
+  console.log("applied role", validation.values.appliedRole);
+  
+  const skillIdToLabelMap = useMemo(() => {
+    const map: Record<string, string> = {};
+    skillOptions.forEach((skill: any) => {
+      map[skill.value] = skill.label;
+    });
+    return map;
+  }, [skillOptions]);
+
+  console.log("skillIdToLabelMap:", skillIdToLabelMap);
 
   useEffect(() => {
     setLoading(true);
@@ -155,7 +167,6 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
   // const handleRoleChange = (SelectedOptionRole: SelectedOptionRole | null) => {
   //   if (SelectedOptionRole) {
   //     const newRole = SelectedOptionRole.value;
-  //     setSelectedRole(newRole);
   //     validation.setFieldValue("appliedRole", newRole);
 
   //     const roleTechnologies =
@@ -169,40 +180,87 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
   //     );
   //     validation.setFieldValue("meta", newMeta);
   //   } else {
-  //     setSelectedRole("");
   //     validation.setFieldValue("appliedRole", "");
   //     validation.setFieldValue("meta", {});
   //   }
   // };
 
-  const handleRoleChange = (SelectedOptionRole: SelectedOptionRole | null) => {
+  const handleRoleChange = async (SelectedOptionRole: any) => {
     if (SelectedOptionRole) {
-      const newRole = SelectedOptionRole.value;
+      console.log("selected", SelectedOptionRole);
+
+      // const newRole = SelectedOptionRole.value;
+      const newRole = SelectedOptionRole.label;
+      console.log("selected role label", newRole);
+
       validation.setFieldValue("appliedRole", newRole);
 
-      const roleTechnologies =
-        technologyOptions[newRole as keyof typeof technologyOptions] || [];
-      const newMeta = roleTechnologies.reduce(
-        (acc: Record<string, string>, tech: string) => {
-          acc[tech] = validation.values.meta[tech] || "";
-          return acc;
-        },
-        {}
-      );
-      validation.setFieldValue("meta", newMeta);
+      try {
+        const response = await authServices.get(
+          `/appliedRole/viewSkillsByAppliedRole`,
+          {
+            params: { appliedRole: newRole },
+          }
+        );
+        console.log("viewSkillsByAppliedRole response", response);
+        const skillIds = response?.data?.data?.[0]?.skill || [];
+        console.log("skills id", skillIds);
+        console.log("now using skills skillIds find skills labels ");
+
+        const matchedSkillLabels = skillIds
+          .map((id: string) => skillIdToLabelMap[id])
+          .filter(Boolean);
+
+        console.log("Matched Skill Labels:", matchedSkillLabels);
+        // setRoleSkills(skillIds);
+        setRoleSkills(matchedSkillLabels);
+        // Prepare default meta structure based on skillIds
+        const newMeta = matchedSkillLabels.reduce(
+          (acc: Record<string, string>, matchedSkillLabels: string | number) => {
+            acc[matchedSkillLabels] =
+              validation.values.meta?.[matchedSkillLabels] || "";
+            return acc;
+          },
+          {}
+        );
+        validation.setFieldValue("meta", newMeta);
+      } catch (err) {
+        console.error(err);
+      }
     } else {
       validation.setFieldValue("appliedRole", "");
       validation.setFieldValue("meta", {});
+      setRoleSkills([]);
     }
   };
 
-  // const handleTechnologyExperienceChange = (tech: string, value: string) => {
-  //   validation.setFieldValue(`meta.${tech}`, value);
-  // };
+  useEffect(() => {
+    const fetchRoles = async () => {
+      try {
+        const response = await viewRoleSkill();
+        const roles = response?.data?.data?.map((role: any) => ({
+          label: role.appliedRole,
+          value: role._id,
+          skills: role.skill,
+        }));
 
-  // const handleTechnologyExperienceChange = (tech: string, value: string) => {
-  //   validation.setFieldValue(`meta.${tech}`, value);
-  // };
+        setRoleOptions(roles);
+        console.log("roles", roles);
+        if (initialValues.appliedRole) {
+          const selected = roles.find(
+            (role: { label: any; }) => role.label === initialValues.appliedRole
+          );
+          if (selected) {
+            handleRoleChange(selected); // trigger skill loading
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching roles:", error);
+      }
+    };
+
+    fetchRoles();
+}, [initialValues]);
 
   return (
     <Fragment>
@@ -747,7 +805,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                 </Col>
 
                 <Col xs={12} sm={6} md={6} lg={4} className="mb-3">
-                  <BaseSelect
+                  {/* <BaseSelect
                     label="Applied Role"
                     name="appliedRole"
                     className="select-border"
@@ -764,117 +822,27 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     touched={validation.touched.appliedRole}
                     error={validation.errors.appliedRole}
                     isRequired={true}
+                  /> */}
+
+                  <BaseSelect
+                    label="Applied Role"
+                    name="appliedRole"
+                    className="select-border"
+                    options={roleOptions}
+                    placeholder={InputPlaceHolder("Applied Role")}
+                    handleChange={handleRoleChange}
+                    handleBlur={validation.appliedRole}
+                    value={
+                      dynamicFind(roleOptions, validation.values.appliedRole) ||
+                      ""
+                    }
+                    touched={validation.touched.appliedRole}
+                    error={validation.errors.appliedRole}
+                    isRequired={true}
                   />
                 </Col>
-                {/* {selectedRole &&
-                  selectedRole !== "Other" &&
-                  selectedRole !== "Na" && (
-                    <div className="mb-4 ">
-                      <h5>Technologies for {selectedRole}:</h5>
-                      <div className="flex-wrap space-x-2 d-flex ">
-                        {technologyOptions[
-                          selectedRole as keyof typeof technologyOptions
-                        ].map((tech: string) => (
-                          <Col
-                            xs={12}
-                            sm={2}
-                            md={2}
-                            lg={2}
-                            xl={2}
-                            className="mb-3"
-                            key={tech}
-                          >
-                            <BaseInput
-                                name={tech}
-                                type="text"
-                                className=""
-                                label={`${tech} Exp.(Yrs)`}
-                                placeholder={` ${tech}`}
-                                value={meta[tech] || ""}
-                                handleChange={(e) => {
-                                  handleTechnologyExperienceChange(
-                                    tech,
-                                    e.target.value
-                                  );
-                                  validation.setFieldValue(
-                                    tech,
-                                    e.target.value
-                                  );
-                                }}
-                              />
 
-                            <BaseInput
-                              name={tech}
-                              type="text"
-                              className=""
-                              label={`${tech} Exp.(Yrs)`}
-                              placeholder={`${tech}`}
-                              // value={meta[tech] || ""}
-                              value={validation.values.meta[tech] || ""}
-                              handleChange={(e) => {
-                                let value = e.target.value;
-
-                                value = value.replace(/[^0-9.]/g, "");
-
-                                const parts = value.split(".");
-
-                                if (parts.length > 2) {
-                                  value =
-                                    parts[0] + "." + parts.slice(1).join("");
-                                }
-
-                                if (parts[1]?.length > 2) {
-                                  value = parts[0] + "." + parts[1].slice(0, 2);
-                                }
-
-                                const numValue = parseFloat(value);
-                                if (
-                                  !isNaN(numValue) &&
-                                  numValue >= 0 &&
-                                  numValue <= 30
-                                ) {
-                                  validation.setFieldValue(tech, value);
-                                  handleTechnologyExperienceChange(tech, value);
-                                } else if (value === "" || value === ".") {
-                                  validation.setFieldValue(tech, value);
-                                  handleTechnologyExperienceChange(tech, value);
-                                } else {
-                                  // Don't update anything if the value is invalid
-                                  return;
-                                }
-                                validation.setFieldValue(`meta.${tech}`, value);
-                              }}
-                              handleBlur={(e) => {
-                                const value = e.target.value;
-
-                                if (value && !isNaN(parseFloat(value))) {
-                                  const numValue = parseFloat(value);
-                                  if (numValue >= 0 && numValue <= 30) {
-                                    validation.setFieldValue(
-                                      tech,
-                                      numValue.toFixed(2)
-                                    );
-                                  } else {
-                                    validation.setFieldValue(tech, "");
-                                  }
-                                } else {
-                                  validation.setFieldValue(tech, "");
-                                }
-
-                                validation.handleBlur(e);
-                              }}
-                              // value={validation.values[tech]}
-                              touched={validation.touched.meta?.[tech]}
-                              error={validation.errors.meta?.[tech]}
-                              passwordToggle={false}
-                            />
-                          </Col>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                */}
-                {validation.values.appliedRole &&
+                {/* {validation.values.appliedRole &&
                   validation.values.appliedRole !== "Other" &&
                   validation.values.appliedRole !== "Na" && (
                     <div className="mb-4 ">
@@ -942,6 +910,87 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                               }}
                               touched={validation.touched.meta?.[tech]}
                               error={validation.errors.meta?.[tech]}
+                            />
+                          </Col>
+                        ))}
+                      </div>
+                    </div>
+                  )} */}
+
+                {validation.values.appliedRole &&
+                  validation.values.appliedRole !== "Other" &&
+                  validation.values.appliedRole !== "Na" && (
+                    <div className="mb-4 ">
+                      <h5>Skills for {validation.values.appliedRole}:</h5>
+                      <div className="flex-wrap space-x-2 d-flex ">
+                        {roleSkills.map((matchedSkillLabels: string) => (
+                          <Col
+                            xs={12}
+                            sm={2}
+                            md={2}
+                            lg={2}
+                            xl={2}
+                            className="mb-3"
+                            key={matchedSkillLabels}
+                          >
+                            <BaseInput
+                              name={`meta.${matchedSkillLabels}`}
+                              type="text"
+                              label={`${matchedSkillLabels} Exp.(Yrs)`}
+                              placeholder="e.g. 1.5"
+                              value={
+                                validation.values.meta?.[matchedSkillLabels] ||
+                                ""
+                              }
+                              handleChange={(e) => {
+                                let value = e.target.value.replace(
+                                  /[^0-9.]/g,
+                                  ""
+                                );
+                                const parts = value.split(".");
+                                if (parts.length > 2)
+                                  value =
+                                    parts[0] + "." + parts.slice(1).join("");
+                                if (parts[1]?.length > 2)
+                                  value = parts[0] + "." + parts[1].slice(0, 2);
+                                const numValue = parseFloat(value);
+                                if (
+                                  !isNaN(numValue) &&
+                                  numValue >= 0 &&
+                                  numValue <= 30
+                                ) {
+                                  validation.setFieldValue(
+                                    `meta.${matchedSkillLabels}`,
+                                    value
+                                  );
+                                } else if (value === "" || value === ".") {
+                                  validation.setFieldValue(
+                                    `meta.${matchedSkillLabels}`,
+                                    value
+                                  );
+                                }
+                              }}
+                              handleBlur={(e) => {
+                                const value = e.target.value;
+                                if (value && !isNaN(parseFloat(value))) {
+                                  validation.setFieldValue(
+                                    `meta.${matchedSkillLabels}`,
+                                    parseFloat(value).toFixed(2)
+                                  );
+                                } else {
+                                  validation.setFieldValue(
+                                    `meta.${matchedSkillLabels}`,
+                                    ""
+                                  );
+                                }
+                                validation.handleBlur(e);
+                              }}
+                              touched={
+                                validation.touched.meta?.[matchedSkillLabels]
+                              }
+                              error={
+                                validation.errors.meta?.[matchedSkillLabels]
+                              }
                             />
                           </Col>
                         ))}
