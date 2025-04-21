@@ -720,7 +720,7 @@ function ImportApplicant() {
         throw new Error(response?.message || "Import failed");
       }
     } catch (error: any) {
-      console.error("Import error:", error);
+      // console.error("Import error:", error);
 
       if (error.response?.data) {
         const errorMessage =
@@ -798,7 +798,6 @@ function ImportApplicant() {
       });
 
       if (response?.success) {
-      console.log("succss", response?.message);
         toast.success(response?.message || "File imported successfully!");
       } else if (!response?.success && response.statusCode === 400) {
         // setShowPopupModal(true);
@@ -951,7 +950,6 @@ function ImportApplicant() {
         toast.error("Unexpected JSON response during export.");
       }
     } catch (error) {
-      console.log("errors3", error);
       setShowExportModal(false);
       setSelectedApplicants([]);
        setExportOption("");
