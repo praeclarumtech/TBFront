@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import TableContainer from "components/BaseComponents/TableContainer";
 import { Col, Row, Card } from "react-bootstrap";
-import { getRecentApplications } from "api/dashboardApi";
+import {
+  ExportSkilledApplicant,
+  getRecentApplications,
+} from "api/dashboardApi";
 import appConstants from "constants/constant";
 import { errorHandle, getSerialNumber } from "utils/commonFunctions";
 import Skeleton from "react-loading-skeleton";
-import { ExportApplicant } from "api/applicantApi";
 import { toast } from "react-toastify";
 import saveAs from "file-saver";
 import BaseButton from "components/BaseComponents/BaseButton";
@@ -39,11 +41,11 @@ const RecentApplicants = ({
     }
   };
 
-  const handleExportExcel = async (filtered: string[]) => {
+  const handleExportExcel = async (filtered: string) => {
     try {
       toast.info("Preparing file for download...");
       await new Promise((resolve) => setTimeout(resolve, 3500));
-    const response = await ExportApplicant({ source: filtered[0] });
+      const response = await ExportSkilledApplicant({ skills: filtered });
 
       if (!response) {
         toast.error("Failed to download file");
@@ -55,6 +57,7 @@ const RecentApplicants = ({
       saveAs(blob, `${filtered}-applicants.csv`);
 
       toast.success("File downloaded successfully!");
+      
     } catch (error) {
       // console.error("Export error:", error);
       errorHandle(error);
@@ -114,13 +117,13 @@ const RecentApplicants = ({
             </h4>
 
             {selectedTechnology && (
-              <div className="d-flex justify-end gap-2">
+              <div className="justify-end gap-2 d-flex">
                 <BaseButton color="primary" onClick={onResetFilter}>
                   Reset Filter
                 </BaseButton>
                 <BaseButton
                   color="success"
-                  onClick={() => handleExportExcel([selectedTechnology])}
+                  onClick={() => handleExportExcel(selectedTechnology)}
                 >
                   <i className="ri-upload-2-line me-1" />
                   Export

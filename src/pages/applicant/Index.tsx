@@ -179,7 +179,7 @@ const Applicant = () => {
         currentPkg?: string;
         applicantName?: string;
         searchSkills?: string;
-        searchS?: string;
+        search?: string;
         addedBy?: string;
         // name?: string;
       } = {
@@ -217,11 +217,11 @@ const Applicant = () => {
       }
       if (filterCity) {
         // params.currentCity = filterCity.label;
-         params.currentCity = encodeURIComponent(filterCity.label);
+        params.currentCity = encodeURIComponent(filterCity.label);
       }
       if (filterState) {
         // params.state = filterState.label;
-          params.state = encodeURIComponent(filterState.label);
+        params.state = encodeURIComponent(filterState.label);
       }
 
       if (appliedSkills.length > 0) {
@@ -254,12 +254,12 @@ const Applicant = () => {
       }
       const searchValue = searchAll?.trim();
       if (searchValue) {
-        params.searchS = searchValue;
+        params.applicantName = searchValue;
         params.appliedSkills = searchValue;
       }
 
       const res = await listOfApplicants(params);
-      setApplicant(res?.data?.item || []);
+      setApplicant(res?.data?.item || res?.data?.results || []);
       setTotalRecords(res?.data?.totalRecords || 0);
     } catch (error: any) {
       const details = error?.response?.data?.details;
@@ -311,6 +311,7 @@ const Applicant = () => {
     filterEngRating,
     filterWorkPreference,
     addedBy,
+    searchAll,
   ]);
 
   useEffect(() => {
@@ -381,15 +382,16 @@ const Applicant = () => {
   const handleStateChange = (selectedOption: SelectedOption) => {
     setFilterState(selectedOption);
 
-     if (selectedOption) {
+    if (selectedOption) {
       const selectedStateId = selectedOption.value;
-      const selectedState = states.find((state) => state.value === selectedStateId);
+      const selectedState = states.find(
+        (state) => state.value === selectedStateId
+      );
 
       if (selectedState) {
         // console.log("Selected city name:", selectedCity.label);
       }
-
-    };
+    }
   };
 
   const handleGenderChange = (selectedOption: SelectedOption) => {
@@ -504,49 +506,47 @@ const Applicant = () => {
     }
   };
 
-   useEffect(() => {
-     const getStates = async () => {
-       try {
-             setLoading(true);
-             const stateData = await fetchState();
-             if (stateData?.data) {
-               setStates(
-                 stateData.data.map(
-                   (state: {
-                     state_name: string;
-                     _id: string;
-                     country_id: string;
-                   }) => ({
-                     label: state.state_name,
-                     value: state._id,
-                     country_id: state.country_id,
-                   })
-                 )
-               );
-             }
-       } catch (error: any) {
-         const details = error?.response?.data?.details;
-         if (Array.isArray(details)) {
-           details.forEach((msg: string) => {
-             toast.error(msg, {
-               closeOnClick: true,
-               autoClose: 5000,
-             });
-           });
-         } else {
-           toast.error("Failed to fetch cities.. Please try again.", {
-             closeOnClick: true,
-             autoClose: 5000,
-           });
-         }
-       }
-     };
+  useEffect(() => {
+    const getStates = async () => {
+      try {
+        setLoading(true);
+        const stateData = await fetchState();
+        if (stateData?.data) {
+          setStates(
+            stateData.data.map(
+              (state: {
+                state_name: string;
+                _id: string;
+                country_id: string;
+              }) => ({
+                label: state.state_name,
+                value: state._id,
+                country_id: state.country_id,
+              })
+            )
+          );
+        }
+      } catch (error: any) {
+        const details = error?.response?.data?.details;
+        if (Array.isArray(details)) {
+          details.forEach((msg: string) => {
+            toast.error(msg, {
+              closeOnClick: true,
+              autoClose: 5000,
+            });
+          });
+        } else {
+          toast.error("Failed to fetch cities.. Please try again.", {
+            closeOnClick: true,
+            autoClose: 5000,
+          });
+        }
+      }
+    };
 
-     getStates();
-   }, []);
+    getStates();
+  }, []);
 
-
-  
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
       setSelectedApplicants(applicant.map((app) => app._id));
@@ -650,7 +650,7 @@ const Applicant = () => {
       const payload = {
         ids: selectedApplicants,
         fields: selectedColumns,
-        main:true
+        main: true,
       };
       // console.log("payload function", payload.fields);
 
@@ -662,23 +662,23 @@ const Applicant = () => {
 
       const response = await ExportApplicant(queryParams, payload);
 
-  //     if (!response) {
-  //       toast.error("Failed to download file");
-  //       return;
-  //     }
+      //     if (!response) {
+      //       toast.error("Failed to download file");
+      //       return;
+      //     }
 
-  //     const blob = new Blob([response], { type: "text/csv" });
-  //     saveAs(blob, "Imported_Applicants.csv");
-  //     setShowExportModal(false);
-  //     setSelectedApplicants([]);
-  //     toast.success("File downloaded successfully!");
-  //   } catch (error) {
-  //     // toast.error(error);
-  //     errorHandle(error);
-  //   } finally {
-  //     fetchApplicants();
-  //   }
-  // };
+      //     const blob = new Blob([response], { type: "text/csv" });
+      //     saveAs(blob, "Imported_Applicants.csv");
+      //     setShowExportModal(false);
+      //     setSelectedApplicants([]);
+      //     toast.success("File downloaded successfully!");
+      //   } catch (error) {
+      //     // toast.error(error);
+      //     errorHandle(error);
+      //   } finally {
+      //     fetchApplicants();
+      //   }
+      // };
 
   // Read the Blob content
         const text = await response.text();
@@ -935,7 +935,7 @@ const Applicant = () => {
           key="addedBy"
           label="Added By"
           name="addedBy"
-          className="select-border mb-3"
+          className="mb-3 select-border"
           options={addedByOptions}
           isMulti={true}
           placeholder="Added By"
@@ -1105,7 +1105,9 @@ const Applicant = () => {
                   cell.row.original._id
                 )
                   .then(() => {
-                    toast.success("Applicant status updated successfully!");
+                    toast.success(
+                      "Applicant Interview Stage updated successfully!"
+                    );
                   })
                   .catch((error: any) => {
                     errorHandle(error);
@@ -1246,7 +1248,7 @@ const Applicant = () => {
   const isMobile = window.innerWidth <= 767;
   const ModalTitle = () => (
     <div className="flex items-center">
-      <i className="fas fa-file-export mr-2" style={{ fontSize: 24 }}></i>
+      <i className="mr-2 fas fa-file-export" style={{ fontSize: 24 }}></i>
       <span style={{ fontSize: 24, fontWeight: 600 }}>Export Applicants</span>
     </div>
   );
@@ -1284,7 +1286,7 @@ const Applicant = () => {
                 />
                 {exportableFields.length > 0 && exportOption === "" && (
                   <button
-                    className="btn btn-sm btn-outline-secondary mt-2"
+                    className="mt-2 btn btn-sm btn-outline-secondary"
                     onClick={() => setExportableFields([])}
                   >
                     Reset Column Selection
@@ -1312,7 +1314,7 @@ const Applicant = () => {
                 ))}
                 {exportOption && exportableFields.length === 0 && (
                   <button
-                    className="btn btn-sm btn-outline-secondary mt-2"
+                    className="mt-2 btn btn-sm btn-outline-secondary"
                     onClick={() => setExportOption("")}
                   >
                     Reset Export Option

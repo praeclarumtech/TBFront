@@ -44,7 +44,7 @@ const EmailForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const initialEmail = location.state?.email_to || "";
-  // const fromPage = location.state?.fromPage || "/email";
+  const fromPage = location.state?.fromPage || "/email";
   // const initialName = location.state?.name || "";
 
   const [templateTypes, setTemplateTypes] = useState<SelectedOption[]>([]);
@@ -151,7 +151,6 @@ const EmailForm = () => {
     validateOnChange: true,
     validateOnMount: true,
     onSubmit: async (values) => {
-
       try {
         const rawHtml = values.description;
 
@@ -206,11 +205,24 @@ const EmailForm = () => {
         validation.resetForm();
         setTimeout(() => {
           // navigate("/email");
-           if (initialEmail) {
-             navigate("/applicants");
-           } else {
-             navigate("/email");
-           }
+          // if (initialEmail) {
+          //   navigate("/applicants");
+          // } else {
+          //   navigate("/email");
+          // }
+          switch (fromPage) {
+            case "/email":
+              navigate("/email");
+              break;
+            case "/applicants":
+              navigate("/applicants");
+              break;
+            case "/import-applicants":
+              navigate("/import-applicants");
+              break;
+            default:
+              navigate("/applicants"); // or any default fallback route
+          }
         }, 3000);
       } catch (error: any) {
         const details = error?.response?.data?.details;
@@ -235,6 +247,8 @@ const EmailForm = () => {
     validation.validateForm();
   }, []);
 
+  console.log("From PAge:-", fromPage);
+
   return (
     <>
       <div className="mt-6 mx-9">
@@ -248,17 +262,25 @@ const EmailForm = () => {
                 //   navigate(fromPage)
                 // }
                 onClick={() => {
-                  if (initialEmail) {
-                    navigate("/applicants");
-                  } else {
-                    navigate("/email");
+                  switch (fromPage) {
+                    case "/email":
+                      navigate("/email");
+                      break;
+                    case "/applicants":
+                      navigate("/applicants");
+                      break;
+                    case "/import-applicants":
+                      navigate("/import-applicants");
+                      break;
+                    default:
+                      navigate("/applicants"); // or any default fallback route
                   }
                 }}
               >
                 <i className="mr-2 fa fa-arrow-left"></i>
                 Back
               </button>
-              <div className="justify-center mt-1 mb-3 text-center   ">
+              <div className="justify-center mt-1 mb-3 text-center ">
                 <h4 className="text-base font-bold">Send Email to Applicant</h4>
               </div>
               <div className="flex items-center justify-center mb-6">
