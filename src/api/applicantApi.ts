@@ -53,9 +53,9 @@ export const listOfApplicants = async (params: {
 }) => {
   const response = await authServices.get(`${LIST_APPLICANT}`, {
     params,
-    paramsSerializer: (params) => {
-      return new URLSearchParams(params).toString().replace(/\+/g, "%20");
-    },
+    // paramsSerializer: (params) => {
+    //   return new URLSearchParams(params).toString().replace(/\+/g, "%20");
+    // },
   });
   
   return response?.data;
@@ -274,9 +274,9 @@ export const listOfImportApplicants = async (params: {
 }) => {
   const response = await authServices.get(`${IMPORT_APPLICANT_LIST}`, {
     params,
-    paramsSerializer: (params) => {
-      return new URLSearchParams(params).toString().replace(/\+/g, "%20");
-    },
+    // paramsSerializer: (params) => {
+    //   return new URLSearchParams(params).toString().replace(/\+/g, "%20");
+    // },
   });
   return response?.data;
 };
