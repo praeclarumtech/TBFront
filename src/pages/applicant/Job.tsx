@@ -34,7 +34,6 @@ const {
   // technologyOptions,
 } = appConstants;
 
-
 const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
   document.title = Modules.CreateApplicantForm + " | " + projectTitle;
 
@@ -43,7 +42,6 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
   const [roleOptions, setRoleOptions] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [roleSkills, setRoleSkills] = useState<string[]>([]);
-
 
   const formattedlastFollowUpDate = initialValues.lastFollowUpDate
     ? moment(initialValues.lastFollowUpDate).format("YYYY-MM-DD")
@@ -105,7 +103,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
   });
 
   console.log("applied role", validation.values.appliedRole);
-  
+
   const skillIdToLabelMap = useMemo(() => {
     const map: Record<string, string> = {};
     skillOptions.forEach((skill: any) => {
@@ -192,14 +190,14 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
       // const newRole = SelectedOptionRole.value;
       // const newRole = SelectedOptionRole.label;
 
-    const newRoleId = SelectedOptionRole.value;
-    const newRoleLabel = SelectedOptionRole.label;
+      // const newRoleId = SelectedOptionRole.value;
+      const newRoleLabel = SelectedOptionRole.label;
 
       // console.log("selected role label", newRole);
 
       // validation.setFieldValue("appliedRole", newRole);
- validation.setFieldValue("appliedRole", newRoleId);
-
+      // validation.setFieldValue("appliedRole", newRoleId);
+      validation.setFieldValue("appliedRole", newRoleLabel);
       try {
         const response = await authServices.get(
           `/appliedRole/viewSkillsByAppliedRole`,
@@ -221,7 +219,10 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
         setRoleSkills(matchedSkillLabels);
         // Prepare default meta structure based on skillIds
         const newMeta = matchedSkillLabels.reduce(
-          (acc: Record<string, string>, matchedSkillLabels: string | number) => {
+          (
+            acc: Record<string, string>,
+            matchedSkillLabels: string | number
+          ) => {
             acc[matchedSkillLabels] =
               validation.values.meta?.[matchedSkillLabels] || "";
             return acc;
@@ -229,6 +230,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
           {}
         );
         validation.setFieldValue("meta", newMeta);
+        if (!Object.keys(skillIdToLabelMap).length) return;
       } catch (err) {
         console.error(err);
       }
@@ -238,42 +240,46 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
       setRoleSkills([]);
     }
   };
-
+  const dynamicFind = (options: any[], value: string) => {
+    return options.find((option) => option.value === value); // Match by label (value)
+  };
   useEffect(() => {
     const fetchRoles = async () => {
       try {
         const response = await viewRoleSkill();
         const roles = response?.data?.data?.map((role: any) => ({
           label: role.appliedRole,
-          value: role._id,
+          // value: role._id,
+          value: role.appliedRole,
           skills: role.skill,
         }));
 
         setRoleOptions(roles);
         console.log("roles", roles);
-        if (initialValues.appliedRole) {
-          // const selected = roles.find(
-          //   (role: { label: any; }) => role.label === initialValues.appliedRole
-          // );
-          const role = roles.find(
-            (r: { label: string }) => r.label === initialValues.appliedRole
+        // if (initialValues.appliedRole) {
+        //   const selectedRole = roles.find(
+        //     (r: { value: string }) => r.value === initialValues.appliedRole
+        //   );
+        if (
+          initialValues.appliedRole &&
+          roleOptions.length > 0 &&
+          skillOptions.length > 0
+        ) {
+          const selectedRole = roleOptions.find(
+            (r) => r.value === initialValues.appliedRole
           );
-          // if (selected) {
-          //   handleRoleChange(selected); // trigger skill loading
-          // }
-          if (role) {
-            // Set appliedRole to the ID (value)
-            validation.setFieldValue("appliedRole", role.value);
-            handleRoleChange(role); // Load skills for initial role
+          if (selectedRole) {
+            handleRoleChange(selectedRole);
           }
         }
+     
       } catch (error) {
         console.error("Error fetching roles:", error);
       }
     };
 
     fetchRoles();
-}, [initialValues]);
+  }, [initialValues, roleOptions, skillOptions]);
 
   return (
     <Fragment>
@@ -845,10 +851,14 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     placeholder={InputPlaceHolder("Applied Role")}
                     handleChange={handleRoleChange}
                     handleBlur={validation.appliedRole}
-                    value={
-                      dynamicFind(roleOptions, validation.values.appliedRole) ||
-                      ""
-                    }
+                    // value={
+                    //   dynamicFind(roleOptions, validation.values.appliedRole) ||
+                    //   ""
+                    // }
+                    value={dynamicFind(
+                      roleOptions,
+                      validation.values.appliedRole
+                    )}
                     touched={validation.touched.appliedRole}
                     error={validation.errors.appliedRole}
                     isRequired={true}
