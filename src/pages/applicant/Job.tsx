@@ -1092,7 +1092,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     label="Comments"
                     name="comment"
                     placeholder={InputPlaceHolder(
-                      "Describe your experience and expectations"
+                      "Add Comments"
                     )}
                     handleChange={validation.handleChange}
                     handleBlur={validation.handleBlur}

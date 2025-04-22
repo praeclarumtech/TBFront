@@ -170,13 +170,13 @@ const Profile = () => {
     }
   };
 
-  const handleProfilePicRemove = () => {
-    setFormData((prevState) => ({
-      ...prevState,
-      profilePicture: "",
-    }));
-    setImagePreview("/images/avatar/avatar.png");
-  };
+  // const handleProfilePicRemove = () => {
+  //   setFormData((prevState) => ({
+  //     ...prevState,
+  //     profilePicture: "",
+  //   }));
+  //   setImagePreview("/images/avatar/avatar.png");
+  // };
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const date = e.target.value;
 
@@ -265,13 +265,13 @@ const Profile = () => {
                           >
                             Change
                           </button>
-                          <button
+                          {/* <button
                             type="button"
                             className="text-sm px-4 py-1.5 bg-red-100 text-red-600 rounded-md"
                             onClick={handleProfilePicRemove}
                           >
                             Remove
-                          </button>
+                          </button> */}
                         </div>
                       </div>
 
