@@ -668,18 +668,22 @@ function ImportApplicant() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files && e.target.files[0];
     const fileExtension = file?.name?.split(".").pop()?.toLowerCase() ?? "";
-    if (["csv", "xlsx", "xls"].includes(fileExtension ?? "")) {
+
+    if (["csv", "xlsx", "xls", ".xltx"].includes(fileExtension)) {
       handleFileImport(e);
-    } else if (["doc", "pdf", "docx"].includes(fileExtension ?? "")) {
+    } else if (["doc", "pdf", "docx"].includes(fileExtension)) {
       const newEvent = {
         target: {
           files: [file],
         },
       } as unknown as React.ChangeEvent<HTMLInputElement>;
-      handleResumeUpload(newEvent as React.ChangeEvent<HTMLInputElement>);
+      handleResumeUpload(newEvent);
+    } else {
+      toast.error(
+        "Unsupported file type. Please upload a CSV, Excel, Word, or PDF file."
+      );
     }
   };
-
   const handleResumeUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -765,7 +769,7 @@ function ImportApplicant() {
     if (!file) return;
 
     const fileExtension = file.name.split(".").pop()?.toLowerCase();
-    if (!["csv", "xlsx", "xls"].includes(fileExtension || "")) {
+    if (!["csv", "xlsx", "xls", ".xltx"].includes(fileExtension || "")) {
       toast.error("Please upload a valid CSV or Excel file");
       return;
     }
@@ -807,14 +811,9 @@ function ImportApplicant() {
           });
         }
         toast.error(response.message || "Import failed");
-      }
-
-      if (!response?.success && response.statusCode === 409) {
+      } else if (!response?.success && response.statusCode === 409) {
         setShowPopupModal(true);
-
         toast.error(response.message || "Import failed");
-      } else {
-        toast.error(response.message || "Unknown error occurred during import");
       }
     } catch (error: any) {
       toast.error(error?.message || "Failed to import file");
@@ -910,7 +909,6 @@ function ImportApplicant() {
           setShowExportModal(false);
           setSelectedApplicants([]);
           setExportOption("");
-
           //   toast.error(parsed.message || "No data available to export");
 
           const messages = parsed?.message;
@@ -1164,33 +1162,33 @@ function ImportApplicant() {
           handleChange={handleAnyHandOnOffersChange}
           value={filterAnyHandOnOffers}
         />
-<Row className="mb-3">
+        <Row className="mb-3">
           <Col xs={6}>
-        <BaseInput
-          label="Start Date"
-          name="startDate"
-          className="mb-2 select-border"
-          type="date"
-          placeholder={InputPlaceHolder("Start Date")}
-          handleChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            handleDateChange(e, true)
-          }
-          value={startDate || ""}
-        />
-             </Col>
+            <BaseInput
+              label="Start Date"
+              name="startDate"
+              className="mb-2 select-border"
+              type="date"
+              placeholder={InputPlaceHolder("Start Date")}
+              handleChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                handleDateChange(e, true)
+              }
+              value={startDate || ""}
+            />
+          </Col>
           <Col xs={6}>
-        <BaseInput
-          label="End Date"
-          name="endDate"
-          type="date"
-          placeholder={InputPlaceHolder("End Date")}
-          handleChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            handleDateChange(e, false)
-          }
-          value={endDate || ""}
-        />
-        </Col>
-                </Row>
+            <BaseInput
+              label="End Date"
+              name="endDate"
+              type="date"
+              placeholder={InputPlaceHolder("End Date")}
+              handleChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                handleDateChange(e, false)
+              }
+              value={endDate || ""}
+            />
+          </Col>
+        </Row>
       </List>
 
       <Divider />
@@ -1685,7 +1683,7 @@ function ImportApplicant() {
                       <input
                         type="file"
                         ref={fileInputRef}
-                        accept=".csv,.xlsx,.xls,.xls,doc,pdf"
+                        accept=".csv,.xlsx,.xls,.xls,.doc,.pdf,.xltx,.docx"
                         style={{ display: "none" }}
                         onChange={handleFileChange}
                         disabled={isImporting}

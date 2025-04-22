@@ -551,7 +551,19 @@ const AddSkill = () => {
                           className="bg-gray-100"
                           type="text"
                           placeholder={InputPlaceHolder("Skill to be Added")}
-                          handleChange={validation.handleChange}
+                          // handleChange={validation.handleChange}
+                          handleChange={(e) => {
+                            const value = e.target.value
+                              .split(" ")
+                              .map(
+                                (word) =>
+                                  word.charAt(0).toUpperCase() +
+                                  word.slice(1).toLowerCase()
+                              )
+                              .join(" ");
+
+                            validation.setFieldValue("addSkills", value);
+                          }}
                           handleBlur={validation.handleBlur}
                           value={validation.values.addSkills}
                           touched={!!validation.touched.addSkills}

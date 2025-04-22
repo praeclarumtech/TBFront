@@ -7,8 +7,8 @@ import {
   sendEmail,
   viewEmailTemplate,
 } from "api/emailApi";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
+// import "react-toastify/dist/ReactToastify.css";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import BaseInput from "components/BaseComponents/BaseInput";
@@ -425,7 +425,7 @@ const EmailForm = () => {
           </div>
         </div>
       </div>
-      <ToastContainer position="top-right" autoClose={5000} />
+      {/* <ToastContainer position="top-right" autoClose={5000} /> */}
     </>
   );
 };
