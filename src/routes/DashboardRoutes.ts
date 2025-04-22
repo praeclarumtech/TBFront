@@ -84,4 +84,10 @@ export const DashboardMenu: DashboardMenuProps[] = [
     icon: "plus",
     link: "/master/email-template",
   },
+  {
+    id: uuid(),
+    title: "Add Designation",
+    icon: "plus",
+    link: "/master/designation",
+  },
 ];

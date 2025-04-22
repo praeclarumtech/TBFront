@@ -18,6 +18,7 @@ import ChangePassword from "pages/auth/ChangePassword";
 import UpdateSkill from "pages/master/UpdateSkill";
 import FindAndReplace from "pages/master/FindAndReplace";
 import AddEmailTemplate from "pages/master/EmailTemplate";
+import AddDesignation from "pages/master/Designation";
 
 const routes = {
   ROOT: {
@@ -146,6 +147,11 @@ const routes = {
         title: "Email Template",
         path: "/master/email-template",
         element: AddEmailTemplate,
+      },
+      {
+        title: "Designation",
+        path: "/master/designation",
+        element: AddDesignation,
       },
     ],
   },

@@ -8,27 +8,22 @@ import { Tooltip as ReactTooltip } from "react-tooltip";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import BaseInput from "components/BaseComponents/BaseInput";
-import {
-  createDegree,
-  updateDegree,
-  viewAllDegree,
-  deleteDegree,
-} from "api/apiDegree";
 import { toast } from "react-toastify";
 import DeleteModal from "components/BaseComponents/DeleteModal";
 import BaseModal from "components/BaseComponents/BaseModal";
 import appConstants from "constants/constant";
 import { getSerialNumber, InputPlaceHolder } from "utils/commonFunctions";
 import Skeleton from "react-loading-skeleton";
+import { createDesignation, deleteDesignation, updateDesignation, viewAllDesignation } from "api/designation";
 
 const { projectTitle, Modules, handleResponse } = appConstants;
 
-const AddDegree = () => {
-  document.title = Modules.Degree + " | " + projectTitle;
-  const [degrees, setDegrees] = useState<any[]>([]);
-  const [editingDegree, setEditingDegree] = useState<any>(null);
+const AddDesignation = () => {
+  document.title = Modules.Designation + " | " + projectTitle;
+  const [designations, setDesignations] = useState<any[]>([]);
+  const [editingDesignation, setEditingDesignation] = useState<any>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [degreeToDelete, setDegreeToDelete] = useState<any>([]);
+  const [designationToDelete, setDesignationToDelete] = useState<any>([]);
   const [showBaseModal, setShowBaseModal] = useState(false);
   const [totalRecords, setTotalRecords] = useState(0);
   const [pagination, setPagination] = useState({
@@ -38,23 +33,23 @@ const AddDegree = () => {
   });
   const [loader, setLoader] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedDegree, setSelectedDegree] = useState<string[]>([]);
+  const [selectedDesignation, setSelectedDesignation] = useState<string[]>([]);
   const [searchAll, setSearchAll] = useState<string>("");
 
-  const fetchDegrees = async () => {
+  const fetchDesignations = async () => {
     setIsLoading(true);
     try {
-      const res = await viewAllDegree({
+      const res = await viewAllDesignation({
         page: pagination.pageIndex + 1,
         pageSize: pagination.pageSize,
         limit: 50,
       });
 
       if (res?.success) {
-        setDegrees(res.data.data || []);
+        setDesignations(res.data.data || []);
         setTotalRecords(res.data?.pagination?.totalRecords || 0);
       } else {
-        toast.error(res?.message || "Failed to fetch qualification!");
+        toast.error(res?.message || "Failed to fetch designations");
       }
     } catch (error) {
       toast.error("Something went wrong!");
@@ -65,65 +60,64 @@ const AddDegree = () => {
   };
 
   useEffect(() => {
-    fetchDegrees();
+    fetchDesignations();
   }, [pagination.pageIndex, pagination.pageSize]);
 
-  const handleEdit = (degree: any) => {
-    setEditingDegree(degree);
+  const handleEdit = (designation: any) => {
+    setEditingDesignation(designation);
     validation.setValues({
-      degreeName: degree.degree,
+      designationName: designation.designationName,
     });
     setShowBaseModal(true);
   };
 
-  const handleDelete = (degree: any) => {
-    setDegreeToDelete(degree);
+  const handleDelete = (designation: any) => {
+    setDesignationToDelete(designation);
     setShowDeleteModal(true);
   };
 
   const confirmDelete = async () => {
-    if (!degreeToDelete || degreeToDelete.length === 0) {
-      toast.error("No Qualification selected for deletion.");
+    if (!designationToDelete || designationToDelete.length === 0) {
+      toast.error("No designations selected for deletion.");
       return;
     }
 
     setLoader(true);
-
     try {
-      await deleteDegree({ _id: degreeToDelete._id });
+      await deleteDesignation(designationToDelete._id);
 
-      toast.success("Selected qualification deleted successfully");
-      fetchDegrees();
+      toast.success("Selected designations deleted successfully");
+      fetchDesignations();
     } catch (error) {
-      toast.error("Failed to delete one or more qualification.");
+      toast.error("Failed to delete one or more designations.");
       console.error(error);
     } finally {
       setLoader(false);
       setShowDeleteModal(false);
-      setDegreeToDelete([]);
+      setDesignationToDelete([]);
     }
   };
 
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      setSelectedDegree(degrees.map((degree) => degree._id)); // Select all
+      setSelectedDesignation(designations.map((designation) => designation._id)); // Select all
     } else {
-      setSelectedDegree([]); // Unselect all
+      setSelectedDesignation([]); // Unselect all
     }
   };
 
-  const handleSelectDegree = (degreeId: string) => {
-    setSelectedDegree(
+  const handleSelectDesignation = (designationId: string) => {
+    setSelectedDesignation(
       (prev) =>
-        prev.includes(degreeId)
-          ? prev.filter((id) => id !== degreeId) // Unselect if already selected
-          : [...prev, degreeId] // Add to selected list
+        prev.includes(designationId)
+          ? prev.filter((id) => id !== designationId) // Unselect if already selected
+          : [...prev, designationId] // Add to selected list
     );
   };
 
   const handleDeleteAll = () => {
-    if (selectedDegree.length > 1) {
-      setDegreeToDelete([...selectedDegree]);
+    if (selectedDesignation.length > 1) {
+      setDesignationToDelete([...selectedDesignation]);
       setShowDeleteModal(true);
     }
   };
@@ -136,7 +130,8 @@ const AddDegree = () => {
             type="checkbox"
             onChange={handleSelectAll}
             checked={
-              selectedDegree.length === degrees.length && degrees.length > 0
+              selectedDesignation.length === designations.length &&
+              designations.length > 0
             }
           />
         ),
@@ -144,8 +139,8 @@ const AddDegree = () => {
         cell: (info: any) => (
           <input
             type="checkbox"
-            checked={selectedDegree.includes(info.row.original._id)}
-            onChange={() => handleSelectDegree(info.row.original._id)}
+            checked={selectedDesignation.includes(info.row.original._id)}
+            onChange={() => handleSelectDesignation(info.row.original._id)}
           />
         ),
         enableColumnFilter: false,
@@ -156,8 +151,8 @@ const AddDegree = () => {
         enableColumnFilter: false,
       },
       {
-        header: "Qualification",
-        accessorKey: "degree",
+        header: "Designation",
+        accessorKey: "designation",
         enableColumnFilter: false,
       },
       {
@@ -196,56 +191,53 @@ const AddDegree = () => {
         ),
       },
     ],
-    [degrees, selectedDegree]
+    [designations, selectedDesignation]
   );
 
   const validation: any = useFormik({
     enableReinitialize: true,
     initialValues: {
-      degreeName: "",
+      designationName: "",
     },
     validationSchema: Yup.object({
-      degreeName: Yup.string()
-        .min(1, "Qualification Name must be at least 1.")
-        .max(50, "Qualification name must be between 1 to 50 characters.")
-        .required("Qualification name is required"),
+      designationName: Yup.string()
+        .min(1, "Designation Name must be at least 1.")
+        .max(50, "Designation name must be between 1 to 50 characters.")
+        .required("Designation name is required"),
     }),
 
     onSubmit: (values) => {
       setLoader(true);
       const payload = {
-        _id: editingDegree?._id,
-        degree: values.degreeName,
+        _id: editingDesignation?._id,
+        designation: values.designationName,
       };
 
-      const apiCall = editingDegree
-        ? updateDegree(payload)
-        : createDegree(payload);
+      const apiCall = editingDesignation
+        ? updateDesignation(editingDesignation._id, payload)
+        : createDesignation(payload);
 
       apiCall
         .then((res: { success: any; message: any }) => {
           if (res?.success) {
             toast.success(
               res?.message ||
-                `Qualification  ${
-                  editingDegree ? "updated" : "added"
-                } successfully`
+                `Designation ${editingDesignation ? "updated" : "added"} successfully`
             );
 
-            setEditingDegree(null);
+            setEditingDesignation(null);
             validation.resetForm();
-            fetchDegrees();
+            fetchDesignations();
             setShowBaseModal(false);
           } else {
             toast.error(
               res?.message ||
-                `Failed to ${editingDegree ? "update" : "add"} Qualification`
+                `Failed to ${editingDesignation ? "update" : "add"} Designation`
             );
           }
         })
         .catch((error: any) => {
-          toast.error(error);
-          // toast.error("Something went wrong!");
+          toast.error("Something went wrong!");
           console.error(error);
         })
         .finally(() => {
@@ -254,13 +246,11 @@ const AddDegree = () => {
     },
   });
 
-  const formTitle = editingDegree
-    ? "Qualification"
-    : "Qualification";
+  const formTitle = editingDesignation ? "Designation" : "Designation";
   const submitButtonText = "Add";
 
   const handleOpenBaseModal = () => {
-    setEditingDegree(null);
+    setEditingDesignation(null);
     validation.resetForm();
     setShowBaseModal(true);
   };
@@ -271,7 +261,7 @@ const AddDegree = () => {
 
   const handleCloseClick = () => {
     setShowBaseModal(false);
-    setEditingDegree(null);
+    setEditingDesignation(null);
     validation.resetForm();
   };
 
@@ -279,13 +269,13 @@ const AddDegree = () => {
     setSearchAll(event.target.value);
   };
 
-  const filteredDegree = degrees.filter((fDegree) =>
-    fDegree.degree.toLowerCase().includes(searchAll.toLowerCase())
+  const filteredDesignation = designations.filter((fDesignation) =>
+    fDesignation.designation.toLowerCase().includes(searchAll.toLowerCase())
   );
 
   const closeDeleteModal = () => {
     setShowDeleteModal(false);
-    setSelectedDegree([]);
+    setSelectedDesignation([]);
   };
 
   return (
@@ -321,7 +311,7 @@ const AddDegree = () => {
                           />
                         </div>
                         <div className="d-flex justify-content-end">
-                          {selectedDegree.length > 1 && (
+                          {selectedDesignation.length > 1 && (
                             <BaseButton
                               className="ml-2 text-lg border-0 btn bg-danger edit-list w-fit"
                               onClick={handleDeleteAll}
@@ -331,7 +321,7 @@ const AddDegree = () => {
                                 place="bottom"
                                 variant="error"
                                 content="Delete"
-                                anchorId={`Delete ${selectedDegree.length} Emails`}
+                                anchorId={`Delete ${selectedDesignation.length} Designations`}
                               />
                             </BaseButton>
                           )}
@@ -358,30 +348,30 @@ const AddDegree = () => {
                     onCloseClick={handleCloseClick}
                     onSubmitClick={handleSubmit}
                     modalTitle={
-                      editingDegree ? "Edit Qualification" : "Add Qualification"
+                      editingDesignation ? "Edit Designation" : "Add Designation"
                     }
                     submitButtonText={
-                      editingDegree
-                        ? "Update Qualification"
-                        : "Add Qualification"
+                      editingDesignation
+                        ? "Update Designation"
+                        : "Add Designation"
                     }
                     closeButtonText="Close"
                   >
                     <Row>
                       <Col xs={9} md={5} lg={9}>
                         <BaseInput
-                          label="Qualification Name"
-                          name="degreeName"
+                          label="Designation Name"
+                          name="designationName"
                           className="bg-gray-100"
                           type="text"
                           placeholder={InputPlaceHolder(
-                            "Qualification to be Added"
+                            "Designation to be Added"
                           )}
                           handleChange={validation.handleChange}
                           handleBlur={validation.handleBlur}
-                          value={validation.values.degreeName}
-                          touched={validation.touched.degreeName}
-                          error={validation.errors.degreeName}
+                          value={validation.values.designationName}
+                          touched={validation.touched.designationName}
+                          error={validation.errors.designationName}
                           passwordToggle={false}
                         />
                       </Col>
@@ -397,11 +387,11 @@ const AddDegree = () => {
                         </div>
                       ) : (
                         <div>
-                          {degrees?.length > 0 ? (
+                          {designations?.length > 0 ? (
                             <TableContainer
                               // isHeaderTitle="Qualification"
                               columns={columns}
-                              data={filteredDegree}
+                              data={filteredDesignation}
                               isGlobalFilter={false}
                               customPageSize={10}
                               tableClass="!text-nowrap !mb-0 !responsive !table-responsive-sm !table-hover !table-outline-none !mb-0"
@@ -434,4 +424,4 @@ const AddDegree = () => {
   );
 };
 
-export default AddDegree;
+export default AddDesignation;

@@ -29,6 +29,7 @@ import ChangePassword from "pages/auth/ChangePassword";
 import UpdateSkill from "pages/master/UpdateSkill";
 import FindAndReplace from "pages/master/FindAndReplace";
 import AddEmailTemplate from "pages/master/EmailTemplate";
+import AddDesignation from "pages/master/Designation";
 
 const RenderRouter: React.FC = () => {
   const {
@@ -183,6 +184,14 @@ const RenderRouter: React.FC = () => {
             element={
               <RootLayout>
                 <AddEmailTemplate />
+              </RootLayout>
+            }
+          />
+          <Route
+            path="designation"
+            element={
+              <RootLayout>
+                <AddDesignation />
               </RootLayout>
             }
           />

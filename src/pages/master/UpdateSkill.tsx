@@ -44,7 +44,7 @@ const UpdateSkill = () => {
   const [totalRecords, setTotalRecords] = useState(0);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
-    pageSize: 10,
+    pageSize: 50,
     limit: 50,
   });
   const [isLoading, setIsLoading] = useState(false);
@@ -60,7 +60,7 @@ const UpdateSkill = () => {
       //  const allSkills: any[] = [];
       const page = 1;
       const pageSize = 50;
-      const limit = 200;
+      const limit = 500;
       const response = await ViewAppliedSkills({
         page,
         pageSize,
@@ -118,7 +118,7 @@ const UpdateSkill = () => {
       const res = await viewRoleSkill({
         page: pagination.pageIndex + 1,
         pageSize: pagination.pageSize,
-        limit: 50,
+        limit: 500,
       });
 
       if (res?.success) {
@@ -126,21 +126,23 @@ const UpdateSkill = () => {
 
         const skillMap = skillOptions.reduce(
           (acc: Record<string, string>, item: any) => {
-            acc[item.id] = item.label; // Make sure you're using the correct key: 'id' or '_id'
+            acc[item.id || item._id] = item.label;
             return acc;
           },
           {}
         );
 
-        // Check the skillMap
-
-        // Enrich roleSkills with skill names from skillMap
-        const enrichedRoleSkills = roleSkills.map((item: any) => ({
-          ...item,
-          skill: item?.skill?.map(
+        const enrichedRoleSkills = roleSkills.map((item: any) => {
+          const skillIds = Array.isArray(item.skill) ? item.skill : [];
+          const skillNames = skillIds.map(
             (id: string) => skillMap[id] || "Unknown Skill"
-          ), // Map skill IDs to skill names
-        }));
+          );
+          return {
+            ...item,
+            skill: skillNames,
+          };
+        });
+
 
         setRoleSkills(enrichedRoleSkills);
         setTotalRecords(res.data?.pagination?.totalRecords || 0);
@@ -155,9 +157,11 @@ const UpdateSkill = () => {
     }
   };
 
-  useEffect(() => {
+ useEffect(() => {
+  if (skillOptions && skillOptions.length > 0) {
     fetchRoleSkills();
-  }, [pagination.pageIndex, pagination.pageSize]);
+  }
+  }, [pagination.pageIndex, pagination.pageSize,skillOptions]);
 
   const handleEdit = (id: any) => {
     const selectedSkillOptions = skillOptions.filter((opt) =>

@@ -22,7 +22,7 @@ const ViewRoleSkill = ({ show, onHide, applicantId }: any) => {
         const skillsRes = await ViewAppliedSkills({
           page: 1,
           pageSize: 50,
-          limit: 200,
+          limit: 500,
         });
         const allSkills = skillsRes?.data?.data || [];
 

@@ -315,9 +315,15 @@ const ViewModal = ({ show, onHide, applicantId }: any) => {
                 <DetailsRow
                   label="Description"
                   value={
-                    formData?.email?.description
-                      ? formData?.email?.description
-                      : "No description provided"
+                    formData?.email?.description ? (
+                      <div
+                        dangerouslySetInnerHTML={{
+                          __html: formData.email.description,
+                        }}
+                      />
+                    ) : (
+                      "No description provided"
+                    )
                   }
                 />
               </Col>

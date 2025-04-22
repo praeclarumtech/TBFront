@@ -55,7 +55,7 @@ const AddEmailTemplate = () => {
   const [totalRecords, setTotalRecords] = useState(0);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
-    pageSize: 10,
+    pageSize: 50,
     limit: 50,
   });
   const [isLoading, setIsLoading] = useState(false);
@@ -212,6 +212,22 @@ const AddEmailTemplate = () => {
         header: "Description",
         accessorKey: "description",
         enableColumnFilter: false,
+        cell: (info: any) => (
+          <div
+            dangerouslySetInnerHTML={{
+              __html: sanitizeHtml(info.getValue(), {
+                allowedTags: sanitizeHtml.defaults.allowedTags.concat(["img"]),
+                allowedAttributes: {
+                  a: ["href", "target"],
+                  img: ["src", "alt", "style"],
+                  span: ["style"],
+                  "*": ["style"],
+                },
+              }),
+            }}
+            className="overflow-hidden"
+          />
+        ),
       },
       {
         header: "Action",
