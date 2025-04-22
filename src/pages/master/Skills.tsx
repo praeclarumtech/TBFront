@@ -553,16 +553,25 @@ const AddSkill = () => {
                           placeholder={InputPlaceHolder("Skill to be Added")}
                           // handleChange={validation.handleChange}
                           handleChange={(e) => {
-                            const value = e.target.value
-                              .split(" ")
-                              .map(
-                                (word) =>
-                                  word.charAt(0).toUpperCase() +
-                                  word.slice(1).toLowerCase()
-                              )
-                              .join(" ");
+                            const value = e.target.value;
+                            const words = value.split(" ");
 
-                            validation.setFieldValue("addSkills", value);
+                            if (words.length === 0) {
+                              validation.setFieldValue("addSkills", "");
+                              return;
+                            }
+
+                            const firstWord =
+                              words[0].charAt(0).toUpperCase() +
+                              words[0].slice(1);
+
+                            // Keep the rest as the user typed
+                            const restWords = words.slice(1);
+                            const finalValue = [firstWord, ...restWords].join(
+                              " "
+                            );
+
+                            validation.setFieldValue("addSkills", finalValue);
                           }}
                           handleBlur={validation.handleBlur}
                           value={validation.values.addSkills}

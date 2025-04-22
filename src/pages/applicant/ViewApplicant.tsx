@@ -405,9 +405,7 @@ const ViewModal: React.FC<ViewModalProps> = ({
                   label="Negotiation"
                   value={
                     <Tag color="gold">
-                      {formData.negotiation
-                        ? `${formData.negotiation} LPA`
-                        : "-"}
+                      {formData.negotiation ? `${formData.negotiation}` : "-"}
                     </Tag>
                   }
                 />
@@ -500,7 +498,7 @@ const ViewModal: React.FC<ViewModalProps> = ({
 
               <Col span={12}>
                 <DetailsRow
-                  label="LinkdIn"
+                  label="LinkedIn"
                   value={
                     formData.linkedinUrl ? (
                       <a
@@ -509,7 +507,7 @@ const ViewModal: React.FC<ViewModalProps> = ({
                         rel="noopener noreferrer"
                         className="text-blue-500 underline"
                       >
-                        View LinkdIn
+                        View LinkedIn
                       </a>
                     ) : (
                       "-"

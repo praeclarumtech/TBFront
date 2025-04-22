@@ -39,6 +39,22 @@ const BaseSlider = ({
 
   return (
     <>
+      <style>
+        {`
+    /* Chrome, Safari, Edge */
+    .no-spinner::-webkit-outer-spin-button,
+    .no-spinner::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    /* Firefox */
+    .no-spinner {
+      -moz-appearance: textfield;
+      appearance: textfield;
+    }
+  `}
+      </style>
       {label && (
         <Label
           htmlFor={name}
