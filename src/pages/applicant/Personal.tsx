@@ -18,7 +18,7 @@ import appConstants from "constants/constant";
 import {
   CheckExistingApplicant,
   city as fetchCities,
-  state as fetchState
+  state as fetchState,
 } from "../../api/applicantApi";
 import {
   personalApplicantSchema,
@@ -38,7 +38,7 @@ const {
 const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
   document.title = Modules.CreateApplicantForm + " | " + projectTitle;
   const [cities, setCities] = useState<City[]>([]);
-    const [states, setStates] = useState<City[]>([]);
+  const [states, setStates] = useState<City[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   // const [isChecking, setIsChecking] = useState(false);
   // const [existingError, setExistingError] = useState("");
@@ -49,12 +49,20 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
 
   const [formReady, setFormReady] = useState(false);
 
-useEffect(() => {
-  if (cities.length && states.length && countriesType.length) {
-    setFormReady(true);
-  }
-}, [cities, states, countriesType]);
-  
+  const capitalizeWords = (str: string) => {
+    return str
+      .toLowerCase()
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
+
+  useEffect(() => {
+    if (cities.length && states.length && countriesType.length) {
+      setFormReady(true);
+    }
+  }, [cities, states, countriesType]);
+
   useEffect(() => {
     const getCities = async () => {
       try {
@@ -78,81 +86,76 @@ useEffect(() => {
     getCities();
   }, []);
 
- useEffect(() => {
-   const getState = async () => {
-     try {
-       setLoading(true);
-       const stateData = await fetchState();
-       if (stateData?.data) {
-         setStates(
-           stateData.data.map(
-             (state: {
-               state_name: string;
-               _id: string;
-               country_id: string;
-             }) => ({
-               label: state.state_name,
-               value: state._id,
-               country_id: state.country_id,
-             })
-           )
-         );
-       }
-     } catch (error) {
-       errorHandle(error);
-     } finally {
-       setLoading(false);
-     }
-   };
+  useEffect(() => {
+    const getState = async () => {
+      try {
+        setLoading(true);
+        const stateData = await fetchState();
+        if (stateData?.data) {
+          setStates(
+            stateData.data.map(
+              (state: {
+                state_name: string;
+                _id: string;
+                country_id: string;
+              }) => ({
+                label: state.state_name,
+                value: state._id,
+                country_id: state.country_id,
+              })
+            )
+          );
+        }
+      } catch (error) {
+        errorHandle(error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-   getState();
- }, []);
+    getState();
+  }, []);
 
   const initialCityValue =
-    cities.find((city) => city.label === initialValues.currentCity)?.value ||
-    "";
+    cities.find(
+      (city) => city.label === capitalizeWords(initialValues.currentCity)
+    )?.value || "";
 
   const initialStateValue =
-    states.find((state) => state.label === initialValues.state)?.value ||
-    "";
+    states.find((state) => state.label === capitalizeWords(initialValues.state))
+      ?.value || "";
 
   const minDateOfBirth = moment().subtract(15, "years").format("YYYY-MM-DD");
   const formattedDateOfBirth = initialValues.dateOfBirth
     ? moment(initialValues.dateOfBirth).format("YYYY-MM-DD")
     : "";
 
-  const capitalizeWords = (str: string) => {
-    return str
-      .toLowerCase()
-      .split(" ")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
-  };
-
-  
   const validation: any = useFormik({
     enableReinitialize: true,
-    initialValues:formReady ?{
-      firstName: initialValues.name.firstName || "",
-      middleName: initialValues.name.middleName || "",
-      lastName: initialValues.name.lastName || "",
-      whatsappNumber: initialValues.phone.whatsappNumber || "",
-      phoneNumber: initialValues.phone.phoneNumber || "",
-      email: initialValues.email || "",
-      gender: initialValues.gender || "",
-      dateOfBirth: formattedDateOfBirth,
-      // state: initialValues.state || "",
-      state: initialStateValue,
-      // country: initialValues.country || "",
-      country: initialValues.country
-        ? capitalizeWords(initialValues.country)
-        : "",
-      currentCity: initialCityValue,
-      currentAddress: initialValues.currentAddress || "",
-      maritalStatus: initialValues?.maritalStatus || "",
-      permanentAddress: initialValues?.permanentAddress || "",
-    }: {},
+    initialValues: formReady
+      ? {
+          firstName: initialValues.name.firstName || "",
+          middleName: initialValues.name.middleName || "",
+          lastName: initialValues.name.lastName || "",
+          whatsappNumber: initialValues.phone.whatsappNumber || "",
+          phoneNumber: initialValues.phone.phoneNumber || "",
+          email: initialValues.email || "",
+          gender: initialValues.gender || "",
+          dateOfBirth: formattedDateOfBirth,
+          // state: initialValues.state || "",
+          state: initialStateValue || "",
+          // country: initialValues.country || "",
+          country: initialValues.country
+            ? capitalizeWords(initialValues.country)
+            : "",
+          currentCity: initialCityValue,
+          currentAddress: initialValues.currentAddress || "",
+          maritalStatus: initialValues?.maritalStatus || "",
+          permanentAddress: initialValues?.permanentAddress || "",
+        }
+      : {},
     validationSchema: personalApplicantSchema,
+
     onSubmit: (data: any) => {
       setLoading(true);
 
@@ -164,13 +167,11 @@ useEffect(() => {
         data.currentCity = selectedCity.label;
       }
 
-        const selectedState = states.find(
-          (state) => state.value === data.state
-        );
+      const selectedState = states.find((state) => state.value === data.state);
 
-        if (selectedState) {
-          data.state = selectedState.label;
-        }
+      if (selectedState) {
+        data.state = selectedState.label;
+      }
 
       const structuredData = {
         name: {
@@ -259,9 +260,8 @@ useEffect(() => {
     }
   };
 
-const dynamicFind1 = (options: any[], value: string) =>
-  options.find((option) => option.value === value || option.label === value);
-
+  const dynamicFind1 = (options: any[], value: string) =>
+    options.find((option) => option.value === value || option.label === value);
 
   const handleCancel = () => {
     if (module === "import-applicant") {
@@ -588,8 +588,10 @@ const dynamicFind1 = (options: any[], value: string) =>
                       //   ""
                       // }
                       value={
-                        dynamicFind1(countriesType, validation.values.country) ||
-                        ""
+                        dynamicFind1(
+                          countriesType,
+                          validation.values.country
+                        ) || ""
                       }
                       touched={validation.touched.country}
                       error={validation.errors.country}

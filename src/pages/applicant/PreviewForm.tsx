@@ -15,7 +15,6 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
       .join(" ");
   };
-  // console.log("preview ", data);
 
   return (
     <>
@@ -124,7 +123,7 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
             <Col xs={12} md={6} className="mb-3 ">
               <Typography>
                 <span className="  !text-black pt-3">Qualification:</span>
-                <span>{data?.qualification}</span>
+                <span>{" " + data?.qualification}</span>
               </Typography>
               <Typography variant="body1" className="text-gray-600">
                 <span className="  !text-black pt-3">Specialization:</span>
@@ -135,7 +134,7 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
               <Typography variant="body1" className="text-gray-600">
                 <span className="  !text-black pt-3">CGPA:</span>
                 <span className="">
-                  {" " + capitalizeWords(data?.cgpa) + " Cgpa"}
+                  {" " + parseFloat(data?.cgpa) + " Cgpa"}
                 </span>
               </Typography>
             </Col>
@@ -202,26 +201,24 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
                 <span className="  !text-black pt-3">Applied Role:</span>
                 <span>{" " + capitalizeWords(data?.appliedRole)}</span>
               </Typography>
-              <Typography>
-                <span className="  !text-black pt-3">Referral :</span>
-                <span>{" " + capitalizeWords(data?.referral)}</span>
-              </Typography>
+              {data?.meta && (
+                <>
+                  <Typography>
+                    <span className="  !text-black pt-3">
+                      {capitalizeWords(data?.appliedRole)} Skills Experience:
+                    </span>
+                  </Typography>
 
-              <Typography>
-                <span className="  !text-black pt-3">Last Follow UpDate:</span>
-                <span>
-                  {" " + new Date(data?.lastFollowUpDate).toLocaleDateString()}
-                </span>
-              </Typography>
-              <Typography>
-                <span className="  !text-black pt-3">Any Hand On Offers?:</span>
-                <span>{" " + (data?.anyHandOnOffers ? "Yes" : "No")}</span>
-              </Typography>
-
-              <Typography>
-                <span className="  !text-black pt-3">Comment:</span>
-                <span>{" " + capitalizeWords(data?.comment)}</span>
-              </Typography>
+                  {Object.entries(data.meta).map(([key, value]) => (
+                    <Typography key={key} className="text-gray-700">
+                      <span className="!text-black ">
+                        {capitalizeWords(key)}:
+                      </span>{" "}
+                      <span>{String(value) + " Yrs"}</span>
+                    </Typography>
+                  ))}
+                </>
+              )}
             </Col>
             <Col xs={12} md={6}>
               <Typography>
@@ -262,7 +259,25 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
                 <span className="  !text-black pt-3">Preferred Locations:</span>
                 <span>{" " + capitalizeWords(data?.preferredLocations)}</span>
               </Typography>
+              <Typography>
+                <span className="  !text-black pt-3">Referral :</span>
+                <span>{" " + capitalizeWords(data?.referral)}</span>
+              </Typography>
 
+              <Typography>
+                <span className="  !text-black pt-3">Last Follow UpDate:</span>
+                <span>
+                  {" " + new Date(data?.lastFollowUpDate).toLocaleDateString()}
+                </span>
+              </Typography>
+              <Typography>
+                <span className="  !text-black pt-3">Any Hand On Offers?:</span>
+                <span>{" " + (data?.anyHandOnOffers ? "Yes" : "No")}</span>
+              </Typography>
+              <Typography>
+                <span className="  !text-black pt-3">Comment:</span>
+                <span>{" " + capitalizeWords(data?.comment)}</span>
+              </Typography>
               <Typography>
                 <span className="  !text-black pt-3">Practical Feedback :</span>
                 <span>{" " + capitalizeWords(data?.practicalFeedback)}</span>

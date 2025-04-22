@@ -357,7 +357,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                         if (numValue >= 0 && numValue <= 30) {
                           validation.setFieldValue(
                             "totalExperience",
-                            numValue.toFixed(2)
+                            numValue.toFixed(1)
                           );
                         } else {
                           validation.setFieldValue("totalExperience", "");
@@ -417,7 +417,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                         if (numValue >= 0 && numValue <= 30) {
                           validation.setFieldValue(
                             "relevantSkillExperience",
-                            numValue.toFixed(2)
+                            numValue.toFixed(1)
                           );
                         } else {
                           validation.setFieldValue(
