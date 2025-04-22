@@ -206,7 +206,7 @@ function ImportApplicant() {
         gender?: string;
         applicantName?: string;
         searchSkills?: string;
-        searchS?: string;
+        search?: string;
       } = {
         page: pagination.pageIndex + 1,
         pageSize: pagination.pageSize,
@@ -277,8 +277,9 @@ function ImportApplicant() {
       }
       const searchValue = searchAll?.trim();
       if (searchValue) {
-        params.applicantName = searchValue;
-        params.appliedSkills = searchValue;
+        params.search = searchValue;
+        // params.applicantName = searchValue;
+        // params.appliedSkills = searchValue;
       }
 
       const res = await listOfImportApplicants(params);
@@ -298,7 +299,7 @@ function ImportApplicant() {
       const response = await ViewAppliedSkills({
         page: 1,
         pageSize: 50,
-        limit: 200,
+        limit: 500,
       });
       const skillData = response?.data?.data || [];
       setSkillOptions(
@@ -743,24 +744,24 @@ function ImportApplicant() {
       }
     }
   };
-  const filteredApplicant = applicant.filter((applicants) => {
-    const searchTerm = searchAll.toLowerCase();
+  // const filteredApplicant = applicant.filter((applicants) => {
+  //   const searchTerm = searchAll.toLowerCase();
 
-    return (
-      applicants?.name?.firstName?.toLowerCase().includes(searchTerm) ||
-      applicants?.name?.middleName?.toLowerCase().includes(searchTerm) ||
-      applicants?.name?.lastName?.toLowerCase().includes(searchTerm) ||
-      applicants.subject?.toLowerCase().includes(searchTerm) ||
-      applicants.interviewStage?.toLowerCase().includes(searchTerm) ||
-      applicants.status?.toLowerCase().includes(searchTerm) ||
-      applicants.totalExperience?.toString().includes(searchTerm) ||
-      applicants.totalExperience?.toString().includes(searchTerm) ||
-      (Array.isArray(applicants.appliedSkills) &&
-        applicants.appliedSkills.some((skill: string) =>
-          skill.toLowerCase().includes(searchTerm)
-        ))
-    );
-  });
+  //   return (
+  //     applicants?.name?.firstName?.toLowerCase().includes(searchTerm) ||
+  //     applicants?.name?.middleName?.toLowerCase().includes(searchTerm) ||
+  //     applicants?.name?.lastName?.toLowerCase().includes(searchTerm) ||
+  //     applicants.subject?.toLowerCase().includes(searchTerm) ||
+  //     applicants.interviewStage?.toLowerCase().includes(searchTerm) ||
+  //     applicants.status?.toLowerCase().includes(searchTerm) ||
+  //     applicants.totalExperience?.toString().includes(searchTerm) ||
+  //     applicants.totalExperience?.toString().includes(searchTerm) ||
+  //     (Array.isArray(applicants.appliedSkills) &&
+  //       applicants.appliedSkills.some((skill: string) =>
+  //         skill.toLowerCase().includes(searchTerm)
+  //       ))
+  //   );
+  // });
 
   const handleFileImport = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -1850,7 +1851,7 @@ function ImportApplicant() {
                       <TableContainer
                         isHeaderTitle="Import Applicants"
                         columns={columns}
-                        data={filteredApplicant}
+                        data={applicant}
                         // isGlobalFilter
                         customPageSize={50}
                         theadClass="table-light text-muted"

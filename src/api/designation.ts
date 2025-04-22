@@ -19,7 +19,13 @@ export const viewDesignation = async (designationId: string) => {
   return response.data;
 };
 
-export const viewAllDesignation = async (params?: { page?: number; pageSize?: number; limit?: number; }) => {
+export const viewAllDesignation = async (params: { page?: number; pageSize?: number; limit?: number; search?:string }) => {
+  if (params.search ) {
+    const {  limit, ...searchParams } = params;
+    params = { ...searchParams };
+  }
+
+
   const response = await authServices.get(VIEW_ALL_DESIGNATION, { params });
   return response.data;
 };

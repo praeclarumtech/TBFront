@@ -25,11 +25,14 @@ export const getChartDetails = async (ids: string[]) => {
 
 
 export const ExportSkilledApplicant = async (
-  queryParams: {  skills: string },
+  queryParams: {  skills: string[] },
 ) => {
   const {  skills } = queryParams;
   const response = await authServices.post(
-    `${SKILL_EXPORT}?skills=${encodeURIComponent(skills)}`,
+    // `${SKILL_EXPORT}?appliedSkills=${encodeURIComponent(skills.join(","))
+    `${SKILL_EXPORT}?appliedSkills=${skills.join(",")
+
+    }`,
     {
       headers: {
         "Content-Type": "application/json",

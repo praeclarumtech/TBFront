@@ -41,7 +41,31 @@ const RecentApplicants = ({
     }
   };
 
-  const handleExportExcel = async (filtered: string) => {
+  // const handleExportExcel = async (filtered: string[]) => {
+  //   try {
+  //     toast.info("Preparing file for download...");
+  //     await new Promise((resolve) => setTimeout(resolve, 3500));
+  //     const response = await ExportSkilledApplicant({ skills: [filtered] });
+
+  //     if (!response) {
+  //       toast.error("Failed to download file");
+  //       return;
+  //     }
+
+  //     const blob = new Blob([response], { type: "text/csv" });
+
+  //     saveAs(blob, `${filtered}-applicants.csv`);
+
+  //     toast.success("File downloaded successfully!");
+
+  //   } catch (error) {
+  //     // console.error("Export error:", error);
+  //     errorHandle(error);
+  //     // toast.error("Failed to export file");
+  //   }
+  // };
+
+  const handleExportExcel = async (filtered: string[]) => {
     try {
       toast.info("Preparing file for download...");
       await new Promise((resolve) => setTimeout(resolve, 3500));
@@ -53,15 +77,11 @@ const RecentApplicants = ({
       }
 
       const blob = new Blob([response], { type: "text/csv" });
-
-      saveAs(blob, `${filtered}-applicants.csv`);
+      saveAs(blob, `${filtered.join("-")}-applicants.csv`);
 
       toast.success("File downloaded successfully!");
-      
     } catch (error) {
-      // console.error("Export error:", error);
       errorHandle(error);
-      // toast.error("Failed to export file");
     }
   };
 
@@ -123,7 +143,7 @@ const RecentApplicants = ({
                 </BaseButton>
                 <BaseButton
                   color="success"
-                  onClick={() => handleExportExcel(selectedTechnology)}
+                  onClick={() => handleExportExcel([selectedTechnology])}
                 >
                   <i className="ri-upload-2-line me-1" />
                   Export

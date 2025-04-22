@@ -48,13 +48,12 @@ export const viewAllEmail = async (params: {
 }) => {
   let finalParams = { ...params };
 
-  if (params.email_to || params.appliedSkills || params.name) {
-    const {  limit, ...rest } = params;
+  if (params.search) {
+    const {  page,pageSize, limit, ...rest } = params;
     finalParams = { ...rest };
   }
 
   const response = await authServices.get(`${VIEW_ALL_EMAIL}`, { params: finalParams });
-  console.log("res",response)
   return response?.data;
 };
 
@@ -105,17 +104,49 @@ export const deleteEmailTemplate = async (id: string) => {
   return response?.data;
 };
 
-export const viewEmailTemplate = async (params?: {
+export const viewEmailTemplate = async (params : {
   page?: number;
   pageSize?: number;
   limit?: number;
+  search? :string;
 }) => {
+  let finalParams = { ...params };
+
+  if (params.search) {
+    const {  page,pageSize, limit, ...rest } = params;
+    finalParams = { ...rest };
+  }
+
   const response = await authServices.get(
     `/email/template/${VIEW_EMAIL_TEMPLATE}`,
-    { params }
+    { params: finalParams  }
   );
   return response?.data;
 };
+
+// export const viewEmailTemplate = async (params: {
+//   page?: number;
+//   pageSize?: number;
+//   limit?: number;
+//   search?: string;
+// }) => {
+//   // If search is provided and not just whitespace
+//   const isSearching = params.search && params.search.trim().length > 0;
+
+//   const finalParams = isSearching
+//     ? { search: params.search?.trim() } // search-only mode
+//     : params; // include page/limit normally
+
+//   const response = await authServices.get(
+//     `/email/template/${VIEW_EMAIL_TEMPLATE}`,
+//     { params: finalParams }
+//   );
+
+//   return response?.data;
+// };
+
+
+
 
 export const getEmailTemplateById = async (id: string) => {
   const response = await authServices.get(

@@ -143,7 +143,6 @@ const UpdateSkill = () => {
           };
         });
 
-
         setRoleSkills(enrichedRoleSkills);
         setTotalRecords(res.data?.pagination?.totalRecords || 0);
       } else {
@@ -157,11 +156,11 @@ const UpdateSkill = () => {
     }
   };
 
- useEffect(() => {
-  if (skillOptions && skillOptions.length > 0) {
-    fetchRoleSkills();
-  }
-  }, [pagination.pageIndex, pagination.pageSize,skillOptions]);
+  useEffect(() => {
+    if (skillOptions && skillOptions.length > 0) {
+      fetchRoleSkills();
+    }
+  }, [pagination.pageIndex, pagination.pageSize, skillOptions]);
 
   const handleEdit = (id: any) => {
     const selectedSkillOptions = skillOptions.filter((opt) =>
@@ -600,7 +599,7 @@ const UpdateSkill = () => {
                           label="Applied Skills"
                           name="addSkill"
                           className="mb-1 bg-gray-100 select-border"
-                          placeholder="Applied Skills"
+                          placeholder="Skills"
                           value={validation.values.addSkill}
                           isMulti={true}
                           handleChange={validation.handleChange}
