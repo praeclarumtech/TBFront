@@ -50,7 +50,7 @@ const EmailForm = () => {
   const [templateTypes, setTemplateTypes] = useState<SelectedOption[]>([]);
 
   const getTemplateType = async () => {
-    const response = await viewEmailTemplate();
+    const response = await viewEmailTemplate({ limit: 1000 });
     const types = response.data.templates.map((template: any) => template.type);
     return types;
   };
