@@ -106,3 +106,10 @@ export const DELETE_EMAIL_TEMPLATE = "deleteEmailTemplate";
 export const VIEW_EMAIL_TEMPLATE = "getAllEmailTemplates";
 export const GET_EMAIL_TEMPLATE_BY_ID = "getEmailTemplateById";
 export const GET_EMAIL_TEMPLATE_BY_TYPE = "templateByType";
+
+//Designation module
+export const CREATE_DESIGNATION = "designation/adddesignations";
+export const VIEW_DESIGNATION = "designation/getDesignationsById";
+export const VIEW_ALL_DESIGNATION = "designation/viewDesignation";
+export const UPDATE_DESIGNATION = "designation/update";
+export const DELETE_DESIGNATION = "designation/deleteDesignation";

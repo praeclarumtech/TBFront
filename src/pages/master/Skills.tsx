@@ -39,7 +39,7 @@ const AddSkill = () => {
   const [totalRecords, setTotalRecords] = useState(0);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
-    pageSize: 10,
+    pageSize: 50,
     limit: 50,
   });
   const [isLoading, setIsLoading] = useState(false);

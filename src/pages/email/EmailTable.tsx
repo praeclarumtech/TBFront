@@ -52,7 +52,7 @@ const EmailTable = () => {
   const [showModal, setShowModal] = useState(false);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
-    pageSize: 10,
+    pageSize: 50,
   });
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [emailToDelete, setEmailToDelete] = useState<string[]>([]);
