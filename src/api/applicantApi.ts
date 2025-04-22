@@ -59,8 +59,8 @@ export const listOfApplicants = async (params: {
   searchSkills?: string;
 }) => {
   // If applicantName or searchSkills are present, remove pagination and limit parameters
-  if (params.applicantName || params.searchSkills) {
-    const { page, pageSize, limit, ...searchParams } = params;
+  if (params.search ) {
+    const {  limit, ...searchParams } = params;
     params = { ...searchParams };
   }
 
@@ -291,7 +291,7 @@ export const listOfImportApplicants = async (params: {
   searchSkills?: string;
 }) => {
   // If applicantName or searchSkills are present, remove pagination and limit parameters
-  if (params.applicantName || params.searchSkills) {
+  if (params.search) {
     const { page, pageSize, limit, ...searchParams } = params;
     params = { ...searchParams };
   }

@@ -254,8 +254,9 @@ const Applicant = () => {
       }
       const searchValue = searchAll?.trim();
       if (searchValue) {
-        params.applicantName = searchValue;
-        params.appliedSkills = searchValue;
+        params.search = searchValue;
+        // params.applicantName = searchValue;
+        // params.appliedSkills = searchValue;
       }
 
       const res = await listOfApplicants(params);
@@ -321,7 +322,7 @@ const Applicant = () => {
         const response = await ViewAppliedSkills({
           page: 1,
           pageSize: 50,
-          limit: 200,
+          limit: 500,
         });
 
         const skillData = response?.data?.data || [];
@@ -680,48 +681,47 @@ const Applicant = () => {
       //   }
       // };
 
-  // Read the Blob content
-        const text = await response.text();
-        let parsed;
-  
-        try {
-          // Try to parse it as JSON
-          parsed = JSON.parse(text);
-        } catch {
-          // Not JSON = valid CSV
-          const blob = new Blob([text], { type: "text/csv" });
-          saveAs(blob, "Main_Applicants_Data.csv");
-          setShowExportModal(false);
-          setSelectedApplicants([]);
-          toast.success("File downloaded successfully!");
-          return;
-        }
-  
-        // If it is JSON, check for an error message
-        if (parsed?.statusCode === 404 || parsed?.success === false) {
-          setShowExportModal(false);
-          setSelectedApplicants([]);
-           setExportOption("");
-          toast.error(parsed.message || "No data available to export");
-        } else if (parsed?.statuscode === 500 || parsed?.success === false) {
-          setShowExportModal(false);
-          setSelectedApplicants([]);
-           setExportOption("");
-          toast.error(parsed.message || "No data available to export");
-        } else {
-          toast.error("Unexpected JSON response during export.");
-        }
-      } catch (error) {
-        console.log("errors3", error);
+      // Read the Blob content
+      const text = await response.text();
+      let parsed;
+
+      try {
+        // Try to parse it as JSON
+        parsed = JSON.parse(text);
+      } catch {
+        // Not JSON = valid CSV
+        const blob = new Blob([text], { type: "text/csv" });
+        saveAs(blob, "Main_Applicants_Data.csv");
         setShowExportModal(false);
         setSelectedApplicants([]);
-         setExportOption("");
-        errorHandle(error);
-      } finally {
-        fetchApplicants();
+        toast.success("File downloaded successfully!");
+        return;
       }
-    };
 
+      // If it is JSON, check for an error message
+      if (parsed?.statusCode === 404 || parsed?.success === false) {
+        setShowExportModal(false);
+        setSelectedApplicants([]);
+        setExportOption("");
+        toast.error(parsed.message || "No data available to export");
+      } else if (parsed?.statuscode === 500 || parsed?.success === false) {
+        setShowExportModal(false);
+        setSelectedApplicants([]);
+        setExportOption("");
+        toast.error(parsed.message || "No data available to export");
+      } else {
+        toast.error("Unexpected JSON response during export.");
+      }
+    } catch (error) {
+      console.log("errors3", error);
+      setShowExportModal(false);
+      setSelectedApplicants([]);
+      setExportOption("");
+      errorHandle(error);
+    } finally {
+      fetchApplicants();
+    }
+  };
 
   const handleColumnSelected = (
     selectedOptions: any[] | ((prevState: SelectedOption[]) => SelectedOption[])
@@ -931,7 +931,7 @@ const Applicant = () => {
           step={1}
           valueLabelDisplay="auto"
         />
-           <MultiSelect
+        <MultiSelect
           key="addedBy"
           label="Added By"
           name="addedBy"
@@ -951,7 +951,7 @@ const Applicant = () => {
           handleChange={handleAnyHandOnOffersChange}
           value={filterAnyHandOnOffers}
         />
-      
+
         <Row className="mb-3">
           <Col xs={6}>
             <BaseInput
@@ -979,7 +979,6 @@ const Applicant = () => {
             />
           </Col>
         </Row>
-       
       </List>
 
       <Divider />
@@ -1226,24 +1225,24 @@ const Applicant = () => {
     navigate("/applicants/add-applicant");
   };
 
-  const filteredApplicant = applicant.filter((applicants) => {
-    const searchTerm = searchAll.toLowerCase();
+  // const filteredApplicant = applicant.filter((applicants) => {
+  //   const searchTerm = searchAll.toLowerCase();
 
-    return (
-      applicants?.name?.firstName?.toLowerCase().includes(searchTerm) ||
-      applicants?.name?.middleName?.toLowerCase().includes(searchTerm) ||
-      applicants?.name?.lastName?.toLowerCase().includes(searchTerm) ||
-      applicants.subject?.toLowerCase().includes(searchTerm) ||
-      applicants.interviewStage?.toLowerCase().includes(searchTerm) ||
-      applicants.status?.toLowerCase().includes(searchTerm) ||
-      applicants.totalExperience?.toString().includes(searchTerm) ||
-      applicants.totalExperience?.toString().includes(searchTerm) ||
-      (Array.isArray(applicants.appliedSkills) &&
-        applicants.appliedSkills.some((skill: string) =>
-          skill.toLowerCase().includes(searchTerm)
-        ))
-    );
-  });
+  //   return (
+  //     applicants?.name?.firstName?.toLowerCase().includes(searchTerm) ||
+  //     applicants?.name?.middleName?.toLowerCase().includes(searchTerm) ||
+  //     applicants?.name?.lastName?.toLowerCase().includes(searchTerm) ||
+  //     applicants.subject?.toLowerCase().includes(searchTerm) ||
+  //     applicants.interviewStage?.toLowerCase().includes(searchTerm) ||
+  //     applicants.status?.toLowerCase().includes(searchTerm) ||
+  //     applicants.totalExperience?.toString().includes(searchTerm) ||
+  //     applicants.totalExperience?.toString().includes(searchTerm) ||
+  //     (Array.isArray(applicants.appliedSkills) &&
+  //       applicants.appliedSkills.some((skill: string) =>
+  //         skill.toLowerCase().includes(searchTerm)
+  //       ))
+  //   );
+  // });
 
   const isMobile = window.innerWidth <= 767;
   const ModalTitle = () => (
@@ -1439,7 +1438,7 @@ const Applicant = () => {
                       <TableContainer
                         isHeaderTitle="Applicants"
                         columns={columns}
-                        data={filteredApplicant}
+                        data={applicant}
                         // isGlobalFilter
                         customPageSize={50}
                         theadClass="table-light text-muted"

@@ -68,11 +68,22 @@ const AddEmailTemplate = () => {
   const fetchEmailTemplates = async () => {
     setIsLoading(true);
     try {
-      const res = await viewEmailTemplate({
+      const params: {
+        search?: string;
+        page?: number;
+        pageSize?: number;
+        limit?: number;
+      } = {
         page: pagination.pageIndex + 1,
         pageSize: pagination.pageSize,
         limit: 50,
-      });
+      };
+
+      const searchValue = searchAll?.trim();
+      if (searchValue) {
+        params.search = searchValue;
+      }
+      const res = await viewEmailTemplate(params);
 
       if (res?.success) {
         setEmailTemplates(res.data?.templates || []);
@@ -90,7 +101,7 @@ const AddEmailTemplate = () => {
 
   useEffect(() => {
     fetchEmailTemplates();
-  }, [pagination.pageIndex, pagination.pageSize]);
+  }, [pagination.pageIndex, pagination.pageSize, searchAll]);
 
   const handleEdit = (emailTemplate: any) => {
     setEditingEmailTemplate(emailTemplate);
@@ -407,11 +418,8 @@ const AddEmailTemplate = () => {
     setShowDeleteModal(false);
     setSelectedEmailTemplates([]);
   };
-  console.log(emailTemplates);
 
-  const filteredEmailTemplates = emailTemplates.filter((emailTemplate) =>
-    emailTemplate.type.toLowerCase().includes(searchAll.toLowerCase())
-  );
+
   return (
     <Fragment>
       <DeleteModal
@@ -551,7 +559,7 @@ const AddEmailTemplate = () => {
                           {emailTemplates?.length > 0 ? (
                             <TableContainer
                               columns={columns}
-                              data={filteredEmailTemplates}
+                              data={emailTemplates}
                               // isGlobalFilter={true}
                               customPageSize={50}
                               theadClass="table-light text-muted"

@@ -218,9 +218,9 @@ const EmailTable = () => {
       }
       const searchValue = searchAll?.trim();
       if (searchValue) {
-        params.email_to = decodeURIComponent(searchValue);
-        params.appliedSkills = searchValue;
-        params.name = searchValue;
+        // params.email_to = decodeURIComponent(searchValue);
+        // params.appliedSkills = searchValue;
+        params.search = searchValue;
       }
       
 

@@ -14,7 +14,12 @@ import BaseModal from "components/BaseComponents/BaseModal";
 import appConstants from "constants/constant";
 import { getSerialNumber, InputPlaceHolder } from "utils/commonFunctions";
 import Skeleton from "react-loading-skeleton";
-import { createDesignation, deleteDesignation, updateDesignation, viewAllDesignation } from "api/designation";
+import {
+  createDesignation,
+  deleteDesignation,
+  updateDesignation,
+  viewAllDesignation,
+} from "api/designation";
 
 const { projectTitle, Modules, handleResponse } = appConstants;
 
@@ -39,11 +44,23 @@ const AddDesignation = () => {
   const fetchDesignations = async () => {
     setIsLoading(true);
     try {
-      const res = await viewAllDesignation({
+      const params: {
+        search?: string;
+        page?: number;
+        pageSize?: number;
+        limit?: number;
+      } = {
         page: pagination.pageIndex + 1,
         pageSize: pagination.pageSize,
         limit: 50,
-      });
+      };
+
+      const searchValue = searchAll?.trim();
+      if (searchValue) {
+        params.search = searchValue;
+      }
+
+      const res = await viewAllDesignation(params);
 
       if (res?.success) {
         setDesignations(res.data.data || []);
@@ -61,7 +78,7 @@ const AddDesignation = () => {
 
   useEffect(() => {
     fetchDesignations();
-  }, [pagination.pageIndex, pagination.pageSize]);
+  }, [pagination.pageIndex, pagination.pageSize, searchAll]);
 
   const handleEdit = (designation: any) => {
     setEditingDesignation(designation);
@@ -100,7 +117,9 @@ const AddDesignation = () => {
 
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      setSelectedDesignation(designations.map((designation) => designation._id)); // Select all
+      setSelectedDesignation(
+        designations.map((designation) => designation._id)
+      ); // Select all
     } else {
       setSelectedDesignation([]); // Unselect all
     }
@@ -222,7 +241,9 @@ const AddDesignation = () => {
           if (res?.success) {
             toast.success(
               res?.message ||
-                `Designation ${editingDesignation ? "updated" : "added"} successfully`
+                `Designation ${
+                  editingDesignation ? "updated" : "added"
+                } successfully`
             );
 
             setEditingDesignation(null);
@@ -269,9 +290,9 @@ const AddDesignation = () => {
     setSearchAll(event.target.value);
   };
 
-  const filteredDesignation = designations.filter((fDesignation) =>
-    fDesignation.designation.toLowerCase().includes(searchAll.toLowerCase())
-  );
+  // const filteredDesignation = designations.filter((fDesignation) =>
+  //   fDesignation.designation.toLowerCase().includes(searchAll.toLowerCase())
+  // );
 
   const closeDeleteModal = () => {
     setShowDeleteModal(false);
@@ -348,7 +369,9 @@ const AddDesignation = () => {
                     onCloseClick={handleCloseClick}
                     onSubmitClick={handleSubmit}
                     modalTitle={
-                      editingDesignation ? "Edit Designation" : "Add Designation"
+                      editingDesignation
+                        ? "Edit Designation"
+                        : "Add Designation"
                     }
                     submitButtonText={
                       editingDesignation
@@ -391,7 +414,7 @@ const AddDesignation = () => {
                             <TableContainer
                               // isHeaderTitle="Qualification"
                               columns={columns}
-                              data={filteredDesignation}
+                              data={designations}
                               isGlobalFilter={false}
                               customPageSize={10}
                               tableClass="!text-nowrap !mb-0 !responsive !table-responsive-sm !table-hover !table-outline-none !mb-0"

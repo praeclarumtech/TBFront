@@ -1,4 +1,3 @@
-
 // export { BaseSelect, MultiSelect };
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FormFeedback, Label } from "reactstrap";
@@ -91,6 +90,19 @@ const MultiSelect = ({
       "&:hover": {
         borderColor: "#2684FF",
       },
+    }),
+    input: (base: any) => ({
+      ...base,
+      margin: 0, // remove default margin that causes misalignment
+      padding: 0,
+      flexGrow: 1, // allow the input to fill space
+      minWidth: "2px", // ensure it takes full width
+    }),
+    placeholder: (base: any) => ({
+      ...base,
+      marginLeft: 0,
+      position: "absolute",
+      left: "10px", // optional: adds spacing from left edge
     }),
   };
 
