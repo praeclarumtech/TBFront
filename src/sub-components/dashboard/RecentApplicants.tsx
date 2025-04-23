@@ -23,6 +23,7 @@ const RecentApplicants = ({
 }) => {
   const [recentApplicants, setRecentApplicants] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  // const [totalRecords, setTotalRecords] = useState(0);
 
   useEffect(() => {
     fetchRecentApplicants();
@@ -33,6 +34,7 @@ const RecentApplicants = ({
     try {
       const data = await getRecentApplications(selectedTechnology || undefined); // Pass filter
       setRecentApplicants(data?.data?.item || []);
+      // setTotalRecords(data?.data?.totalRecords || []);
     } catch (error) {
       errorHandle(error);
       console.log("Error loading recent applicants");
@@ -139,7 +141,10 @@ const RecentApplicants = ({
       <Col>
         <Card className="w-full min-h-[390px]">
           <Card.Header className="bg-white border-0 d-flex justify-content-between align-items-center p-4  min-h-[63px]">
-            <h4 className="h4">{titleText} Applicants</h4>
+            <h4 className="h4">
+              {titleText} Applicants
+              {/* <p>Total Records:-{totalRecords}</p> */}
+            </h4>
 
             {selectedTechnology && (
               <div className="justify-end gap-2 d-flex">

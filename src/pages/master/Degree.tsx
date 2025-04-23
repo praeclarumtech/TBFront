@@ -13,6 +13,7 @@ import {
   updateDegree,
   viewAllDegree,
   deleteDegree,
+  deleteMultipleDegree,
 } from "api/apiDegree";
 import { toast } from "react-toastify";
 import DeleteModal from "components/BaseComponents/DeleteModal";
@@ -103,6 +104,30 @@ const AddDegree = () => {
       setDegreeToDelete([]);
     }
   };
+
+  const confirmManyDelete = async (  degreeToDelete: string[] | undefined | null) => {
+    if (!degreeToDelete || degreeToDelete.length === 0) {
+      toast.error("No Qualification selected for deletion.");
+      return;
+    }
+
+    setLoader(true);
+
+    try {
+      await deleteMultipleDegree(degreeToDelete);
+
+      toast.success("Selected qualification deleted successfully");
+      fetchDegrees();
+    } catch (error) {
+      toast.error("Failed to delete one or more qualification.");
+      console.error(error);
+    } finally {
+      setLoader(false);
+      setShowDeleteModal(false);
+      setDegreeToDelete([]);
+    }
+  };
+
 
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
@@ -286,12 +311,20 @@ const AddDegree = () => {
     setSelectedDegree([]);
   };
 
+  const handleDeleteClick = () => {
+    if (degreeToDelete.length > 1) {
+      confirmManyDelete(degreeToDelete);
+    } else {
+      confirmDelete();
+    }
+  };
+
   return (
     <Fragment>
       <DeleteModal
         show={showDeleteModal}
         onCloseClick={closeDeleteModal}
-        onDeleteClick={confirmDelete}
+        onDeleteClick={handleDeleteClick}
         loader={loader}
       />
       <div className="pt-1 page-content"></div>

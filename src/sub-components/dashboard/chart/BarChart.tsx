@@ -46,6 +46,15 @@ const BarChart = ({ onBarClick, selectedFilter, isloading }: BarChartProps) => {
   const labels = Object.keys(selectedFilter ?? {}).map(formatLabel);
   const dataValues = Object.values(selectedFilter ?? {});
 
+  const generateColors = (length: number) => {
+    const colors = [];
+    for (let i = 0; i < length; i++) {
+      const hue = (i * 137.508) % 360; // Using golden angle approximation
+      colors.push(`hsl(${hue}, 70%, 50%)`);
+    }
+    return colors;
+  };
+
   const chartData = {
     labels,
     datasets: [
@@ -53,15 +62,7 @@ const BarChart = ({ onBarClick, selectedFilter, isloading }: BarChartProps) => {
         label: "Applicants",
         data: dataValues,
         borderColor: "#000000",
-        backgroundColor: [
-          "#d40000",
-          "#ffa500",
-          "#FCE903",
-          "#004225",
-          "#0000FF",
-          "#4b369d",
-          "#70369d",
-        ],
+        backgroundColor: generateColors(dataValues.length),
         fill: true,
         barThickness: 50,
         maxBarThickness: 70,
@@ -142,7 +143,15 @@ const BarChart = ({ onBarClick, selectedFilter, isloading }: BarChartProps) => {
 
   return (
     <div className="w-full min-h-[571px] flex justify-center items-center">
-      <div className="w-full h-[570px] overflow-x-scroll overflow-y-auto  ">
+      <div
+        className="w-full h-[570px] overflow-x-scroll overflow-y-auto !scrollbar-visible "
+        style={{
+          overflowX: "scroll",
+          overflowY: "auto",
+          scrollbarWidth: "thin", // For Firefox
+          WebkitOverflowScrolling: "touch", // Smooth scrolling on iOS
+        }}
+      >
         <div
           className="h-[530px] min-w-[800px]"
           style={{ minWidth: `${Math.max(labels.length * 70, 900)}px` }}
@@ -160,3 +169,4 @@ const BarChart = ({ onBarClick, selectedFilter, isloading }: BarChartProps) => {
 };
 
 export default BarChart;
+
