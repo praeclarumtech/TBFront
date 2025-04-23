@@ -49,13 +49,14 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
 
   const [formReady, setFormReady] = useState(false);
 
-  const capitalizeWords = (str: string) => {
-    return str
-      .toLowerCase()
-      .split(" ")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
-  };
+  const capitalizeWords = (str: string | undefined) => {
+  if (!str) return "";
+  return str
+    .toLowerCase()
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+};
 
   useEffect(() => {
     if (cities.length && states.length && countriesType.length) {
