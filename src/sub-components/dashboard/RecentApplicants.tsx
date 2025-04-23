@@ -124,17 +124,22 @@ const RecentApplicants = ({
     [recentApplicants]
   );
 
+  const technologyLabelMap: Record<string, string> = {
+    "C%2B%2B": "C++",
+    "C%23": "C#",
+  };
+
+  const titleText =
+    selectedTechnology && technologyLabelMap[selectedTechnology]
+      ? technologyLabelMap[selectedTechnology]
+      : selectedTechnology || "Recent";
+
   return (
     <Row className="mt-6">
       <Col>
         <Card className="w-full min-h-[390px]">
           <Card.Header className="bg-white border-0 d-flex justify-content-between align-items-center p-4  min-h-[63px]">
-            <h4 className="h4">
-              {selectedTechnology === "C%2B%2B"
-                ? "C++"
-                : selectedTechnology || "Recent"}{" "}
-              Applicants
-            </h4>
+            <h4 className="h4">{titleText} Applicants</h4>
 
             {selectedTechnology && (
               <div className="justify-end gap-2 d-flex">

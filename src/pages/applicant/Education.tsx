@@ -27,7 +27,10 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
     const getQualification = async () => {
       try {
         setLoading(true);
-        const qualificationData = await viewAllDegree();
+        const page = 1;
+        const pageSize = 50;
+        const limit = 1000;
+        const qualificationData = await viewAllDegree({ page, pageSize, limit });
         const degreeList = qualificationData?.data?.data;
         if (Array.isArray(degreeList)) {
           setQualification(

@@ -113,3 +113,4 @@ export const VIEW_DESIGNATION = "designation/getDesignationsById";
 export const VIEW_ALL_DESIGNATION = "designation/viewDesignation";
 export const UPDATE_DESIGNATION = "designation/update";
 export const DELETE_DESIGNATION = "designation/deleteDesignation";
+export const DELETE_MULTIPLE_DESIGNATION = "designation/deleteManyDesignation";

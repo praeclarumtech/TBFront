@@ -254,9 +254,7 @@ const AddDegree = () => {
     },
   });
 
-  const formTitle = editingDegree
-    ? "Qualification"
-    : "Qualification";
+  const formTitle = editingDegree ? "Qualification" : "Qualification";
   const submitButtonText = "Add";
 
   const handleOpenBaseModal = () => {
@@ -403,7 +401,7 @@ const AddDegree = () => {
                               columns={columns}
                               data={filteredDegree}
                               isGlobalFilter={false}
-                              customPageSize={10}
+                              customPageSize={50}
                               tableClass="!text-nowrap !mb-0 !responsive !table-responsive-sm !table-hover !table-outline-none !mb-0"
                               theadClass="table-light text-muted "
                               SearchPlaceholder="Search..."
