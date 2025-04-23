@@ -17,6 +17,7 @@ import Skeleton from "react-loading-skeleton";
 import {
   createDesignation,
   deleteDesignation,
+  deleteMultipleDesignation,
   updateDesignation,
   viewAllDesignation,
 } from "api/designation";
@@ -115,6 +116,25 @@ const AddDesignation = () => {
     }
   };
 
+  const confirmMultiDelete = async (
+    multipleDesignationDelete: string[] | undefined | null
+  ) => {
+    setLoader(true);
+    try {
+      await deleteMultipleDesignation(multipleDesignationDelete);
+
+      toast.success("Selected designations deleted successfully");
+      fetchDesignations();
+    } catch (error) {
+      toast.error("Failed to delete one or more designations.");
+      console.error(error);
+    } finally {
+      setLoader(false);
+      setShowDeleteModal(false);
+      setDesignationToDelete([]);
+    }
+  };
+
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
       setSelectedDesignation(
@@ -138,6 +158,14 @@ const AddDesignation = () => {
     if (selectedDesignation.length > 1) {
       setDesignationToDelete([...selectedDesignation]);
       setShowDeleteModal(true);
+    }
+  };
+
+  const handleDeleteClick = () => {
+    if (selectedDesignation.length > 1) {
+      confirmMultiDelete(selectedDesignation);
+    } else {
+      confirmDelete();
     }
   };
 
@@ -304,7 +332,7 @@ const AddDesignation = () => {
       <DeleteModal
         show={showDeleteModal}
         onCloseClick={closeDeleteModal}
-        onDeleteClick={confirmDelete}
+        onDeleteClick={handleDeleteClick}
         loader={loader}
       />
       <div className="pt-1 page-content"></div>
@@ -416,7 +444,7 @@ const AddDesignation = () => {
                               columns={columns}
                               data={designations}
                               isGlobalFilter={false}
-                              customPageSize={10}
+                              customPageSize={50}
                               tableClass="!text-nowrap !mb-0 !responsive !table-responsive-sm !table-hover !table-outline-none !mb-0"
                               theadClass="table-light text-muted "
                               SearchPlaceholder="Search..."

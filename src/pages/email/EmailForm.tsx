@@ -247,7 +247,6 @@ const EmailForm = () => {
     validation.validateForm();
   }, []);
 
-  console.log("From PAge:-", fromPage);
 
   return (
     <>
@@ -273,7 +272,7 @@ const EmailForm = () => {
                       navigate("/import-applicants");
                       break;
                     default:
-                      navigate("/applicants"); // or any default fallback route
+                      navigate("/email"); // or any default fallback route
                   }
                 }}
               >

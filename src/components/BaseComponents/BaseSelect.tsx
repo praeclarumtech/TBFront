@@ -19,6 +19,19 @@ const BaseSelect = ({
   styles,
   isRequired,
 }: BaseSelectProps) => {
+  const customStyles = {
+    ...styles,
+    menu: (provided: any) => ({
+      ...provided,
+      width: "fit-content",
+      minWidth: "100%", // ensures dropdown is at least as wide as the select
+    }),
+    menuList: (provided: any) => ({
+      ...provided,
+      width: "fit-content",
+      minWidth: "100%",
+    }),
+  };
   return (
     <>
       {label && (
@@ -42,8 +55,8 @@ const BaseSelect = ({
         onBlur={handleBlur}
         isClearable
         isDisabled={isDisabled}
-        menuPlacement="bottom"
-        styles={styles}
+        menuPlacement="auto"
+        styles={customStyles}
       />
       {touched && error && (
         <FormFeedback className="d-block">{error}</FormFeedback>

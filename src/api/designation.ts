@@ -5,6 +5,7 @@ import {
   VIEW_ALL_DESIGNATION,
   UPDATE_DESIGNATION,
   DELETE_DESIGNATION,
+  DELETE_MULTIPLE_DESIGNATION,
 } from "./apiRoutes";
 
 export const createDesignation = async (designation: any) => {
@@ -47,3 +48,13 @@ export const deleteDesignation = async (designationId: string) => {
   );
   return response.data;
 };
+
+export const deleteMultipleDesignation = async ( ids: string[] | undefined | null) => {
+  if (!ids || ids.length === 0) return;
+  const response = await authServices.delete(
+    DELETE_MULTIPLE_DESIGNATION, {data:{ids},}
+  );
+  return response.data;
+};
+
+

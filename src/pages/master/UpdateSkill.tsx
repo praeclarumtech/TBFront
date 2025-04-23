@@ -118,7 +118,7 @@ const UpdateSkill = () => {
       const res = await viewRoleSkill({
         page: pagination.pageIndex + 1,
         pageSize: pagination.pageSize,
-        limit: 500,
+        limit:  pagination.limit,
       });
 
       if (res?.success) {
