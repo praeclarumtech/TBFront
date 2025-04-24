@@ -7,8 +7,12 @@ import BaseInput from "components/BaseComponents/BaseInput";
 import { useFormik } from "formik";
 import { SetStateAction, Dispatch, useState } from "react";
 import appConstants from "constants/constant";
-import { errorHandle, InputPlaceHolder } from "utils/commonFunctions";
-import { jwtDecode } from "jwt-decode";
+import {
+  errorHandle,
+  getCurrentUser,
+  InputPlaceHolder,
+} from "utils/commonFunctions";
+// import { jwtDecode } from "jwt-decode";
 import BaseModal from "components/BaseComponents/BaseModal";
 import Loader from "components/BaseComponents/Loader";
 
@@ -35,9 +39,7 @@ const ChangePassword = ({ showModal, setShowModal }: ChangePasswordProps) => {
   const [showConfirmPassword, setShowConfirmPassword] =
     useState<boolean>(false);
 
-  const token = sessionStorage.getItem("authUser");
-  const user = token ? jwtDecode(token) : null;
-
+  const user = getCurrentUser();
   const validation = useFormik({
     enableReinitialize: true,
     initialValues: {
@@ -112,7 +114,7 @@ const ChangePassword = ({ showModal, setShowModal }: ChangePasswordProps) => {
       show={showModal}
       onCloseClick={() => setShowModal(false)}
       setShowBaseModal={setShowModal}
-      onSubmitClick={validation.handleSubmit} 
+      onSubmitClick={validation.handleSubmit}
       submitButtonText="Change Password"
       closeButtonText="Close"
       modalTitle="Change Password"

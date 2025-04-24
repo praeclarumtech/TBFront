@@ -43,10 +43,10 @@ const Profile = () => {
   );
   const navigate = useNavigate();
 
-  const id = sessionStorage.getItem("id");
+  const id = localStorage.getItem("id");
   useEffect(() => {
     const fetchProfile = async () => {
-      const token = sessionStorage.getItem("authUser");
+      const token = localStorage.getItem("authUser");
       setLoading(true);
       try {
         const response = await getProfile({ token });
@@ -102,7 +102,7 @@ const Profile = () => {
 
     const formDataToSend = new FormData();
 
-    console.log("profile data", formData);
+
 
     for (const key in formData) {
       if (key === "profilePicture") {
@@ -127,7 +127,7 @@ const Profile = () => {
 
       if (response) {
         toast.success(response?.message || "Profile updated successfully!");
-        console.log(" function of error", response?.message);
+      
         setLoading(false);
 
         setImagePreview(
@@ -139,7 +139,7 @@ const Profile = () => {
       }
     } catch (error) {
       // if (error && statusCode === 400) {
-      console.log(" function of error", error);
+
       toast.error(error instanceof Error ? error.message : "An error occurred");
       // }
     } finally {
@@ -168,6 +168,7 @@ const Profile = () => {
       };
       fileReader.readAsDataURL(file);
     }
+    window.location.reload();
   };
 
   // const handleProfilePicRemove = () => {

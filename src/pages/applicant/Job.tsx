@@ -42,17 +42,20 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
   >({});
 
   const [designationOptions, setDesignationOptions] = useState<any[]>([]);
-  // const [selectedMultiRole, setSelectedMultiRole] = useState<any>([]);
-  // const [selectedRole, setSelectedRole] = useState<string>(
-  //   initialValues?.appliedRole || ""
-  // );
 
   const [loading, setLoading] = useState<boolean>(false);
-  // const [meta, setTechnologyExperience] = useState<any>({});
 
   const formattedlastFollowUpDate = initialValues.lastFollowUpDate
     ? moment(initialValues.lastFollowUpDate).format("YYYY-MM-DD")
     : "";
+  
+  const initialDesignationValue =
+    designationOptions.find(
+      (currentCompanyDesignation) =>
+        currentCompanyDesignation.label ===
+        initialValues.currentCompanyDesignation
+    )?.value || "";
+  
   const validation: any = useFormik({
     enableReinitialize: true,
     initialValues: {
@@ -78,7 +81,8 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
       resumeUrl: initialValues?.resumeUrl || "",
       rating: initialValues?.rating || "",
       portfolioUrl: initialValues?.portfolioUrl || "",
-      currentCompanyDesignation: initialValues?.currentCompanyDesignation || "",
+      // currentCompanyDesignation: initialValues?.currentCompanyDesignation || "",
+      currentCompanyDesignation: initialDesignationValue,
       preferredLocations: initialValues?.preferredLocations || "",
       linkedinUrl: initialValues?.linkedinUrl || "",
       clientCvUrl: initialValues?.clientCvUrl || "",
@@ -94,9 +98,18 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
 
       const appliedSkillsNames = selectedMulti.map((item: any) => item.label);
 
+const currentDesignation = dynamicFind(
+  designationOptions,
+  data.currentCompanyDesignation
+);
+      const currentCompanyDesignation = currentDesignation
+        ? currentDesignation.label
+        : "";
+
       const updatedData = {
         ...data,
         appliedSkills: appliedSkillsNames,
+        currentCompanyDesignation: currentCompanyDesignation,
         // meta,
       };
 
@@ -1091,9 +1104,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                   <BaseTextarea
                     label="Comments"
                     name="comment"
-                    placeholder={InputPlaceHolder(
-                      "Add Comments"
-                    )}
+                    placeholder={InputPlaceHolder("Add Comments")}
                     handleChange={validation.handleChange}
                     handleBlur={validation.handleBlur}
                     value={validation.values.comment}

@@ -158,6 +158,13 @@ const ViewModal: React.FC<ViewModalProps> = ({
 
   if (!show) return null;
 
+const getUniqueSkills = (skills: string[]) => {
+  const normalized = skills.map((s) => s.trim().toLowerCase());
+  const unique = Array.from(new Set(normalized));
+  return unique.map((s) => s.charAt(0).toUpperCase() + s.slice(1)).sort();
+};
+   
+
   return (
     <Modal
       open={show}
@@ -413,8 +420,7 @@ const ViewModal: React.FC<ViewModalProps> = ({
                   label="Notice Period"
                   value={`${formData.noticePeriod || "-"} days`}
                 />
-
-                <Row gutter={[16, 16]}>
+                {/* <Row gutter={[16, 16]}>
                   <Col span={24}>
                     <DetailsRow
                       label="Skills"
@@ -426,6 +432,41 @@ const ViewModal: React.FC<ViewModalProps> = ({
                                 {skill}
                               </Tag>
                             ))}
+                          </div>
+                        ) : (
+                          "-"
+                        )
+                      }
+                    />
+                  </Col>
+                </Row> */}
+                <Row gutter={[16, 16]}>
+                  <Col xs={24} sm={24} md={24} lg={24} xl={24}>
+                    <DetailsRow
+                      label="Skills"
+                      value={
+                        formData.appliedSkills.length > 0 ? (
+                          <div
+                            className="flex flex-wrap gap-2 py-1"
+                            style={{
+                              rowGap: "8px",
+                              columnGap: "8px",
+                            }}
+                          >
+                            {getUniqueSkills(formData.appliedSkills).map(
+                              (skill) => (
+                                <Tag
+                                  color="cyan"
+                                  key={skill}
+                                  style={{
+                                    fontSize: "0.85rem",
+                                    padding: "2px 8px",
+                                  }}
+                                >
+                                  {skill}
+                                </Tag>
+                              )
+                            )}
                           </div>
                         ) : (
                           "-"
