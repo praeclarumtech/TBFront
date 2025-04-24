@@ -30,6 +30,7 @@ import UpdateSkill from "pages/master/UpdateSkill";
 import FindAndReplace from "pages/master/FindAndReplace";
 import AddEmailTemplate from "pages/master/EmailTemplate";
 import AddDesignation from "pages/master/Designation";
+import PrivateRoute from "./PrivateRoute";
 
 const RenderRouter: React.FC = () => {
   const {
@@ -54,147 +55,160 @@ const RenderRouter: React.FC = () => {
         <Route path={FORGET_PASSWORD.path} element={<ForgetPassword />} />
         <Route path={VERIFY_EMAIL.path} element={<EmailVerification />} />
         <Route path={UPDATE_PASSWORD.path} element={<UpdatePassword />} />
-        <Route
-          path={DASHBOARD.path}
-          element={<RootLayout>{<Dashboard />}</RootLayout>}
-        />
-        <Route
-          path={APPLICANTS.path}
-          element={
-            <RootLayout>
-              <Applicant />
-            </RootLayout>
-          }
-        />
-        <Route
-          path={"import-applicants"}
-          element={
-            <RootLayout>
-              <ImportApplicantTables />
-            </RootLayout>
-          }
-        />
-        <Route
-          path={"userProfile"}
-          element={
-            <RootLayout>
-              <Profile />
-            </RootLayout>
-          }
-        />
-        <Route
-          path={CHANGE_PASSWORD.path}
-          element={
-            <RootLayout>
-              <ChangePassword showModal={true} setShowModal={() => {}} />
-            </RootLayout>
-          }
-        />
-        <Route path={APPLICANTS.path}>
-          <Route
-            path={"add-applicant"}
-            element={
-              <RootLayout>
-                <StepperForm />
-              </RootLayout>
-            }
-          />
-          <Route
-            path={"edit-applicant/:id"}
-            element={
-              <RootLayout>
-                <StepperForm />
-              </RootLayout>
-            }
-          />
-        </Route>
-        <Route path={EMAIL.path}>
-          <Route
-            index
-            element={
-              <RootLayout>
-                <EmailTable />
-              </RootLayout>
-            }
-          />
-          <Route
-            path="compose"
-            element={
-              <RootLayout>
-                <EmailForm />
-              </RootLayout>
-            }
-          />
-        </Route>
-        <Route path={REPORT.path}>
-          <Route
-            index
-            element={
-              <RootLayout>
-                <Report />
-              </RootLayout>
-            }
-          />
-        </Route>
-        <Route path={MASTER.path}>
-          <Route
-            path="passing-year"
-            element={
-              <RootLayout>
-                <PassingYear />
-              </RootLayout>
-            }
-          />
-          <Route
-            path="skills"
-            element={
-              <RootLayout>
-                <AddSkill />
-              </RootLayout>
-            }
-          />
-          <Route
-            path="degree"
-            element={
-              <RootLayout>
-                <AddDegree />
-              </RootLayout>
-            }
-          />
-          <Route
-            path="add-role-skill"
-            element={
-              <RootLayout>
-                <UpdateSkill />
-              </RootLayout>
-            }
-          />
-          <Route
-            path="Find-Fields"
-            element={
-              <RootLayout>
-                <FindAndReplace />
-              </RootLayout>
-            }
-          />
-        
 
+        <Route element={<PrivateRoute component={() => <RootLayout />} />}>
           <Route
-            path="email-template"
+            path={DASHBOARD.path}
+            element={
+              // <RootLayout>{<Dashboard />}</RootLayout>
+              <PrivateRoute
+                component={() => (
+                  <RootLayout>
+                    <Dashboard />
+                  </RootLayout>
+                )}
+              />
+            }
+          />
+          <Route
+            path={APPLICANTS.path}
+            element={
+         
+                <RootLayout>
+                  <Applicant />
+                </RootLayout>
+         
+            }
+          />
+          <Route
+            path={"import-applicants"}
             element={
               <RootLayout>
-                <AddEmailTemplate />
+                <ImportApplicantTables />
               </RootLayout>
             }
           />
           <Route
-            path="designation"
+            path={"userProfile"}
             element={
               <RootLayout>
-                <AddDesignation />
+                <Profile />
               </RootLayout>
             }
           />
+          <Route
+            path={CHANGE_PASSWORD.path}
+            element={
+              <RootLayout>
+                <ChangePassword showModal={true} setShowModal={() => {}} />
+              </RootLayout>
+            }
+          />
+          <Route path={APPLICANTS.path}>
+            <Route
+              path={"add-applicant"}
+              element={
+                <RootLayout>
+                  <StepperForm />
+                </RootLayout>
+              }
+            />
+            <Route
+              path={"edit-applicant/:id"}
+              element={
+                <RootLayout>
+                  <StepperForm />
+                </RootLayout>
+              }
+            />
+          </Route>
+          <Route path={EMAIL.path}>
+            <Route
+              index
+              element={
+                <RootLayout>
+                  <EmailTable />
+                </RootLayout>
+              }
+            />
+            <Route
+              path="compose"
+              element={
+                <RootLayout>
+                  <EmailForm />
+                </RootLayout>
+              }
+            />
+          </Route>
+          <Route path={REPORT.path}>
+            <Route
+              index
+              element={
+                <RootLayout>
+                  <Report />
+                </RootLayout>
+              }
+            />
+          </Route>
+          <Route path={MASTER.path}>
+            <Route
+              path="passing-year"
+              element={
+                <RootLayout>
+                  <PassingYear />
+                </RootLayout>
+              }
+            />
+            <Route
+              path="skills"
+              element={
+                <RootLayout>
+                  <AddSkill />
+                </RootLayout>
+              }
+            />
+            <Route
+              path="degree"
+              element={
+                <RootLayout>
+                  <AddDegree />
+                </RootLayout>
+              }
+            />
+            <Route
+              path="add-role-skill"
+              element={
+                <RootLayout>
+                  <UpdateSkill />
+                </RootLayout>
+              }
+            />
+            <Route
+              path="Find-Fields"
+              element={
+                <RootLayout>
+                  <FindAndReplace />
+                </RootLayout>
+              }
+            />
+
+            <Route
+              path="email-template"
+              element={
+                <RootLayout>
+                  <AddEmailTemplate />
+                </RootLayout>
+              }
+            />
+            <Route
+              path="designation"
+              element={
+                <RootLayout>
+                  <AddDesignation />
+                </RootLayout>
+              }
+            />
+          </Route>
         </Route>
       </Route>
     )

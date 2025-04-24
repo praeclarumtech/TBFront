@@ -3,13 +3,14 @@ import { Outlet } from "react-router";
 import Sidebar from "components/navbars/sidebar/Sidebar";
 import Header from "components/navbars/topbar/Header";
 import AppFooter from "layouts/footer/AppFooter";
-import { ReactNode, useState } from "react";
+import {  useState } from "react";
 import { useMediaQuery } from "react-responsive";
+import AutoLogout from "hooks/useAutoLogout";
+
 
 interface RootLayoutProps {
-  children: ReactNode;
+  children?: React.ReactNode;
 }
-
 const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
   const [showMenu, setShowMenu] = useState(true);
   const isMobile = useMediaQuery({ maxWidth: 767 });
@@ -98,6 +99,7 @@ const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
                 
               </div>
             )} */}
+            <AutoLogout />
             <Outlet />
             {children}
           </div>

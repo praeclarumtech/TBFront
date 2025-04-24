@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 
 interface TokenProps {
-  token: string; 
-};
+  token: string;
+}
 
 const getLoggedInUser = (): TokenProps | null => {
-  const user = sessionStorage.getItem("authUser");
+  const user = localStorage.getItem("authUser");
   if (!user) {
     return null;
   } else {

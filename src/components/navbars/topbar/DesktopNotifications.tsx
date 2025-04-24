@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { User } from "interfaces/dashboard.interface";
 import appEnv from "config/appEnv";
 import ChangePassword from "pages/auth/ChangePassword";
+import { logout } from "utils/commonFunctions";
 
 export const DesktopNotifications = () => {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ export const DesktopNotifications = () => {
   );
   useEffect(() => {
     const fetchProfile = async () => {
-      const token = sessionStorage.getItem("authUser");
+      const token = localStorage.getItem("authUser");
       const response = await getProfile({ token });
       setUser(response.data);
       setImagePreview(
@@ -103,7 +104,9 @@ export const DesktopNotifications = () => {
             </Dropdown.Item>
             <Dropdown.Item
               onClick={() => {
+                logout();
                 navigate("/");
+                window.location.reload();
               }}
             >
               <i className="fe fe-power me-2"></i>Sign Out

@@ -5,6 +5,7 @@ import { User } from "interfaces/dashboard.interface";
 import { getProfile } from "api/usersApi";
 import appEnv from "config/appEnv";
 import ChangePassword from "pages/auth/ChangePassword";
+import { logout } from "utils/commonFunctions";
 
 export const MobileNotifications = () => {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ export const MobileNotifications = () => {
   );
   useEffect(() => {
     const fetchProfile = async () => {
-      const token = sessionStorage.getItem("authUser");
+      const token = localStorage.getItem("authUser");
       const response = await getProfile({ token });
       setUser(response.data);
       setImagePreview(
@@ -84,8 +85,9 @@ export const MobileNotifications = () => {
             </Dropdown.Item>
             <Dropdown.Item
               onClick={() => {
-                // Clear any auth tokens/session data here if needed
+                logout();
                 navigate("/");
+                window.location.reload();
               }}
             >
               <i className="fe fe-power me-2"></i>Sign Out

@@ -1,34 +1,71 @@
 import appConstants from "constants/constant";
-import { JWTDecodedUser } from "interfaces/global.interface";
+// import { JWTDecodedUser } from "interfaces/global.interface";
 import { jwtDecode } from "jwt-decode";
 import { toast } from "react-toastify";
 
-const { ACCESS_TOKEN, handleResponse, NOT_FOUND } = appConstants;
+const {  handleResponse, NOT_FOUND } = appConstants;
+
+export const ACCESS_TOKEN = "authUser";
+export const EXPIRES_AT = "expiresAt";
 
 export const removeAppTokens = (): void => {
   localStorage.removeItem(ACCESS_TOKEN);
   sessionStorage.clear();
+  localStorage.removeItem(EXPIRES_AT);
+  localStorage.removeItem("authUser");  
+  localStorage.removeItem("id");
+  localStorage.removeItem("role");
+};
+const removeItem = (key: string) => {
+  sessionStorage.removeItem(key);
+  localStorage.removeItem(key);
+    localStorage.removeItem("authUser");
+    localStorage.removeItem("id");
+    localStorage.removeItem("role");
 };
 
-export const isAuthenticated = (): boolean => {
-  if (typeof window == "undefined") return false;
+// export const isAuthenticated = (): boolean => {
+//   if (typeof window == "undefined") return false;
 
-  try {
-    const token = localStorage.getItem(ACCESS_TOKEN);
-    if (token) {
-      const user: JWTDecodedUser = jwtDecode(token);
-      const dateNow = new Date();
+//   try {
+//     const token = localStorage.getItem(ACCESS_TOKEN);
+//     if (token) {
+//       const user: JWTDecodedUser = jwtDecode(token);
+//       const dateNow = new Date();
 
-      if (user?.exp > dateNow.getTime() / 1000) {
-        return true;
-      }
-      removeAppTokens();
-    }
-  } catch (error) {
-    removeAppTokens();
-  }
+//       if (user?.exp > dateNow.getTime() / 1000) {
+//         return true;
+//       }
+//       removeAppTokens();
+//     }
+//   } catch (error) {
+//     removeAppTokens();
+//   }
 
-  return false;
+//   return false;
+// };
+
+export const isAuthenticated = () => {
+  const token = getItem(ACCESS_TOKEN);
+  const expiresAt = getItem(EXPIRES_AT);
+  return !!token && Date.now() < parseInt(expiresAt || 0);
+};
+
+export const setAuthData = (token: string) => {
+  const decoded: any = jwtDecode(token);
+  const expireTime = Date.now() + 60 * 60 * 1000; // 60 minutes
+  setItem(ACCESS_TOKEN, token);
+  setItem(EXPIRES_AT, expireTime.toString());
+  setItem("role", decoded.role);
+  setItem("id", decoded.id);
+};
+
+export const logout = () => {
+  removeAppTokens();
+  removeItem(ACCESS_TOKEN);
+  removeItem(EXPIRES_AT);
+  removeItem("role");
+  removeItem("id");
 };
 
 export const InputPlaceHolder = (fieldName: string) => {
@@ -55,11 +92,28 @@ export const PlaceHolderFormat = (fieldName: string) => {
 export const IsInvalid = (validation: any, fieldName: string | number) => {
   return validation.touched[fieldName] && validation.errors[fieldName];
 };
-const getItem = (key: any) => {
-  return sessionStorage.getItem(key);
+const getItem = (key: string) => {
+  const val = localStorage.getItem(key);
+  if (!val) return null;
+  try {
+    return JSON.parse(val);
+  } catch (e) {
+    return val;
+  }
 };
-const setItem = (key: any, value: any) => {
-  return sessionStorage.setItem(key, value);
+
+// const getItem = (key: any) => {
+//   return sessionStorage.getItem(key);
+// };
+
+// const setItem = (key: any, value: any) => {
+//   return sessionStorage.setItem(key, value);
+// };
+const setItem = (key: string, value: any) => {
+  localStorage.setItem(
+    key,
+    typeof value === "string" ? value : JSON.stringify(value)
+  );
 };
 const clearSessionStorage = () => {
   sessionStorage.clear();
@@ -83,4 +137,16 @@ export const capitalizeWords = (str: any) => {
     .split(" ")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(" ");
+};
+
+export const getCurrentUser = () => {
+  const token = localStorage.getItem(ACCESS_TOKEN);
+  if (!token) return null;
+
+  try {
+    const decoded: any = jwtDecode(token);
+    return decoded && typeof decoded === "object" ? decoded : null;
+  } catch {
+    return null;
+  }
 };
