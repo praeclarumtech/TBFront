@@ -158,12 +158,11 @@ const ViewModal: React.FC<ViewModalProps> = ({
 
   if (!show) return null;
 
-const getUniqueSkills = (skills: string[]) => {
-  const normalized = skills.map((s) => s.trim().toLowerCase());
-  const unique = Array.from(new Set(normalized));
-  return unique.map((s) => s.charAt(0).toUpperCase() + s.slice(1)).sort();
-};
-   
+  const getUniqueSkills = (skills: string[]) => {
+    const normalized = skills.map((s) => s.trim().toLowerCase());
+    const unique = Array.from(new Set(normalized));
+    return unique.map((s) => s.charAt(0).toUpperCase() + s.slice(1)).sort();
+  };
 
   return (
     <Modal
@@ -173,6 +172,7 @@ const getUniqueSkills = (skills: string[]) => {
       width={800}
       centered
       title={<span className="text-lg font-bold">Applicant Details</span>}
+      className="mt-10 mb-10"
     >
       {loading ? (
         <Spin size="large" className="flex items-center justify-center" />

@@ -31,15 +31,16 @@ const ProgressBars: React.FC<ProgressBarsProps> = ({
       setTotalApplicants(data.data.totalApplicants);
     } catch (error) {
       console.error("API Error:", error);
+    } finally {
     }
   };
 
   useEffect(() => {
-    if (!loading && value !== null && percentage < value) {
-      const timer = setTimeout(() => setPercentage(percentage + 1), 30);
-      return () => clearTimeout(timer);
-    }
-    // setPercentage(value)
+    // if (!loading && value !== null && percentage < value) {
+    //   const timer = setTimeout(() => setPercentage(percentage + 1), 10);
+    //   return () => clearTimeout(timer);
+    // }
+    setPercentage(value);
   }, [percentage, value, loading]);
 
   // const range = (percentage / totalApplicants) * 100;

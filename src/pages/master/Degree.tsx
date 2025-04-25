@@ -13,6 +13,7 @@ import {
   updateDegree,
   viewAllDegree,
   deleteDegree,
+  deleteMultipleDegree,
 } from "api/apiDegree";
 import { toast } from "react-toastify";
 import DeleteModal from "components/BaseComponents/DeleteModal";
@@ -81,7 +82,7 @@ const AddDegree = () => {
     setShowDeleteModal(true);
   };
 
-  const confirmDelete = async () => {
+  const confirmDelete = async (deletetoDegree: string) => {
     if (!degreeToDelete || degreeToDelete.length === 0) {
       toast.error("No Qualification selected for deletion.");
       return;
@@ -90,7 +91,32 @@ const AddDegree = () => {
     setLoader(true);
 
     try {
-      await deleteDegree({ _id: degreeToDelete._id });
+      await deleteDegree({ _id: deletetoDegree });
+
+      toast.success("Selected qualification deleted successfully");
+      fetchDegrees();
+    } catch (error) {
+      toast.error("Failed to delete one or more qualification.");
+      console.error(error);
+    } finally {
+      setLoader(false);
+      setShowDeleteModal(false);
+      setDegreeToDelete([]);
+    }
+  };
+
+  const confirmManyDelete = async (
+    degreeToDelete: string[] | undefined | null
+  ) => {
+    if (!degreeToDelete || degreeToDelete.length === 0) {
+      toast.error("No Qualification selected for deletion.");
+      return;
+    }
+
+    setLoader(true);
+
+    try {
+      await deleteMultipleDegree(degreeToDelete);
 
       toast.success("Selected qualification deleted successfully");
       fetchDegrees();
@@ -286,12 +312,21 @@ const AddDegree = () => {
     setSelectedDegree([]);
   };
 
+  const handleDeleteClick = () => {
+    console.log(degreeToDelete);
+    if (degreeToDelete.length > 1) {
+      confirmManyDelete(degreeToDelete);
+    } else {
+      confirmDelete(degreeToDelete._id);
+    }
+  };
+
   return (
     <Fragment>
       <DeleteModal
         show={showDeleteModal}
         onCloseClick={closeDeleteModal}
-        onDeleteClick={confirmDelete}
+        onDeleteClick={handleDeleteClick}
         loader={loader}
       />
       <div className="pt-1 page-content"></div>

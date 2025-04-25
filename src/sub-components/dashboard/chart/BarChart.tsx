@@ -46,6 +46,15 @@ const BarChart = ({ onBarClick, selectedFilter, isloading }: BarChartProps) => {
   const labels = Object.keys(selectedFilter ?? {}).map(formatLabel);
   const dataValues = Object.values(selectedFilter ?? {});
 
+  const generateColors = (length: number) => {
+    const colors = [];
+    for (let i = 0; i < length; i++) {
+      const hue = (i * 137.508) % 360; // Using golden angle approximation
+      colors.push(`hsl(${hue}, 70%, 50%)`);
+    }
+    return colors;
+  };
+
   const chartData = {
     labels,
     datasets: [
@@ -53,15 +62,7 @@ const BarChart = ({ onBarClick, selectedFilter, isloading }: BarChartProps) => {
         label: "Applicants",
         data: dataValues,
         borderColor: "#000000",
-        backgroundColor: [
-          "#d40000",
-          "#ffa500",
-          "#FCE903",
-          "#004225",
-          "#0000FF",
-          "#4b369d",
-          "#70369d",
-        ],
+        backgroundColor: generateColors(dataValues.length),
         fill: true,
         barThickness: 50,
         maxBarThickness: 70,
@@ -122,38 +123,46 @@ const BarChart = ({ onBarClick, selectedFilter, isloading }: BarChartProps) => {
     }
   };
 
-  if (isloading) {
-    return (
-      <div className="w-full h-[570px] flex justify-center items-center">
-        <div className="h-[500px] w-[600px]">
-          <Skeleton height="100%" />
-        </div>
-      </div>
-    );
-  }
+  // if (isloading) {
+  //   return (
+  //     <div className="w-full h-[570px] flex justify-center items-center">
+  //       <div className="h-[500px] w-[600px]">
+  //         <Skeleton height="500px" width="600px" />
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
-  if (!labels.length || !dataValues.length) {
-    return (
-      <div className="py-4 text-center">
-        <b>No data available. Please Go and Select Skills to Show </b>
-      </div>
-    );
-  }
+  // if (!labels.length || !dataValues.length) {
+  //   return (
+  //     <div className="py-4 text-center">
+  //       <b>No data available. Please Go and Select Skills to Show </b>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="w-full min-h-[571px] flex justify-center items-center">
-      <div className="w-full h-[570px] overflow-x-scroll overflow-y-auto  ">
-        <div
-          className="h-[530px] min-w-[800px]"
-          style={{ minWidth: `${Math.max(labels.length * 70, 900)}px` }}
-        >
-          <Bar
-            ref={chartRef}
-            data={chartData}
-            options={options}
-            onClick={handleChartClick}
-          />
-        </div>
+      <div className="w-full h-[570px] overflow-x-scroll overflow-y-auto !scrollbar-visible overflow-scroll">
+        {isloading ? (
+          <div>
+            <Skeleton height="500px" width="100%" />
+          </div>
+        ) : (
+          <>
+            <div
+              className="h-[530px] min-w-[800px]"
+              style={{ minWidth: `${Math.max(labels.length * 70, 900)}px` }}
+            >
+              <Bar
+                ref={chartRef}
+                data={chartData}
+                options={options}
+                onClick={handleChartClick}
+              />
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

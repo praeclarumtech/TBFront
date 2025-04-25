@@ -13,9 +13,16 @@ export const addRoleSkill = async (data:{
   return response?.data;
 };
 
+
+
 export const viewRoleSkill = async (
-  params: { page?: number; pageSize?: number; limit?: number } = {}
+  params: { page?: number; pageSize?: number; limit?: number; search?:string } = {}
 ) => {
+  if (params.search ) {
+    const {  limit, ...searchParams } = params;
+    params = { ...searchParams };
+  }
+
   const response = await authServices.get(`${VIEW_ROLE_AND_SKILL}`, { params });
   return response?.data;
 };

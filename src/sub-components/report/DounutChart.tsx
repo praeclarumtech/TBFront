@@ -7,7 +7,7 @@ import {
   ChartOptions,
 } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
-import { getSkillStatistics } from "api/reportApi";
+import { getCityState } from "api/reportApi";
 import Skeleton from "react-loading-skeleton";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -23,7 +23,7 @@ const centerTextPlugin = {
     const { width, height, ctx } = chart;
     ctx.save();
 
-    const text = "Technology wise\nApplicants"; // Add a line break for better formatting
+    const text = "City and State wise\nApplicants"; // Add a line break for better formatting
     const fontSize = Math.min(width / 18, height / 9, 18);
 
     ctx.font = `600 ${fontSize}px Arial`;
@@ -48,18 +48,18 @@ const centerTextPlugin = {
 };
 
 const DounutChart = ({ selectedFilter }: DounutChartProps) => {
-  const [skillStatistics, setSkillStatistics] = useState([]);
+  const [cityStateData, setCityStateData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    fetchSkillStatistics();
+    fetchCityState();
   }, [selectedFilter]);
 
-  const fetchSkillStatistics = async () => {
+  const fetchCityState = async () => {
     setIsLoading(true);
     try {
-      const data = await getSkillStatistics(selectedFilter);
-      setSkillStatistics(data.data?.skillCounts);
+      const data = await getCityState(selectedFilter);
+      setCityStateData(data?.data);
     } catch (error) {
       console.error("API Error:", error);
     } finally {
@@ -75,8 +75,8 @@ const DounutChart = ({ selectedFilter }: DounutChartProps) => {
       .trim();
   };
 
-  const labels = Object.keys(skillStatistics).map((key) => formatLabel(key));
-  const dataValues = Object.values(skillStatistics);
+  const labels = Object.keys(cityStateData).map((key) => formatLabel(key));
+  const dataValues = Object.values(cityStateData);
 
   const data = {
     labels: labels,
@@ -84,17 +84,10 @@ const DounutChart = ({ selectedFilter }: DounutChartProps) => {
       {
         label: "Applicants",
         data: dataValues,
-        backgroundColor: [
-          "#d40000",
-          "#660099",
-          "#ffcc00",
-          "#9b2242",
-          "#660099",
-          "#0000FF",
-          "#27ae60",
-          "#004225",
-          "#FCE903",
-        ],
+        backgroundColor: labels.map((_, index) => {
+          const hue = (index * 360) / labels.length;
+          return `hsl(${hue}, 65%, 55%)`; // Generates distinct colors
+        }),
       },
     ],
   };

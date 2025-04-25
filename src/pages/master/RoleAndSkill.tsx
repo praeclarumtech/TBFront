@@ -115,11 +115,23 @@ const UpdateSkill = () => {
   const fetchRoleSkills = async () => {
     setIsLoading(true);
     try {
-      const res = await viewRoleSkill({
+      const params: {
+        search?: string;
+        page?: number;
+        pageSize?: number;
+        limit?: number;
+      } = {
         page: pagination.pageIndex + 1,
         pageSize: pagination.pageSize,
-        limit:  pagination.limit,
-      });
+        limit: 50,
+      };
+
+      const searchValue = searchAll?.trim();
+      if (searchValue) {
+        params.search = searchValue;
+      }
+
+      const res = await viewRoleSkill(params);
 
       if (res?.success) {
         const roleSkills = res?.data?.data || [];
@@ -160,7 +172,12 @@ const UpdateSkill = () => {
     if (skillOptions && skillOptions.length > 0) {
       fetchRoleSkills();
     }
-  }, [pagination.pageIndex, pagination.pageSize, skillOptions]);
+  }, [
+    pagination.pageIndex,
+    pagination.pageSize,
+    skillOptions,
+    searchAll,
+  ]);
 
   const handleEdit = (id: any) => {
     const selectedSkillOptions = skillOptions.filter((opt) =>

@@ -597,7 +597,7 @@ const AddSkill = () => {
                         <div>
                           {skills?.length > 0 ? (
                             <TableContainer
-                              isHeaderTitle="Skills"
+                              // isHeaderTitle="Skills"
                               columns={columns}
                               data={filteredSkills}
                               // isGlobalFilter={true}

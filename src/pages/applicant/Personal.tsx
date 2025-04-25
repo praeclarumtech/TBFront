@@ -690,7 +690,7 @@ applicants"
                 </Link> */}
 
                 <BaseButton
-                  className="w-full btn btn-outline-danger"
+                  className="max-w-full btn btn-outline-danger"
                   color="white"
                   onClick={handleCancel}
                 >
@@ -700,7 +700,7 @@ applicants"
                 <BaseButton
                   color="primary"
                   type="submit"
-                  className="w-full d-flex align-items-center justify-content-center"
+                  className="max-w-full d-flex align-items-center justify-content-center"
                 >
                   Next
                 </BaseButton>

@@ -1122,7 +1122,7 @@ const currentDesignation = dynamicFind(
             <div className="gap-3 mt-4 d-flex flex-column flex-md-row justify-content-end">
               {" "}
               <BaseButton
-                className="order-1 w-full order-md-0"
+                className="order-1 order-md-0"
                 type="submit"
                 onClick={() => {
                   onBack(validation.values);
@@ -1132,7 +1132,7 @@ const currentDesignation = dynamicFind(
               </BaseButton>
               <BaseButton
                 color="primary"
-                className="w-full order-0 order-md-1"
+                className="order-0 order-md-1"
                 type="submit"
               >
                 Next

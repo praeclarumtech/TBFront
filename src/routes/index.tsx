@@ -26,7 +26,7 @@ import AddDegree from "pages/master/Degree";
 import ImportApplicantTables from "pages/applicant/importApplicants/Index";
 import Profile from "pages/UserProfile/Profile";
 import ChangePassword from "pages/auth/ChangePassword";
-import UpdateSkill from "pages/master/UpdateSkill";
+import UpdateSkill from "pages/master/RoleAndSkill";
 import FindAndReplace from "pages/master/FindAndReplace";
 import AddEmailTemplate from "pages/master/EmailTemplate";
 import AddDesignation from "pages/master/Designation";
@@ -63,9 +63,9 @@ const RenderRouter: React.FC = () => {
               // <RootLayout>{<Dashboard />}</RootLayout>
               <PrivateRoute
                 component={() => (
-                  <RootLayout>
-                    <Dashboard />
-                  </RootLayout>
+                  // <RootLayout>
+                  <Dashboard />
+                  // </RootLayout>
                 )}
               />
             }
@@ -73,52 +73,50 @@ const RenderRouter: React.FC = () => {
           <Route
             path={APPLICANTS.path}
             element={
-         
-                <RootLayout>
-                  <Applicant />
-                </RootLayout>
-         
+              // <RootLayout>
+              <Applicant />
+              // </RootLayout>
             }
           />
           <Route
             path={"import-applicants"}
             element={
-              <RootLayout>
-                <ImportApplicantTables />
-              </RootLayout>
+              // <RootLayout>
+              <ImportApplicantTables />
+              // </RootLayout>
             }
           />
           <Route
             path={"userProfile"}
             element={
-              <RootLayout>
-                <Profile />
-              </RootLayout>
+              // <RootLayout>
+              <Profile />
+              // </RootLayout>
             }
           />
           <Route
             path={CHANGE_PASSWORD.path}
             element={
-              <RootLayout>
-                <ChangePassword showModal={true} setShowModal={() => {}} />
-              </RootLayout>
+              // <RootLayout>
+              <ChangePassword showModal={true} setShowModal={() => {}} />
+              // </RootLayout>
             }
           />
           <Route path={APPLICANTS.path}>
             <Route
               path={"add-applicant"}
               element={
-                <RootLayout>
-                  <StepperForm />
-                </RootLayout>
+                // <RootLayout>
+                <StepperForm />
+                // </RootLayout>
               }
             />
             <Route
               path={"edit-applicant/:id"}
               element={
-                <RootLayout>
-                  <StepperForm />
-                </RootLayout>
+                // <RootLayout>
+                <StepperForm />
+                // </RootLayout>
               }
             />
           </Route>
@@ -126,17 +124,17 @@ const RenderRouter: React.FC = () => {
             <Route
               index
               element={
-                <RootLayout>
-                  <EmailTable />
-                </RootLayout>
+                // <RootLayout>
+                <EmailTable />
+                // </RootLayout>
               }
             />
             <Route
               path="compose"
               element={
-                <RootLayout>
-                  <EmailForm />
-                </RootLayout>
+                // <RootLayout>
+                <EmailForm />
+                // </RootLayout>
               }
             />
           </Route>
@@ -144,9 +142,9 @@ const RenderRouter: React.FC = () => {
             <Route
               index
               element={
-                <RootLayout>
-                  <Report />
-                </RootLayout>
+                // <RootLayout>
+                <Report />
+                // </RootLayout>
               }
             />
           </Route>
@@ -154,58 +152,58 @@ const RenderRouter: React.FC = () => {
             <Route
               path="passing-year"
               element={
-                <RootLayout>
-                  <PassingYear />
-                </RootLayout>
+                // <RootLayout>
+                <PassingYear />
+                // </RootLayout>
               }
             />
             <Route
               path="skills"
               element={
-                <RootLayout>
-                  <AddSkill />
-                </RootLayout>
+                // <RootLayout>
+                <AddSkill />
+                // </RootLayout>
               }
             />
             <Route
               path="degree"
               element={
-                <RootLayout>
-                  <AddDegree />
-                </RootLayout>
+                // <RootLayout>
+                <AddDegree />
+                // </RootLayout>
               }
             />
             <Route
               path="add-role-skill"
               element={
-                <RootLayout>
-                  <UpdateSkill />
-                </RootLayout>
+                // <RootLayout>
+                <UpdateSkill />
+                // </RootLayout>
               }
             />
             <Route
               path="Find-Fields"
               element={
-                <RootLayout>
-                  <FindAndReplace />
-                </RootLayout>
+                // <RootLayout>
+                <FindAndReplace />
+                // </RootLayout>
               }
             />
 
             <Route
               path="email-template"
               element={
-                <RootLayout>
-                  <AddEmailTemplate />
-                </RootLayout>
+                // <RootLayout>
+                <AddEmailTemplate />
+                // </RootLayout>
               }
             />
             <Route
               path="designation"
               element={
-                <RootLayout>
-                  <AddDesignation />
-                </RootLayout>
+                // <RootLayout>
+                <AddDesignation />
+                // </RootLayout>
               }
             />
           </Route>
