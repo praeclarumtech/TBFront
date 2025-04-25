@@ -19,7 +19,8 @@ export const authInstanceMultipart = axios.create({
 });
 
 authServices.interceptors.request.use(async (config) => {
-  const token = sessionStorage.getItem("authUser");
+  // const token = sessionStorage.getItem("authUser");
+  const token = localStorage.getItem("authUser");
   if (token) {
     config.headers["Authorization"] = `Bearer ${token}`;
   }
@@ -27,7 +28,8 @@ authServices.interceptors.request.use(async (config) => {
 });
 
 authInstanceMultipart.interceptors.request.use(async (config) => {
-  const token = sessionStorage.getItem("authUser");
+  // const token = sessionStorage.getItem("authUser");
+  const token = localStorage.getItem("authUser");
   if (token) {
     config.headers["Authorization"] = `Bearer ${token}`;
   }

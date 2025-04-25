@@ -7,11 +7,14 @@ import { useFormik } from "formik";
 import { useState } from "react";
 import { login } from "api/usersApi";
 import { toast } from "react-toastify";
-import { jwtDecode } from "jwt-decode";
+// import { jwtDecode } from "jwt-decode";
 import BaseInput from "components/BaseComponents/BaseInput";
 import BaseButton from "components/BaseComponents/BaseButton";
 import appConstants from "constants/constant";
-import { errorHandle, InputPlaceHolder, setItem } from "utils/commonFunctions";
+import {
+  errorHandle, InputPlaceHolder, setAuthData,
+  // setItem
+} from "utils/commonFunctions";
 
 
 const {
@@ -51,14 +54,19 @@ const SignIn = () => {
       setLoader(true);
       login(payload)
         .then((res) => {
-          if (res?.statusCode === OK && res?.success === SUCCESS) {
-            setItem("authUser", res?.data);
+          // if (res?.statusCode === OK && res?.success === SUCCESS) {
+          //   setItem("authUser", res?.data);
 
-            const decode = jwtDecode<any>(res?.data);
-            const role = decode.role;
-            const id = decode.id;
-            setItem("role", role);
-            setItem("id", id);
+          //   const decode = jwtDecode<any>(res?.data);
+          //   const role = decode.role;
+          //   const id = decode.id;
+          //   setItem("role", role);
+          //   setItem("id", id);
+          //   navigate("/dashboard");
+          //   toast.success(res?.message);
+    // }
+          if (res?.statusCode === OK && res?.success === SUCCESS) {
+            setAuthData(res.data); 
             navigate("/dashboard");
             toast.success(res?.message);
           } else {

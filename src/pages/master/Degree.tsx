@@ -82,7 +82,7 @@ const AddDegree = () => {
     setShowDeleteModal(true);
   };
 
-  const confirmDelete = async () => {
+  const confirmDelete = async (deletetoDegree: string) => {
     if (!degreeToDelete || degreeToDelete.length === 0) {
       toast.error("No Qualification selected for deletion.");
       return;
@@ -91,7 +91,7 @@ const AddDegree = () => {
     setLoader(true);
 
     try {
-      await deleteDegree({ _id: degreeToDelete._id });
+      await deleteDegree({ _id: deletetoDegree });
 
       toast.success("Selected qualification deleted successfully");
       fetchDegrees();
@@ -105,7 +105,9 @@ const AddDegree = () => {
     }
   };
 
-  const confirmManyDelete = async (  degreeToDelete: string[] | undefined | null) => {
+  const confirmManyDelete = async (
+    degreeToDelete: string[] | undefined | null
+  ) => {
     if (!degreeToDelete || degreeToDelete.length === 0) {
       toast.error("No Qualification selected for deletion.");
       return;
@@ -127,7 +129,6 @@ const AddDegree = () => {
       setDegreeToDelete([]);
     }
   };
-
 
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
@@ -312,10 +313,11 @@ const AddDegree = () => {
   };
 
   const handleDeleteClick = () => {
+    console.log(degreeToDelete);
     if (degreeToDelete.length > 1) {
       confirmManyDelete(degreeToDelete);
     } else {
-      confirmDelete();
+      confirmDelete(degreeToDelete._id);
     }
   };
 

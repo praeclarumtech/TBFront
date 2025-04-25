@@ -29,10 +29,22 @@ export const StatRightTopIcon: React.FC<StatRightProps> = ({
       <Card.Body className="d-flex flex-column justify-content-between">
         {/* Title and Icon */}
         <div className="mb-3 d-flex justify-content-between align-items-center">
-          <h4 style={{ fontSize: "1.1rem" }} className="mb-0 text-muted">
-            {title}
-          </h4>
-          <div className={classes}>{icon}</div>
+          {isLoading ? (
+            <>
+              <Skeleton height={48} width={90} />
+            </>
+          ) : (
+            <h4 style={{ fontSize: "1.1rem" }} className="mb-0 text-muted">
+              {title}
+            </h4>
+          )}{" "}
+          {isLoading ? (
+            <>
+              <Skeleton height={48} width={48} />
+            </>
+          ) : (
+            <div className={classes}>{icon}</div>
+          )}
         </div>
         <div>
           {isLoading ? (
@@ -43,7 +55,7 @@ export const StatRightTopIcon: React.FC<StatRightProps> = ({
               {handleResponse?.dataNotFound}
             </div>
           ) : (
-            <h1 className="fw-bold">{data}</h1>
+            <h1 className="fw-bold"> {data}</h1>
           )}
         </div>
       </Card.Body>
