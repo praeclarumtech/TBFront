@@ -12,7 +12,6 @@ import {
   createDegree,
   updateDegree,
   viewAllDegree,
-  deleteDegree,
   deleteMultipleDegree,
 } from "api/apiDegree";
 import { toast } from "react-toastify";
@@ -80,29 +79,6 @@ const AddDegree = () => {
   const handleDelete = (degree: any) => {
     setDegreeToDelete(degree);
     setShowDeleteModal(true);
-  };
-
-  const confirmDelete = async (deletetoDegree: string) => {
-    if (!degreeToDelete || degreeToDelete.length === 0) {
-      toast.error("No Qualification selected for deletion.");
-      return;
-    }
-
-    setLoader(true);
-
-    try {
-      await deleteDegree({ _id: deletetoDegree });
-
-      toast.success("Selected qualification deleted successfully");
-      fetchDegrees();
-    } catch (error) {
-      toast.error("Failed to delete one or more qualification.");
-      console.error(error);
-    } finally {
-      setLoader(false);
-      setShowDeleteModal(false);
-      setDegreeToDelete([]);
-    }
   };
 
   const confirmManyDelete = async (
@@ -314,11 +290,7 @@ const AddDegree = () => {
 
   const handleDeleteClick = () => {
     console.log(degreeToDelete);
-    if (degreeToDelete.length > 1) {
-      confirmManyDelete(degreeToDelete);
-    } else {
-      confirmDelete(degreeToDelete._id);
-    }
+    confirmManyDelete(degreeToDelete);
   };
 
   return (

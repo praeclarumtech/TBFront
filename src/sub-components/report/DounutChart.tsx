@@ -19,32 +19,32 @@ type DounutChartProps = {
 // Custom plugin to render text in the center
 const centerTextPlugin = {
   id: "centerText",
-  beforeDraw: (chart: any) => {
-    const { width, height, ctx } = chart;
-    ctx.save();
+  // beforeDraw: (chart: any) => {
+    // const { width, height, ctx } = chart;
+    // ctx.save();
 
-    const text = "City and State wise\nApplicants"; // Add a line break for better formatting
-    const fontSize = Math.min(width / 18, height / 9, 18);
+    // const text = "City and State wise\nApplicants"; // Add a line break for better formatting
+    // const fontSize = Math.min(width / 18, height / 9, 18);
 
-    ctx.font = `600 ${fontSize}px Arial`;
-    ctx.textBaseline = "middle";
-    ctx.textAlign = "center";
-    ctx.fillStyle = "#000"; // Slightly darker for better visibility
+    // ctx.font = `600 ${fontSize}px Arial`;
+    // ctx.textBaseline = "middle";
+    // ctx.textAlign = "center";
+    // ctx.fillStyle = "#000"; // Slightly darker for better visibility
 
-    const textX = width / 2;
-    const textY = height / 2 - fontSize * 0.6;
+    // const textX = width / 2;
+    // const textY = height / 2 - fontSize * 0.6;
 
-    const lines = text.split("\n");
-    lines.forEach((line, index) => {
-      ctx.fillText(
-        line,
-        textX,
-        textY + (index - (lines.length - 1) / 2) * fontSize * 1.2
-      );
-    });
+    // const lines = text.split("\n");
+    // lines.forEach((line, index) => {
+    //   ctx.fillText(
+    //     line,
+    //     textX,
+    //     textY + (index - (lines.length - 1) / 2) * fontSize * 1.2
+    //   );
+    // });
 
-    ctx.restore();
-  },
+    // ctx.restore();
+  // },
 };
 
 const DounutChart = ({ selectedFilter }: DounutChartProps) => {

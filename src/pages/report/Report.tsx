@@ -168,7 +168,7 @@ const Report = () => {
                     </Col>
                   </Row>
                   <Row className="mt-4">
-                    <Col xl={6} lg={6} md={12} sm={12} xs={12}>
+                    <Col xl={8} lg={6} md={12} sm={12} xs={12}>
                       <div className="justify-between d-flex">
                         <h4 className="justify-start fw-bold">Statistics</h4>
                         <ActionMenu
@@ -180,7 +180,7 @@ const Report = () => {
                         <DounutChart selectedFilter={selectedFilter} />
                       </div>
                     </Col>
-                    <Col xl={6} lg={6} md={12} sm={12} xs={12}>
+                    <Col xl={4} lg={6} md={12} sm={12} xs={12}>
                       <h4 className="fw-bold">Applicants</h4>
                       <div className="mt-3 chart-container">
                         {" "}
