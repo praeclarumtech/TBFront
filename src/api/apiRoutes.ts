@@ -71,7 +71,7 @@ export const CREATE_DEGREE = "degree/addDegree";
 export const VIEW_DEGREE = "degree/viewById";
 export const VIEW_ALL_DEGREE = "degree/viewDegrees";
 export const UPDATE_DEGREE = "degree/update";
-export const DELETE_DEGREE = "degree/delete";
+// export const DELETE_DEGREE = "degree/delete";
 export const DELETE_MANY_DEGREE = "degree/delete/deleteManyDegree";
 
 
