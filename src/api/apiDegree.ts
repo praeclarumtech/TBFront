@@ -4,6 +4,7 @@ import {
   VIEW_ALL_DEGREE,
   UPDATE_DEGREE,
   DELETE_DEGREE,
+  DELETE_MANY_DEGREE,
 } from "./apiRoutes";
 import { authServices } from "./apiServices";
 
@@ -36,3 +37,12 @@ export const deleteDegree = async (data: { _id: string } = { _id: "" }) => {
   const response = await authServices.delete(`${DELETE_DEGREE}/${data?._id}`);
   return response?.data;
 };
+
+export const deleteMultipleDegree = async ( ids: string[] | undefined | null) => {
+  if (!ids || ids.length === 0) return;
+  const response = await authServices.delete(
+    DELETE_MANY_DEGREE, {data:{ids},}
+  );
+  return response.data;
+};
+

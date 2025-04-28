@@ -15,7 +15,7 @@ import AddDegree from "pages/master/Degree";
 import ImportApplicantTables from "pages/applicant/importApplicants/Index";
 import Profile from "pages/UserProfile/Profile";
 import ChangePassword from "pages/auth/ChangePassword";
-import UpdateSkill from "pages/master/UpdateSkill";
+import UpdateSkill from "pages/master/RoleAndSkill";
 import FindAndReplace from "pages/master/FindAndReplace";
 import AddEmailTemplate from "pages/master/EmailTemplate";
 import AddDesignation from "pages/master/Designation";

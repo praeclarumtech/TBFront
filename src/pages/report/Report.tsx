@@ -13,7 +13,6 @@ import ProgressChart from "sub-components/report/ProgressChart";
 import { getApplicationOnProcess } from "api/reportApi";
 import AreaChart from "sub-components/report/AreaChart";
 import appConstants from "constants/constant";
-import { capitalizeWords } from "utils/commonFunctions";
 
 const { projectTitle, Modules } = appConstants;
 
@@ -32,22 +31,13 @@ const ActionMenu = ({
   return (
     <Dropdown onSelect={handleSelect}>
       <Dropdown.Toggle variant="outline-primary">
-        {capitalizeWords(selectedFilter) ||
+        {selectedFilter ||
           // "Select Filters" ||
-          "Frontend"}
+          "city"}
       </Dropdown.Toggle>
       <Dropdown.Menu align={"end"}>
-        <Dropdown.Item eventKey="Frontend">Frontend</Dropdown.Item>
-        <Dropdown.Item eventKey="Backend">Backend</Dropdown.Item>
-        <Dropdown.Item eventKey="Database">Database</Dropdown.Item>
-        <Dropdown.Item eventKey="Testing">Testing</Dropdown.Item>
-        <Dropdown.Item eventKey="UIUX">Ui/Ux</Dropdown.Item>
-        <Dropdown.Item eventKey="VersionControl">Version Control</Dropdown.Item>
-        <Dropdown.Item eventKey="devops">Development Operations</Dropdown.Item>
-        <Dropdown.Item eventKey="Programming">
-          Programming Language
-        </Dropdown.Item>
-        <Dropdown.Item eventKey="Others">Others</Dropdown.Item>
+        <Dropdown.Item eventKey="city">City</Dropdown.Item>
+        <Dropdown.Item eventKey="state">State</Dropdown.Item>
       </Dropdown.Menu>
     </Dropdown>
   );
@@ -62,7 +52,7 @@ const Report = () => {
   const [applicantsOnProcess5, setApplicantsOnProcess5] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [errorS, setErrorS] = useState<string | null>(null);
-  const [selectedFilter, setSelectedFilter] = useState("Frontend");
+  const [selectedFilter, setSelectedFilter] = useState("city");
 
   useEffect(() => {
     fetchApplicantsOnProcess();

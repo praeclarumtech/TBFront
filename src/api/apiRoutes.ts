@@ -72,6 +72,8 @@ export const VIEW_DEGREE = "degree/viewById";
 export const VIEW_ALL_DEGREE = "degree/viewDegrees";
 export const UPDATE_DEGREE = "degree/update";
 export const DELETE_DEGREE = "degree/delete";
+export const DELETE_MANY_DEGREE = "degree/delete/deleteManyDegree";
+
 
 
 //Dashboard Module
@@ -89,6 +91,7 @@ export const REPORT_ON_SKILL = "reports/applicants/applicantSkillStatistics"
 //Report Module
 // export const SKILL_STATISTICS = "/reports/applicants/categoryWiseSkillCount?category="
 export const SKILL_STATISTICS = "/reports/applicants/technologyStatistics?category="
+export const CITY_STATE = "/reports/applicants/applicantCountByCityAndState?type="
 export const APPLICATION_ON_PROCESS = "/reports/applicants/applicationOnProcessCount"
 export const STATUS_OF_APPLICATION = "/reports/applicants/statusByPercentage"
 export const APPLICATION = "/reports/applicants/getApplicationsByDate?calendarType="

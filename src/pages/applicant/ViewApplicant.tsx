@@ -174,6 +174,7 @@ const ViewModal: React.FC<ViewModalProps> = ({
       width={800}
       centered
       title={<span className="text-lg font-bold">Applicant Details</span>}
+      className="mt-10 mb-10"
     >
       {loading ? (
         <Spin size="large" className="flex items-center justify-center" />

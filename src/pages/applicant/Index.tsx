@@ -1,10 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Row, Col, Card, Container, CardBody, Spinner } from "react-bootstrap";
+import {
+  Row,
+  Col,
+  Card,
+  Container,
+  CardBody,
+  Spinner,
+  Dropdown,
+} from "react-bootstrap";
 import React, { Fragment, useEffect, useState, useMemo } from "react";
 import BaseButton from "components/BaseComponents/BaseButton";
 import { BaseSelect, MultiSelect } from "components/BaseComponents/BaseSelect";
 import TableContainer from "components/BaseComponents/TableContainer";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -52,6 +60,14 @@ import { IconButton, useMediaQuery } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import BaseModal from "components/BaseComponents/BaseModal";
 import CheckboxMultiSelect from "components/BaseComponents/CheckboxMultiSelect";
+import { CustomToggleProps } from "types";
+import { MoreVertical } from "react-feather";
+import {
+  DeleteFilled,
+  EditFilled,
+  EyeTwoTone,
+  MailFilled,
+} from "@ant-design/icons";
 // import CheckboxMultiSelect from "components/BaseComponents/CheckboxMultiSelect";
 const {
   exportableFieldOption,
@@ -136,6 +152,15 @@ const Applicant = () => {
   );
   const [states, setStates] = useState<City[]>([]);
   const isDesktop = useMediaQuery("(min-width: 768px)");
+  interface ActionMenuProps {
+    id: string;
+    source: string;
+    handleDeleteSingle: (id: string) => void;
+    handleEmail: (id: string) => void;
+    handleView: (id: string, source: string) => void;
+    handleEdit: (id: string) => void;
+  }
+
   const toggleDrawer =
     (anchor: Anchor, open: boolean) =>
     (event: React.KeyboardEvent | React.MouseEvent) => {
@@ -1006,6 +1031,63 @@ const Applicant = () => {
       </div>
     </Box>
   );
+  const CustomToggle = React.forwardRef<HTMLAnchorElement, CustomToggleProps>(
+    ({ children, onClick }, ref) => (
+      <Link
+        to=""
+        ref={ref}
+        onClick={(e) => {
+          e.preventDefault();
+          onClick(e);
+        }}
+        className="text-muted text-primary-hover text-center"
+      >
+        {children}
+      </Link>
+    )
+  );
+
+  CustomToggle.displayName = "CustomToggle";
+
+  const ActionMenu: React.FC<ActionMenuProps> = ({
+    id,
+    // source,
+    handleDeleteSingle,
+    handleEmail,
+    handleView,
+    handleEdit,
+  }) => {
+    return (
+      <Dropdown>
+        <Dropdown.Toggle as={CustomToggle}>
+          <MoreVertical size="15px" className="text-muted" />
+        </Dropdown.Toggle>
+        <Dropdown.Menu align={"end"}>
+          <Dropdown.Item onClick={() => handleDeleteSingle(id)}>
+            <DeleteFilled style={{ color: "#ff0000" }} className="me-2" />{" "}
+            Delete
+          </Dropdown.Item>
+          <Dropdown.Divider />
+
+          <Dropdown.Item onClick={() => handleEmail(id)}>
+            <MailFilled style={{ color: "#0000ff" }} className="me-2" /> Mail
+          </Dropdown.Item>
+          <Dropdown.Divider />
+
+          <Dropdown.Item onClick={() => handleView(id, "main")}>
+            <EyeTwoTone className="me-2" /> View Applicant
+          </Dropdown.Item>
+          <Dropdown.Divider />
+
+          <Dropdown.Item onClick={() => handleEdit(id)}>
+            <EditFilled style={{ color: "#808080" }} className="me-2" /> Edit
+            Applicant
+          </Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown>
+    );
+  };
+
 
   const columns = useMemo(
     () => [
@@ -1155,67 +1237,86 @@ const Applicant = () => {
 
       {
         header: "Action",
-        cell: (cell: any) => (
-          <div className="gap-2 hstack">
-            <BaseButton
-              id={`usage-${cell?.row?.original?.id}`}
-              color="primary"
-              className="btn btn-sm btn-soft-success usage-list"
-              onClick={() => handleView(cell.row.original._id, "main")}
-            >
-              <i className="align-bottom ri-eye-fill" />
+        cell: (cell: any) => {
+          const id = cell.row.original._id;
+          return (
+            <div>
+              <ActionMenu
+                id={id}
+                source="main"
+                handleDeleteSingle={handleDeleteSingle}
+                handleEmail={handleEmail}
+                handleView={handleView}
+                handleEdit={handleEdit}
+              />
               <ReactTooltip
                 place="bottom"
                 variant="info"
-                content="View"
-                anchorId={`usage-${cell?.row?.original?.id}`}
+                content="Action"
+                anchorId={`action-${id}`}
               />
-            </BaseButton>
+            </div>
+          );
+          // <div className="gap-2 hstack">
+          //   <BaseButton
+          //     id={`usage-${cell?.row?.original?.id}`}
+          //     color="primary"
+          //     className="btn btn-sm btn-soft-success usage-list"
+          //     onClick={() => handleView(cell.row.original._id, "main")}
+          //   >
+          //     <i className="align-bottom ri-eye-fill" />
+          //     <ReactTooltip
+          //       place="bottom"
+          //       variant="info"
+          //       content="View"
+          //       anchorId={`usage-${cell?.row?.original?.id}`}
+          //     />
+          //   </BaseButton>
 
-            <BaseButton
-              id={`editMode-${cell?.row?.original?.id}`}
-              className="btn btn-sm btn-soft-secondary edit-list"
-              onClick={() => handleEdit(cell?.row?.original._id)}
-            >
-              <i className="align-bottom ri-pencil-fill" />
-              <ReactTooltip
-                place="bottom"
-                variant="warning"
-                content="Edit"
-                anchorId={`editMode-${cell?.row?.original?.id}`}
-              />
-            </BaseButton>
+          //   <BaseButton
+          //     id={`editMode-${cell?.row?.original?.id}`}
+          //     className="btn btn-sm btn-soft-secondary edit-list"
+          //     onClick={() => handleEdit(cell?.row?.original._id)}
+          //   >
+          //     <i className="align-bottom ri-pencil-fill" />
+          //     <ReactTooltip
+          //       place="bottom"
+          //       variant="warning"
+          //       content="Edit"
+          //       anchorId={`editMode-${cell?.row?.original?.id}`}
+          //     />
+          //   </BaseButton>
 
-            <BaseButton
-              id={`delete-${cell?.row?.original?.id}`}
-              className="btn btn-sm btn-soft-danger remove-list"
-              color="danger"
-              onClick={() => handleDeleteSingle(cell.row.original._id)} // Call the single delete function
-            >
-              <i className="align-bottom ri-delete-bin-5-fill" />
-              <ReactTooltip
-                place="bottom"
-                variant="error"
-                content="Delete"
-                anchorId={`delete-${cell?.row?.original?._id}`}
-              />
-            </BaseButton>
+          //   <BaseButton
+          //     id={`delete-${cell?.row?.original?.id}`}
+          //     className="btn btn-sm btn-soft-danger remove-list"
+          //     color="danger"
+          //     onClick={() => handleDeleteSingle(cell.row.original._id)} // Call the single delete function
+          //   >
+          //     <i className="align-bottom ri-delete-bin-5-fill" />
+          //     <ReactTooltip
+          //       place="bottom"
+          //       variant="error"
+          //       content="Delete"
+          //       anchorId={`delete-${cell?.row?.original?._id}`}
+          //     />
+          //   </BaseButton>
 
-            <BaseButton
-              id={`email-${cell?.row?.original?.id}`}
-              className="btn btn-sm btn-soft-secondary bg-success edit-list"
-              onClick={() => handleEmail(cell?.row?.original._id)}
-            >
-              <i className="align-bottom ri-mail-close-line" />
-              <ReactTooltip
-                place="bottom"
-                variant="info"
-                content="Email"
-                anchorId={`email-${cell?.row?.original?.id}`}
-              />
-            </BaseButton>
-          </div>
-        ),
+          //   <BaseButton
+          //     id={`email-${cell?.row?.original?.id}`}
+          //     className="btn btn-sm btn-soft-secondary bg-success edit-list"
+          //     onClick={() => handleEmail(cell?.row?.original._id)}
+          //   >
+          //     <i className="align-bottom ri-mail-close-line" />
+          //     <ReactTooltip
+          //       place="bottom"
+          //       variant="info"
+          //       content="Email"
+          //       anchorId={`email-${cell?.row?.original?.id}`}
+          //     />
+          //   </BaseButton>
+          // </div>
+        },
       },
     ],
     [applicant, selectedApplicants]

@@ -435,13 +435,13 @@ const AddEmailTemplate = () => {
             <Card className="my-3 mb-3">
               <CardBody>
                 <Row className="flex">
-                  <Row className="mt-1 fw-bold text-dark d-flex align-items-center">
+                  <Row className="mt-1 d-flex align-items-center">
                     <Col
                       sm={12}
                       lg={12}
                       className="flex-wrap mb-2 ml-2 d-flex justify-content-between align-items-center"
                     >
-                      <div className="justify-content-start h4">
+                      <div className="justify-content-start h4 fw-bold text-dark">
                         Add Email Template
                       </div>
                       <div className="flex-wrap d-flex justify-content-end ">

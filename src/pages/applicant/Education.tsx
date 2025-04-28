@@ -30,7 +30,11 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
         const page = 1;
         const pageSize = 50;
         const limit = 1000;
-        const qualificationData = await viewAllDegree({ page, pageSize, limit });
+        const qualificationData = await viewAllDegree({
+          page,
+          pageSize,
+          limit,
+        });
         const degreeList = qualificationData?.data?.data;
         if (Array.isArray(degreeList)) {
           setQualification(
@@ -63,18 +67,15 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
     getQualification();
   }, []);
 
- 
-const initialQualificationValue = (() => {
-  const match = qualification.find(
-    (q) =>
-      q.label === initialValues?.qualification ||
-      q.value === initialValues?.qualification
-  );
-  return match?.value || "";
-})();
+  const initialQualificationValue = (() => {
+    const match = qualification.find(
+      (q) =>
+        q.label === initialValues?.qualification ||
+        q.value === initialValues?.qualification
+    );
+    return match?.value || "";
+  })();
 
-
-  
   const validation: any = useFormik({
     enableReinitialize: true,
     initialValues: {
@@ -88,14 +89,14 @@ const initialQualificationValue = (() => {
 
     onSubmit: (data) => {
       setLoading(true);
-    
-     const selectedDegree = qualification.find(
-       (q) => q.value === data.qualification
-     )?.label;
-     const submissionData = {
-       ...data,
-       qualification: selectedDegree || data.qualification,
-     };
+
+      const selectedDegree = qualification.find(
+        (q) => q.value === data.qualification
+      )?.label;
+      const submissionData = {
+        ...data,
+        qualification: selectedDegree || data.qualification,
+      };
       // onNext(data);
       onNext(submissionData);
       setLoading(true);
@@ -281,7 +282,7 @@ const initialQualificationValue = (() => {
               )}
               <div className="gap-3 mt-4 d-flex flex-column flex-md-row justify-content-end">
                 <BaseButton
-                  className="order-1 w-full order-md-0"
+                  className="order-1 order-md-0"
                   type="submit"
                   onClick={() => {
                     onBack(validation.values);
@@ -291,7 +292,7 @@ const initialQualificationValue = (() => {
                 </BaseButton>
                 <BaseButton
                   color="primary"
-                  className="w-full order-0 order-md-1"
+                  className="order-0 order-md-1"
                   type="submit"
                 >
                   Next

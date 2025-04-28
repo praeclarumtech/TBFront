@@ -23,6 +23,7 @@ const RecentApplicants = ({
 }) => {
   const [recentApplicants, setRecentApplicants] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  // const [totalRecords, setTotalRecords] = useState(0);
 
   useEffect(() => {
     fetchRecentApplicants();
@@ -33,6 +34,7 @@ const RecentApplicants = ({
     try {
       const data = await getRecentApplications(selectedTechnology || undefined); // Pass filter
       setRecentApplicants(data?.data?.item || []);
+      // setTotalRecords(data?.data?.totalRecords || []);
     } catch (error) {
       errorHandle(error);
       console.log("Error loading recent applicants");
@@ -40,30 +42,6 @@ const RecentApplicants = ({
       setIsLoading(false);
     }
   };
-
-  // const handleExportExcel = async (filtered: string[]) => {
-  //   try {
-  //     toast.info("Preparing file for download...");
-  //     await new Promise((resolve) => setTimeout(resolve, 3500));
-  //     const response = await ExportSkilledApplicant({ skills: [filtered] });
-
-  //     if (!response) {
-  //       toast.error("Failed to download file");
-  //       return;
-  //     }
-
-  //     const blob = new Blob([response], { type: "text/csv" });
-
-  //     saveAs(blob, `${filtered}-applicants.csv`);
-
-  //     toast.success("File downloaded successfully!");
-
-  //   } catch (error) {
-  //     // console.error("Export error:", error);
-  //     errorHandle(error);
-  //     // toast.error("Failed to export file");
-  //   }
-  // };
 
   const handleExportExcel = async (filtered: string[]) => {
     try {
@@ -127,6 +105,7 @@ const RecentApplicants = ({
   const technologyLabelMap: Record<string, string> = {
     "C%2B%2B": "C++",
     "C%23": "C#",
+    FullStack: "Full Stack",
   };
 
   const titleText =
@@ -139,7 +118,10 @@ const RecentApplicants = ({
       <Col>
         <Card className="w-full min-h-[390px]">
           <Card.Header className="bg-white border-0 d-flex justify-content-between align-items-center p-4  min-h-[63px]">
-            <h4 className="h4">{titleText} Applicants</h4>
+            <h4 className="h4 fw-bold text-dark">
+              {titleText} Applicants
+              {/* <p>Total Records:-{totalRecords}</p> */}
+            </h4>
 
             {selectedTechnology && (
               <div className="justify-end gap-2 d-flex">

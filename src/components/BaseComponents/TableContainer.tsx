@@ -191,7 +191,7 @@ const TableContainer = ({
             <Row className="d-flex justify-content-between">
               {isHeaderTitle && (
                 <Col lg={7} sm={3}>
-                  <h4>{isHeaderTitle}</h4>
+                  <h4 className="fw-bold text-dark">{isHeaderTitle}</h4>
                 </Col>
               )}
               {isGlobalFilter && (
