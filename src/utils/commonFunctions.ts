@@ -53,7 +53,7 @@ export const isAuthenticated = () => {
 
 export const setAuthData = (token: string) => {
   const decoded: any = jwtDecode(token);
-  const expireTime = Date.now() + 60 * 60 * 1000; // 60 minutes
+  const expireTime = Date.now() + 24 * 60 * 60 * 1000;
   setItem(ACCESS_TOKEN, token);
   setItem(EXPIRES_AT, expireTime.toString());
   setItem("role", decoded.role);
