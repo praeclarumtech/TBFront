@@ -48,12 +48,18 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
   const formattedlastFollowUpDate = initialValues.lastFollowUpDate
     ? moment(initialValues.lastFollowUpDate).format("YYYY-MM-DD")
     : "";
-  
+
   const initialDesignationValue =
     designationOptions.find(
       (currentCompanyDesignation) =>
         currentCompanyDesignation.label ===
         initialValues.currentCompanyDesignation
+    )?.value || "";
+
+  const initialAppliedRoleValue =
+    designationOptions.find(
+      (appliedRole) =>
+        appliedRole.label === initialValues.currentCompanyDesignation
     )?.value || "";
   
   const validation: any = useFormik({
@@ -87,8 +93,8 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
       linkedinUrl: initialValues?.linkedinUrl || "",
       clientCvUrl: initialValues?.clientCvUrl || "",
       clientFeedback: initialValues?.clientFeedback || "",
-      // appliedRole: initialValues?.appliedRole || selectedRole || "",
-      appliedRole: initialValues?.appliedRole || "",
+    appliedRole:initialAppliedRoleValue || "",
+      // appliedRole: initialValues?.appliedRole || "",
       // meta: initialValues?.meta || "",
       meta: initialValues?.meta || {},
     },
@@ -98,10 +104,17 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
 
       const appliedSkillsNames = selectedMulti.map((item: any) => item.label);
 
-const currentDesignation = dynamicFind(
-  designationOptions,
-  data.currentCompanyDesignation
-);
+      const appliedRole = dynamicFind(
+        designationOptions,
+        data.appliedRole
+      );
+      const appliedRoleName = appliedRole ? appliedRole.label : "";
+
+      const currentDesignation = dynamicFind(
+        designationOptions,
+        data.currentCompanyDesignation
+      );
+
       const currentCompanyDesignation = currentDesignation
         ? currentDesignation.label
         : "";
@@ -110,6 +123,7 @@ const currentDesignation = dynamicFind(
         ...data,
         appliedSkills: appliedSkillsNames,
         currentCompanyDesignation: currentCompanyDesignation,
+        appliedRole: appliedRoleName,
         // meta,
       };
 

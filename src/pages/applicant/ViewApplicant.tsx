@@ -46,6 +46,7 @@ interface ApplicantDetails {
   passingYear: number;
   specialization: string;
   appliedSkills: string[];
+  appliedRole: string;
   totalExperience: number;
   relevantSkillExperience: number;
   otherSkills: string;
@@ -75,6 +76,7 @@ interface ApplicantDetails {
   workPreference: string;
   lastFollowUpDate: string;
   anyHandOnOffers: boolean;
+  meta: object;
 }
 
 const capitalizeWords = (str?: string) => {
@@ -420,6 +422,31 @@ const ViewModal: React.FC<ViewModalProps> = ({
                   label="Notice Period"
                   value={`${formData.noticePeriod || "-"} days`}
                 />
+                <DetailsRow
+                  label="Applied Role"
+                  value={
+                    formData.appliedRole ? (
+                      <Tag color="cyan">{formData.appliedRole}</Tag>
+                    ) : (
+                      "-"
+                    )
+                  }
+                />
+                {formData.meta && Object.keys(formData.meta).length > 0 && (
+                  <DetailsRow
+                    label="Skill Exp"
+                    value={
+                      <div className="flex flex-wrap gap-2">
+                        {Object.entries(formData.meta).map(([key, value]) => (
+                          <Tag key={key} color="geekblue">
+                            {`${key}: ${value || "-"} Yrs`}
+                          </Tag>
+                        ))}
+                      </div>
+                    }
+                  />
+                )}
+
                 {/* <Row gutter={[16, 16]}>
                   <Col span={24}>
                     <DetailsRow
@@ -498,7 +525,9 @@ const ViewModal: React.FC<ViewModalProps> = ({
                   </Col>
                 </Row>
                 {/* </DetailsCard> */}
+              </Col>
 
+              <Col span={12}>
                 <DetailsRow
                   label="Work Preference"
                   value={
@@ -535,9 +564,6 @@ const ViewModal: React.FC<ViewModalProps> = ({
                     )
                   }
                 />
-              </Col>
-
-              <Col span={12}>
                 <DetailsRow
                   label="LinkedIn"
                   value={

@@ -21,7 +21,6 @@ const { projectTitle, Modules } = appConstants;
 
 const Dashboard = () => {
   const navigate = useNavigate();
-
   document.title = Modules.Dashboard + " | " + projectTitle;
   const [totalApplicants, setTotalApplicants] = useState<number | null>(null);
   const [holdApplicants, setHoldApplicants] = useState<number | null>(null);
