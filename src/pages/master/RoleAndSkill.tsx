@@ -87,31 +87,6 @@ const UpdateSkill = () => {
     fetchSkills();
   }, []);
 
-  // const fetchRoleSkills = async () => {
-  //   setIsLoading(true);
-  //   try {
-  //     const res = await viewRoleSkill({
-  //       page: pagination.pageIndex + 1,
-  //       pageSize: pagination.pageSize,
-  //       limit: 50,
-  //     });
-
-  //     if (res?.success) {
-  //       // const roleSkills = res?.data?.data || [];
-
-  //       setRoleSkills(res?.data?.data || []);
-  //       setTotalRecords(res.data?.pagination?.totalRecords || 0);
-  //     } else {
-  //       toast.error(res?.message || "Failed to fetch skills");
-  //     }
-  //   } catch (error) {
-  //     toast.error("Something went wrong!");
-  //     console.error(error);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
-
   const fetchRoleSkills = async () => {
     setIsLoading(true);
     try {
@@ -145,10 +120,23 @@ const UpdateSkill = () => {
         );
 
         const enrichedRoleSkills = roleSkills.map((item: any) => {
-          const skillIds = Array.isArray(item.skill) ? item.skill : [];
+          let skillIds: string[] = [];
+
+          if (Array.isArray(item.skill)) {
+            if (typeof item.skill[0] === "string") {
+              skillIds = item.skill;
+            } else if (
+              typeof item.skill[0] === "object" &&
+              item.skill[0]?._id
+            ) {
+              skillIds = item.skill.map((s: any) => s._id);
+            }
+          }
+
           const skillNames = skillIds.map(
             (id: string) => skillMap[id] || "Unknown Skill"
           );
+
           return {
             ...item,
             skill: skillNames,
@@ -172,12 +160,7 @@ const UpdateSkill = () => {
     if (skillOptions && skillOptions.length > 0) {
       fetchRoleSkills();
     }
-  }, [
-    pagination.pageIndex,
-    pagination.pageSize,
-    skillOptions,
-    searchAll,
-  ]);
+  }, [pagination.pageIndex, pagination.pageSize, skillOptions, searchAll]);
 
   const handleEdit = (id: any) => {
     const selectedSkillOptions = skillOptions.filter((opt) =>

@@ -61,7 +61,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
       (appliedRole) =>
         appliedRole.label === initialValues.currentCompanyDesignation
     )?.value || "";
-  
+
   const validation: any = useFormik({
     enableReinitialize: true,
     initialValues: {
@@ -93,7 +93,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
       linkedinUrl: initialValues?.linkedinUrl || "",
       clientCvUrl: initialValues?.clientCvUrl || "",
       clientFeedback: initialValues?.clientFeedback || "",
-    appliedRole:initialAppliedRoleValue || "",
+      appliedRole: initialAppliedRoleValue || "",
       // appliedRole: initialValues?.appliedRole || "",
       // meta: initialValues?.meta || "",
       meta: initialValues?.meta || {},
@@ -104,10 +104,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
 
       const appliedSkillsNames = selectedMulti.map((item: any) => item.label);
 
-      const appliedRole = dynamicFind(
-        designationOptions,
-        data.appliedRole
-      );
+      const appliedRole = dynamicFind(designationOptions, data.appliedRole);
       const appliedRoleName = appliedRole ? appliedRole.label : "";
 
       const currentDesignation = dynamicFind(
@@ -262,7 +259,6 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
             ?.filter((item: any) => skillIDs.includes(item.value))
             .map((item: any) => item.label);
 
-          // Set meta values (initial exp input)
           const updatedMeta = skillLabels.reduce(
             (acc: Record<string, string>, techLabel: string) => {
               acc[techLabel] = validation.values.meta?.[techLabel] || "";
@@ -886,7 +882,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                                   key={tech}
                                 >
                                   <BaseInput
-                                    name={`meta.${tech}`}
+                                    name={`meta["${tech}"]`}
                                     type="text"
                                     label={`${tech} Exp.(Yrs)`}
                                     placeholder={tech}
@@ -898,7 +894,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                                         val === ""
                                       ) {
                                         validation.setFieldValue(
-                                          `meta.${tech}`,
+                                          `meta["${tech}"]`,
                                           val
                                         );
                                       }
@@ -912,12 +908,12 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                                         num <= 30
                                       ) {
                                         validation.setFieldValue(
-                                          `meta.${tech}`,
+                                          `meta["${tech}"]`,
                                           num.toFixed(2)
                                         );
                                       } else {
                                         validation.setFieldValue(
-                                          `meta.${tech}`,
+                                          `meta["${tech}"]`,
                                           ""
                                         );
                                       }
