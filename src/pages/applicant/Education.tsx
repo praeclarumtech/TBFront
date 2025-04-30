@@ -93,12 +93,23 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
       const selectedDegree = qualification.find(
         (q) => q.value === data.qualification
       )?.label;
-      const submissionData = {
+      // const submissionData = {
+      //   ...data,
+      //   qualification: selectedDegree || data.qualification,
+      // };
+
+      onNext({
         ...data,
         qualification: selectedDegree || data.qualification,
-      };
+      });
+
       // onNext(data);
-      onNext(submissionData);
+      // data = submissionData;
+      // onNext(submissionData);
+      // onNext(data);
+
+
+
       setLoading(true);
     },
   });
