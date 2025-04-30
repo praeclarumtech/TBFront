@@ -95,7 +95,7 @@ export const CITY_STATE = "/reports/applicants/applicantCountByCityAndState?type
 export const APPLICATION_ON_PROCESS = "/reports/applicants/applicationOnProcessCount"
 export const STATUS_OF_APPLICATION = "/reports/applicants/statusByPercentage"
 export const APPLICATION = "/reports/applicants/getApplicationsByDate?calendarType="
-
+export const ADDEDBY_REPORT= "/reports/applicants/applicantCountByAddedBy"
 
 
 //Find And Replace

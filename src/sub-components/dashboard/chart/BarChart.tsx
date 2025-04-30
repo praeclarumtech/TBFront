@@ -36,14 +36,14 @@ interface BarChartProps {
 const BarChart = ({ onBarClick, selectedFilter, isloading }: BarChartProps) => {
   const chartRef = useRef<any>(null);
 
-  const formatLabel = (text: string) =>
-    text
-      .replace(/Applicants$/, "")
-      .replace(/([A-Z])/g, " $1")
-      .trim()
-      .replace(/\b\w/g, (char) => char.toUpperCase());
+  // const formatLabel = (text: string) =>
+  //   text
+  //     .replace(/Applicants$/, "")
+  //     .replace(/([A-Z])/g, " $1")
+  //     .trim()
+  //     .replace(/\b\w/g, (char) => char.toUpperCase());
 
-  const labels = Object.keys(selectedFilter ?? {}).map(formatLabel);
+  const labels = Object.keys(selectedFilter ?? {});
   const dataValues = Object.values(selectedFilter ?? {});
 
   const generateColors = (length: number) => {

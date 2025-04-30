@@ -108,14 +108,14 @@ const DounutChart = ({ selectedFilter }: DounutChartProps) => {
   };
 
   return (
-    <div className="flex items-center justify-center w-full h-[350px]">
+    <div className="flex items-center justify-center w-full h-[500px]">
       {isLoading ? (
         <div>
-          <Skeleton height={300} width={300} borderRadius="50%" />
-          <Skeleton height={20} width={300} />
+          <Skeleton height={350} width={350} borderRadius="50%" className="mb-3"/>
+          <Skeleton height={20} width={350} />
         </div>
       ) : (
-        <div className="w-full h-[350px] flex items-center justify-center">
+        <div className="w-full h-[450px] flex items-center justify-center">
           <Doughnut
             data={data}
             options={options}

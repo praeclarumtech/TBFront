@@ -1,5 +1,5 @@
 
-import { SKILL_STATISTICS, APPLICATION_ON_PROCESS, STATUS_OF_APPLICATION, APPLICATION, CITY_STATE } from "./apiRoutes";
+import { SKILL_STATISTICS, APPLICATION_ON_PROCESS, STATUS_OF_APPLICATION, APPLICATION, CITY_STATE, ADDEDBY_REPORT } from "./apiRoutes";
 import { authServices } from "./apiServices";
 
 export const getSkillStatistics = async (selectedFilter = "") => {
@@ -24,5 +24,11 @@ export const getSkillStatistics = async (selectedFilter = "") => {
   
   export const getCityState = async (type = "") => {
     const response = await authServices.get(`${CITY_STATE}${type || "city"}`);
+    return response?.data;
+  };
+
+
+  export const getaddedbyReport = async () => {
+    const response = await authServices.get(`${ADDEDBY_REPORT}`);
     return response?.data;
   };
