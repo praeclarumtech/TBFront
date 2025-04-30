@@ -9,7 +9,7 @@ import BaseInput from "components/BaseComponents/BaseInput";
 import {
   jobApplicantSchema,
   SelectedOption,
-  SelectedOptionRole,
+  // SelectedOptionRole,
 } from "interfaces/applicant.interface";
 import BaseTextarea from "components/BaseComponents/BaseTextArea";
 import {
@@ -58,8 +58,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
 
   const initialAppliedRoleValue =
     designationOptions.find(
-      (appliedRole) =>
-        appliedRole.label === initialValues.currentCompanyDesignation
+      (appliedRole) => appliedRole.label === initialValues.appliedRole
     )?.value || "";
 
   const validation: any = useFormik({
@@ -87,15 +86,12 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
       resumeUrl: initialValues?.resumeUrl || "",
       rating: initialValues?.rating || "",
       portfolioUrl: initialValues?.portfolioUrl || "",
-      // currentCompanyDesignation: initialValues?.currentCompanyDesignation || "",
       currentCompanyDesignation: initialDesignationValue,
       preferredLocations: initialValues?.preferredLocations || "",
       linkedinUrl: initialValues?.linkedinUrl || "",
       clientCvUrl: initialValues?.clientCvUrl || "",
       clientFeedback: initialValues?.clientFeedback || "",
       appliedRole: initialAppliedRoleValue || "",
-      // appliedRole: initialValues?.appliedRole || "",
-      // meta: initialValues?.meta || "",
       meta: initialValues?.meta || {},
     },
     validationSchema: jobApplicantSchema,
@@ -116,21 +112,20 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
         ? currentDesignation.label
         : "";
 
-      const updatedData = {
+    
+      onNext({
         ...data,
         appliedSkills: appliedSkillsNames,
         currentCompanyDesignation: currentCompanyDesignation,
         appliedRole: appliedRoleName,
-        // meta,
-      };
-
-      onNext(updatedData);
-      // console.log("job Data:", updatedData);
-      // onNext(data);
+      });
+    
 
       setLoading(false);
     },
   });
+
+  
 
   useEffect(() => {
     const fetchDesignations = async () => {
@@ -147,9 +142,47 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
         errorHandle(error);
       }
     };
-
     fetchDesignations();
   }, []);
+
+  useEffect(() => {
+    if (
+      validation.values.appliedRole &&
+      designationOptions.length > 0 &&
+      skillOptions.length > 0
+    ) {
+      const roleId = validation.values.appliedRole;
+      const selectedDesignation = designationOptions.find(
+        (opt) => opt.value === roleId
+      );
+      const roleLabel = selectedDesignation?.label;
+
+      if (roleLabel) {
+        viewRoleSkill({ page: 1, pageSize: 50, limit: 500 })
+          .then((response) => {
+            if (response?.success) {
+              const allRoleSkills = response.data.data || [];
+              const selectedRoleSkills = allRoleSkills.find(
+                (item: any) => item.appliedRole === roleLabel
+              );
+
+              if (selectedRoleSkills) {
+                const skillIDs: string[] = selectedRoleSkills.skill || [];
+                const skillLabels = skillOptions
+                  .filter((item: any) => skillIDs.includes(item.value))
+                  .map((item: any) => item.label);
+
+                setTechnologyOptionsFromAPI((prev) => ({
+                  ...prev,
+                  [roleId]: skillLabels,
+                }));
+              }
+            }
+          })
+          .catch((error) => errorHandle(error));
+      }
+    }
+  }, [designationOptions, skillOptions, validation.values.appliedRole]);
 
   useEffect(() => {
     setLoading(true);
@@ -199,36 +232,11 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
     setSelectedMulti(selectedMulti);
   };
 
-  // const handleRoleChange = (SelectedOptionRole: SelectedOptionRole | null) => {
-  //   if (SelectedOptionRole) {
-  //     const newRole = SelectedOptionRole.value;
-  //     setSelectedRole(newRole);
-  //     validation.setFieldValue("appliedRole", newRole);
+  
 
-  //     const roleTechnologies =
-  //       technologyOptions[newRole as keyof typeof technologyOptions] || [];
-  //     const newMeta = roleTechnologies.reduce(
-  //       (acc: Record<string, string>, tech: string) => {
-  //         acc[tech] = validation.values.meta[tech] || "";
-  //         return acc;
-  //       },
-  //       {}
-  //     );
-  //     validation.setFieldValue("meta", newMeta);
-  //   } else {
-  //     setSelectedRole("");
-  //     validation.setFieldValue("appliedRole", "");
-  //     validation.setFieldValue("meta", {});
-  //   }
-  // };
-
-  const handleRoleChange = async (
-    SelectedOptionRole: SelectedOptionRole | null
-  ) => {
+  const handleRoleChange = async (SelectedOptionRole: any) => {
     if (SelectedOptionRole) {
-      const roleLabel = SelectedOptionRole.label;
       const roleId = SelectedOptionRole.value;
-
       validation.setFieldValue("appliedRole", roleId);
 
       try {
@@ -237,42 +245,41 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
           pageSize: 50,
           limit: 500,
         });
-
         if (response?.success) {
-          const allRoleSkills = response?.data?.data || [];
+          const allRoleSkills = response.data.data || [];
+          const selectedRole = designationOptions.find(
+            (opt) => opt.value === roleId
+          );
+          const roleLabel = selectedRole?.label;
 
-          const selectedRoleSkills = allRoleSkills.find((item: any) => {
-            const itemLabel = item?.appliedRole;
-            return itemLabel === roleLabel;
-          });
-
-          console.log("Matched Role Skills:", selectedRoleSkills);
-
-          if (!selectedRoleSkills) {
-            console.warn("No skills found for selected role:", roleLabel);
-            return;
-          }
-
-          const skillIDs: string[] = selectedRoleSkills.skill || [];
-
-          const skillLabels = skillOptions
-            ?.filter((item: any) => skillIDs.includes(item.value))
-            .map((item: any) => item.label);
-
-          const updatedMeta = skillLabels.reduce(
-            (acc: Record<string, string>, techLabel: string) => {
-              acc[techLabel] = validation.values.meta?.[techLabel] || "";
-              return acc;
-            },
-            {}
+          const selectedRoleSkills = allRoleSkills.find(
+            (item: any) => item.appliedRole === roleLabel
           );
 
-          validation.setFieldValue("meta", updatedMeta);
+          if (selectedRoleSkills) {
+            const skillIDs = selectedRoleSkills.skill || [];
+            const skillLabels = skillOptions
+              .filter((item: any) => skillIDs.includes(item.value))
+              .map((item: any) => item.label);
 
-          setTechnologyOptionsFromAPI((prev) => ({
-            ...prev,
-            [roleId]: skillLabels,
-          }));
+            // Merge existing meta values with new skills
+            const updatedMeta = {
+              ...validation.values.meta,
+              ...skillLabels.reduce(
+                (acc, techLabel) => ({
+                  ...acc,
+                  [techLabel]: validation.values.meta?.[techLabel] || "",
+                }),
+                {}
+              ),
+            };
+
+            validation.setFieldValue("meta", updatedMeta);
+            setTechnologyOptionsFromAPI((prev) => ({
+              ...prev,
+              [roleId]: skillLabels,
+            }));
+          }
         }
       } catch (error) {
         errorHandle(error);
@@ -282,14 +289,6 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
       validation.setFieldValue("meta", {});
     }
   };
-
-  // const handleTechnologyExperienceChange = (tech: string, value: string) => {
-  //   validation.setFieldValue(`meta.${tech}`, value);
-  // };
-
-  // const handleTechnologyExperienceChange = (tech: string, value: string) => {
-  //   validation.setFieldValue(`meta.${tech}`, value);
-  // };
 
   return (
     <Fragment>

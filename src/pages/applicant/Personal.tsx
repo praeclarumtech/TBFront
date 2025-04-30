@@ -174,28 +174,30 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
         data.state = selectedState.label;
       }
 
-      const structuredData = {
-        name: {
-          firstName: data.firstName,
-          middleName: data.middleName,
-          lastName: data.lastName,
-        },
-        phone: {
-          whatsappNumber: data.whatsappNumber,
-          phoneNumber: data.phoneNumber,
-        },
-        email: data.email,
-        gender: data.gender,
-        dateOfBirth: moment(data.dateOfBirth).toISOString(),
-        state: data.state,
-        country: data.country,
-        currentCity: data.currentCity,
-        currentAddress: data.currentAddress,
-        maritalStatus: data.maritalStatus,
-        permanentAddress: data.permanentAddress,
-      };
-
-      onNext(structuredData);
+      // const structuredData = {
+      onNext({
+         ...data,
+         name: {
+           firstName: data.firstName,
+           middleName: data.middleName,
+           lastName: data.lastName,
+         },
+         phone: {
+           whatsappNumber: data.whatsappNumber,
+           phoneNumber: data.phoneNumber,
+         },
+         email: data.email,
+         gender: data.gender,
+         dateOfBirth: moment(data.dateOfBirth).toISOString(),
+         state: data.state,
+         country: data.country,
+         currentCity: data.currentCity,
+         currentAddress: data.currentAddress,
+         maritalStatus: data.maritalStatus,
+         permanentAddress: data.permanentAddress,
+         // };
+       });
+      // onNext(structuredData);
       onNext(data);
 
       setLoading(false);
