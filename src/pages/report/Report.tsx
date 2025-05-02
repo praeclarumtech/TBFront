@@ -7,12 +7,13 @@ import {
   Laptop,
   PersonCircle,
 } from "react-bootstrap-icons";
-import DounutChart from "sub-components/report/DounutChart";
+// import DounutChart from "sub-components/report/DounutChart";
 import ProgressBars from "sub-components/report/ProgressBar";
 import ProgressChart from "sub-components/report/ProgressChart";
 import { getApplicationOnProcess } from "api/reportApi";
 import AreaChart from "sub-components/report/AreaChart";
 import appConstants from "constants/constant";
+import ColumnChart from "sub-components/report/ColumnChart";
 
 const { projectTitle, Modules } = appConstants;
 
@@ -168,25 +169,35 @@ const Report = () => {
                     </Col>
                   </Row>
                   <Row className="mt-4">
-                    <Col xl={7} lg={6} md={12} sm={12} xs={12}>
-                      <div className="justify-between d-flex">
-                        <h4 className="justify-start fw-bold">Statistics</h4>
-                        <ActionMenu
-                          setSelectedFilter={setSelectedFilter}
-                          selectedFilter={selectedFilter}
-                        />
-                      </div>
-                      <div className="chart-container">
+                    {/* <Col xl={7} lg={6} md={12} sm={12} xs={12}> */}
+                    <div className="justify-between d-flex">
+                      <h4 className="justify-start fw-bold">Statistics</h4>
+                      <ActionMenu
+                        setSelectedFilter={setSelectedFilter}
+                        selectedFilter={selectedFilter}
+                      />
+                    </div>
+                    {/* <div className="chart-container">
                         <DounutChart selectedFilter={selectedFilter} />
-                      </div>
-                    </Col>
-                    <Col xl={5} lg={6} md={12} sm={12} xs={12}>
+                      </div> */}
+                    <div className="chart-container mt-3">
+                      <ColumnChart selectedFilter={selectedFilter} />
+                    </div>
+                    {/* </Col> */}
+                    {/* <Col xl={5} lg={6} md={12} sm={12} xs={12}>
                       <h4 className="fw-bold">Applicants</h4>
                       <div className="mt-3 chart-container">
                         {" "}
                         <AreaChart />
                       </div>
-                    </Col>
+                    </Col> */}
+                  </Row>
+                  <Row className="mt-4">
+                    <h4 className="fw-bold">Applicants</h4>
+                    <div className="mt-3 chart-container">
+                      {" "}
+                      <AreaChart />
+                    </div>
                   </Row>
                 </Card.Body>
               </Card>

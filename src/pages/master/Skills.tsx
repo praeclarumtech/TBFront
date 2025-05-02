@@ -299,7 +299,7 @@ const AddSkill = () => {
 
   const formTitle = editingSkill
     ? "Edit Skill"
-    : "Add DropDown Items of Skills";
+    : "Add Skills";
   const submitButtonText = "Add";
 
   const handleOpenBaseModal = () => {

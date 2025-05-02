@@ -13,7 +13,7 @@ import { InputPlaceHolder } from "utils/commonFunctions";
 import "react-loading-skeleton/dist/skeleton.css";
 import { BaseSelect } from "components/BaseComponents/BaseSelect";
 import { SelectedOption } from "interfaces/applicant.interface";
-import { FindInPage, FindReplace } from "@mui/icons-material";
+import { FindReplace } from "@mui/icons-material";
 import { find, findAndReplaceAll } from "api/findAndReplace";
 
 const { projectTitle, Modules, findAndReplaceOptions } = appConstants;
@@ -199,7 +199,7 @@ const FindAndReplace = () => {
                           <BaseInput
                             label="Find"
                             name="findValue"
-                            className="bg-gray-100"
+                            // className="bg-gray-100"
                             type="text"
                             placeholder={InputPlaceHolder("Field to Find")}
                             handleChange={validation.handleChange}
@@ -217,11 +217,11 @@ const FindAndReplace = () => {
                         </Col>
                         <Col xs={2} md={2} lg={2}>
                           <BaseButton
-                            className="!p-0 mt-[35px] ml-n5"
+                            className="!p-0 mt-[35px] ml-n5 bg-primary "
                             onClick={handleFind}
                             disabled={!validation.values.findValue}
                           >
-                            <FindInPage />
+                            <i className="ri-search-2-line p-1"> </i>
                           </BaseButton>
                           <ReactTooltip
                             id="find-tooltip"
@@ -235,7 +235,7 @@ const FindAndReplace = () => {
                           <BaseInput
                             label="Replace"
                             name="ReplaceValue"
-                            className="bg-gray-100"
+                            // className="bg-gray-100"
                             type="text"
                             placeholder={InputPlaceHolder("Field to Replace")}
                             handleChange={validation.handleChange}
@@ -256,7 +256,7 @@ const FindAndReplace = () => {
                         </Col>
                         <Col xs={2} md={2} lg={2}>
                           <BaseButton
-                            className="!p-0  mt-[35px] ml-n5"
+                            className="!p-0  mt-[35px] ml-n5 bg-primary "
                             onClick={replaceAll}
                             disabled={!validation.values.ReplaceValue}
                           >
