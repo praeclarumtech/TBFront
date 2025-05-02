@@ -158,7 +158,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
       const roleLabel = selectedDesignation?.label;
 
       if (roleLabel) {
-        viewRoleSkill({ page: 1, pageSize: 50, limit: 500 })
+        viewRoleSkill({ page: 1, pageSize: 50, limit: 5000 })
           .then((response) => {
             if (response?.success) {
               const allRoleSkills = response.data.data || [];
