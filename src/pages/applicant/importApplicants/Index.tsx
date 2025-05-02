@@ -667,16 +667,25 @@ function ImportApplicant() {
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files && e.target.files[0];
-    const fileExtension = file?.name?.split(".").pop()?.toLowerCase() ?? "";
-
-    if (["csv", "xlsx", "xls", ".xltx"].includes(fileExtension)) {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+ 
+    const validExtensions = ["csv", "xlsx", "xls", "xltx"];
+    const resumeExtensions = ["doc", "pdf", "docx"];
+ 
+    const firstExtension = files[0].name.split(".").pop()?.toLowerCase() ?? "";
+ 
+    if (validExtensions.includes(firstExtension)) {
       handleFileImport(e);
-    } else if (["doc", "pdf", "docx"].includes(fileExtension)) {
+    } else if (
+      [...files].every((file) =>
+        resumeExtensions.includes(
+          file.name.split(".").pop()?.toLowerCase() || ""
+        )
+      )
+    ) {
       const newEvent = {
-        target: {
-          files: [file],
-        },
+        target: { files },
       } as unknown as React.ChangeEvent<HTMLInputElement>;
       handleResumeUpload(newEvent);
     } else {
@@ -685,29 +694,40 @@ function ImportApplicant() {
       );
     }
   };
+ 
   const handleResumeUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    const fileExtension = file.name.split(".").pop()?.toLowerCase();
-    if (!["doc", "pdf", "docx"].includes(fileExtension || "")) {
-      toast.error("Please upload a valid Pdf or doc file");
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
+ 
+    const allowedExtensions = ["doc", "pdf", "docx"];
+    const validFiles = Array.from(files).filter((file) =>
+      allowedExtensions.includes(
+        file.name.split(".").pop()?.toLowerCase() || ""
+      )
+    );
+ 
+    if (validFiles.length === 0) {
+      toast.error("Please upload valid PDF or DOC/DOCX files.");
       return;
     }
-
-    if (file.size > 5 * 1024 * 1024) {
-      toast("Large file detected. Import may take a few minutes.");
+ 
+    const largeFiles = validFiles.filter((file) => file.size > 5 * 1024 * 1024);
+    if (largeFiles.length > 0) {
+      toast("One or more large files detected. Import may take a few minutes.");
     }
-
+ 
     setImportLoader(true);
     setIsImporting(true);
     setImportProgress(0);
-
+ 
     try {
       const formData = new FormData();
-      formData.append("resume", file);
-
+      validFiles.forEach((file) => {
+        formData.append("resume", file); // Ensure backend expects 'resumes'
+      });
+ 
       const response = await resumeUpload(formData, {
         onUploadProgress: (progressEvent) => {
           const progress = Math.round(
@@ -716,25 +736,20 @@ function ImportApplicant() {
           setImportProgress(progress);
         },
       });
-
+ 
       if (response?.success) {
-        toast.success(response?.message || "File imported successfully!");
+        toast.success(response.message || "Resume(s) uploaded successfully!");
         await fetchApplicants();
       } else {
-        throw new Error(response?.message || "Import failed");
+        throw new Error(response?.message || "Upload failed");
       }
     } catch (error: any) {
-      // console.error("Import error:", error);
-
-      if (error.response?.data) {
-        const errorMessage =
-          error.response.data.message || error.response.data.error;
-        toast.error(errorMessage || "Failed to import file");
-      } else if (error.message) {
-        toast.error(error.message);
-      } else {
-        toast.error("An unexpected error occurred during import");
-      }
+      const message =
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        error.message ||
+        "Unexpected error during upload";
+      toast.error(message);
     } finally {
       setImportLoader(false);
       setIsImporting(false);
@@ -744,6 +759,86 @@ function ImportApplicant() {
       }
     }
   };
+
+  // const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const file = e.target.files && e.target.files[0];
+  //   const fileExtension = file?.name?.split(".").pop()?.toLowerCase() ?? "";
+
+  //   if (["csv", "xlsx", "xls", ".xltx"].includes(fileExtension)) {
+  //     handleFileImport(e);
+  //   } else if (["doc", "pdf", "docx"].includes(fileExtension)) {
+  //     const newEvent = {
+  //       target: {
+  //         files: [file],
+  //       },
+  //     } as unknown as React.ChangeEvent<HTMLInputElement>;
+  //     handleResumeUpload(newEvent);
+  //   } else {
+  //     toast.error(
+  //       "Unsupported file type. Please upload a CSV, Excel, Word, or PDF file."
+  //     );
+  //   }
+  // };
+  
+  // const handleResumeUpload = async (
+  //   event: React.ChangeEvent<HTMLInputElement>
+  // ) => {
+  //   const file = event.target.files?.[0];
+  //   if (!file) return;
+  //   const fileExtension = file.name.split(".").pop()?.toLowerCase();
+  //   if (!["doc", "pdf", "docx"].includes(fileExtension || "")) {
+  //     toast.error("Please upload a valid Pdf or doc file");
+  //     return;
+  //   }
+
+  //   if (file.size > 5 * 1024 * 1024) {
+  //     toast("Large file detected. Import may take a few minutes.");
+  //   }
+
+  //   setImportLoader(true);
+  //   setIsImporting(true);
+  //   setImportProgress(0);
+
+  //   try {
+  //     const formData = new FormData();
+  //     formData.append("resume", file);
+
+  //     const response = await resumeUpload(formData, {
+  //       onUploadProgress: (progressEvent) => {
+  //         const progress = Math.round(
+  //           (progressEvent.loaded * 100) / (progressEvent.total || 100)
+  //         );
+  //         setImportProgress(progress);
+  //       },
+  //     });
+
+  //     if (response?.success) {
+  //       toast.success(response?.message || "File imported successfully!");
+  //       await fetchApplicants();
+  //     } else {
+  //       throw new Error(response?.message || "Import failed");
+  //     }
+  //   } catch (error: any) {
+  //     // console.error("Import error:", error);
+
+  //     if (error.response?.data) {
+  //       const errorMessage =
+  //         error.response.data.message || error.response.data.error;
+  //       toast.error(errorMessage || "Failed to import file");
+  //     } else if (error.message) {
+  //       toast.error(error.message);
+  //     } else {
+  //       toast.error("An unexpected error occurred during import");
+  //     }
+  //   } finally {
+  //     setImportLoader(false);
+  //     setIsImporting(false);
+  //     setImportProgress(0);
+  //     if (fileInputRef.current) {
+  //       fileInputRef.current.value = "";
+  //     }
+  //   }
+  // };
   // const filteredApplicant = applicant.filter((applicants) => {
   //   const searchTerm = searchAll.toLowerCase();
 
