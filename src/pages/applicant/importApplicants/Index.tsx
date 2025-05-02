@@ -1684,6 +1684,7 @@ function ImportApplicant() {
                       <input
                         type="file"
                         ref={fileInputRef}
+                        multiple
                         accept=".csv,.xlsx,.xls,.xls,.doc,.pdf,.xltx,.docx"
                         style={{ display: "none" }}
                         onChange={handleFileChange}
