@@ -168,7 +168,6 @@ const Profile = () => {
       };
       fileReader.readAsDataURL(file);
     }
-    window.location.reload();
   };
 
   // const handleProfilePicRemove = () => {
@@ -266,13 +265,13 @@ const Profile = () => {
                           >
                             Change
                           </button>
-                          {/* <button
+                           {/* <button
                             type="button"
-                            className="text-sm px-4 py-1.5 bg-red-100 text-red-600 rounded-md"
+                            className="text-sm px-4 py-1.5 bg-red-100 text-red-600 rounded-md  "
                             onClick={handleProfilePicRemove}
                           >
                             Remove
-                          </button> */}
+                          </button>  */}
                         </div>
                       </div>
 
