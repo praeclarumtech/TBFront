@@ -84,7 +84,7 @@ const AddDesignation = () => {
   const handleEdit = (designation: any) => {
     setEditingDesignation(designation);
     validation.setValues({
-      designationName: designation.designationName,
+     designationName: designation.designation,
     });
     setShowBaseModal(true);
   };
