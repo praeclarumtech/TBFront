@@ -1060,34 +1060,30 @@ const Applicant = () => {
     return (
       <Dropdown>
         <Dropdown.Toggle as={CustomToggle}>
-          <MoreVertical size="15px" className="text-muted" />
+          <MoreVertical size="20px" className="text-muted" />
         </Dropdown.Toggle>
         <Dropdown.Menu align={"end"}>
-          <Dropdown.Item onClick={() => handleDeleteSingle(id)}>
-            <DeleteFilled style={{ color: "#ff0000" }} className="me-2" />{" "}
-            Delete
-          </Dropdown.Item>
-          <Dropdown.Divider />
-
-          <Dropdown.Item onClick={() => handleEmail(id)}>
-            <MailFilled style={{ color: "#0000ff" }} className="me-2" /> Mail
-          </Dropdown.Item>
-          <Dropdown.Divider />
-
           <Dropdown.Item onClick={() => handleView(id, "main")}>
             <EyeTwoTone className="me-2" /> View Applicant
           </Dropdown.Item>
           <Dropdown.Divider />
-
           <Dropdown.Item onClick={() => handleEdit(id)}>
             <EditFilled style={{ color: "#808080" }} className="me-2" /> Edit
             Applicant
+          </Dropdown.Item>
+          <Dropdown.Divider />
+          <Dropdown.Item onClick={() => handleEmail(id)}>
+            <MailFilled style={{ color: "#0000ff" }} className="me-2" /> Mail
+          </Dropdown.Item>
+          <Dropdown.Divider />
+          <Dropdown.Item onClick={() => handleDeleteSingle(id)}>
+            <DeleteFilled style={{ color: "#ff0000" }} className="me-2" />{" "}
+            Delete
           </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
     );
   };
-
 
   const columns = useMemo(
     () => [

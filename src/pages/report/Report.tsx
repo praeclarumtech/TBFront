@@ -37,8 +37,8 @@ const ActionMenu = ({
           "city"}
       </Dropdown.Toggle>
       <Dropdown.Menu align={"end"}>
-        <Dropdown.Item eventKey="city">City</Dropdown.Item>
-        <Dropdown.Item eventKey="state">State</Dropdown.Item>
+        <Dropdown.Item eventKey="City">City</Dropdown.Item>
+        <Dropdown.Item eventKey="State">State</Dropdown.Item>
       </Dropdown.Menu>
     </Dropdown>
   );
