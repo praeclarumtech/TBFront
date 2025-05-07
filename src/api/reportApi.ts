@@ -28,7 +28,14 @@ export const getSkillStatistics = async (selectedFilter = "") => {
   };
 
 
-  export const getaddedbyReport = async () => {
-    const response = await authServices.get(`${ADDEDBY_REPORT}`);
+  // export const getaddedbyReport = async () => {
+  //   const response = await authServices.get(`${ADDEDBY_REPORT}`);
+  //   return response?.data;
+  // };
+
+  export const getaddedbyReport = async (startDate: string, endDate: string) => {
+    console.log("Hello",startDate,endDate)
+    const response = await authServices.get(`${ADDEDBY_REPORT}?startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}`);
     return response?.data;
   };
+  

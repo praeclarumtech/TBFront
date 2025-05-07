@@ -1,5 +1,3 @@
-
-
 import { useEffect, useState } from "react";
 import { Pie } from "react-chartjs-2";
 import {
@@ -22,19 +20,41 @@ const PieChart = () => {
   const [filterType, setFilterType] = useState("Date"); // "time" or "date"
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
 
+  const formatDateTime = (date: string, time: string) => {
+    if (!date) return "";
+    const [year, month, day] = date.split("-");
+    return `${day}-${month}-${year} ${time || "00:00"}`;
+  };
+  
+  const fetchAddedByReport = async () => {
+    setIsLoading(true);
+    try {
+      const start = formatDateTime(startDate, startTime);
+      const end = formatDateTime(endDate, endTime || "23:59");
+  
+      const response = await getaddedbyReport(start, end);
+      setApplication(response?.data || {});
+    } catch (error) {
+      console.error("API Error:", error);
+      setApplication({});
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
   // const fetchAddedByReport = async () => {
   //   setIsLoading(true);
   //   try {
   //     let params: any = {};
-  //     if (filterType === "time") {
-  //       params.filter = selectedTime;
-  //     } else if (startDate && endDate) {
+  //     if (startDate && endDate) {
   //       params.startDate = startDate;
   //       params.endDate = endDate;
   //     }
 
-  //     const response = await getaddedbyReport(params);
+  //     const response = await getaddedbyReport(startDate, endDate);
   //     setApplication(response?.data || {});
   //   } catch (error) {
   //     console.error("API Error:", error);
@@ -44,24 +64,24 @@ const PieChart = () => {
   //   }
   // };
 
-  const fetchAddedByReport = async () => {
-    setIsLoading(true);
-    try {
-      const response = await getaddedbyReport();
-      setApplication(response?.data || []);
-    } catch (error) {
-      console.error("API Error:", error);
-      setApplication([]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // const fetchAddedByReport = async () => {
+  //   setIsLoading(true);
+  //   try {
+  //     const response = await getaddedbyReport();
+  //     setApplication(response?.data || []);
+  //   } catch (error) {
+  //     console.error("API Error:", error);
+  //     setApplication([]);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
   useEffect(() => {
     if (filterType === "time" || (startDate && endDate)) {
       fetchAddedByReport();
     }
-  }, [filterType, startDate, endDate]);
+  }, [filterType, startDate, endDate, startTime, endTime]);
 
   const labels = Object.keys(application);
   const values = Object.values(application);
@@ -94,6 +114,9 @@ const PieChart = () => {
     },
   };
 
+  console.log("time start", startDate, startTime);
+  console.log("startTime:", startTime);
+
   return (
     <>
       {/* Dropdown Row */}
@@ -104,7 +127,7 @@ const PieChart = () => {
             {filterType}
           </Dropdown.Toggle>
           <Dropdown.Menu>
-            <Dropdown.Item eventKey="date">Date</Dropdown.Item>
+            <Dropdown.Item eventKey="Date">Date</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
 
@@ -125,7 +148,7 @@ const PieChart = () => {
         )} */}
 
         {/* Date Pickers */}
-        {filterType === "date" && (
+        {filterType === "Date" && (
           <div className="gap-2 mt-2 d-flex flex-column">
             <div className="gap-2 d-flex">
               <div>
@@ -142,7 +165,8 @@ const PieChart = () => {
                 <input
                   type="time"
                   className="form-control form-control-sm"
-                  onChange={(e) => console.log("Start Time:", e.target.value)}
+                  value={startTime}
+                  onChange={(e) => setStartTime(e.target.value)}
                 />
               </div>
             </div>
@@ -161,7 +185,8 @@ const PieChart = () => {
                 <input
                   type="time"
                   className="form-control form-control-sm"
-                  onChange={(e) => console.log("End Time:", e.target.value)}
+                  value={endTime}
+                  onChange={(e) => setEndTime(e.target.value)}
                 />
               </div>
             </div>
@@ -171,7 +196,12 @@ const PieChart = () => {
 
       {/* Chart Container */}
       <div
-        style={{ width: "100%", maxWidth: "100%", height: "300px",overflow: "hidden", }}
+        style={{
+          width: "100%",
+          maxWidth: "100%",
+          height: "300px",
+          overflow: "hidden",
+        }}
         className="justify-items-center"
       >
         {isLoading ? (
