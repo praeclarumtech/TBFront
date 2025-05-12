@@ -1,29 +1,22 @@
-// // redux/store.ts
-// import { configureStore } from '@reduxjs/toolkit';
-// import personalDetailsReducer from '../store/slices/personalDetailsSlice';
-
-// const store = configureStore({
-//   reducer: {
-//     personalDetails: personalDetailsReducer,
-
-//   },
-// });
-
-// export default store;
-
-
 
 // src/redux/store.ts
 import { configureStore } from '@reduxjs/toolkit';
-import personalDetailsReducer from './slices/personalDetailsSlice';
-import educationalDetailsReducer from './slices/educationalDetailsSlice';
-import jobDetailsReducer from './slices/jobDetailsSlice';
+
+import personalReducer from "./slices/personalDetailsSlice";
+import educationReducer from "./slices/educationalDetailsSlice";
+import jobReducer from "./slices/jobDetailsSlice";
+import stepperReducer from "./slices/stepperSlice";
+import listingReducer from "./slices/listing";
 
 export const store = configureStore({
-  reducer: {
-    personalDetails: personalDetailsReducer,
-    educationalDetails: educationalDetailsReducer,
-    jobDetails: jobDetailsReducer
+
+  devTools: true,
+   reducer: {
+    personal: personalReducer,
+    education: educationReducer,
+    job: jobReducer,
+    stepper: stepperReducer,
+    listing: listingReducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
