@@ -20,21 +20,19 @@ const PieChart = () => {
   const [filterType, setFilterType] = useState("Date"); // "time" or "date"
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [startTime, setStartTime] = useState("");
-  const [endTime, setEndTime] = useState("");
 
-  const formatDateTime = (date: string, time: string) => {
+  const formatDateTime = (date: string) => {
     if (!date) return "";
     const [year, month, day] = date.split("-");
-    return `${day}-${month}-${year} ${time || "00:00"}`;
+    return `${day}-${month}-${year}`;
   };
-  
+
   const fetchAddedByReport = async () => {
     setIsLoading(true);
     try {
-      const start = formatDateTime(startDate, startTime);
-      const end = formatDateTime(endDate, endTime || "23:59");
-  
+      const start = formatDateTime(startDate,);
+      const end = formatDateTime(endDate);
+
       const response = await getaddedbyReport(start, end);
       setApplication(response?.data || {});
     } catch (error) {
@@ -44,7 +42,7 @@ const PieChart = () => {
       setIsLoading(false);
     }
   };
-  
+
   // const fetchAddedByReport = async () => {
   //   setIsLoading(true);
   //   try {
@@ -78,10 +76,8 @@ const PieChart = () => {
   // };
 
   useEffect(() => {
-    if (filterType === "time" || (startDate && endDate)) {
-      fetchAddedByReport();
-    }
-  }, [filterType, startDate, endDate, startTime, endTime]);
+    fetchAddedByReport();
+  }, [filterType, startDate, endDate]);
 
   const labels = Object.keys(application);
   const values = Object.values(application);
@@ -114,8 +110,6 @@ const PieChart = () => {
     },
   };
 
-  console.log("time start", startDate, startTime);
-  console.log("startTime:", startTime);
 
   return (
     <>
@@ -158,15 +152,7 @@ const PieChart = () => {
                   className="form-control form-control-sm"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
-                />
-              </div>
-              <div>
-                <label style={{ fontSize: "0.8rem" }}>Start Time</label>
-                <input
-                  type="time"
-                  className="form-control form-control-sm"
-                  value={startTime}
-                  onChange={(e) => setStartTime(e.target.value)}
+                 
                 />
               </div>
             </div>
@@ -178,15 +164,7 @@ const PieChart = () => {
                   className="form-control form-control-sm"
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
-                />
-              </div>
-              <div>
-                <label style={{ fontSize: "0.8rem" }}>End Time</label>
-                <input
-                  type="time"
-                  className="form-control form-control-sm"
-                  value={endTime}
-                  onChange={(e) => setEndTime(e.target.value)}
+                  disabled={!startDate.length}
                 />
               </div>
             </div>

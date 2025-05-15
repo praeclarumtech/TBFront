@@ -37,8 +37,8 @@ const ActionMenu = ({
           "city"}
       </Dropdown.Toggle>
       <Dropdown.Menu align={"end"}>
-        <Dropdown.Item eventKey="City">City</Dropdown.Item>
-        <Dropdown.Item eventKey="State">State</Dropdown.Item>
+        <Dropdown.Item eventKey="city">City</Dropdown.Item>
+        <Dropdown.Item eventKey="state">State</Dropdown.Item>
       </Dropdown.Menu>
     </Dropdown>
   );
@@ -90,7 +90,7 @@ const Report = () => {
                     <Col xl={8} lg={6} md={12} sm={12} xs={12}>
                       <h4 className="w-full fw-bold">
                         {" "}
-                        Application on Process
+                        Applicant on Process
                       </h4>
                       <div className="mt-5">
                         <div className="my-2 d-flex">
