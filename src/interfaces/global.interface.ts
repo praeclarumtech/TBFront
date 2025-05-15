@@ -101,7 +101,7 @@ export interface BaseModalProps {
   onCloseClick?: () => void;
   loader?: boolean;
   children?: React.ReactNode;
-  modalTitle?: string | React.ReactNode;
+  modalTitle?: string|React.ReactNode; 
   closeButtonText?: string;
   submitButtonText?: string;
   setShowBaseModal: React.Dispatch<React.SetStateAction<boolean>>;

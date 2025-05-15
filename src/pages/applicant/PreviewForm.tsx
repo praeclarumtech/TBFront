@@ -349,7 +349,7 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
           <div className="gap-3 mx-2 mt-4 d-flex flex-column flex-md-row justify-content-end">
             <BaseButton
               variant=" order-1 w-full order-md-0"
-              onClick={() => onEdit(-1)}
+              onClick={() => onEdit(2)}
             >
               Back
             </BaseButton>

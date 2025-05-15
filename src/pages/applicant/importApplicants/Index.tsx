@@ -900,11 +900,10 @@ function ImportApplicant() {
         toast.success(response?.message || "File imported successfully!");
       } else if (!response?.success && response.statusCode === 400) {
         // setShowPopupModal(true);
-        const messages = response?.data;
+        const messages = response?.message;
         if (messages && Array.isArray(messages)) {
           messages.forEach((messages) => {
             toast.error(messages);
-      
           });
         }
         toast.error(response.message || "Import failed");
@@ -976,15 +975,6 @@ function ImportApplicant() {
     filtered: string
     // ids: string[]
   ) => {
-
-       if (selectedApplicants.length === 0 && exportOption === "") {
-         toast.error("Please select filters or records for export");
-         return;
-    }
-       else if (selectedApplicants.length > 0) {
-         setShowExportModal(true);
-       }
-              
     try {
       toast.info("Preparing file for download...");
 
@@ -1035,24 +1025,17 @@ function ImportApplicant() {
         return;
       }
 
+      // If it is JSON, check for an error message
       if (parsed?.statusCode === 404 || parsed?.success === false) {
         setShowExportModal(false);
         setSelectedApplicants([]);
         setExportOption("");
-        const messages = parsed?.data;
-        if (messages && Array.isArray(messages)) {
-          messages.forEach((msg) => {
-            toast.error(msg);
-          
-          });
-        }
-     
+        toast.error(parsed.message || "No data available to export");
       } else if (parsed?.statuscode === 500 || parsed?.success === false) {
         setShowExportModal(false);
         setSelectedApplicants([]);
         setExportOption("");
         toast.error(parsed.message || "No data available to export");
-      
       } else {
         toast.error("Unexpected JSON response during export.");
       }
@@ -1067,10 +1050,6 @@ function ImportApplicant() {
   };
 
   const handleExportModalShow = () => {
-     if (applicant.length === 0) {
-       toast.error("No data available to export");
-       return;
-     }
     setShowExportModal(true);
   };
 
@@ -1626,7 +1605,6 @@ function ImportApplicant() {
         closeButtonText="Close"
         setShowBaseModal={setShowExportModal}
         modalTitle={<ModalTitle />}
-      
         children={
           <div>
             <Row>
@@ -1876,7 +1854,6 @@ function ImportApplicant() {
           submitButtonText="Apply All"
           closeButtonText="Close"
           modalTitle="Multi Edit"
-       
         >
           <Row>
             <Col xs={12} md={12} lg={12}>
