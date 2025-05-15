@@ -134,7 +134,7 @@ const ColumnChart = ({ selectedFilter }: Props) => {
       {/* Sticky Title */}
       <div
         style={{
-          position: "sticky",
+          position: "static",
           top: 0,
           background: "#fff",
           zIndex: 10,

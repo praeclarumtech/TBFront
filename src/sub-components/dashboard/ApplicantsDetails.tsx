@@ -18,7 +18,7 @@ const ApplicantsDetails = ({
           <Card.Header className="p-4 bg-white border-0 d-flex justify-content-between align-items-center">
             <h4 className="h4">Skills Statistics</h4>
           </Card.Header>
-          <Card.Body>
+          <Card.Body className="pt-0">
             <BarChart
               onBarClick={setSelectedTechnology}
               selectedFilter={setData}

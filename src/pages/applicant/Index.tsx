@@ -68,6 +68,7 @@ import {
   EyeTwoTone,
   MailFilled,
 } from "@ant-design/icons";
+import { Switch } from "antd";
 // import CheckboxMultiSelect from "components/BaseComponents/CheckboxMultiSelect";
 const {
   exportableFieldOption,
@@ -177,7 +178,8 @@ const Applicant = () => {
 
   const fetchApplicants = async () => {
     setTableLoader(true);
-    // setLoader(true);
+    setApplicant([]);
+    setTableLoader(true);
 
     try {
       const params: {
@@ -307,7 +309,6 @@ const Applicant = () => {
       // setLoader(false);
     }
   };
-
   useEffect(() => {
     const delayedSearch = debounce(() => {
       // console.log("your api is calling");
@@ -489,13 +490,14 @@ const Applicant = () => {
     const getCities = async () => {
       try {
         const cityData = await fetchCities();
-
-        if (cityData?.data) {
+        if (cityData?.data?.item) {
           setCities(
-            cityData.data.map((city: { city_name: string; _id: string }) => ({
-              label: city.city_name,
-              value: city._id,
-            }))
+            cityData.data.item.map(
+              (city: { city_name: string; _id: string }) => ({
+                label: city.city_name,
+                value: city._id,
+              })
+            )
           );
         }
       } catch (error: any) {
@@ -539,7 +541,7 @@ const Applicant = () => {
         const stateData = await fetchState();
         if (stateData?.data) {
           setStates(
-            stateData.data.map(
+            stateData.data.item.map(
               (state: {
                 state_name: string;
                 _id: string;
@@ -562,7 +564,7 @@ const Applicant = () => {
             });
           });
         } else {
-          toast.error("Failed to fetch cities.. Please try again.", {
+          toast.error("Failed to fetch State.. Please try again.", {
             closeOnClick: true,
             autoClose: 5000,
           });
@@ -1040,7 +1042,7 @@ const Applicant = () => {
           e.preventDefault();
           onClick(e);
         }}
-        className="text-muted text-primary-hover text-center"
+        className="text-center text-muted text-primary-hover"
       >
         {children}
       </Link>
@@ -1155,6 +1157,42 @@ const Applicant = () => {
         accessorKey: "totalExperience",
         enableColumnFilter: false,
       },
+      {
+        header: "Status",
+        cell: () => (
+          <Switch
+            checkedChildren="Active"
+            unCheckedChildren="InActive"
+            defaultChecked
+            className="w-[70px]"
+          />
+        ),
+        enableColumnFilter: false,
+      },
+      // {
+      //   header: "Status",
+      //   cell: () => {
+      //     const [checked, setChecked] = useState(true);
+
+      //     return (
+      //       <Switch
+      //         checked={checked}
+      //         onChange={(val) => setChecked(val)}
+      //         checkedChildren={
+      //           <span>
+      //             Active <CheckCircleOutlined style={{ color: "#1677ff" }} />
+      //           </span>
+      //         }
+      //         unCheckedChildren={
+      //           <span>
+      //             <CloseCircleOutlined style={{ color: "black" }} /> InActive
+      //           </span>
+      //         }
+      //       />
+      //     );
+      //   },
+      //   enableColumnFilter: false,
+      // },
       {
         header: "Interview Stage",
         accessorKey: "interviewStage",
@@ -1526,34 +1564,30 @@ const Applicant = () => {
                 {tableLoader ? (
                   <div className="py-4 text-center">
                     <Skeleton count={1} className="mb-5 min-h-10" />
-
                     <Skeleton count={5} />
                   </div>
-                ) : (
+                ) : applicant.length > 0 ? (
                   <div className="pt-4 card-body">
-                    {applicant.length > 0 ? (
-                      <TableContainer
-                        isHeaderTitle="Applicants"
-                        columns={columns}
-                        data={applicant}
-                        // isGlobalFilter
-                        customPageSize={50}
-                        theadClass="table-light text-muted"
-                        SearchPlaceholder="Search..."
-                        tableClass="!text-nowrap !mb-0 !responsive !table-responsive-sm !table-hover !table-outline-none !mb-0"
-                        totalRecords={totalRecords}
-                        pagination={pagination}
-                        setPagination={setPagination}
-                        loader={tableLoader}
-                        customPadding="0.3rem 1.5rem"
-                        rowHeight="10px !important"
-                      />
-                    ) : (
-                      <div className="text-center">
-                        <i className="ri-search-line d-block fs-1 text-success"></i>
-                        {"Total Record: " + totalRecords}
-                      </div>
-                    )}
+                    <TableContainer
+                      isHeaderTitle="Applicants"
+                      columns={columns}
+                      data={applicant}
+                      customPageSize={50}
+                      theadClass="table-light text-muted"
+                      SearchPlaceholder="Search..."
+                      tableClass="!text-nowrap !mb-0 !responsive !table-responsive-sm !table-hover !table-outline-none !mb-0"
+                      totalRecords={totalRecords}
+                      pagination={pagination}
+                      setPagination={setPagination}
+                      loader={tableLoader}
+                      customPadding="0.3rem 1.5rem"
+                      rowHeight="10px !important"
+                    />
+                  </div>
+                ) : (
+                  <div className="pt-4 text-center">
+                    <i className="ri-search-line d-block fs-1 text-success"></i>
+                    {"Total Record: " + totalRecords}
                   </div>
                 )}
               </div>

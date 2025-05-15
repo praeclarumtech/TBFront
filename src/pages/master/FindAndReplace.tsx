@@ -221,7 +221,7 @@ const FindAndReplace = () => {
                             onClick={handleFind}
                             disabled={!validation.values.findValue}
                           >
-                            <i className="ri-search-2-line p-1"> </i>
+                            <i className="p-1 ri-search-2-line"> </i>
                           </BaseButton>
                           <ReactTooltip
                             id="find-tooltip"

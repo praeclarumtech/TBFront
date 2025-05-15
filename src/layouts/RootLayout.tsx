@@ -1,122 +1,3 @@
-// import { Outlet } from "react-router";
-// import Sidebar from "components/navbars/sidebar/Sidebar";
-// import Header from "components/navbars/topbar/Header";
-// import AppFooter from "layouts/footer/AppFooter";
-// import { ReactNode, useState } from "react";
-// import { useMediaQuery } from "react-responsive";
-
-// interface RootLayoutProps {
-//   children: ReactNode;
-// }
-
-// const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
-//   const [showMenu, setShowMenu] = useState(true);
-//   const isMobile = useMediaQuery({ maxWidth: 767 });
-
-//   const ToggleMenu = () => {
-//     setShowMenu(!showMenu);
-//   };
-
-//   return (
-//     <section className="top-0 left-0 bg-light min-vh-100 position-fixed w-100">
-//       <div id="db-wrapper" className={`${showMenu ? "" : "toggled"} h-100`}>
-//         {/* Sidebar */}
-//         <div
-//           className={`navbar-vertical navbar position-fixed top-0 bottom-0 border-end-dark ${
-//             isMobile && !showMenu ? "d-block" : "d-block"
-//           }`}
-//           style={{
-//             width: isMobile
-//               ? showMenu
-//                 ? "256px"
-//                 : "256px"
-//               : showMenu
-//               ? "256px"
-//               : "256px",
-//             transition: " 0.5s ease-in-out",
-//             zIndex: 1030,
-//             overflowX: "hidden",
-//             whiteSpace: "nowrap",
-//           }}
-//         >
-//           <Sidebar showMenu={showMenu} toggleMenu={ToggleMenu} />
-//         </div>
-
-//         {/* Main Page Content */}
-//         <div
-//           id="page-content"
-//           style={{
-//             marginLeft: isMobile ? "0px" : showMenu ? "250px" : "0px",
-//             transition: " 0.5s ease-in-out",
-//           }}
-//         >
-//           {/* Header */}
-//           <div
-//             className="header fixed-top bg-dark border-bottom-dark"
-//             style={{
-//               left: isMobile
-//                 ? showMenu
-//                   ? "0px"
-//                   : "250px"
-//                 : showMenu
-//                 ? "250px"
-//                 : "0px",
-//               right: 0,
-//               transition: " 0.5s ease-in-out",
-//               // zIndex: 1030,
-//             }}
-//           >
-//             <Header toggleMenu={ToggleMenu} />
-//           </div>
-//           <div
-//             className="content"
-//             style={{
-//               left: isMobile
-//                 ? showMenu
-//                   ? "252px"
-//                   : "0px"
-//                 : showMenu
-//                 ? "252px"
-//                 : "0px",
-//               marginTop: "66px",
-//               marginBottom: "50px",
-//               paddingBottom: "20px",
-//               // overflowY: "auto",
-//               height: "calc(100vh - 104px)",
-//               // overflow:
-//               //   isMobile && !showMenu ? "hidden" : "auto",
-//               transition: " 0.5s ease-in-out",
-//             }}
-//           >
-//             <Outlet />
-//             {children}
-//           </div>
-
-//           {/* Footer */}
-//           <div
-//             className="bg-white footer fixed-bottom border-top"
-//             style={{
-//               left: isMobile
-//                 ? showMenu
-//                   ? "0px"
-//                   : "250px"
-//                 : showMenu
-//                 ? "250px"
-//                 : "0px",
-//               right: 0,
-//               transition: " 0.5s ease-in-out",
-//               // zIndex: 1030,
-//             }}
-//           >
-//             <AppFooter isSidebarOpen={showMenu} />
-//           </div>
-//         </div>
-//       </div>
-//     </section>
-//   );
-// };
-// export default RootLayout;
-
 import { Outlet } from "react-router";
 import Sidebar from "components/navbars/sidebar/Sidebar";
 import Header from "components/navbars/topbar/Header";
@@ -161,16 +42,17 @@ const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
   return (
     <section className="bg-light">
       <div id="db-wrapper" className={`${showMenu ? "" : "toggled"}`}>
-        <div className="navbar-vertical navbar ">
+        <div className="navbar-vertical navbar" style={{ zIndex: 10 }}>
           <Sidebar showMenu={showMenu} toggleMenu={ToggleMenu} />
         </div>
         <div id="page-content" className="overflow-auto">
           <div
             className="header fixed-top bg-dark border-bottom-dark"
-            style={contentShiftStyle}
+            style={{ ...contentShiftStyle, zIndex: 10 }}
           >
             <Header toggleMenu={ToggleMenu} />
           </div>
+
           <div
             className="content"
             style={{
@@ -182,6 +64,7 @@ const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
               overflowY: "auto",
               // height: "calc(100vh - 104px)",
               right: 0,
+              zIndex: 10,
             }}
           >
             <AutoLogout />
@@ -193,7 +76,7 @@ const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
 
       <div
         className="bg-white footer fixed-bottom border-top"
-        style={contentShiftStyle}
+        style={{ ...contentShiftStyle, zIndex: 10 }}
       >
         <AppFooter isSidebarOpen={showMenu} />
       </div>

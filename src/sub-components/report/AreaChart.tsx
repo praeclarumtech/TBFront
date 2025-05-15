@@ -10,14 +10,15 @@ import {
 import { Dropdown } from "react-bootstrap";
 import Skeleton from "react-loading-skeleton";
 import { getaddedbyReport } from "api/reportApi"; // <-- Make sure this path is correct
+import BaseButton from "components/BaseComponents/BaseButton";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const PieChart = () => {
   const [application, setApplication] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const [filterType, setFilterType] = useState("Date"); // "time" or "date"
+  const [filterType, setFilterType] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
@@ -30,7 +31,7 @@ const PieChart = () => {
   const fetchAddedByReport = async () => {
     setIsLoading(true);
     try {
-      const start = formatDateTime(startDate,);
+      const start = formatDateTime(startDate);
       const end = formatDateTime(endDate);
 
       const response = await getaddedbyReport(start, end);
@@ -52,28 +53,11 @@ const PieChart = () => {
   //       params.endDate = endDate;
   //     }
 
-  //     const response = await getaddedbyReport(startDate, endDate);
-  //     setApplication(response?.data || {});
-  //   } catch (error) {
-  //     console.error("API Error:", error);
-  //     setApplication({});
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
-
-  // const fetchAddedByReport = async () => {
-  //   setIsLoading(true);
-  //   try {
-  //     const response = await getaddedbyReport();
-  //     setApplication(response?.data || []);
-  //   } catch (error) {
-  //     console.error("API Error:", error);
-  //     setApplication([]);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
+  const filterReset = () => {
+    setFilterType("");
+    setEndDate("");
+    setStartDate("");
+  };
 
   useEffect(() => {
     fetchAddedByReport();
@@ -110,38 +94,28 @@ const PieChart = () => {
     },
   };
 
-
   return (
     <>
       {/* Dropdown Row */}
-      <div className="mb-3 d-flex flex-column align-items-end">
+      <div className="gap-2 mb-3 d-flex justify-content-end align-items-cente">
         {/* Main Filter Dropdown */}
-        <Dropdown onSelect={(val) => val && setFilterType(val)}>
-          <Dropdown.Toggle variant="outline-primary" size="sm">
-            {filterType}
-          </Dropdown.Toggle>
-          <Dropdown.Menu>
-            <Dropdown.Item eventKey="Date">Date</Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
-
+        <div>
+          <BaseButton color="success" onClick={filterReset}>
+            Reset
+          </BaseButton>
+        </div>
+        <div>
+          <Dropdown onSelect={(val) => val && setFilterType(val)}>
+            <Dropdown.Toggle variant="outline-primary" className="min-h-[40px]">
+              {filterType || "Selcet Filter"}
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+              <Dropdown.Item eventKey="Date">Date</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
+        </div>
         {/* Time Range Dropdown */}
-        {/* {filterType === "time" && (
-          <div className="mt-2">
-            <Dropdown onSelect={(val) => val && setSelectedTime(val)}>
-              <Dropdown.Toggle variant="outline-secondary" size="sm">
-                {selectedTime}
-              </Dropdown.Toggle>
-              <Dropdown.Menu>
-                <Dropdown.Item eventKey="today">Today</Dropdown.Item>
-                <Dropdown.Item eventKey="week">This Week</Dropdown.Item>
-                <Dropdown.Item eventKey="month">This Month</Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
-          </div>
-        )} */}
 
-        {/* Date Pickers */}
         {filterType === "Date" && (
           <div className="gap-2 mt-2 d-flex flex-column">
             <div className="gap-2 d-flex">
@@ -152,7 +126,6 @@ const PieChart = () => {
                   className="form-control form-control-sm"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
-                 
                 />
               </div>
             </div>
@@ -180,10 +153,10 @@ const PieChart = () => {
           height: "300px",
           overflow: "hidden",
         }}
-        className="justify-items-center"
+        className="d-flex justify-content-center align-items-center"
       >
         {isLoading ? (
-          <Skeleton height={300} width="100%" />
+          <Skeleton height={300} borderRadius={"50%"} width={300} />
         ) : (
           <Pie data={data} options={options} />
         )}

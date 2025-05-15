@@ -31,6 +31,9 @@ import FindAndReplace from "pages/master/FindAndReplace";
 import AddEmailTemplate from "pages/master/EmailTemplate";
 import AddDesignation from "pages/master/Designation";
 import PrivateRoute from "./PrivateRoute";
+import Country from "pages/master/CityStateCountry";
+import State from "pages/master/State";
+import City from "pages/master/City";
 
 const RenderRouter: React.FC = () => {
   const {
@@ -203,6 +206,31 @@ const RenderRouter: React.FC = () => {
               element={
                 // <RootLayout>
                 <AddDesignation />
+                // </RootLayout>
+              }
+            />
+
+            <Route
+              path="country"
+              element={
+                // <RootLayout>
+                <Country />
+                // </RootLayout>
+              }
+            />
+            <Route
+              path="state"
+              element={
+                // <RootLayout>
+                <State />
+                // </RootLayout>
+              }
+            />
+              <Route
+              path="city"
+              element={
+                // <RootLayout>
+                <City />
                 // </RootLayout>
               }
             />
