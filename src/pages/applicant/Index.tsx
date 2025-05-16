@@ -100,6 +100,7 @@ const Applicant = () => {
     null
   );
   const [showModal, setShowModal] = useState(false);
+  const [showViewModal, setShowViewModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const [experienceRange, setExperienceRange] = useState<number[]>([0, 25]);
@@ -611,6 +612,7 @@ const Applicant = () => {
     setShowModal(false);
   };
 
+   
   const handleDeleteAll = () => {
     if (selectedApplicants.length > 0) {
       setMultipleApplicantsDelete(selectedApplicants);
@@ -640,11 +642,11 @@ const Applicant = () => {
   const handleView = (id: string, source: string) => {
     setSelectedApplicantId(id);
     setSourcePage(source);
-    setShowModal(true);
+    setShowViewModal(true);
   };
 
   const handleCloseModal = () => {
-    setShowModal(false);
+    setShowViewModal(false);
   };
 
   const handleEdit = (applicantId: string) => {
@@ -1568,9 +1570,9 @@ const Applicant = () => {
         onYesClick={handleConfirm}
         onCloseClick={closeDeleteModal}
       />
-      {showModal && selectedApplicantId && (
+      {showViewModal && selectedApplicantId && (
         <ViewModal
-          show={showModal}
+          show={showViewModal}
           onHide={handleCloseModal}
           applicantId={selectedApplicantId}
           source={sourcePage}
