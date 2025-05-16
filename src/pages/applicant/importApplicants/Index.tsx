@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Row, Col, Card, Container, CardBody, Spinner } from "react-bootstrap";
+import { Row, Col, Card, Container, CardBody } from "react-bootstrap";
 import React, { Fragment, useEffect, useState, useMemo, useRef } from "react";
 import BaseButton from "components/BaseComponents/BaseButton";
 import { BaseSelect, MultiSelect } from "components/BaseComponents/BaseSelect";
@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { IconButton, useMediaQuery } from "@mui/material";
+// import { IconButton, useMediaQuery } from "@mui/material";
 import "react-loading-skeleton/dist/skeleton.css";
 import {
   listOfImportApplicants,
@@ -21,23 +21,23 @@ import {
   updateImportedApplicantsStatus,
 } from "api/applicantApi";
 
-import {
-  city as fetchCities,
-  state as fetchState,
-} from "../../../api/applicantApi";
+// import {
+//   city as fetchCities,
+//   state as fetchState,
+// } from "../../../api/applicantApi";
 
 import ViewModal from "../ViewApplicant";
 import BaseInput from "components/BaseComponents/BaseInput";
 import DeleteModal from "components/BaseComponents/DeleteModal";
-import Box from "@mui/material/Box";
-import Drawer from "@mui/material/Drawer";
-import List from "@mui/material/List";
-import Divider from "@mui/material/Divider";
+// import Box from "@mui/material/Box";
+// import Drawer from "@mui/material/Drawer";
+// import List from "@mui/material/List";
+// import Divider from "@mui/material/Divider";
 
 import {
-  City,
+  // City,
   SelectedOption,
-  SelectedOption1,
+  // SelectedOption1,
 } from "interfaces/applicant.interface";
 import {
   dynamicFind,
@@ -45,15 +45,15 @@ import {
   InputPlaceHolder,
 } from "utils/commonFunctions";
 import appConstants from "constants/constant";
-import BaseSlider from "components/BaseComponents/BaseSlider";
+// import BaseSlider from "components/BaseComponents/BaseSlider";
 import Skeleton from "react-loading-skeleton";
 import saveAs from "file-saver";
 import BasePopUpModal from "components/BaseComponents/BasePopUpModal";
-import { ViewAppliedSkills } from "api/skillsApi";
+// import { ViewAppliedSkills } from "api/skillsApi";
 import { FaExclamationTriangle } from "react-icons/fa";
 import debounce from "lodash.debounce";
 
-import { Close } from "@mui/icons-material";
+// import { Close } from "@mui/icons-material";
 import BaseModal from "components/BaseComponents/BaseModal";
 import CheckboxMultiSelect from "components/BaseComponents/CheckboxMultiSelect";
 
@@ -70,14 +70,14 @@ const {
   interviewStageOptions,
   // cityOptions,
   statusOptions,
-  gendersType,
+  // gendersType,
   // stateType,
-  anyHandOnOffers,
-  workPreferenceType,
+  // anyHandOnOffers,
+  // workPreferenceType,
   designationType,
 } = appConstants;
 
-type Anchor = "top" | "right" | "bottom";
+// type Anchor = "top" | "right" | "bottom";
 function ImportApplicant() {
   document.title = Modules.ImportApplicant + " | " + projectTitle;
   const navigate = useNavigate();
@@ -93,35 +93,35 @@ function ImportApplicant() {
   const [showModal, setShowModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  const [experienceRange, setExperienceRange] = useState<number[]>([0, 25]);
+  // const [experienceRange, setExperienceRange] = useState<number[]>([0, 25]);
 
-  const [filterNoticePeriod, setFilterNoticePeriod] = useState<number[]>([
-    0, 90,
-  ]);
+  // const [filterNoticePeriod, setFilterNoticePeriod] = useState<number[]>([
+  //   0, 90,
+  // ]);
   const [searchAll, setSearchAll] = useState<string>("");
 
   const [uploadedFile, setUploadedFile] = useState<FormData | null>(null);
 
-  const [filterStatus, setFilterStatus] = useState<SelectedOption | null>(null);
-  const [filterInterviewStage, setFilterInterviewStage] =
-    useState<SelectedOption | null>(null);
-  const [filterEngRating, setFilterEngRating] = useState<number[]>([0, 10]);
+  // const [filterStatus, setFilterStatus] = useState<SelectedOption | null>(null);
+  // const [filterInterviewStage, setFilterInterviewStage] =
+  //   useState<SelectedOption | null>(null);
+  // const [filterEngRating, setFilterEngRating] = useState<number[]>([0, 10]);
 
-  const [filterAnyHandOnOffers, setFilterAnyHandOnOffers] =
-    useState<SelectedOption | null>(null);
-  const [filterGender, setFilterGender] = useState<SelectedOption | null>(null);
-  const [filterRating, setFilterRating] = useState<number[]>([0, 10]);
-  const [filterWorkPreference, setFilterWorkPreference] =
-    useState<SelectedOption | null>(null);
-  const [filterExpectedPkg, setFilterExpectedPkg] = useState<number[]>([
-    0, 100,
-  ]);
-  const [filterCurrentPkg, setFilterCurrentPkg] = useState<number[]>([0, 100]);
-  const [filterDesignation, SetFilterDesignation] =
-    useState<SelectedOption | null>(null);
-  const [filterCity, setFilterCity] = useState<SelectedOption | null>(null);
-  const [filterState, setFilterState] = useState<SelectedOption | null>(null);
-  const [appliedSkills, setAppliedSkills] = useState<SelectedOption[]>([]);
+  // const [filterAnyHandOnOffers, setFilterAnyHandOnOffers] =
+  //   useState<SelectedOption | null>(null);
+  // const [filterGender, setFilterGender] = useState<SelectedOption | null>(null);
+  // const [filterRating, setFilterRating] = useState<number[]>([0, 10]);
+  // const [filterWorkPreference, setFilterWorkPreference] =
+  //   useState<SelectedOption | null>(null);
+  // const [filterExpectedPkg, setFilterExpectedPkg] = useState<number[]>([
+  //   0, 100,
+  // ]);
+  // const [filterCurrentPkg, setFilterCurrentPkg] = useState<number[]>([0, 100]);
+  // const [filterDesignation, SetFilterDesignation] =
+  //   useState<SelectedOption | null>(null);
+  // const [filterCity, setFilterCity] = useState<SelectedOption | null>(null);
+  // const [filterState, setFilterState] = useState<SelectedOption | null>(null);
+  // const [appliedSkills, setAppliedSkills] = useState<SelectedOption[]>([]);
   const [exportableFields, setExportableFields] = useState<SelectedOption[]>(
     []
   );
@@ -132,41 +132,41 @@ function ImportApplicant() {
     pageIndex: 0,
     pageSize: 50,
   });
-  const [tableLoader, setTableLoader] = useState(false);
+  const [tableLoader, setTableLoader] = useState(true);
   const [selectedApplicants, setSelectedApplicants] = useState<string[]>([]);
-  const [state, setState] = React.useState({
-    right: false,
-  });
-  const [cities, setCities] = useState<City[]>([]);
-  const [states, setStates] = useState<City[]>([]);
+  // const [state, setState] = React.useState({
+  //   right: false,
+  // });
+  // const [cities, setCities] = useState<City[]>([]);
+  // const [states, setStates] = useState<City[]>([]);
 
-  const [skillOptions, setSkillOptions] = useState<any[]>([]);
+  // const [skillOptions, setSkillOptions] = useState<any[]>([]);
   const [importLoader, setImportLoader] = useState(false);
   const [importProgress, setImportProgress] = useState(0);
   const [isImporting, setIsImporting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [showPopupModal, setShowPopupModal] = useState(false);
-  const [loading, setLoading] = useState<boolean>(false);
+  // const [loading, setLoading] = useState<boolean>(false);
   const [showBaseModal, setShowBaseModal] = useState(false);
   const [valueToEdit, setValueToEdit] = useState<ValueToEdit[]>([]);
   const [sourcePage, setSourcePage] = useState("import");
-  const isDesktop = useMediaQuery("(min-width: 768px)");
+  // const isDesktop = useMediaQuery("(min-width: 768px)");
   const [showExportModal, setShowExportModal] = useState(false);
   const [exportOption, setExportOption] = useState<string>("");
 
-  const toggleDrawer =
-    (anchor: Anchor, open: boolean) =>
-    (event: React.KeyboardEvent | React.MouseEvent) => {
-      if (
-        event.type === "keydown" &&
-        ((event as React.KeyboardEvent).key === "Tab" ||
-          (event as React.KeyboardEvent).key === "Shift")
-      ) {
-        return;
-      }
+  // const toggleDrawer =
+  //   (anchor: Anchor, open: boolean) =>
+  //   (event: React.KeyboardEvent | React.MouseEvent) => {
+  //     if (
+  //       event.type === "keydown" &&
+  //       ((event as React.KeyboardEvent).key === "Tab" ||
+  //         (event as React.KeyboardEvent).key === "Shift")
+  //     ) {
+  //       return;
+  //     }
 
-      setState({ ...state, [anchor]: open });
-    };
+  //     setState({ ...state, [anchor]: open });
+  //   };
 
   const [multiEditInterViewStage, setMultiEditInterViewStage] =
     useState<SelectedOption | null>(null);
@@ -213,68 +213,68 @@ function ImportApplicant() {
         limit: 50,
       };
 
-      if (experienceRange[0] !== 0 || experienceRange[1] !== 25) {
-        params.totalExperience = `${experienceRange[0]}-${experienceRange[1]}`;
-      }
-      if (filterNoticePeriod[0] !== 0 || filterNoticePeriod[1] !== 90) {
-        params.noticePeriod = `${filterNoticePeriod[0]}-${filterNoticePeriod[1]}`;
-      }
-      if (filterRating[0] !== 0 || filterRating[1] !== 10) {
-        params.rating = `${filterRating[0]}-${filterRating[1]}`;
-      }
-      if (filterEngRating[0] !== 0 || filterEngRating[1] !== 10) {
-        params.communicationSkill = `${filterEngRating[0]}-${filterEngRating[1]}`;
-      }
-      if (filterExpectedPkg[0] !== 0 || filterExpectedPkg[1] !== 100) {
-        params.expectedPkg = `${filterExpectedPkg[0]}-${filterExpectedPkg[1]}`;
-      }
-      if (filterCurrentPkg[0] !== 0 || filterCurrentPkg[1] !== 100) {
-        params.currentPkg = `${filterCurrentPkg[0]}-${filterCurrentPkg[1]}`;
-      }
-      if (filterWorkPreference) {
-        params.workPreference = filterWorkPreference.value;
-      }
-      if (filterAnyHandOnOffers) {
-        params.anyHandOnOffers = filterAnyHandOnOffers.value;
-      }
+      // if (experienceRange[0] !== 0 || experienceRange[1] !== 25) {
+      //   params.totalExperience = `${experienceRange[0]}-${experienceRange[1]}`;
+      // }
+      // if (filterNoticePeriod[0] !== 0 || filterNoticePeriod[1] !== 90) {
+      //   params.noticePeriod = `${filterNoticePeriod[0]}-${filterNoticePeriod[1]}`;
+      // }
+      // if (filterRating[0] !== 0 || filterRating[1] !== 10) {
+      //   params.rating = `${filterRating[0]}-${filterRating[1]}`;
+      // }
+      // if (filterEngRating[0] !== 0 || filterEngRating[1] !== 10) {
+      //   params.communicationSkill = `${filterEngRating[0]}-${filterEngRating[1]}`;
+      // }
+      // if (filterExpectedPkg[0] !== 0 || filterExpectedPkg[1] !== 100) {
+      //   params.expectedPkg = `${filterExpectedPkg[0]}-${filterExpectedPkg[1]}`;
+      // }
+      // if (filterCurrentPkg[0] !== 0 || filterCurrentPkg[1] !== 100) {
+      //   params.currentPkg = `${filterCurrentPkg[0]}-${filterCurrentPkg[1]}`;
+      // }
+      // if (filterWorkPreference) {
+      //   params.workPreference = filterWorkPreference.value;
+      // }
+      // if (filterAnyHandOnOffers) {
+      //   params.anyHandOnOffers = filterAnyHandOnOffers.value;
+      // }
       // if (filterCity) {
       //   params.currentCity = filterCity.label;
       // }
       // if (filterState) {
       //   params.state = filterState.label;
       // }
-      if (filterCity) {
-        // params.currentCity = filterCity.label;
-        params.currentCity = encodeURIComponent(filterCity.label);
-      }
-      if (filterState) {
-        // params.state = filterState.label;
-        params.state = encodeURIComponent(filterState.label);
-      }
+      // if (filterCity) {
+      //   // params.currentCity = filterCity.label;
+      //   params.currentCity = encodeURIComponent(filterCity.label);
+      // }
+      // if (filterState) {
+      //   // params.state = filterState.label;
+      //   params.state = encodeURIComponent(filterState.label);
+      // }
 
-      if (appliedSkills.length > 0) {
-        params.appliedSkills = appliedSkills
-          .map((skill) => skill.label)
-          .join(",");
-      }
-      if (startDate) {
-        params.startDate = startDate;
-      }
-      if (endDate) {
-        params.endDate = endDate;
-      }
-      if (filterStatus) {
-        params.status = filterStatus.value;
-      }
-      if (filterDesignation) {
-        params.currentCompanyDesignation = filterDesignation.value;
-      }
-      if (filterInterviewStage) {
-        params.interviewStage = filterInterviewStage.value;
-      }
-      if (filterGender) {
-        params.gender = filterGender.value;
-      }
+      // if (appliedSkills.length > 0) {
+      //   params.appliedSkills = appliedSkills
+      //     .map((skill) => skill.label)
+      //     .join(",");
+      // }
+      // if (startDate) {
+      //   params.startDate = startDate;
+      // }
+      // if (endDate) {
+      //   params.endDate = endDate;
+      // }
+      // if (filterStatus) {
+      //   params.status = filterStatus.value;
+      // }
+      // if (filterDesignation) {
+      //   params.currentCompanyDesignation = filterDesignation.value;
+      // }
+      // if (filterInterviewStage) {
+      //   params.interviewStage = filterInterviewStage.value;
+      // }
+      // if (filterGender) {
+      //   params.gender = filterGender.value;
+      // }
       const searchValue = searchAll?.trim();
       if (searchValue) {
         params.search = searchValue;
@@ -293,27 +293,27 @@ function ImportApplicant() {
     }
   };
 
-  const fetchSkills = async () => {
-    setLoading(true);
-    try {
-      const response = await ViewAppliedSkills({
-        page: 1,
-        pageSize: 50,
-        limit: 500,
-      });
-      const skillData = response?.data?.data || [];
-      setSkillOptions(
-        skillData.map((item: { skills: any; _id: any }) => ({
-          label: item.skills,
-          value: item._id,
-        }))
-      );
-    } catch (error) {
-      errorHandle(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // const fetchSkills = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const response = await ViewAppliedSkills({
+  //       page: 1,
+  //       pageSize: 50,
+  //       limit: 500,
+  //     });
+  //     const skillData = response?.data?.data || [];
+  //     setSkillOptions(
+  //       skillData.map((item: { skills: any; _id: any }) => ({
+  //         label: item.skills,
+  //         value: item._id,
+  //       }))
+  //     );
+  //   } catch (error) {
+  //     errorHandle(error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   useEffect(() => {
     const fetchApplicantsDebounced = debounce(fetchApplicants, 300);
@@ -322,15 +322,15 @@ function ImportApplicant() {
       try {
         setTableLoader(true);
         setLoader(true);
-        setLoading(true);
+        // setLoading(true);
         // await Promise.all([ fetchSkills()]);
-        await Promise.all([fetchSkills(), fetchApplicantsDebounced()]);
+        await Promise.all([fetchApplicantsDebounced()]);
       } catch (error) {
         errorHandle(error);
       } finally {
         setTableLoader(false);
         setLoader(false);
-        setLoading(false);
+        // setLoading(false);
       }
     };
 
@@ -340,50 +340,50 @@ function ImportApplicant() {
   }, [
     pagination.pageIndex,
     pagination.pageSize,
-    appliedSkills,
+    // appliedSkills,
     startDate,
     endDate,
-    filterCity,
-    filterGender,
-    filterInterviewStage,
-    filterStatus,
-    experienceRange,
-    filterNoticePeriod,
-    filterExpectedPkg,
-    filterCurrentPkg,
-    filterDesignation,
-    filterAnyHandOnOffers,
-    filterState,
-    filterRating,
-    filterEngRating,
-    filterWorkPreference,
+    // filterCity,
+    // filterGender,
+    // filterInterviewStage,
+    // filterStatus,
+    // experienceRange,
+    // filterNoticePeriod,
+    // filterExpectedPkg,
+    // filterCurrentPkg,
+    // filterDesignation,
+    // filterAnyHandOnOffers,
+    // filterState,
+    // filterRating,
+    // filterEngRating,
+    // filterWorkPreference,
     searchAll,
   ]);
 
-  const handleExperienceChange = (e: React.ChangeEvent<any>) => {
-    setExperienceRange(e.target.value as number[]);
-  };
-  const handleNoticePeriodChange = (e: React.ChangeEvent<any>) => {
-    setFilterNoticePeriod(e.target.value as number[]);
-  };
-  const handleRatingChange = (e: React.ChangeEvent<any>) => {
-    setFilterRating(e.target.value as number[]);
-  };
+  // const handleExperienceChange = (e: React.ChangeEvent<any>) => {
+  //   setExperienceRange(e.target.value as number[]);
+  // };
+  // const handleNoticePeriodChange = (e: React.ChangeEvent<any>) => {
+  //   setFilterNoticePeriod(e.target.value as number[]);
+  // };
+  // const handleRatingChange = (e: React.ChangeEvent<any>) => {
+  //   setFilterRating(e.target.value as number[]);
+  // };
 
-  const handleEngRatingChange = (e: React.ChangeEvent<any>) => {
-    setFilterEngRating(e.target.value as number[]);
-  };
+  // const handleEngRatingChange = (e: React.ChangeEvent<any>) => {
+  //   setFilterEngRating(e.target.value as number[]);
+  // };
 
-  const handleExpectedPkgChange = (e: React.ChangeEvent<any>) => {
-    setFilterExpectedPkg(e.target.value as number[]);
-  };
-  const handleCurrentPkgChange = (e: React.ChangeEvent<any>) => {
-    setFilterCurrentPkg(e.target.value as number[]);
-  };
+  // const handleExpectedPkgChange = (e: React.ChangeEvent<any>) => {
+  //   setFilterExpectedPkg(e.target.value as number[]);
+  // };
+  // const handleCurrentPkgChange = (e: React.ChangeEvent<any>) => {
+  //   setFilterCurrentPkg(e.target.value as number[]);
+  // };
 
-  const handleAppliedSkillsChange = (selectedOptions: SelectedOption1[]) => {
-    setAppliedSkills(selectedOptions);
-  };
+  // const handleAppliedSkillsChange = (selectedOptions: SelectedOption1[]) => {
+  //   setAppliedSkills(selectedOptions);
+  // };
 
   // const handleCityChange = (selectedOption: SelectedOption) => {
   //   setFilterCity(selectedOption);
@@ -393,131 +393,134 @@ function ImportApplicant() {
   //   setFilterState(selectedOption);
   // };
 
-  useEffect(() => {
-    const getCities = async () => {
-      try {
-        const cityData = await fetchCities();
+  // useEffect(() => {
+  //   const getCities = async () => {
+  //     try {
+  //       const cityData = await fetchCities();
 
-        if (cityData?.data) {
-          setCities(
-            cityData.data.item.map((city: { city_name: string; _id: string }) => ({
-              label: city.city_name,
-              value: city._id,
-            }))
-          );
-        }
-      } catch (error: any) {
-        const details = error?.response?.data?.details;
-        if (Array.isArray(details)) {
-          details.forEach((msg: string) => {
-            toast.error(msg, {
-              closeOnClick: true,
-              autoClose: 5000,
-            });
-          });
-        } else {
-          toast.error("Failed to fetch cities.. Please try again.", {
-            closeOnClick: true,
-            autoClose: 5000,
-          });
-        }
-      }
-    };
+  //       if (cityData?.data) {
+  //         setCities(
+  //           cityData.data.item.map(
+  //             (city: { city_name: string; _id: string }) => ({
+  //               label: city.city_name,
+  //               value: city._id,
+  //             })
+  //           )
+  //         );
+  //       }
+  //     } catch (error: any) {
+  //       const details = error?.response?.data?.details;
+  //       if (Array.isArray(details)) {
+  //         details.forEach((msg: string) => {
+  //           toast.error(msg, {
+  //             closeOnClick: true,
+  //             autoClose: 5000,
+  //           });
+  //         });
+  //       } else {
+  //         toast.error("Failed to fetch cities.. Please try again.", {
+  //           closeOnClick: true,
+  //           autoClose: 5000,
+  //         });
+  //       }
+  //     }
+  //   };
 
-    getCities();
-  }, []);
+  //   getCities();
+  // }, []);
 
-  useEffect(() => {
-    const getStates = async () => {
-      try {
-        setLoading(true);
-        const stateData = await fetchState();
-        if (stateData?.data) {
-          setStates(
-            stateData.data.item.map(
-              (state: {
-                state_name: string;
-                _id: string;
-                country_id: string;
-              }) => ({
-                label: state.state_name,
-                value: state._id,
-                country_id: state.country_id,
-              })
-            )
-          );
-        }
-      } catch (error: any) {
-        const details = error?.response?.data?.details;
-        if (Array.isArray(details)) {
-          details.forEach((msg: string) => {
-            toast.error(msg, {
-              closeOnClick: true,
-              autoClose: 5000,
-            });
-          });
-        } else {
-          toast.error("Failed to fetch cities.. Please try again.", {
-            closeOnClick: true,
-            autoClose: 5000,
-          });
-        }
-      }
-    };
+  // useEffect(() => {
+  //   const getStates = async () => {
+  //     try {
+  //       setLoading(true);
+  //       const stateData = await fetchState();
+  //       if (stateData?.data) {
+  //         setStates(
+  //           stateData.data.item.map(
+  //             (state: {
+  //               state_name: string;
+  //               _id: string;
+  //               country_id: string;
+  //             }) => ({
+  //               label: state.state_name,
+  //               value: state._id,
+  //               country_id: state.country_id,
+  //             })
+  //           )
+  //         );
+  //       }
+  //     } catch (error: any) {
+  //       const details = error?.response?.data?.details;
+  //       if (Array.isArray(details)) {
+  //         details.forEach((msg: string) => {
+  //           toast.error(msg, {
+  //             closeOnClick: true,
+  //             autoClose: 5000,
+  //           });
+  //         });
+  //       } else {
+  //         toast.error("Failed to fetch cities.. Please try again.", {
+  //           closeOnClick: true,
+  //           autoClose: 5000,
+  //         });
+  //       }
+  //     }
+  //   };
 
-    getStates();
-  }, []);
+  //   getStates();
+  // }, []);
 
-  const handleStateChange = (selectedOption: SelectedOption) => {
-    setFilterState(selectedOption);
+  // const handleStateChange = (selectedOption: SelectedOption) => {
+  //   setFilterState(selectedOption);
 
-    if (selectedOption) {
-      const selectedStateId = selectedOption.value;
-      const selectedState = states.find(
-        (state) => state.value === selectedStateId
-      );
+  //   if (selectedOption) {
+  //     const selectedStateId = selectedOption.value;
+  //     const selectedState = states.find(
+  //       (state) => state.value === selectedStateId
+  //     );
 
-      if (selectedState) {
-        // console.log("Selected city name:", selectedCity.label);
-      }
-    }
-  };
-  const handleCityChange = (selectedOption: SelectedOption) => {
-    setFilterCity(selectedOption);
+  //     if (selectedState) {
+  //       // console.log("Selected city name:", selectedCity.label);
+  //     }
+  //   }
+  // };
+  // const handleCityChange = (selectedOption: SelectedOption) => {
+  //   setFilterCity(selectedOption);
 
-    if (selectedOption) {
-      const selectedCityId = selectedOption.value;
-      const selectedCity = cities.find((city) => city.value === selectedCityId);
+  //   if (selectedOption) {
+  //     const selectedCityId = selectedOption.value;
+  //     const selectedCity = cities.find((city) => city.value === selectedCityId);
 
-      if (selectedCity) {
-        // console.log("Selected city name:", selectedCity.label);
-      }
-    }
-  };
+  //     if (selectedCity) {
+  //       // console.log("Selected city name:", selectedCity.label);
+  //     }
+  //   }
+  // };
 
-  const handleGenderChange = (selectedOption: SelectedOption) => {
-    setFilterGender(selectedOption);
-  };
+  // const handleGenderChange = (selectedOption: SelectedOption) => {
+  //   setFilterGender(selectedOption);
+  // };
 
-  const handleInterviewStageChange = (selectedOption: SelectedOption) => {
-    setFilterInterviewStage(selectedOption);
-  };
+  // const handleInterviewStageChange = (selectedOption: SelectedOption) => {
+  //   setFilterInterviewStage(selectedOption);
+  // };
 
-  const handleStatusChange = (selectedOption: SelectedOption) => {
-    setFilterStatus(selectedOption);
-  };
+  // const handleStatusChange = (selectedOption: SelectedOption) => {
+  //   setFilterStatus(selectedOption);
+  // };
 
-  const handleWorkPreferenceChange = (selectedOption: SelectedOption) => {
-    setFilterWorkPreference(selectedOption);
-  };
+  // const handleWorkPreferenceChange = (selectedOption: SelectedOption) => {
+  //   setFilterWorkPreference(selectedOption);
+  // };
 
-  const handleAnyHandOnOffersChange = (selectedOption: SelectedOption) => {
-    setFilterAnyHandOnOffers(selectedOption);
-  };
+  // const handleAnyHandOnOffersChange = (selectedOption: SelectedOption) => {
+  //   setFilterAnyHandOnOffers(selectedOption);
+  // };
 
-  const handleDesignationChange = (selectedOption: SelectedOption) => {
-    SetFilterDesignation(selectedOption);
-  };
+  // const handleDesignationChange = (selectedOption: SelectedOption) => {
+  //   SetFilterDesignation(selectedOption);
+  // };
+
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchAll(event.target.value);
   };
@@ -532,28 +535,28 @@ function ImportApplicant() {
     }
   };
 
-  const resetFilters = () => {
-    setAppliedSkills([]);
-    setStartDate("");
-    setEndDate("");
-    setFilterCity(null);
-    setFilterGender(null);
-    setFilterInterviewStage(null);
-    setFilterStatus(null);
-    setFilterNoticePeriod([0, 90]);
-    setFilterExpectedPkg([0, 100]);
-    setFilterCurrentPkg([0, 100]);
-    SetFilterDesignation(null);
-    setExperienceRange([0, 25]);
-    setFilterAnyHandOnOffers(null);
-    setFilterWorkPreference(null);
+  // const resetFilters = () => {
+  //   setAppliedSkills([]);
+  //   setStartDate("");
+  //   setEndDate("");
+  //   setFilterCity(null);
+  //   setFilterGender(null);
+  //   setFilterInterviewStage(null);
+  //   setFilterStatus(null);
+  //   setFilterNoticePeriod([0, 90]);
+  //   setFilterExpectedPkg([0, 100]);
+  //   setFilterCurrentPkg([0, 100]);
+  //   SetFilterDesignation(null);
+  //   setExperienceRange([0, 25]);
+  //   setFilterAnyHandOnOffers(null);
+  //   setFilterWorkPreference(null);
 
-    setFilterRating([0, 10]);
-    setFilterEngRating([0, 10]);
-    setFilterState(null);
+  //   setFilterRating([0, 10]);
+  //   setFilterEngRating([0, 10]);
+  //   setFilterState(null);
 
-    fetchApplicants();
-  };
+  //   fetchApplicants();
+  // };
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
       setSelectedApplicants(applicant.map((app) => app._id));
@@ -669,12 +672,12 @@ function ImportApplicant() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
- 
+
     const validExtensions = ["csv", "xlsx", "xls", "xltx"];
     const resumeExtensions = ["doc", "pdf", "docx"];
- 
+
     const firstExtension = files[0].name.split(".").pop()?.toLowerCase() ?? "";
- 
+
     if (validExtensions.includes(firstExtension)) {
       handleFileImport(e);
     } else if (
@@ -694,40 +697,40 @@ function ImportApplicant() {
       );
     }
   };
- 
+
   const handleResumeUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const files = event.target.files;
     if (!files || files.length === 0) return;
- 
+
     const allowedExtensions = ["doc", "pdf", "docx"];
     const validFiles = Array.from(files).filter((file) =>
       allowedExtensions.includes(
         file.name.split(".").pop()?.toLowerCase() || ""
       )
     );
- 
+
     if (validFiles.length === 0) {
       toast.error("Please upload valid PDF or DOC/DOCX files.");
       return;
     }
- 
+
     const largeFiles = validFiles.filter((file) => file.size > 5 * 1024 * 1024);
     if (largeFiles.length > 0) {
       toast("One or more large files detected. Import may take a few minutes.");
     }
- 
+
     setImportLoader(true);
     setIsImporting(true);
     setImportProgress(0);
- 
+
     try {
       const formData = new FormData();
       validFiles.forEach((file) => {
         formData.append("resume", file); // Ensure backend expects 'resumes'
       });
- 
+
       const response = await resumeUpload(formData, {
         onUploadProgress: (progressEvent) => {
           const progress = Math.round(
@@ -736,9 +739,30 @@ function ImportApplicant() {
           setImportProgress(progress);
         },
       });
- 
+
       if (response?.success) {
-        toast.success(response.message || "Resume(s) uploaded successfully!");
+        if (response?.data?.summary?.insertedApplicants >= 1) {
+          const lengthInserted = response.data.summary.insertedApplicants;
+          const lengthSkipped = response.data.summary.skippedApplicants;
+          const lengthError = response.data.summary.erroredFiles;
+          const insertedFiles = response.data.details.inserted
+            .map((item: any) => item.file + " " + item.email)
+            .join(" \n");
+          const skipped = response.data.details.skipped
+            .map((item: any) => item.file + " " + item.reason)
+            .join("\n ");
+          const reasonError = response.data.details.errors
+            .map((item: any) => item.file + " " + item.error)
+            .join("\n ");
+
+          toast.success(
+            `Total ${lengthInserted} data are imported ${insertedFiles}` ||
+              "Resume(s) uploaded successfully!"
+          );
+          toast.error(`Total ${lengthError} are not imported ${reasonError}`);
+          toast.warning(`Total skipped ${lengthSkipped} \n  ${skipped}`);
+        }
+        // toast.success(response.message || "Resume(s) uploaded successfully!");
         await fetchApplicants();
       } else {
         throw new Error(response?.message || "Upload failed");
@@ -779,7 +803,7 @@ function ImportApplicant() {
   //     );
   //   }
   // };
-  
+
   // const handleResumeUpload = async (
   //   event: React.ChangeEvent<HTMLInputElement>
   // ) => {
@@ -1058,260 +1082,260 @@ function ImportApplicant() {
     setExportableFields([]);
   };
 
-  const drawerList = (anchor: Anchor) => (
-    <Box
-      sx={{
-        // width: anchor === "top" || anchor === "bottom" ? "auto" : 400,
-        width: isDesktop ? 400 : 250,
-        padding: "16px",
-        marginTop: anchor === "top" ? "64px" : 0,
-      }}
-      role="presentation"
-    >
-      <div
-        style={{
-          position: "sticky",
-          top: 0,
-          background: "#fff",
-          zIndex: 100,
-          paddingBottom: "8px",
-          paddingTop: "8px",
-        }}
-      >
-        <Row className="flex items-center justify-between">
-          <Col>
-            <h3>Apply Filters</h3>
-          </Col>
-          <Col className="text-end">
-            <IconButton
-              onClick={toggleDrawer("right", false)}
-              sx={{ position: "absolute", top: 0, right: 0, zIndex: 10 }}
-            >
-              <Close />
-            </IconButton>
-          </Col>
-        </Row>
-      </div>
-      <List>
-        <MultiSelect
-          label="Applied Skills"
-          name="appliedSkills"
-          className="mb-2 select-border"
-          placeholder="Applied Skills"
-          value={appliedSkills}
-          isMulti={true}
-          onChange={handleAppliedSkillsChange}
-          options={skillOptions}
-        />
-        {loading && (
-          <div style={{ marginTop: "10px" }}>
-            <Spinner animation="border" size="sm" />
-            <span style={{ marginLeft: "5px" }}>Loading skills...</span>
-          </div>
-        )}
-        <BaseSlider
-          label="Experience (in years)"
-          name="experience"
-          className="mx-5 mb-2 select-border "
-          value={experienceRange}
-          handleChange={handleExperienceChange}
-          min={0}
-          max={25}
-          step={1}
-          valueLabelDisplay="auto"
-          disabled={false}
-        />
+  // const drawerList = (anchor: Anchor) => (
+  //   <Box
+  //     sx={{
+  //       // width: anchor === "top" || anchor === "bottom" ? "auto" : 400,
+  //       width: isDesktop ? 400 : 250,
+  //       padding: "16px",
+  //       marginTop: anchor === "top" ? "64px" : 0,
+  //     }}
+  //     role="presentation"
+  //   >
+  //     <div
+  //       style={{
+  //         position: "sticky",
+  //         top: 0,
+  //         background: "#fff",
+  //         zIndex: 100,
+  //         paddingBottom: "8px",
+  //         paddingTop: "8px",
+  //       }}
+  //     >
+  //       <Row className="flex items-center justify-between">
+  //         <Col>
+  //           <h3>Apply Filters</h3>
+  //         </Col>
+  //         <Col className="text-end">
+  //           <IconButton
+  //             onClick={toggleDrawer("right", false)}
+  //             sx={{ position: "absolute", top: 0, right: 0, zIndex: 10 }}
+  //           >
+  //             <Close />
+  //           </IconButton>
+  //         </Col>
+  //       </Row>
+  //     </div>
+  //     <List>
+  //       <MultiSelect
+  //         label="Applied Skills"
+  //         name="appliedSkills"
+  //         className="mb-2 select-border"
+  //         placeholder="Applied Skills"
+  //         value={appliedSkills}
+  //         isMulti={true}
+  //         onChange={handleAppliedSkillsChange}
+  //         options={skillOptions}
+  //       />
+  //       {loading && (
+  //         <div style={{ marginTop: "10px" }}>
+  //           <Spinner animation="border" size="sm" />
+  //           <span style={{ marginLeft: "5px" }}>Loading skills...</span>
+  //         </div>
+  //       )}
+  //       <BaseSlider
+  //         label="Experience (in years)"
+  //         name="experience"
+  //         className="mx-5 mb-2 select-border "
+  //         value={experienceRange}
+  //         handleChange={handleExperienceChange}
+  //         min={0}
+  //         max={25}
+  //         step={1}
+  //         valueLabelDisplay="auto"
+  //         disabled={false}
+  //       />
 
-        <BaseSelect
-          label="City"
-          name="city"
-          className="mb-2 select-border "
-          options={cities}
-          placeholder="City"
-          handleChange={handleCityChange}
-          value={filterCity}
-        />
+  //       <BaseSelect
+  //         label="City"
+  //         name="city"
+  //         className="mb-2 select-border "
+  //         options={cities}
+  //         placeholder="City"
+  //         handleChange={handleCityChange}
+  //         value={filterCity}
+  //       />
 
-        <BaseSelect
-          label="State"
-          name="state"
-          className="mb-2 select-border "
-          options={states}
-          placeholder="State"
-          handleChange={handleStateChange}
-          value={filterState}
-        />
-        <BaseSelect
-          label="Interview Stage"
-          name="interviewStage"
-          className="mb-2 select-border"
-          options={interviewStageOptions}
-          placeholder="Interview Stage"
-          handleChange={handleInterviewStageChange}
-          value={filterInterviewStage}
-        />
-        <BaseSelect
-          label="Status"
-          name="status"
-          className="mb-2 select-border"
-          options={statusOptions}
-          placeholder="Status"
-          handleChange={handleStatusChange}
-          value={filterStatus}
-        />
+  //       <BaseSelect
+  //         label="State"
+  //         name="state"
+  //         className="mb-2 select-border "
+  //         options={states}
+  //         placeholder="State"
+  //         handleChange={handleStateChange}
+  //         value={filterState}
+  //       />
+  //       <BaseSelect
+  //         label="Interview Stage"
+  //         name="interviewStage"
+  //         className="mb-2 select-border"
+  //         options={interviewStageOptions}
+  //         placeholder="Interview Stage"
+  //         handleChange={handleInterviewStageChange}
+  //         value={filterInterviewStage}
+  //       />
+  //       <BaseSelect
+  //         label="Status"
+  //         name="status"
+  //         className="mb-2 select-border"
+  //         options={statusOptions}
+  //         placeholder="Status"
+  //         handleChange={handleStatusChange}
+  //         value={filterStatus}
+  //       />
 
-        <BaseSelect
-          label="Gender"
-          name="gender"
-          className="mb-2 select-border"
-          options={gendersType}
-          placeholder="Gender"
-          handleChange={handleGenderChange}
-          value={filterGender}
-        />
+  //       <BaseSelect
+  //         label="Gender"
+  //         name="gender"
+  //         className="mb-2 select-border"
+  //         options={gendersType}
+  //         placeholder="Gender"
+  //         handleChange={handleGenderChange}
+  //         value={filterGender}
+  //       />
 
-        <BaseSlider
-          label="Expected Pkg(LPA)"
-          name="expectedPkg"
-          className="mx-5 mb-2 select-border "
-          value={filterExpectedPkg}
-          handleChange={handleExpectedPkgChange}
-          min={0}
-          max={100}
-          step={1}
-          valueLabelDisplay="auto"
-        />
-        <BaseSlider
-          label="Current Pkg(LPA)"
-          name="currentPkg"
-          className="mx-5 mb-2 select-border "
-          value={filterCurrentPkg}
-          handleChange={handleCurrentPkgChange}
-          min={0}
-          max={100}
-          step={1}
-          valueLabelDisplay="auto"
-        />
+  //       <BaseSlider
+  //         label="Expected Pkg(LPA)"
+  //         name="expectedPkg"
+  //         className="mx-5 mb-2 select-border "
+  //         value={filterExpectedPkg}
+  //         handleChange={handleExpectedPkgChange}
+  //         min={0}
+  //         max={100}
+  //         step={1}
+  //         valueLabelDisplay="auto"
+  //       />
+  //       <BaseSlider
+  //         label="Current Pkg(LPA)"
+  //         name="currentPkg"
+  //         className="mx-5 mb-2 select-border "
+  //         value={filterCurrentPkg}
+  //         handleChange={handleCurrentPkgChange}
+  //         min={0}
+  //         max={100}
+  //         step={1}
+  //         valueLabelDisplay="auto"
+  //       />
 
-        <BaseSelect
-          label="Designation"
-          name="designation"
-          className="mb-2 select-border"
-          options={designationType}
-          placeholder="Designation"
-          handleChange={handleDesignationChange}
-          value={filterDesignation}
-        />
+  //       <BaseSelect
+  //         label="Designation"
+  //         name="designation"
+  //         className="mb-2 select-border"
+  //         options={designationType}
+  //         placeholder="Designation"
+  //         handleChange={handleDesignationChange}
+  //         value={filterDesignation}
+  //       />
 
-        <BaseSlider
-          label="Notice Period (in Days)"
-          name="noticePeriod"
-          className="mx-5 mb-2 select-border "
-          value={filterNoticePeriod}
-          handleChange={handleNoticePeriodChange}
-          min={0}
-          max={90}
-          step={1}
-          valueLabelDisplay="auto"
-          disabled={false}
-        />
+  //       <BaseSlider
+  //         label="Notice Period (in Days)"
+  //         name="noticePeriod"
+  //         className="mx-5 mb-2 select-border "
+  //         value={filterNoticePeriod}
+  //         handleChange={handleNoticePeriodChange}
+  //         min={0}
+  //         max={90}
+  //         step={1}
+  //         valueLabelDisplay="auto"
+  //         disabled={false}
+  //       />
 
-        <BaseSelect
-          label="Work Preference"
-          name="workPreference"
-          className="mb-2 select-border"
-          options={workPreferenceType}
-          placeholder="Work Preference"
-          handleChange={handleWorkPreferenceChange}
-          value={filterWorkPreference}
-        />
+  //       <BaseSelect
+  //         label="Work Preference"
+  //         name="workPreference"
+  //         className="mb-2 select-border"
+  //         options={workPreferenceType}
+  //         placeholder="Work Preference"
+  //         handleChange={handleWorkPreferenceChange}
+  //         value={filterWorkPreference}
+  //       />
 
-        <BaseSlider
-          label="JavaScript Rating"
-          name="rating"
-          value={filterRating}
-          className="mx-5 mb-2 select-border "
-          handleChange={handleRatingChange}
-          min={0}
-          max={10}
-          step={1}
-          valueLabelDisplay="auto"
-        />
+  //       <BaseSlider
+  //         label="JavaScript Rating"
+  //         name="rating"
+  //         value={filterRating}
+  //         className="mx-5 mb-2 select-border "
+  //         handleChange={handleRatingChange}
+  //         min={0}
+  //         max={10}
+  //         step={1}
+  //         valueLabelDisplay="auto"
+  //       />
 
-        <BaseSlider
-          label="Eng.Communication Rating"
-          name="communication"
-          className="mx-5 mb-2 select-border "
-          value={filterEngRating}
-          handleChange={handleEngRatingChange}
-          min={0}
-          max={10}
-          step={1}
-          valueLabelDisplay="auto"
-        />
-        <BaseSelect
-          label="Any Hand On Offers"
-          name="anyHandOnOffers"
-          className="mb-2 select-border"
-          options={anyHandOnOffers}
-          placeholder="Any Hand On Offers"
-          handleChange={handleAnyHandOnOffersChange}
-          value={filterAnyHandOnOffers}
-        />
-        <Row className="mb-3">
-          <Col xs={6}>
-            <BaseInput
-              label="Start Date"
-              name="startDate"
-              className="mb-2 select-border"
-              type="date"
-              placeholder={InputPlaceHolder("Start Date")}
-              handleChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                handleDateChange(e, true)
-              }
-              value={startDate || ""}
-            />
-          </Col>
-          <Col xs={6}>
-            <BaseInput
-              label="End Date"
-              name="endDate"
-              type="date"
-              placeholder={InputPlaceHolder("End Date")}
-              handleChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                handleDateChange(e, false)
-              }
-              value={endDate || ""}
-            />
-          </Col>
-        </Row>
-      </List>
+  //       <BaseSlider
+  //         label="Eng.Communication Rating"
+  //         name="communication"
+  //         className="mx-5 mb-2 select-border "
+  //         value={filterEngRating}
+  //         handleChange={handleEngRatingChange}
+  //         min={0}
+  //         max={10}
+  //         step={1}
+  //         valueLabelDisplay="auto"
+  //       />
+  //       <BaseSelect
+  //         label="Any Hand On Offers"
+  //         name="anyHandOnOffers"
+  //         className="mb-2 select-border"
+  //         options={anyHandOnOffers}
+  //         placeholder="Any Hand On Offers"
+  //         handleChange={handleAnyHandOnOffersChange}
+  //         value={filterAnyHandOnOffers}
+  //       />
+  //       <Row className="mb-3">
+  //         <Col xs={6}>
+  //           <BaseInput
+  //             label="Start Date"
+  //             name="startDate"
+  //             className="mb-2 select-border"
+  //             type="date"
+  //             placeholder={InputPlaceHolder("Start Date")}
+  //             handleChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+  //               handleDateChange(e, true)
+  //             }
+  //             value={startDate || ""}
+  //           />
+  //         </Col>
+  //         <Col xs={6}>
+  //           <BaseInput
+  //             label="End Date"
+  //             name="endDate"
+  //             type="date"
+  //             placeholder={InputPlaceHolder("End Date")}
+  //             handleChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+  //               handleDateChange(e, false)
+  //             }
+  //             value={endDate || ""}
+  //           />
+  //         </Col>
+  //       </Row>
+  //     </List>
 
-      <Divider />
-      <div
-        style={{
-          position: "sticky",
-          bottom: 0,
-          background: "#fff",
-          zIndex: 100,
-          paddingTop: "8px",
-          paddingBottom: "8px",
-        }}
-      >
-        <Row>
-          <Col className="text-end">
-            <BaseButton
-              color="primary"
-              onClick={resetFilters}
-              sx={{ width: "auto" }}
-            >
-              Reset Filters
-            </BaseButton>
-          </Col>
-        </Row>
-      </div>
-    </Box>
-  );
+  //     <Divider />
+  //     <div
+  //       style={{
+  //         position: "sticky",
+  //         bottom: 0,
+  //         background: "#fff",
+  //         zIndex: 100,
+  //         paddingTop: "8px",
+  //         paddingBottom: "8px",
+  //       }}
+  //     >
+  //       <Row>
+  //         <Col className="text-end">
+  //           <BaseButton
+  //             color="primary"
+  //             onClick={resetFilters}
+  //             sx={{ width: "auto" }}
+  //           >
+  //             Reset Filters
+  //           </BaseButton>
+  //         </Col>
+  //       </Row>
+  //     </div>
+  //   </Box>
+  // );
 
   const columns = useMemo(
     () => [
@@ -1702,9 +1726,9 @@ function ImportApplicant() {
             <Card className="my-3 mb-3">
               <CardBody>
                 <div className="container">
-                  <div className="row align-items-center">
+                  <div className="row align-items-end">
                     {/* <div className="col-3 col-xs-auto"> */}
-                    <div className="mb-2 col-12 col-md-3 mb-md-0 d-flex justify-content-start">
+                    {/* <div className="mb-2 col-12 col-md-3 mb-md-0 d-flex justify-content-start">
                       <button
                         onClick={toggleDrawer("right", true)}
                         // color="primary"
@@ -1721,9 +1745,9 @@ function ImportApplicant() {
                       >
                         {drawerList("right")}
                       </Drawer>
-                    </div>
+                    </div> */}
                     {/* <div className="flex-wrap mt-2 col-9 col-md d-flex flex-column flex-sm-row justify-content-end mt-md-0"> */}
-                    <div className="flex-wrap gap-2 col-12 col-md-9 d-flex justify-content-end">
+                    <div className="flex-wrap gap-2 col-12 col-md-12 d-flex justify-content-end">
                       {/* <div> */}
                       <input
                         id="search-bar-0"

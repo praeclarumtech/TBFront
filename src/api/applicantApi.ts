@@ -208,22 +208,52 @@ export const importApplicant = async (
   return response.data;
 };
 
+import qs from "qs"; // You can install this with `npm install qs` if not already
+
 export const ExportApplicant = async (
-  queryParams: { source: string },
+  queryParams: {
+    source?: string;
+    page?: number;
+    pageSize?: number;
+    limit?: number;
+    totalExperience?: string;
+    city?: string;
+    appliedSkills?: string;
+    startDate?: string;
+    endDate?: string;
+    currentCity?: string;
+    noticePeriod?: string;
+    status?: string;
+    interviewStage?: string;
+    gender?: string;
+    expectedPkg?: string;
+    currentCompanyDesignation?: string;
+    state?: string;
+    currentPkg?: string;
+    anyHandOnOffers?: string;
+    rating?: string;
+    workPreference?: string;
+    search?: string;
+    appliedRole?: string;
+    applicantName?: string;
+    searchSkills?: string;
+  },
   payload?: { ids: string[]; fields: string[]; main: boolean }
 ) => {
-  const { source } = queryParams;
+  const queryString = qs.stringify(queryParams, { arrayFormat: "repeat" });
+
   const response = await authServices.post(
-    `${EXPORT_APPLICANT}?source=${encodeURIComponent(source)}`,
+    `${EXPORT_APPLICANT}?${queryString}`,
     payload,
     {
       headers: {
         "Content-Type": "application/json",
       },
-      responseType: "blob",
+      responseType: "blob", // This is correct for downloading files
       timeout: 300000,
     }
   );
+
   return response.data;
 };
 

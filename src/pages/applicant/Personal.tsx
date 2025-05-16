@@ -55,33 +55,12 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
 
   const [formReady, setFormReady] = useState(false);
 
-  const capitalizeWords = (str: string | undefined) => {
-    if (!str) return "";
-    return str
-      .toLowerCase()
-      .split(" ")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
-  };
   useEffect(() => {
     const getCountry = async () => {
       try {
         setLoading(true);
         const countryData = await viewAllCountry();
         if (countryData?.data) {
-          // setCountry(
-          //   countryData.data.item.map(
-          //     (country: {
-          //       country_name: string;
-          //       _id: string;
-          //       name: string;
-          //     }) => ({
-          //       label: country.country_name,
-          //       value: country._id,
-          //       name: country.country_name,
-          //     })
-          //   )
-          // );
           setCountry(
             countryData.data.item.map(
               (country: { country_name: string; _id: string }) => ({
@@ -165,36 +144,6 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
       setFormReady(true);
     }
   }, [cities, states, country]);
-
-  console.log("object", initialValues);
-
-  const initialCityValue =
-    cities.find(
-      (city) => city.label === capitalizeWords(initialValues.currentCity)
-    )?.label || "";
-
-  const initialStateValue =
-    states.find((state) => state.label === capitalizeWords(initialValues.state))
-      ?.value || "";
-
-  const initialCountryValue =
-    country.find(
-      (country) => country.label === capitalizeWords(initialValues.country)
-    )?.value || "";
-  // const getInitialValue = (
-  //   options: { label: string; value: string }[],
-  //   input: string
-  // ): string =>
-  //   options.find((opt) => opt.label === capitalizeWords(input))?.value || "";
-
-  // // Usage:
-  // const initialCityValue = getInitialValue(cities, initialValues.currentCity);
-  // const initialStateValue = getInitialValue(states, initialValues.state);
-  // const initialCountryValue = getInitialValue(country, initialValues.country);
-
-  console.log("11111111111", initialCityValue);
-  console.log("22222222", initialCountryValue);
-  console.log("333333", initialStateValue);
 
   const minDateOfBirth = moment().subtract(15, "years").format("YYYY-MM-DD");
   const formattedDateOfBirth = initialValues.dateOfBirth
@@ -379,11 +328,6 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
       setSelectedStateId(selectedState.value); // or whatever state variable you're using
     }
   };
-
-  console.log("data1", validation.values.country);
-  console.log("data2", validation.values.state);
-  console.log("data3", validation.values.currentCity);
-  console.log("data4", validation.values);
 
   return (
     <Fragment>
@@ -659,21 +603,6 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
                     />
                   </Col>
 
-                  {/* <Col xs={12} md={6} lg={3}>
-                  <BaseInput
-                    label="Current Pincode"
-                    name="currentPincode"
-                    type="number"
-                    placeholder={InputPlaceHolder("Current Pincode")}
-                    handleChange={validation.handleChange}
-                    handleBlur={validation.handleBlur}
-                    value={validation.values.currentPincode}
-                    touched={validation.touched.currentPincode}
-                    error={validation.errors.currentPincode}
-                    passwordToggle={false}
-                    className="!appearance-none"
-                  />
-                </Col> */}
                   <Col xs={12} md={6} lg={4}>
                     <BaseSelect
                       label="City"
@@ -767,25 +696,6 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
                 </Row>
               )}
               <div className="gap-3 mt-4 d-flex flex-column flex-md-row justify-content-end">
-                {/* <Link
-                  to={
-                    module === "import-applicant"
-                      ? "/import-applicants"
-                      : "/import country from './../../../../tbbackend/TBAPI/src/models/countryModel';
-applicants"
-                  }
-                  // style={styleButton}
-                  className="w-full d-flex align-items-center justify-content-center"
-                >
-                  <BaseButton
-                    className="w-full btn btn-outline-danger"
-                    color="white"
-                    
-                  >
-                    Cancel
-                  </BaseButton>
-                </Link> */}
-
                 <BaseButton
                   className="max-w-full btn btn-outline-danger"
                   color="white"
@@ -810,14 +720,4 @@ applicants"
   );
 };
 
-// const styleButton = {
-//   backgroundColor: "white",
-//   color: "red",
-//   borderRadius: "5px",
-//   padding: "8px 20px",
-//   fontSize: "16px",
-//   cursor: "pointer",
-//   alignItems: "center",
-//   justifyContent: "center",
-// };
 export default PersonalDetailsForm;

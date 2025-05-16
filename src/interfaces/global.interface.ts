@@ -190,6 +190,13 @@ export interface DeleteModalProps {
   recordId?: string;
   loader?: boolean;
 }
+export interface ActiveModalProps {
+  show?: boolean;
+  onYesClick?: () => void;
+  onCloseClick?: () => void;
+  recordId?: string;
+  loader?: boolean;
+}
 
 export interface MultiDeleteModalProps {
   show?: boolean;
