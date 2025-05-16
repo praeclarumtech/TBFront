@@ -1250,6 +1250,7 @@ const Applicant = () => {
                 style={truncateText}
                 className="truncated-text"
                 title={fullName}
+                onClick={() => handleView(info.row.original._id, "main")}
               >
                 {fullName}
               </div>
@@ -1402,7 +1403,7 @@ const Applicant = () => {
               id={`usage-${cell?.row?.original?.id}`}
               color="primary"
               className="btn btn-sm btn-soft-success usage-list"
-              onClick={() => handleView(cell.row.original._id, "import")}
+              onClick={() => handleView(cell.row.original._id, "main")}
             >
               <i className="align-bottom ri-eye-fill" />
               <ReactTooltip
@@ -1716,6 +1717,7 @@ const truncateText = {
   textOverflow: "ellipsis",
   maxWidth: "150px",
   fontSize: "14px",
+  cursor: "pointer",
   // alignItems: "center",
   // justifyContent: "center",
   // height: "40px",
