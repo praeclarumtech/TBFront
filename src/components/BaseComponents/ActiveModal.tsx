@@ -1,10 +1,10 @@
-import { DeleteModalProps } from "interfaces/global.interface";
+import { ActiveModalProps } from "interfaces/global.interface";
 import React from "react";
 import { Button, Modal, ModalBody, Spinner } from "reactstrap";
 
-const DeleteModal: React.FC<DeleteModalProps> = ({
+const ActiveModal: React.FC<ActiveModalProps> = ({
   show,
-  onDeleteClick,
+  onYesClick,
   onCloseClick,
   recordId,
   loader,
@@ -13,11 +13,11 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
     <Modal fade={true} isOpen={show} toggle={onCloseClick} centered={true}>
       <ModalBody className="px-5 py-3">
         <div className="mt-2 text-center">
-          <i className="ri-delete-bin-line display-5 text-danger"></i>
+          <i className="ri-delete-bin-line display-5 "></i>
           <div className="pt-2 mx-4 mt-4 fs-15 mx-sm-5">
             <h4>Are you sure ?</h4>
             <p className="mx-4 mb-0 text-muted">
-              Are you sure you want to remove this record{" "}
+              Are you sure you want to InActivate this record{" "}
               {recordId ? recordId : ""} ?
             </p>
           </div>
@@ -31,8 +31,8 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
           >
             No
           </Button>
-          <Button color="danger" size="btn w-sm" onClick={onDeleteClick}>
-            Yes, Delete It!
+          <Button color="primary" size="btn w-sm" onClick={onYesClick}>
+            Yes
             {loader}
             {loader && <Spinner size="sm" className="me-2" />}{" "}
           </Button>
@@ -42,4 +42,4 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
   ) as unknown as JSX.Element;
 };
 
-export default DeleteModal;
+export default ActiveModal;

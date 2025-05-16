@@ -5,14 +5,17 @@ import {
   Card,
   Container,
   CardBody,
-  Spinner,
-  Dropdown,
+  // Spinner,
+  // Dropdown,
 } from "react-bootstrap";
 import React, { Fragment, useEffect, useState, useMemo } from "react";
 import BaseButton from "components/BaseComponents/BaseButton";
 import { BaseSelect, MultiSelect } from "components/BaseComponents/BaseSelect";
 import TableContainer from "components/BaseComponents/TableContainer";
-import { Link, useNavigate } from "react-router-dom";
+import {
+  // Link,
+  useNavigate,
+} from "react-router-dom";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -60,15 +63,17 @@ import { IconButton, useMediaQuery } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import BaseModal from "components/BaseComponents/BaseModal";
 import CheckboxMultiSelect from "components/BaseComponents/CheckboxMultiSelect";
-import { CustomToggleProps } from "types";
-import { MoreVertical } from "react-feather";
-import {
-  DeleteFilled,
-  EditFilled,
-  EyeTwoTone,
-  MailFilled,
-} from "@ant-design/icons";
+// import { CustomToggleProps } from "types";
+// import { MoreVertical } from "react-feather";
+// import {
+//   DeleteFilled,
+//   EditFilled,
+//   EyeTwoTone,
+//   MailFilled,
+// } from "@ant-design/icons";
 import { Switch } from "antd";
+
+import ActiveModal from "components/BaseComponents/ActiveModal";
 // import CheckboxMultiSelect from "components/BaseComponents/CheckboxMultiSelect";
 const {
   exportableFieldOption,
@@ -152,15 +157,19 @@ const Applicant = () => {
     []
   );
   const [states, setStates] = useState<City[]>([]);
+
+  const [selectedRecord, setSelectedRecord] = useState(null);
+  const [pendingChecked, setPendingChecked] = useState(null);
+
   const isDesktop = useMediaQuery("(min-width: 768px)");
-  interface ActionMenuProps {
-    id: string;
-    source: string;
-    handleDeleteSingle: (id: string) => void;
-    handleEmail: (id: string) => void;
-    handleView: (id: string, source: string) => void;
-    handleEdit: (id: string) => void;
-  }
+  // interface ActionMenuProps {
+  //   id: string;
+  //   source: string;
+  //   handleDeleteSingle: (id: string) => void;
+  //   handleEmail: (id: string) => void;
+  //   handleView: (id: string, source: string) => void;
+  //   handleEdit: (id: string) => void;
+  // }
 
   const toggleDrawer =
     (anchor: Anchor, open: boolean) =>
@@ -599,6 +608,7 @@ const Applicant = () => {
   const closeDeleteModal = () => {
     setShowDeleteModal(false);
     setSelectedApplicants([]);
+    setShowModal(false);
   };
 
   const handleDeleteAll = () => {
@@ -670,6 +680,88 @@ const Applicant = () => {
     });
   };
 
+  // const handleExportExcel = async (source: string) => {
+  //   try {
+  //     toast.info("Preparing file for download...");
+
+  //     const selectedColumns = exportableFields.map((field) => field.value);
+  //     const payload = {
+  //       ids: selectedApplicants,
+  //       fields: selectedColumns,
+  //       main: true,
+  //     };
+
+  //     const queryParams: {
+  //       source?: string;
+  //       totalExperience?: string;
+  //       currentCity?: string;
+  //       appliedSkills?: string;
+  //       startDate?: string;
+  //       endDate?: string;
+  //       noticePeriod?: string;
+  //       status?: string;
+  //       interviewStage?: string;
+  //       gender?: string;
+  //       expectedPkg?: string;
+  //       currentCompanyDesignation?: string;
+  //       state?: string;
+  //       maritalStatus?: string;
+  //       anyHandOnOffers?: string;
+  //       rating?: string;
+  //       workPreference?: string;
+  //       communicationSkill?: string;
+  //       currentPkg?: string;
+  //       applicantName?: string;
+  //       searchSkills?: string;
+  //       search?: string;
+  //       addedBy?: string;
+  //     } = {};
+
+  //     await new Promise((resolve) => setTimeout(resolve, 3500));
+
+  //     const response = await ExportApplicant(queryParams, payload);
+
+  //     const text = await response.text();
+  //     let parsed;
+
+  //     try {
+  //       // Try to parse it as JSON
+  //       parsed = JSON.parse(text);
+  //     } catch {
+  //       // Not JSON = valid CSV
+  //       const blob = new Blob([text], { type: "text/csv" });
+  //       saveAs(blob, "Main_Applicants_Data.csv");
+  //       setShowExportModal(false);
+  //       setSelectedApplicants([]);
+  //       toast.success("File downloaded successfully!");
+  //       return;
+  //     }
+
+  //     // If it is JSON, check for an error message
+  //     if (parsed?.statusCode === 404 || parsed?.success === false) {
+  //       setShowExportModal(false);
+  //       setSelectedApplicants([]);
+  //       setExportOption("");
+  //       toast.error(parsed.message || "No data available to export");
+  //     } else if (parsed?.statuscode === 500 || parsed?.success === false) {
+  //       setShowExportModal(false);
+  //       setSelectedApplicants([]);
+  //       setExportOption("");
+  //       toast.error(parsed.message || "No data available to export");
+  //     } else {
+  //       toast.error("Unexpected JSON response during export.");
+  //     }
+  //   } catch (error) {
+  //     console.log("errors3", error);
+  //     setShowExportModal(false);
+  //     setSelectedApplicants([]);
+  //     setExportOption("");
+  //     errorHandle(error);
+  //   } finally {
+  //     fetchApplicants();
+  //   }
+  // };
+
   const handleExportExcel = async (source: string) => {
     try {
       toast.info("Preparing file for download...");
@@ -680,43 +772,76 @@ const Applicant = () => {
         fields: selectedColumns,
         main: true,
       };
-      // console.log("payload function", payload.fields);
 
-      const queryParams = {
+      const queryParams: any = {
         source,
       };
 
+      // Apply filters (copied from fetchApplicants, only relevant filter logic)
+      if (experienceRange[0] !== 0 || experienceRange[1] !== 25) {
+        queryParams.totalExperience = `${experienceRange[0]}-${experienceRange[1]}`;
+      }
+      if (filterNoticePeriod[0] !== 0 || filterNoticePeriod[1] !== 90) {
+        queryParams.noticePeriod = `${filterNoticePeriod[0]}-${filterNoticePeriod[1]}`;
+      }
+      if (filterRating[0] !== 0 || filterRating[1] !== 10) {
+        queryParams.rating = `${filterRating[0]}-${filterRating[1]}`;
+      }
+      if (filterEngRating[0] !== 0 || filterEngRating[1] !== 10) {
+        queryParams.communicationSkill = `${filterEngRating[0]}-${filterEngRating[1]}`;
+      }
+      if (filterExpectedPkg[0] !== 0 || filterExpectedPkg[1] !== 100) {
+        queryParams.expectedPkg = `${filterExpectedPkg[0]}-${filterExpectedPkg[1]}`;
+      }
+      if (filterCurrentPkg[0] !== 0 || filterCurrentPkg[1] !== 100) {
+        queryParams.currentPkg = `${filterCurrentPkg[0]}-${filterCurrentPkg[1]}`;
+      }
+
+      if (filterWorkPreference) {
+        queryParams.workPreference = filterWorkPreference.value;
+      }
+      if (filterAnyHandOnOffers) {
+        queryParams.anyHandOnOffers = filterAnyHandOnOffers.value;
+      }
+      if (filterCity) {
+        queryParams.currentCity = encodeURIComponent(filterCity.label);
+      }
+      if (filterState) {
+        queryParams.state = encodeURIComponent(filterState.label);
+      }
+      if (appliedSkills.length > 0) {
+        queryParams.appliedSkills = appliedSkills
+          .map((skill) => skill.label)
+          .join(",");
+      }
+      if (addedBy.length > 0) {
+        queryParams.addedBy = addedBy.map((role) => role.value).join(",");
+      }
+
+      if (startDate) queryParams.startDate = startDate;
+      if (endDate) queryParams.endDate = endDate;
+      if (filterStatus) queryParams.status = filterStatus.value;
+      if (filterDesignation)
+        queryParams.currentCompanyDesignation = filterDesignation.value;
+      if (filterInterviewStage)
+        queryParams.interviewStage = filterInterviewStage.value;
+      if (filterGender) queryParams.gender = filterGender.value;
+
+      if (searchAll?.trim()) {
+        queryParams.search = searchAll.trim();
+      }
+
+      // Wait (if needed)
       await new Promise((resolve) => setTimeout(resolve, 3500));
 
-      const response = await ExportApplicant(queryParams, payload);
+      const responseBlob = await ExportApplicant(queryParams, payload);
 
-      //     if (!response) {
-      //       toast.error("Failed to download file");
-      //       return;
-      //     }
-
-      //     const blob = new Blob([response], { type: "text/csv" });
-      //     saveAs(blob, "Imported_Applicants.csv");
-      //     setShowExportModal(false);
-      //     setSelectedApplicants([]);
-      //     toast.success("File downloaded successfully!");
-      //   } catch (error) {
-      //     // toast.error(error);
-      //     errorHandle(error);
-      //   } finally {
-      //     fetchApplicants();
-      //   }
-      // };
-
-      // Read the Blob content
-      const text = await response.text();
+      const text = await responseBlob.text();
       let parsed;
 
       try {
-        // Try to parse it as JSON
         parsed = JSON.parse(text);
       } catch {
-        // Not JSON = valid CSV
         const blob = new Blob([text], { type: "text/csv" });
         saveAs(blob, "Main_Applicants_Data.csv");
         setShowExportModal(false);
@@ -725,28 +850,28 @@ const Applicant = () => {
         return;
       }
 
-      // If it is JSON, check for an error message
-      if (parsed?.statusCode === 404 || parsed?.success === false) {
-        setShowExportModal(false);
-        setSelectedApplicants([]);
-        setExportOption("");
-        toast.error(parsed.message || "No data available to export");
-      } else if (parsed?.statuscode === 500 || parsed?.success === false) {
-        setShowExportModal(false);
-        setSelectedApplicants([]);
-        setExportOption("");
-        toast.error(parsed.message || "No data available to export");
+      // If parsed JSON, check for errors
+      if (
+        parsed?.statusCode === 404 ||
+        parsed?.statuscode === 500 ||
+        parsed?.success === false
+      ) {
+        toast.error(parsed?.message || "No data available to export");
       } else {
         toast.error("Unexpected JSON response during export.");
       }
+
+      setShowExportModal(false);
+      setSelectedApplicants([]);
+      setExportOption("");
     } catch (error) {
-      console.log("errors3", error);
+      console.log("Export error", error);
       setShowExportModal(false);
       setSelectedApplicants([]);
       setExportOption("");
       errorHandle(error);
     } finally {
-      fetchApplicants();
+      fetchApplicants(); // optional refresh
     }
   };
 
@@ -820,12 +945,12 @@ const Applicant = () => {
           onChange={handleAppliedSkillsChange}
           options={skillOptions}
         />
-        {loading && (
+        {/* {loading && (
           <div style={{ marginTop: "10px" }}>
             <Spinner animation="border" size="sm" />
             <span style={{ marginLeft: "5px" }}>Loading skills...</span>
           </div>
-        )}
+        )} */}
         <BaseSlider
           label="Experience (in years)"
           name="experience"
@@ -1033,59 +1158,59 @@ const Applicant = () => {
       </div>
     </Box>
   );
-  const CustomToggle = React.forwardRef<HTMLAnchorElement, CustomToggleProps>(
-    ({ children, onClick }, ref) => (
-      <Link
-        to=""
-        ref={ref}
-        onClick={(e) => {
-          e.preventDefault();
-          onClick(e);
-        }}
-        className="text-center text-muted text-primary-hover"
-      >
-        {children}
-      </Link>
-    )
-  );
+  // const CustomToggle = React.forwardRef<HTMLAnchorElement, CustomToggleProps>(
+  //   ({ children, onClick }, ref) => (
+  //     <Link
+  //       to=""
+  //       ref={ref}
+  //       onClick={(e) => {
+  //         e.preventDefault();
+  //         onClick(e);
+  //       }}
+  //       className="text-center text-muted text-primary-hover"
+  //     >
+  //       {children}
+  //     </Link>
+  //   )
+  // );
 
-  CustomToggle.displayName = "CustomToggle";
+  // CustomToggle.displayName = "CustomToggle";
 
-  const ActionMenu: React.FC<ActionMenuProps> = ({
-    id,
-    // source,
-    handleDeleteSingle,
-    handleEmail,
-    handleView,
-    handleEdit,
-  }) => {
-    return (
-      <Dropdown>
-        <Dropdown.Toggle as={CustomToggle}>
-          <MoreVertical size="20px" className="text-muted" />
-        </Dropdown.Toggle>
-        <Dropdown.Menu align={"end"}>
-          <Dropdown.Item onClick={() => handleView(id, "main")}>
-            <EyeTwoTone className="me-2" /> View Applicant
-          </Dropdown.Item>
-          <Dropdown.Divider />
-          <Dropdown.Item onClick={() => handleEdit(id)}>
-            <EditFilled style={{ color: "#808080" }} className="me-2" /> Edit
-            Applicant
-          </Dropdown.Item>
-          <Dropdown.Divider />
-          <Dropdown.Item onClick={() => handleEmail(id)}>
-            <MailFilled style={{ color: "#0000ff" }} className="me-2" /> Mail
-          </Dropdown.Item>
-          <Dropdown.Divider />
-          <Dropdown.Item onClick={() => handleDeleteSingle(id)}>
-            <DeleteFilled style={{ color: "#ff0000" }} className="me-2" />{" "}
-            Delete
-          </Dropdown.Item>
-        </Dropdown.Menu>
-      </Dropdown>
-    );
-  };
+  // const ActionMenu: React.FC<ActionMenuProps> = ({
+  //   id,
+  //   // source,
+  //   handleDeleteSingle,
+  //   handleEmail,
+  //   handleView,
+  //   handleEdit,
+  // }) => {
+  //   return (
+  //     <Dropdown>
+  //       <Dropdown.Toggle as={CustomToggle}>
+  //         <MoreVertical size="20px" className="text-muted" />
+  //       </Dropdown.Toggle>
+  //       <Dropdown.Menu align={"end"}>
+  //         <Dropdown.Item onClick={() => handleView(id, "main")}>
+  //           <EyeTwoTone className="me-2" /> View Applicant
+  //         </Dropdown.Item>
+  //         <Dropdown.Divider />
+  //         <Dropdown.Item onClick={() => handleEdit(id)}>
+  //           <EditFilled style={{ color: "#808080" }} className="me-2" /> Edit
+  //           Applicant
+  //         </Dropdown.Item>
+  //         <Dropdown.Divider />
+  //         <Dropdown.Item onClick={() => handleEmail(id)}>
+  //           <MailFilled style={{ color: "#0000ff" }} className="me-2" /> Mail
+  //         </Dropdown.Item>
+  //         <Dropdown.Divider />
+  //         <Dropdown.Item onClick={() => handleDeleteSingle(id)}>
+  //           <DeleteFilled style={{ color: "#ff0000" }} className="me-2" />{" "}
+  //           Delete
+  //         </Dropdown.Item>
+  //       </Dropdown.Menu>
+  //     </Dropdown>
+  //   );
+  // };
 
   const columns = useMemo(
     () => [
@@ -1139,7 +1264,7 @@ const Applicant = () => {
         enableColumnFilter: false,
       },
       {
-        header: "applied Skills",
+        header: "Skills",
         accessorKey: "appliedSkills",
         cell: (cell: any) => (
           <div
@@ -1153,46 +1278,44 @@ const Applicant = () => {
         enableColumnFilter: false,
       },
       {
-        header: "Total Experience",
-        accessorKey: "totalExperience",
+        header: "Role",
+        accessorKey: "appliedRole",
         enableColumnFilter: false,
       },
       {
-        header: "Status",
-        cell: () => (
-          <Switch
-            checkedChildren="Active"
-            unCheckedChildren="InActive"
-            defaultChecked
-            className="w-[70px]"
-          />
-        ),
+        header: "Total Exp",
+        accessorKey: "totalExperience",
         enableColumnFilter: false,
       },
       // {
       //   header: "Status",
-      //   cell: () => {
-      //     const [checked, setChecked] = useState(true);
-
-      //     return (
-      //       <Switch
-      //         checked={checked}
-      //         onChange={(val) => setChecked(val)}
-      //         checkedChildren={
-      //           <span>
-      //             Active <CheckCircleOutlined style={{ color: "#1677ff" }} />
-      //           </span>
-      //         }
-      //         unCheckedChildren={
-      //           <span>
-      //             <CloseCircleOutlined style={{ color: "black" }} /> InActive
-      //           </span>
-      //         }
-      //       />
-      //     );
-      //   },
+      //   cell: () => (
+      //     <Switch
+      //       checkedChildren="Active"
+      //       unCheckedChildren="InActive"
+      //       defaultChecked
+      //       className="w-[70px]"
+      //     />
+      //   ),
       //   enableColumnFilter: false,
       // },
+      {
+        header: "Status",
+        cell: (cell: any) => {
+          const id = cell.row.original._id;
+          const checked = switchStates[id] ?? false;
+
+          return (
+            <Switch
+              checked={checked}
+              onChange={(val) => handleToggleSwitch(id, val)}
+              checkedChildren={<span>Active</span>}
+              unCheckedChildren={<span>InActive</span>}
+            />
+          );
+        },
+        enableColumnFilter: false,
+      },
       {
         header: "Interview Stage",
         accessorKey: "interviewStage",
@@ -1271,113 +1394,92 @@ const Applicant = () => {
 
       {
         header: "Action",
-        cell: (cell: any) => {
-          const id = cell.row.original._id;
-          return (
-            <div>
-              <ActionMenu
-                id={id}
-                source="main"
-                handleDeleteSingle={handleDeleteSingle}
-                handleEmail={handleEmail}
-                handleView={handleView}
-                handleEdit={handleEdit}
+        cell: (cell: any) => (
+          <div className="gap-2 hstack">
+            <BaseButton
+              id={`usage-${cell?.row?.original?.id}`}
+              color="primary"
+              className="btn btn-sm btn-soft-success usage-list"
+              onClick={() => handleView(cell.row.original._id, "import")}
+            >
+              <i className="align-bottom ri-eye-fill" />
+              <ReactTooltip
+                place="bottom"
+                variant="success"
+                content="View"
+                anchorId={`usage-${cell?.row?.original?.id}`}
               />
+            </BaseButton>
+
+            <BaseButton
+              id={`editMode-${cell?.row?.original?.id}`}
+              className="btn btn-sm btn-soft-secondary edit-list"
+              onClick={() => handleEdit(cell?.row?.original._id)}
+            >
+              <i className="align-bottom ri-pencil-fill" />
               <ReactTooltip
                 place="bottom"
                 variant="info"
-                content="Action"
-                anchorId={`action-${id}`}
+                content="Edit"
+                anchorId={`editMode-${cell?.row?.original?.id}`}
               />
-            </div>
-          );
-          // <div className="gap-2 hstack">
-          //   <BaseButton
-          //     id={`usage-${cell?.row?.original?.id}`}
-          //     color="primary"
-          //     className="btn btn-sm btn-soft-success usage-list"
-          //     onClick={() => handleView(cell.row.original._id, "main")}
-          //   >
-          //     <i className="align-bottom ri-eye-fill" />
-          //     <ReactTooltip
-          //       place="bottom"
-          //       variant="info"
-          //       content="View"
-          //       anchorId={`usage-${cell?.row?.original?.id}`}
-          //     />
-          //   </BaseButton>
+            </BaseButton>
 
-          //   <BaseButton
-          //     id={`editMode-${cell?.row?.original?.id}`}
-          //     className="btn btn-sm btn-soft-secondary edit-list"
-          //     onClick={() => handleEdit(cell?.row?.original._id)}
-          //   >
-          //     <i className="align-bottom ri-pencil-fill" />
-          //     <ReactTooltip
-          //       place="bottom"
-          //       variant="warning"
-          //       content="Edit"
-          //       anchorId={`editMode-${cell?.row?.original?.id}`}
-          //     />
-          //   </BaseButton>
+            <BaseButton
+              id={`delete-${cell?.row?.original?.id}`}
+              className="btn btn-sm btn-soft-danger remove-list"
+              color="danger"
+              onClick={() => handleDeleteSingle(cell.row.original._id)}
+            >
+              <i className="align-bottom ri-delete-bin-5-fill" />
+              <ReactTooltip
+                place="bottom"
+                variant="error"
+                content="Delete"
+                anchorId={`delete-${cell?.row?.original?._id}`}
+              />
+            </BaseButton>
 
-          //   <BaseButton
-          //     id={`delete-${cell?.row?.original?.id}`}
-          //     className="btn btn-sm btn-soft-danger remove-list"
-          //     color="danger"
-          //     onClick={() => handleDeleteSingle(cell.row.original._id)} // Call the single delete function
-          //   >
-          //     <i className="align-bottom ri-delete-bin-5-fill" />
-          //     <ReactTooltip
-          //       place="bottom"
-          //       variant="error"
-          //       content="Delete"
-          //       anchorId={`delete-${cell?.row?.original?._id}`}
-          //     />
-          //   </BaseButton>
-
-          //   <BaseButton
-          //     id={`email-${cell?.row?.original?.id}`}
-          //     className="btn btn-sm btn-soft-secondary bg-success edit-list"
-          //     onClick={() => handleEmail(cell?.row?.original._id)}
-          //   >
-          //     <i className="align-bottom ri-mail-close-line" />
-          //     <ReactTooltip
-          //       place="bottom"
-          //       variant="info"
-          //       content="Email"
-          //       anchorId={`email-${cell?.row?.original?.id}`}
-          //     />
-          //   </BaseButton>
-          // </div>
-        },
+            <BaseButton
+              id={`email-${cell?.row?.original?.id}`}
+              className="btn btn-sm btn-soft-secondary bg-success edit-list"
+              onClick={() => handleEmail(cell?.row?.original._id)}
+            >
+              <i className="align-bottom ri-mail-close-line" />
+              <ReactTooltip
+                place="bottom"
+                variant="info"
+                content="Email"
+                anchorId={`email-${cell?.row?.original?.id}`}
+              />
+            </BaseButton>
+          </div>
+        ),
       },
     ],
     [applicant, selectedApplicants]
   );
 
+  const handleToggleSwitch = (id: any, checked: any) => {
+    setSelectedRecord(id);
+    setPendingChecked(checked);
+    setShowModal(true);
+  };
+
+  const handleConfirm = () => {
+    setPendingChecked(pendingChecked);
+  };
+
+  const switchStates = useMemo(() => {
+    return applicant.reduce((acc, curr) => {
+      acc[curr._id] = curr.status === "Active"; // or your condition for active
+      return acc;
+    }, {});
+  }, [applicant]);
+
   const handleNavigate = () => {
     navigate("/applicants/add-applicant");
   };
-
-  // const filteredApplicant = applicant.filter((applicants) => {
-  //   const searchTerm = searchAll.toLowerCase();
-
-  //   return (
-  //     applicants?.name?.firstName?.toLowerCase().includes(searchTerm) ||
-  //     applicants?.name?.middleName?.toLowerCase().includes(searchTerm) ||
-  //     applicants?.name?.lastName?.toLowerCase().includes(searchTerm) ||
-  //     applicants.subject?.toLowerCase().includes(searchTerm) ||
-  //     applicants.interviewStage?.toLowerCase().includes(searchTerm) ||
-  //     applicants.status?.toLowerCase().includes(searchTerm) ||
-  //     applicants.totalExperience?.toString().includes(searchTerm) ||
-  //     applicants.totalExperience?.toString().includes(searchTerm) ||
-  //     (Array.isArray(applicants.appliedSkills) &&
-  //       applicants.appliedSkills.some((skill: string) =>
-  //         skill.toLowerCase().includes(searchTerm)
-  //       ))
-  //   );
-  // });
 
   const isMobile = window.innerWidth <= 767;
   const ModalTitle = () => (
@@ -1459,7 +1561,13 @@ const Applicant = () => {
           </div>
         }
       />
-
+      <ActiveModal
+        show={showModal}
+        recordId={selectedRecord || ""}
+        loader={loading}
+        onYesClick={handleConfirm}
+        onCloseClick={closeDeleteModal}
+      />
       {showModal && selectedApplicantId && (
         <ViewModal
           show={showModal}
@@ -1561,7 +1669,7 @@ const Applicant = () => {
           <Col lg={12}>
             <Card>
               <div className="pt-0 card-body">
-                {tableLoader ? (
+                {tableLoader || loading ? (
                   <div className="py-4 text-center">
                     <Skeleton count={1} className="mb-5 min-h-10" />
                     <Skeleton count={5} />
