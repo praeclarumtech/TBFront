@@ -20,6 +20,10 @@ import FindAndReplace from "pages/master/FindAndReplace";
 import AddEmailTemplate from "pages/master/EmailTemplate";
 import AddDesignation from "pages/master/Designation";
 
+import Country from "pages/master/CityStateCountry";
+import State from "pages/master/State";
+import City from "pages/master/City";
+
 const routes = {
   ROOT: {
     path: "/",
@@ -152,6 +156,21 @@ const routes = {
         title: "Designation",
         path: "/master/designation",
         element: AddDesignation,
+      },
+      {
+        title: "Country",
+        path: "/master/country",
+        element: Country,
+      },
+      {
+        title: "State",
+        path: "/master/state",
+        element: State,
+      },
+      {
+        title: "City",
+        path: "/master/city",
+        element: City,
       },
     ],
   },

@@ -143,6 +143,9 @@ const appConstants = Object.freeze({
     ComposeEmails: "Compose Email",
     EmailTemplate: "Email Template",
     Designation: "Designation",
+    Country: "Country",
+    State: "State",
+    City: "City",
   },
   qualification: [
     { label: "Bachelors", value: "Bachelors" },

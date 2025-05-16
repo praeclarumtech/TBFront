@@ -3,8 +3,19 @@ import { Col, Row } from "react-bootstrap";
 import appConstants from "constants/constant";
 import BaseButton from "components/BaseComponents/BaseButton";
 import { Typography } from "@mui/material";
+import { viewAllCity } from "api/cityApis";
+import { viewAllCountry } from "api/CountryStateCity";
+import { viewAllState } from "api/stateApi";
+import { City } from "interfaces/applicant.interface";
+import { useState, useEffect } from "react";
+import { errorHandle } from "utils/commonFunctions";
+
 const { projectTitle, Modules } = appConstants;
+
 const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
+  const [cities, setCities] = useState<City[]>([]);
+  const [states, setStates] = useState<City[]>([]);
+  const [country, setCountry] = useState<City[]>([]);
   document.title = Modules.PreviewApplicantsDetails + " | " + projectTitle;
   const capitalizeWords = (str: string) => {
     if (typeof str !== "string") {
@@ -15,6 +26,80 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
       .join(" ");
   };
+
+  useEffect(() => {
+    const getCountry = async () => {
+      try {
+        const countryData = await viewAllCountry();
+        if (countryData?.data) {
+          setCountry(
+            countryData.data.item.map(
+              (country: { country_name: string; _id: string }) => ({
+                label: country.country_name,
+                value: country._id,
+              })
+            )
+          );
+        }
+      } catch (error) {
+        errorHandle(error);
+      }
+    };
+
+    getCountry();
+  }, []);
+
+  useEffect(() => {
+    const getState = async (selectedCountryId?: string) => {
+      try {
+        const params = { country_id: selectedCountryId };
+        const stateData = await viewAllState(params);
+        if (stateData?.data) {
+          setStates(
+            stateData.data.item.map(
+              (state: {
+                state_name: string;
+                _id: string;
+                country_id: string;
+              }) => ({
+                label: state.state_name,
+                value: state._id,
+                country_id: state.country_id,
+              })
+            )
+          );
+        }
+      } catch (error) {
+        errorHandle(error);
+      }
+    };
+
+    getState();
+  }, []);
+
+  useEffect(() => {
+    const getCities = async (selectedStateId?: string) => {
+      try {
+        const params = { state_id: selectedStateId };
+        const cityData = await viewAllCity(params);
+        if (cityData?.data) {
+          setCities(
+            cityData.data.item.map(
+              (city: { city_name: string; _id: string; state_id: string }) => ({
+                label: city.city_name,
+                value: city._id,
+                state_id: city.state_id,
+              })
+            )
+          );
+        }
+      } catch (error) {
+        errorHandle(error);
+      }
+    };
+
+    getCities();
+  }, []);
 
   return (
     <>
@@ -64,7 +149,13 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
 
               <Typography>
                 <span className="text-base  !text-black pt-3">Country:</span>
-                <span>{" " + capitalizeWords(data?.country)}</span>
+                <span>
+                  {" " +
+                    capitalizeWords(
+                      country.find((country) => country.value === data?.country)
+                        ?.label || ""
+                    )}
+                </span>
               </Typography>
               {/* <Typography>
                 <span className="text-base  !text-black pt-3">
@@ -97,11 +188,23 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
               </Typography>
               <Typography>
                 <span className="text-base  !text-black pt-3">City:</span>
-                <span>{" " + capitalizeWords(data?.currentCity)}</span>
+                <span>
+                  {" " +
+                    capitalizeWords(
+                      cities.find((city) => city.value === data?.currentCity)
+                        ?.label || ""
+                    )}
+                </span>
               </Typography>
               <Typography>
                 <span className="text-base  !text-black pt-3">State :</span>
-                <span>{" " + data?.state}</span>
+                <span>
+                  {" " +
+                    capitalizeWords(
+                      states.find((state) => state.value === data?.state)
+                        ?.label || ""
+                    )}
+                </span>
               </Typography>
               <Typography>
                 <span className="text-base  !text-black pt-3">

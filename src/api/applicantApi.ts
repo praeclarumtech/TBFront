@@ -18,7 +18,7 @@ import {
   UPDATE_APPLICANT_STAGE,
   UPDATE_APPLICANT_STATUS,
   FILTER_APPLICANT,
-  CITY,
+  VIEW_CITY,
   IMPORT_APPLICANT,
   EXPORT_APPLICANT,
   IMPORT_RESUME,
@@ -184,7 +184,7 @@ export const filterApplicants = async () => {
 };
 
 export const city = async () => {
-  const response = await authServices.get(`${CITY}`);
+  const response = await authServices.get(`${VIEW_CITY}`);
   return response?.data;
 };
 export const state = async () => {

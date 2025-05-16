@@ -400,7 +400,7 @@ function ImportApplicant() {
 
         if (cityData?.data) {
           setCities(
-            cityData.data.map((city: { city_name: string; _id: string }) => ({
+            cityData.data.item.map((city: { city_name: string; _id: string }) => ({
               label: city.city_name,
               value: city._id,
             }))
@@ -434,7 +434,7 @@ function ImportApplicant() {
         const stateData = await fetchState();
         if (stateData?.data) {
           setStates(
-            stateData.data.map(
+            stateData.data.item.map(
               (state: {
                 state_name: string;
                 _id: string;

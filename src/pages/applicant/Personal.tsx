@@ -17,20 +17,23 @@ import {
 import appConstants from "constants/constant";
 import {
   CheckExistingApplicant,
-  city as fetchCities,
-  state as fetchState,
+  // city as fetchCities,
+  // state as fetchState,
 } from "../../api/applicantApi";
 import {
   personalApplicantSchema,
   SelectedOption,
   City,
 } from "interfaces/applicant.interface";
+import { viewAllCity } from "api/cityApis";
+import { viewAllState } from "api/stateApi";
+import { viewAllCountry } from "api/CountryStateCity";
 
 const {
   projectTitle,
   Modules,
   gendersType,
-  countriesType,
+  // countriesType,
   maritalStatusType,
   // stateType,
 } = appConstants;
@@ -39,7 +42,10 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
   document.title = Modules.CreateApplicantForm + " | " + projectTitle;
   const [cities, setCities] = useState<City[]>([]);
   const [states, setStates] = useState<City[]>([]);
+  const [country, setCountry] = useState<City[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [selectedCountryId, setSelectedCountryId] = useState("");
+  const [selectedStateId, setSelectedStateId] = useState("");
   // const [isChecking, setIsChecking] = useState(false);
   // const [existingError, setExistingError] = useState("");
   const [emailError, setEmailError] = useState("");
@@ -50,31 +56,39 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
   const [formReady, setFormReady] = useState(false);
 
   const capitalizeWords = (str: string | undefined) => {
-  if (!str) return "";
-  return str
-    .toLowerCase()
-    .split(" ")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
-};
-
+    if (!str) return "";
+    return str
+      .toLowerCase()
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
   useEffect(() => {
-    if (cities.length && states.length && countriesType.length) {
-      setFormReady(true);
-    }
-  }, [cities, states, countriesType]);
-
-  useEffect(() => {
-    const getCities = async () => {
+    const getCountry = async () => {
       try {
         setLoading(true);
-        const cityData = await fetchCities();
-        if (cityData?.data) {
-          setCities(
-            cityData.data.map((city: { city_name: string; _id: string }) => ({
-              label: city.city_name,
-              value: city._id,
-            }))
+        const countryData = await viewAllCountry();
+        if (countryData?.data) {
+          // setCountry(
+          //   countryData.data.item.map(
+          //     (country: {
+          //       country_name: string;
+          //       _id: string;
+          //       name: string;
+          //     }) => ({
+          //       label: country.country_name,
+          //       value: country._id,
+          //       name: country.country_name,
+          //     })
+          //   )
+          // );
+          setCountry(
+            countryData.data.item.map(
+              (country: { country_name: string; _id: string }) => ({
+                label: country.country_name,
+                value: country._id,
+              })
+            )
           );
         }
       } catch (error) {
@@ -84,17 +98,19 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
       }
     };
 
-    getCities();
-  }, []);
+    getCountry();
+  }, [selectedCountryId]);
 
   useEffect(() => {
-    const getState = async () => {
+    const getState = async (selectedCountryId?: string) => {
       try {
         setLoading(true);
-        const stateData = await fetchState();
+        console.log("object", selectedCountryId);
+        const params = { country_id: selectedCountryId };
+        const stateData = await viewAllState(params);
         if (stateData?.data) {
           setStates(
-            stateData.data.map(
+            stateData.data.item.map(
               (state: {
                 state_name: string;
                 _id: string;
@@ -114,17 +130,71 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
       }
     };
 
-    getState();
-  }, []);
+    getState(selectedCountryId);
+  }, [selectedCountryId]);
+
+  useEffect(() => {
+    const getCities = async (selectedStateId?: string) => {
+      try {
+        setLoading(true);
+        const params = { state_id: selectedStateId };
+        const cityData = await viewAllCity(params);
+        if (cityData?.data) {
+          setCities(
+            cityData.data.item.map(
+              (city: { city_name: string; _id: string; state_id: string }) => ({
+                label: city.city_name,
+                value: city._id,
+                state_id: city.state_id,
+              })
+            )
+          );
+        }
+      } catch (error) {
+        errorHandle(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getCities(selectedStateId);
+  }, [selectedStateId]);
+
+  useEffect(() => {
+    if (cities.length && states.length && country.length) {
+      setFormReady(true);
+    }
+  }, [cities, states, country]);
+
+  console.log("object", initialValues);
 
   const initialCityValue =
     cities.find(
       (city) => city.label === capitalizeWords(initialValues.currentCity)
-    )?.value || "";
+    )?.label || "";
 
   const initialStateValue =
     states.find((state) => state.label === capitalizeWords(initialValues.state))
       ?.value || "";
+
+  const initialCountryValue =
+    country.find(
+      (country) => country.label === capitalizeWords(initialValues.country)
+    )?.value || "";
+  // const getInitialValue = (
+  //   options: { label: string; value: string }[],
+  //   input: string
+  // ): string =>
+  //   options.find((opt) => opt.label === capitalizeWords(input))?.value || "";
+
+  // // Usage:
+  // const initialCityValue = getInitialValue(cities, initialValues.currentCity);
+  // const initialStateValue = getInitialValue(states, initialValues.state);
+  // const initialCountryValue = getInitialValue(country, initialValues.country);
+
+  console.log("11111111111", initialCityValue);
+  console.log("22222222", initialCountryValue);
+  console.log("333333", initialStateValue);
 
   const minDateOfBirth = moment().subtract(15, "years").format("YYYY-MM-DD");
   const formattedDateOfBirth = initialValues.dateOfBirth
@@ -144,12 +214,12 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
           gender: initialValues.gender || "",
           dateOfBirth: formattedDateOfBirth,
           // state: initialValues.state || "",
-          state: initialStateValue || "",
-          // country: initialValues.country || "",
-          country: initialValues.country
-            ? capitalizeWords(initialValues.country)
-            : "",
-          currentCity: initialCityValue,
+          state: initialValues.state || "",
+          country: initialValues.country || "",
+          // country: initialValues.country
+          //   ? capitalizeWords(initialValues.country)
+          //   : "",
+          currentCity: initialValues.currentCity || "",
           currentAddress: initialValues.currentAddress || "",
           maritalStatus: initialValues?.maritalStatus || "",
           permanentAddress: initialValues?.permanentAddress || "",
@@ -165,38 +235,46 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
       );
 
       if (selectedCity) {
-        data.currentCity = selectedCity.label;
+        data.currentCity = selectedCity.value;
       }
 
       const selectedState = states.find((state) => state.value === data.state);
 
       if (selectedState) {
-        data.state = selectedState.label;
+        data.state = selectedState.value;
+      }
+
+      const selectedCountry = country.find(
+        (country) => country.value === data.country
+      );
+
+      if (selectedCountry) {
+        data.country = selectedCountry.value;
       }
 
       // const structuredData = {
       onNext({
-         ...data,
-         name: {
-           firstName: data.firstName,
-           middleName: data.middleName,
-           lastName: data.lastName,
-         },
-         phone: {
-           whatsappNumber: data.whatsappNumber,
-           phoneNumber: data.phoneNumber,
-         },
-         email: data.email,
-         gender: data.gender,
-         dateOfBirth: moment(data.dateOfBirth).toISOString(),
-         state: data.state,
-         country: data.country,
-         currentCity: data.currentCity,
-         currentAddress: data.currentAddress,
-         maritalStatus: data.maritalStatus,
-         permanentAddress: data.permanentAddress,
-         // };
-       });
+        ...data,
+        name: {
+          firstName: data.firstName,
+          middleName: data.middleName,
+          lastName: data.lastName,
+        },
+        phone: {
+          whatsappNumber: data.whatsappNumber,
+          phoneNumber: data.phoneNumber,
+        },
+        email: data.email,
+        gender: data.gender,
+        dateOfBirth: moment(data.dateOfBirth).toISOString(),
+        state: data.state,
+        country: data.country,
+        currentCity: data.currentCity,
+        currentAddress: data.currentAddress,
+        maritalStatus: data.maritalStatus,
+        permanentAddress: data.permanentAddress,
+        // };
+      });
       // onNext(structuredData);
       onNext(data);
 
@@ -263,9 +341,6 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
     }
   };
 
-  const dynamicFind1 = (options: any[], value: string) =>
-    options.find((option) => option.value === value || option.label === value);
-
   const handleCancel = () => {
     if (module === "import-applicant") {
       navigate("/import-applicants");
@@ -273,6 +348,42 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
       navigate("/applicants");
     }
   };
+
+  console.log("country", country);
+  const handleCountryChange = (selectedOption: SelectedOption) => {
+    const selectedValue = selectedOption?.value || "";
+    console.log("selected", selectedValue);
+    // Set formik field value
+    validation.setFieldValue("country", selectedValue);
+
+    // Find the selected country's full object
+    const selectedCountry = country.find((c) => c.value === selectedValue);
+
+    // Extract and store the country_id
+    if (selectedCountry) {
+      setSelectedCountryId(selectedCountry.value || initialValues.country); // or whatever state variable you're using
+    }
+  };
+
+  const handleStateChange = (selectedOption: SelectedOption) => {
+    const selectedValue = selectedOption?.value || "";
+
+    // Set formik field value
+    validation.setFieldValue("state", selectedValue);
+
+    // Find the selected country's full object
+    const selectedState = states.find((c) => c.value === selectedValue);
+
+    // Extract and store the country_id
+    if (selectedState) {
+      setSelectedStateId(selectedState.value); // or whatever state variable you're using
+    }
+  };
+
+  console.log("data1", validation.values.country);
+  console.log("data2", validation.values.state);
+  console.log("data3", validation.values.currentCity);
+  console.log("data4", validation.values);
 
   return (
     <Fragment>
@@ -516,26 +627,22 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
                   </Col>
                   <Col xs={12} md={6} lg={4}>
                     <BaseSelect
-                      label="City"
-                      name="currentCity"
+                      label="Country"
+                      name="country"
                       className="select-border"
-                      options={cities}
-                      placeholder={InputPlaceHolder("City")}
-                      handleChange={(selectedOption: SelectedOption) => {
-                        validation.setFieldValue(
-                          "currentCity",
-                          selectedOption?.value || ""
-                        );
-                      }}
+                      options={country}
+                      placeholder={InputPlaceHolder("Country")}
+                      handleChange={handleCountryChange}
                       handleBlur={validation.handleBlur}
                       value={
-                        dynamicFind(cities, validation.values.currentCity) || ""
+                        dynamicFind(country, validation.values.country) || ""
                       }
-                      touched={validation.touched.currentCity}
-                      error={validation.errors.currentCity}
+                      touched={validation.touched.country}
+                      error={validation.errors.country}
                       isRequired={true}
                     />
                   </Col>
+
                   <Col xs={12} md={6} lg={4}>
                     <BaseSelect
                       label="State"
@@ -543,12 +650,7 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
                       className="select-border"
                       options={states}
                       placeholder={InputPlaceHolder("State")}
-                      handleChange={(selectedOption: SelectedOption) => {
-                        validation.setFieldValue(
-                          "state",
-                          selectedOption?.value || ""
-                        );
-                      }}
+                      handleChange={handleStateChange}
                       handleBlur={validation.handleBlur}
                       value={dynamicFind(states, validation.values.state) || ""}
                       touched={validation.touched.state}
@@ -574,30 +676,23 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
                 </Col> */}
                   <Col xs={12} md={6} lg={4}>
                     <BaseSelect
-                      label="Country"
-                      name="country"
+                      label="City"
+                      name="currentCity"
                       className="select-border"
-                      options={countriesType}
-                      placeholder={InputPlaceHolder("Country")}
+                      options={cities}
+                      placeholder={InputPlaceHolder("City")}
                       handleChange={(selectedOption: SelectedOption) => {
                         validation.setFieldValue(
-                          "country",
+                          "currentCity",
                           selectedOption?.value || ""
                         );
                       }}
                       handleBlur={validation.handleBlur}
-                      // value={
-                      //   dynamicFind(countriesType, validation.values.country) ||
-                      //   ""
-                      // }
                       value={
-                        dynamicFind1(
-                          countriesType,
-                          validation.values.country
-                        ) || ""
+                        dynamicFind(cities, validation.values.currentCity) || ""
                       }
-                      touched={validation.touched.country}
-                      error={validation.errors.country}
+                      touched={validation.touched.currentCity}
+                      error={validation.errors.currentCity}
                       isRequired={true}
                     />
                   </Col>

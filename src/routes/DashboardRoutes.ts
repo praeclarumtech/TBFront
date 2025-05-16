@@ -90,4 +90,22 @@ export const DashboardMenu: DashboardMenuProps[] = [
     icon: "plus",
     link: "/master/designation",
   },
+  {
+    id: uuid(),
+    title: "Add Country",
+    icon: "plus",
+    link: "/master/country",
+  },
+  {
+    id: uuid(),
+    title: "Add State",
+    icon: "plus",
+    link: "/master/state",
+  },
+   {
+    id: uuid(),
+    title: "Add City",
+    icon: "plus",
+    link: "/master/city",
+  },
 ];
