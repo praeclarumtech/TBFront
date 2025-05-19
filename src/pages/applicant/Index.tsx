@@ -74,6 +74,7 @@ import CheckboxMultiSelect from "components/BaseComponents/CheckboxMultiSelect";
 import { Switch } from "antd";
 
 import ActiveModal from "components/BaseComponents/ActiveModal";
+import { activeApplicant, inActiveApplicant } from "api/apiActive";
 // import CheckboxMultiSelect from "components/BaseComponents/CheckboxMultiSelect";
 const {
   exportableFieldOption,
@@ -159,9 +160,11 @@ const Applicant = () => {
   );
   const [states, setStates] = useState<City[]>([]);
 
-  const [selectedRecord, setSelectedRecord] = useState(null);
-  const [pendingChecked, setPendingChecked] = useState(null);
+  const [selectedRecord, setSelectedRecord] = useState<string | null>(null);
 
+  const [dataActive, SetDataActive] = useState(true);
+  const [nameRecored, setNameRecored] = useState(null);
+  const [showActiveModal, setShowActiveModal] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
   // interface ActionMenuProps {
   //   id: string;
@@ -682,88 +685,6 @@ const Applicant = () => {
     });
   };
 
-  // const handleExportExcel = async (source: string) => {
-  //   try {
-  //     toast.info("Preparing file for download...");
-
-  //     const selectedColumns = exportableFields.map((field) => field.value);
-  //     const payload = {
-  //       ids: selectedApplicants,
-  //       fields: selectedColumns,
-  //       main: true,
-  //     };
-
-  //     const queryParams: {
-  //       source?: string;
-  //       totalExperience?: string;
-  //       currentCity?: string;
-  //       appliedSkills?: string;
-  //       startDate?: string;
-  //       endDate?: string;
-  //       noticePeriod?: string;
-  //       status?: string;
-  //       interviewStage?: string;
-  //       gender?: string;
-  //       expectedPkg?: string;
-  //       currentCompanyDesignation?: string;
-  //       state?: string;
-  //       maritalStatus?: string;
-  //       anyHandOnOffers?: string;
-  //       rating?: string;
-  //       workPreference?: string;
-  //       communicationSkill?: string;
-  //       currentPkg?: string;
-  //       applicantName?: string;
-  //       searchSkills?: string;
-  //       search?: string;
-  //       addedBy?: string;
-  //     } = {};
-
-  //     await new Promise((resolve) => setTimeout(resolve, 3500));
-
-  //     const response = await ExportApplicant(queryParams, payload);
-
-  //     const text = await response.text();
-  //     let parsed;
-
-  //     try {
-  //       // Try to parse it as JSON
-  //       parsed = JSON.parse(text);
-  //     } catch {
-  //       // Not JSON = valid CSV
-  //       const blob = new Blob([text], { type: "text/csv" });
-  //       saveAs(blob, "Main_Applicants_Data.csv");
-  //       setShowExportModal(false);
-  //       setSelectedApplicants([]);
-  //       toast.success("File downloaded successfully!");
-  //       return;
-  //     }
-
-  //     // If it is JSON, check for an error message
-  //     if (parsed?.statusCode === 404 || parsed?.success === false) {
-  //       setShowExportModal(false);
-  //       setSelectedApplicants([]);
-  //       setExportOption("");
-  //       toast.error(parsed.message || "No data available to export");
-  //     } else if (parsed?.statuscode === 500 || parsed?.success === false) {
-  //       setShowExportModal(false);
-  //       setSelectedApplicants([]);
-  //       setExportOption("");
-  //       toast.error(parsed.message || "No data available to export");
-  //     } else {
-  //       toast.error("Unexpected JSON response during export.");
-  //     }
-  //   } catch (error) {
-  //     console.log("errors3", error);
-  //     setShowExportModal(false);
-  //     setSelectedApplicants([]);
-  //     setExportOption("");
-  //     errorHandle(error);
-  //   } finally {
-  //     fetchApplicants();
-  //   }
-  // };
-
   const handleExportExcel = async (source: string) => {
     try {
       toast.info("Preparing file for download...");
@@ -1160,6 +1081,7 @@ const Applicant = () => {
       </div>
     </Box>
   );
+
   // const CustomToggle = React.forwardRef<HTMLAnchorElement, CustomToggleProps>(
   //   ({ children, onClick }, ref) => (
   //     <Link
@@ -1290,28 +1212,17 @@ const Applicant = () => {
         accessorKey: "totalExperience",
         enableColumnFilter: false,
       },
-      // {
-      //   header: "Status",
-      //   cell: () => (
-      //     <Switch
-      //       checkedChildren="Active"
-      //       unCheckedChildren="InActive"
-      //       defaultChecked
-      //       className="w-[70px]"
-      //     />
-      //   ),
-      //   enableColumnFilter: false,
-      // },
       {
         header: "Status",
+        accessorKey: "isActive",
         cell: (cell: any) => {
           const id = cell.row.original._id;
-          const checked = switchStates[id] ?? false;
+          const isActive = cell.getValue();
 
           return (
             <Switch
-              checked={checked}
-              onChange={(val) => handleToggleSwitch(id, val)}
+              checked={isActive}
+              onClick={() => handleToggleSwitch(id, isActive, name)} // ✅ Handler only runs on user interaction
               checkedChildren={<span>Active</span>}
               unCheckedChildren={<span>InActive</span>}
             />
@@ -1319,6 +1230,7 @@ const Applicant = () => {
         },
         enableColumnFilter: false,
       },
+
       {
         header: "Interview Stage",
         accessorKey: "interviewStage",
@@ -1463,23 +1375,52 @@ const Applicant = () => {
     [applicant, selectedApplicants]
   );
 
-  const handleToggleSwitch = (id: any, checked: any) => {
+  const handleToggleSwitch = (id: any, isActive: any, name: any) => {
     setSelectedRecord(id);
-    setPendingChecked(checked);
-    setShowModal(true);
+    SetDataActive(isActive);
+    setNameRecored(name);
+    // setPendingChecked(checked);
+    setShowActiveModal(true);
   };
 
-  const handleConfirm = () => {
-    setPendingChecked(pendingChecked);
+  const handleConfirm = async () => {
+    if (!selectedRecord) {
+      console.warn("No record selected");
+      return;
+    }
+    setShowActiveModal(false);
+    try {
+      switch (dataActive) {
+        case true: {
+          // console.log("Deactivating user...");
+          const res = await inActiveApplicant(selectedRecord);
+          if (res.success) {
+            toast.success(res.message);
+          }
+          break;
+        }
+        case false: {
+          // console.log("Activating user...");
+          const res = await activeApplicant(selectedRecord);
+          if (res.success) {
+            toast.success(res.message);
+          }
+          break;
+        }
+        default:
+          console.warn("Unknown status value:", dataActive);
+      }
+    } catch (error) {
+      console.error("Failed to toggle status:", error);
+    } finally {
+      fetchApplicants();
+    }
+    // setPendingChecked(pendingChecked);
   };
 
-  const switchStates = useMemo(() => {
-    return applicant.reduce((acc, curr) => {
-      acc[curr._id] = curr.status === "Active"; // or your condition for active
-      return acc;
-    }, {});
-  }, [applicant]);
-
+  useEffect(() => {
+    handleConfirm();
+  }, []);
   const handleNavigate = () => {
     navigate("/applicants/add-applicant");
   };
@@ -1564,14 +1505,19 @@ const Applicant = () => {
           </div>
         }
       />
-      <ActiveModal
-        show={showModal}
-        recordId={selectedRecord || ""}
-        loader={loading}
-        onYesClick={handleConfirm}
-        onCloseClick={closeDeleteModal}
-      />
-      {showViewModal && selectedApplicantId && (
+      {showActiveModal ? (
+        <ActiveModal
+          show={showActiveModal}
+          recordId={nameRecored || ""}
+          loader={loading}
+          onYesClick={() => handleConfirm()}
+          onCloseClick={closeDeleteModal}
+        />
+      ) : (
+        <></>
+      )}
+
+      {showModal && selectedApplicantId && (
         <ViewModal
           show={showViewModal}
           onHide={handleCloseModal}

@@ -17,8 +17,8 @@ const ActiveModal: React.FC<ActiveModalProps> = ({
           <div className="pt-2 mx-4 mt-4 fs-15 mx-sm-5">
             <h4>Are you sure ?</h4>
             <p className="mx-4 mb-0 text-muted">
-              Are you sure you want to InActivate this record{" "}
-              {recordId ? recordId : ""} ?
+              Are you sure you want to InActivate/Active this record{" "}
+              <span className="fw-bold"> {recordId ? recordId : ""} </span>?
             </p>
           </div>
         </div>

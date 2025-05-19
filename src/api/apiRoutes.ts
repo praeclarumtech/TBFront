@@ -139,3 +139,9 @@ export const VIEW_CITY = "/city";
 export const UPDATE_CITY = "updateCityById";
 export const DELETE_CITY = "/deleteCityById";
 export const VIEW_BY_ID_CITY = "/viewCityById";
+
+
+
+//Active InActive 
+export const ACTIVE = "/applicants/activateApplicant"
+export const IN_ACTIVE = "/applicants/inactivateApplicant"
