@@ -100,7 +100,6 @@ const Applicant = () => {
   const [selectedApplicantId, setSelectedApplicantId] = useState<string | null>(
     null
   );
-  const [showModal, setShowModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
@@ -612,7 +611,6 @@ const Applicant = () => {
   const closeDeleteModal = () => {
     setShowDeleteModal(false);
     setSelectedApplicants([]);
-    setShowModal(false);
   };
 
    
