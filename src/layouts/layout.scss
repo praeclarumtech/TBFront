@@ -1,0 +1,8 @@
+.appLayout {
+  height: 100vh;
+
+  .appHeader {
+    @apply h-auto bg-white border-b border-gray-200;
+  }
+}
+
