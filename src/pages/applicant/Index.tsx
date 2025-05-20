@@ -1170,7 +1170,7 @@ const Applicant = () => {
             <>
               <div
                 style={truncateText}
-                className="truncated-text"
+                className="truncated-text cursor-pointer text-blue-600 underline hover:text-blue-800"
                 title={fullName}
                 onClick={() => handleView(info.row.original._id, "main")}
               >
@@ -1517,7 +1517,7 @@ const Applicant = () => {
         <></>
       )}
 
-      {showModal && selectedApplicantId && (
+      {showViewModal && selectedApplicantId && (
         <ViewModal
           show={showViewModal}
           onHide={handleCloseModal}
@@ -1663,7 +1663,6 @@ const truncateText = {
   textOverflow: "ellipsis",
   maxWidth: "150px",
   fontSize: "14px",
-  cursor: "pointer",
   // alignItems: "center",
   // justifyContent: "center",
   // height: "40px",
