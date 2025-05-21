@@ -32,9 +32,7 @@ const ActionMenu = ({
   return (
     <Dropdown onSelect={handleSelect}>
       <Dropdown.Toggle variant="outline-primary">
-        {selectedFilter ||
-          // "Select Filters" ||
-          "city"}
+        {selectedFilter.charAt(0).toUpperCase() + selectedFilter.slice(1)}
       </Dropdown.Toggle>
       <Dropdown.Menu align={"end"}>
         <Dropdown.Item eventKey="city">City</Dropdown.Item>

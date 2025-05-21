@@ -39,6 +39,7 @@ export const listOfApplicants = async (params: {
   totalExperience?: string;
   city?: string;
   appliedSkills?: string;
+  appliedSkillsOR?: string;
   startDate?: string;
   endDate?: string;
   currentCity?: string;
@@ -57,6 +58,7 @@ export const listOfApplicants = async (params: {
   appliedRole?: string;
   applicantName?: string;
   searchSkills?: string;
+  isAcrive?: boolean;
 }) => {
   // If applicantName or searchSkills are present, remove pagination and limit parameters
   if (params.search ) {
@@ -219,6 +221,7 @@ export const ExportApplicant = async (
     totalExperience?: string;
     city?: string;
     appliedSkills?: string;
+    appliedSkillsOR?: string;
     startDate?: string;
     endDate?: string;
     currentCity?: string;
@@ -237,6 +240,7 @@ export const ExportApplicant = async (
     appliedRole?: string;
     applicantName?: string;
     searchSkills?: string;
+    isAcrive?: boolean;
   },
   payload?: { ids: string[]; fields: string[]; main: boolean }
 ) => {

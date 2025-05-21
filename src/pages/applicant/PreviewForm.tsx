@@ -139,7 +139,7 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
                 <span className="  !text-black pt-3">Date of Birth:</span>
                 <span>
                   {" "}
-                  {" " + new Date(data?.dateOfBirth).toLocaleDateString()}
+                  {data?.dateOfBirth ? new Date(data.dateOfBirth).toLocaleDateString() : ""}
                 </span>
               </Typography>
               <Typography>
@@ -370,7 +370,9 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
               <Typography>
                 <span className="  !text-black pt-3">Last Follow UpDate:</span>
                 <span>
-                  {" " + new Date(data?.lastFollowUpDate).toLocaleDateString()}
+                   {data?.lastFollowUpDate && !isNaN(new Date(data.lastFollowUpDate).getTime())
+                    ? " " + new Date(data.lastFollowUpDate).toLocaleDateString()
+                    : " "}
                 </span>
               </Typography>
               <Typography>

@@ -26,11 +26,11 @@ export const viewAllSkill = async (
   params: { page?: number; pageSize?: number; limit?: number; search?: string } = {}
 ) => {
   // If searchS is provided, exclude pagination parameters
-  if (params.search) {
-    // Only keep searchS, remove pagination parameters
-    const { page, pageSize, limit, ...searchParams } = params;
-    params = { ...searchParams };
-  }
+  // if (params.search) {
+  //   // Only keep searchS, remove pagination parameters
+  //   const { page, pageSize, limit, ...searchParams } = params;
+  //   params = { ...searchParams };
+  // }
 
   const response = await authServices.get(`${VIEW_ALL_SKILL}`, { params });
   return response?.data;
