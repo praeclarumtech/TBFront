@@ -457,7 +457,7 @@ const AddSkill = () => {
                               className="ml-2 text-lg border-0 btn bg-primary edit-list w-fit"
                               onClick={() => handleSkills(selectedSkills)}
                             >
-                              Add to Chart
+                              View in Chart
                               <ReactTooltip
                                 place="bottom"
                                 variant="error"
