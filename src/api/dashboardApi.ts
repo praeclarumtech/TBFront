@@ -26,20 +26,19 @@ export const getChartDetails = async (ids: string[]) => {
 
 export const ExportSkilledApplicant = async (
   queryParams: {  skills: string[] },
+  payload: { ids: string[]; fields: string[]; main: boolean }
 ) => {
   const {  skills } = queryParams;
   const response = await authServices.post(
-    // `${SKILL_EXPORT}?appliedSkills=${encodeURIComponent(skills.join(","))
-    `${SKILL_EXPORT}?appliedSkills=${skills.join(",")
-
-    }`,
-    {
-      headers: {
-        "Content-Type": "application/json",
-      },
-      responseType: "blob",
-      timeout: 300000,
-    }
+    `${SKILL_EXPORT}?appliedSkills=${skills.join(",")}`,
+    payload,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        responseType: "blob",
+        timeout: 300000,
+      }
   );
   return response.data;
 };
