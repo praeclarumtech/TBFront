@@ -88,6 +88,7 @@ const {
   workPreferenceType,
   designationType,
   addedByOptions,
+  activeStatusOptions,
   // exportableFields,
 } = appConstants;
 
@@ -128,7 +129,8 @@ const Applicant = () => {
     useState<SelectedOption | null>(null);
   const [filterCity, setFilterCity] = useState<SelectedOption | null>(null);
   const [filterState, setFilterState] = useState<SelectedOption | null>(null);
-  const [appliedSkills, setAppliedSkills] = useState<SelectedOption1[]>([]);
+  const [appliedSkills, setAppliedSkills] = useState<SelectedOption1[]>([]);  
+  const [multipleSkills, setMultipleSkills] = useState<SelectedOption1[]>([]);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [totalRecords, setTotalRecords] = useState(0);
@@ -165,6 +167,7 @@ const Applicant = () => {
   const [nameRecored, setNameRecored] = useState(null);
   const [showActiveModal, setShowActiveModal] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
+  const [filterActiveStatus, setFilterActiveStatus] = useState<SelectedOption | null>(null);
   // interface ActionMenuProps {
   //   id: string;
   //   source: string;
@@ -201,6 +204,7 @@ const Applicant = () => {
         totalExperience?: string;
         currentCity?: string;
         appliedSkills?: string;
+        appliedSkillsOR?: string; 
         startDate?: string;
         endDate?: string;
         noticePeriod?: string;
@@ -220,7 +224,7 @@ const Applicant = () => {
         searchSkills?: string;
         search?: string;
         addedBy?: string;
-        // name?: string;
+        isActive?: string;
       } = {
         page: pagination.pageIndex + 1,
         pageSize: pagination.pageSize,
@@ -268,6 +272,11 @@ const Applicant = () => {
           .map((skill) => skill.label)
           .join(",");
       }
+      if (multipleSkills.length > 0) {
+        params.appliedSkillsOR = multipleSkills
+          .map((skill) => skill.label)  
+          .join(",");
+      }
       if (addedBy) {
         params.addedBy = addedBy.map((role: any) => role.value).join(",");
       }
@@ -290,6 +299,9 @@ const Applicant = () => {
       }
       if (filterGender) {
         params.gender = filterGender.value;
+      }
+      if (filterActiveStatus && filterActiveStatus.value !== "") {
+        params.isActive = filterActiveStatus.value;
       }
       const searchValue = searchAll?.trim();
       if (searchValue) {
@@ -333,6 +345,7 @@ const Applicant = () => {
     pagination.pageIndex,
     pagination.pageSize,
     appliedSkills,
+    multipleSkills,
     startDate,
     endDate,
     filterCity,
@@ -351,6 +364,7 @@ const Applicant = () => {
     filterWorkPreference,
     addedBy,
     searchAll,
+    filterActiveStatus,
   ]);
 
   useEffect(() => {
@@ -417,6 +431,9 @@ const Applicant = () => {
   const handleAppliedSkillsChange = (selectedOptions: SelectedOption1[]) => {
     setAppliedSkills(selectedOptions);
   };
+  const handleMultipleSkillsChange = (selectedOptions: SelectedOption1[]) => {
+    setMultipleSkills(selectedOptions);
+  };
 
   const handleStateChange = (selectedOption: SelectedOption) => {
     setFilterState(selectedOption);
@@ -477,6 +494,7 @@ const Applicant = () => {
 
   const resetFilters = () => {
     setAppliedSkills([]);
+    setMultipleSkills([]);
     setStartDate("");
     setEndDate("");
     setFilterCity(null);
@@ -495,6 +513,7 @@ const Applicant = () => {
     setFilterEngRating([0, 10]);
     setFilterState(null);
     setAddedBy([]);
+    setFilterActiveStatus(null);
     fetchApplicants();
   };
 
@@ -613,6 +632,9 @@ const Applicant = () => {
     setSelectedApplicants([]);
   };
 
+  const closeActiveModal = () => {
+    setShowActiveModal(false);
+  };
    
   const handleDeleteAll = () => {
     if (selectedApplicants.length > 0) {
@@ -735,6 +757,11 @@ const Applicant = () => {
           .map((skill) => skill.label)
           .join(",");
       }
+      if (multipleSkills.length > 0) {
+        queryParams.appliedSkillsOR = multipleSkills
+          .map((skill) => skill.label)
+          .join(",");
+      }
       if (addedBy.length > 0) {
         queryParams.addedBy = addedBy.map((role) => role.value).join(",");
       }
@@ -747,6 +774,10 @@ const Applicant = () => {
       if (filterInterviewStage)
         queryParams.interviewStage = filterInterviewStage.value;
       if (filterGender) queryParams.gender = filterGender.value;
+
+      if (filterActiveStatus && filterActiveStatus.value !== "") {
+        queryParams.isActive = filterActiveStatus.value;
+      }
 
       if (searchAll?.trim()) {
         queryParams.search = searchAll.trim();
@@ -872,6 +903,16 @@ const Applicant = () => {
             <span style={{ marginLeft: "5px" }}>Loading skills...</span>
           </div>
         )} */}
+        <MultiSelect
+          label="Multiple Skills"
+          name="multipleSkills"
+          className="mb-1 select-border"
+          placeholder="Multiple Skills"
+          value={multipleSkills}
+          isMulti={true}
+          onChange={handleMultipleSkillsChange}
+          options={skillOptions}
+        />
         <BaseSlider
           label="Experience (in years)"
           name="experience"
@@ -913,11 +954,11 @@ const Applicant = () => {
           value={filterInterviewStage}
         />
         <BaseSelect
-          label="Status"
-          name="status"
+          label="Applicant Status"
+          name="applicantStatus"
           className="mb-1 select-border"
           options={statusOptions}
-          placeholder="Status"
+          placeholder="Applicant Status"
           handleChange={handleStatusChange}
           value={filterStatus}
         />
@@ -1014,6 +1055,15 @@ const Applicant = () => {
           placeholder="Added By"
           onChange={handleAppliedRoleChange}
           value={addedBy}
+        />
+        <BaseSelect
+          label="Status"
+          name="Status"
+          className="mb-1 select-border"
+          options={activeStatusOptions}
+          placeholder="Status"
+          handleChange={(selectedOption: SelectedOption) => setFilterActiveStatus(selectedOption)}
+          value={filterActiveStatus}
         />
         <BaseSelect
           label="Any Hand On Offers"
@@ -1509,7 +1559,7 @@ const Applicant = () => {
           recordId={nameRecored || ""}
           loader={loading}
           onYesClick={() => handleConfirm()}
-          onCloseClick={closeDeleteModal}
+          onCloseClick={closeActiveModal}
         />
       ) : (
         <></>

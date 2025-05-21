@@ -675,6 +675,11 @@ const appConstants = Object.freeze({
     { label: "CSV", value: "Csv" },
   ],
 
+    activeStatusOptions: [
+    { label: "Active", value: "true" },
+    { label: "Inactive", value: "false" },
+  ],
+
   technologyOptions: {
     "Junior PHP Developer": ["PHP", "MySQL", "HTML", "CSS", "JavaScript"],
     "Associate PHP Developer": ["PHP", "Laravel", "MySQL", "JavaScript"],
