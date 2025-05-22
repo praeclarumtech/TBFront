@@ -23,7 +23,6 @@ const RecentApplicants = ({
 }) => {
   const [recentApplicants, setRecentApplicants] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  // const [totalRecords, setTotalRecords] = useState(0);
 
   useEffect(() => {
     fetchRecentApplicants();
@@ -47,7 +46,10 @@ const RecentApplicants = ({
     try {
       toast.info("Preparing file for download...");
       await new Promise((resolve) => setTimeout(resolve, 3500));
-      const response = await ExportSkilledApplicant({ skills: filtered }, { ids: [], fields: [], main: true })
+      const response = await ExportSkilledApplicant(
+        { skills: filtered },
+        { ids: [], fields: [], main: true }
+      );
 
       if (!response) {
         toast.error("Failed to download file");

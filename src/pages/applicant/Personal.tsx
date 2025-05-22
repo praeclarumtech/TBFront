@@ -29,14 +29,7 @@ import { viewAllCity } from "api/cityApis";
 import { viewAllState } from "api/stateApi";
 import { viewAllCountry } from "api/CountryStateCity";
 
-const {
-  projectTitle,
-  Modules,
-  gendersType,
-  // countriesType,
-  maritalStatusType,
-  // stateType,
-} = appConstants;
+const { projectTitle, Modules, gendersType, maritalStatusType } = appConstants;
 
 const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
   document.title = Modules.CreateApplicantForm + " | " + projectTitle;

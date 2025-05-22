@@ -61,8 +61,8 @@ export const listOfApplicants = async (params: {
   isAcrive?: boolean;
 }) => {
   // If applicantName or searchSkills are present, remove pagination and limit parameters
-  if (params.search ) {
-    const {  limit, ...searchParams } = params;
+  if (params.search) {
+    const { limit, ...searchParams } = params;
     params = { ...searchParams };
   }
 

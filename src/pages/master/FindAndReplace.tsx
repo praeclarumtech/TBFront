@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Row, Col, Card, Container, CardBody } from "react-bootstrap";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 
 import { toast } from "react-toastify";
 import BaseButton from "components/BaseComponents/BaseButton";
@@ -12,9 +12,13 @@ import appConstants from "constants/constant";
 import { InputPlaceHolder } from "utils/commonFunctions";
 import "react-loading-skeleton/dist/skeleton.css";
 import { BaseSelect } from "components/BaseComponents/BaseSelect";
-import { SelectedOption } from "interfaces/applicant.interface";
+import {
+  SelectedOption,
+  SelectedOption1,
+} from "interfaces/applicant.interface";
 import { FindReplace } from "@mui/icons-material";
 import { find, findAndReplaceAll } from "api/findAndReplace";
+import { ViewAppliedSkills } from "api/skillsApi";
 
 const { projectTitle, Modules, findAndReplaceOptions } = appConstants;
 
@@ -22,7 +26,7 @@ const FindAndReplace = () => {
   document.title = Modules.SKill + " | " + projectTitle;
   const [findAndReplaceOption, setFindAndReplaceOption] =
     useState<SelectedOption | null>(null);
-
+  const [skillOptions, setSkillOptions] = useState<SelectedOption1[]>([]);
   const [editingSkill, setEditingSkill] = useState<any>(null);
 
   const validation = useFormik({
@@ -38,7 +42,6 @@ const FindAndReplace = () => {
       ReplaceValue: Yup.string().required("Please enter value to find"),
     }),
     onSubmit: (values) => {
-      // setLoader(true);
       const payload = {
         field: findAndReplaceOption?.value || "",
         find: values.findValue,
@@ -49,10 +52,7 @@ const FindAndReplace = () => {
       apiCall
         .then((res) => {
           if (res?.success) {
-            toast.success(
-              // `Your Field ${payload.find} is Succesfully replace with ${payload.replaceWith}`
-              res?.message
-            );
+            toast.success(res?.message);
             setEditingSkill(null);
             validation.resetForm();
           } else {
@@ -75,8 +75,6 @@ const FindAndReplace = () => {
         replaceWith: validation.values.ReplaceValue,
       };
 
-      // setLoader(true);
-
       findAndReplaceAll(payload)
         .then((res) => {
           if (res?.success) {
@@ -88,7 +86,6 @@ const FindAndReplace = () => {
           }
         })
         .catch((error) => toast.error(error || "Somthing went wrong"));
-      // .finally(() => setLoader(false));
     } else {
       // Validation errors exist
       validation.setTouched({
@@ -103,40 +100,31 @@ const FindAndReplace = () => {
   const handleField = (selectedOption: SelectedOption) => {
     setFindAndReplaceOption(selectedOption);
     validation.setFieldValue("field", selectedOption?.value || "");
-    console.log(findAndReplaceOption);
+  };
+
+  const handleAppliedField = (selectedOption: SelectedOption) => {
+    validation.setFieldValue("ReplaceValue", selectedOption?.value || "");
   };
 
   const handleFind = async () => {
-    // if (!findAndReplaceOption?.value) {
-    //   toast.error("Please select a field");
-    //   return;
-    // }
-
     await validation.setFieldTouched("findValue", true);
     const error = await validation.validateField("findValue");
 
     if (!error) {
-      // No validation error, safe to call API
       const payload = {
         field: findAndReplaceOption?.value || "",
         find: validation.values.findValue,
         replaceWith: validation.values.ReplaceValue, // Optional if API accepts it
       };
 
-      // setLoader(true);
-
       find(payload)
         .then((res) => {
           if (res?.message === "No matching records found.") {
-            toast.error("No matches found for the given text.");
+            toast.error("your find does not content any data ");
           } else {
             if (res?.success) {
-              toast.success(
-                // `Your field "${payload.find}" was found successfully`
-                res?.message
-              );
+              toast.success(res?.message);
               setEditingSkill(null);
-              validation.resetForm();
             } else {
               toast.error(res?.message || "Something went wrong");
             }
@@ -144,9 +132,45 @@ const FindAndReplace = () => {
         })
 
         .catch(() => toast.error("API Error"));
-      // .finally(() => setLoader(false));
     }
   };
+
+  useEffect(() => {
+    const fetchSkills = async () => {
+      try {
+        const response = await ViewAppliedSkills({
+          page: 1,
+          pageSize: 50,
+          limit: 1000,
+        });
+
+        const skillData = response?.data?.data || [];
+        setSkillOptions(
+          skillData.map((item: any) => ({
+            label: item.skills,
+            value: item.skills,
+          }))
+        );
+      } catch (error: any) {
+        const details = error?.response?.data?.details;
+        if (Array.isArray(details)) {
+          details.forEach((msg: string) => {
+            toast.error(msg, {
+              closeOnClick: true,
+              autoClose: 5000,
+            });
+          });
+        } else {
+          toast.error("Failed to fetch skills.. Please try again.", {
+            closeOnClick: true,
+            autoClose: 5000,
+          });
+        }
+      }
+    };
+
+    fetchSkills();
+  }, []);
 
   return (
     <Fragment>
@@ -154,7 +178,7 @@ const FindAndReplace = () => {
       <Container fluid>
         <Row>
           <div>
-            <Card className="my-3 mb-3 ">
+            <Card className="my-3 mb-3">
               <CardBody>
                 <Row className="pl-3 mb-3">
                   <Row className="mt-1 fw-bold text-dark d-flex align-items-center">
@@ -201,7 +225,11 @@ const FindAndReplace = () => {
                             name="findValue"
                             // className="bg-gray-100"
                             type="text"
-                            placeholder={InputPlaceHolder("Field to Find")}
+                            placeholder={InputPlaceHolder(
+                              `Field to ${
+                                findAndReplaceOption?.label || "Find"
+                              } `
+                            )}
                             handleChange={validation.handleChange}
                             handleBlur={validation.handleBlur}
                             value={validation.values.findValue}
@@ -231,34 +259,67 @@ const FindAndReplace = () => {
                         </Col>
                       </Row>
                       <Row className="mt-3 mb-3">
-                        <Col xs={10} md={8} lg={8}>
-                          <BaseInput
-                            label="Replace"
-                            name="ReplaceValue"
-                            // className="bg-gray-100"
-                            type="text"
-                            placeholder={InputPlaceHolder("Field to Replace")}
-                            handleChange={validation.handleChange}
-                            handleBlur={validation.handleBlur}
-                            value={validation.values.ReplaceValue}
-                            touched={!!validation.touched.ReplaceValue}
-                            error={
-                              typeof validation.errors.ReplaceValue === "string"
-                                ? validation.errors.ReplaceValue
-                                : undefined
-                            }
-                            passwordToggle={false}
-                            disabled={
-                              !validation.values.field &&
-                              !validation.values.findValue
-                            }
-                          />
-                        </Col>
+                        {findAndReplaceOption?.value === "appliedSkills" && (
+                          <Col xs={12} md={8} lg={8}>
+                            <BaseSelect
+                              label="Replace"
+                              name="ReplaceValue"
+                              options={skillOptions}
+                              className="mb-1 select-border"
+                              placeholder="Select Fields"
+                              value={
+                                skillOptions.find(
+                                  (opt) =>
+                                    opt.value === validation.values.ReplaceValue
+                                ) || null
+                              }
+                              handleChange={handleAppliedField}
+                              handleBlur={validation.handleBlur}
+                              touched={!!validation.touched.ReplaceValue}
+                              error={
+                                typeof validation.errors.ReplaceValue ===
+                                "string"
+                                  ? validation.errors.ReplaceValue
+                                  : undefined
+                              }
+                            />
+                          </Col>
+                        )}
+
+                        {findAndReplaceOption?.value !== "appliedSkills" && (
+                          <Col xs={10} md={8} lg={8}>
+                            <BaseInput
+                              label="Replace"
+                              name="ReplaceValue"
+                              // className="bg-gray-100"
+                              type="text"
+                              placeholder={InputPlaceHolder("Field to Replace")}
+                              handleChange={validation.handleChange}
+                              handleBlur={validation.handleBlur}
+                              value={validation.values.ReplaceValue}
+                              touched={!!validation.touched.ReplaceValue}
+                              error={
+                                typeof validation.errors.ReplaceValue ===
+                                "string"
+                                  ? validation.errors.ReplaceValue
+                                  : undefined
+                              }
+                              passwordToggle={false}
+                              disabled={
+                                !validation.values.field &&
+                                !validation.values.findValue
+                              }
+                            />
+                          </Col>
+                        )}
                         <Col xs={2} md={2} lg={2}>
                           <BaseButton
                             className="!p-0  mt-[35px] ml-n5 bg-primary "
                             onClick={replaceAll}
-                            disabled={!validation.values.ReplaceValue}
+                            disabled={
+                              !validation.values.ReplaceValue ||
+                              !validation.values.field
+                            }
                           >
                             <FindReplace />
                           </BaseButton>
@@ -267,9 +328,6 @@ const FindAndReplace = () => {
                             place="bottom"
                             variant="info"
                           />
-                          {/* <BaseButton className="!p-0  mt-[35px] ml-2">
-                            <DoneAll />
-                          </BaseButton> */}
                         </Col>
                       </Row>
                     </Col>

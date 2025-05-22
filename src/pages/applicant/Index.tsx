@@ -63,14 +63,6 @@ import { IconButton, useMediaQuery } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import BaseModal from "components/BaseComponents/BaseModal";
 import CheckboxMultiSelect from "components/BaseComponents/CheckboxMultiSelect";
-// import { CustomToggleProps } from "types";
-// import { MoreVertical } from "react-feather";
-// import {
-//   DeleteFilled,
-//   EditFilled,
-//   EyeTwoTone,
-//   MailFilled,
-// } from "@ant-design/icons";
 import { Switch } from "antd";
 
 import ActiveModal from "components/BaseComponents/ActiveModal";
@@ -83,7 +75,6 @@ const {
   interviewStageOptions,
   statusOptions,
   gendersType,
-  // stateType,
   anyHandOnOffers,
   workPreferenceType,
   designationType,
@@ -129,7 +120,7 @@ const Applicant = () => {
     useState<SelectedOption | null>(null);
   const [filterCity, setFilterCity] = useState<SelectedOption | null>(null);
   const [filterState, setFilterState] = useState<SelectedOption | null>(null);
-  const [appliedSkills, setAppliedSkills] = useState<SelectedOption1[]>([]);  
+  const [appliedSkills, setAppliedSkills] = useState<SelectedOption1[]>([]);
   const [multipleSkills, setMultipleSkills] = useState<SelectedOption1[]>([]);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -167,15 +158,8 @@ const Applicant = () => {
   const [nameRecored, setNameRecored] = useState(null);
   const [showActiveModal, setShowActiveModal] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
-  const [filterActiveStatus, setFilterActiveStatus] = useState<SelectedOption | null>(null);
-  // interface ActionMenuProps {
-  //   id: string;
-  //   source: string;
-  //   handleDeleteSingle: (id: string) => void;
-  //   handleEmail: (id: string) => void;
-  //   handleView: (id: string, source: string) => void;
-  //   handleEdit: (id: string) => void;
-  // }
+  const [filterActiveStatus, setFilterActiveStatus] =
+    useState<SelectedOption | null>(null);
 
   const toggleDrawer =
     (anchor: Anchor, open: boolean) =>
@@ -204,7 +188,7 @@ const Applicant = () => {
         totalExperience?: string;
         currentCity?: string;
         appliedSkills?: string;
-        appliedSkillsOR?: string; 
+        appliedSkillsOR?: string;
         startDate?: string;
         endDate?: string;
         noticePeriod?: string;
@@ -274,7 +258,7 @@ const Applicant = () => {
       }
       if (multipleSkills.length > 0) {
         params.appliedSkillsOR = multipleSkills
-          .map((skill) => skill.label)  
+          .map((skill) => skill.label)
           .join(",");
       }
       if (addedBy) {
@@ -306,8 +290,6 @@ const Applicant = () => {
       const searchValue = searchAll?.trim();
       if (searchValue) {
         params.search = searchValue;
-        // params.applicantName = searchValue;
-        // params.appliedSkills = searchValue;
       }
 
       const res = await listOfApplicants(params);
@@ -635,7 +617,7 @@ const Applicant = () => {
   const closeActiveModal = () => {
     setShowActiveModal(false);
   };
-   
+
   const handleDeleteAll = () => {
     if (selectedApplicants.length > 0) {
       setMultipleApplicantsDelete(selectedApplicants);
@@ -1062,7 +1044,9 @@ const Applicant = () => {
           className="mb-1 select-border"
           options={activeStatusOptions}
           placeholder="Status"
-          handleChange={(selectedOption: SelectedOption) => setFilterActiveStatus(selectedOption)}
+          handleChange={(selectedOption: SelectedOption) =>
+            setFilterActiveStatus(selectedOption)
+          }
           value={filterActiveStatus}
         />
         <BaseSelect

@@ -65,15 +65,9 @@ interface ValueToEdit {
 const {
   projectTitle,
   Modules,
-  // skillOptions,
   exportableFieldOption,
   interviewStageOptions,
-  // cityOptions,
   statusOptions,
-  // gendersType,
-  // stateType,
-  // anyHandOnOffers,
-  // workPreferenceType,
   designationType,
 } = appConstants;
 
