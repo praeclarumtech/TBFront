@@ -1252,7 +1252,7 @@ const Applicant = () => {
           return (
             <Switch
               checked={isActive}
-              onClick={() => handleToggleSwitch(id, isActive, name)} // ✅ Handler only runs on user interaction
+              onClick={() => handleToggleSwitch(id, isActive)} // ✅ Handler only runs on user interaction
               checkedChildren={<span>Active</span>}
               unCheckedChildren={<span>InActive</span>}
             />
@@ -1411,7 +1411,7 @@ const Applicant = () => {
     [applicant, selectedApplicants]
   );
 
-  const handleToggleSwitch = (id: any, isActive: any, name: any) => {
+  const handleToggleSwitch = (id: any, isActive: any) => {
     setSelectedRecord(id);
     SetDataActive(isActive);
     // setPendingChecked(checked);
