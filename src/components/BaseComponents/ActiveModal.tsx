@@ -1,45 +1,42 @@
 import { ActiveModalProps } from "interfaces/global.interface";
 import React from "react";
 import { Button, Modal, ModalBody, Spinner } from "reactstrap";
-
+ 
 const ActiveModal: React.FC<ActiveModalProps> = ({
   show,
   onYesClick,
   onCloseClick,
-  recordId,
   loader,
+  flag,
 }) => {
   return (
     <Modal fade={true} isOpen={show} toggle={onCloseClick} centered={true}>
-      <ModalBody className="px-5 py-3">
-        <div className="mt-2 text-center">
-          <i className="ri-delete-bin-line display-5 "></i>
-          <div className="pt-2 mx-4 mt-4 fs-15 mx-sm-5">
-            <h4>Are you sure ?</h4>
-            <p className="mx-4 mb-0 text-muted">
-              Are you sure you want to InActivate/Active this record{" "}
-              <span className="fw-bold"> {recordId ? recordId : ""} </span>?
-            </p>
-          </div>
-        </div>
-        <div className="gap-2 mt-4 mb-2 d-flex justify-content-center">
-          <Button
-            color="light"
-            size="btn w-sm"
-            onClick={onCloseClick}
-            className="px-8"
-          >
-            No
+      <ModalBody className="px-4 py-4 text-center">
+        <p className="text-muted mb-3">
+          <h5>
+            {" "}
+            Are you sure you want to {flag ? "deactivate" : "active"} this
+            record?{" "}
+          </h5>
+        </p>
+        <div className="d-flex justify-content-center gap-3 mt-4">
+          <Button color="secondary" onClick={onCloseClick}>
+            Cancel
           </Button>
-          <Button color="primary" size="btn w-sm" onClick={onYesClick}>
-            Yes
-            {loader}
-            {loader && <Spinner size="sm" className="me-2" />}{" "}
+          <Button color="primary" onClick={onYesClick} disabled={loader}>
+            {loader ? (
+              <>
+                <Spinner size="sm" className="me-2" />{" "}
+                {flag ? "Deactivating..." : "Activating..."}
+              </>
+            ) : (
+              <>{flag ? "Deactivate" : "Active"}</>
+            )}
           </Button>
         </div>
       </ModalBody>
     </Modal>
-  ) as unknown as JSX.Element;
+  );
 };
-
+ 
 export default ActiveModal;
