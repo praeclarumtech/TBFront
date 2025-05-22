@@ -139,6 +139,7 @@ const Applicant = () => {
   const [sourcePage, setSourcePage] = useState("main");
 
   const [loading, setLoading] = useState<boolean>(false);
+  const [modelLoading, setModelLoading] = useState<boolean>(false);
   const [cities, setCities] = useState<City[]>([]);
   const [searchAll, setSearchAll] = useState<string>("");
   const [multipleApplicantDelete, setMultipleApplicantsDelete] = useState<
@@ -151,11 +152,8 @@ const Applicant = () => {
     []
   );
   const [states, setStates] = useState<City[]>([]);
-
   const [selectedRecord, setSelectedRecord] = useState<string | null>(null);
-
   const [dataActive, SetDataActive] = useState(true);
-  const [nameRecored, setNameRecored] = useState(null);
   const [showActiveModal, setShowActiveModal] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const [filterActiveStatus, setFilterActiveStatus] =
@@ -1254,7 +1252,7 @@ const Applicant = () => {
           return (
             <Switch
               checked={isActive}
-              onClick={() => handleToggleSwitch(id, isActive, name)} // ✅ Handler only runs on user interaction
+              onClick={() => handleToggleSwitch(id, isActive)} // ✅ Handler only runs on user interaction
               checkedChildren={<span>Active</span>}
               unCheckedChildren={<span>InActive</span>}
             />
@@ -1299,6 +1297,7 @@ const Applicant = () => {
                   });
               }
             }}
+             isDisabled={!cell?.row?.original?.isActive}
           />
         ),
         enableColumnFilter: false,
@@ -1334,6 +1333,7 @@ const Applicant = () => {
                   });
               }
             }}
+             isDisabled={!cell?.row?.original?.isActive}
           />
         ),
         enableColumnFilter: false,
@@ -1348,6 +1348,7 @@ const Applicant = () => {
               color="primary"
               className="btn btn-sm btn-soft-success usage-list"
               onClick={() => handleView(cell.row.original._id, "main")}
+              disabled={!cell?.row?.original?.isActive}
             >
               <i className="align-bottom ri-eye-fill" />
               <ReactTooltip
@@ -1362,6 +1363,7 @@ const Applicant = () => {
               id={`editMode-${cell?.row?.original?.id}`}
               className="btn btn-sm btn-soft-secondary edit-list"
               onClick={() => handleEdit(cell?.row?.original._id)}
+              disabled={!cell?.row?.original?.isActive}
             >
               <i className="align-bottom ri-pencil-fill" />
               <ReactTooltip
@@ -1377,6 +1379,7 @@ const Applicant = () => {
               className="btn btn-sm btn-soft-danger remove-list"
               color="danger"
               onClick={() => handleDeleteSingle(cell.row.original._id)}
+              disabled={!cell?.row?.original?.isActive}
             >
               <i className="align-bottom ri-delete-bin-5-fill" />
               <ReactTooltip
@@ -1391,6 +1394,7 @@ const Applicant = () => {
               id={`email-${cell?.row?.original?.id}`}
               className="btn btn-sm btn-soft-secondary bg-success edit-list"
               onClick={() => handleEmail(cell?.row?.original._id)}
+              disabled={!cell?.row?.original?.isActive}
             >
               <i className="align-bottom ri-mail-close-line" />
               <ReactTooltip
@@ -1407,10 +1411,9 @@ const Applicant = () => {
     [applicant, selectedApplicants]
   );
 
-  const handleToggleSwitch = (id: any, isActive: any, name: any) => {
+  const handleToggleSwitch = (id: any, isActive: any) => {
     setSelectedRecord(id);
     SetDataActive(isActive);
-    setNameRecored(name);
     // setPendingChecked(checked);
     setShowActiveModal(true);
   };
@@ -1420,13 +1423,15 @@ const Applicant = () => {
       console.warn("No record selected");
       return;
     }
-    setShowActiveModal(false);
+    setModelLoading(true);
     try {
       switch (dataActive) {
         case true: {
           // console.log("Deactivating user...");
           const res = await inActiveApplicant(selectedRecord);
           if (res.success) {
+            setModelLoading(false);
+            setShowActiveModal(false);
             toast.success(res.message);
           }
           break;
@@ -1435,6 +1440,8 @@ const Applicant = () => {
           // console.log("Activating user...");
           const res = await activeApplicant(selectedRecord);
           if (res.success) {
+            setModelLoading(false);
+            setShowActiveModal(false);
             toast.success(res.message);
           }
           break;
@@ -1445,6 +1452,8 @@ const Applicant = () => {
     } catch (error) {
       console.error("Failed to toggle status:", error);
     } finally {
+      setModelLoading(false);
+      setShowActiveModal(false);
       fetchApplicants();
     }
     // setPendingChecked(pendingChecked);
@@ -1540,10 +1549,10 @@ const Applicant = () => {
       {showActiveModal ? (
         <ActiveModal
           show={showActiveModal}
-          recordId={nameRecored || ""}
-          loader={loading}
+          loader={modelLoading}
           onYesClick={() => handleConfirm()}
           onCloseClick={closeActiveModal}
+          flag={dataActive}
         />
       ) : (
         <></>

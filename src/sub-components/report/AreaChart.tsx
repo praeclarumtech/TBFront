@@ -107,7 +107,7 @@ const PieChart = () => {
         <div>
           <Dropdown onSelect={(val) => val && setFilterType(val)}>
             <Dropdown.Toggle variant="outline-primary" className="min-h-[40px]">
-              {filterType || "Selcet Filter"}
+              {filterType || "Select Filter"}
             </Dropdown.Toggle>
             <Dropdown.Menu>
               <Dropdown.Item eventKey="Date">Date</Dropdown.Item>

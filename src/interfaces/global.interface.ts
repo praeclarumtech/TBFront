@@ -196,6 +196,7 @@ export interface ActiveModalProps {
   onCloseClick?: () => void;
   recordId?: string;
   loader?: boolean;
+  flag?: boolean;
 }
 
 export interface MultiDeleteModalProps {

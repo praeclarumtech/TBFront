@@ -88,7 +88,7 @@ const Report = () => {
                     <Col xl={8} lg={6} md={12} sm={12} xs={12}>
                       <h4 className="w-full fw-bold">
                         {" "}
-                        Applicant on Process
+                        Interview Rounds Progress Report
                       </h4>
                       <div className="mt-5">
                         <div className="my-2 d-flex">
@@ -159,7 +159,7 @@ const Report = () => {
                       className="mt-3 mt-lg-0"
                     >
                       <div className="d-flex justify-content-between align-items-center">
-                        <h4 className="fw-bold">Status of Application</h4>
+                        <h4 className="fw-bold">Application Status Analytics</h4>
                       </div>
                       <div className="mt-2 chart-container">
                         <ProgressChart />
