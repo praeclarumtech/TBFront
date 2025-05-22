@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import appConstants from "constants/constant";
 // import { JWTDecodedUser } from "interfaces/global.interface";
 import { jwtDecode } from "jwt-decode";
@@ -97,7 +98,7 @@ const getItem = (key: string) => {
   if (!val) return null;
   try {
     return JSON.parse(val);
-  } catch (e) {
+  } catch (e: any) {
     return val;
   }
 };
@@ -120,9 +121,15 @@ const clearSessionStorage = () => {
 };
 export { getItem, clearSessionStorage, setItem };
 
-export const dynamicFind = (array: any, validation: any) => {
+export const dynamicFind = (array: any, validation: any, flag = "all") => {
+  //For city, state, contury
+  if (flag === "location") {
+    return array?.find((option: any) => option?.label === validation);
+  }
+ 
   return array?.find((option: any) => option?.value === validation);
 };
+ 
 
 export const errorHandle = (error: any) => {
   if (error?.response?.data?.statusCode === NOT_FOUND) {

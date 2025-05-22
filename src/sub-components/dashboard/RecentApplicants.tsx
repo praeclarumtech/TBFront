@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useMemo, useState } from "react";
 import TableContainer from "components/BaseComponents/TableContainer";
 import { Col, Row, Card } from "react-bootstrap";
