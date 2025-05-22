@@ -120,7 +120,7 @@ const FindAndReplace = () => {
       find(payload)
         .then((res) => {
           if (res?.message === "No matching records found.") {
-            toast.error("your find does not content any data ");
+            toast.error("Your find does not content any data.");
           } else {
             if (res?.success) {
               toast.success(res?.message);
