@@ -15,11 +15,7 @@ import {
   InputPlaceHolder,
 } from "utils/commonFunctions";
 import appConstants from "constants/constant";
-import {
-  CheckExistingApplicant,
-  // city as fetchCities,
-  // state as fetchState,
-} from "../../api/applicantApi";
+import { CheckExistingApplicant } from "../../api/applicantApi";
 import {
   personalApplicantSchema,
   SelectedOption,
@@ -29,14 +25,7 @@ import { viewAllCity } from "api/cityApis";
 import { viewAllState } from "api/stateApi";
 import { viewAllCountry } from "api/CountryStateCity";
 
-const {
-  projectTitle,
-  Modules,
-  gendersType,
-  // countriesType,
-  maritalStatusType,
-  // stateType,
-} = appConstants;
+const { projectTitle, Modules, gendersType, maritalStatusType } = appConstants;
 
 const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
   document.title = Modules.CreateApplicantForm + " | " + projectTitle;
@@ -46,8 +35,6 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedCountryId, setSelectedCountryId] = useState("");
   const [selectedStateId, setSelectedStateId] = useState("");
-  // const [isChecking, setIsChecking] = useState(false);
-  // const [existingError, setExistingError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [phoneNumberError, setPhoneNumberError] = useState("");
   const [whatsappError, setWhatsappError] = useState("");
@@ -162,12 +149,8 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
           email: initialValues.email || "",
           gender: initialValues.gender || "",
           dateOfBirth: formattedDateOfBirth,
-          // state: initialValues.state || "",
           state: initialValues.state || "",
           country: initialValues.country || "",
-          // country: initialValues.country
-          //   ? capitalizeWords(initialValues.country)
-          //   : "",
           currentCity: initialValues.currentCity || "",
           currentAddress: initialValues.currentAddress || "",
           maritalStatus: initialValues?.maritalStatus || "",
@@ -201,7 +184,6 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
         data.country = selectedCountry.value;
       }
 
-      // const structuredData = {
       onNext({
         ...data,
         name: {
@@ -222,9 +204,7 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
         currentAddress: data.currentAddress,
         maritalStatus: data.maritalStatus,
         permanentAddress: data.permanentAddress,
-        // };
       });
-      // onNext(structuredData);
       onNext(data);
 
       setLoading(false);
@@ -232,8 +212,6 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
   });
 
   const checkExistingField = async (field: string, value: string) => {
-    // setIsChecking(true);
-
     if (field === "email") {
       setEmailError("");
     } else if (field === "phoneNumber") {
@@ -241,8 +219,6 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
     } else if (field === "whatsappNumber") {
       setWhatsappError("");
     }
-
-    // setExistingError("");
 
     try {
       const params: {
@@ -283,7 +259,6 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
         }
       }
     } catch (error) {
-      // console.error("Error checking existing field:", error);
       errorHandle(error);
 
       return "Error while checking this field.";
@@ -298,15 +273,13 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
     }
   };
 
-  console.log("country", country);
   const handleCountryChange = (selectedOption: SelectedOption) => {
-    const selectedValue = selectedOption?.value || "";
-    console.log("selected", selectedValue);
+    const selectedValue = selectedOption?.label || "";
     // Set formik field value
     validation.setFieldValue("country", selectedValue);
 
     // Find the selected country's full object
-    const selectedCountry = country.find((c) => c.value === selectedValue);
+    const selectedCountry = country.find((c) => c.label === selectedValue);
 
     // Extract and store the country_id
     if (selectedCountry) {
@@ -315,13 +288,13 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
   };
 
   const handleStateChange = (selectedOption: SelectedOption) => {
-    const selectedValue = selectedOption?.value || "";
+    const selectedValue = selectedOption?.label || "";
 
     // Set formik field value
     validation.setFieldValue("state", selectedValue);
 
     // Find the selected country's full object
-    const selectedState = states.find((c) => c.value === selectedValue);
+    const selectedState = states.find((c) => c.label === selectedValue);
 
     // Extract and store the country_id
     if (selectedState) {
@@ -523,6 +496,7 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
                       isRequired={true}
                     />
                   </Col>
+
                   <Col xs={12} md={6} lg={4}>
                     <BaseSelect
                       label="Gender"
@@ -579,7 +553,11 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
                       handleChange={handleCountryChange}
                       handleBlur={validation.handleBlur}
                       value={
-                        dynamicFind(country, validation.values.country) || ""
+                        dynamicFind(
+                          country,
+                          validation.values.country,
+                          "location"
+                        ) || ""
                       }
                       touched={validation.touched.country}
                       error={validation.errors.country}
@@ -596,7 +574,13 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
                       placeholder={InputPlaceHolder("State")}
                       handleChange={handleStateChange}
                       handleBlur={validation.handleBlur}
-                      value={dynamicFind(states, validation.values.state) || ""}
+                      value={
+                        dynamicFind(
+                          states,
+                          validation.values.state,
+                          "location"
+                        ) || ""
+                      }
                       touched={validation.touched.state}
                       error={validation.errors.state}
                       isRequired={true}
@@ -613,12 +597,16 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
                       handleChange={(selectedOption: SelectedOption) => {
                         validation.setFieldValue(
                           "currentCity",
-                          selectedOption?.value || ""
+                          selectedOption?.label || ""
                         );
                       }}
                       handleBlur={validation.handleBlur}
                       value={
-                        dynamicFind(cities, validation.values.currentCity) || ""
+                        dynamicFind(
+                          cities,
+                          validation.values.currentCity,
+                          "location"
+                        ) || ""
                       }
                       touched={validation.touched.currentCity}
                       error={validation.errors.currentCity}

@@ -73,10 +73,8 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
       practicalFeedback: initialValues?.practicalFeedback || "",
       comment: initialValues?.comment || "",
       communicationSkill: initialValues?.communicationSkill || "",
-      // appliedRole: initialValues?.appliedRole || "",
       currentCompanyName: initialValues?.currentCompanyName || "",
       anyHandOnOffers: initialValues?.anyHandOnOffers || false,
-      // lastFollowUpDate: initialValues?.lastFollowUpDate || "",
       lastFollowUpDate: formattedlastFollowUpDate,
       totalExperience: initialValues?.totalExperience || "0",
       relevantSkillExperience: initialValues?.relevantSkillExperience || "0",
@@ -102,30 +100,24 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
 
       const appliedRole = dynamicFind(designationOptions, data.appliedRole);
       const appliedRoleName = appliedRole ? appliedRole.label : "";
-
       const currentDesignation = dynamicFind(
         designationOptions,
         data.currentCompanyDesignation
       );
-
       const currentCompanyDesignation = currentDesignation
         ? currentDesignation.label
         : "";
 
-    
       onNext({
         ...data,
         appliedSkills: appliedSkillsNames,
         currentCompanyDesignation: currentCompanyDesignation,
         appliedRole: appliedRoleName,
       });
-    
 
       setLoading(false);
     },
   });
-
-  
 
   useEffect(() => {
     const fetchDesignations = async () => {
@@ -231,8 +223,6 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
     validation.setFieldValue("appliedSkills", ids);
     setSelectedMulti(selectedMulti);
   };
-
-  
 
   const handleRoleChange = async (SelectedOptionRole: any) => {
     if (SelectedOptionRole) {

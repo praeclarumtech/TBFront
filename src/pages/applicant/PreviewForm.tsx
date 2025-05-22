@@ -148,21 +148,11 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
               </Typography>
 
               <Typography>
-                <span className="text-base  !text-black pt-3">Country:</span>
-                <span>
-                  {" " +
-                    capitalizeWords(
-                      country.find((country) => country.value === data?.country)
-                        ?.label || ""
-                    )}
-                </span>
-              </Typography>
-              {/* <Typography>
                 <span className="text-base  !text-black pt-3">
-                  Currrent Pincode:
+                  Current Address:
                 </span>
-                <span>{" " + data.currentPincode}</span>
-              </Typography> */}
+                <span>{" " + capitalizeWords(data?.currentAddress)}</span>
+              </Typography>
 
               <Typography>
                 <span className="text-base  !text-black pt-3">
@@ -186,12 +176,12 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
                 <span className="text-base  !text-black pt-3">Gender :</span>
                 <span>{" " + capitalizeWords(data?.gender)}</span>
               </Typography>
-              <Typography>
-                <span className="text-base  !text-black pt-3">City:</span>
+               <Typography>
+                <span className="text-base  !text-black pt-3">Country:</span>
                 <span>
                   {" " +
                     capitalizeWords(
-                      cities.find((city) => city.value === data?.currentCity)
+                      country.find((country) => country.label === data?.country)
                         ?.label || ""
                     )}
                 </span>
@@ -201,16 +191,20 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
                 <span>
                   {" " +
                     capitalizeWords(
-                      states.find((state) => state.value === data?.state)
+                      states.find((state) => state.label === data?.state)
                         ?.label || ""
                     )}
                 </span>
               </Typography>
               <Typography>
-                <span className="text-base  !text-black pt-3">
-                  Current Address:
+                <span className="text-base  !text-black pt-3">City:</span>
+                <span>
+                  {" " +
+                    capitalizeWords(
+                      cities.find((city) => city.label === data?.currentCity)
+                        ?.label || ""
+                    )}
                 </span>
-                <span>{" " + capitalizeWords(data?.currentAddress)}</span>
               </Typography>
             </div>
           </Row>
