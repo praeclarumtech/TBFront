@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Row, Col, Card, Container, CardBody } from "react-bootstrap";
 import { Fragment, useMemo, useState, useEffect } from "react";
-
+ 
 import { toast } from "react-toastify";
 import BaseButton from "components/BaseComponents/BaseButton";
 import TableContainer from "components/BaseComponents/TableContainer";
@@ -14,12 +14,12 @@ import BaseModal from "components/BaseComponents/BaseModal";
 import appConstants from "constants/constant";
 import {
   errorHandle,
-  getSerialNumber,
+  // getSerialNumber,
   InputPlaceHolder,
 } from "utils/commonFunctions";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-
+ 
 import { viewAllCountry } from "api/CountryStateCity";
 import {
   createState,
@@ -29,14 +29,14 @@ import {
 } from "api/stateApi";
 import { SelectedOption1 } from "interfaces/applicant.interface";
 import { BaseSelect } from "components/BaseComponents/BaseSelect";
-
+ 
 const { projectTitle, Modules, handleResponse } = appConstants;
-
+ 
 const State = () => {
   document.title = Modules.State + " | " + projectTitle;
   const [state, setState] = useState<any[]>([]);
   const [editingState, setEditingState] = useState<any>(null);
-
+ 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [stateToDelete, setStateToDelete] = useState<any>([]);
   const [showBaseModal, setShowBaseModal] = useState(false);
@@ -48,12 +48,12 @@ const State = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [countryOptions, setCountryOptions] = useState<SelectedOption1[]>([]);
-
+ 
   const [selectedState, setSelectedState] = useState<string[]>([]);
   const [searchAll, setSearchAll] = useState<string>("");
   //   const [selectedId, setSelectedId] = useState<string | null>(null);
   //   const [showViewModal, setShowViewModal] = useState(false);
-
+ 
   const fetchCountry = async () => {
     try {
       setIsLoading(true);
@@ -65,9 +65,9 @@ const State = () => {
         pageSize,
         limit,
       });
-
+ 
       const countryData = response?.data?.item || [];
-
+ 
       setCountryOptions(
         countryData.map((item: any) => ({
           label: item.country_name,
@@ -81,7 +81,7 @@ const State = () => {
       setIsLoading(false);
     }
   };
-
+ 
   const fetchState = async () => {
     setIsLoading(true);
     try {
@@ -95,14 +95,14 @@ const State = () => {
         pageSize: pagination.pageSize,
         limit: 50,
       };
-
+ 
       const searchValue = searchAll?.trim();
       if (searchValue) {
         params.search = searchValue;
       }
-
+ 
       const res = await viewAllState(params);
-
+ 
       if (res?.success) {
         setState(res?.data?.item || []);
         setTotalRecords(res.data?.totalRecords || 0);
@@ -116,35 +116,35 @@ const State = () => {
       setIsLoading(false);
     }
   };
-
+ 
   useEffect(() => {
     fetchState();
     fetchCountry();
   }, [pagination.pageIndex, pagination.pageSize, searchAll]);
-
+ 
   const handleDelete = (city: any) => {
     setStateToDelete(city);
     setShowDeleteModal(true);
   };
-
+ 
   const confirmDelete = async () => {
     if (!stateToDelete || stateToDelete.length === 0) {
       toast.error("No states selected for deletion.");
       return;
     }
-
+ 
     setLoader(true);
-
+ 
     try {
       // If deleting multiple
       if (Array.isArray(stateToDelete)) {
         const deleteRequests = stateToDelete.map((id) =>
           deleteState({ _id: id })
         );
-
+ 
         // Wait for all delete requests to finish
         const results = await Promise.all(deleteRequests);
-
+ 
         const allSuccess = results.every((res) => res?.success);
         if (allSuccess) {
           toast.success("State deleted successfully");
@@ -172,7 +172,7 @@ const State = () => {
       setSelectedState([]);
     }
   };
-
+ 
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
       setSelectedState(state.map((state) => state._id)); // Select all
@@ -180,7 +180,7 @@ const State = () => {
       setSelectedState([]); // Unselect all
     }
   };
-
+ 
   const handleSelectApplicant = (stateId: string) => {
     setSelectedState(
       (prev) =>
@@ -189,14 +189,14 @@ const State = () => {
           : [...prev, stateId] // Add to selected list
     );
   };
-
+ 
   const handleDeleteAll = () => {
     if (selectedState.length > 1) {
       setStateToDelete([...selectedState]);
       setShowDeleteModal(true);
     }
   };
-
+ 
   const columns = useMemo(
     () => [
       {
@@ -217,11 +217,11 @@ const State = () => {
         ),
         enableColumnFilter: false,
       },
-      {
-        header: "Sr.no",
-        cell: getSerialNumber,
-        enableColumnFilter: false,
-      },
+      // {
+      //   header: "Sr.no",
+      //   cell: getSerialNumber,
+      //   enableColumnFilter: false,
+      // },
       {
         header: "State",
         accessorKey: "state_name",
@@ -266,7 +266,7 @@ const State = () => {
             >
               <i className="align-bottom ri-delete-bin-fill" />
             </BaseButton>
-
+ 
             {/* Tooltips should be outside buttons */}
             <ReactTooltip
               place="bottom"
@@ -286,18 +286,18 @@ const State = () => {
     ],
     [selectedState, state]
   );
-
+ 
   const [loader, setLoader] = useState(false);
-
+ 
   //   const handleView = (id: string) => {
   //     setSelectedId(id);
   //     setShowViewModal(true);
   //   };
-
+ 
   //   const handleCloseModal = () => {
   //     setShowViewModal(false);
   //   };
-
+ 
   const validation = useFormik({
     enableReinitialize: true,
     initialValues: {
@@ -314,17 +314,17 @@ const State = () => {
     }),
     onSubmit: (values) => {
       setLoader(true);
-
+ 
       const payload = {
         _id: values._id,
         country_id: values.country_id,
         state_name: values.state_name,
       };
-
+ 
       const apiCall = editingState
         ? updateState(payload)
         : createState(payload);
-
+ 
       apiCall
         .then((res) => {
           if (res?.success) {
@@ -341,7 +341,7 @@ const State = () => {
         .finally(() => setLoader(false));
     },
   });
-
+ 
   const handleEdit = (id: any) => {
     setEditingState(id);
     const selectCountry = countryOptions.find(
@@ -354,36 +354,36 @@ const State = () => {
     });
     setShowBaseModal(true);
   };
-
-
+ 
+ 
   const formTitle = editingState ? "Update State" : "Add State";
   const submitButtonText = "Add";
-
+ 
   const handleOpenBaseModal = () => {
     setEditingState(null);
     validation.resetForm();
     setShowBaseModal(true);
   };
-
+ 
   const handleSubmit = () => {
     validation.handleSubmit();
   };
-
+ 
   const handleCloseClick = () => {
     setShowBaseModal(false);
     setEditingState(null);
     validation.resetForm();
   };
-
+ 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchAll(event.target.value);
   };
-
+ 
   const closeDeleteModal = () => {
     setShowDeleteModal(false);
     setSelectedState([]);
   };
-
+ 
   return (
     <Fragment>
       {/* {showViewModal && selectedId && (
@@ -427,7 +427,7 @@ const State = () => {
                             value={searchAll}
                           />
                         </div>
-
+ 
                         {/* Delete Button (Only if cities are selected) */}
                         {selectedState.length > 1 && (
                           <BaseButton
@@ -443,7 +443,7 @@ const State = () => {
                             />
                           </BaseButton>
                         )}
-
+ 
                         {/* Import & Submit Buttons (Stack only on smaller screens) */}
                         <div className="flex-wrap gap-2 d-flex align-items-center">
                           <BaseButton
@@ -459,7 +459,7 @@ const State = () => {
                       </div>
                     </Col>
                   </Row>
-
+ 
                   <BaseModal
                     show={showBaseModal}
                     onCloseClick={handleCloseClick}
@@ -562,5 +562,7 @@ const State = () => {
     </Fragment>
   );
 };
-
+ 
 export default State;
+ 
+ 

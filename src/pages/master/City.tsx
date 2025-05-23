@@ -14,7 +14,7 @@ import BaseModal from "components/BaseComponents/BaseModal";
 import appConstants from "constants/constant";
 import {
   errorHandle,
-  getSerialNumber,
+  // getSerialNumber,
   InputPlaceHolder,
 } from "utils/commonFunctions";
 import Skeleton from "react-loading-skeleton";
@@ -213,11 +213,11 @@ const City = () => {
         ),
         enableColumnFilter: false,
       },
-      {
-        header: "Sr.no",
-        cell: getSerialNumber,
-        enableColumnFilter: false,
-      },
+      // {
+      //   header: "Sr.no",
+      //   cell: getSerialNumber,
+      //   enableColumnFilter: false,
+      // },
       {
         header: "City",
         accessorKey: "city_name",
@@ -353,7 +353,6 @@ const City = () => {
     setShowBaseModal(true);
   };
 
-
   const formTitle = editingCity ? "Update City" : "Add City";
   const submitButtonText = "Add";
 
@@ -474,7 +473,7 @@ const City = () => {
                           label="State"
                           name="state_id"
                           className="mb-1 bg-gray-100 cursor-pointer select-border"
-                          placeholder="City"
+                          placeholder="Select State"
                           value={stateOptions.find(
                             (option) =>
                               option.value === validation.values.state_id

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Row, Col, Card, Container, CardBody } from "react-bootstrap";
 import { Fragment, useMemo, useState, useEffect } from "react";
-
+ 
 import { toast } from "react-toastify";
 import BaseButton from "components/BaseComponents/BaseButton";
 import TableContainer from "components/BaseComponents/TableContainer";
@@ -12,24 +12,24 @@ import BaseInput from "components/BaseComponents/BaseInput";
 import DeleteModal from "components/BaseComponents/DeleteModal";
 import BaseModal from "components/BaseComponents/BaseModal";
 import appConstants from "constants/constant";
-import { getSerialNumber, InputPlaceHolder } from "utils/commonFunctions";
+import { InputPlaceHolder } from "utils/commonFunctions";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-
+ 
 import {
   createCountry,
   deleteCountry,
   updateCountry,
   viewAllCountry,
 } from "api/CountryStateCity";
-
+ 
 const { projectTitle, Modules, handleResponse } = appConstants;
-
+ 
 const Country = () => {
   document.title = Modules.Country + " | " + projectTitle;
   const [country, setcountry] = useState<any[]>([]);
   const [editingCountry, setEditingCountry] = useState<any>(null);
-
+ 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [countryToDelete, setCountyToDelete] = useState<any>([]);
   const [showBaseModal, setShowBaseModal] = useState(false);
@@ -40,12 +40,12 @@ const Country = () => {
     limit: 50,
   });
   const [isLoading, setIsLoading] = useState(false);
-
+ 
   const [selectedcountry, setSelectedCountry] = useState<string[]>([]);
   const [searchAll, setSearchAll] = useState<string>("");
   //   const [selectedId, setSelectedId] = useState<string | null>(null);
   //   const [showViewModal, setShowViewModal] = useState(false);
-
+ 
   const fetchCountry = async () => {
     setIsLoading(true);
     try {
@@ -59,14 +59,14 @@ const Country = () => {
         pageSize: pagination.pageSize,
         limit: 50,
       };
-
+ 
       const searchValue = searchAll?.trim();
       if (searchValue) {
         params.search = searchValue;
       }
-
+ 
       const res = await viewAllCountry(params);
-
+ 
       if (res?.success) {
         setcountry(res?.data?.item || []);
         setTotalRecords(res.data?.totalRecords || 0);
@@ -80,34 +80,34 @@ const Country = () => {
       setIsLoading(false);
     }
   };
-
+ 
   useEffect(() => {
     fetchCountry();
   }, [pagination.pageIndex, pagination.pageSize, searchAll]);
-
+ 
   const handleDelete = (city: any) => {
     setCountyToDelete(city);
     setShowDeleteModal(true);
   };
-
+ 
   const confirmDelete = async () => {
     if (!countryToDelete || countryToDelete.length === 0) {
       toast.error("No countries selected for deletion.");
       return;
     }
-
+ 
     setLoader(true);
-
+ 
     try {
       // If deleting multiple countries
       if (Array.isArray(countryToDelete)) {
         const deleteRequests = countryToDelete.map((id) =>
           deleteCountry({ _id: id })
         );
-
+ 
         // Wait for all delete requests to finish
         const results = await Promise.all(deleteRequests);
-
+ 
         const allSuccess = results.every((res) => res?.success);
         if (allSuccess) {
           toast.success("Country deleted successfully");
@@ -135,7 +135,7 @@ const Country = () => {
       setSelectedCountry([]);
     }
   };
-
+ 
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
       setSelectedCountry(country.map((country) => country._id)); // Select all
@@ -143,7 +143,7 @@ const Country = () => {
       setSelectedCountry([]); // Unselect all
     }
   };
-
+ 
   const handleSelectApplicant = (countryId: string) => {
     setSelectedCountry(
       (prev) =>
@@ -152,14 +152,14 @@ const Country = () => {
           : [...prev, countryId] // Add to selected list
     );
   };
-
+ 
   const handleDeleteAll = () => {
     if (selectedcountry.length > 1) {
       setCountyToDelete([...selectedcountry]);
       setShowDeleteModal(true);
     }
   };
-
+ 
   const columns = useMemo(
     () => [
       {
@@ -182,17 +182,17 @@ const Country = () => {
         ),
         enableColumnFilter: false,
       },
-      {
-        header: "Sr.no",
-        cell: getSerialNumber,
-        enableColumnFilter: false,
-      },
+      // {
+      //   header: "Sr.no",
+      //   cell: getSerialNumber,
+      //   enableColumnFilter: false,
+      // },
       {
         header: "Country",
         accessorKey: "country_name",
         enableColumnFilter: false,
       },
-
+ 
       {
         header: "Action",
         cell: (cell: { row: { original: any } }) => (
@@ -227,7 +227,7 @@ const Country = () => {
             >
               <i className="align-bottom ri-delete-bin-fill" />
             </BaseButton>
-
+ 
             {/* Tooltips should be outside buttons */}
             <ReactTooltip
               place="bottom"
@@ -247,18 +247,18 @@ const Country = () => {
     ],
     [selectedcountry, country]
   );
-
+ 
   const [loader, setLoader] = useState(false);
-
+ 
   //   const handleView = (id: string) => {
   //     setSelectedId(id);
   //     setShowViewModal(true);
   //   };
-
+ 
   //   const handleCloseModal = () => {
   //     setShowViewModal(false);
   //   };
-
+ 
   const validation = useFormik({
     enableReinitialize: true,
     initialValues: {
@@ -273,16 +273,16 @@ const Country = () => {
     }),
     onSubmit: (values) => {
       setLoader(true);
-
+ 
       const payload = {
         _id: values._id,
         country_name: values.country_name,
       };
-
+ 
       const apiCall = editingCountry
         ? updateCountry(payload)
         : createCountry(payload);
-
+ 
       apiCall
         .then((res) => {
           if (res?.success) {
@@ -299,44 +299,44 @@ const Country = () => {
         .finally(() => setLoader(false));
     },
   });
-
+ 
   const handleEdit = (id: any) => {
     setEditingCountry(id);
     validation.setValues({
       _id: id.country || "",
       country_name: id.country_name,
     });
-
+ 
     setShowBaseModal(true);
   };
   const formTitle = editingCountry ? "Update Country" : "Add Country";
   const submitButtonText = "Add";
-
+ 
   const handleOpenBaseModal = () => {
     setEditingCountry(null);
     validation.resetForm();
     setShowBaseModal(true);
   };
-
+ 
   const handleSubmit = () => {
     validation.handleSubmit();
   };
-
+ 
   const handleCloseClick = () => {
     setShowBaseModal(false);
     setEditingCountry(null);
     validation.resetForm();
   };
-
+ 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchAll(event.target.value);
   };
-
+ 
   const closeDeleteModal = () => {
     setShowDeleteModal(false);
     setSelectedCountry([]);
   };
-
+ 
   return (
     <Fragment>
       {/* {showViewModal && selectedId && (
@@ -380,7 +380,7 @@ const Country = () => {
                             value={searchAll}
                           />
                         </div>
-
+ 
                         {/* Delete Button (Only if countries are selected) */}
                         {selectedcountry.length > 1 && (
                           <BaseButton
@@ -396,7 +396,7 @@ const Country = () => {
                             />
                           </BaseButton>
                         )}
-
+ 
                         {/* Import & Submit Buttons (Stack only on smaller screens) */}
                         <div className="flex-wrap gap-2 d-flex align-items-center">
                           <BaseButton
@@ -412,7 +412,7 @@ const Country = () => {
                       </div>
                     </Col>
                   </Row>
-
+ 
                   <BaseModal
                     show={showBaseModal}
                     onCloseClick={handleCloseClick}
@@ -488,5 +488,7 @@ const Country = () => {
     </Fragment>
   );
 };
-
+ 
 export default Country;
+ 
+ 

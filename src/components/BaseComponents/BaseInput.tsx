@@ -17,6 +17,8 @@ const BaseInput = ({
   maxLength,
   disabled,
   isRequired,
+  max,
+  min,
 }: BaseInputProps) => {
   const [passwordShow, setPasswordShow] = useState(false);
 
@@ -53,7 +55,8 @@ const BaseInput = ({
               value={value || ""}
               invalid={!!(touched && error)}
               maxLength={maxLength}
-              min={0}
+              max={max}
+              min={min}
             />
             {touched && error && <FormFeedback>{error}</FormFeedback>}
           </>
