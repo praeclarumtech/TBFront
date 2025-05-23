@@ -22,6 +22,9 @@ const PieChart = () => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
+  // Add today constant to prevent future date selection
+  const today = new Date().toISOString().split("T")[0];
+
   const formatDateTime = (date: string) => {
     if (!date) return "";
     const [year, month, day] = date.split("-");
@@ -63,8 +66,19 @@ const PieChart = () => {
     fetchAddedByReport();
   }, [filterType, startDate, endDate]);
 
-  const labels = Object.keys(application);
-  const values = Object.values(application);
+  // Define the fixed order of categories
+  const fixedCategories = ["Resume", "Manual", "Csv"];
+
+  // Map backend values to display labels
+  const labelDisplayMap: Record<string, string> = {
+    Csv: "CSV",
+    Resume: "Resume",
+    Manual: "Manual",
+  };
+
+  // Build labels and values in fixed order
+  const labels = fixedCategories.map((key) => labelDisplayMap[key] || key);
+  const values = fixedCategories.map((key) => application[key] || 0);
 
   const data = {
     labels,
@@ -73,12 +87,9 @@ const PieChart = () => {
         label: "Applications",
         data: values,
         backgroundColor: [
-          "#FF6384",
-          "#36A2EB",
-          "#FFCE56",
-          "#8AFFC1",
-          "#FF8A5B",
-          "#7F5AFF",
+          "#36A2EB", // Resume
+          "#FFCE56", // Manual
+          "#FF6384", // CSV
         ],
         borderWidth: 1,
       },
@@ -126,6 +137,7 @@ const PieChart = () => {
                   className="form-control form-control-sm"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
+                  max={today}
                 />
               </div>
             </div>
@@ -137,7 +149,7 @@ const PieChart = () => {
                   className="form-control form-control-sm"
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
-                  disabled={!startDate.length}
+                  max={today}
                 />
               </div>
             </div>

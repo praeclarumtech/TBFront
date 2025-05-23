@@ -167,6 +167,7 @@ const Applicant = () => {
   const [filterAppliedRole, setFilterAppliedRole] = useState<SelectedOption[]>(
     []
   );
+    const today = new Date().toISOString().split('T')[0];
 
   const toggleDrawer =
     (anchor: Anchor, open: boolean) =>
@@ -1155,6 +1156,7 @@ const Applicant = () => {
                 handleDateChange(e, true)
               }
               value={startDate || ""}
+              max={today}
             />
           </Col>
           <Col xs={6}>
@@ -1167,6 +1169,7 @@ const Applicant = () => {
                 handleDateChange(e, false)
               }
               value={endDate || ""}
+              max={today}
             />
           </Col>
         </Row>
