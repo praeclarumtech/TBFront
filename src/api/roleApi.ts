@@ -1,4 +1,4 @@
-import { ADD_ROLE_AND_SKILL, VIEW_ROLE_AND_SKILL, UPDATE_ROLE_AND_SKILL, DELETE_ROLE_AND_SKILL, VIEW_ROLE_AND_SKILL_ID } from "./apiRoutes";
+import { ADD_ROLE_AND_SKILL, VIEW_ROLE_AND_SKILL, UPDATE_ROLE_AND_SKILL, DELETE_ROLE_AND_SKILL, VIEW_ROLE_AND_SKILL_ID, VIEW_SKILLS_BY_APPLIED_ROLE } from "./apiRoutes";
 
 import { authServices } from "./apiServices";
 
@@ -48,5 +48,12 @@ export const deleteRoleSkill = async (data: { _id: string } = { _id: "" }) => {
 
 export const viewRoleSkillById = async (data: { _id: string } = { _id: "" }) => {
   const response = await authServices.get(`${VIEW_ROLE_AND_SKILL_ID}/${data?._id}`);
+  return response?.data;
+};
+
+export const getSkillsByAppliedRole = async (appliedRole: string) => {
+  const response = await authServices.get(`${VIEW_SKILLS_BY_APPLIED_ROLE}`, {
+    params: { appliedRole },
+  });
   return response?.data;
 };

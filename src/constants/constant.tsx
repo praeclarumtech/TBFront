@@ -436,7 +436,7 @@ const appConstants = Object.freeze({
   findAndReplaceOptions: [
     { label: "Skills", value: "skills" },
     { label: "Role", value: "appliedRole" },
-    { label: "Qualification", value: "degree" },
+    { label: "Qualification", value: "qualification" },
     { label: "Applied Skills", value: "appliedSkills" },
   ],
   addedByOptions: [
