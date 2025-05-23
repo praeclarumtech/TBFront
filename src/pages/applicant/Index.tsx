@@ -67,6 +67,7 @@ import { Switch } from "antd";
 
 import ActiveModal from "components/BaseComponents/ActiveModal";
 import { activeApplicant, inActiveApplicant } from "api/apiActive";
+import { viewRoleSkill } from "api/roleApi";
 // import CheckboxMultiSelect from "components/BaseComponents/CheckboxMultiSelect";
 const {
   exportableFieldOption,
@@ -121,7 +122,7 @@ const Applicant = () => {
   const [filterCity, setFilterCity] = useState<SelectedOption | null>(null);
   const [filterState, setFilterState] = useState<SelectedOption | null>(null);
   const [appliedSkills, setAppliedSkills] = useState<SelectedOption1[]>([]);
-  const [multipleSkills, setMultipleSkills] = useState<SelectedOption1[]>([]);
+  const [multipleSkills, setMultipleSkills] = useState<SelectedOption1[]>([]);  
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [totalRecords, setTotalRecords] = useState(0);
@@ -136,6 +137,7 @@ const Applicant = () => {
   });
 
   const [skillOptions, setSkillOptions] = useState<SelectedOption1[]>([]);
+  const [appliedRoleOptions, setAppliedRoleOptions] = useState<SelectedOption[]>([]);
   const [sourcePage, setSourcePage] = useState("main");
 
   const [loading, setLoading] = useState<boolean>(false);
@@ -158,6 +160,7 @@ const Applicant = () => {
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const [filterActiveStatus, setFilterActiveStatus] =
     useState<SelectedOption | null>(null);
+ const [filterAppliedRole, setFilterAppliedRole] = useState<SelectedOption[]>([]);
 
   const toggleDrawer =
     (anchor: Anchor, open: boolean) =>
@@ -207,6 +210,7 @@ const Applicant = () => {
         search?: string;
         addedBy?: string;
         isActive?: string;
+        appliedRole?: string;
       } = {
         page: pagination.pageIndex + 1,
         pageSize: pagination.pageSize,
@@ -285,6 +289,9 @@ const Applicant = () => {
       if (filterActiveStatus && filterActiveStatus.value !== "") {
         params.isActive = filterActiveStatus.value;
       }
+      if (filterAppliedRole.length > 0) {
+        params.appliedRole = filterAppliedRole.map(role => role.label).join(",");
+      }
       const searchValue = searchAll?.trim();
       if (searchValue) {
         params.search = searchValue;
@@ -345,6 +352,7 @@ const Applicant = () => {
     addedBy,
     searchAll,
     filterActiveStatus,
+    filterAppliedRole,
   ]);
 
   useEffect(() => {
@@ -386,6 +394,44 @@ const Applicant = () => {
 
     fetchSkills();
   }, []);
+
+  useEffect(() => {
+    const fetchAppliedRole = async () => {
+      try {
+        const roleData = await viewRoleSkill({
+          page: 1,
+          pageSize: 50,
+          limit: 500,
+        });
+        const appliedRoleData = roleData?.data?.data || [];
+        setAppliedRoleOptions(
+          appliedRoleData.map((item: any) => ({
+            label: item.appliedRole,
+            value: item.appliedRole
+          }))
+        );
+      } catch (error: any) {
+        const details = error?.response?.data?.details;
+        if (Array.isArray(details)) {
+          details.forEach((msg: string) => {
+            toast.error(msg, {
+              closeOnClick: true,
+              autoClose: 5000,
+            });
+          });
+        } else {
+          toast.error("Failed to fetch roles... Please try again.", {
+            closeOnClick: true,
+            autoClose: 5000,
+          });
+        }
+      } finally {
+        setLoading(false);
+      }
+      };
+    fetchAppliedRole();
+  }, []);
+ 
 
   const handleExperienceChange = (e: React.ChangeEvent<any>) => {
     setExperienceRange(e.target.value as number[]);
@@ -472,7 +518,7 @@ const Applicant = () => {
     setAddedBy(selectedOption);
   };
 
-  const resetFilters = () => {
+ const resetFilters = () => {
     setAppliedSkills([]);
     setMultipleSkills([]);
     setStartDate("");
@@ -488,12 +534,12 @@ const Applicant = () => {
     setExperienceRange([0, 25]);
     setFilterAnyHandOnOffers(null);
     setFilterWorkPreference(null);
-
     setFilterRating([0, 10]);
     setFilterEngRating([0, 10]);
     setFilterState(null);
     setAddedBy([]);
     setFilterActiveStatus(null);
+    setFilterAppliedRole([]);
     fetchApplicants();
   };
 
@@ -759,6 +805,10 @@ const Applicant = () => {
         queryParams.isActive = filterActiveStatus.value;
       }
 
+      if (filterAppliedRole.length > 0) {
+        queryParams.appliedRole = filterAppliedRole.map(role => role.label).join(",");
+      }
+
       if (searchAll?.trim()) {
         queryParams.search = searchAll.trim();
       }
@@ -893,6 +943,18 @@ const Applicant = () => {
           onChange={handleMultipleSkillsChange}
           options={skillOptions}
         />
+        <MultiSelect
+          label="Applied Role"
+          name="appliedRole"
+          className="mb-1 select-border"
+          options={appliedRoleOptions}
+          placeholder="Applied Role"
+          value={filterAppliedRole}
+          isMulti={true}
+          onChange={(selectedOptions: SelectedOption[]) => setFilterAppliedRole(selectedOptions)}
+        />
+ 
+        
         <BaseSlider
           label="Experience (in years)"
           name="experience"

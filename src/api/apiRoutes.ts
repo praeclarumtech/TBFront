@@ -67,6 +67,7 @@ export const UPDATE_ROLE_AND_SKILL = "/appliedRole/updateAppliedRoleAndSkill";
 export const DELETE_ROLE_AND_SKILL = "/appliedRole/deleteAppliedRoleAndSkill";
 export const VIEW_ROLE_AND_SKILL_ID =
   "/appliedRole/viewskillAndAppliedRoleById";
+export const VIEW_SKILLS_BY_APPLIED_ROLE = "/appliedRole/viewSkillsByAppliedRole";
 
 //Degree module
 export const CREATE_DEGREE = "degree/addDegree";

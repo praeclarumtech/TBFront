@@ -231,7 +231,7 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
               <Typography variant="body1" className="text-gray-600">
                 <span className="  !text-black pt-3">CGPA:</span>
                 <span className="">
-                  {" " + parseFloat(data?.cgpa) + " Cgpa"}
+                  {" " + (data?.cgpa ? parseFloat(data?.cgpa) + " Cgpa" : "")}
                 </span>
               </Typography>
             </Col>
@@ -298,24 +298,23 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
                 <span className="  !text-black pt-3">Applied Role:</span>
                 <span>{" " + capitalizeWords(data?.appliedRole)}</span>
               </Typography>
-              {data?.meta && (
-                <>
-                  <Typography>
-                    <span className="  !text-black pt-3">
-                      {capitalizeWords(data?.appliedRole)} Skills Experience:
-                    </span>
-                  </Typography>
-
-                  {Object.entries(data.meta).map(([key, value]) => (
-                    <Typography key={key} className="text-gray-700">
-                      <span className="!text-black ">
-                        {capitalizeWords(key)}:
-                      </span>{" "}
-                      <span>{String(value) + " Yrs"}</span>
-                    </Typography>
-                  ))}
-                </>
-              )}
+              <Typography>
+                <span className="  !text-black pt-3">
+                  {capitalizeWords(data?.appliedRole)} Skills Experience:
+                </span>
+              </Typography>
+              {(data.roleSkills && data.roleSkills.length > 0 ? data.roleSkills : Object.keys(data.meta || {})).map((skill: string) => (
+                <Typography key={skill} className="text-gray-700">
+                  <span className="!text-black ">
+                    {capitalizeWords(skill)}:
+                  </span>{" "}
+                  <span>
+                    {data.meta && data.meta[skill]
+                      ? `${data.meta[skill]} Yrs`
+                      : "Yrs"}
+                  </span>
+                </Typography>
+              ))}
             </Col>
             <Col xs={12} md={6}>
               <Typography>
