@@ -15,7 +15,7 @@ import BaseButton from "components/BaseComponents/BaseButton";
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const PieChart = () => {
-  const [application, setApplication] = useState({});
+  const [application, setApplication] = useState<Record<string, number>>({});
   const [isLoading, setIsLoading] = useState(true);
 
   const [filterType, setFilterType] = useState("");
