@@ -1,8 +1,8 @@
-import { ActiveModalProps } from "interfaces/global.interface";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 import { Button, Modal, ModalBody, Spinner } from "reactstrap";
 
-const ConfirmModal: React.FC<ActiveModalProps> = ({
+const ConfirmModal: React.FC<any> = ({
   show,
   onYesClick,
   onCloseClick,
