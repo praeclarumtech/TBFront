@@ -128,7 +128,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
         // Set initial designation if it exists
         if (initialValues?.currentCompanyDesignation) {
           const selectedDesignation = options.find(
-            (opt) => opt.label === initialValues.currentCompanyDesignation
+            (opt:any) => opt.label === initialValues.currentCompanyDesignation
           );
           if (selectedDesignation) {
             validation.setFieldValue("currentCompanyDesignation", selectedDesignation.value);
@@ -155,7 +155,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
         // Set initial role if it exists
         if (initialValues?.appliedRole) {
           const selectedRole = options.find(
-            (opt) => opt.label === initialValues.appliedRole
+            (opt:any) => opt.label === initialValues.appliedRole
           );
           if (selectedRole) {
             validation.setFieldValue("appliedRole", selectedRole.value);
