@@ -150,7 +150,7 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
           gender: initialValues.gender || "",
           dateOfBirth: formattedDateOfBirth,
           state: initialValues.state || "",
-          country: initialValues.country || "",
+          country: initialValues.country || "India",
           currentCity: initialValues.currentCity || "",
           currentAddress: initialValues.currentAddress || "",
           maritalStatus: initialValues?.maritalStatus || "",

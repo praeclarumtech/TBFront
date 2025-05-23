@@ -68,6 +68,7 @@ import { Switch } from "antd";
 import ActiveModal from "components/BaseComponents/ActiveModal";
 import { activeApplicant, inActiveApplicant } from "api/apiActive";
 import { viewRoleSkill } from "api/roleApi";
+import ConfirmModal from "components/BaseComponents/BaseConfirmModal";
 // import CheckboxMultiSelect from "components/BaseComponents/CheckboxMultiSelect";
 const {
   exportableFieldOption,
@@ -122,7 +123,7 @@ const Applicant = () => {
   const [filterCity, setFilterCity] = useState<SelectedOption | null>(null);
   const [filterState, setFilterState] = useState<SelectedOption | null>(null);
   const [appliedSkills, setAppliedSkills] = useState<SelectedOption1[]>([]);
-  const [multipleSkills, setMultipleSkills] = useState<SelectedOption1[]>([]);  
+  const [multipleSkills, setMultipleSkills] = useState<SelectedOption1[]>([]);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [totalRecords, setTotalRecords] = useState(0);
@@ -137,7 +138,9 @@ const Applicant = () => {
   });
 
   const [skillOptions, setSkillOptions] = useState<SelectedOption1[]>([]);
-  const [appliedRoleOptions, setAppliedRoleOptions] = useState<SelectedOption[]>([]);
+  const [appliedRoleOptions, setAppliedRoleOptions] = useState<
+    SelectedOption[]
+  >([]);
   const [sourcePage, setSourcePage] = useState("main");
 
   const [loading, setLoading] = useState<boolean>(false);
@@ -149,6 +152,7 @@ const Applicant = () => {
   >([]);
   const [addedBy, setAddedBy] = useState<SelectedOption[]>([]);
   const [showExportModal, setShowExportModal] = useState(false);
+  const [showConfirmExportModal, setShowConfirmExportModal] = useState(false);
   const [exportOption, setExportOption] = useState("");
   const [exportableFields, setExportableFields] = useState<SelectedOption[]>(
     []
@@ -160,7 +164,9 @@ const Applicant = () => {
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const [filterActiveStatus, setFilterActiveStatus] =
     useState<SelectedOption | null>(null);
- const [filterAppliedRole, setFilterAppliedRole] = useState<SelectedOption[]>([]);
+  const [filterAppliedRole, setFilterAppliedRole] = useState<SelectedOption[]>(
+    []
+  );
 
   const toggleDrawer =
     (anchor: Anchor, open: boolean) =>
@@ -290,7 +296,9 @@ const Applicant = () => {
         params.isActive = filterActiveStatus.value;
       }
       if (filterAppliedRole.length > 0) {
-        params.appliedRole = filterAppliedRole.map(role => role.label).join(",");
+        params.appliedRole = filterAppliedRole
+          .map((role) => role.label)
+          .join(",");
       }
       const searchValue = searchAll?.trim();
       if (searchValue) {
@@ -407,7 +415,7 @@ const Applicant = () => {
         setAppliedRoleOptions(
           appliedRoleData.map((item: any) => ({
             label: item.appliedRole,
-            value: item.appliedRole
+            value: item.appliedRole,
           }))
         );
       } catch (error: any) {
@@ -428,10 +436,9 @@ const Applicant = () => {
       } finally {
         setLoading(false);
       }
-      };
+    };
     fetchAppliedRole();
   }, []);
- 
 
   const handleExperienceChange = (e: React.ChangeEvent<any>) => {
     setExperienceRange(e.target.value as number[]);
@@ -518,7 +525,7 @@ const Applicant = () => {
     setAddedBy(selectedOption);
   };
 
- const resetFilters = () => {
+  const resetFilters = () => {
     setAppliedSkills([]);
     setMultipleSkills([]);
     setStartDate("");
@@ -734,6 +741,7 @@ const Applicant = () => {
   const handleExportExcel = async (source: string) => {
     try {
       toast.info("Preparing file for download...");
+      setModelLoading(true);
 
       const selectedColumns = exportableFields.map((field) => field.value);
       const payload = {
@@ -806,7 +814,9 @@ const Applicant = () => {
       }
 
       if (filterAppliedRole.length > 0) {
-        queryParams.appliedRole = filterAppliedRole.map(role => role.label).join(",");
+        queryParams.appliedRole = filterAppliedRole
+          .map((role) => role.label)
+          .join(",");
       }
 
       if (searchAll?.trim()) {
@@ -828,6 +838,8 @@ const Applicant = () => {
         saveAs(blob, "Main_Applicants_Data.csv");
         setShowExportModal(false);
         setSelectedApplicants([]);
+        setShowConfirmExportModal(false);
+        setModelLoading(false);
         toast.success("File downloaded successfully!");
         return;
       }
@@ -849,10 +861,13 @@ const Applicant = () => {
     } catch (error) {
       console.log("Export error", error);
       setShowExportModal(false);
+      setModelLoading(false);
       setSelectedApplicants([]);
       setExportOption("");
       errorHandle(error);
     } finally {
+      setShowConfirmExportModal(false);
+      setModelLoading(false);
       fetchApplicants(); // optional refresh
     }
   };
@@ -880,6 +895,14 @@ const Applicant = () => {
 
   const handleExportModalShow = () => {
     setShowExportModal(true);
+  };
+
+  const handleConfirmExportModalShow = () => {
+    setShowConfirmExportModal(true);
+  };
+
+  const closeConfirmExportModal = () => {
+    setShowConfirmExportModal(false);
   };
 
   const drawerList = (anchor: Anchor) => (
@@ -951,10 +974,11 @@ const Applicant = () => {
           placeholder="Applied Role"
           value={filterAppliedRole}
           isMulti={true}
-          onChange={(selectedOptions: SelectedOption[]) => setFilterAppliedRole(selectedOptions)}
+          onChange={(selectedOptions: SelectedOption[]) =>
+            setFilterAppliedRole(selectedOptions)
+          }
         />
- 
-        
+
         <BaseSlider
           label="Experience (in years)"
           name="experience"
@@ -1359,7 +1383,7 @@ const Applicant = () => {
                   });
               }
             }}
-             isDisabled={!cell?.row?.original?.isActive}
+            isDisabled={!cell?.row?.original?.isActive}
           />
         ),
         enableColumnFilter: false,
@@ -1395,7 +1419,7 @@ const Applicant = () => {
                   });
               }
             }}
-             isDisabled={!cell?.row?.original?.isActive}
+            isDisabled={!cell?.row?.original?.isActive}
           />
         ),
         enableColumnFilter: false,
@@ -1541,9 +1565,16 @@ const Applicant = () => {
   };
   return (
     <Fragment>
+       <ConfirmModal
+      show={showConfirmExportModal}
+      loader={modelLoading}
+      onYesClick={() => handleExportExcel(exportOption)}
+      onCloseClick={closeConfirmExportModal}
+      flag={false}
+      />
       <BaseModal
         show={showExportModal}
-        onSubmitClick={() => handleExportExcel(exportOption)}
+        onSubmitClick={() => handleConfirmExportModalShow()}
         onCloseClick={() => setShowExportModal(false)}
         loader={false}
         submitButtonText="Export"
@@ -1588,7 +1619,7 @@ const Applicant = () => {
                       type="radio"
                       id={option}
                       name="exportOption"
-                      disabled={exportableFields.length > 0}
+                       disabled={(exportableFields.length > 0 || selectedApplicants.length > 0)}
                       checked={exportOption === option}
                       onChange={() => handleExportOptionChange(option)}
                     />
