@@ -567,7 +567,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     handleChange={(selectedOption: SelectedOption) => {
                       validation.setFieldValue(
                         "currentCompanyDesignation",
-                        selectedOption?.value || "Na"
+                        selectedOption?.value || ""
                       );
                     }}
                     handleBlur={validation.currentCompanyDesignation}
