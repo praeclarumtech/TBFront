@@ -134,7 +134,7 @@ const appConstants = Object.freeze({
     Reports: "Reports",
     EmailVerification: "Email Verification",
     UpdatePassword: "Update Password",
-    Degree: "Degree",
+    Degree: "Qualification",
     ChangePassword: "ChangePassword",
     FindAndReplace: "Find And Replace",
     RoleAndSkill: "Role And Skill",

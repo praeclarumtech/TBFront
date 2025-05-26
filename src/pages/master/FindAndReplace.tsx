@@ -23,7 +23,7 @@ import { ViewAppliedSkills } from "api/skillsApi";
 const { projectTitle, Modules, findAndReplaceOptions } = appConstants;
 
 const FindAndReplace = () => {
-  document.title = Modules.SKill + " | " + projectTitle;
+  document.title = Modules.FindAndReplace + " | " + projectTitle;
   const [findAndReplaceOption, setFindAndReplaceOption] =
     useState<SelectedOption | null>(null);
   const [skillOptions, setSkillOptions] = useState<SelectedOption1[]>([]);
