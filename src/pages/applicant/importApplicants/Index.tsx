@@ -1188,6 +1188,7 @@ function ImportApplicant() {
                         color="primary"
                         className="ml-2 bg-green-900 btn btn-soft-secondary edit-list"
                         onClick={() => handleConfirmExportModalShow(true)}
+                        disabled={applicant?.length === 0}
                       >
                         <i className="ri-drag-move-line me-1" />
                         Move to Applicant
@@ -1197,6 +1198,7 @@ function ImportApplicant() {
                         color="primary"
                         className="ml-2 bg-green-900 btn btn-soft-secondary edit-list"
                         onClick={() => handleExportModalShow()}
+                        disabled={applicant?.length === 0}
                       >
                         <i className="ri-upload-2-line me-1" />
                         Export

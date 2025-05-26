@@ -160,12 +160,6 @@ const ViewModal: React.FC<ViewModalProps> = ({
 
   if (!show) return null;
 
-  const getUniqueSkills = (skills: string[]) => {
-    const normalized = skills.map((s) => s.trim().toLowerCase());
-    const unique = Array.from(new Set(normalized));
-    return unique.map((s) => s.charAt(0).toUpperCase() + s.slice(1)).sort();
-  };
-
   return (
     <Modal
       open={show}
@@ -480,7 +474,7 @@ const ViewModal: React.FC<ViewModalProps> = ({
                               columnGap: "8px",
                             }}
                           >
-                            {getUniqueSkills(formData.appliedSkills).map(
+                            {formData?.appliedSkills.map(
                               (skill) => (
                                 <Tag
                                   color="cyan"
