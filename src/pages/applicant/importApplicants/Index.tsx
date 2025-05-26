@@ -405,8 +405,7 @@ function ImportApplicant() {
             .join("\n ");
 
           toast.success(
-            `Total ${lengthInserted} data are imported ${insertedFiles}` ||
-              "Resume(s) uploaded successfully!"
+            `Total ${lengthInserted} data are imported ${insertedFiles}`
           );
           toast.error(`Total ${lengthError} are not imported ${reasonError}`);
           toast.warning(`Total skipped ${lengthSkipped} \n  ${skipped}`);

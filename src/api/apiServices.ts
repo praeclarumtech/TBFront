@@ -3,21 +3,21 @@ import config from "../config";
 // import { getItem } from "components/constants/enum";
 const { api } = config;
 // const token = getItem('token')
-
-export const authServices = axios.create({
+ 
+const authServices = axios.create({
   baseURL: api.API_URL,
   headers: {
     Accept: "application/json",
   },
 });
-
-export const authInstanceMultipart = axios.create({
+ 
+const authInstanceMultipart = axios.create({
   baseURL: api.API_URL,
   headers: {
     "Content-Type": "multipart/form-data",
   },
 });
-
+ 
 authServices.interceptors.request.use(async (config) => {
   // const token = sessionStorage.getItem("authUser");
   const token = localStorage.getItem("authUser");
@@ -26,7 +26,7 @@ authServices.interceptors.request.use(async (config) => {
   }
   return config;
 });
-
+ 
 authInstanceMultipart.interceptors.request.use(async (config) => {
   // const token = sessionStorage.getItem("authUser");
   const token = localStorage.getItem("authUser");
@@ -35,3 +35,21 @@ authInstanceMultipart.interceptors.request.use(async (config) => {
   }
   return config;
 });
+ 
+authServices.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+ 
+      // Redirect to login
+      window.location.href = "/";
+    }
+    return Promise.reject(error);
+  }
+);
+ 
+export {authServices, authInstanceMultipart};
+ 
+ 
