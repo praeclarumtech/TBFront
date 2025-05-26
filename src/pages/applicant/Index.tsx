@@ -69,7 +69,8 @@ import ActiveModal from "components/BaseComponents/ActiveModal";
 import { activeApplicant, inActiveApplicant } from "api/apiActive";
 import { viewRoleSkill } from "api/roleApi";
 import ConfirmModal from "components/BaseComponents/BaseConfirmModal";
-// import CheckboxMultiSelect from "components/BaseComponents/CheckboxMultiSelect";
+import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
+
 const {
   exportableFieldOption,
   projectTitle,
@@ -748,7 +749,7 @@ const Applicant = () => {
       const payload = {
         ids: selectedApplicants,
         fields: selectedColumns,
-        flag:false,
+        flag: false,
         main: true,
       };
 
@@ -1332,25 +1333,74 @@ const Applicant = () => {
         accessorKey: "totalExperience",
         enableColumnFilter: false,
       },
-      {
-        header: "Status",
-        accessorKey: "isActive",
-        cell: (cell: any) => {
-          const id = cell.row.original._id;
-          const isActive = cell.getValue();
+        {
+        header: "Action",
+        cell: (cell: any) => (
+          <div className="gap-2 hstack">
+            <BaseButton
+              id={`usage-${cell?.row?.original?.id}`}
+              color="primary"
+              className="btn btn-sm btn-soft-success usage-list"
+              onClick={() => handleView(cell.row.original._id, "main")}
+              disabled={!cell?.row?.original?.isActive}
+            >
+              <i className="align-bottom ri-eye-fill" />
+              <ReactTooltip
+                place="bottom"
+                variant="success"
+                content="View"
+                anchorId={`usage-${cell?.row?.original?.id}`}
+              />
+            </BaseButton>
 
-          return (
-            <Switch
-              checked={isActive}
-              onClick={() => handleToggleSwitch(id, isActive)} // ✅ Handler only runs on user interaction
-              checkedChildren={<span>Active</span>}
-              unCheckedChildren={<span>InActive</span>}
-            />
-          );
-        },
-        enableColumnFilter: false,
-      },
+            <BaseButton
+              id={`editMode-${cell?.row?.original?.id}`}
+              className="btn btn-sm btn-soft-secondary edit-list"
+              onClick={() => handleEdit(cell?.row?.original._id)}
+              disabled={!cell?.row?.original?.isActive}
+            >
+              <i className="align-bottom ri-pencil-fill" />
+              <ReactTooltip
+                place="bottom"
+                variant="info"
+                content="Edit"
+                anchorId={`editMode-${cell?.row?.original?.id}`}
+              />
+            </BaseButton>
 
+            <BaseButton
+              id={`delete-${cell?.row?.original?.id}`}
+              className="btn btn-sm btn-soft-danger remove-list"
+              color="danger"
+              onClick={() => handleDeleteSingle(cell.row.original._id)}
+              disabled={!cell?.row?.original?.isActive}
+            >
+              <i className="align-bottom ri-delete-bin-5-fill" />
+              <ReactTooltip
+                place="bottom"
+                variant="error"
+                content="Delete"
+                anchorId={`delete-${cell?.row?.original?._id}`}
+              />
+            </BaseButton>
+
+            <BaseButton
+              id={`email-${cell?.row?.original?.id}`}
+              className="btn btn-sm btn-soft-secondary bg-success edit-list"
+              onClick={() => handleEmail(cell?.row?.original._id)}
+              disabled={!cell?.row?.original?.isActive}
+            >
+              <i className="align-bottom ri-mail-close-line" />
+              <ReactTooltip
+                place="bottom"
+                variant="info"
+                content="Email"
+                anchorId={`email-${cell?.row?.original?.id}`}
+              />
+            </BaseButton>
+          </div>
+        ),
+      },  
       {
         header: "Interview Stage",
         accessorKey: "interviewStage",
@@ -1428,75 +1478,25 @@ const Applicant = () => {
         ),
         enableColumnFilter: false,
       },
-
-      {
-        header: "Action",
-        cell: (cell: any) => (
-          <div className="gap-2 hstack">
-            <BaseButton
-              id={`usage-${cell?.row?.original?.id}`}
-              color="primary"
-              className="btn btn-sm btn-soft-success usage-list"
-              onClick={() => handleView(cell.row.original._id, "main")}
-              disabled={!cell?.row?.original?.isActive}
-            >
-              <i className="align-bottom ri-eye-fill" />
-              <ReactTooltip
-                place="bottom"
-                variant="success"
-                content="View"
-                anchorId={`usage-${cell?.row?.original?.id}`}
-              />
-            </BaseButton>
-
-            <BaseButton
-              id={`editMode-${cell?.row?.original?.id}`}
-              className="btn btn-sm btn-soft-secondary edit-list"
-              onClick={() => handleEdit(cell?.row?.original._id)}
-              disabled={!cell?.row?.original?.isActive}
-            >
-              <i className="align-bottom ri-pencil-fill" />
-              <ReactTooltip
-                place="bottom"
-                variant="info"
-                content="Edit"
-                anchorId={`editMode-${cell?.row?.original?.id}`}
-              />
-            </BaseButton>
-
-            <BaseButton
-              id={`delete-${cell?.row?.original?.id}`}
-              className="btn btn-sm btn-soft-danger remove-list"
-              color="danger"
-              onClick={() => handleDeleteSingle(cell.row.original._id)}
-              disabled={!cell?.row?.original?.isActive}
-            >
-              <i className="align-bottom ri-delete-bin-5-fill" />
-              <ReactTooltip
-                place="bottom"
-                variant="error"
-                content="Delete"
-                anchorId={`delete-${cell?.row?.original?._id}`}
-              />
-            </BaseButton>
-
-            <BaseButton
-              id={`email-${cell?.row?.original?.id}`}
-              className="btn btn-sm btn-soft-secondary bg-success edit-list"
-              onClick={() => handleEmail(cell?.row?.original._id)}
-              disabled={!cell?.row?.original?.isActive}
-            >
-              <i className="align-bottom ri-mail-close-line" />
-              <ReactTooltip
-                place="bottom"
-                variant="info"
-                content="Email"
-                anchorId={`email-${cell?.row?.original?.id}`}
-              />
-            </BaseButton>
-          </div>
-        ),
-      },
+       {
+        header: "Status",
+        accessorKey: "isActive",
+        cell: (cell: any) => {
+          const id = cell.row.original._id;
+          const isActive = cell.getValue();
+ 
+          return (
+            <Switch
+              size="small"
+              checked={isActive}
+              onClick={() => handleToggleSwitch(id, isActive)} // ✅ Handler only runs on user interaction
+              checkedChildren={<CheckOutlined />}
+              unCheckedChildren={<CloseOutlined />}
+            />
+          );
+        },
+        enableColumnFilter: false,
+      }
     ],
     [applicant, selectedApplicants]
   );

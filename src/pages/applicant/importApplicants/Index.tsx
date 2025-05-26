@@ -20,7 +20,6 @@ import {
   updateImportedApplicantsStatus,
 } from "api/applicantApi";
 
-
 import ViewModal from "../ViewApplicant";
 import BaseInput from "components/BaseComponents/BaseInput";
 import DeleteModal from "components/BaseComponents/DeleteModal";
@@ -547,106 +546,13 @@ function ImportApplicant() {
     setShowPopupModal(false);
   };
 
-  // const handleSelectedRowToExport = async (
-  //   filtered: string
-  //   // ids: string[]
-  // ) => {
-  //   try {
-
-  //     if ( 
-  //       selectedFlag
-  //     ) {
-  //       toast.info("Verify the records for move...");
-  //     } else {
-  //       toast.info("Preparing file for download...");
-  //     }
-      
-
-  //     const selectedColumns = exportableFields.map((field) => field.value);
-
-  //     const payload = {
-  //       ids: selectedApplicants,
-  //       fields: selectedColumns,
-  //       flag: selectedFlag
-  //     };
-
-  //     const queryParams = {
-  //       filtered,
-  //     };
-
-  //     await new Promise((resolve) => setTimeout(resolve, 3500));
-
-  //     const response = await ExportImportedApplicant(queryParams, payload);
-
-  //     // Read the Blob content
-  //     const text = await response.text();
-  //     let parsed;
-
-  //     try {
-  //       // Try to parse it as JSON
-  //       parsed = JSON.parse(text);
-
-  //       console.log('parsed------------',parsed);
-        
-
-  //       if (parsed?.statusCode === 409 || parsed?.success === false) {
-  //         setShowExportModal(false);
-  //         setSelectedApplicants([]);
-  //         setExportOption("");
-  //         //   toast.error(parsed.message || "No data available to export");
-
-  //         const messages = parsed?.message;
-  //         if (messages && Array.isArray(messages)) {
-  //           messages.forEach((msg) => {
-  //             toast.error(msg);
-  //           });
-  //         }
-  //         // return;
-  //       }
-  //     } catch {
-
-  //       console.log('Catchhh-------enter');
-        
-  //       // Not JSON = valid CSV
-  //       const blob = new Blob([text], { type: "text/csv" });
-  //       saveAs(blob, "Export_Applicants_data.csv");
-  //       setShowExportModal(false);
-  //       setSelectedApplicants([]);
-  //       toast.success("File downloaded successfully!");
-  //       return;
-  //     }
-
-  //     // If it is JSON, check for an error message
-  //     if (parsed?.statusCode === 404 || parsed?.statusCode === 500 || parsed?.success === false) {
-  //       setShowExportModal(false);
-  //       setSelectedApplicants([]);
-  //       setExportOption("");
-  //       toast.error(parsed.message || "No data available to export");
-  //     } else if (parsed?.success === true && parsed?.statusCode === 410) {
-  //       setShowExportModal(false);
-  //       setSelectedApplicants([]);
-  //       setExportOption("");
-  //       toast.success(parsed.message)
-  //     } else {
-  //       toast.error("Unexpected JSON response during export.");
-  //     }
-  //   } catch (error) {
-  //     setShowExportModal(false);
-  //     setSelectedApplicants([]);
-  //     setExportOption("");
-  //     errorHandle(error);
-  //   } finally {
-  //     fetchApplicants();
-  //   }
-  // };
-
   const handleSelectedRowToExport = async (filtered: string) => {
     const resetExportState = () => {
       setShowExportModal(false);
       setSelectedApplicants([]);
       setExportOption("");
     };
-  
+
     const handleJsonResponse = (parsed: any) => {
       if (parsed?.statusCode === 409 || parsed?.success === false) {
         resetExportState();
@@ -656,37 +562,44 @@ function ImportApplicant() {
         }
         return true;
       }
-  
-      if ([404, 500].includes(parsed?.statusCode) || parsed?.success === false) {
+
+      if (
+        [404, 500].includes(parsed?.statusCode) ||
+        parsed?.success === false
+      ) {
         resetExportState();
         toast.error(parsed?.message || "No data available to export");
         return true;
       }
-  
+
       if (parsed?.success === true && parsed?.statusCode === 410) {
         resetExportState();
         toast.success(parsed.message);
         return true;
       }
-  
+
       toast.error("Unexpected JSON response during export.");
       return false;
     };
-  
+
     try {
-      toast.info(selectedFlag ? "Verify the records for move..." : "Preparing file for download...");
-  
+      toast.info(
+        selectedFlag
+          ? "Verify the records for move..."
+          : "Preparing file for download..."
+      );
+
       const selectedColumns = exportableFields.map((field) => field.value);
       const payload = {
         ids: selectedApplicants,
         fields: selectedColumns,
         flag: selectedFlag,
       };
-  
+
       await new Promise((resolve) => setTimeout(resolve, 3500));
       const response = await ExportImportedApplicant({ filtered }, payload);
       const text = await response.text();
-  
+
       try {
         const parsed = JSON.parse(text);
         if (handleJsonResponse(parsed)) return;
@@ -704,7 +617,6 @@ function ImportApplicant() {
       fetchApplicants();
     }
   };
-  
 
   const handleExportModalShow = () => {
     setShowExportModal(true);
@@ -783,9 +695,73 @@ function ImportApplicant() {
         enableColumnFilter: false,
       },
       {
-        header: "Total Experience",
+        header: "Total Exp",
         accessorKey: "totalExperience",
         enableColumnFilter: false,
+      },
+      {
+        header: "Action",
+        cell: (cell: any) => (
+          <div className="gap-2 hstack">
+            <BaseButton
+              id={`usage-${cell?.row?.original?.id}`}
+              color="primary"
+              className="btn btn-sm btn-soft-success usage-list"
+              onClick={() => handleView(cell.row.original._id, "import")}
+            >
+              <i className="align-bottom ri-eye-fill" />
+              <ReactTooltip
+                place="bottom"
+                variant="success"
+                content="View"
+                anchorId={`usage-${cell?.row?.original?.id}`}
+              />
+            </BaseButton>
+
+            <BaseButton
+              id={`editMode-${cell?.row?.original?.id}`}
+              className="btn btn-sm btn-soft-secondary edit-list"
+              onClick={() => handleEdit(cell?.row?.original._id)}
+            >
+              <i className="align-bottom ri-pencil-fill" />
+              <ReactTooltip
+                place="bottom"
+                variant="info"
+                content="Edit"
+                anchorId={`editMode-${cell?.row?.original?.id}`}
+              />
+            </BaseButton>
+
+            <BaseButton
+              id={`delete-${cell?.row?.original?.id}`}
+              className="btn btn-sm btn-soft-danger remove-list"
+              color="danger"
+              onClick={() => handleDeleteSingle(cell.row.original._id)}
+            >
+              <i className="align-bottom ri-delete-bin-5-fill" />
+              <ReactTooltip
+                place="bottom"
+                variant="error"
+                content="Delete"
+                anchorId={`delete-${cell?.row?.original?._id}`}
+              />
+            </BaseButton>
+
+            <BaseButton
+              id={`email-${cell?.row?.original?.id}`}
+              className="btn btn-sm btn-soft-secondary bg-success edit-list"
+              onClick={() => handleEmail(cell?.row?.original._id)}
+            >
+              <i className="align-bottom ri-mail-close-line" />
+              <ReactTooltip
+                place="bottom"
+                variant="info"
+                content="Email"
+                anchorId={`email-${cell?.row?.original?.id}`}
+              />
+            </BaseButton>
+          </div>
+        ),
       },
       {
         header: "Interview Stage",
@@ -861,71 +837,6 @@ function ImportApplicant() {
         ),
         enableColumnFilter: false,
       },
-
-      {
-        header: "Action",
-        cell: (cell: any) => (
-          <div className="gap-2 hstack">
-            <BaseButton
-              id={`usage-${cell?.row?.original?.id}`}
-              color="primary"
-              className="btn btn-sm btn-soft-success usage-list"
-              onClick={() => handleView(cell.row.original._id, "import")}
-            >
-              <i className="align-bottom ri-eye-fill" />
-              <ReactTooltip
-                place="bottom"
-                variant="success"
-                content="View"
-                anchorId={`usage-${cell?.row?.original?.id}`}
-              />
-            </BaseButton>
-
-            <BaseButton
-              id={`editMode-${cell?.row?.original?.id}`}
-              className="btn btn-sm btn-soft-secondary edit-list"
-              onClick={() => handleEdit(cell?.row?.original._id)}
-            >
-              <i className="align-bottom ri-pencil-fill" />
-              <ReactTooltip
-                place="bottom"
-                variant="info"
-                content="Edit"
-                anchorId={`editMode-${cell?.row?.original?.id}`}
-              />
-            </BaseButton>
-
-            <BaseButton
-              id={`delete-${cell?.row?.original?.id}`}
-              className="btn btn-sm btn-soft-danger remove-list"
-              color="danger"
-              onClick={() => handleDeleteSingle(cell.row.original._id)}
-            >
-              <i className="align-bottom ri-delete-bin-5-fill" />
-              <ReactTooltip
-                place="bottom"
-                variant="error"
-                content="Delete"
-                anchorId={`delete-${cell?.row?.original?._id}`}
-              />
-            </BaseButton>
-
-            <BaseButton
-              id={`email-${cell?.row?.original?.id}`}
-              className="btn btn-sm btn-soft-secondary bg-success edit-list"
-              onClick={() => handleEmail(cell?.row?.original._id)}
-            >
-              <i className="align-bottom ri-mail-close-line" />
-              <ReactTooltip
-                place="bottom"
-                variant="info"
-                content="Email"
-                anchorId={`email-${cell?.row?.original?.id}`}
-              />
-            </BaseButton>
-          </div>
-        ),
-      },
     ],
     [applicant, selectedApplicants]
   );
@@ -998,7 +909,7 @@ function ImportApplicant() {
 
   const handleConfirmExportModalShow = (value: boolean) => {
     setShowConfirmExportModal(true);
-    setSelectedFlag(value)
+    setSelectedFlag(value);
   };
 
   const closeConfirmExportModal = () => {
@@ -1007,12 +918,12 @@ function ImportApplicant() {
 
   return (
     <Fragment>
-       <ConfirmModal
-      show={showConfirmExportModal}
-      loader={modelLoading}
-      onYesClick={() => handleSelectedRowToExport(exportOption)}
-      onCloseClick={closeConfirmExportModal}
-      flag={selectedFlag}
+      <ConfirmModal
+        show={showConfirmExportModal}
+        loader={modelLoading}
+        onYesClick={() => handleSelectedRowToExport(exportOption)}
+        onCloseClick={closeConfirmExportModal}
+        flag={selectedFlag}
       />
 
       <BaseModal
@@ -1062,7 +973,10 @@ function ImportApplicant() {
                       type="radio"
                       id={option}
                       name="exportOption"
-                      disabled={exportableFields.length > 0 || selectedApplicants.length > 0}
+                      disabled={
+                        exportableFields.length > 0 ||
+                        selectedApplicants.length > 0
+                      }
                       checked={exportOption === option}
                       onChange={() => handleExportOptionChange(option)}
                     />
