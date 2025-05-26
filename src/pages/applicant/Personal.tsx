@@ -162,6 +162,12 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
     onSubmit: (data: any) => {
       setLoading(true);
 
+      // Prevent submission if email or phone number is already registered
+      if (emailError || phoneNumberError || whatsappError) {
+        setLoading(false);
+        return;
+      }
+
       const selectedCity = cities.find(
         (city) => city.value === data.currentCity
       );
