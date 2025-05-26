@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Row, Col, Card, Container, CardBody } from "react-bootstrap";
 import { Fragment, useMemo, useState, useEffect } from "react";
-
+ 
 import BaseButton from "components/BaseComponents/BaseButton";
 import TableContainer from "components/BaseComponents/TableContainer";
 import { Tooltip as ReactTooltip } from "react-tooltip";
@@ -18,11 +18,11 @@ import { toast } from "react-toastify";
 import DeleteModal from "components/BaseComponents/DeleteModal";
 import BaseModal from "components/BaseComponents/BaseModal";
 import appConstants from "constants/constant";
-import { getSerialNumber, InputPlaceHolder } from "utils/commonFunctions";
+import { InputPlaceHolder } from "utils/commonFunctions";
 import Skeleton from "react-loading-skeleton";
-
+ 
 const { projectTitle, Modules, handleResponse } = appConstants;
-
+ 
 const AddDegree = () => {
   document.title = Modules.Degree + " | " + projectTitle;
   const [degrees, setDegrees] = useState<any[]>([]);
@@ -40,7 +40,7 @@ const AddDegree = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedDegree, setSelectedDegree] = useState<string[]>([]);
   const [searchAll, setSearchAll] = useState<string>("");
-
+ 
   const fetchDegrees = async () => {
     setIsLoading(true);
     try {
@@ -49,7 +49,7 @@ const AddDegree = () => {
         pageSize: pagination.pageSize,
         limit: 50,
       });
-
+ 
       if (res?.success) {
         setDegrees(res.data.data || []);
         setTotalRecords(res.data?.pagination?.totalRecords || 0);
@@ -63,11 +63,11 @@ const AddDegree = () => {
       setIsLoading(false);
     }
   };
-
+ 
   useEffect(() => {
     fetchDegrees();
   }, [pagination.pageIndex, pagination.pageSize]);
-
+ 
   const handleEdit = (degree: any) => {
     setEditingDegree(degree);
     validation.setValues({
@@ -75,12 +75,12 @@ const AddDegree = () => {
     });
     setShowBaseModal(true);
   };
-
+ 
   const handleDelete = (degree: any) => {
     setDegreeToDelete(degree);
     setShowDeleteModal(true);
   };
-
+ 
   const confirmManyDelete = async (
     degreeToDelete: string[] | undefined | null
   ) => {
@@ -88,12 +88,12 @@ const AddDegree = () => {
       toast.error("No Qualification selected for deletion.");
       return;
     }
-
+ 
     setLoader(true);
-
+ 
     try {
       await deleteMultipleDegree(degreeToDelete);
-
+ 
       toast.success("Selected qualification deleted successfully");
       fetchDegrees();
     } catch (error) {
@@ -105,7 +105,7 @@ const AddDegree = () => {
       setDegreeToDelete([]);
     }
   };
-
+ 
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
       setSelectedDegree(degrees.map((degree) => degree._id)); // Select all
@@ -113,7 +113,7 @@ const AddDegree = () => {
       setSelectedDegree([]); // Unselect all
     }
   };
-
+ 
   const handleSelectDegree = (degreeId: string) => {
     setSelectedDegree(
       (prev) =>
@@ -122,14 +122,14 @@ const AddDegree = () => {
           : [...prev, degreeId] // Add to selected list
     );
   };
-
+ 
   const handleDeleteAll = () => {
     if (selectedDegree.length > 1) {
       setDegreeToDelete([...selectedDegree]);
       setShowDeleteModal(true);
     }
   };
-
+ 
   const columns = useMemo(
     () => [
       {
@@ -152,11 +152,11 @@ const AddDegree = () => {
         ),
         enableColumnFilter: false,
       },
-      {
-        header: "Sr.no",
-        cell: getSerialNumber,
-        enableColumnFilter: false,
-      },
+      // {
+      //   header: "Sr.no",
+      //   cell: getSerialNumber,
+      //   enableColumnFilter: false,
+      // },
       {
         header: "Qualification",
         accessorKey: "degree",
@@ -200,7 +200,7 @@ const AddDegree = () => {
     ],
     [degrees, selectedDegree]
   );
-
+ 
   const validation: any = useFormik({
     enableReinitialize: true,
     initialValues: {
@@ -212,18 +212,18 @@ const AddDegree = () => {
         .max(50, "Qualification name must be between 1 to 50 characters.")
         .required("Qualification name is required"),
     }),
-
+ 
     onSubmit: (values) => {
       setLoader(true);
       const payload = {
         _id: editingDegree?._id,
         degree: values.degreeName,
       };
-
+ 
       const apiCall = editingDegree
         ? updateDegree(payload)
         : createDegree(payload);
-
+ 
       apiCall
         .then((res: { success: any; message: any }) => {
           if (res?.success) {
@@ -233,7 +233,7 @@ const AddDegree = () => {
                   editingDegree ? "updated" : "added"
                 } successfully`
             );
-
+ 
             setEditingDegree(null);
             validation.resetForm();
             fetchDegrees();
@@ -255,44 +255,44 @@ const AddDegree = () => {
         });
     },
   });
-
+ 
   const formTitle = editingDegree ? "Qualification" : "Qualification";
   const submitButtonText = "Add";
-
+ 
   const handleOpenBaseModal = () => {
     setEditingDegree(null);
     validation.resetForm();
     setShowBaseModal(true);
   };
-
+ 
   const handleSubmit = () => {
     validation.handleSubmit();
   };
-
+ 
   const handleCloseClick = () => {
     setShowBaseModal(false);
     setEditingDegree(null);
     validation.resetForm();
   };
-
+ 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchAll(event.target.value);
   };
-
+ 
   const filteredDegree = degrees.filter((fDegree) =>
     fDegree.degree.toLowerCase().includes(searchAll.toLowerCase())
   );
-
+ 
   const closeDeleteModal = () => {
     setShowDeleteModal(false);
     setSelectedDegree([]);
   };
-
+ 
   const handleDeleteClick = () => {
     console.log(degreeToDelete);
     confirmManyDelete(degreeToDelete);
   };
-
+ 
   return (
     <Fragment>
       <DeleteModal
@@ -356,7 +356,7 @@ const AddDegree = () => {
                       </div>
                     </Col>
                   </Row>
-
+ 
                   <BaseModal
                     show={showBaseModal}
                     setShowBaseModal={setShowBaseModal}
@@ -397,7 +397,7 @@ const AddDegree = () => {
                       {isLoading ? (
                         <div className="py-4 text-center">
                           <Skeleton count={1} className="mb-5 min-h-10" />
-
+ 
                           <Skeleton count={5} />
                         </div>
                       ) : (
@@ -438,5 +438,7 @@ const AddDegree = () => {
     </Fragment>
   );
 };
-
+ 
 export default AddDegree;
+ 
+ 

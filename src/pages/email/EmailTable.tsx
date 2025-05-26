@@ -64,6 +64,8 @@ const EmailTable = () => {
   });
   const [multipleEmailDelete, setMultipleEmailDelete] = useState<string[]>([]);
 
+  const today = new Date().toISOString().split('T')[0];  
+
   const handleView = (id: string) => {
     setSelectedApplicantId(id);
     setShowModal(true);
@@ -393,6 +395,7 @@ const EmailTable = () => {
             handleDateChange(e, true)
           }
           value={startDate || ""}
+          max={today}
         />
         <BaseInput
           label="End Date"
@@ -403,6 +406,7 @@ const EmailTable = () => {
             handleDateChange(e, false)
           }
           value={endDate || ""}
+          max={today}
         />
       </List>
 
