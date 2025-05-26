@@ -33,7 +33,7 @@ import { MultiSelect } from "components/BaseComponents/BaseSelect";
 const { projectTitle, Modules, handleResponse } = appConstants;
  
 const UpdateSkill = () => {
-  document.title = Modules.SKill + " | " + projectTitle;
+  document.title = Modules.RoleAndSkill + " | " + projectTitle;
   const [roleSkill, setRoleSkills] = useState<any[]>([]);
   const [skillOptions, setSkillOptions] = useState<SelectedOption1[]>([]);
   const [editingSkill, setEditingSkill] = useState<any>(null);

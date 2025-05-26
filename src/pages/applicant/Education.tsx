@@ -158,7 +158,7 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                       }
                       touched={validation.touched.qualification}
                       error={validation.errors.qualification}
-                      isRequired={true}
+                      isRequired={false}
                     />
                   </Col>
 
@@ -180,7 +180,7 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                       touched={validation.touched.specialization}
                       error={validation.errors.specialization}
                       passwordToggle={false}
-                      isRequired={true}
+                      isRequired={false}
                     />
                   </Col>
                   <Col xs={12} md={6} lg={4}>
@@ -228,7 +228,7 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                       }
                       touched={validation.touched.passingYear}
                       error={validation.errors.passingYear}
-                      isRequired={true}
+                      isRequired={false}
                     />
                   </Col>
 

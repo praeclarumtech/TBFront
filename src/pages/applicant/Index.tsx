@@ -748,6 +748,7 @@ const Applicant = () => {
       const payload = {
         ids: selectedApplicants,
         fields: selectedColumns,
+        flag:false,
         main: true,
       };
 
