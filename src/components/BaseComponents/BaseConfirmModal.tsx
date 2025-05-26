@@ -14,7 +14,7 @@ const ConfirmModal: React.FC<any> = ({
       <ModalBody className="px-4 py-4 text-center">
         <p className="text-muted mb-3">
           <h5>
-            {!flag ? " Are you sure you want to export records?" : "Records updated! Do you want to go to the Applicants page now?"}
+            {!flag ? " Are you sure you want to export records?" : "Are you sure you want to move the records to the Applicants page?"}
           </h5>
         </p>
         <div className="d-flex justify-content-center gap-3 mt-4">
