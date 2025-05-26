@@ -493,7 +493,7 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
                       error={validation.errors.dateOfBirth}
                       passwordToggle={false}
                       min={minDateOfBirth}
-                      isRequired={true}
+                      isRequired={false}
                     />
                   </Col>
 
@@ -516,7 +516,7 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
                       }
                       touched={validation.touched.gender}
                       error={validation.errors.gender}
-                      isRequired={true}
+                      isRequired={false}
                     />
                   </Col>
                   <Col xs={12} md={6} lg={4}>
@@ -561,7 +561,7 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
                       }
                       touched={validation.touched.country}
                       error={validation.errors.country}
-                      isRequired={true}
+                      isRequired={false}
                     />
                   </Col>
 
@@ -583,7 +583,7 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
                       }
                       touched={validation.touched.state}
                       error={validation.errors.state}
-                      isRequired={true}
+                      isRequired={false}
                     />
                   </Col>
 
@@ -610,7 +610,7 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
                       }
                       touched={validation.touched.currentCity}
                       error={validation.errors.currentCity}
-                      isRequired={true}
+                      isRequired={false}
                     />
                   </Col>
 
@@ -629,7 +629,7 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
                       multiline
                       rows={2}
                       cols={50}
-                      isRequired={true}
+                      isRequired={false}
                     />
                   </Col>
 
