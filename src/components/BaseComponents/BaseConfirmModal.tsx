@@ -12,11 +12,13 @@ const ConfirmModal: React.FC<any> = ({
   return (
     <Modal fade={true} isOpen={show} toggle={onCloseClick} centered={true}>
       <ModalBody className="px-4 py-4 text-center">
-        <p className="text-muted mb-3">
-          <h5>
-            {!flag ? " Are you sure you want to export records?" : "Are you sure you want to move the records to the Applicants page?"}
-          </h5>
-        </p>
+        <h5>
+          <p className="text-muted mb-3">
+            {!flag
+              ? " Are you sure you want to export records?"
+              : "Are you sure you want to move the records to the Applicants page?"}
+          </p>
+        </h5>
         <div className="d-flex justify-content-center gap-3 mt-4">
           <Button color="secondary" onClick={onCloseClick}>
             No
