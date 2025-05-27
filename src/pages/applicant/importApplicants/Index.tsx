@@ -553,12 +553,9 @@ function ImportApplicant() {
     };
 
     const handleJsonResponse = (parsed: any) => {
-      if (parsed?.statusCode === 409 || parsed?.success === false) {
+      if (parsed?.statusCode === 409 && parsed?.success === false) {
         resetExportState();
-        const messages = parsed?.message;
-        if (Array.isArray(messages)) {
-          messages.forEach((msg) => toast.error(msg));
-        }
+        toast.error(parsed.message);
         return true;
       }
 
@@ -572,6 +569,12 @@ function ImportApplicant() {
       }
 
       if (parsed?.success === true && parsed?.statusCode === 410) {
+        resetExportState();
+        toast.success(parsed.message);
+        return true;
+      }
+
+      if (parsed?.success === true && parsed?.statusCode === 206) {
         resetExportState();
         toast.success(parsed.message);
         return true;

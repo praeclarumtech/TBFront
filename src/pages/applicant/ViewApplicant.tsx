@@ -428,7 +428,7 @@ const ViewModal: React.FC<ViewModalProps> = ({
                 />
                 {formData.meta && Object.keys(formData.meta).length > 0 && (
                   <DetailsRow
-                    label="Skill Exp"
+                    label="Relevant Skills Experience"
                     value={
                       <div className="flex flex-wrap gap-2">
                         {Object.entries(formData.meta).map(([key, value]) => (
@@ -440,27 +440,6 @@ const ViewModal: React.FC<ViewModalProps> = ({
                     }
                   />
                 )}
-
-                {/* <Row gutter={[16, 16]}>
-                  <Col span={24}>
-                    <DetailsRow
-                      label="Skills"
-                      value={
-                        formData.appliedSkills.length > 0 ? (
-                          <div className="flex flex-wrap py-1">
-                            {formData.appliedSkills.map((skill) => (
-                              <Tag color="cyan" key={skill}>
-                                {skill}
-                              </Tag>
-                            ))}
-                          </div>
-                        ) : (
-                          "-"
-                        )
-                      }
-                    />
-                  </Col>
-                </Row> */}
                 <Row gutter={[16, 16]}>
                   <Col xs={24} sm={24} md={24} lg={24} xl={24}>
                     <DetailsRow

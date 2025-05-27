@@ -245,15 +245,13 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
 
       if (response?.data?.exists) {
         if (field === "email") {
-          setEmailError(response?.message || "This email is already in use.");
+          setEmailError(
+            response?.message || "This email is already registered."
+          );
         } else if (field === "phoneNumber") {
-          setPhoneNumberError(
-            response?.message || "This phone number is already in use."
-          );
+          setPhoneNumberError("This phone number is already registered.");
         } else if (field === "whatsappNumber") {
-          setWhatsappError(
-            response?.message || "This WhatsApp number is already in use."
-          );
+          setWhatsappError("This whatsApp number is already registered.");
         }
       } else {
         if (field === "email") {
