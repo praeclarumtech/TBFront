@@ -132,7 +132,7 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
     }
   }, [cities, states, country]);
 
-  const minDateOfBirth = moment().subtract(15, "years").format("YYYY-MM-DD");
+  const minDateOfBirth = moment().subtract(60, "years").format("YYYY-MM-DD");
   const formattedDateOfBirth = initialValues.dateOfBirth
     ? moment(initialValues.dateOfBirth).format("YYYY-MM-DD")
     : "";

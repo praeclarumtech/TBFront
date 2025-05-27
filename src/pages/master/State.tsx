@@ -481,7 +481,7 @@ const State = () => {
                           placeholder="Country"
                           value={countryOptions.find(
                             (option) =>
-                              option.value === validation.values.country_id
+                              option.id === validation.values.country_id
                           )}
                           handleChange={(selectedOption) => {
                             validation.setFieldValue(

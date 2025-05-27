@@ -15,9 +15,9 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
         <div className="mt-2 text-center">
           <i className="ri-delete-bin-line display-5 text-danger"></i>
           <div className="pt-2 mx-4 mt-4 fs-15 mx-sm-5">
-            <h4>Are you sure ?</h4>
-            <p className="mx-4 mb-0 text-muted">
-              Are you sure you want to remove this record{" "}
+              {/* <h4>Are you sure ?</h4> */}
+            <p className="mx-4 mb-0 text-dark">
+              <strong>Are you sure you want to remove this record</strong>{" "}
               {recordId ? recordId : ""} ?
             </p>
           </div>
