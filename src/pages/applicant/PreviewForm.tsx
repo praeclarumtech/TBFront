@@ -300,7 +300,7 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
               </Typography>
               <Typography>
                 <span className="  !text-black pt-3">
-                  {capitalizeWords(data?.appliedRole)} Skills Experience:
+                  Relevant Skills Experience:
                 </span>
               </Typography>
               {(data.roleSkills && data.roleSkills.length > 0 ? data.roleSkills : Object.keys(data.meta || {})).map((skill: string) => (
