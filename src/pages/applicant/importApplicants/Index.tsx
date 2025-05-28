@@ -18,35 +18,30 @@ import {
   deleteImportedMultipleApplicant,
   updateImportedApplicantsStage,
   updateImportedApplicantsStatus,
+  duplicateApplicants,
 } from "api/applicantApi";
 
 import ViewModal from "../ViewApplicant";
 import BaseInput from "components/BaseComponents/BaseInput";
 import DeleteModal from "components/BaseComponents/DeleteModal";
 
-import {
-  // City,
-  SelectedOption,
-  // SelectedOption1,
-} from "interfaces/applicant.interface";
+import { SelectedOption } from "interfaces/applicant.interface";
 import {
   dynamicFind,
   errorHandle,
   InputPlaceHolder,
 } from "utils/commonFunctions";
 import appConstants from "constants/constant";
-// import BaseSlider from "components/BaseComponents/BaseSlider";
 import Skeleton from "react-loading-skeleton";
 import saveAs from "file-saver";
 import BasePopUpModal from "components/BaseComponents/BasePopUpModal";
-// import { ViewAppliedSkills } from "api/skillsApi";
 import { FaExclamationTriangle } from "react-icons/fa";
 import debounce from "lodash.debounce";
 
-// import { Close } from "@mui/icons-material";
 import BaseModal from "components/BaseComponents/BaseModal";
 import CheckboxMultiSelect from "components/BaseComponents/CheckboxMultiSelect";
 import ConfirmModal from "components/BaseComponents/BaseConfirmModal";
+import DrawerData from "./Drawer";
 
 interface ValueToEdit {
   label: string;
@@ -111,6 +106,34 @@ function ImportApplicant() {
   const [modelLoading, setModelLoading] = useState<boolean>(false);
   const [showConfirmExportModal, setShowConfirmExportModal] = useState(false);
   const [selectedFlag, setSelectedFlag] = useState<boolean | null>(null);
+  const [duplicateRecords, setDuplicateRecords] = useState<any>([]);
+
+  const fetchDuplicateData = async () => {
+    const params: {
+      page: number;
+      pageSize: number;
+      limit: number;
+    } = {
+      page: 1,
+      pageSize: 1,
+      limit: 50,
+    };
+
+    duplicateApplicants(params)
+      .then((res) => {
+        if (res?.statusCode === 200 || res?.success === true) {
+          setDuplicateRecords(res?.data?.item);
+        }
+      })
+      .catch((error) => {
+        console.log("error", error);
+      })
+      .finally(() => {});
+  };
+
+  useEffect(() => {
+    fetchDuplicateData();
+  }, []);
 
   const fetchApplicants = async () => {
     setTableLoader(true);
@@ -410,7 +433,6 @@ function ImportApplicant() {
           toast.error(`Total ${lengthError} are not imported ${reasonError}`);
           toast.warning(`Total skipped ${lengthSkipped} \n  ${skipped}`);
         }
-        // toast.success(response.message || "Resume(s) uploaded successfully!");
         await fetchApplicants();
       } else {
         throw new Error(response?.message || "Upload failed");
@@ -429,6 +451,7 @@ function ImportApplicant() {
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
+      fetchDuplicateData();
     }
   };
 
@@ -484,6 +507,7 @@ function ImportApplicant() {
       } else if (!response?.success && response.statusCode === 409) {
         setShowPopupModal(true);
         toast.error(response.message || "Import failed");
+        fetchDuplicateData();
       }
     } catch (error: any) {
       toast.error(error?.message || "Failed to import file");
@@ -495,6 +519,7 @@ function ImportApplicant() {
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
+      fetchDuplicateData();
     }
   };
 
@@ -1037,8 +1062,21 @@ function ImportApplicant() {
             <Card className="my-3 mb-3">
               <CardBody>
                 <div className="container">
-                  <div className="row align-items-end">
-                    <div className="flex-wrap gap-2 col-12 col-md-12 d-flex justify-content-end">
+                  <div
+                    className={
+                      duplicateRecords?.length > 0
+                        ? "d-flex justify-content-between align-items-center"
+                        : "row align-items-end"
+                    }
+                  >
+                    {duplicateRecords?.length > 0 && (
+                      <DrawerData
+                        duplicateRecords={duplicateRecords}
+                        fetchDuplicateData={fetchDuplicateData}
+                      />
+                    )}
+
+                    <div className="flex-wrap gap-2  d-flex justify-content-end">
                       {/* <div> */}
                       <input
                         id="search-bar-0"
@@ -1158,15 +1196,9 @@ function ImportApplicant() {
                           </div>
                         )}
                       </BaseButton>
-
-                      {/* <BaseButton color="success" onClick={handleNavigate}>
-                        <i className="align-bottom ri-add-line me-1" />
-                        Add
-                      </BaseButton> */}
                     </div>
                   </div>
                 </div>
-                {/* </div> */}
               </CardBody>
             </Card>
           </div>

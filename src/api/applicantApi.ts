@@ -1,15 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {
-  DELETE_IMPORTED_APPLICANT,
-  STATE,
-  UPDATE_IMPORTED_APPLICANT,
-  UPDATE_IMPORTED_APPLICANTS_STATUS,
-} from "./apiRoutes";
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// import { toast } from "react-toastify";
-// import { errorHandle } from "utils/commonFunctions";
 // // @ts-ignore
-// import qs from "qs";
 import {
   LIST_APPLICANT,
   CREATE_APPLICANT,
@@ -30,6 +21,12 @@ import {
   EXPORT_IMPORT_APPLICANT,
   VIEW_IMPORTED_APPLICANT,
   DELETE_IMPORTED_MULTIPLE_APPLICANT,
+  DELETE_IMPORTED_APPLICANT,
+  DELETE_DUPLICATE_RECORDS,
+  DUPLICATE_RECORDS,
+  STATE,
+  UPDATE_IMPORTED_APPLICANT,
+  UPDATE_IMPORTED_APPLICANTS_STATUS,
 } from "./apiRoutes";
 import { authServices } from "./apiServices";
 
@@ -61,11 +58,6 @@ export const listOfApplicants = async (params: {
   searchSkills?: string;
   isAcrive?: boolean;
 }) => {
-  // If applicantName or searchSkills are present, remove pagination and limit parameters
-  // if (params.search) {
-  //   const { limit, ...searchParams } = params;
-  //   params = { ...searchParams };
-  // }
 
   const response = await authServices.get(`${LIST_APPLICANT}`, {
     params,
@@ -84,7 +76,6 @@ export const CheckExistingApplicant = async (params: {
   phoneNumber?: number;
   whatsappNumber?: number;
 }) => {
-  // try {
   const response = await authServices.get(`${EXISTING_APPLICANT}`, {
     params,
   });
@@ -374,3 +365,18 @@ export const deleteImportedMultipleApplicant = async (
   );
   return response?.data;
 };
+
+export const duplicateApplicants = async (data?: object) => {
+  const response = await authServices.get(`${DUPLICATE_RECORDS}`, {
+    data,
+  });
+  return response?.data;
+};
+ 
+export const deleteDuplicateApplicants = async (data?: object) => {
+  const response = await authServices.delete(`${DELETE_DUPLICATE_RECORDS}`, {
+    data,
+  });
+  return response?.data;
+};
+ 
