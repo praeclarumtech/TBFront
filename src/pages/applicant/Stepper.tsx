@@ -333,9 +333,16 @@ const StepperForm = () => {
                 activeStep={activeStep}
                 orientation={isMobile ? "vertical" : "horizontal"}
               >
-                {steps.map((label) => (
+                {steps.map((label, index) => (
                   <Step key={label}>
-                    <StepLabel>{label}</StepLabel>
+                    <StepLabel
+                      onClick={
+                        isEditMode ? () => setActiveStep(index) : undefined
+                      }
+                      style={isEditMode ? { cursor: "pointer" } : {}}
+                    >
+                      {label}
+                    </StepLabel>
                   </Step>
                 ))}
               </Stepper>

@@ -24,6 +24,8 @@ export const DELETE_IMPORTED_MULTIPLE_APPLICANT =
 export const UPDATE_APPLICANT_STATUS = "applicants/update/status";
 export const UPDATE_APPLICANT_STAGE = "applicants/update/status";
 export const FILTER_APPLICANT = "applicants/viewApplicant/?";
+export const DUPLICATE_RECORDS = 'applicants/duplicate-record';
+export const DELETE_DUPLICATE_RECORDS = 'applicants/delete/duplicate-record';
 
 export const COUNTRY = "country";
 export const STATE = "state";
