@@ -1567,6 +1567,13 @@ const Applicant = () => {
     setExportOption(option);
     setExportableFields([]);
   };
+
+   const handlecancelClose = () => {
+    setShowExportModal(false);
+    setExportOption("");
+    setExportableFields([]);
+  }
+ 
   return (
     <Fragment>
        <ConfirmModal
@@ -1579,7 +1586,7 @@ const Applicant = () => {
       <BaseModal
         show={showExportModal}
         onSubmitClick={() => handleConfirmExportModalShow()}
-        onCloseClick={() => setShowExportModal(false)}
+        onCloseClick={handlecancelClose}
         loader={false}
         submitButtonText="Export"
         closeButtonText="Close"

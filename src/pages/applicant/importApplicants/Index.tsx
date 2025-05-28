@@ -414,9 +414,7 @@ function ImportApplicant() {
 
       if (response?.success) {
         if (response?.data?.summary?.insertedApplicants > 0) {
-          toast.success(
-            response.message
-          );
+          toast.success(response.message);
         }
         await fetchApplicants();
       } else {
@@ -928,6 +926,12 @@ function ImportApplicant() {
     setShowConfirmExportModal(false);
   };
 
+  const handlecancelClose = () => {
+    setShowExportModal(false);
+    setExportOption("");
+    setExportableFields([]);
+  };
+
   return (
     <Fragment>
       <ConfirmModal
@@ -941,7 +945,7 @@ function ImportApplicant() {
       <BaseModal
         show={showExportModal}
         onSubmitClick={() => handleConfirmExportModalShow(false)}
-        onCloseClick={() => setShowExportModal(false)}
+        onCloseClick={handlecancelClose}
         loader={false}
         submitButtonText="Export"
         closeButtonText="Close"
