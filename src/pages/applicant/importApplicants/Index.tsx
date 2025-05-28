@@ -413,25 +413,10 @@ function ImportApplicant() {
       });
 
       if (response?.success) {
-        if (response?.data?.summary?.insertedApplicants >= 1) {
-          const lengthInserted = response.data.summary.insertedApplicants;
-          const lengthSkipped = response.data.summary.skippedApplicants;
-          const lengthError = response.data.summary.erroredFiles;
-          const insertedFiles = response.data.details.inserted
-            .map((item: any) => item.file + " " + item.email)
-            .join(" \n");
-          const skipped = response.data.details.skipped
-            .map((item: any) => item.file + " " + item.reason)
-            .join("\n ");
-          const reasonError = response.data.details.errors
-            .map((item: any) => item.file + " " + item.error)
-            .join("\n ");
-
+        if (response?.data?.summary?.insertedApplicants > 0) {
           toast.success(
-            `Total ${lengthInserted} data are imported ${insertedFiles}`
+            response.message
           );
-          toast.error(`Total ${lengthError} are not imported ${reasonError}`);
-          toast.warning(`Total skipped ${lengthSkipped} \n  ${skipped}`);
         }
         await fetchApplicants();
       } else {
