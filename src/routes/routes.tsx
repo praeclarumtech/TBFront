@@ -19,11 +19,12 @@ import UpdateSkill from "pages/master/RoleAndSkill";
 import FindAndReplace from "pages/master/FindAndReplace";
 import AddEmailTemplate from "pages/master/EmailTemplate";
 import AddDesignation from "pages/master/Designation";
-
+ 
 import Country from "pages/master/CityStateCountry";
 import State from "pages/master/State";
 import City from "pages/master/City";
-
+import QrCodeStepperForm from "pages/applicant/QrCode/QrCodeStepper"
+ 
 const routes = {
   ROOT: {
     path: "/",
@@ -90,7 +91,19 @@ const routes = {
       },
     ],
   },
-
+ 
+  APPLICANT_ADD_QR_CODE: {
+    title: "Applicant Add QR Code",
+    path: "api/applicants/applicant-add-qr-code",
+    element: QrCodeStepperForm,
+  },
+ 
+  APPLICANT_EDIT_QR_CODE: {
+    title: "Applicant Edit QR Code",
+    path: "api/applicants/applicant-edit-qr-code/:id",
+    element: QrCodeStepperForm,
+  },
+ 
   EMAIL: {
     title: "Email",
     path: "/email",
@@ -180,7 +193,8 @@ const routes = {
     element: LayoutVertical,
   },
 };
-
+ 
 Object.freeze(routes);
-
+ 
 export default routes;
+ 

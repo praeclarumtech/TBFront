@@ -34,7 +34,8 @@ import PrivateRoute from "./PrivateRoute";
 import Country from "pages/master/CityStateCountry";
 import State from "pages/master/State";
 import City from "pages/master/City";
-
+import QrCodeStepperForm from "pages/applicant/qrCode/QrCodeStepper";
+ 
 const RenderRouter: React.FC = () => {
   const {
     ROOT,
@@ -48,8 +49,10 @@ const RenderRouter: React.FC = () => {
     REPORT,
     MASTER,
     CHANGE_PASSWORD,
+    APPLICANT_ADD_QR_CODE,
+    APPLICANT_EDIT_QR_CODE,
   } = routes;
-
+ 
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path={ROOT.path} errorElement={<RootBoundary />}>
@@ -58,7 +61,10 @@ const RenderRouter: React.FC = () => {
         <Route path={FORGET_PASSWORD.path} element={<ForgetPassword />} />
         <Route path={VERIFY_EMAIL.path} element={<EmailVerification />} />
         <Route path={UPDATE_PASSWORD.path} element={<UpdatePassword />} />
-
+ 
+        <Route path={APPLICANT_ADD_QR_CODE.path} element={<QrCodeStepperForm />} />
+        <Route path={APPLICANT_EDIT_QR_CODE.path} element={<QrCodeStepperForm />} />
+ 
         <Route element={<PrivateRoute component={() => <RootLayout />} />}>
           <Route
             path={DASHBOARD.path}
@@ -192,7 +198,7 @@ const RenderRouter: React.FC = () => {
                 // </RootLayout>
               }
             />
-
+ 
             <Route
               path="email-template"
               element={
@@ -209,7 +215,7 @@ const RenderRouter: React.FC = () => {
                 // </RootLayout>
               }
             />
-
+ 
             <Route
               path="country"
               element={
@@ -239,8 +245,9 @@ const RenderRouter: React.FC = () => {
       </Route>
     )
   );
-
+ 
   return <RouterProvider router={router} />;
 };
-
+ 
 export default RenderRouter;
+ 
