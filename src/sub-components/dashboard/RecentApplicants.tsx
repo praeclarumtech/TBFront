@@ -47,6 +47,9 @@ const RecentApplicants = ({
     try {
       toast.info("Preparing file for download...");
       await new Promise((resolve) => setTimeout(resolve, 3500));
+
+      const decodedSkills = filtered.map((skill) => decodeURIComponent(skill));
+
       const response = await ExportSkilledApplicant(
         { skills: filtered },
         { ids: [], fields: [], main: true }
@@ -58,7 +61,8 @@ const RecentApplicants = ({
       }
 
       const blob = new Blob([response], { type: "text/csv" });
-      saveAs(blob, `${filtered.join("-")}-applicants.csv`);
+      const safeFileName = decodedSkills.join("-").replace(/[\\/\\?%*:|"<>]/g, "");
+       saveAs(blob, `${safeFileName}-applicants.csv`);
 
       toast.success("File downloaded successfully!");
     } catch (error) {
