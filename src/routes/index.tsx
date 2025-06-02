@@ -35,6 +35,8 @@ import Country from "pages/master/CityStateCountry";
 import State from "pages/master/State";
 import City from "pages/master/City";
 import QrCodeStepperForm from "pages/applicant/qrCode/QrCodeStepper";
+import QrFrom from "pages/applicant/QrCode/QrFrom";
+import SuccessPage from "pages/applicant/QrCode/Success";
  
 const RenderRouter: React.FC = () => {
   const {
@@ -51,6 +53,7 @@ const RenderRouter: React.FC = () => {
     CHANGE_PASSWORD,
     APPLICANT_ADD_QR_CODE,
     APPLICANT_EDIT_QR_CODE,
+    APPLICANT_SUCCESS
   } = routes;
  
   const router = createBrowserRouter(
@@ -61,9 +64,12 @@ const RenderRouter: React.FC = () => {
         <Route path={FORGET_PASSWORD.path} element={<ForgetPassword />} />
         <Route path={VERIFY_EMAIL.path} element={<EmailVerification />} />
         <Route path={UPDATE_PASSWORD.path} element={<UpdatePassword />} />
+
+
+         <Route path={APPLICANT_ADD_QR_CODE.path} element={<QrFrom />} />
+        <Route path={APPLICANT_EDIT_QR_CODE.path} element={<QrFrom />} />
+        <Route path={APPLICANT_SUCCESS.path} element={<SuccessPage />} />
  
-        <Route path={APPLICANT_ADD_QR_CODE.path} element={<QrCodeStepperForm />} />
-        <Route path={APPLICANT_EDIT_QR_CODE.path} element={<QrCodeStepperForm />} />
  
         <Route element={<PrivateRoute component={() => <RootLayout />} />}>
           <Route

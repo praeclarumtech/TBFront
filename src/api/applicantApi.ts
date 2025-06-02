@@ -27,6 +27,8 @@ import {
   STATE,
   UPDATE_IMPORTED_APPLICANT,
   UPDATE_IMPORTED_APPLICANTS_STATUS,
+  CREATE_APPLICANT_QR,
+  UPDATE_APPLICANT_QR,
 } from "./apiRoutes";
 import { authServices } from "./apiServices";
 
@@ -377,6 +379,19 @@ export const deleteDuplicateApplicants = async (data?: object) => {
   const response = await authServices.delete(`${DELETE_DUPLICATE_RECORDS}`, {
     data,
   });
+  return response?.data;
+};
+
+export const createApplicantQR = async (data?: object) => {
+  const response = await authServices.post(`${CREATE_APPLICANT_QR}`, data);
+  return response?.data;
+};
+ 
+export const updateApplicantQR = async (
+  data: object,
+  id: string | undefined | null
+) => {
+  const response = await authServices.put(`${UPDATE_APPLICANT_QR}/${id}`, data);
   return response?.data;
 };
  
