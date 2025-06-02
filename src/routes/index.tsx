@@ -12,7 +12,6 @@ import ForgetPassword from "pages/auth/ForgetPassword";
 import SignUp from "pages/auth/SignUp";
 import Dashboard from "pages/dashboard/Index";
 import RootLayout from "layouts/RootLayout";
-// import ApplicantTables from "pages/Tables/ApplicantsTables";
 import Report from "pages/report/Report";
 import StepperForm from "pages/applicant/Stepper";
 import EmailTable from "pages/email/EmailTable";
@@ -34,10 +33,9 @@ import PrivateRoute from "./PrivateRoute";
 import Country from "pages/master/CityStateCountry";
 import State from "pages/master/State";
 import City from "pages/master/City";
-import QrCodeStepperForm from "pages/applicant/qrCode/QrCodeStepper";
 import QrFrom from "pages/applicant/QrCode/QrFrom";
 import SuccessPage from "pages/applicant/QrCode/Success";
- 
+
 const RenderRouter: React.FC = () => {
   const {
     ROOT,
@@ -53,9 +51,9 @@ const RenderRouter: React.FC = () => {
     CHANGE_PASSWORD,
     APPLICANT_ADD_QR_CODE,
     APPLICANT_EDIT_QR_CODE,
-    APPLICANT_SUCCESS
+    APPLICANT_SUCCESS,
   } = routes;
- 
+
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path={ROOT.path} errorElement={<RootBoundary />}>
@@ -65,195 +63,58 @@ const RenderRouter: React.FC = () => {
         <Route path={VERIFY_EMAIL.path} element={<EmailVerification />} />
         <Route path={UPDATE_PASSWORD.path} element={<UpdatePassword />} />
 
-
-         <Route path={APPLICANT_ADD_QR_CODE.path} element={<QrFrom />} />
+        <Route path={APPLICANT_ADD_QR_CODE.path} element={<QrFrom />} />
         <Route path={APPLICANT_EDIT_QR_CODE.path} element={<QrFrom />} />
         <Route path={APPLICANT_SUCCESS.path} element={<SuccessPage />} />
- 
- 
+
         <Route element={<PrivateRoute component={() => <RootLayout />} />}>
           <Route
             path={DASHBOARD.path}
-            element={
-              // <RootLayout>{<Dashboard />}</RootLayout>
-              <PrivateRoute
-                component={() => (
-                  // <RootLayout>
-                  <Dashboard />
-                  // </RootLayout>
-                )}
-              />
-            }
+            element={<PrivateRoute component={() => <Dashboard />} />}
           />
-          <Route
-            path={APPLICANTS.path}
-            element={
-              // <RootLayout>
-              <Applicant />
-              // </RootLayout>
-            }
-          />
+          <Route path={APPLICANTS.path} element={<Applicant />} />
           <Route
             path={"import-applicants"}
-            element={
-              // <RootLayout>
-              <ImportApplicantTables />
-              // </RootLayout>
-            }
+            element={<ImportApplicantTables />}
           />
-          <Route
-            path={"userProfile"}
-            element={
-              // <RootLayout>
-              <Profile />
-              // </RootLayout>
-            }
-          />
+          <Route path={"userProfile"} element={<Profile />} />
           <Route
             path={CHANGE_PASSWORD.path}
             element={
-              // <RootLayout>
               <ChangePassword showModal={true} setShowModal={() => {}} />
-              // </RootLayout>
             }
           />
           <Route path={APPLICANTS.path}>
-            <Route
-              path={"add-applicant"}
-              element={
-                // <RootLayout>
-                <StepperForm />
-                // </RootLayout>
-              }
-            />
-            <Route
-              path={"edit-applicant/:id"}
-              element={
-                // <RootLayout>
-                <StepperForm />
-                // </RootLayout>
-              }
-            />
+            <Route path={"add-applicant"} element={<StepperForm />} />
+            <Route path={"edit-applicant/:id"} element={<StepperForm />} />
           </Route>
           <Route path={EMAIL.path}>
-            <Route
-              index
-              element={
-                // <RootLayout>
-                <EmailTable />
-                // </RootLayout>
-              }
-            />
-            <Route
-              path="compose"
-              element={
-                // <RootLayout>
-                <EmailForm />
-                // </RootLayout>
-              }
-            />
+            <Route index element={<EmailTable />} />
+            <Route path="compose" element={<EmailForm />} />
           </Route>
           <Route path={REPORT.path}>
-            <Route
-              index
-              element={
-                // <RootLayout>
-                <Report />
-                // </RootLayout>
-              }
-            />
+            <Route index element={<Report />} />
           </Route>
           <Route path={MASTER.path}>
-            <Route
-              path="passing-year"
-              element={
-                // <RootLayout>
-                <PassingYear />
-                // </RootLayout>
-              }
-            />
-            <Route
-              path="skills"
-              element={
-                // <RootLayout>
-                <AddSkill />
-                // </RootLayout>
-              }
-            />
-            <Route
-              path="degree"
-              element={
-                // <RootLayout>
-                <AddDegree />
-                // </RootLayout>
-              }
-            />
-            <Route
-              path="add-role-skill"
-              element={
-                // <RootLayout>
-                <UpdateSkill />
-                // </RootLayout>
-              }
-            />
-            <Route
-              path="Find-Fields"
-              element={
-                // <RootLayout>
-                <FindAndReplace />
-                // </RootLayout>
-              }
-            />
- 
-            <Route
-              path="email-template"
-              element={
-                // <RootLayout>
-                <AddEmailTemplate />
-                // </RootLayout>
-              }
-            />
-            <Route
-              path="designation"
-              element={
-                // <RootLayout>
-                <AddDesignation />
-                // </RootLayout>
-              }
-            />
- 
-            <Route
-              path="country"
-              element={
-                // <RootLayout>
-                <Country />
-                // </RootLayout>
-              }
-            />
-            <Route
-              path="state"
-              element={
-                // <RootLayout>
-                <State />
-                // </RootLayout>
-              }
-            />
-              <Route
-              path="city"
-              element={
-                // <RootLayout>
-                <City />
-                // </RootLayout>
-              }
-            />
+            <Route path="passing-year" element={<PassingYear />} />
+            <Route path="skills" element={<AddSkill />} />
+            <Route path="degree" element={<AddDegree />} />
+            <Route path="add-role-skill" element={<UpdateSkill />} />
+            <Route path="Find-Fields" element={<FindAndReplace />} />
+
+            <Route path="email-template" element={<AddEmailTemplate />} />
+            <Route path="designation" element={<AddDesignation />} />
+
+            <Route path="country" element={<Country />} />
+            <Route path="state" element={<State />} />
+            <Route path="city" element={<City />} />
           </Route>
         </Route>
       </Route>
     )
   );
- 
+
   return <RouterProvider router={router} />;
 };
- 
+
 export default RenderRouter;
- 
