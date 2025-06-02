@@ -5,15 +5,12 @@ import {
   Card,
   Container,
   CardBody,
-  // Spinner,
-  // Dropdown,
 } from "react-bootstrap";
 import React, { Fragment, useEffect, useState, useMemo } from "react";
 import BaseButton from "components/BaseComponents/BaseButton";
 import { BaseSelect, MultiSelect } from "components/BaseComponents/BaseSelect";
 import TableContainer from "components/BaseComponents/TableContainer";
 import {
-  // Link,
   useNavigate,
 } from "react-router-dom";
 import { Tooltip as ReactTooltip } from "react-tooltip";
@@ -21,7 +18,6 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "react-loading-skeleton/dist/skeleton.css";
 import {
-  // deleteApplicant,
   listOfApplicants,
   updateStage,
   updateStatus,
@@ -32,7 +28,6 @@ import {
 import ViewModal from "./ViewApplicant";
 import BaseInput from "components/BaseComponents/BaseInput";
 import DeleteModal from "components/BaseComponents/DeleteModal";
-// import BaseModal from "components/BaseComponents/BaseModal";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
@@ -83,7 +78,6 @@ const {
   designationType,
   addedByOptions,
   activeStatusOptions,
-  // exportableFields,
 } = appConstants;
 
 type Anchor = "top" | "right" | "bottom";
@@ -327,12 +321,10 @@ const Applicant = () => {
       }
     } finally {
       setTableLoader(false);
-      // setLoader(false);
     }
   };
   useEffect(() => {
     const delayedSearch = debounce(() => {
-      // console.log("your api is calling");
       fetchApplicants();
     }, 0);
 
@@ -472,17 +464,6 @@ const Applicant = () => {
 
   const handleStateChange = (selectedOption: SelectedOption) => {
     setFilterState(selectedOption);
-
-    if (selectedOption) {
-      const selectedStateId = selectedOption.value;
-      const selectedState = states.find(
-        (state) => state.value === selectedStateId
-      );
-
-      if (selectedState) {
-        // console.log("Selected city name:", selectedCity.label);
-      }
-    }
   };
 
   const handleGenderChange = (selectedOption: SelectedOption) => {
@@ -683,8 +664,8 @@ const Applicant = () => {
   ) => {
     setLoader(true);
     deleteMultipleApplicant(multipleApplicantDelete)
-      .then(() => {
-        toast.success("Applicants Delete Successfully!.");
+      .then((res) => {
+        toast.success(res?.message);
         fetchApplicants();
         setSelectedApplicants([]);
       })
@@ -953,12 +934,6 @@ const Applicant = () => {
           onChange={handleAppliedSkillsChange}
           options={skillOptions}
         />
-        {/* {loading && (
-          <div style={{ marginTop: "10px" }}>
-            <Spinner animation="border" size="sm" />
-            <span style={{ marginLeft: "5px" }}>Loading skills...</span>
-          </div>
-        )} */}
         <MultiSelect
           label="Multiple Skills"
           name="multipleSkills"
@@ -1203,60 +1178,6 @@ const Applicant = () => {
     </Box>
   );
 
-  // const CustomToggle = React.forwardRef<HTMLAnchorElement, CustomToggleProps>(
-  //   ({ children, onClick }, ref) => (
-  //     <Link
-  //       to=""
-  //       ref={ref}
-  //       onClick={(e) => {
-  //         e.preventDefault();
-  //         onClick(e);
-  //       }}
-  //       className="text-center text-muted text-primary-hover"
-  //     >
-  //       {children}
-  //     </Link>
-  //   )
-  // );
-
-  // CustomToggle.displayName = "CustomToggle";
-
-  // const ActionMenu: React.FC<ActionMenuProps> = ({
-  //   id,
-  //   // source,
-  //   handleDeleteSingle,
-  //   handleEmail,
-  //   handleView,
-  //   handleEdit,
-  // }) => {
-  //   return (
-  //     <Dropdown>
-  //       <Dropdown.Toggle as={CustomToggle}>
-  //         <MoreVertical size="20px" className="text-muted" />
-  //       </Dropdown.Toggle>
-  //       <Dropdown.Menu align={"end"}>
-  //         <Dropdown.Item onClick={() => handleView(id, "main")}>
-  //           <EyeTwoTone className="me-2" /> View Applicant
-  //         </Dropdown.Item>
-  //         <Dropdown.Divider />
-  //         <Dropdown.Item onClick={() => handleEdit(id)}>
-  //           <EditFilled style={{ color: "#808080" }} className="me-2" /> Edit
-  //           Applicant
-  //         </Dropdown.Item>
-  //         <Dropdown.Divider />
-  //         <Dropdown.Item onClick={() => handleEmail(id)}>
-  //           <MailFilled style={{ color: "#0000ff" }} className="me-2" /> Mail
-  //         </Dropdown.Item>
-  //         <Dropdown.Divider />
-  //         <Dropdown.Item onClick={() => handleDeleteSingle(id)}>
-  //           <DeleteFilled style={{ color: "#ff0000" }} className="me-2" />{" "}
-  //           Delete
-  //         </Dropdown.Item>
-  //       </Dropdown.Menu>
-  //     </Dropdown>
-  //   );
-  // };
-
   const columns = useMemo(
     () => [
       {
@@ -1449,7 +1370,6 @@ const Applicant = () => {
         cell: (cell: any) => (
           <BaseSelect
             name="status"
-            // className="custom-select"
             styles={customStyles}
             options={statusOptions}
             value={dynamicFind(statusOptions, cell.row.original.status)}
