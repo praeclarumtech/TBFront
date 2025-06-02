@@ -23,13 +23,23 @@ const BaseSelect = ({
     ...styles,
     menu: (provided: any) => ({
       ...provided,
-      width: "fit-content",
-      minWidth: "100%", // ensures dropdown is at least as wide as the select
+      width: "100%",
+      zIndex: 9999,
     }),
     menuList: (provided: any) => ({
       ...provided,
-      width: "fit-content",
-      minWidth: "100%",
+      maxHeight: "200px", // reduce dropdown height here (adjust as needed)
+      overflowY: "auto",  // enable scroll if too many items
+    }),
+    control: (base: any, state: any) => ({
+      ...base,
+      minHeight: "38px",
+      borderColor: state.isFocused ? "#2684FF" : base.borderColor,
+      boxShadow: state.isFocused ? "0 0 0 1px #2684FF" : base.boxShadow,
+      "&:hover": {
+        borderColor: "#2684FF",
+      },
+      width: "100%",
     }),
   };
   return (
