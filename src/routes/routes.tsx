@@ -23,6 +23,8 @@ import AddDesignation from "pages/master/Designation";
 import Country from "pages/master/CityStateCountry";
 import State from "pages/master/State";
 import City from "pages/master/City";
+import QrFrom from "pages/applicant/QrCode/QrFrom";
+import SuccessPage from "pages/applicant/QrCode/Success";
 
 const routes = {
   ROOT: {
@@ -89,6 +91,24 @@ const routes = {
         Component: ImportApplicantTables,
       },
     ],
+  },
+
+  APPLICANT_ADD_QR_CODE: {
+    title: "Applicant Add QR Code",
+    path: "/applicants/applicant-add-qr-code",
+    element: QrFrom,
+  },
+
+  APPLICANT_EDIT_QR_CODE: {
+    title: "Applicant Edit QR Code",
+    path: "/applicants/applicant-edit-qr-code/:id",
+    element: QrFrom,
+  },
+
+  APPLICANT_SUCCESS: {
+    title: "Success",
+    path: "/applicants/qr-code-success",
+    element: SuccessPage,
   },
 
   EMAIL: {

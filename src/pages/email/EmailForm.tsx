@@ -124,6 +124,7 @@ const EmailForm = () => {
       email_bcc: "",
       subject: "",
       description: "",
+      sendQrCode: false,
     },
     validationSchema: Yup.object({
       email_to: Yup.string()
@@ -143,9 +144,9 @@ const EmailForm = () => {
           return emails.every((email) => emailRegex.test(email));
         }
       ),
-
       subject: Yup.string().required("Subject is required"),
       description: Yup.string().required("Description is required"),
+      sendQrCode: Yup.boolean(),
     }),
     validateOnBlur: true,
     validateOnChange: true,
@@ -159,11 +160,10 @@ const EmailForm = () => {
           const file = base64ToFile(base64, `image_${index + 1}.png`);
           return {
             file,
-            cid: `image${index + 1}@cid`, // This must match <img src="cid:image1@cid">
+            cid: `image${index + 1}@cid`,
           };
         });
 
-        // Replace base64 image tags in the HTML
         let cleanedHtml = rawHtml;
         attachments.forEach((att) => {
           cleanedHtml = cleanedHtml.replace(
@@ -199,7 +199,9 @@ const EmailForm = () => {
           formData.append("attachments", attachment.file);
         });
 
-        await sendEmail(formData);
+        await sendEmail(formData, {
+          params: { flag: values.sendQrCode.toString() },
+        });
 
         toast.success("Email sent successfully!");
         validation.resetForm();
@@ -246,7 +248,6 @@ const EmailForm = () => {
   useEffect(() => {
     validation.validateForm();
   }, []);
-
 
   return (
     <>
@@ -398,6 +399,25 @@ const EmailForm = () => {
                         }
                         modules={quillModules}
                       />
+                    </div>
+
+                    <div className="mb-3">
+                      <div className="flex items-center">
+                        <input
+                          type="checkbox"
+                          id="sendQrCode"
+                          name="sendQrCode"
+                          checked={validation.values.sendQrCode}
+                          onChange={validation.handleChange}
+                          className="w-4 h-4 mr-2 text-primary border-gray-300 rounded focus:ring-primary"
+                        />
+                        <label
+                          htmlFor="sendQrCode"
+                          className="text-sm font-medium text-gray-700"
+                        >
+                          Include QR Code in Email
+                        </label>
+                      </div>
                     </div>
 
                     <div className="flex items-center justify-end gap-4">

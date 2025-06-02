@@ -12,11 +12,14 @@ import {
   GET_EMAIL_TEMPLATE_BY_TYPE,
 } from "./apiRoutes";
 import { authServices } from "./apiServices";
-
-export const sendEmail = async (data?: object) => {
-  const response = await authServices.post(`${SEND_EMAIL}`, data);
+import { AxiosRequestConfig } from 'axios';
+ 
+export const sendEmail = async (data: FormData, config?: AxiosRequestConfig) => {
+  const response = await authServices.post(`${SEND_EMAIL}`, data, config);
   return response?.data;
 };
+ 
+ 
 
 // export const viewAllEmail = async (params: {
 //   page: number;
