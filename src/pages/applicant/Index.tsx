@@ -847,6 +847,10 @@ const Applicant = () => {
         queryParams.search = searchAll.trim();
       }
 
+       if (filterFavorite) {
+        queryParams.isFavorite = filterFavorite.value;
+      }
+
       // Wait (if needed)
       await new Promise((resolve) => setTimeout(resolve, 3500));
 
