@@ -24,14 +24,10 @@ import { viewAllDesignation } from "api/designation";
 import BaseButton from "components/BaseComponents/BaseButton";
 import { Card } from "antd";
 import { toast } from "react-toastify";
+import { viewRoleSkill } from "api/roleApi";
 
-const {
-  projectTitle,
-  Modules,
-  maritalStatusType,
-  workPreferenceType,
-  communicationOptions,
-} = appConstants;
+const { projectTitle, Modules, workPreferenceType, communicationOptions } =
+  appConstants;
 
 const QrFrom = () => {
   document.title = Modules.CreateApplicantForm + " | " + projectTitle;
@@ -43,6 +39,7 @@ const QrFrom = () => {
   const [skillOptions, setSkillOptions] = useState<any[]>([]);
   const [designationOptions, setDesignationOptions] = useState<any[]>([]);
   const [formData, setFormData] = useState<any>();
+  const [roleOptions, setRoleOptions] = useState<any[]>([]);
   const navigate = useNavigate();
 
   const { id } = useParams();
@@ -54,17 +51,15 @@ const QrFrom = () => {
       const pageSize = 50;
       const limit = 1000;
       const response = await ViewAppliedSkills({ page, pageSize, limit });
-      const skillData = response?.data.data || [];
 
-      setSkillOptions(
-        skillData.map((item: any) => ({
-          label: item.skills,
-          value: item.skills,
-        }))
-      );
+      const options = response?.data?.data.map((item: any) => ({
+        label: item.skills,
+        value: item.skills,
+      }));
+      setSkillOptions(options);
 
       if (initialValues?.appliedSkills && initialValues?.appliedSkills.length) {
-        const selectedSkills = skillData
+        const selectedSkills = options
           .filter((option: { skills: any }) =>
             initialValues.appliedSkills.includes(option.skills)
           )
@@ -76,6 +71,7 @@ const QrFrom = () => {
         setSelectedMulti(selectedSkills);
       }
     } catch (error) {
+      console.log("error skills", error);
       errorHandle(error);
     } finally {
       setLoading(false);
@@ -109,6 +105,32 @@ const QrFrom = () => {
     }
   };
 
+  const fetchRoles = async () => {
+    try {
+      const response = await viewRoleSkill({ limit: 1000 });
+      const roleData = response?.data?.data || [];
+      const options = roleData.map((item: any) => ({
+        label: item.appliedRole,
+        value: item.appliedRole,
+      }));
+      setRoleOptions(options);
+
+      // Set initial role if it exists
+      if (initialValues?.appliedRole) {
+        const selectedRole = options.find(
+          (opt: any) => opt.label === initialValues.appliedRole
+        );
+        if (selectedRole) {
+          validation.setFieldValue("appliedRole", selectedRole.value);
+          // Also trigger role change to load skills
+          handleRoleChange(selectedRole);
+        }
+      }
+    } catch (error) {
+      errorHandle(error);
+    }
+  };
+
   const getApplicant = (id: string | undefined | null) => {
     if (id !== undefined) {
       getApplicantDetails(id)
@@ -118,6 +140,8 @@ const QrFrom = () => {
           }
         })
         .catch((error) => {
+          console.log("error getApplicant", error);
+          
           errorHandle(error);
         })
         .finally(() => {
@@ -133,6 +157,7 @@ const QrFrom = () => {
   useEffect(() => {
     fetchSkills();
     fetchDesignations();
+    fetchRoles();
   }, []);
 
   const initialValues: any = formData;
@@ -144,21 +169,18 @@ const QrFrom = () => {
       lastName: initialValues?.name?.lastName || "",
       phoneNumber: initialValues?.phone?.phoneNumber || "",
       email: initialValues?.email || "",
-      maritalStatus: initialValues?.maritalStatus || "",
       currentPkg: initialValues?.currentPkg || "0",
       expectedPkg: initialValues?.expectedPkg || "0",
-      negotiation: initialValues?.negotiation || "0",
       noticePeriod: initialValues?.noticePeriod || "0",
       workPreference: initialValues?.workPreference || "",
-      currentCompanyName: initialValues?.currentCompanyName || "",
       appliedSkills: initialValues?.appliedSkills || [],
       otherSkills: initialValues?.otherSkills || "",
       linkedinUrl: initialValues?.linkedinUrl || "",
       currentCompanyDesignation: initialValues?.currentCompanyDesignation || "",
       communicationSkill: initialValues?.communicationSkill || "",
-      rating: initialValues?.rating || "",
       totalExperience: initialValues?.totalExperience || "",
       relevantSkillExperience: initialValues?.relevantSkillExperience || "",
+      appliedRole: initialValues?.appliedRole || "",
     },
     validationSchema: QrApplicants,
 
@@ -175,21 +197,18 @@ const QrFrom = () => {
           whatsappNumber: value.phoneNumber,
         },
         email: value.email,
-        maritalStatus: value.maritalStatus,
         appliedSkills: value.appliedSkills,
         otherSkills: value.otherSkills,
         currentPkg: value.currentPkg,
         expectedPkg: value.expectedPkg,
-        negotiation: value.negotiation,
         noticePeriod: value.noticePeriod,
         workPreference: value.workPreference,
         currentCompanyDesignation: value.currentCompanyDesignation,
-        currentCompanyName: value.currentCompanyName,
         linkedinUrl: value.linkedinUrl,
         communicationSkill: value.communicationSkill,
-        rating: value.rating,
         totalExperience: value.totalExperience,
         relevantSkillExperience: value.relevantSkillExperience,
+        appliedRole: value.appliedRole,
       };
 
       if (!id) {
@@ -298,11 +317,21 @@ const QrFrom = () => {
     setSelectedMulti(selectedMulti);
   };
 
+  const handleRoleChange = async (SelectedOptionRole: any) => {
+    if (SelectedOptionRole) {
+      const roleId = SelectedOptionRole.value;
+      validation.setFieldValue("appliedRole", roleId);
+    } else {
+      validation.setFieldValue("appliedRole", "");
+      validation.setFieldValue("meta", {});
+    }
+  };
+
   return (
     <Fragment>
       <div className="pt-3 page-content"></div>
       <Container fluid>
-        <Card title={!id ? "Add Applicant" : "Update Applicant"}>
+        <Card title="Job Profile">
           <Row>
             <div>
               <Form
@@ -321,7 +350,7 @@ const QrFrom = () => {
                   </div>
                 ) : (
                   <Row className="mb-3 g-3">
-                    <Col xs={12} md={6} lg={4}>
+                    <Col xs={12} sm={6} md={6} lg={3}>
                       <BaseInput
                         label="First Name"
                         name="firstName"
@@ -344,7 +373,7 @@ const QrFrom = () => {
                       />
                     </Col>
 
-                    <Col xs={12} md={6} lg={4}>
+                    <Col xs={12} sm={6} md={6} lg={3}>
                       <BaseInput
                         label="Last Name"
                         name="lastName"
@@ -366,7 +395,7 @@ const QrFrom = () => {
                       />
                     </Col>
 
-                    <Col xs={12} md={6} lg={4}>
+                    <Col xs={12} sm={6} md={6} lg={3}>
                       <BaseInput
                         label="Email"
                         name="email"
@@ -395,7 +424,7 @@ const QrFrom = () => {
                       />
                     </Col>
 
-                    <Col xs={12} md={6} lg={4}>
+                    <Col xs={12} sm={6} md={6} lg={3}>
                       <BaseInput
                         label="Phone Number"
                         name="phoneNumber"
@@ -428,34 +457,9 @@ const QrFrom = () => {
                       />
                     </Col>
 
-                    <Col xs={12} md={6} lg={4}>
-                      <BaseSelect
-                        label="Marital Status (Optional)"
-                        name="maritalStatus"
-                        className="select-border"
-                        options={maritalStatusType}
-                        placeholder="Marital Status (Optional)"
-                        handleChange={(selectedOption: SelectedOption) => {
-                          validation.setFieldValue(
-                            "maritalStatus",
-                            selectedOption?.value || ""
-                          );
-                        }}
-                        handleBlur={validation.handleBlur}
-                        value={
-                          dynamicFind(
-                            maritalStatusType,
-                            validation.values.maritalStatus
-                          ) || ""
-                        }
-                        touched={validation.touched.maritalStatus}
-                        error={validation.errors.maritalStatus}
-                      />
-                    </Col>
-
                     {/* Job Details */}
 
-                    <Col xs={12} md={6} lg={4} className="mb-3">
+                    <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
                       <MultiSelect
                         label="Applied Skills"
                         name="appliedSkills"
@@ -470,7 +474,7 @@ const QrFrom = () => {
                         isRequired={false}
                       />
                     </Col>
-                    <Col xs={12} md={6} lg={4} className="mb-3">
+                    <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
                       <BaseInput
                         label="Other Skills (Optional)"
                         name="otherSkills"
@@ -486,7 +490,53 @@ const QrFrom = () => {
                         passwordToggle={false}
                       />
                     </Col>
-                    <Col xs={12} md={6} lg={4} className="mb-3">
+                    <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
+                      <BaseSelect
+                        label="Applied Role"
+                        name="appliedRole"
+                        className="select-border"
+                        options={roleOptions}
+                        placeholder={InputPlaceHolder("Applied Role")}
+                        handleChange={handleRoleChange}
+                        handleBlur={validation.appliedRole}
+                        value={
+                          dynamicFind(
+                            roleOptions,
+                            validation.values.appliedRole
+                          ) || ""
+                        }
+                        touched={validation.touched.appliedRole}
+                        error={validation.errors.appliedRole}
+                        isRequired={true}
+                      />
+                    </Col>
+                    <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
+                      <BaseSelect
+                        label="Current Company Designation"
+                        name="currentCompanyDesignation"
+                        className="select-border"
+                        options={designationOptions}
+                        placeholder={InputPlaceHolder("Degination")}
+                        handleChange={(selectedOption: SelectedOption) => {
+                          validation.setFieldValue(
+                            "currentCompanyDesignation",
+                            selectedOption?.label || ""
+                          );
+                        }}
+                        handleBlur={validation.currentCompanyDesignation}
+                        value={
+                          dynamicFind(
+                            designationOptions,
+                            validation.values.currentCompanyDesignation
+                          ) || ""
+                        }
+                        touched={validation.touched.currentCompanyDesignation}
+                        error={validation.errors.currentCompanyDesignation}
+                        isRequired={true}
+                      />
+                    </Col>
+
+                    <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
                       <BaseInput
                         label="Total Experience(Year)"
                         name="totalExperience"
@@ -546,7 +596,7 @@ const QrFrom = () => {
                         isRequired={false}
                       />
                     </Col>
-                    <Col xs={12} md={6} lg={4} className="mb-3">
+                    <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
                       <BaseInput
                         label="Relevant Experience(Year)"
                         name="relevantSkillExperience"
@@ -621,32 +671,7 @@ const QrFrom = () => {
                         isRequired={false}
                       />
                     </Col>
-                    <Col xs={12} md={6} lg={4} className="mb-3">
-                      <BaseSelect
-                        label="Javascript Rate(out of 10)"
-                        name="rating"
-                        className="select-border"
-                        options={communicationOptions}
-                        placeholder="Rating"
-                        handleChange={(selectedOption: SelectedOption) => {
-                          validation.setFieldValue(
-                            "rating",
-                            selectedOption?.value || ""
-                          );
-                        }}
-                        handleBlur={validation.handleBlur}
-                        value={
-                          dynamicFind(
-                            communicationOptions,
-                            String(validation.values.rating)
-                          ) || ""
-                        }
-                        touched={validation.touched.rating}
-                        error={validation.errors.rating}
-                        isRequired={false}
-                      />
-                    </Col>
-                    <Col xs={12} md={6} lg={4} className="mb-3">
+                    <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
                       <BaseSelect
                         label="English Communication(out of 10)"
                         name="communicationSkill"
@@ -671,53 +696,7 @@ const QrFrom = () => {
                         isRequired={false}
                       />
                     </Col>
-                    <Col xs={12} md={6} lg={4} className="mb-3 mb-sm-0">
-                      <BaseInput
-                        label="Current Company"
-                        name="currentCompanyName"
-                        type="text"
-                        placeholder={InputPlaceHolder("Current Company")}
-                        handleChange={(e) => {
-                          const value = e.target.value.replace(
-                            /[^A-Za-z\s]/g,
-                            ""
-                          );
-                          validation.setFieldValue("currentCompanyName", value);
-                        }}
-                        handleBlur={validation.handleBlur}
-                        value={validation.values.currentCompanyName}
-                        touched={validation.touched.currentCompanyName}
-                        error={validation.errors.currentCompanyName}
-                        passwordToggle={false}
-                        isRequired={false}
-                      />
-                    </Col>
-                    <Col xs={12} md={6} lg={4} className="mb-3">
-                      <BaseSelect
-                        label="Current Company Designation"
-                        name="currentCompanyDesignation"
-                        className="select-border"
-                        options={designationOptions}
-                        placeholder={InputPlaceHolder("Degination")}
-                        handleChange={(selectedOption: SelectedOption) => {
-                          validation.setFieldValue(
-                            "currentCompanyDesignation",
-                            selectedOption?.label || ""
-                          );
-                        }}
-                        handleBlur={validation.currentCompanyDesignation}
-                        value={
-                          dynamicFind(
-                            designationOptions,
-                            validation.values.currentCompanyDesignation
-                          ) || ""
-                        }
-                        touched={validation.touched.currentCompanyDesignation}
-                        error={validation.errors.currentCompanyDesignation}
-                        isRequired={true}
-                      />
-                    </Col>
-                    <Col xs={12} md={6} lg={4} className="mb-3">
+                    <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
                       <BaseInput
                         label="Current Package (LPA)"
                         name="currentPkg"
@@ -775,7 +754,8 @@ const QrFrom = () => {
                         isRequired={false}
                       />
                     </Col>
-                    <Col xs={12} md={6} lg={4} className="mb-3 mb-sm-0">
+
+                    <Col xs={12} sm={6} md={6} lg={3} className="mb-3 mb-sm-0">
                       <BaseInput
                         label="Expected Package (LPA)"
                         name="expectedPkg"
@@ -833,66 +813,7 @@ const QrFrom = () => {
                         isRequired={false}
                       />
                     </Col>
-                    <Col xs={12} md={6} lg={4} className="mb-3 mb-sm-0">
-                      <BaseInput
-                        label="Negotiation (₹) (Optional)"
-                        name="negotiation"
-                        type="text"
-                        placeholder={InputPlaceHolder(
-                          "Negotiation (₹) (Optional)"
-                        )}
-                        handleChange={(e) => {
-                          let value = e.target.value;
-                          value = value.replace(/[^0-9.]/g, "");
-
-                          const parts = value.split(".");
-                          if (parts.length > 2) {
-                            value = parts[0] + "." + parts.slice(1).join("");
-                          }
-
-                          if (parts[1]?.length > 2) {
-                            value = parts[0] + "." + parts[1].slice(0, 2);
-                          }
-
-                          const numValue = parseFloat(value);
-
-                          if (
-                            !isNaN(numValue) &&
-                            numValue >= 0 &&
-                            numValue <= 100000
-                          ) {
-                            validation.setFieldValue("negotiation", value);
-                          } else if (value === "" || value === ".") {
-                            validation.setFieldValue("negotiation", value);
-                          } else if (!value) {
-                            validation.setFieldValue("negotiation", "");
-                          }
-                        }}
-                        handleBlur={(e) => {
-                          const value = e.target.value;
-
-                          if (value && !isNaN(parseFloat(value))) {
-                            const numValue = parseFloat(value);
-                            if (numValue >= 0 && numValue <= 100000) {
-                              validation.setFieldValue(
-                                "negotiation",
-                                numValue.toFixed(2)
-                              );
-                            } else {
-                              validation.setFieldValue("negotiation", "");
-                            }
-                          } else {
-                            validation.setFieldValue("negotiation", "");
-                          }
-                          validation.handleBlur(e);
-                        }}
-                        value={validation.values.negotiation}
-                        touched={validation.touched.negotiation}
-                        error={validation.errors.negotiation}
-                        passwordToggle={false}
-                      />
-                    </Col>
-                    <Col xs={12} md={6} lg={4} className="mb-3">
+                    <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
                       <BaseInput
                         label="Notice Period (Days)"
                         name="noticePeriod"
@@ -950,7 +871,7 @@ const QrFrom = () => {
                         isRequired={false}
                       />
                     </Col>
-                    <Col xsxs={12} md={6} lg={4} className="mb-3">
+                    <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
                       <BaseSelect
                         label="Work Preference"
                         name="workPreference"
@@ -975,7 +896,7 @@ const QrFrom = () => {
                         isRequired={false}
                       />
                     </Col>
-                    <Col xs={12} md={6} lg={4} className="mb-3">
+                    <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
                       <BaseInput
                         label="Linkedin Url (Optional)"
                         name="linkedinUrl"

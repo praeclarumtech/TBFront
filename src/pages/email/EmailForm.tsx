@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useMounted } from "hooks/useMounted";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -48,6 +48,12 @@ const EmailForm = () => {
   // const initialName = location.state?.name || "";
 
   const [templateTypes, setTemplateTypes] = useState<SelectedOption[]>([]);
+  const [showToTooltip, setShowToTooltip] = useState(false);
+  const [showBccTooltip, setShowBccTooltip] = useState(false);
+  const toTooltipRef = useRef<HTMLDivElement>(null);
+  const bccTooltipRef = useRef<HTMLDivElement>(null);
+  const [toInputFocused, setToInputFocused] = useState(false);
+  const [bccInputFocused, setBccInputFocused] = useState(false);
 
   const getTemplateType = async () => {
     const response = await viewEmailTemplate({ limit: 1000 });
@@ -70,7 +76,6 @@ const EmailForm = () => {
     };
 
     fetchTypes();
-    validation.validateForm();
   }, []);
 
   const handleTemplateChange = async (selectedOption: SelectedOption) => {
@@ -150,7 +155,6 @@ const EmailForm = () => {
     }),
     validateOnBlur: true,
     validateOnChange: true,
-    validateOnMount: true,
     onSubmit: async (values) => {
       try {
         const rawHtml = values.description;
@@ -245,9 +249,261 @@ const EmailForm = () => {
     },
   });
 
+  // Click-away handler
   useEffect(() => {
-    validation.validateForm();
-  }, []);
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        toTooltipRef.current &&
+        !toTooltipRef.current.contains(event.target as Node)
+      ) {
+        setShowToTooltip(false);
+      }
+      if (
+        bccTooltipRef.current &&
+        !bccTooltipRef.current.contains(event.target as Node)
+      ) {
+        setShowBccTooltip(false);
+      }
+    }
+    if (showToTooltip || showBccTooltip) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showToTooltip, showBccTooltip]);
+
+  const renderToInputWithMore = () => {
+    const arr = validation.values.email_to
+      .split(",")
+      .map((e: string) => e.trim())
+      .filter(Boolean);
+    const showMore = arr.length > 2;
+    const displayEmails = showMore
+      ? arr.slice(0, 2).join(", ") + ", "
+      : arr.join(", ");
+    return (
+      <div style={{ position: "relative", marginBottom: 8 }}>
+        <label className="block font-medium mb-1">To</label>
+        {toInputFocused || arr.length === 0 ? (
+          <BaseInput
+            name="email_to"
+            className={`w-full p-2 rounded-md ${
+              validation.touched.email_to && validation.errors.email_to
+                ? "border-red-500 border-2"
+                : ""
+            }`}
+            type="text"
+            placeholder={InputPlaceHolder("Recipients")}
+            handleChange={validation.handleChange}
+            handleBlur={(e) => {
+              validation.handleBlur(e);
+              setToInputFocused(false);
+            }}
+            value={validation.values.email_to}
+            error={
+              typeof validation.errors.email_to === "string"
+                ? validation.errors.email_to
+                : undefined
+            }
+            touched={
+              typeof validation.touched.email_to === "boolean"
+                ? validation.touched.email_to
+                : undefined
+            }
+          />
+        ) : (
+          <div
+            style={{
+              width: "100%",
+              minHeight: 38,
+              border: "1px solid #d1d5db",
+              borderRadius: 6,
+              padding: "6px 12px",
+              background: "#f9fafb",
+              color: "#374151",
+              display: "flex",
+              alignItems: "center",
+              fontSize: 15,
+              cursor: "text",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+            onClick={() => setToInputFocused(true)}
+            tabIndex={0}
+          >
+            <span
+              style={{
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
+            >
+              {displayEmails}
+            </span>
+            {showMore && (
+              <span
+                style={{
+                  color: "#1976d2",
+                  cursor: "pointer",
+                  marginLeft: 4,
+                  textDecoration: "underline",
+                  background: "#f9fafb",
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowToTooltip(!showToTooltip);
+                }}
+              >
+                ...more
+              </span>
+            )}
+          </div>
+        )}
+        {showToTooltip && (
+          <div
+            ref={toTooltipRef}
+            style={{
+              position: "absolute",
+              top: 62,
+              left: 0,
+              width: 350,
+              maxHeight: 200,
+              zIndex: 9999,
+              background: "#222",
+              color: "#fff",
+              borderRadius: 6,
+              padding: "12px 16px",
+              boxShadow: "0 2px 12px rgba(0,0,0,0.15)",
+              overflowY: "auto",
+              whiteSpace: "normal",
+              fontSize: 14,
+            }}
+          >
+            {arr.map((e: string, i: number) => (
+              <span key={i} style={{ display: "inline" }}>
+                {e}
+                {i !== arr.length - 1 ? ", " : ""}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const renderBccInputWithMore = () => {
+    const arr = validation.values.email_bcc
+      .split(",")
+      .map((e: string) => e.trim())
+      .filter(Boolean);
+    const showMore = arr.length > 2;
+    const displayEmails = showMore
+      ? arr.slice(0, 2).join(", ") + ", "
+      : arr.join(", ");
+    return (
+      <div style={{ position: "relative", marginBottom: 8 }}>
+        <label className="block font-medium mb-1">Bcc</label>
+        {bccInputFocused || arr.length === 0 ? (
+          <BaseInput
+            name="email_bcc"
+            className={`w-full p-2 rounded-md ${
+              validation.touched.email_bcc && validation.errors.email_bcc
+                ? "border-red-500 border-2"
+                : ""
+            }`}
+            type="text"
+            placeholder={InputPlaceHolder("Emails")}
+            handleChange={validation.handleChange}
+            handleBlur={(e) => {
+              validation.handleBlur(e);
+              setBccInputFocused(false);
+            }}
+            value={validation.values.email_bcc}
+            error={validation.errors.email_bcc}
+            touched={validation.touched.email_bcc}
+          />
+        ) : (
+          <div
+            style={{
+              width: "100%",
+              minHeight: 38,
+              border: "1px solid #d1d5db",
+              borderRadius: 6,
+              padding: "6px 12px",
+              background: "#f9fafb",
+              color: "#374151",
+              display: "flex",
+              alignItems: "center",
+              fontSize: 15,
+              cursor: "text",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+            onClick={() => setBccInputFocused(true)}
+            tabIndex={0}
+          >
+            <span
+              style={{
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
+            >
+              {displayEmails}
+            </span>
+            {showMore && (
+              <span
+                style={{
+                  color: "#1976d2",
+                  cursor: "pointer",
+                  marginLeft: 4,
+                  textDecoration: "underline",
+                  background: "#f9fafb",
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowBccTooltip(!showBccTooltip);
+                }}
+              >
+                ...more
+              </span>
+            )}
+          </div>
+        )}
+        {showBccTooltip && (
+          <div
+            ref={bccTooltipRef}
+            style={{
+              position: "absolute",
+              top: 62,
+              left: 0,
+              width: 350,
+              maxHeight: 200,
+              zIndex: 9999,
+              background: "#222",
+              color: "#fff",
+              borderRadius: 6,
+              padding: "12px 16px",
+              boxShadow: "0 2px 12px rgba(0,0,0,0.15)",
+              overflowY: "auto",
+              whiteSpace: "normal",
+              fontSize: 14,
+            }}
+          >
+            {arr.map((e: string, i: number) => (
+              <span key={i} style={{ display: "inline" }}>
+                {e}
+                {i !== arr.length - 1 ? ", " : ""}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
     <>
@@ -314,53 +570,9 @@ const EmailForm = () => {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-6 mb-3">
-                      <div>
-                        <BaseInput
-                          label="To"
-                          name="email_to"
-                          className={`w-full p-2 rounded-md ${
-                            validation.touched.email_to &&
-                            validation.errors.email_to
-                              ? "border-red-500 border-2"
-                              : ""
-                          }`}
-                          type="text"
-                          placeholder={InputPlaceHolder("Recipients")}
-                          handleChange={validation.handleChange}
-                          handleBlur={validation.handleBlur}
-                          value={validation.values.email_to}
-                          error={
-                            typeof validation.errors.email_to === "string"
-                              ? validation.errors.email_to
-                              : undefined
-                          }
-                          touched={
-                            typeof validation.touched.email_to === "boolean"
-                              ? validation.touched.email_to
-                              : undefined
-                          }
-                        />
-                      </div>
-                      <div>
-                        <BaseInput
-                          label="Bcc"
-                          name="email_bcc"
-                          className={`w-full p-2 rounded-md ${
-                            validation.touched.email_bcc &&
-                            validation.errors.email_bcc
-                              ? "border-red-500 border-2"
-                              : ""
-                          }`}
-                          type="text"
-                          placeholder={InputPlaceHolder("Emails")}
-                          handleChange={validation.handleChange}
-                          handleBlur={validation.handleBlur}
-                          value={validation.values.email_bcc}
-                          error={validation.errors.email_bcc}
-                          touched={validation.touched.email_bcc}
-                        />
-                      </div>
+                    <div className="grid grid-cols-2 gap-6 mb-6">
+                      <div>{renderToInputWithMore()}</div>
+                      <div>{renderBccInputWithMore()}</div>
                     </div>
 
                     <div className="mb-3">

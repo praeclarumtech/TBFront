@@ -11,6 +11,7 @@ import {
 import ProgressBars from "sub-components/report/ProgressBar";
 import ProgressChart from "sub-components/report/ProgressChart";
 import { getApplicationOnProcess } from "api/reportApi";
+import { getTotalApplicants } from "api/dashboardApi";
 import AreaChart from "sub-components/report/AreaChart";
 import appConstants from "constants/constant";
 import ColumnChart from "sub-components/report/ColumnChart";
@@ -52,10 +53,22 @@ const Report = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorS, setErrorS] = useState<string | null>(null);
   const [selectedFilter, setSelectedFilter] = useState("city");
+  const [totalApplicants, setTotalApplicants] = useState(0);
 
   useEffect(() => {
     fetchApplicantsOnProcess();
+    fetchTotalApplicants();
   }, []);
+
+  const fetchTotalApplicants = async () => {
+    try {
+      const data = await getTotalApplicants();
+      setTotalApplicants(data?.data?.totalApplicants || 0);
+    } catch (error) {
+      console.error("Error fetching total applicants:", error);
+      setErrorS("Failed to load Api");
+    }
+  };
 
   const fetchApplicantsOnProcess = async () => {
     setIsLoading(true);
@@ -81,19 +94,33 @@ const Report = () => {
       <div className="min-h-screen">
         <Container fluid className="px-3 pt-5">
           <Row className="gy-3">
-            <Col xs={12}>
+            <Col className="report-section-width">
               <Card className="p-3 shadow-sm rounded-4 w-100">
                 <Card.Body className="d-flex flex-column">
+                  {/* Top right total applicants */}
+                  <div className="d-flex justify-content-end mb-2">
+                    <div
+                      className="bg-light-primary text-dark p-2 rounded-3 text-end"
+                      style={{
+                        minWidth: "120px",
+                        fontWeight: 600,
+                        fontSize: "15px",
+                        border: "1px solid #e3e6ed",
+                      }}
+                    >
+                      Total Applicants:{" "}
+                      <span style={{ fontWeight: 700 }}>{totalApplicants}</span>
+                    </div>
+                  </div>
+                  {/* Main charts row */}
                   <Row>
-                    <Col xl={8} lg={6} md={12} sm={12} xs={12}>
-                      <h4 className="w-full fw-bold">
-                        {" "}
+                    <Col md={6} sm={12}>
+                      <h4 className="fw-bold mb-3">
                         Interview Rounds Progress Report
                       </h4>
-                      <div className="mt-5">
+                      <div className="mt-2 w-100">
                         <div className="my-2 d-flex">
                           <div className="shadow-md icon-shape icon-lg rounded-2 bg-light-warning text-warning">
-                            {/* <Cart /> */}
                             <Icon1Circle size={20} />
                           </div>
                           <ProgressBars
@@ -105,7 +132,6 @@ const Report = () => {
                         </div>
                         <div className="my-2 d-flex">
                           <div className="shadow-md icon-shape icon-lg rounded-2 bg-light-success text-success">
-                            {/* <Truck /> */}
                             <Icon2Circle size={20} />
                           </div>
                           <ProgressBars
@@ -150,24 +176,17 @@ const Report = () => {
                         </div>
                       </div>
                     </Col>
-                    <Col
-                      xl={4}
-                      lg={6}
-                      md={12}
-                      sm={12}
-                      xs={12}
-                      className="mt-3 mt-lg-0"
-                    >
-                      <div className="d-flex justify-content-between align-items-center">
-                        <h4 className="fw-bold">Application Status Analytics</h4>
-                      </div>
+                    <Col md={6} sm={12} className="mt-4 mt-md-0">
+                      <h4 className="fw-bold mb-3">
+                        Application Status Analytics
+                      </h4>
                       <div className="mt-2 chart-container">
                         <ProgressChart />
                       </div>
                     </Col>
                   </Row>
+                  {/* Statistics and charts */}
                   <Row className="mt-4">
-                    {/* <Col xl={7} lg={6} md={12} sm={12} xs={12}> */}
                     <div className="justify-between d-flex">
                       <h4 className="justify-start fw-bold">Statistics</h4>
                       <ActionMenu
@@ -175,25 +194,13 @@ const Report = () => {
                         selectedFilter={selectedFilter}
                       />
                     </div>
-                    {/* <div className="chart-container">
-                        <DounutChart selectedFilter={selectedFilter} />
-                      </div> */}
                     <div className="chart-container mt-3">
                       <ColumnChart selectedFilter={selectedFilter} />
                     </div>
-                    {/* </Col> */}
-                    {/* <Col xl={5} lg={6} md={12} sm={12} xs={12}>
-                      <h4 className="fw-bold">Applicants</h4>
-                      <div className="mt-3 chart-container">
-                        {" "}
-                        <AreaChart />
-                      </div>
-                    </Col> */}
                   </Row>
                   <Row className="mt-4">
                     <h4 className="fw-bold">Applicants</h4>
                     <div className="mt-3 chart-container">
-                      {" "}
                       <AreaChart />
                     </div>
                   </Row>

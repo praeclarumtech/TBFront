@@ -2,7 +2,7 @@
 import React from "react";
 import { Button, Modal, ModalBody, Spinner } from "reactstrap";
 
-const ConfirmModal: React.FC<any> = ({
+const BaseFav: React.FC<any> = ({
   show,
   onYesClick,
   onCloseClick,
@@ -15,8 +15,8 @@ const ConfirmModal: React.FC<any> = ({
         <h5>
           <p className="text-muted mb-3">
             {!flag
-              ? " Are you sure you want to export records?"
-              : "Are you sure you want to move the records to the Applicants page?"}
+              ? "Are you sure you want to add this applicant to your favorite list?"
+              : "Are you sure you want to remove this applicant from your favorite list?"}
           </p>
         </h5>
         <div className="d-flex justify-content-center gap-3 mt-4">
@@ -24,10 +24,12 @@ const ConfirmModal: React.FC<any> = ({
             {loader ? (
               <>
                 <Spinner size="sm" className="me-2" />
-                {!flag ? "Exporting..." : "Moving..."}
+                {!flag ? "Adding..." : "Removing..."}
               </>
+            ) : !flag ? (
+              "Add"
             ) : (
-              "Yes"
+              "Remove"
             )}
           </Button>
           <Button color="secondary" onClick={onCloseClick}>
@@ -39,4 +41,4 @@ const ConfirmModal: React.FC<any> = ({
   );
 };
 
-export default ConfirmModal;
+export default BaseFav;
