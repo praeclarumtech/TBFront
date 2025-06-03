@@ -81,7 +81,7 @@ export const jobApplicantSchema = Yup.object({
       "Please provide a detailed comment about how you found us (minimum 10 characters)."
     )
     .max(150, " Please keep your comment under 150 characters."),
-  appliedSkills: Yup.array(),
+     appliedSkills: Yup.array().of(Yup.string()),
   // .required("Skills are required!")
   // .min(1, "Please select at least one skill."),
   otherSkills: Yup.string(),

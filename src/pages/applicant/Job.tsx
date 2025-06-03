@@ -968,7 +968,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                   <BaseInput
                     label="Portfolio Url (Optional)"
                     name="portfolioUrl"
-                    type="url"
+                    type="text"
                     placeholder={InputPlaceHolder("Portfolio Url (Optional)")}
                     handleChange={validation.handleChange}
                     handleBlur={validation.handleBlur}

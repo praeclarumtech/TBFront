@@ -11,7 +11,12 @@ import { errorHandle, InputPlaceHolder } from "utils/commonFunctions";
 import appConstants from "constants/constant";
 import ViewEmail from "./ViewEmail";
 import "react-loading-skeleton/dist/skeleton.css";
-import { deleteEmail, viewAllEmail, deleteMultipleEmail } from "api/emailApi";
+import {
+  deleteEmail,
+  viewAllEmail,
+  deleteMultipleEmail,
+  getEmailCount,
+} from "api/emailApi";
 import DeleteModal from "components/BaseComponents/DeleteModal";
 import Skeleton from "react-loading-skeleton";
 import debounce from "lodash.debounce";
@@ -63,8 +68,9 @@ const EmailTable = () => {
     right: false,
   });
   const [multipleEmailDelete, setMultipleEmailDelete] = useState<string[]>([]);
+  const [emailCount, setEmailCount] = useState<number>(0);
 
-  const today = new Date().toISOString().split('T')[0];  
+  const today = new Date().toISOString().split("T")[0];
 
   const handleView = (id: string) => {
     setSelectedApplicantId(id);
@@ -224,7 +230,6 @@ const EmailTable = () => {
         // params.appliedSkills = searchValue;
         params.search = searchValue;
       }
-      
 
       const response = await viewAllEmail(params);
 
@@ -238,6 +243,25 @@ const EmailTable = () => {
       errorHandle(error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchEmailCount = async () => {
+    try {
+      const params: { startDate?: string; endDate?: string } = {};
+      if (startDate) params.startDate = startDate;
+      if (endDate) params.endDate = endDate;
+      else if (!startDate && !endDate) {
+        // Default to today
+        const today = new Date().toISOString().split("T")[0];
+        params.startDate = today;
+        params.endDate = today;
+      }
+      const data = await getEmailCount(params);
+      setEmailCount(data?.data?.count || 0);
+    } catch (error) {
+      console.log("error========================", error);
+      setEmailCount(0);
     }
   };
 
@@ -256,6 +280,10 @@ const EmailTable = () => {
     endDate,
     searchAll,
   ]); // Runs when `searchAll` changes
+
+  useEffect(() => {
+    fetchEmailCount();
+  }, [startDate, endDate]);
 
   const handleDelete = (id: string) => {
     setEmailToDelete([id]);
@@ -443,6 +471,27 @@ const EmailTable = () => {
           <div className="card-body">
             <div className="container">
               <div className="row gy-2 gx-2 align-items-center justify-content-between">
+                {/* Email Count */}
+                <div className="col-auto d-flex align-items-center">
+                  <span
+                    className="
+                      inline-block
+                      bg-primary
+                      text-white
+                      text-base
+                      font-medium
+                      px-5
+                      py-2
+                      rounded-lg
+                      shadow-sm
+                      mr-4
+                      tracking-wide
+                      align-middle
+                    "
+                  >
+                    Sent Emails: {emailCount}
+                  </span>
+                </div>
                 {/* Filters Button */}
                 <div className="col-3 col-xs-auto">
                   <button

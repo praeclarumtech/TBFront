@@ -1,18 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  Row,
-  Col,
-  Card,
-  Container,
-  CardBody,
-} from "react-bootstrap";
+import { Row, Col, Card, Container, CardBody } from "react-bootstrap";
 import React, { Fragment, useEffect, useState, useMemo } from "react";
 import BaseButton from "components/BaseComponents/BaseButton";
 import { BaseSelect, MultiSelect } from "components/BaseComponents/BaseSelect";
 import TableContainer from "components/BaseComponents/TableContainer";
-import {
-  useNavigate,
-} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -23,6 +15,7 @@ import {
   updateStatus,
   ExportApplicant,
   deleteMultipleApplicant,
+  updateApplicant,
 } from "api/applicantApi";
 
 import ViewModal from "./ViewApplicant";
@@ -65,6 +58,7 @@ import { activeApplicant, inActiveApplicant } from "api/apiActive";
 import { viewRoleSkill } from "api/roleApi";
 import ConfirmModal from "components/BaseComponents/BaseConfirmModal";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
+import BaseFav from "components/BaseComponents/BaseFav";
 
 const {
   exportableFieldOption,
@@ -162,7 +156,11 @@ const Applicant = () => {
   const [filterAppliedRole, setFilterAppliedRole] = useState<SelectedOption[]>(
     []
   );
-    const today = new Date().toISOString().split('T')[0];
+  const [filterFavorite, setFilterFavorite] = useState<SelectedOption | null>(
+    null
+  );
+
+  const today = new Date().toISOString().split("T")[0];
 
   const toggleDrawer =
     (anchor: Anchor, open: boolean) =>
@@ -213,6 +211,7 @@ const Applicant = () => {
         addedBy?: string;
         isActive?: string;
         appliedRole?: string;
+        isFavorite?: string;
       } = {
         page: pagination.pageIndex + 1,
         pageSize: pagination.pageSize,
@@ -301,6 +300,10 @@ const Applicant = () => {
         params.search = searchValue;
       }
 
+      if (filterFavorite) {
+        params.isFavorite = filterFavorite.value;
+      }
+
       const res = await listOfApplicants(params);
       setApplicant(res?.data?.item || res?.data?.results || []);
       setTotalRecords(res?.data?.totalRecords || 0);
@@ -323,6 +326,7 @@ const Applicant = () => {
       setTableLoader(false);
     }
   };
+
   useEffect(() => {
     const delayedSearch = debounce(() => {
       fetchApplicants();
@@ -355,83 +359,193 @@ const Applicant = () => {
     searchAll,
     filterActiveStatus,
     filterAppliedRole,
+    filterFavorite,
   ]);
 
-  useEffect(() => {
-    const fetchSkills = async () => {
-      try {
-        setLoading(true);
-        const response = await ViewAppliedSkills({
-          page: 1,
-          pageSize: 50,
-          limit: 500,
-        });
-
-        const skillData = response?.data?.data || [];
-        setSkillOptions(
-          skillData.map((item: any) => ({
-            label: item.skills,
-            value: item._id,
-          }))
-        );
-      } catch (error: any) {
-        const details = error?.response?.data?.details;
-        if (Array.isArray(details)) {
-          details.forEach((msg: string) => {
-            toast.error(msg, {
-              closeOnClick: true,
-              autoClose: 5000,
-            });
-          });
-        } else {
-          toast.error("Failed to fetch skills.. Please try again.", {
+  const fetchAppliedRole = async () => {
+    try {
+      const roleData = await viewRoleSkill({
+        page: 1,
+        pageSize: 50,
+        limit: 500,
+      });
+      const appliedRoleData = roleData?.data?.data || [];
+      setAppliedRoleOptions(
+        appliedRoleData.map((item: any) => ({
+          label: item.appliedRole,
+          value: item.appliedRole,
+        }))
+      );
+    } catch (error: any) {
+      const details = error?.response?.data?.details;
+      if (Array.isArray(details)) {
+        details.forEach((msg: string) => {
+          toast.error(msg, {
             closeOnClick: true,
             autoClose: 5000,
           });
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchSkills();
-  }, []);
-
-  useEffect(() => {
-    const fetchAppliedRole = async () => {
-      try {
-        const roleData = await viewRoleSkill({
-          page: 1,
-          pageSize: 50,
-          limit: 500,
         });
-        const appliedRoleData = roleData?.data?.data || [];
-        setAppliedRoleOptions(
-          appliedRoleData.map((item: any) => ({
-            label: item.appliedRole,
-            value: item.appliedRole,
-          }))
-        );
-      } catch (error: any) {
-        const details = error?.response?.data?.details;
-        if (Array.isArray(details)) {
-          details.forEach((msg: string) => {
-            toast.error(msg, {
-              closeOnClick: true,
-              autoClose: 5000,
-            });
-          });
-        } else {
-          toast.error("Failed to fetch roles... Please try again.", {
+      } else {
+        toast.error("Failed to fetch roles... Please try again.", {
+          closeOnClick: true,
+          autoClose: 5000,
+        });
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchSkills = async () => {
+    try {
+      setLoading(true);
+      const response = await ViewAppliedSkills({
+        page: 1,
+        pageSize: 50,
+        limit: 500,
+      });
+
+      const skillData = response?.data?.data || [];
+      setSkillOptions(
+        skillData.map((item: any) => ({
+          label: item.skills,
+          value: item._id,
+        }))
+      );
+    } catch (error: any) {
+      const details = error?.response?.data?.details;
+      if (Array.isArray(details)) {
+        details.forEach((msg: string) => {
+          toast.error(msg, {
             closeOnClick: true,
             autoClose: 5000,
           });
-        }
-      } finally {
-        setLoading(false);
+        });
+      } else {
+        toast.error("Failed to fetch skills.. Please try again.", {
+          closeOnClick: true,
+          autoClose: 5000,
+        });
       }
-    };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getCities = async () => {
+    try {
+      const cityData = await fetchCities();
+      if (cityData?.data?.item) {
+        setCities(
+          cityData.data.item.map(
+            (city: { city_name: string; _id: string }) => ({
+              label: city.city_name,
+              value: city._id,
+            })
+          )
+        );
+      }
+    } catch (error: any) {
+      const details = error?.response?.data?.details;
+      if (Array.isArray(details)) {
+        details.forEach((msg: string) => {
+          toast.error(msg, {
+            closeOnClick: true,
+            autoClose: 5000,
+          });
+        });
+      } else {
+        toast.error("Failed to fetch cities.. Please try again.", {
+          closeOnClick: true,
+          autoClose: 5000,
+        });
+      }
+    }
+  };
+
+  const getStates = async () => {
+    try {
+      setLoading(true);
+      const stateData = await fetchState();
+      if (stateData?.data) {
+        setStates(
+          stateData.data.item.map(
+            (state: {
+              state_name: string;
+              _id: string;
+              country_id: string;
+            }) => ({
+              label: state.state_name,
+              value: state._id,
+              country_id: state.country_id,
+            })
+          )
+        );
+      }
+    } catch (error: any) {
+      const details = error?.response?.data?.details;
+      if (Array.isArray(details)) {
+        details.forEach((msg: string) => {
+          toast.error(msg, {
+            closeOnClick: true,
+            autoClose: 5000,
+          });
+        });
+      } else {
+        toast.error("Failed to fetch State.. Please try again.", {
+          closeOnClick: true,
+          autoClose: 5000,
+        });
+      }
+    }
+  };
+
+  const handleConfirm = async () => {
+    if (!selectedRecord) {
+      console.warn("No record selected");
+      return;
+    }
+    setModelLoading(true);
+    try {
+      switch (dataActive) {
+        case true: {
+          // console.log("Deactivating user...");
+          const res = await inActiveApplicant(selectedRecord);
+          if (res.success) {
+            setModelLoading(false);
+            setShowActiveModal(false);
+            toast.success(res.message);
+          }
+          break;
+        }
+        case false: {
+          // console.log("Activating user...");
+          const res = await activeApplicant(selectedRecord);
+          if (res.success) {
+            setModelLoading(false);
+            setShowActiveModal(false);
+            toast.success(res.message);
+          }
+          break;
+        }
+        default:
+          console.warn("Unknown status value:", dataActive);
+      }
+    } catch (error) {
+      console.error("Failed to toggle status:", error);
+    } finally {
+      setModelLoading(false);
+      setShowActiveModal(false);
+      fetchApplicants();
+    }
+  };
+
+  useEffect(() => {
     fetchAppliedRole();
+    fetchSkills();
+    getCities();
+    getStates();
+    handleConfirm();
   }, []);
 
   const handleExperienceChange = (e: React.ChangeEvent<any>) => {
@@ -530,43 +644,9 @@ const Applicant = () => {
     setAddedBy([]);
     setFilterActiveStatus(null);
     setFilterAppliedRole([]);
+    setFilterFavorite(null);
     fetchApplicants();
   };
-
-  useEffect(() => {
-    const getCities = async () => {
-      try {
-        const cityData = await fetchCities();
-        if (cityData?.data?.item) {
-          setCities(
-            cityData.data.item.map(
-              (city: { city_name: string; _id: string }) => ({
-                label: city.city_name,
-                value: city._id,
-              })
-            )
-          );
-        }
-      } catch (error: any) {
-        const details = error?.response?.data?.details;
-        if (Array.isArray(details)) {
-          details.forEach((msg: string) => {
-            toast.error(msg, {
-              closeOnClick: true,
-              autoClose: 5000,
-            });
-          });
-        } else {
-          toast.error("Failed to fetch cities.. Please try again.", {
-            closeOnClick: true,
-            autoClose: 5000,
-          });
-        }
-      }
-    };
-
-    getCities();
-  }, []);
 
   const handleCityChange = (selectedOption: SelectedOption) => {
     setFilterCity(selectedOption);
@@ -580,47 +660,6 @@ const Applicant = () => {
       }
     }
   };
-
-  useEffect(() => {
-    const getStates = async () => {
-      try {
-        setLoading(true);
-        const stateData = await fetchState();
-        if (stateData?.data) {
-          setStates(
-            stateData.data.item.map(
-              (state: {
-                state_name: string;
-                _id: string;
-                country_id: string;
-              }) => ({
-                label: state.state_name,
-                value: state._id,
-                country_id: state.country_id,
-              })
-            )
-          );
-        }
-      } catch (error: any) {
-        const details = error?.response?.data?.details;
-        if (Array.isArray(details)) {
-          details.forEach((msg: string) => {
-            toast.error(msg, {
-              closeOnClick: true,
-              autoClose: 5000,
-            });
-          });
-        } else {
-          toast.error("Failed to fetch State.. Please try again.", {
-            closeOnClick: true,
-            autoClose: 5000,
-          });
-        }
-      }
-    };
-
-    getStates();
-  }, []);
 
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
@@ -706,6 +745,7 @@ const Applicant = () => {
       });
     }
   };
+
   const handleSendEmail = () => {
     const emails = applicant
       .filter((app) => selectedApplicants.includes(app._id))
@@ -807,6 +847,10 @@ const Applicant = () => {
         queryParams.search = searchAll.trim();
       }
 
+       if (filterFavorite) {
+        queryParams.isFavorite = filterFavorite.value;
+      }
+
       // Wait (if needed)
       await new Promise((resolve) => setTimeout(resolve, 3500));
 
@@ -888,6 +932,11 @@ const Applicant = () => {
   const closeConfirmExportModal = () => {
     setShowConfirmExportModal(false);
   };
+
+  const favoriteOptions = [
+    { label: "Favorite", value: true },
+    { label: "Not Favorite", value: false },
+  ];
 
   const drawerList = (anchor: Anchor) => (
     <Box
@@ -1120,6 +1169,17 @@ const Applicant = () => {
           handleChange={handleAnyHandOnOffersChange}
           value={filterAnyHandOnOffers}
         />
+          <BaseSelect
+          label="Favorite"
+          name="favorite"
+          className="mb-1 select-border"
+          options={favoriteOptions}
+          placeholder="Favorite"
+          handleChange={(selectedOption: SelectedOption) =>
+            setFilterFavorite(selectedOption)
+          }
+          value={filterFavorite}
+        />
 
         <Row className="mb-3">
           <Col xs={6}>
@@ -1254,7 +1314,7 @@ const Applicant = () => {
         accessorKey: "totalExperience",
         enableColumnFilter: false,
       },
-        {
+      {
         header: "Action",
         cell: (cell: any) => (
           <div className="gap-2 hstack">
@@ -1319,9 +1379,27 @@ const Applicant = () => {
                 anchorId={`email-${cell?.row?.original?.id}`}
               />
             </BaseButton>
+
+              {/* Add to favorite */}
+              {cell?.row?.original?.isFavorite ? (
+                <i className="align-bottom ri-heart-fill text-danger" style={{fontSize: '20px', cursor: "pointer"}} onClick={() =>
+                  handleConfirmFav(
+                    cell?.row?.original?.isFavorite,
+                    cell?.row?.original?._id
+                  )
+                }></i>
+              ) : (
+                <i className="align-bottom ri-heart-line" style={{fontSize: '20px', cursor: "pointer" }} onClick={() =>
+                  handleConfirmFav(
+                    cell?.row?.original?.isFavorite,
+                    cell?.row?.original?._id
+                  )
+                }></i>
+              )}
+
           </div>
         ),
-      },  
+      },
       {
         header: "Interview Stage",
         accessorKey: "interviewStage",
@@ -1398,13 +1476,13 @@ const Applicant = () => {
         ),
         enableColumnFilter: false,
       },
-       {
+      {
         header: "Status",
         accessorKey: "isActive",
         cell: (cell: any) => {
           const id = cell.row.original._id;
           const isActive = cell.getValue();
- 
+
           return (
             <Switch
               size="small"
@@ -1416,7 +1494,7 @@ const Applicant = () => {
           );
         },
         enableColumnFilter: false,
-      }
+      },
     ],
     [applicant, selectedApplicants]
   );
@@ -1428,50 +1506,6 @@ const Applicant = () => {
     setShowActiveModal(true);
   };
 
-  const handleConfirm = async () => {
-    if (!selectedRecord) {
-      console.warn("No record selected");
-      return;
-    }
-    setModelLoading(true);
-    try {
-      switch (dataActive) {
-        case true: {
-          // console.log("Deactivating user...");
-          const res = await inActiveApplicant(selectedRecord);
-          if (res.success) {
-            setModelLoading(false);
-            setShowActiveModal(false);
-            toast.success(res.message);
-          }
-          break;
-        }
-        case false: {
-          // console.log("Activating user...");
-          const res = await activeApplicant(selectedRecord);
-          if (res.success) {
-            setModelLoading(false);
-            setShowActiveModal(false);
-            toast.success(res.message);
-          }
-          break;
-        }
-        default:
-          console.warn("Unknown status value:", dataActive);
-      }
-    } catch (error) {
-      console.error("Failed to toggle status:", error);
-    } finally {
-      setModelLoading(false);
-      setShowActiveModal(false);
-      fetchApplicants();
-    }
-    // setPendingChecked(pendingChecked);
-  };
-
-  useEffect(() => {
-    handleConfirm();
-  }, []);
   const handleNavigate = () => {
     navigate("/applicants/add-applicant");
   };
@@ -1488,20 +1522,53 @@ const Applicant = () => {
     setExportableFields([]);
   };
 
-   const handlecancelClose = () => {
+  const handlecancelClose = () => {
     setShowExportModal(false);
     setExportOption("");
     setExportableFields([]);
-  }
- 
+  };
+
+  const [showFavModal, setShowFavModal] = useState(false);
+  const [isFav, setIsFav] = useState(false);
+
+  const handleConfirmFav = (isFav: boolean = false, id: string | null) => {
+    setShowFavModal(true);
+    setIsFav(isFav);
+    setSelectedApplicantId(id);
+  };
+
+  const updateApplicantData = (isFav: boolean, id: string | null) => {
+    updateApplicant({ isFavorite: !isFav }, id)
+      .then((res: any) => {
+        if (res.success) {
+          toast.success("Applicant added to favorite list");
+          setShowFavModal(false);
+          fetchApplicants();
+        }
+      })
+      .catch((error) => {
+        const errorMessages = error?.response?.data?.details;
+        if (errorMessages && Array.isArray(errorMessages)) {
+          errorMessages.forEach((errorMessage) => {
+            toast.error(errorMessage);
+          });
+        } else {
+          toast.error("An error occurred while updating the applicant.");
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
   return (
     <Fragment>
-       <ConfirmModal
-      show={showConfirmExportModal}
-      loader={modelLoading}
-      onYesClick={() => handleExportExcel(exportOption)}
-      onCloseClick={closeConfirmExportModal}
-      flag={false}
+      <ConfirmModal
+        show={showConfirmExportModal}
+        loader={modelLoading}
+        onYesClick={() => handleExportExcel(exportOption)}
+        onCloseClick={closeConfirmExportModal}
+        flag={false}
       />
       <BaseModal
         show={showExportModal}
@@ -1550,7 +1617,10 @@ const Applicant = () => {
                       type="radio"
                       id={option}
                       name="exportOption"
-                       disabled={(exportableFields.length > 0 || selectedApplicants.length > 0)}
+                      disabled={
+                        exportableFields.length > 0 ||
+                        selectedApplicants.length > 0
+                      }
                       checked={exportOption === option}
                       onChange={() => handleExportOptionChange(option)}
                     />
@@ -1599,9 +1669,16 @@ const Applicant = () => {
             ? deleteMultipleApplicantDetails(multipleApplicantDelete)
             : null
         }
-        // recordId={recordIdToDelete}
         loader={loader}
       />
+
+      <BaseFav
+        show={showFavModal}
+        onCloseClick={() => setShowFavModal(false)}
+        onYesClick={() => updateApplicantData(isFav, selectedApplicantId)}
+        flag={isFav}
+      />
+
       <Container fluid>
         <Row>
           <div>
@@ -1722,16 +1799,11 @@ const Applicant = () => {
 };
 
 const truncateText = {
-  // display: "flex",
   whiteSpace: "nowrap",
   overflow: "hidden",
   textOverflow: "ellipsis",
   maxWidth: "150px",
   fontSize: "14px",
-  // alignItems: "center",
-  // justifyContent: "center",
-  // height: "40px",
-  // textAlign: "left",
 };
 
 const toolipComponents = {

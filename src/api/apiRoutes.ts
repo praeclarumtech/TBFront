@@ -48,6 +48,7 @@ export const VIEW_ALL_EMAIL = "email/applicant/getAllEmails";
 export const DELETE_EMAIL = "email/applicant/deleteManyEmails";
 export const VIEW_EMAIL = "email/applicant/viewEmailById";
 export const DELETE_MULTIPLE_EMAIL = "email/applicant/deleteManyEmails";
+export const EMAIL_COUNT = "email/applicant/count";
 
 //Passing Year module
 export const ADD_PASSING_YEAR = "year";

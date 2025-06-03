@@ -10,6 +10,7 @@ import {
   CREATE_EMAIL_TEMPLATE,
   GET_EMAIL_TEMPLATE_BY_ID,
   GET_EMAIL_TEMPLATE_BY_TYPE,
+  EMAIL_COUNT
 } from "./apiRoutes";
 import { authServices } from "./apiServices";
 import { AxiosRequestConfig } from 'axios';
@@ -162,5 +163,13 @@ export const getEmailTemplateByType = async (type: string) => {
   const response = await authServices.get(
     `/email/template/${GET_EMAIL_TEMPLATE_BY_TYPE}/${type}`
   );
+  return response?.data;
+};
+
+export const getEmailCount = async (params?: {
+  startDate?: string;
+  endDate?: string;
+}) => {
+  const response = await authServices.get(`${EMAIL_COUNT}`, { params });
   return response?.data;
 };
