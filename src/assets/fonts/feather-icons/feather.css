@@ -821,3 +821,31 @@
 .fe-zoom-out:before {
   content: "\ea09";
 }
+
+.drawer-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+ 
+.download-icon {
+  font-size: 20px;
+  color: #1890ff;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+ 
+.download-icon:hover {
+  color: #40a9ff;
+}
+ 
+.delete-button {
+  background-color: #ff4d4f;
+  border: none;
+  font-weight: 500;
+}
+ 
+.delete-button:hover {
+  background-color: #ff7875;
+}
+ 

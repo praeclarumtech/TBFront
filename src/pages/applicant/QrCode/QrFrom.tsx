@@ -25,6 +25,7 @@ import BaseButton from "components/BaseComponents/BaseButton";
 import { Card } from "antd";
 import { toast } from "react-toastify";
 import { viewRoleSkill } from "api/roleApi";
+import uploadCloud from "assets/fonts/feather-icons/icons/upload-cloud.svg";
 
 const { projectTitle, Modules, workPreferenceType, communicationOptions } =
   appConstants;
@@ -40,6 +41,7 @@ const QrFrom = () => {
   const [designationOptions, setDesignationOptions] = useState<any[]>([]);
   const [formData, setFormData] = useState<any>();
   const [roleOptions, setRoleOptions] = useState<any[]>([]);
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
   const navigate = useNavigate();
 
   const { id } = useParams();
@@ -184,80 +186,53 @@ const QrFrom = () => {
     },
     validationSchema: QrApplicants,
 
-    onSubmit: (value: any) => {
+    onSubmit: async (value: any) => {
       setButtonLoading(true);
-
-      const payload = {
-        name: {
-          firstName: value.firstName,
-          lastName: value.lastName,
-        },
-        phone: {
-          phoneNumber: value.phoneNumber,
-          whatsappNumber: value.phoneNumber,
-        },
-        email: value.email,
-        appliedSkills: value.appliedSkills,
-        otherSkills: value.otherSkills,
-        currentPkg: value.currentPkg,
-        expectedPkg: value.expectedPkg,
-        noticePeriod: value.noticePeriod,
-        workPreference: value.workPreference,
-        currentCompanyDesignation: value.currentCompanyDesignation,
-        linkedinUrl: value.linkedinUrl,
-        communicationSkill: value.communicationSkill,
-        totalExperience: value.totalExperience,
-        relevantSkillExperience: value.relevantSkillExperience,
-        appliedRole: value.appliedRole,
-      };
-
-      if (!id) {
-        createApplicantQR(payload)
-          .then((res: any) => {
-            if (res.success) {
-              toast.success(res.message);
-              navigate("/applicants/qr-code-success");
-              setButtonLoading(false);
-            }
-          })
-          .catch((error) => {
-            setButtonLoading(false);
-            const errorMessages = error?.response?.data?.details;
-            if (errorMessages && Array.isArray(errorMessages)) {
-              errorMessages.forEach((errorMessage) => {
-                toast.error(errorMessage);
-              });
-            } else {
-              toast.error("An error occurred while updating the applicant.");
-            }
-          })
-
-          .finally(() => {
-            setButtonLoading(false);
+      try {
+        const formData = new FormData();
+        formData.append("name[firstName]", value.firstName);
+        formData.append("name[lastName]", value.lastName);
+        formData.append("phone[phoneNumber]", value.phoneNumber);
+        formData.append("phone[whatsappNumber]", value.phoneNumber);
+        formData.append("email", value.email);
+        value.appliedSkills.forEach((skill: string) => {
+          formData.append("appliedSkills[]", skill);
+        });
+        formData.append("otherSkills", value.otherSkills);
+        formData.append("currentPkg", value.currentPkg);
+        formData.append("expectedPkg", value.expectedPkg);
+        formData.append("noticePeriod", value.noticePeriod);
+        formData.append("workPreference", value.workPreference);
+        formData.append("currentCompanyDesignation", value.currentCompanyDesignation);
+        formData.append("linkedinUrl", value.linkedinUrl);
+        formData.append("communicationSkill", value.communicationSkill);
+        formData.append("totalExperience", value.totalExperience);
+        formData.append("relevantSkillExperience", value.relevantSkillExperience);
+        formData.append("appliedRole", value.appliedRole);
+        if (resumeFile) {
+          formData.append("attachments", resumeFile);
+        }
+        if (!id) {
+          await createApplicantQR(formData, true);
+          toast.success("Applicant created successfully");
+          navigate("/applicants/qr-code-success");
+        } else {
+          await updateApplicantQR(formData, id, true);
+          toast.success("Applicant updated successfully");
+          navigate("/applicants/qr-code-success");
+        }
+      } catch (error: any) {
+        setButtonLoading(false);
+        const errorMessages = error?.response?.data?.details;
+        if (errorMessages && Array.isArray(errorMessages)) {
+          errorMessages.forEach((errorMessage: string) => {
+            toast.error(errorMessage);
           });
-      } else {
-        updateApplicantQR(payload, id)
-          .then((res: any) => {
-            if (res.success) {
-              toast.success(res.message);
-              navigate("/applicants/qr-code-success");
-              setButtonLoading(false);
-            }
-          })
-          .catch((error: any) => {
-            setButtonLoading(false);
-            const errorMessages = error?.response?.data?.details;
-            if (errorMessages && Array.isArray(errorMessages)) {
-              errorMessages.forEach((errorMessage) => {
-                toast.error(errorMessage);
-              });
-            } else {
-              toast.error("An error occurred while updating the applicant.");
-            }
-          })
-          .finally(() => {
-            setButtonLoading(false);
-          });
+        } else {
+          toast.error("An error occurred while updating the applicant.");
+        }
+      } finally {
+        setButtonLoading(false);
       }
     },
   });
@@ -312,8 +287,8 @@ const QrFrom = () => {
   };
 
   const handleMultiSkill = (selectedMulti: any) => {
-    const ids = selectedMulti?.map((item: any) => item.label) || [];
-    validation.setFieldValue("appliedSkills", ids);
+    const skills = selectedMulti?.map((item: any) => item.label) || [];
+    validation.setFieldValue("appliedSkills", skills);
     setSelectedMulti(selectedMulti);
   };
 
@@ -911,6 +886,56 @@ const QrFrom = () => {
                         error={validation.errors.linkedinUrl}
                         passwordToggle={false}
                       />
+                    </Col>
+                    <Col xs={12} sm={6} md={6} lg={6} className="mb-3 d-flex align-items-end">
+                      <div className="w-100">
+                        <label className="form-label text-gray-700 font-semibold" htmlFor="resume-upload">
+                          Resume Upload
+                        </label>
+                        <div className="d-flex align-items-center position-relative">
+                          <input
+                            id="resume-upload"
+                            type="file"
+                            accept="application/pdf,.doc,.docx"
+                            style={{ display: "none" }}
+                            onChange={(e) => {
+                              if (e.target.files && e.target.files[0]) {
+                                setResumeFile(e.target.files[0]);
+                              }
+                            }}
+                          />
+                          <button
+                            type="button"
+                            className="btn btn-outline-primary d-flex align-items-center"
+                            onClick={() => document.getElementById("resume-upload")?.click()}
+                          >
+                            <img src={uploadCloud} alt="Upload" style={{ width: 22, height: 22, marginRight: 8 }} />
+                            {resumeFile ? "Change File" : "Upload Resume"}
+                          </button>
+                          {resumeFile && (
+                            <>
+                              <span className="ms-2 text-truncate" style={{ maxWidth: 120 }}>
+                                {resumeFile.name}
+                              </span>
+                              <button
+                                type="button"
+                                className="btn btn-link text-danger ms-2 p-0"
+                                style={{ fontSize: 18 }}
+                                onClick={() => {
+                                  setResumeFile(null);
+                                  // Also clear the file input value
+                                  const input = document.getElementById("resume-upload") as HTMLInputElement;
+                                  if (input) input.value = "";
+                                }}
+                                title="Remove file"
+                              >
+                                &times;
+                              </button>
+                            </>
+                          )}
+                        </div>
+                        <small className="text-muted">PDF, DOC, DOCX only. Max 5MB.</small>
+                      </div>
                     </Col>
                   </Row>
                 )}

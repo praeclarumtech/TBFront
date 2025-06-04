@@ -18,7 +18,7 @@ import { BaseSelect } from "components/BaseComponents/BaseSelect";
 import { SelectedOption } from "interfaces/applicant.interface";
 import "react-quill/dist/quill.snow.css";
 import ReactQuill from "react-quill";
-import { Label } from "reactstrap";
+import { Label, Spinner } from "reactstrap";
 
 const quillModules = {
   toolbar: [
@@ -640,7 +640,8 @@ const EmailForm = () => {
                       >
                         {validation.isSubmitting ? (
                           <>
-                            Loading... <i className="fa fa-spinner fa-spin"></i>
+                            <Spinner size="sm" className="me-2" />
+                            Loading...
                           </>
                         ) : (
                           <>

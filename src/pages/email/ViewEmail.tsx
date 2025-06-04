@@ -15,6 +15,7 @@ import Skeleton from "react-loading-skeleton";
 import { MailTwoTone } from "@ant-design/icons";
 import { Modal, Badge, Card, Row, Col, Tag } from "antd";
 import appConstants from "constants/constant";
+import "react-quill/dist/quill.snow.css";
 
 const { projectTitle, Modules } = appConstants;
 
@@ -317,6 +318,7 @@ const ViewModal = ({ show, onHide, applicantId }: any) => {
                   value={
                     formData?.email?.description ? (
                       <div
+                        className="ql-editor"
                         dangerouslySetInnerHTML={{
                           __html: formData.email.description,
                         }}
