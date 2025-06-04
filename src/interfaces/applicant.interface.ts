@@ -271,4 +271,5 @@ export const QrApplicants = Yup.object({
   ),
   linkedinUrl: Yup.string().url("Please enter a valid URL."),
   otherSkills: Yup.string(),
+   appliedRole: Yup.string().required("Applied role is required"),
 });

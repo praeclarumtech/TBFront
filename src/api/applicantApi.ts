@@ -29,6 +29,7 @@ import {
   UPDATE_IMPORTED_APPLICANTS_STATUS,
   CREATE_APPLICANT_QR,
   UPDATE_APPLICANT_QR,
+  DOWNLOAD_APPLICANT,
 } from "./apiRoutes";
 import { authServices } from "./apiServices";
 
@@ -60,7 +61,6 @@ export const listOfApplicants = async (params: {
   searchSkills?: string;
   isAcrive?: boolean;
 }) => {
-
   const response = await authServices.get(`${LIST_APPLICANT}`, {
     params,
   });
@@ -374,7 +374,7 @@ export const duplicateApplicants = async (data?: object) => {
   });
   return response?.data;
 };
- 
+
 export const deleteDuplicateApplicants = async (data?: object) => {
   const response = await authServices.delete(`${DELETE_DUPLICATE_RECORDS}`, {
     data,
@@ -382,16 +382,42 @@ export const deleteDuplicateApplicants = async (data?: object) => {
   return response?.data;
 };
 
-export const createApplicantQR = async (data?: object) => {
-  const response = await authServices.post(`${CREATE_APPLICANT_QR}`, data);
-  return response?.data;
+export const createApplicantQR = async (data?: object, isFormData = false) => {
+  if (isFormData && data instanceof FormData) {
+    const response = await authServices.post(`${CREATE_APPLICANT_QR}`, data, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return response?.data;
+  } else {
+    const response = await authServices.post(`${CREATE_APPLICANT_QR}`, data);
+    return response?.data;
+  }
 };
  
 export const updateApplicantQR = async (
   data: object,
-  id: string | undefined | null
+  id: string | undefined | null,
+  isFormData = false
 ) => {
-  const response = await authServices.put(`${UPDATE_APPLICANT_QR}/${id}`, data);
+  if (isFormData && data instanceof FormData) {
+    const response = await authServices.put(`${UPDATE_APPLICANT_QR}/${id}`, data, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return response?.data;
+  } else {
+    const response = await authServices.put(`${UPDATE_APPLICANT_QR}/${id}`, data);
+    return response?.data;
+  }
+};
+
+export const downloadApplicant = async (data?: object) => {
+  const response = await authServices.get(`${DOWNLOAD_APPLICANT}`, {
+    data,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    responseType: "blob", // This is correct for downloading files
+    timeout: 300000,
+  });
   return response?.data;
 };
- 
