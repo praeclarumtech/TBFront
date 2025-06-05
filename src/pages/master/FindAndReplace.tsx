@@ -19,6 +19,8 @@ import {
 import { FindReplace } from "@mui/icons-material";
 import { find, findAndReplaceAll } from "api/findAndReplace";
 import { ViewAppliedSkills } from "api/skillsApi";
+import { viewRoleSkill } from "api/roleApi";
+import { viewAllDegree } from "api/apiDegree";
 
 const { projectTitle, Modules, findAndReplaceOptions } = appConstants;
 
@@ -27,6 +29,8 @@ const FindAndReplace = () => {
   const [findAndReplaceOption, setFindAndReplaceOption] =
     useState<SelectedOption | null>(null);
   const [skillOptions, setSkillOptions] = useState<SelectedOption1[]>([]);
+  const [roleOptions, setRoleOptions] = useState<SelectedOption1[]>([]);
+  const [qualificationOptions, setQualificationOptions] = useState<SelectedOption1[]>([]);
   const [editingSkill, setEditingSkill] = useState<any>(null);
 
   const validation = useFormik({
@@ -169,7 +173,75 @@ const FindAndReplace = () => {
       }
     };
 
+    const fetchRoles = async () => {
+      try {
+        const response = await viewRoleSkill({
+          page: 1,
+          pageSize: 50,
+          limit: 1000,
+        });
+
+        const roleData = response?.data?.data || [];
+        setRoleOptions(
+          roleData.map((item: any) => ({
+            label: item.appliedRole,
+            value: item.appliedRole,
+          }))
+        );
+      } catch (error: any) {
+        const details = error?.response?.data?.details;
+        if (Array.isArray(details)) {
+          details.forEach((msg: string) => {
+            toast.error(msg, {
+              closeOnClick: true,
+              autoClose: 5000,
+            });
+          });
+        } else {
+          toast.error("Failed to fetch roles.. Please try again.", {
+            closeOnClick: true,
+            autoClose: 5000,
+          });
+        }
+      }
+    };
+
+    const fetchQualifications = async () => {
+      try {
+        const response = await viewAllDegree({
+          page: 1,
+          pageSize: 50,
+          limit: 1000,
+        });
+
+        const qualificationData = response?.data?.data || [];
+        setQualificationOptions(
+          qualificationData.map((item: any) => ({
+            label: item.degree,
+            value: item.degree,
+          }))
+        );
+      } catch (error: any) {
+        const details = error?.response?.data?.details;
+        if (Array.isArray(details)) {
+          details.forEach((msg: string) => {
+            toast.error(msg, {
+              closeOnClick: true,
+              autoClose: 5000,
+            });
+          });
+        } else {
+          toast.error("Failed to fetch qualifications.. Please try again.", {
+            closeOnClick: true,
+            autoClose: 5000,
+          });
+        }
+      }
+    };
+
     fetchSkills();
+    fetchRoles();
+    fetchQualifications();
   }, []);
 
   return (
@@ -215,6 +287,16 @@ const FindAndReplace = () => {
                                 ? validation.errors.field
                                 : undefined
                             }
+                            menuPortalTarget={typeof window !== "undefined" ? document.body : null}
+                            menuPosition="fixed"
+                            styles={{
+                              menuPortal: (base: any) => ({ ...base, zIndex: 9999 }),
+                              menuList: (provided: any) => ({
+                                ...provided,
+                                maxHeight: 200,
+                                overflowY: 'auto',
+                              }),
+                            }}
                           />
                         </Col>
                       </Row>
@@ -282,16 +364,99 @@ const FindAndReplace = () => {
                                   ? validation.errors.ReplaceValue
                                   : undefined
                               }
+                              menuPortalTarget={typeof window !== "undefined" ? document.body : null}
+                              menuPosition="fixed"
+                              styles={{
+                                menuPortal: (base: any) => ({ ...base, zIndex: 9999 }),
+                                menuList: (provided: any) => ({
+                                  ...provided,
+                                  maxHeight: 200,
+                                  overflowY: 'auto',
+                                }),
+                              }}
                             />
                           </Col>
                         )}
 
-                        {findAndReplaceOption?.value !== "appliedSkills" && (
+                        {findAndReplaceOption?.value === "appliedRole" && (
+                          <Col xs={12} md={8} lg={8}>
+                            <BaseSelect
+                              label="Replace"
+                              name="ReplaceValue"
+                              options={roleOptions}
+                              className="mb-1 select-border"
+                              placeholder="Select Role"
+                              value={
+                                roleOptions.find(
+                                  (opt) =>
+                                    opt.value === validation.values.ReplaceValue
+                                ) || null
+                              }
+                              handleChange={handleAppliedField}
+                              handleBlur={validation.handleBlur}
+                              touched={!!validation.touched.ReplaceValue}
+                              error={
+                                typeof validation.errors.ReplaceValue ===
+                                "string"
+                                  ? validation.errors.ReplaceValue
+                                  : undefined
+                              }
+                              menuPortalTarget={typeof window !== "undefined" ? document.body : null}
+                              menuPosition="fixed"
+                              styles={{
+                                menuPortal: (base: any) => ({ ...base, zIndex: 9999 }),
+                                menuList: (provided: any) => ({
+                                  ...provided,
+                                  maxHeight: 200,
+                                  overflowY: 'auto',
+                                }),
+                              }}
+                            />
+                          </Col>
+                        )}
+
+                        {findAndReplaceOption?.value === "qualification" && (
+                          <Col xs={12} md={8} lg={8}>
+                            <BaseSelect
+                              label="Replace"
+                              name="ReplaceValue"
+                              options={qualificationOptions}
+                              className="mb-1 select-border"
+                              placeholder="Select Qualification"
+                              value={
+                                qualificationOptions.find(
+                                  (opt) =>
+                                    opt.value === validation.values.ReplaceValue
+                                ) || null
+                              }
+                              handleChange={handleAppliedField}
+                              handleBlur={validation.handleBlur}
+                              touched={!!validation.touched.ReplaceValue}
+                              error={
+                                typeof validation.errors.ReplaceValue ===
+                                "string"
+                                  ? validation.errors.ReplaceValue
+                                  : undefined
+                              }
+                              menuPortalTarget={typeof window !== "undefined" ? document.body : null}
+                              menuPosition="fixed"
+                              styles={{
+                                menuPortal: (base: any) => ({ ...base, zIndex: 9999 }),
+                                menuList: (provided: any) => ({
+                                  ...provided,
+                                  maxHeight: 200,
+                                  overflowY: "auto",
+                                }),
+                              }}
+                            />
+                          </Col>
+                        )}
+
+                        {!["appliedSkills", "appliedRole", "qualification"].includes(findAndReplaceOption?.value || "") && (
                           <Col xs={10} md={8} lg={8}>
                             <BaseInput
                               label="Replace"
                               name="ReplaceValue"
-                              // className="bg-gray-100"
                               type="text"
                               placeholder={InputPlaceHolder("Field to Replace")}
                               handleChange={validation.handleChange}

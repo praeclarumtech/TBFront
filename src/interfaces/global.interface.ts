@@ -158,6 +158,8 @@ export interface BaseSelectProps {
   isDisabled?: boolean;
   styles?: any;
   isRequired?: boolean;
+  menuPortalTarget?: HTMLElement | null;
+  menuPosition?: "absolute" | "fixed";
 }
 
 export interface BaseTextareaProps {
