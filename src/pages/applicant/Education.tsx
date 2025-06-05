@@ -159,6 +159,16 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                       touched={validation.touched.qualification}
                       error={validation.errors.qualification}
                       isRequired={false}
+                      menuPortalTarget={typeof window !== "undefined" ? document.body : null}
+                      menuPosition="fixed"
+                      styles={{
+                        menuPortal: (base: any) => ({ ...base, zIndex: 9999 }),
+                        menuList: (provided: any) => ({
+                          ...provided,
+                          maxHeight: 200,
+                          overflowY: 'auto',
+                        }),
+                      }}
                     />
                   </Col>
 
@@ -229,6 +239,16 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                       touched={validation.touched.passingYear}
                       error={validation.errors.passingYear}
                       isRequired={false}
+                      menuPortalTarget={typeof window !== "undefined" ? document.body : null}
+                      menuPosition="fixed"
+                      styles={{
+                        menuPortal: (base: any) => ({ ...base, zIndex: 9999 }),
+                        menuList: (provided: any) => ({
+                          ...provided,
+                          maxHeight: 200,
+                          overflowY: 'auto',
+                        }),
+                      }}
                     />
                   </Col>
 
