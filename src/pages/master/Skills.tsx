@@ -378,7 +378,10 @@ const AddSkill = () => {
  
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchAll(event.target.value);
-    console.log("first", searchAll);
+       setPagination((prev) => ({
+      ...prev,
+      pageIndex: 0,
+    }));
   };
  
   const closeDeleteModal = () => {

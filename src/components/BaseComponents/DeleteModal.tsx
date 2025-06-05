@@ -23,6 +23,11 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
           </div>
         </div>
         <div className="gap-2 mt-4 mb-2 d-flex justify-content-center">
+          <Button color="danger" size="btn w-sm" onClick={onDeleteClick}>
+            Yes, Delete It!
+            {loader}
+            {loader && <Spinner size="sm" className="me-2" />}{" "}
+          </Button>
           <Button
             color="light"
             size="btn w-sm"
@@ -30,11 +35,6 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
             className="px-8"
           >
             No
-          </Button>
-          <Button color="danger" size="btn w-sm" onClick={onDeleteClick}>
-            Yes, Delete It!
-            {loader}
-            {loader && <Spinner size="sm" className="me-2" />}{" "}
           </Button>
         </div>
       </ModalBody>

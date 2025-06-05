@@ -98,6 +98,10 @@ const EmailTable = () => {
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchAll(event.target.value);
+       setPagination((prev) => ({
+      ...prev,
+      pageIndex: 0,
+    }));
   };
 
   const columns = [
