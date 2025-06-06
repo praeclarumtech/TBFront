@@ -852,7 +852,7 @@ const QrFrom = () => {
                         name="workPreference"
                         className="select-border"
                         options={workPreferenceType}
-                        placeholder={InputPlaceHolder("workPreference")}
+                        placeholder={InputPlaceHolder("Work Preference")}
                         handleChange={(selectedOption: SelectedOption) => {
                           validation.setFieldValue(
                             "workPreference",
@@ -873,7 +873,7 @@ const QrFrom = () => {
                     </Col>
                     <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
                       <BaseInput
-                        label="Linkedin Url (Optional)"
+                        label="Linkedin URL (Optional)"
                         name="linkedinUrl"
                         type="url"
                         placeholder={InputPlaceHolder(
