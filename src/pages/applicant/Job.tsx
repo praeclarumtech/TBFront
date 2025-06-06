@@ -819,7 +819,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     name="workPreference"
                     className="select-border"
                     options={workPreferenceType}
-                    placeholder={InputPlaceHolder("workPreference")}
+                    placeholder={InputPlaceHolder("Work Preference")}
                     handleChange={(selectedOption: SelectedOption) => {
                       validation.setFieldValue(
                         "workPreference",
@@ -966,10 +966,10 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                 </Col>
                 <Col xs={12} md={8} lg={4} sm={12} className="mb-3">
                   <BaseInput
-                    label="Portfolio Url (Optional)"
+                    label="Portfolio URL (Optional)"
                     name="portfolioUrl"
                     type="text"
-                    placeholder={InputPlaceHolder("Portfolio Url (Optional)")}
+                    placeholder={InputPlaceHolder("Portfolio URL (Optional)")}
                     handleChange={validation.handleChange}
                     handleBlur={validation.handleBlur}
                     value={validation.values.portfolioUrl}
@@ -980,7 +980,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                 </Col>
                 <Col xs={12} md={6} lg={4} sm={12} className="mb-3">
                   <BaseInput
-                    label="Resume Url"
+                    label="Resume URL"
                     name="resumeUrl"
                     type="url"
                     placeholder={InputPlaceHolder("Resume URL")}
@@ -996,7 +996,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                 </Col>
                 <Col xs={12} md={6} lg={4} sm={12} className="mb-3">
                   <BaseInput
-                    label="Linkedin Url (Optional)"
+                    label="Linkedin URL (Optional)"
                     name="linkedinUrl"
                     type="url"
                     placeholder={InputPlaceHolder("Linkedin URL (Optional)")}
@@ -1010,10 +1010,10 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                 </Col>
                 <Col xs={12} md={12} lg={4} sm={12} className="mb-3">
                   <BaseInput
-                    label="Client Cv Url (Optional)"
+                    label="Client CV URL (Optional)"
                     name="clientCvUrl"
                     type="url"
-                    placeholder={InputPlaceHolder("Client Cv Url (Optional)")}
+                    placeholder={InputPlaceHolder("Client CV URL (Optional)")}
                     handleChange={validation.handleChange}
                     handleBlur={validation.handleBlur}
                     value={validation.values.clientCvUrl}
@@ -1034,7 +1034,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     name="clientFeedback"
                     className="mb-3"
                     placeholder={InputPlaceHolder(
-                      "Describe about Us Practical Task... (Optional)"
+                      "Feedback (Optional)"
                     )}
                     handleChange={validation.handleChange}
                     handleBlur={validation.handleBlur}
@@ -1048,11 +1048,11 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                 </Col>
                 <Col xs={12} md={12} lg={4} sm={12} className="!mb-3  mb-sm-0">
                   <BaseInput
-                    label="Practical Url (Optional)"
+                    label="Practical URL (Optional)"
                     name="practicalUrl"
                     type="url"
                     className="mb-3"
-                    placeholder={InputPlaceHolder("Practical Url (Optional)")}
+                    placeholder={InputPlaceHolder("Practical URL (Optional)")}
                     handleChange={validation.handleChange}
                     handleBlur={validation.handleBlur}
                     value={validation.values.practicalUrl}
@@ -1072,7 +1072,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     label="Practical Feedback (Optional)"
                     name="practicalFeedback"
                     placeholder={InputPlaceHolder(
-                      "Describe about Us Practical Task... (Optional)"
+                      "Describe About Us Practical Task... (Optional)"
                     )}
                     handleChange={validation.handleChange}
                     handleBlur={validation.handleBlur}
