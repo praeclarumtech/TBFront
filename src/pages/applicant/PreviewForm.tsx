@@ -420,7 +420,7 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
                 </a>
               </Typography>
               <Typography className="mt-2">
-                <span className="text-black ">Client Cv URL:</span>
+                <span className="text-black ">Client CV URL:</span>
                 <a
                   href={data?.clientCvUrl}
                   target="_blank"

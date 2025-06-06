@@ -1072,7 +1072,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     label="Practical Feedback (Optional)"
                     name="practicalFeedback"
                     placeholder={InputPlaceHolder(
-                      "Describe About Us Practical Task... (Optional)"
+                      "Feedback (Optional)"
                     )}
                     handleChange={validation.handleChange}
                     handleBlur={validation.handleBlur}
