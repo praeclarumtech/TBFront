@@ -18,6 +18,8 @@ const BaseSelect = ({
   isDisabled,
   styles,
   isRequired,
+  menuPortalTarget,
+  menuPosition,
 }: BaseSelectProps) => {
   const customStyles = {
     ...styles,
@@ -67,6 +69,8 @@ const BaseSelect = ({
         isDisabled={isDisabled}
         menuPlacement="auto"
         styles={customStyles}
+        menuPortalTarget={menuPortalTarget}
+        menuPosition={menuPosition}
       />
       {touched && error && (
         <FormFeedback className="d-block">{error}</FormFeedback>

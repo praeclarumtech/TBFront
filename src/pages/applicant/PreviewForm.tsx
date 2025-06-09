@@ -262,7 +262,7 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
                 <span>
                   {" "}
                   {data.appliedSkills?.length > 0
-                    ? capitalizeWords(data.appliedSkills.join(", "))
+                    ? (data.appliedSkills.join(", "))
                     : "No skills listed"}
                 </span>
               </Typography>
@@ -319,7 +319,7 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
             <Col xs={12} md={6}>
               <Typography>
                 <span className="  !text-black pt-3">Other Skills:</span>
-                <span>{" " + capitalizeWords(data?.otherSkills)}</span>
+                <span>{" " + data?.otherSkills}</span>
               </Typography>
               <Typography>
                 <span className="  !text-black pt-3">
@@ -361,7 +361,7 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
               </Typography>
 
               <Typography>
-                <span className="  !text-black pt-3">Last Follow UpDate:</span>
+                <span className="  !text-black pt-3">Last Follow Up Date:</span>
                 <span>
                    {data?.lastFollowUpDate && !isNaN(new Date(data.lastFollowUpDate).getTime())
                     ? " " + new Date(data.lastFollowUpDate).toLocaleDateString()
@@ -420,7 +420,7 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
                 </a>
               </Typography>
               <Typography className="mt-2">
-                <span className="text-black ">Client Cv URL:</span>
+                <span className="text-black ">Client CV URL:</span>
                 <a
                   href={data?.clientCvUrl}
                   target="_blank"
