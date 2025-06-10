@@ -1367,7 +1367,6 @@ const Applicant = () => {
       //       </BaseButton>
 
       //       <BaseButton
-      //         id={`email-${cell?.row?.original?.id}`}
       //         className="btn btn-sm btn-soft-secondary bg-success edit-list"
       //         onClick={() => handleEmail(cell?.row?.original._id)}
       //         disabled={!cell?.row?.original?.isActive}
