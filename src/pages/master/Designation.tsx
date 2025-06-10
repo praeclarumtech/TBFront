@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Row, Col, Card, Container, CardBody } from "react-bootstrap";
 import { Fragment, useMemo, useState, useEffect } from "react";
- 
+
 import BaseButton from "components/BaseComponents/BaseButton";
 import TableContainer from "components/BaseComponents/TableContainer";
 import { Tooltip as ReactTooltip } from "react-tooltip";
+import * as Tooltip from "@radix-ui/react-tooltip";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import BaseInput from "components/BaseComponents/BaseInput";
@@ -21,9 +22,9 @@ import {
   updateDesignation,
   viewAllDesignation,
 } from "api/designation";
- 
+
 const { projectTitle, Modules, handleResponse } = appConstants;
- 
+
 const AddDesignation = () => {
   document.title = Modules.Designation + " | " + projectTitle;
   const [designations, setDesignations] = useState<any[]>([]);
@@ -41,7 +42,7 @@ const AddDesignation = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedDesignation, setSelectedDesignation] = useState<string[]>([]);
   const [searchAll, setSearchAll] = useState<string>("");
- 
+
   const fetchDesignations = async () => {
     setIsLoading(true);
     try {
@@ -55,14 +56,14 @@ const AddDesignation = () => {
         pageSize: pagination.pageSize,
         limit: 50,
       };
- 
+
       const searchValue = searchAll?.trim();
       if (searchValue) {
         params.search = searchValue;
       }
- 
+
       const res = await viewAllDesignation(params);
- 
+
       if (res?.success) {
         setDesignations(res.data.data || []);
         setTotalRecords(res.data?.pagination?.totalRecords || 0);
@@ -76,34 +77,34 @@ const AddDesignation = () => {
       setIsLoading(false);
     }
   };
- 
+
   useEffect(() => {
     fetchDesignations();
   }, [pagination.pageIndex, pagination.pageSize, searchAll]);
- 
+
   const handleEdit = (designation: any) => {
     setEditingDesignation(designation);
     validation.setValues({
-     designationName: designation.designation,
+      designationName: designation.designation,
     });
     setShowBaseModal(true);
   };
- 
+
   const handleDelete = (designation: any) => {
     setDesignationToDelete(designation);
     setShowDeleteModal(true);
   };
- 
+
   const confirmDelete = async () => {
     if (!designationToDelete || designationToDelete.length === 0) {
       toast.error("No designations selected for deletion.");
       return;
     }
- 
+
     setLoader(true);
     try {
       await deleteDesignation(designationToDelete._id);
- 
+
       toast.success("Selected designations deleted successfully");
       fetchDesignations();
     } catch (error) {
@@ -115,14 +116,14 @@ const AddDesignation = () => {
       setDesignationToDelete([]);
     }
   };
- 
+
   const confirmMultiDelete = async (
     multipleDesignationDelete: string[] | undefined | null
   ) => {
     setLoader(true);
     try {
       await deleteMultipleDesignation(multipleDesignationDelete);
- 
+
       toast.success("Selected designations deleted successfully");
       fetchDesignations();
     } catch (error) {
@@ -134,7 +135,7 @@ const AddDesignation = () => {
       setDesignationToDelete([]);
     }
   };
- 
+
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
       setSelectedDesignation(
@@ -144,7 +145,7 @@ const AddDesignation = () => {
       setSelectedDesignation([]); // Unselect all
     }
   };
- 
+
   const handleSelectDesignation = (designationId: string) => {
     setSelectedDesignation(
       (prev) =>
@@ -153,14 +154,14 @@ const AddDesignation = () => {
           : [...prev, designationId] // Add to selected list
     );
   };
- 
+
   const handleDeleteAll = () => {
     if (selectedDesignation.length > 1) {
       setDesignationToDelete([...selectedDesignation]);
       setShowDeleteModal(true);
     }
   };
- 
+
   const handleDeleteClick = () => {
     if (selectedDesignation.length > 1) {
       confirmMultiDelete(selectedDesignation);
@@ -168,7 +169,7 @@ const AddDesignation = () => {
       confirmDelete();
     }
   };
- 
+
   const columns = useMemo(
     () => [
       {
@@ -202,45 +203,103 @@ const AddDesignation = () => {
         accessorKey: "designation",
         enableColumnFilter: false,
       },
+      // {
+      //   header: "Action",
+      //   cell: (cell: { row: { original: any } }) => (
+      //     <div className="gap-2 hstack">
+      //       <BaseButton
+      //         id={`edit-${cell?.row?.original?._id}`}
+      //         color="primary"
+      //         className="btn btn-sm btn-soft-warning edit-list"
+      //         onClick={() => handleEdit(cell?.row?.original)}
+      //       >
+      //         <i className="align-bottom ri-pencil-fill" />
+      //         <ReactTooltip
+      //           place="bottom"
+      //           variant="warning"
+      //           content="Edit"
+      //           anchorId={`edit-${cell?.row?.original?._id}`}
+      //         />
+      //       </BaseButton>
+      //       <BaseButton
+      //         color="danger"
+      //         id={`delete-${cell?.row?.original?._id}`}
+      //         className="btn btn-sm btn-soft-danger bg-danger"
+      //         onClick={() => handleDelete(cell?.row?.original)}
+      //       >
+      //         <i className="align-bottom ri-delete-bin-fill" />
+      //         <ReactTooltip
+      //           place="bottom"
+      //           variant="error"
+      //           content="Delete"
+      //           anchorId={`delete-${cell?.row?.original?._id}`}
+      //         />
+      //       </BaseButton>
+      //     </div>
+      //   ),
+      // },
+
       {
         header: "Action",
-        cell: (cell: { row: { original: any } }) => (
-          <div className="gap-2 hstack">
-            <BaseButton
-              id={`edit-${cell?.row?.original?._id}`}
-              color="primary"
-              className="btn btn-sm btn-soft-warning edit-list"
-              onClick={() => handleEdit(cell?.row?.original)}
-            >
-              <i className="align-bottom ri-pencil-fill" />
-              <ReactTooltip
-                place="bottom"
-                variant="warning"
-                content="Edit"
-                anchorId={`edit-${cell?.row?.original?._id}`}
-              />
-            </BaseButton>
-            <BaseButton
-              color="danger"
-              id={`delete-${cell?.row?.original?._id}`}
-              className="btn btn-sm btn-soft-danger bg-danger"
-              onClick={() => handleDelete(cell?.row?.original)}
-            >
-              <i className="align-bottom ri-delete-bin-fill" />
-              <ReactTooltip
-                place="bottom"
-                variant="error"
-                content="Delete"
-                anchorId={`delete-${cell?.row?.original?._id}`}
-              />
-            </BaseButton>
-          </div>
-        ),
+        cell: ({ row }: { row: { original: any } }) => {
+          const original = row.original;
+          // const id = original._id;
+
+          return (
+            <Tooltip.Provider delayDuration={100}>
+              <div className="flex items-center gap-2">
+                {/* Edit Button with Tooltip */}
+                <Tooltip.Root>
+                  <Tooltip.Trigger asChild>
+                    <button
+                      className="btn btn-sm btn-soft-warning edit-list bg-primary"
+                      onClick={() => handleEdit(original)}
+                    >
+                      <i className="text-white align-bottom ri-pencil-fill" />
+                    </button>
+                  </Tooltip.Trigger>
+                  <Tooltip.Portal>
+                    <Tooltip.Content
+                      side="bottom"
+                      sideOffset={4}
+                      className="px-2 py-1 text-xs text-white rounded shadow-lg bg-primary"
+                    >
+                      Edit
+                      <Tooltip.Arrow style={{ fill: "#0d6efd" }} />
+                    </Tooltip.Content>
+                  </Tooltip.Portal>
+                </Tooltip.Root>
+
+                {/* Delete Button with Tooltip */}
+                <Tooltip.Root>
+                  <Tooltip.Trigger asChild>
+                    <button
+                      className="btn btn-sm btn-soft-danger bg-danger"
+                      onClick={() => handleDelete(original)}
+                    >
+                      <i className="text-white align-bottom ri-delete-bin-fill" />
+                    </button>
+                  </Tooltip.Trigger>
+                  <Tooltip.Portal>
+                    <Tooltip.Content
+                      side="bottom"
+                      sideOffset={4}
+                      className="px-2 py-1 text-xs text-white rounded shadow-lg bg-danger"
+                    >
+                      Delete
+                      <Tooltip.Arrow className="fill-[#dc3545]" />
+                    </Tooltip.Content>
+                  </Tooltip.Portal>
+                </Tooltip.Root>
+              </div>
+            </Tooltip.Provider>
+          );
+        },
       },
     ],
     [designations, selectedDesignation]
   );
- 
+
   const validation: any = useFormik({
     enableReinitialize: true,
     initialValues: {
@@ -252,18 +311,18 @@ const AddDesignation = () => {
         .max(50, "Designation name must be between 1 to 50 characters.")
         .required("Designation name is required"),
     }),
- 
+
     onSubmit: (values) => {
       setLoader(true);
       const payload = {
         _id: editingDesignation?._id,
         designation: values.designationName,
       };
- 
+
       const apiCall = editingDesignation
         ? updateDesignation(editingDesignation._id, payload)
         : createDesignation(payload);
- 
+
       apiCall
         .then((res: { success: any; message: any }) => {
           if (res?.success) {
@@ -273,7 +332,7 @@ const AddDesignation = () => {
                   editingDesignation ? "updated" : "added"
                 } successfully`
             );
- 
+
             setEditingDesignation(null);
             validation.resetForm();
             fetchDesignations();
@@ -294,39 +353,39 @@ const AddDesignation = () => {
         });
     },
   });
- 
+
   const formTitle = editingDesignation ? "Designation" : "Designation";
   const submitButtonText = "Add";
- 
+
   const handleOpenBaseModal = () => {
     setEditingDesignation(null);
     validation.resetForm();
     setShowBaseModal(true);
   };
- 
+
   const handleSubmit = () => {
     validation.handleSubmit();
   };
- 
+
   const handleCloseClick = () => {
     setShowBaseModal(false);
     setEditingDesignation(null);
     validation.resetForm();
   };
- 
+
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchAll(event.target.value);
   };
- 
+
   // const filteredDesignation = designations.filter((fDesignation) =>
   //   fDesignation.designation.toLowerCase().includes(searchAll.toLowerCase())
   // );
- 
+
   const closeDeleteModal = () => {
     setShowDeleteModal(false);
     setSelectedDesignation([]);
   };
- 
+
   return (
     <Fragment>
       <DeleteModal
@@ -390,7 +449,7 @@ const AddDesignation = () => {
                       </div>
                     </Col>
                   </Row>
- 
+
                   <BaseModal
                     show={showBaseModal}
                     setShowBaseModal={setShowBaseModal}
@@ -433,7 +492,7 @@ const AddDesignation = () => {
                       {isLoading ? (
                         <div className="py-4 text-center">
                           <Skeleton count={1} className="mb-5 min-h-10" />
- 
+
                           <Skeleton count={5} />
                         </div>
                       ) : (
@@ -474,7 +533,5 @@ const AddDesignation = () => {
     </Fragment>
   );
 };
- 
+
 export default AddDesignation;
- 
- 

@@ -6,6 +6,8 @@ import { toast } from "react-toastify";
 import BaseButton from "components/BaseComponents/BaseButton";
 import TableContainer from "components/BaseComponents/TableContainer";
 import { Tooltip as ReactTooltip } from "react-tooltip";
+import * as Tooltip from "@radix-ui/react-tooltip";
+
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import BaseInput from "components/BaseComponents/BaseInput";
@@ -228,54 +230,107 @@ const City = () => {
       //     accessorKey: "country_id",
       //     enableColumnFilter: false,
       //   },
+      // {
+      //   header: "Action",
+      //   cell: (cell: { row: { original: any } }) => (
+      //     <div className="gap-2 hstack">
+      //       {/* <BaseButton
+      //         id={`usage-${cell?.row?.original?.id}`}
+      //         color="primary"
+      //         className="btn btn-sm btn-soft-success usage-list"
+      //         onClick={() => handleView(cell.row.original)}
+      //       >
+      //         <i className="align-bottom ri-eye-fill" />
+      //         <ReactTooltip
+      //           place="bottom"
+      //           variant="info"
+      //           content="View"
+      //           anchorId={`usage-${cell?.row?.original?.id}`}
+      //         />
+      //       </BaseButton> */}
+      //       <BaseButton
+      //         id={`edit-${cell?.row?.original?._id}`}
+      //         color="primary"
+      //         className="btn btn-sm btn-soft-warning edit-list"
+      //         onClick={() => handleEdit(cell?.row?.original)}
+      //       >
+      //         <i className="align-bottom ri-pencil-fill" />
+      //       </BaseButton>
+      //       <BaseButton
+      //         color="danger"
+      //         id={`delete-${cell?.row?.original?._id}`}
+      //         className="btn btn-sm btn-soft-danger bg-danger"
+      //         onClick={() => handleDelete(cell?.row?.original)}
+      //       >
+      //         <i className="align-bottom ri-delete-bin-fill" />
+      //       </BaseButton>
+
+      //       {/* Tooltips should be outside buttons */}
+      //       <ReactTooltip
+      //         place="bottom"
+      //         variant="warning"
+      //         content="Edit"
+      //         anchorId={`edit-${cell?.row?.original?._id}`}
+      //       />
+      //       <ReactTooltip
+      //         place="bottom"
+      //         variant="error"
+      //         content="Delete"
+      //         anchorId={`delete-${cell?.row?.original?._id}`}
+      //       />
+      //     </div>
+      //   ),
+      // },
       {
         header: "Action",
         cell: (cell: { row: { original: any } }) => (
-          <div className="gap-2 hstack">
-            {/* <BaseButton
-              id={`usage-${cell?.row?.original?.id}`}
-              color="primary"
-              className="btn btn-sm btn-soft-success usage-list"
-              onClick={() => handleView(cell.row.original)}
-            >
-              <i className="align-bottom ri-eye-fill" />
-              <ReactTooltip
-                place="bottom"
-                variant="info"
-                content="View"
-                anchorId={`usage-${cell?.row?.original?.id}`}
-              />
-            </BaseButton> */}
-            <BaseButton
-              id={`edit-${cell?.row?.original?._id}`}
-              color="primary"
-              className="btn btn-sm btn-soft-warning edit-list"
-              onClick={() => handleEdit(cell?.row?.original)}
-            >
-              <i className="align-bottom ri-pencil-fill" />
-            </BaseButton>
-            <BaseButton
-              color="danger"
-              id={`delete-${cell?.row?.original?._id}`}
-              className="btn btn-sm btn-soft-danger bg-danger"
-              onClick={() => handleDelete(cell?.row?.original)}
-            >
-              <i className="align-bottom ri-delete-bin-fill" />
-            </BaseButton>
+          <div className="flex gap-2">
+            <Tooltip.Provider delayDuration={100}>
+              {/* View Button with Tooltip */}
+              <Tooltip.Root>
+                <Tooltip.Trigger asChild>
+                  <button
+                    className="btn btn-sm btn-soft-success bg-primary"
+                    onClick={() => handleEdit(cell?.row?.original)}
+                  >
+                    <i className="text-white align-bottom ri-pencil-fill" />
+                  </button>
+                </Tooltip.Trigger>
+                <Tooltip.Portal>
+                  <Tooltip.Content
+                    side="bottom"
+                    sideOffset={4}
+                    className="px-2 py-1 text-xs text-white rounded shadow-lg bg-primary"
+                  >
+                    Edit
+                    <Tooltip.Arrow style={{ fill: "#0d6efd" }} />
+                  </Tooltip.Content>
+                </Tooltip.Portal>
+              </Tooltip.Root>
 
-            {/* Tooltips should be outside buttons */}
-            <ReactTooltip
-              place="bottom"
-              variant="warning"
-              content="Edit"
-              anchorId={`edit-${cell?.row?.original?._id}`}
-            />
-            <ReactTooltip
-              place="bottom"
-              variant="error"
-              content="Delete"
-              anchorId={`delete-${cell?.row?.original?._id}`}
-            />
+              {/* Edit Button with Tooltip */}
+
+              <Tooltip.Root>
+                <Tooltip.Trigger asChild>
+                  <button
+                    className="text-white btn btn-sm btn-soft-danger bg-danger"
+                    onClick={() => handleDelete(cell?.row?.original)}
+                  >
+                    <i className="align-bottom ri-delete-bin-5-fill" />
+                  </button>
+                </Tooltip.Trigger>
+                <Tooltip.Portal>
+                  <Tooltip.Content
+                    side="bottom"
+                    sideOffset={4}
+                    className="px-2 py-1 text-xs text-white rounded shadow-lg bg-danger"
+                  >
+                    Delete
+                    <Tooltip.Arrow style={{ fill: "#dc3545" }} />
+                  </Tooltip.Content>
+                </Tooltip.Portal>
+              </Tooltip.Root>
+            </Tooltip.Provider>
           </div>
         ),
       },
