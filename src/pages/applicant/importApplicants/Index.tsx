@@ -6,6 +6,7 @@ import { BaseSelect, MultiSelect } from "components/BaseComponents/BaseSelect";
 import TableContainer from "components/BaseComponents/TableContainer";
 import { useNavigate } from "react-router-dom";
 import { Tooltip as ReactTooltip } from "react-tooltip";
+import * as Tooltip from "@radix-ui/react-tooltip";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -713,67 +714,165 @@ function ImportApplicant() {
         accessorKey: "totalExperience",
         enableColumnFilter: false,
       },
+      // {
+      //   header: "Action",
+      //   cell: (cell: any) => (
+      //     <div className="gap-2 hstack">
+      //       <BaseButton
+      //         id={`usage-${cell?.row?.original?.id}`}
+      //         color="primary"
+      //         className="btn btn-sm btn-soft-success usage-list"
+      //         onClick={() => handleView(cell.row.original._id, "import")}
+      //       >
+      //         <i className="align-bottom ri-eye-fill" />
+      //         <ReactTooltip
+      //           place="bottom"
+      //           variant="success"
+      //           content="View"
+      //           anchorId={`usage-${cell?.row?.original?.id}`}
+      //         />
+      //       </BaseButton>
+
+      //       <BaseButton
+      //         id={`editMode-${cell?.row?.original?.id}`}
+      //         className="btn btn-sm btn-soft-secondary edit-list"
+      //         onClick={() => handleEdit(cell?.row?.original._id)}
+      //       >
+      //         <i className="align-bottom ri-pencil-fill" />
+      //         <ReactTooltip
+      //           place="bottom"
+      //           variant="info"
+      //           content="Edit"
+      //           anchorId={`editMode-${cell?.row?.original?.id}`}
+      //         />
+      //       </BaseButton>
+
+      //       <BaseButton
+      //         id={`delete-${cell?.row?.original?.id}`}
+      //         className="btn btn-sm btn-soft-danger remove-list"
+      //         color="danger"
+      //         onClick={() => handleDeleteSingle(cell.row.original._id)}
+      //       >
+      //         <i className="align-bottom ri-delete-bin-5-fill" />
+      //         <ReactTooltip
+      //           place="bottom"
+      //           variant="error"
+      //           content="Delete"
+      //           anchorId={`delete-${cell?.row?.original?._id}`}
+      //         />
+      //       </BaseButton>
+
+      //       <BaseButton
+      //         id={`email-${cell?.row?.original?.id}`}
+      //         className="btn btn-sm btn-soft-secondary bg-success edit-list"
+      //         onClick={() => handleEmail(cell?.row?.original._id)}
+      //       >
+      //         <i className="align-bottom ri-mail-close-line" />
+      //         <ReactTooltip
+      //           place="bottom"
+      //           variant="info"
+      //           content="Email"
+      //           anchorId={`email-${cell?.row?.original?.id}`}
+      //         />
+      //       </BaseButton>
+      //     </div>
+      //   ),
+      // },
       {
         header: "Action",
-        cell: (cell: any) => (
-          <div className="gap-2 hstack">
-            <BaseButton
-              id={`usage-${cell?.row?.original?.id}`}
-              color="primary"
-              className="btn btn-sm btn-soft-success usage-list"
-              onClick={() => handleView(cell.row.original._id, "import")}
-            >
-              <i className="align-bottom ri-eye-fill" />
-              <ReactTooltip
-                place="bottom"
-                variant="success"
-                content="View"
-                anchorId={`usage-${cell?.row?.original?.id}`}
-              />
-            </BaseButton>
+        cell: ({ row }: any) => (
+          <div className="flex gap-2">
+            <Tooltip.Provider delayDuration={100}>
+              {/* View Button with Tooltip */}
+              <Tooltip.Root>
+                <Tooltip.Trigger asChild>
+                  <button
+                    className="btn btn-sm btn-soft-success bg-primary"
+                    onClick={() => handleView(row.original._id, "import")}
+                    disabled={!row.original.isActive}
+                  >
+                    <i className="text-white ri-eye-fill" />
+                  </button>
+                </Tooltip.Trigger>
+                <Tooltip.Portal>
+                  <Tooltip.Content
+                    side="bottom"
+                    sideOffset={4}
+                    className="px-2 py-1 text-sm text-white rounded shadow-lg bg-primary"
+                  >
+                    View
+                    <Tooltip.Arrow style={{ fill: "#0d6efd" }} />
+                  </Tooltip.Content>
+                </Tooltip.Portal>
+              </Tooltip.Root>
 
-            <BaseButton
-              id={`editMode-${cell?.row?.original?.id}`}
-              className="btn btn-sm btn-soft-secondary edit-list"
-              onClick={() => handleEdit(cell?.row?.original._id)}
-            >
-              <i className="align-bottom ri-pencil-fill" />
-              <ReactTooltip
-                place="bottom"
-                variant="info"
-                content="Edit"
-                anchorId={`editMode-${cell?.row?.original?.id}`}
-              />
-            </BaseButton>
+              {/* Edit Button with Tooltip */}
+              <Tooltip.Root>
+                <Tooltip.Trigger asChild>
+                  <button
+                    className="text-white btn btn-sm btn-soft-secondary bg-secondary"
+                    onClick={() => handleEdit(row.original._id)}
+                    disabled={!row.original.isActive}
+                  >
+                    <i className="ri-pencil-fill" />
+                  </button>
+                </Tooltip.Trigger>
+                <Tooltip.Portal>
+                  <Tooltip.Content
+                    side="bottom"
+                    sideOffset={4}
+                    className="px-2 py-1 text-sm text-white rounded shadow-lg bg-secondary"
+                  >
+                    Edit
+                    <Tooltip.Arrow style={{ fill: "#6c757d" }} />
+                  </Tooltip.Content>
+                </Tooltip.Portal>
+              </Tooltip.Root>
 
-            <BaseButton
-              id={`delete-${cell?.row?.original?.id}`}
-              className="btn btn-sm btn-soft-danger remove-list"
-              color="danger"
-              onClick={() => handleDeleteSingle(cell.row.original._id)}
-            >
-              <i className="align-bottom ri-delete-bin-5-fill" />
-              <ReactTooltip
-                place="bottom"
-                variant="error"
-                content="Delete"
-                anchorId={`delete-${cell?.row?.original?._id}`}
-              />
-            </BaseButton>
+              <Tooltip.Root>
+                <Tooltip.Trigger asChild>
+                  <button
+                    className="text-white btn btn-sm btn-soft-danger bg-danger"
+                    onClick={() => handleDeleteSingle(row.original._id)}
+                    disabled={!row.original.isActive}
+                  >
+                    <i className="align-bottom ri-delete-bin-5-fill" />
+                  </button>
+                </Tooltip.Trigger>
+                <Tooltip.Portal>
+                  <Tooltip.Content
+                    side="bottom"
+                    sideOffset={4}
+                    className="px-2 py-1 text-sm text-white rounded shadow-lg bg-danger"
+                  >
+                    Delete
+                    <Tooltip.Arrow style={{ fill: "#dc3545" }} />
+                  </Tooltip.Content>
+                </Tooltip.Portal>
+              </Tooltip.Root>
 
-            <BaseButton
-              id={`email-${cell?.row?.original?.id}`}
-              className="btn btn-sm btn-soft-secondary bg-success edit-list"
-              onClick={() => handleEmail(cell?.row?.original._id)}
-            >
-              <i className="align-bottom ri-mail-close-line" />
-              <ReactTooltip
-                place="bottom"
-                variant="info"
-                content="Email"
-                anchorId={`email-${cell?.row?.original?.id}`}
-              />
-            </BaseButton>
+              <Tooltip.Root>
+                <Tooltip.Trigger asChild>
+                  <button
+                    className="text-white btn btn-sm btn-soft-success bg-success"
+                    onClick={() => handleEmail(row.original._id)}
+                    disabled={!row.original.isActive}
+                  >
+                    <i className="align-bottom ri-mail-close-line" />
+                  </button>
+                </Tooltip.Trigger>
+                <Tooltip.Portal>
+                  <Tooltip.Content
+                    side="bottom"
+                    sideOffset={4}
+                    className="px-2 py-1 text-sm text-white rounded shadow-lg bg-success"
+                  >
+                    Mail
+                    <Tooltip.Arrow style={{ fill: "#198754" }} />
+                  </Tooltip.Content>
+                </Tooltip.Portal>
+              </Tooltip.Root>
+            </Tooltip.Provider>
           </div>
         ),
       },
@@ -1069,7 +1168,7 @@ function ImportApplicant() {
                       />
                     )}
 
-                    <div className="flex-wrap gap-2  d-flex justify-content-end">
+                    <div className="flex-wrap gap-2 d-flex justify-content-end">
                       {/* <div> */}
                       <input
                         id="search-bar-0"

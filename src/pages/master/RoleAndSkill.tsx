@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Row, Col, Card, Container, CardBody } from "react-bootstrap";
 import { Fragment, useMemo, useState, useEffect } from "react";
- 
+
 import { toast } from "react-toastify";
 import BaseButton from "components/BaseComponents/BaseButton";
 import TableContainer from "components/BaseComponents/TableContainer";
 import { Tooltip as ReactTooltip } from "react-tooltip";
+import * as Tooltip from "@radix-ui/react-tooltip";
+
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import BaseInput from "components/BaseComponents/BaseInput";
@@ -29,15 +31,15 @@ import ViewRoleSkill from "./ViewRoleSkill";
 import { ViewAppliedSkills } from "api/skillsApi";
 import { SelectedOption1 } from "interfaces/applicant.interface";
 import { MultiSelect } from "components/BaseComponents/BaseSelect";
- 
+
 const { projectTitle, Modules, handleResponse } = appConstants;
- 
+
 const UpdateSkill = () => {
   document.title = Modules.RoleAndSkill + " | " + projectTitle;
   const [roleSkill, setRoleSkills] = useState<any[]>([]);
   const [skillOptions, setSkillOptions] = useState<SelectedOption1[]>([]);
   const [editingSkill, setEditingSkill] = useState<any>(null);
- 
+
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [roleAndSkillToDelete, setRoleAndSkillToDelete] = useState<any>([]);
   const [showBaseModal, setShowBaseModal] = useState(false);
@@ -48,12 +50,12 @@ const UpdateSkill = () => {
     limit: 50,
   });
   const [isLoading, setIsLoading] = useState(false);
- 
+
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [searchAll, setSearchAll] = useState<string>("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [showViewModal, setShowViewModal] = useState(false);
- 
+
   const fetchSkills = async () => {
     try {
       setIsLoading(true);
@@ -66,9 +68,9 @@ const UpdateSkill = () => {
         pageSize,
         limit,
       });
- 
+
       const skillData = response?.data?.data || [];
- 
+
       setSkillOptions(
         skillData.map((item: any) => ({
           label: item.skills,
@@ -82,11 +84,11 @@ const UpdateSkill = () => {
       setIsLoading(false);
     }
   };
- 
+
   useEffect(() => {
     fetchSkills();
   }, []);
- 
+
   const fetchRoleSkills = async () => {
     setIsLoading(true);
     try {
@@ -100,17 +102,17 @@ const UpdateSkill = () => {
         pageSize: pagination.pageSize,
         limit: 50,
       };
- 
+
       const searchValue = searchAll?.trim();
       if (searchValue) {
         params.search = searchValue;
       }
- 
+
       const res = await viewRoleSkill(params);
- 
+
       if (res?.success) {
         const roleSkills = res?.data?.data || [];
- 
+
         const skillMap = skillOptions.reduce(
           (acc: Record<string, string>, item: any) => {
             acc[item.id || item._id] = item.label;
@@ -118,10 +120,10 @@ const UpdateSkill = () => {
           },
           {}
         );
- 
+
         const enrichedRoleSkills = roleSkills.map((item: any) => {
           let skillIds: string[] = [];
- 
+
           if (Array.isArray(item.skill)) {
             if (typeof item.skill[0] === "string") {
               skillIds = item.skill;
@@ -132,17 +134,17 @@ const UpdateSkill = () => {
               skillIds = item.skill.map((s: any) => s._id);
             }
           }
- 
+
           const skillNames = skillIds.map(
             (id: string) => skillMap[id] || "Unknown Skill"
           );
- 
+
           return {
             ...item,
             skill: skillNames,
           };
         });
- 
+
         setRoleSkills(enrichedRoleSkills);
         setTotalRecords(res.data?.pagination?.totalRecords || 0);
       } else {
@@ -155,51 +157,51 @@ const UpdateSkill = () => {
       setIsLoading(false);
     }
   };
- 
+
   useEffect(() => {
     if (skillOptions && skillOptions.length > 0) {
       fetchRoleSkills();
     }
   }, [pagination.pageIndex, pagination.pageSize, skillOptions, searchAll]);
- 
+
   const handleEdit = (id: any) => {
     const selectedSkillOptions = skillOptions.filter((opt) =>
       id.skill.includes(opt.label)
     );
     setEditingSkill(id);
- 
+
     validation.setValues({
       _id: id.skill || "",
       addRole: id.appliedRole || "",
       addSkill: selectedSkillOptions,
     });
- 
+
     setShowBaseModal(true);
   };
- 
+
   const handleDelete = (skill: any) => {
     setRoleAndSkillToDelete(skill);
     setShowDeleteModal(true);
   };
- 
+
   const confirmDelete = async () => {
     if (!roleAndSkillToDelete || roleAndSkillToDelete.length === 0) {
       toast.error("No skills selected for deletion.");
       return;
     }
- 
+
     setLoader(true);
- 
+
     try {
       // If deleting multiple skills
       if (Array.isArray(roleAndSkillToDelete)) {
         const deleteRequests = roleAndSkillToDelete.map((id) =>
           deleteRoleSkill({ _id: id })
         );
- 
+
         // Wait for all delete requests to finish
         const results = await Promise.all(deleteRequests);
- 
+
         const allSuccess = results.every((res) => res?.success);
         if (allSuccess) {
           toast.success("Skills deleted successfully");
@@ -227,7 +229,7 @@ const UpdateSkill = () => {
       setSelectedSkills([]);
     }
   };
- 
+
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
       setSelectedSkills(roleSkill.map((skill) => skill._id)); // Select all
@@ -235,7 +237,7 @@ const UpdateSkill = () => {
       setSelectedSkills([]); // Unselect all
     }
   };
- 
+
   const handleSelectApplicant = (skillId: string) => {
     setSelectedSkills(
       (prev) =>
@@ -244,14 +246,14 @@ const UpdateSkill = () => {
           : [...prev, skillId] // Add to selected list
     );
   };
- 
+
   const handleDeleteAll = () => {
     if (selectedSkills.length > 1) {
       setRoleAndSkillToDelete([...selectedSkills]);
       setShowDeleteModal(true);
     }
   };
- 
+
   const columns = useMemo(
     () => [
       {
@@ -289,78 +291,152 @@ const UpdateSkill = () => {
         accessorKey: "skill",
         enableColumnFilter: false,
       },
+      // {
+      //   header: "Action",
+      //   cell: (cell: { row: { original: any } }) => (
+      //     <div className="gap-2 hstack">
+      //       <BaseButton
+      //         id={`usage-${cell?.row?.original?.id}`}
+      //         color="primary"
+      //         className="btn btn-sm btn-soft-success usage-list"
+      //         onClick={() => handleView(cell.row.original)}
+      //       >
+      //         <i className="align-bottom ri-eye-fill" />
+      //         <ReactTooltip
+      //           place="bottom"
+      //           variant="info"
+      //           content="View"
+      //           anchorId={`usage-${cell?.row?.original?.id}`}
+      //         />
+      //       </BaseButton>
+      //       <BaseButton
+      //         id={`edit-${cell?.row?.original?._id}`}
+      //         color="secondary"
+      //         className="btn btn-sm btn-soft-warning edit-list"
+      //         onClick={() => handleEdit(cell?.row?.original)}
+      //       >
+      //         <i className="align-bottom ri-pencil-fill" />
+      //       </BaseButton>
+      //       <BaseButton
+      //         color="danger"
+      //         id={`delete-${cell?.row?.original?._id}`}
+      //         className="btn btn-sm btn-soft-danger bg-danger"
+      //         onClick={() => handleDelete(cell?.row?.original)}
+      //       >
+      //         <i className="align-bottom ri-delete-bin-fill" />
+      //       </BaseButton>
+
+      //       {/* Tooltips should be outside buttons */}
+      //       <ReactTooltip
+      //         place="bottom"
+      //         variant="warning"
+      //         content="Edit"
+      //         anchorId={`edit-${cell?.row?.original?._id}`}
+      //       />
+      //       <ReactTooltip
+      //         place="bottom"
+      //         variant="error"
+      //         content="Delete"
+      //         anchorId={`delete-${cell?.row?.original?._id}`}
+      //       />
+      //     </div>
+      //   ),
+      // },
       {
         header: "Action",
         cell: (cell: { row: { original: any } }) => (
-          <div className="gap-2 hstack">
-            <BaseButton
-              id={`usage-${cell?.row?.original?.id}`}
-              color="primary"
-              className="btn btn-sm btn-soft-success usage-list"
-              onClick={() => handleView(cell.row.original)}
-            >
-              <i className="align-bottom ri-eye-fill" />
-              <ReactTooltip
-                place="bottom"
-                variant="info"
-                content="View"
-                anchorId={`usage-${cell?.row?.original?.id}`}
-              />
-            </BaseButton>
-            <BaseButton
-              id={`edit-${cell?.row?.original?._id}`}
-              color="secondary"
-              className="btn btn-sm btn-soft-warning edit-list"
-              onClick={() => handleEdit(cell?.row?.original)}
-            >
-              <i className="align-bottom ri-pencil-fill" />
-            </BaseButton>
-            <BaseButton
-              color="danger"
-              id={`delete-${cell?.row?.original?._id}`}
-              className="btn btn-sm btn-soft-danger bg-danger"
-              onClick={() => handleDelete(cell?.row?.original)}
-            >
-              <i className="align-bottom ri-delete-bin-fill" />
-            </BaseButton>
- 
-            {/* Tooltips should be outside buttons */}
-            <ReactTooltip
-              place="bottom"
-              variant="warning"
-              content="Edit"
-              anchorId={`edit-${cell?.row?.original?._id}`}
-            />
-            <ReactTooltip
-              place="bottom"
-              variant="error"
-              content="Delete"
-              anchorId={`delete-${cell?.row?.original?._id}`}
-            />
+          <div className="flex gap-2">
+            <Tooltip.Provider delayDuration={100}>
+              {/* View Button with Tooltip */}
+              <Tooltip.Root>
+                <Tooltip.Trigger asChild>
+                  <button
+                    className="btn btn-sm btn-soft-success bg-primary"
+                    onClick={() => handleView(cell?.row?.original)}
+                  >
+                    <i className="text-white ri-eye-fill" />
+                  </button>
+                </Tooltip.Trigger>
+                <Tooltip.Portal>
+                  <Tooltip.Content
+                    side="bottom"
+                    sideOffset={4}
+                    className="px-2 py-1 text-xs text-white rounded shadow-lg bg-primary"
+                  >
+                    View
+                    <Tooltip.Arrow style={{ fill: "#0d6efd" }} />
+                  </Tooltip.Content>
+                </Tooltip.Portal>
+              </Tooltip.Root>
+
+              <Tooltip.Root>
+                <Tooltip.Trigger asChild>
+                  <button
+                    className="text-white btn btn-sm btn-soft-secondary bg-secondary"
+                    onClick={() => handleEdit(cell?.row?.original)}
+                  >
+                    <i className="ri-pencil-fill" />
+                  </button>
+                </Tooltip.Trigger>
+                <Tooltip.Portal>
+                  <Tooltip.Content
+                    side="bottom"
+                    sideOffset={4}
+                    className="px-2 py-1 text-xs text-white rounded shadow-lg bg-secondary"
+                  >
+                    Edit
+                    <Tooltip.Arrow style={{ fill: "#6c757d" }} />
+                  </Tooltip.Content>
+                </Tooltip.Portal>
+              </Tooltip.Root>
+
+              {/* Edit Button with Tooltip */}
+
+              <Tooltip.Root>
+                <Tooltip.Trigger asChild>
+                  <button
+                    className="text-white btn btn-sm btn-soft-danger bg-danger"
+                     onClick={() => handleDelete(cell?.row?.original)}
+                  >
+                    <i className="align-bottom ri-delete-bin-5-fill" />
+                  </button>
+                </Tooltip.Trigger>
+                <Tooltip.Portal>
+                  <Tooltip.Content
+                    side="bottom"
+                    sideOffset={4}
+                    className="px-2 py-1 text-xs text-white rounded shadow-lg bg-danger"
+                  >
+                    Delete
+                    <Tooltip.Arrow style={{ fill: "#dc3545" }} />
+                  </Tooltip.Content>
+                </Tooltip.Portal>
+              </Tooltip.Root>
+            </Tooltip.Provider>
           </div>
         ),
       },
     ],
     [selectedSkills, roleSkill]
   );
- 
+
   const [loader, setLoader] = useState(false);
- 
+
   const handleView = (id: string) => {
     setSelectedId(id);
     setShowViewModal(true);
   };
- 
+
   const handleCloseModal = () => {
     setShowViewModal(false);
   };
- 
+
   const validation = useFormik({
     enableReinitialize: true,
     initialValues: {
       _id: editingSkill ? editingSkill._id : "",
       addRole: editingSkill ? editingSkill.appliedRole : "",
- 
+
       addSkill: editingSkill
         ? skillOptions.filter((opt) => editingSkill.skill.includes(opt.label))
         : [],
@@ -382,7 +458,7 @@ const UpdateSkill = () => {
     }),
     onSubmit: (values) => {
       setLoader(true);
- 
+
       const payload = {
         _id: values._id,
         appliedRole: values.addRole,
@@ -390,20 +466,20 @@ const UpdateSkill = () => {
           String(item.id)
         ),
       };
- 
+
       const normalize = (arr: (string | number)[]) =>
         arr.map(String).sort().join(",");
- 
+
       const currentSkillIds = values.addSkill.map(
         (item: SelectedOption1) => item.id
       );
- 
+
       const existingData = roleSkill.find(
         (item) =>
           item.appliedRole.toLowerCase() === values.addRole.toLowerCase() &&
           normalize(item.skillIds || []) === normalize(currentSkillIds)
       );
- 
+
       if (existingData && !editingSkill) {
         toast.error("This Role-Skill already exists!");
         setLoader(false);
@@ -412,7 +488,7 @@ const UpdateSkill = () => {
       const apiCall = editingSkill
         ? updateRoleSkill(payload)
         : addRoleSkill(payload);
- 
+
       apiCall
         .then((res) => {
           if (res?.success) {
@@ -436,23 +512,23 @@ const UpdateSkill = () => {
     ? "Update Role and Skills"
     : "Add Role and Skills";
   const submitButtonText = "Add";
- 
+
   const handleOpenBaseModal = () => {
     setEditingSkill(null);
     validation.resetForm();
     setShowBaseModal(true);
   };
- 
+
   const handleSubmit = () => {
     validation.handleSubmit();
   };
- 
+
   const handleCloseClick = () => {
     setShowBaseModal(false);
     setEditingSkill(null);
     validation.resetForm();
   };
- 
+
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchAll(event.target.value);
     setPagination((prev) => ({
@@ -460,29 +536,29 @@ const UpdateSkill = () => {
       pageIndex: 0,
     }));
   };
- 
+
   const closeDeleteModal = () => {
     setShowDeleteModal(false);
     setSelectedSkills([]);
   };
- 
+
   const filteredRoleSkills = roleSkill.filter((skill) => {
     const searchTerm = searchAll.toLowerCase();
- 
+
     const appliedRole = (skill.appliedRole || "").toLowerCase();
     const skills = Array.isArray(skill.skill) ? skill.skill : [];
- 
+
     const matchesSkill = skills.some((s: any) =>
       s.toLowerCase().includes(searchTerm)
     );
- 
+
     return appliedRole.includes(searchTerm) || matchesSkill;
   });
- 
+
   const handleAppliedSkillsChange = (selectedOptions: SelectedOption1[]) => {
     validation.setFieldValue("addSkill", selectedOptions);
   };
- 
+
   return (
     <Fragment>
       {showViewModal && selectedId && (
@@ -526,7 +602,7 @@ const UpdateSkill = () => {
                             value={searchAll}
                           />
                         </div>
- 
+
                         {/* Delete Button (Only if skills are selected) */}
                         {selectedSkills.length > 1 && (
                           <BaseButton
@@ -542,7 +618,7 @@ const UpdateSkill = () => {
                             />
                           </BaseButton>
                         )}
- 
+
                         {/* Import & Submit Buttons (Stack only on smaller screens) */}
                         <div className="flex-wrap gap-2 d-flex align-items-center">
                           <BaseButton
@@ -558,7 +634,7 @@ const UpdateSkill = () => {
                       </div>
                     </Col>
                   </Row>
- 
+
                   <BaseModal
                     show={showBaseModal}
                     onCloseClick={handleCloseClick}
@@ -661,7 +737,5 @@ const UpdateSkill = () => {
     </Fragment>
   );
 };
- 
+
 export default UpdateSkill;
- 
- 

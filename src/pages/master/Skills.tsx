@@ -7,6 +7,8 @@ import { toast } from "react-toastify";
 import BaseButton from "components/BaseComponents/BaseButton";
 import TableContainer from "components/BaseComponents/TableContainer";
 import { Tooltip as ReactTooltip } from "react-tooltip";
+import * as Tooltip from "@radix-ui/react-tooltip";
+
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import BaseInput from "components/BaseComponents/BaseInput";
@@ -25,9 +27,9 @@ import { InputPlaceHolder } from "utils/commonFunctions";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { useNavigate } from "react-router-dom";
- 
+
 const { projectTitle, Modules, handleResponse } = appConstants;
- 
+
 const AddSkill = () => {
   const navigate = useNavigate();
   document.title = Modules.SKill + " | " + projectTitle;
@@ -49,7 +51,7 @@ const AddSkill = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [searchAll, setSearchAll] = useState<string>("");
- 
+
   const fetchSkills = async () => {
     setIsLoading(true);
     try {
@@ -63,14 +65,14 @@ const AddSkill = () => {
         pageSize: pagination.pageSize,
         limit: 50,
       };
- 
+
       const searchValue = searchAll?.trim();
       if (searchValue) {
         params.search = searchValue;
       }
- 
+
       const res = await viewAllSkill(params);
- 
+
       if (res?.success) {
         setSkills(res.data.data || []);
         setTotalRecords(res.data?.pagination?.totalRecords || 0);
@@ -84,11 +86,11 @@ const AddSkill = () => {
       setIsLoading(false);
     }
   };
- 
+
   useEffect(() => {
     fetchSkills();
   }, [pagination.pageIndex, pagination.pageSize, searchAll]);
- 
+
   const handleEdit = (skill: any) => {
     setEditingSkill(skill);
     validation.setValues({
@@ -96,30 +98,30 @@ const AddSkill = () => {
     });
     setShowBaseModal(true);
   };
- 
+
   const handleDelete = (skill: any) => {
     setSkillToDelete(skill);
     setShowDeleteModal(true);
   };
- 
+
   const confirmDelete = async () => {
     if (!skillToDelete || skillToDelete.length === 0) {
       toast.error("No skills selected for deletion.");
       return;
     }
- 
+
     setLoader(true);
- 
+
     try {
       // If deleting multiple skills
       if (Array.isArray(skillToDelete)) {
         const deleteRequests = skillToDelete.map((id) =>
           deleteSkill({ _id: id })
         );
- 
+
         // Wait for all delete requests to finish
         const results = await Promise.all(deleteRequests);
- 
+
         const allSuccess = results.every((res) => res?.success);
         if (allSuccess) {
           toast.success("Skills deleted successfully");
@@ -136,7 +138,7 @@ const AddSkill = () => {
           toast.error("Failed to delete skill");
         }
       }
- 
+
       fetchSkills(); // Refresh data
     } catch (error) {
       toast.error("Something went wrong!");
@@ -148,7 +150,7 @@ const AddSkill = () => {
       setSelectedSkills([]);
     }
   };
- 
+
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
       setSelectedSkills(skills.map((skill) => skill._id)); // Select all
@@ -156,7 +158,7 @@ const AddSkill = () => {
       setSelectedSkills([]); // Unselect all
     }
   };
- 
+
   const handleSelectApplicant = (skillId: string) => {
     setSelectedSkills(
       (prev) =>
@@ -165,14 +167,14 @@ const AddSkill = () => {
           : [...prev, skillId] // Add to selected list
     );
   };
- 
+
   const handleDeleteAll = () => {
     if (selectedSkills.length > 1) {
       setSkillToDelete([...selectedSkills]);
       setShowDeleteModal(true);
     }
   };
- 
+
   const columns = useMemo(
     () => [
       {
@@ -195,59 +197,107 @@ const AddSkill = () => {
         ),
         enableColumnFilter: false,
       },
-      // {
-      //   header: "Sr.No",
-      //   cell: (info: any) => pagination.pageIndex * pagination.pageSize + info.row.index + 1,
-      //   enableColumnFilter: false,
-      // },
       {
         header: "Skill",
         accessorKey: "skills",
         enableColumnFilter: false,
       },
+      // {
+      //   header: "Action",
+      //   cell: (cell: { row: { original: any } }) => (
+      //     <div className="gap-2 hstack">
+      //       <BaseButton
+      //         id={`edit-${cell?.row?.original?._id}`}
+      //         color="primary"
+      //         className="btn btn-sm btn-soft-warning edit-list"
+      //         onClick={() => handleEdit(cell?.row?.original)}
+      //       >
+      //         <i className="align-bottom ri-pencil-fill" />
+      //       </BaseButton>
+      //       <BaseButton
+      //         color="danger"
+      //         id={`delete-${cell?.row?.original?._id}`}
+      //         className="btn btn-sm btn-soft-danger bg-danger"
+      //         onClick={() => handleDelete(cell?.row?.original)}
+      //       >
+      //         <i className="align-bottom ri-delete-bin-fill" />
+      //       </BaseButton>
+
+      //       {/* Tooltips should be outside buttons */}
+      //       <ReactTooltip
+      //         place="bottom"
+      //         variant="warning"
+      //         content="Edit"
+      //         anchorId={`edit-${cell?.row?.original?._id}`}
+      //       />
+      //       <ReactTooltip
+      //         place="bottom"
+      //         variant="error"
+      //         content="Delete"
+      //         anchorId={`delete-${cell?.row?.original?._id}`}
+      //       />
+      //     </div>
+      //   ),
+      // },
       {
         header: "Action",
         cell: (cell: { row: { original: any } }) => (
-          <div className="gap-2 hstack">
-            <BaseButton
-              id={`edit-${cell?.row?.original?._id}`}
-              color="primary"
-              className="btn btn-sm btn-soft-warning edit-list"
-              onClick={() => handleEdit(cell?.row?.original)}
-            >
-              <i className="align-bottom ri-pencil-fill" />
-            </BaseButton>
-            <BaseButton
-              color="danger"
-              id={`delete-${cell?.row?.original?._id}`}
-              className="btn btn-sm btn-soft-danger bg-danger"
-              onClick={() => handleDelete(cell?.row?.original)}
-            >
-              <i className="align-bottom ri-delete-bin-fill" />
-            </BaseButton>
- 
-            {/* Tooltips should be outside buttons */}
-            <ReactTooltip
-              place="bottom"
-              variant="warning"
-              content="Edit"
-              anchorId={`edit-${cell?.row?.original?._id}`}
-            />
-            <ReactTooltip
-              place="bottom"
-              variant="error"
-              content="Delete"
-              anchorId={`delete-${cell?.row?.original?._id}`}
-            />
+          <div className="flex gap-2">
+            <Tooltip.Provider delayDuration={100}>
+              {/* View Button with Tooltip */}
+              <Tooltip.Root>
+                <Tooltip.Trigger asChild>
+                  <button
+                    className="btn btn-sm btn-soft-success bg-primary"
+                    onClick={() => handleEdit(cell?.row?.original)}
+                  >
+                    <i className="text-white align-bottom ri-pencil-fill" />
+                  </button>
+                </Tooltip.Trigger>
+                <Tooltip.Portal>
+                  <Tooltip.Content
+                    side="bottom"
+                    sideOffset={4}
+                    className="px-2 py-1 text-xs text-white rounded shadow-lg bg-primary"
+                  >
+                    Edit
+                    <Tooltip.Arrow style={{ fill: "#0d6efd" }} />
+                  </Tooltip.Content>
+                </Tooltip.Portal>
+              </Tooltip.Root>
+
+              {/* Edit Button with Tooltip */}
+
+              <Tooltip.Root>
+                <Tooltip.Trigger asChild>
+                  <button
+                    className="text-white btn btn-sm btn-soft-danger bg-danger"
+                    onClick={() => handleDelete(cell?.row?.original)}
+                  >
+                    <i className="align-bottom ri-delete-bin-5-fill" />
+                  </button>
+                </Tooltip.Trigger>
+                <Tooltip.Portal>
+                  <Tooltip.Content
+                    side="bottom"
+                    sideOffset={4}
+                    className="px-2 py-1 text-xs text-white rounded shadow-lg bg-danger"
+                  >
+                    Delete
+                    <Tooltip.Arrow style={{ fill: "#dc3545" }} />
+                  </Tooltip.Content>
+                </Tooltip.Portal>
+              </Tooltip.Root>
+            </Tooltip.Provider>
           </div>
         ),
       },
     ],
     [selectedSkills, skills, pagination]
   );
- 
+
   const [loader, setLoader] = useState(false);
- 
+
   const validation = useFormik({
     enableReinitialize: true,
     initialValues: {
@@ -265,11 +315,11 @@ const AddSkill = () => {
         _id: editingSkill?._id,
         skills: values.addSkills,
       };
- 
+
       const apiCall = editingSkill
         ? updateSkill(payload)
         : createSkill(payload);
- 
+
       apiCall
         .then((res) => {
           if (res?.success) {
@@ -296,28 +346,26 @@ const AddSkill = () => {
         });
     },
   });
- 
-  const formTitle = editingSkill
-    ? "Edit Skill"
-    : "Add Skills";
+
+  const formTitle = editingSkill ? "Edit Skill" : "Add Skills";
   const submitButtonText = "Add";
- 
+
   const handleOpenBaseModal = () => {
     setEditingSkill(null);
     validation.resetForm();
     setShowBaseModal(true);
   };
- 
+
   const handleSubmit = () => {
     validation.handleSubmit();
   };
- 
+
   const handleCloseClick = () => {
     setShowBaseModal(false);
     setEditingSkill(null);
     validation.resetForm();
   };
- 
+
   const handleFileImport = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -328,15 +376,15 @@ const AddSkill = () => {
       toast.error("Please upload a valid CSV or Excel file");
       return;
     }
- 
+
     setImportLoader(true);
     setIsImporting(true);
     setImportProgress(0);
- 
+
     try {
       const formData = new FormData();
       formData.append("csvFile", file);
- 
+
       const response = await importSkills(formData, {
         onUploadProgress: (progressEvent) => {
           const progress = Math.round(
@@ -345,7 +393,7 @@ const AddSkill = () => {
           setImportProgress(progress);
         },
       });
- 
+
       if (response?.success) {
         toast.success(response?.message || "File imported successfully!");
         await fetchSkills();
@@ -375,7 +423,7 @@ const AddSkill = () => {
       }
     }
   };
- 
+
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchAll(event.target.value);
        setPagination((prev) => ({
@@ -383,16 +431,16 @@ const AddSkill = () => {
       pageIndex: 0,
     }));
   };
- 
+
   const closeDeleteModal = () => {
     setShowDeleteModal(false);
     setSelectedSkills([]);
   };
- 
+
   const filteredSkills = skills.filter((skill) =>
     skill.skills.toLowerCase().includes(searchAll.toLowerCase())
   );
- 
+
   const handleSkills = (applicantId: string[]) => {
     if (applicantId.length > 0) {
       // navigate(`/dashboard/${applicantId || "0"}`);
@@ -400,7 +448,7 @@ const AddSkill = () => {
       navigate(`/dashboard`, { state: { applicantIds: applicantId } });
     }
   };
- 
+
   return (
     <Fragment>
       <DeleteModal
@@ -437,7 +485,7 @@ const AddSkill = () => {
                             value={searchAll}
                           />
                         </div>
- 
+
                         {/* Delete Button (Only if skills are selected) */}
                         {selectedSkills.length > 1 && (
                           <>
@@ -453,7 +501,7 @@ const AddSkill = () => {
                                 anchorId={`Delete ${selectedSkills.length} Emails`}
                               />
                             </BaseButton>
- 
+
                             <BaseButton
                               className="ml-2 text-lg border-0 btn bg-primary edit-list w-fit"
                               onClick={() => handleSkills(selectedSkills)}
@@ -468,7 +516,7 @@ const AddSkill = () => {
                             </BaseButton>
                           </>
                         )}
- 
+
                         {/* Import & Submit Buttons (Stack only on smaller screens) */}
                         <div className="flex-wrap d-flex align-items-center">
                           <input
@@ -517,7 +565,7 @@ const AddSkill = () => {
                               </div>
                             )}
                           </BaseButton>
- 
+
                           <BaseButton
                             color="success"
                             disabled={loader}
@@ -532,7 +580,7 @@ const AddSkill = () => {
                       </div>
                     </Col>
                   </Row>
- 
+
                   <BaseModal
                     show={showBaseModal}
                     onCloseClick={handleCloseClick}
@@ -556,22 +604,22 @@ const AddSkill = () => {
                           handleChange={(e) => {
                             const value = e.target.value;
                             const words = value.split(" ");
- 
+
                             if (words.length === 0) {
                               validation.setFieldValue("addSkills", "");
                               return;
                             }
- 
+
                             const firstWord =
                               words[0].charAt(0).toUpperCase() +
                               words[0].slice(1);
- 
+
                             // Keep the rest as the user typed
                             const restWords = words.slice(1);
                             const finalValue = [firstWord, ...restWords].join(
                               " "
                             );
- 
+
                             validation.setFieldValue("addSkills", finalValue);
                           }}
                           handleBlur={validation.handleBlur}
@@ -631,7 +679,5 @@ const AddSkill = () => {
     </Fragment>
   );
 };
- 
+
 export default AddSkill;
- 
- 

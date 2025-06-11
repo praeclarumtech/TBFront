@@ -6,7 +6,8 @@ import TableContainer from "../../components/BaseComponents/TableContainer";
 import BaseInput from "../../components/BaseComponents/BaseInput";
 
 import BaseButton from "components/BaseComponents/BaseButton";
-import { Tooltip as ReactTooltip } from "react-tooltip";
+// import { Tooltip as ReactTooltip } from "react-tooltip";
+import * as Tooltip from "@radix-ui/react-tooltip";
 import { errorHandle, InputPlaceHolder } from "utils/commonFunctions";
 import appConstants from "constants/constant";
 import ViewEmail from "./ViewEmail";
@@ -169,38 +170,91 @@ const EmailTable = () => {
       cell: ({ row }: { row: any }) =>
         moment(row.original.createdAt).format("YYYY-MM-DD"),
     },
+    // {
+    //   header: "Action",
+    //   cell: (cell: { row: { original: any } }) => (
+    //     <div className="gap-2 hstack">
+    //       <BaseButton
+    //         id={`usage-${cell?.row?.original?.id}`}
+    //         color="primary"
+    //         className="btn btn-sm btn-soft-success usage-list"
+    //         onClick={() => handleView(cell.row.original._id)}
+    //       >
+    //         <i className="align-bottom ri-eye-fill" />
+    //         <ReactTooltip
+    //           place="bottom"
+    //           variant="success"
+    //           content="View"
+    //           anchorId={`usage-${cell?.row?.original?.id}`}
+    //         />
+    //       </BaseButton>
+    //       <BaseButton
+    //         color="danger"
+    //         id={`delete-${cell?.row?.original?._id}`}
+    //         className="btn btn-sm btn-soft-danger bg-danger"
+    //         onClick={() => handleDelete(cell?.row?.original?._id)}
+    //       >
+    //         <i className="align-bottom ri-delete-bin-fill" />
+    //         <ReactTooltip
+    //           place="bottom"
+    //           variant="error"
+    //           content="Delete"
+    //           anchorId={`delete-${cell?.row?.original?._id}`}
+    //         />
+    //       </BaseButton>
+    //     </div>
+    //   ),
+    // },
     {
       header: "Action",
-      cell: (cell: { row: { original: any } }) => (
-        <div className="gap-2 hstack">
-          <BaseButton
-            id={`usage-${cell?.row?.original?.id}`}
-            color="primary"
-            className="btn btn-sm btn-soft-success usage-list"
-            onClick={() => handleView(cell.row.original._id)}
-          >
-            <i className="align-bottom ri-eye-fill" />
-            <ReactTooltip
-              place="bottom"
-              variant="success"
-              content="View"
-              anchorId={`usage-${cell?.row?.original?.id}`}
-            />
-          </BaseButton>
-          <BaseButton
-            color="danger"
-            id={`delete-${cell?.row?.original?._id}`}
-            className="btn btn-sm btn-soft-danger bg-danger"
-            onClick={() => handleDelete(cell?.row?.original?._id)}
-          >
-            <i className="align-bottom ri-delete-bin-fill" />
-            <ReactTooltip
-              place="bottom"
-              variant="error"
-              content="Delete"
-              anchorId={`delete-${cell?.row?.original?._id}`}
-            />
-          </BaseButton>
+      cell: ({ row }: any) => (
+        <div className="flex gap-2">
+          <Tooltip.Provider delayDuration={100}>
+            {/* View Button with Tooltip */}
+            <Tooltip.Root>
+              <Tooltip.Trigger asChild>
+                <button
+                  className="btn btn-sm btn-soft-success bg-primary"
+                  onClick={() => handleView(row.original._id)}
+                >
+                  <i className="text-white ri-eye-fill" />
+                </button>
+              </Tooltip.Trigger>
+              <Tooltip.Portal>
+                <Tooltip.Content
+                  side="bottom"
+                  sideOffset={4}
+                  className="px-2 py-1 text-xs text-white rounded shadow-lg bg-primary"
+                >
+                  View
+                  <Tooltip.Arrow style={{ fill: "#0d6efd" }} />
+                </Tooltip.Content>
+              </Tooltip.Portal>
+            </Tooltip.Root>
+
+            {/* Edit Button with Tooltip */}
+
+            <Tooltip.Root>
+              <Tooltip.Trigger asChild>
+                <button
+                  className="text-white btn btn-sm btn-soft-danger bg-danger"
+                  onClick={() => handleDelete(row.original._id)}
+                >
+                  <i className="align-bottom ri-delete-bin-5-fill" />
+                </button>
+              </Tooltip.Trigger>
+              <Tooltip.Portal>
+                <Tooltip.Content
+                  side="bottom"
+                  sideOffset={4}
+                  className="px-2 py-1 text-xs text-white rounded shadow-lg bg-danger"
+                >
+                  Delete
+                  <Tooltip.Arrow style={{ fill: "#dc3545" }} />
+                </Tooltip.Content>
+              </Tooltip.Portal>
+            </Tooltip.Root>
+          </Tooltip.Provider>
         </div>
       ),
     },
@@ -477,22 +531,7 @@ const EmailTable = () => {
               <div className="row gy-2 gx-2 align-items-center justify-content-between">
                 {/* Email Count */}
                 <div className="col-auto d-flex align-items-center">
-                  <span
-                    className="
-                      inline-block
-                      bg-primary
-                      text-white
-                      text-base
-                      font-medium
-                      px-5
-                      py-2
-                      rounded-lg
-                      shadow-sm
-                      mr-4
-                      tracking-wide
-                      align-middle
-                    "
-                  >
+                  <span className="inline-block px-5 py-2 mr-4 text-base font-medium tracking-wide text-white align-middle rounded-lg shadow-sm bg-primary">
                     Sent Emails: {emailCount}
                   </span>
                 </div>
@@ -527,18 +566,29 @@ const EmailTable = () => {
 
                   {/* Delete Button (Visible when multiple applicants selected) */}
                   {selectedApplicants.length > 1 && (
-                    <button
-                      className="text-lg text-white border-0 btn bg-danger edit-list w-fit"
-                      onClick={handleDeleteAll}
-                    >
-                      <i className="align-bottom ri-delete-bin-5-fill" />
-                      <ReactTooltip
-                        place="bottom"
-                        variant="error"
-                        content="Delete"
-                        anchorId={`Delete ${selectedApplicants.length} Emails`}
-                      />
-                    </button>
+                    <Tooltip.Provider delayDuration={100}>
+                      {/* View Button with Tooltip */}
+                      <Tooltip.Root>
+                        <Tooltip.Trigger asChild>
+                          <button
+                            className="text-lg text-white border-0 btn bg-danger edit-list w-fit"
+                            onClick={handleDeleteAll}
+                          >
+                            <i className="align-bottom ri-delete-bin-5-fill" />
+                          </button>
+                        </Tooltip.Trigger>
+                        <Tooltip.Portal>
+                          <Tooltip.Content
+                            side="bottom"
+                            sideOffset={4}
+                            className="px-2 py-1 text-xs text-white rounded shadow-lg bg-danger"
+                          >
+                            Delete
+                            <Tooltip.Arrow style={{ fill: "#dc3545" }} />
+                          </Tooltip.Content>
+                        </Tooltip.Portal>
+                      </Tooltip.Root>
+                    </Tooltip.Provider>
                   )}
 
                   {/* Compose Email Button */}

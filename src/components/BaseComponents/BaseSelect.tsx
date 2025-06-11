@@ -26,12 +26,13 @@ const BaseSelect = ({
     menu: (provided: any) => ({
       ...provided,
       width: "100%",
+      minWidth: "fit-content",
       zIndex: 9999,
     }),
     menuList: (provided: any) => ({
       ...provided,
       maxHeight: "200px", // reduce dropdown height here (adjust as needed)
-      overflowY: "auto",  // enable scroll if too many items
+      overflowY: "auto", // enable scroll if too many items
     }),
     control: (base: any, state: any) => ({
       ...base,
