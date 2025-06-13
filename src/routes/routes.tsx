@@ -25,6 +25,10 @@ import State from "pages/master/State";
 import City from "pages/master/City";
 import QrFrom from "pages/applicant/QrCode/QrFrom";
 import SuccessPage from "pages/applicant/QrCode/Success";
+import JobForm from "pages/master/JobForm";
+import JobListing from "pages/applicant/Job/JobListing";
+import OpenJob from "pages/master/OpenJob";
+import ApplyNow from "pages/applicant/Job/ApplyNow";
 
 const routes = {
   ROOT: {
@@ -90,6 +94,11 @@ const routes = {
         path: "/import-applicants",
         Component: ImportApplicantTables,
       },
+      {
+        id: "applicant5",
+        path: "/job-listing",
+        Component: JobListing,
+      },
     ],
   },
 
@@ -99,6 +108,16 @@ const routes = {
     element: QrFrom,
   },
 
+  JOB_ADD_QR_CODE: {
+    title: "Job Add apply-now",
+    path: "/applicants/applyNow",
+    element: ApplyNow,
+  },
+  JOB_EDIT_QR_CODE: {
+    title: "Job Edit apply-now",
+    path: "/applicants/applyNow-edit/:id",
+    element: ApplyNow,
+  },
   APPLICANT_EDIT_QR_CODE: {
     title: "Applicant Edit QR Code",
     path: "/applicants/applicant-edit-qr-code/:id",
@@ -110,7 +129,11 @@ const routes = {
     path: "/applicants/qr-code-success",
     element: SuccessPage,
   },
-
+  JOB_OPEN: {
+    title: "Job Submit",
+    path: "master/job3/:id",
+    element: OpenJob,
+  },
   EMAIL: {
     title: "Email",
     path: "/email",
@@ -191,6 +214,21 @@ const routes = {
         title: "City",
         path: "/master/city",
         element: City,
+      },
+      {
+        title: "Job Create",
+        path: "/master/job",
+        element: JobForm,
+      },
+      {
+        id: "Job Create 2",
+        path: "/master/edit-job/:id",
+        Component: JobForm,
+      },
+      {
+        id: "Job 3",
+        path: "/master/job3/:id",
+        Component: OpenJob,
       },
     ],
   },

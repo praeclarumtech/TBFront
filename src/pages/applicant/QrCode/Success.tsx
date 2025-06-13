@@ -4,7 +4,7 @@ const SuccessPage = () => {
   return (
     <Result
       status="success"
-      title="Successfully application submitted!"
+      title="Application Submitted Successfully!"
       subTitle={
         <div style={{ fontFamily: "Arial, sans-serif", lineHeight: "1.6" }}>
           <p>

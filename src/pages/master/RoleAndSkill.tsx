@@ -364,7 +364,7 @@ const UpdateSkill = () => {
                     className="px-2 py-1 text-xs text-white rounded shadow-lg bg-primary"
                   >
                     View
-                    <Tooltip.Arrow style={{ fill: "#0d6efd" }} />
+                    <Tooltip.Arrow style={{ fill: "#624bff" }} />
                   </Tooltip.Content>
                 </Tooltip.Portal>
               </Tooltip.Root>
@@ -385,7 +385,7 @@ const UpdateSkill = () => {
                     className="px-2 py-1 text-xs text-white rounded shadow-lg bg-secondary"
                   >
                     Edit
-                    <Tooltip.Arrow style={{ fill: "#6c757d" }} />
+                    <Tooltip.Arrow style={{ fill: "#637381" }} />
                   </Tooltip.Content>
                 </Tooltip.Portal>
               </Tooltip.Root>
@@ -396,7 +396,7 @@ const UpdateSkill = () => {
                 <Tooltip.Trigger asChild>
                   <button
                     className="text-white btn btn-sm btn-soft-danger bg-danger"
-                     onClick={() => handleDelete(cell?.row?.original)}
+                    onClick={() => handleDelete(cell?.row?.original)}
                   >
                     <i className="align-bottom ri-delete-bin-5-fill" />
                   </button>

@@ -797,7 +797,7 @@ function ImportApplicant() {
                     className="px-2 py-1 text-sm text-white rounded shadow-lg bg-primary"
                   >
                     View
-                    <Tooltip.Arrow style={{ fill: "#0d6efd" }} />
+                    <Tooltip.Arrow style={{ fill: "#624bff" }} />
                   </Tooltip.Content>
                 </Tooltip.Portal>
               </Tooltip.Root>
@@ -820,7 +820,7 @@ function ImportApplicant() {
                     className="px-2 py-1 text-sm text-white rounded shadow-lg bg-secondary"
                   >
                     Edit
-                    <Tooltip.Arrow style={{ fill: "#6c757d" }} />
+                    <Tooltip.Arrow style={{ fill: "#637381" }} />
                   </Tooltip.Content>
                 </Tooltip.Portal>
               </Tooltip.Root>

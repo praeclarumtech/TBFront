@@ -27,6 +27,8 @@ import {
   UploadOutlined,
   UserOutlined,
 } from "@ant-design/icons";
+import JobForm from "pages/master/JobForm";
+// import OpenJob from "pages/master/OpenJob";
 
 const routess = {
   ROOT: {
@@ -170,6 +172,21 @@ const routess = {
         path: "/master/designation",
         element: AddDesignation,
       },
+      {
+        title: "Job Create",
+        path: "/master/job",
+        element: JobForm,
+      },
+      {
+        id: "Job Create 2",
+        path: "/master/edit-job/:id",
+        Component: JobForm,
+      },
+      // {
+      //   id: "Job 3",
+      //   path: "/master/job3/:id",
+      //   Component: OpenJob,
+      // },
     ],
   },
   LAYOUT_VERTICAL: {

@@ -13,7 +13,7 @@ import {
 } from "utils/commonFunctions";
 import appConstants from "constants/constant";
 import {
-  CheckExistingApplicant,
+  //   CheckExistingApplicant,
   getApplicantDetails,
   updateApplicantQR,
   createApplicantQR,
@@ -31,15 +31,15 @@ import { useLocation } from "react-router-dom";
 const { projectTitle, Modules, workPreferenceType, communicationOptions } =
   appConstants;
 
-const QrFrom = () => {
+const ApplyNow = () => {
   const location = useLocation();
   const jobId = location.state?.jobId;
   console.log("this is in qr Form", jobId);
   document.title = Modules.CreateApplicantForm + " | " + projectTitle;
   const [loading, setLoading] = useState<boolean>(false);
   const [buttonloading, setButtonLoading] = useState<boolean>(false);
-  const [emailError, setEmailError] = useState("");
-  const [phoneNumberError, setPhoneNumberError] = useState("");
+  //   const [emailError, setEmailError] = useState("");
+  //   const [phoneNumberError, setPhoneNumberError] = useState("");
   const [selectedMulti, setSelectedMulti] = useState<any>([]);
   const [skillOptions, setSkillOptions] = useState<any[]>([]);
   const [designationOptions, setDesignationOptions] = useState<any[]>([]);
@@ -193,18 +193,9 @@ const QrFrom = () => {
     },
     validationSchema: QrApplicants,
 
-    onSubmit: async (
-      value: any
-      // , { setSubmitting }
-    ) => {
+    onSubmit: async (value: any) => {
       setButtonLoading(true);
-      // if (emailError) {
-      //   // Optional: show a message or toast
-      //   console.warn("Email validation error:", emailError);
-      //   setSubmitting(false);
-      //   setButtonLoading(false);
-      //   return; // prevent submission
-      // }
+
       try {
         const formData = new FormData();
         formData.append("name[firstName]", value.firstName);
@@ -261,54 +252,54 @@ const QrFrom = () => {
     },
   });
 
-  const checkExistingField = async (field: string, value: string) => {
-    if (field === "email") {
-      setEmailError("");
-    }
-    if (field === "phoneNumber") {
-      setPhoneNumberError("");
-    }
+  //   const checkExistingField = async (field: string, value: string) => {
+  //     // if (field === "email") {
+  //     //   setEmailError("");
+  //     // }
+  //     // if (field === "phoneNumber") {
+  //     //   setPhoneNumberError("");
+  //     // }
 
-    try {
-      const params: {
-        email?: string;
-        phoneNumber?: number;
-        whatsappNumber?: number;
-      } = {};
+  //     try {
+  //       const params: {
+  //         email?: string;
+  //         phoneNumber?: number;
+  //         whatsappNumber?: number;
+  //       } = {};
 
-      if (field === "email") {
-        params.email = value;
-      } else if (field === "phoneNumber") {
-        params.phoneNumber = Number(value);
-      } else if (field === "whatsappNumber") {
-        params.whatsappNumber = Number(value);
-      }
+  //       if (field === "email") {
+  //         params.email = value;
+  //       } else if (field === "phoneNumber") {
+  //         params.phoneNumber = Number(value);
+  //       } else if (field === "whatsappNumber") {
+  //         params.whatsappNumber = Number(value);
+  //       }
 
-      const response = await CheckExistingApplicant(params);
+  //       const response = await CheckExistingApplicant(params);
 
-      if (response?.data?.exists) {
-        if (field === "email") {
-          setEmailError(
-            response?.message || "This email is already registered."
-          );
-        }
-        if (field === "phoneNumber") {
-          setPhoneNumberError("This phone number is already registered.");
-        }
-      } else {
-        if (field === "email") {
-          setEmailError("");
-        }
-        if (field === "phoneNumber") {
-          setPhoneNumberError("");
-        }
-      }
-    } catch (error) {
-      errorHandle(error);
+  //       if (response?.data?.exists) {
+  //     //     if (field === "email") {
+  //     //       setEmailError(
+  //     //         response?.message || "This email is already registered."
+  //     //       );
+  //     //     }
+  //     //     if (field === "phoneNumber") {
+  //     //       setPhoneNumberError("This phone number is already registered.");
+  //     //     }
+  //     //   } else {
+  //     //     if (field === "email") {
+  //     //       setEmailError("");
+  //     //     }
+  //     //     if (field === "phoneNumber") {
+  //     //       setPhoneNumberError("");
+  //     //     }
+  //       }
+  //     } catch (error) {
+  //       errorHandle(error);
 
-      return "Error while checking this field.";
-    }
-  };
+  //       return "Error while checking this field.";
+  //     }
+  //   };
 
   const handleMultiSkill = (selectedMulti: any) => {
     const skills = selectedMulti?.map((item: any) => item.label) || [];
@@ -407,17 +398,20 @@ const QrFrom = () => {
                           const emailValue = e.target.value;
                           validation.setFieldValue("email", emailValue);
 
-                          setEmailError("");
-                          const emailError = await checkExistingField(
-                            "email",
-                            emailValue
-                          );
-                          validation.setFieldError("email", emailError);
+                          //   setEmailError("");
+                          //   const emailError = await checkExistingField(
+                          //     "email",
+                          //     emailValue
+                          //   );
+                          //   validation.setFieldError("email", emailError);
                         }}
                         handleBlur={validation.handleBlur}
                         value={validation.values.email}
                         touched={validation.touched.email}
-                        error={validation.errors.email || emailError}
+                        error={
+                          validation.errors.email
+                          // || emailError
+                        }
                         passwordToggle={false}
                         isRequired={true}
                       />
@@ -439,17 +433,18 @@ const QrFrom = () => {
                             "phoneNumber",
                             sanitizedValue
                           );
-                          const phoneError = await checkExistingField(
-                            "phoneNumber",
-                            sanitizedValue
-                          );
-                          validation.setFieldError("phoneNumber", phoneError);
+                          //   const phoneError = await checkExistingField(
+                          //     "phoneNumber",
+                          //     sanitizedValue
+                          //   );
+                          //   validation.setFieldError("phoneNumber", phoneError);
                         }}
                         handleBlur={validation.handleBlur}
                         value={validation.values.phoneNumber}
                         touched={validation.touched.phoneNumber}
                         error={
-                          validation.errors.phoneNumber || phoneNumberError
+                          validation.errors.phoneNumber
+                          //   || phoneNumberError
                         }
                         passwordToggle={false}
                         isRequired={true}
@@ -1010,4 +1005,4 @@ const QrFrom = () => {
   );
 };
 
-export default QrFrom;
+export default ApplyNow;
