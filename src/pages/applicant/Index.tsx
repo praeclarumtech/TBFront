@@ -1315,99 +1315,6 @@ const Applicant = () => {
         accessorKey: "totalExperience",
         enableColumnFilter: false,
       },
-      // {
-      //   header: "Action",
-      //   cell: (cell: any) => (
-      //     <div className="gap-2 hstack">
-      //       <BaseButton
-      //         id={`usage-${cell?.row?.original?.id}`}
-      //         color="primary"
-      //         className="btn btn-sm btn-soft-success usage-list"
-      //         onClick={() => handleView(cell.row.original._id, "main")}
-      //         disabled={!cell?.row?.original?.isActive}
-      //       >
-      //         <i className="align-bottom ri-eye-fill" />
-      //         <ReactTooltip
-      //           place="bottom"
-      //           variant="success"
-      //           content="View"
-      //           anchorId={`usage-${cell?.row?.original?.id}`}
-      //         />
-      //       </BaseButton>
-
-      //       <BaseButton
-      //         id={`editMode-${cell?.row?.original?.id}`}
-      //         className="btn btn-sm btn-soft-secondary edit-list"
-      //         onClick={() => handleEdit(cell?.row?.original._id)}
-      //         disabled={!cell?.row?.original?.isActive}
-      //       >
-      //         <i className="align-bottom ri-pencil-fill" />
-      //         <ReactTooltip
-      //           place="bottom"
-      //           variant="info"
-      //           content="Edit"
-      //           anchorId={`editMode-${cell?.row?.original?.id}`}
-      //         />
-      //       </BaseButton>
-
-      //       <BaseButton
-      //         id={`delete-${cell?.row?.original?.id}`}
-      //         className="btn btn-sm btn-soft-danger remove-list"
-      //         color="danger"
-      //         onClick={() => handleDeleteSingle(cell.row.original._id)}
-      //         disabled={!cell?.row?.original?.isActive}
-      //       >
-      //         <i className="align-bottom ri-delete-bin-5-fill" />
-      //         <ReactTooltip
-      //           place="bottom"
-      //           variant="error"
-      //           content="Delete"
-      //           anchorId={`delete-${cell?.row?.original?._id}`}
-      //         />
-      //       </BaseButton>
-
-      //       <BaseButton
-      //         className="btn btn-sm btn-soft-secondary bg-success edit-list"
-      //         onClick={() => handleEmail(cell?.row?.original._id)}
-      //         disabled={!cell?.row?.original?.isActive}
-      //       >
-      //         <i className="align-bottom ri-mail-close-line" />
-      //         <ReactTooltip
-      //           place="bottom"
-      //           variant="info"
-      //           content="Email"
-      //           anchorId={`email-${cell?.row?.original?.id}`}
-      //         />
-      //       </BaseButton>
-
-      //       {/* Add to favorite */}
-      //       {cell?.row?.original?.isFavorite ? (
-      //         <i
-      //           className="align-bottom ri-heart-fill text-danger"
-      //           style={{ fontSize: "20px", cursor: "pointer" }}
-      //           onClick={() =>
-      //             handleConfirmFav(
-      //               cell?.row?.original?.isFavorite,
-      //               cell?.row?.original?._id
-      //             )
-      //           }
-      //         ></i>
-      //       ) : (
-      //         <i
-      //           className="align-bottom ri-heart-line"
-      //           style={{ fontSize: "20px", cursor: "pointer" }}
-      //           onClick={() =>
-      //             handleConfirmFav(
-      //               cell?.row?.original?.isFavorite,
-      //               cell?.row?.original?._id
-      //             )
-      //           }
-      //         ></i>
-      //       )}
-      //     </div>
-      //   ),
-      // },
-
       {
         header: "Action",
         cell: ({ row }: any) => (
@@ -1431,7 +1338,7 @@ const Applicant = () => {
                     className="px-2 py-1 text-sm text-white rounded shadow-lg bg-primary"
                   >
                     View
-                    <Tooltip.Arrow style={{ fill: "#0d6efd" }} />
+                    <Tooltip.Arrow style={{ fill: "#624bff" }} />
                   </Tooltip.Content>
                 </Tooltip.Portal>
               </Tooltip.Root>
@@ -1454,7 +1361,7 @@ const Applicant = () => {
                     className="px-2 py-1 text-sm text-white rounded shadow-lg bg-secondary"
                   >
                     Edit
-                    <Tooltip.Arrow style={{ fill: "#6c757d" }} />
+                    <Tooltip.Arrow style={{ fill: "#637381" }} />
                   </Tooltip.Content>
                 </Tooltip.Portal>
               </Tooltip.Root>
@@ -1532,12 +1439,12 @@ const Applicant = () => {
                   <Tooltip.Content
                     side="bottom"
                     sideOffset={4}
-                    className="px-2 py-1 text-sm text-white rounded shadow-lg bg-info"
+                    className="px-2 py-1 text-sm text-white rounded shadow-lg bg-gray-700"
                   >
                     {row?.original?.isFavorite
                       ? "Remove from Favorites"
                       : "Add to Favorites"}
-                    <Tooltip.Arrow style={{ fill: "#0dcaf0" }} />
+                    <Tooltip.Arrow style={{ fill: "#454f5b" }} />
                   </Tooltip.Content>
                 </Tooltip.Portal>
               </Tooltip.Root>

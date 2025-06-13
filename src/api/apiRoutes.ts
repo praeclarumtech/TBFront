@@ -26,9 +26,9 @@ export const DELETE_IMPORTED_MULTIPLE_APPLICANT =
 export const UPDATE_APPLICANT_STATUS = "applicants/update/status";
 export const UPDATE_APPLICANT_STAGE = "applicants/update/status";
 export const FILTER_APPLICANT = "applicants/viewApplicant/?";
-export const DUPLICATE_RECORDS = 'applicants/duplicate-record';
-export const DELETE_DUPLICATE_RECORDS = 'applicants/delete/duplicate-record';
-export const DOWNLOAD_APPLICANT = 'applicants/export-duplicates';
+export const DUPLICATE_RECORDS = "applicants/duplicate-record";
+export const DELETE_DUPLICATE_RECORDS = "applicants/delete/duplicate-record";
+export const DOWNLOAD_APPLICANT = "applicants/export-duplicates";
 
 export const COUNTRY = "country";
 export const STATE = "state";
@@ -73,7 +73,8 @@ export const UPDATE_ROLE_AND_SKILL = "/appliedRole/updateAppliedRoleAndSkill";
 export const DELETE_ROLE_AND_SKILL = "/appliedRole/deleteAppliedRoleAndSkill";
 export const VIEW_ROLE_AND_SKILL_ID =
   "/appliedRole/viewskillAndAppliedRoleById";
-export const VIEW_SKILLS_BY_APPLIED_ROLE = "/appliedRole/viewSkillsByAppliedRole";
+export const VIEW_SKILLS_BY_APPLIED_ROLE =
+  "/appliedRole/viewSkillsByAppliedRole";
 
 //Degree module
 export const CREATE_DEGREE = "degree/addDegree";
@@ -147,8 +148,14 @@ export const UPDATE_CITY = "updateCityById";
 export const DELETE_CITY = "/deleteCityById";
 export const VIEW_BY_ID_CITY = "/viewCityById";
 
+//Active InActive
+export const ACTIVE = "/applicants/activateApplicant";
+export const IN_ACTIVE = "/applicants/inactivateApplicant";
 
+//Job
 
-//Active InActive 
-export const ACTIVE = "/applicants/activateApplicant"
-export const IN_ACTIVE = "/applicants/inactivateApplicant"
+export const VIEW_ALL_JOB = "/jobs/getJobs";
+export const CREATE_JOB = "/jobs/create";
+export const DELETE_JOB = "/jobs/delete";
+export const VIEW_JOB_ID = "/jobs/getJob";
+export const UPDATE_JOB = "/jobs/update"

@@ -146,6 +146,7 @@ const appConstants = Object.freeze({
     Country: "Country",
     State: "State",
     City: "City",
+    Jobs: "Jobs",
   },
   passingYearType: [
     { label: "2005", value: 2005 },
@@ -448,5 +449,19 @@ const appConstants = Object.freeze({
     { label: "Active", value: "true" },
     { label: "Inactive", value: "false" },
   ],
+
+  jobTypeOpyions: [
+    { label: "Internship", value: "internship" },
+    { label: "FULL_TIME", value: "full-time" },
+    { label: "PART_TIME", value: "part-time" },
+    { label: "CONTRACT", value: "contract" },
+    { label: "FREELANCE", value: "freelance" },
+  ],
+
+  timeZoneOptions: [
+    {label: "IST", value: "IST" },
+    {label: "UTC", value: "UTC" },
+    {label: "EST", value: "EST" }
+  ]
 });
 export default appConstants;
