@@ -254,41 +254,6 @@ const AddEmailTemplate = () => {
 
           return (
             <div className="gap-2 hstack">
-              {/* <BaseButton
-                id={`edit-${id}`}
-                color="primary"
-                className="btn btn-sm btn-soft-warning edit-list"
-                onClick={() => handleEdit(original)}
-              >
-                <i className="align-bottom ri-pencil-fill" />
-              </BaseButton>
-
-              {shouldShowDelete && (
-                <>
-                  <BaseButton
-                    color="danger"
-                    id={`delete-${id}`}
-                    className="btn btn-sm btn-soft-danger bg-danger"
-                    onClick={() => handleDelete(original)}
-                  >
-                    <i className="align-bottom ri-delete-bin-fill" />
-                  </BaseButton>
-
-                  <ReactTooltip
-                    place="bottom"
-                    variant="error"
-                    content="Delete"
-                    anchorId={`delete-${id}`}
-                  />
-                </>
-              )}
-
-              <ReactTooltip
-                place="bottom"
-                variant="warning"
-                content="Edit"
-                anchorId={`edit-${id}`}
-              /> */}
               <Tooltip.Provider delayDuration={50}>
                 {/* View Button with Tooltip */}
                 <Tooltip.Root>
@@ -307,7 +272,7 @@ const AddEmailTemplate = () => {
                       className="px-2 py-1 text-xs text-white rounded shadow-lg bg-primary"
                     >
                       Edit
-                      <Tooltip.Arrow className="fill-[#0d6efd]" />
+                      <Tooltip.Arrow className="fill-[#624bff]" />
                     </Tooltip.Content>
                   </Tooltip.Portal>
                 </Tooltip.Root>

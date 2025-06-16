@@ -35,6 +35,10 @@ import State from "pages/master/State";
 import City from "pages/master/City";
 import QrFrom from "pages/applicant/QrCode/QrFrom";
 import SuccessPage from "pages/applicant/QrCode/Success";
+import JobForm from "pages/master/JobForm";
+import JobListing from "pages/applicant/Job/JobListing";
+import OpenJob from "pages/master/OpenJob";
+import ApplyNow from "pages/applicant/Job/ApplyNow";
 
 const RenderRouter: React.FC = () => {
   const {
@@ -52,6 +56,9 @@ const RenderRouter: React.FC = () => {
     APPLICANT_ADD_QR_CODE,
     APPLICANT_EDIT_QR_CODE,
     APPLICANT_SUCCESS,
+    JOB_ADD_QR_CODE,
+    JOB_EDIT_QR_CODE,
+    JOB_OPEN,
   } = routes;
 
   const router = createBrowserRouter(
@@ -62,7 +69,9 @@ const RenderRouter: React.FC = () => {
         <Route path={FORGET_PASSWORD.path} element={<ForgetPassword />} />
         <Route path={VERIFY_EMAIL.path} element={<EmailVerification />} />
         <Route path={UPDATE_PASSWORD.path} element={<UpdatePassword />} />
-
+        <Route path={JOB_OPEN.path} element={<OpenJob />} />
+        <Route path={JOB_ADD_QR_CODE.path} element={<ApplyNow />} />
+        <Route path={JOB_EDIT_QR_CODE.path} element={<ApplyNow />} />
         <Route path={APPLICANT_ADD_QR_CODE.path} element={<QrFrom />} />
         <Route path={APPLICANT_EDIT_QR_CODE.path} element={<QrFrom />} />
         <Route path={APPLICANT_SUCCESS.path} element={<SuccessPage />} />
@@ -77,6 +86,7 @@ const RenderRouter: React.FC = () => {
             path={"import-applicants"}
             element={<ImportApplicantTables />}
           />
+          <Route path={"job-listing"} element={<JobListing />} />
           <Route path={"userProfile"} element={<Profile />} />
           <Route
             path={CHANGE_PASSWORD.path}
@@ -108,6 +118,9 @@ const RenderRouter: React.FC = () => {
             <Route path="country" element={<Country />} />
             <Route path="state" element={<State />} />
             <Route path="city" element={<City />} />
+            <Route path="job" element={<JobForm />} />
+            <Route path="job3" element={<OpenJob />} />
+            <Route path={"edit-job/:id"} element={<JobForm />} />
           </Route>
         </Route>
       </Route>

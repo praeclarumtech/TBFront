@@ -25,7 +25,12 @@ export const DashboardMenu: DashboardMenuProps[] = [
     icon: "download",
     link: "/import-applicants",
   },
-
+  {
+    id: uuid(),
+    title: "Job Listing",
+    icon: "users",
+    link: "/job-listing",
+  },
   {
     id: uuid(),
     title: "Analysis",
@@ -54,6 +59,13 @@ export const DashboardMenu: DashboardMenuProps[] = [
   //   icon: "monitor",
   //   link: "/master/passing-year",
   // },
+
+  {
+    id: uuid(),
+    title: "Job Create",
+    icon: "plus",
+    link: "/master/job",
+  },
   {
     id: uuid(),
     title: "Add Skills",
@@ -102,10 +114,16 @@ export const DashboardMenu: DashboardMenuProps[] = [
     icon: "plus",
     link: "/master/state",
   },
-   {
+  {
     id: uuid(),
     title: "Add City",
     icon: "plus",
     link: "/master/city",
   },
+  // {
+  //   id: uuid(),
+  //   title: "Open Job",
+  //   icon: "plus",
+  //   link: "/master/job3/:id",
+  // },
 ];

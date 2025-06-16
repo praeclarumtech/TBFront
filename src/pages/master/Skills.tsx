@@ -261,7 +261,7 @@ const AddSkill = () => {
                     className="px-2 py-1 text-xs text-white rounded shadow-lg bg-primary"
                   >
                     Edit
-                    <Tooltip.Arrow style={{ fill: "#0d6efd" }} />
+                    <Tooltip.Arrow style={{ fill: "#624bff" }} />
                   </Tooltip.Content>
                 </Tooltip.Portal>
               </Tooltip.Root>
