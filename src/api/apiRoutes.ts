@@ -154,8 +154,8 @@ export const IN_ACTIVE = "/applicants/inactivateApplicant";
 
 //Job
 
-export const VIEW_ALL_JOB = "/jobs/getJobs";
-export const CREATE_JOB = "/jobs/create";
-export const DELETE_JOB = "/jobs/delete";
-export const VIEW_JOB_ID = "/jobs/getJob";
-export const UPDATE_JOB = "/jobs/update"
+export const VIEW_ALL_JOB = "/job/viewJobs";
+export const CREATE_JOB = "/job";
+export const DELETE_JOB = "/job/delete";
+export const VIEW_JOB_ID = "/job";
+export const UPDATE_JOB = "/job";

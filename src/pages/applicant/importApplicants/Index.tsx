@@ -43,6 +43,7 @@ import BaseModal from "components/BaseComponents/BaseModal";
 import CheckboxMultiSelect from "components/BaseComponents/CheckboxMultiSelect";
 import ConfirmModal from "components/BaseComponents/BaseConfirmModal";
 import DrawerData from "./Drawer";
+import { ViewAppliedSkills } from "api/skillsApi";
 
 interface ValueToEdit {
   label: string;
@@ -104,11 +105,15 @@ function ImportApplicant() {
   const [multiEditRole, setMultiEditRole] = useState<SelectedOption | null>(
     null
   );
+  const [multiEditSkills, setMultiEditSkills] = useState<SelectedOption | null>(
+    null
+  );
+  const [multiEditDate, setMultiEditDate] = useState<string | null>(null);
   const [modelLoading, setModelLoading] = useState<boolean>(false);
   const [showConfirmExportModal, setShowConfirmExportModal] = useState(false);
   const [selectedFlag, setSelectedFlag] = useState<boolean | null>(null);
   const [duplicateRecords, setDuplicateRecords] = useState<any>([]);
-
+  const [skillOptions, setSkillOptions] = useState<any[]>([]);
   const fetchDuplicateData = async () => {
     const params: {
       page: number;
@@ -231,6 +236,7 @@ function ImportApplicant() {
     if (isStartDate) {
       setStartDate(e.target.value);
     } else {
+      setMultiEditDate(e.target.value);
       setEndDate(e.target.value);
     }
   };
@@ -714,70 +720,6 @@ function ImportApplicant() {
         accessorKey: "totalExperience",
         enableColumnFilter: false,
       },
-      // {
-      //   header: "Action",
-      //   cell: (cell: any) => (
-      //     <div className="gap-2 hstack">
-      //       <BaseButton
-      //         id={`usage-${cell?.row?.original?.id}`}
-      //         color="primary"
-      //         className="btn btn-sm btn-soft-success usage-list"
-      //         onClick={() => handleView(cell.row.original._id, "import")}
-      //       >
-      //         <i className="align-bottom ri-eye-fill" />
-      //         <ReactTooltip
-      //           place="bottom"
-      //           variant="success"
-      //           content="View"
-      //           anchorId={`usage-${cell?.row?.original?.id}`}
-      //         />
-      //       </BaseButton>
-
-      //       <BaseButton
-      //         id={`editMode-${cell?.row?.original?.id}`}
-      //         className="btn btn-sm btn-soft-secondary edit-list"
-      //         onClick={() => handleEdit(cell?.row?.original._id)}
-      //       >
-      //         <i className="align-bottom ri-pencil-fill" />
-      //         <ReactTooltip
-      //           place="bottom"
-      //           variant="info"
-      //           content="Edit"
-      //           anchorId={`editMode-${cell?.row?.original?.id}`}
-      //         />
-      //       </BaseButton>
-
-      //       <BaseButton
-      //         id={`delete-${cell?.row?.original?.id}`}
-      //         className="btn btn-sm btn-soft-danger remove-list"
-      //         color="danger"
-      //         onClick={() => handleDeleteSingle(cell.row.original._id)}
-      //       >
-      //         <i className="align-bottom ri-delete-bin-5-fill" />
-      //         <ReactTooltip
-      //           place="bottom"
-      //           variant="error"
-      //           content="Delete"
-      //           anchorId={`delete-${cell?.row?.original?._id}`}
-      //         />
-      //       </BaseButton>
-
-      //       <BaseButton
-      //         id={`email-${cell?.row?.original?.id}`}
-      //         className="btn btn-sm btn-soft-secondary bg-success edit-list"
-      //         onClick={() => handleEmail(cell?.row?.original._id)}
-      //       >
-      //         <i className="align-bottom ri-mail-close-line" />
-      //         <ReactTooltip
-      //           place="bottom"
-      //           variant="info"
-      //           content="Email"
-      //           anchorId={`email-${cell?.row?.original?.id}`}
-      //         />
-      //       </BaseButton>
-      //     </div>
-      //   ),
-      // },
       {
         header: "Action",
         cell: ({ row }: any) => (
@@ -962,6 +904,7 @@ function ImportApplicant() {
     setMultiEditInterViewStage(null);
     setMultiEditRole(null);
     setMultiEditStatus(null);
+    setMultiEditSkills(null);
   };
 
   const handleSubmit = async () => {
@@ -982,8 +925,16 @@ function ImportApplicant() {
     if (multiEditInterViewStage) {
       updateData.interviewStage = multiEditInterViewStage.value;
     }
+    if (multiEditDate) {
+      updateData.lastFollowUpDate = multiEditDate;
+    }
     if (multiEditRole) {
       updateData.appliedRole = multiEditRole.value;
+    }
+    if (multiEditSkills) {
+      updateData.appliedSkills = Array.isArray(multiEditSkills)
+        ? multiEditSkills.map((opt) => opt.label)
+        : [multiEditSkills.label];
     }
 
     try {
@@ -999,6 +950,7 @@ function ImportApplicant() {
       setMultiEditInterViewStage(null);
       setMultiEditRole(null);
       setMultiEditStatus(null);
+      setMultiEditSkills(null);
     }
   };
 
@@ -1011,6 +963,7 @@ function ImportApplicant() {
     { label: "Interview Stage", value: "Interview Stage" },
     { label: "Last FollowUp Update", value: "Last FollowUp Update" },
     { label: "Applied Role", value: "Applied Role" },
+    { label: "Applied Skills", value: "Applied Skills" },
   ];
 
   const ModalTitle = () => (
@@ -1034,6 +987,32 @@ function ImportApplicant() {
     setExportOption("");
     setExportableFields([]);
   };
+
+  useEffect(() => {
+    setLoader(true);
+    const fetchSkills = async () => {
+      try {
+        const page = 1;
+        const pageSize = 50;
+        const limit = 1000;
+        const response = await ViewAppliedSkills({ page, pageSize, limit });
+        const skillData = response?.data.data || [];
+
+        setSkillOptions(
+          skillData.map((item: any) => ({
+            label: item.skills,
+            value: item._id,
+          }))
+        );
+      } catch (error) {
+        errorHandle(error);
+      } finally {
+        setLoader(false);
+      }
+    };
+
+    fetchSkills();
+  }, []);
 
   return (
     <Fragment>
@@ -1365,14 +1344,30 @@ function ImportApplicant() {
                 (item) => item.value === "Last FollowUp Update"
               ) && (
                 <BaseInput
-                  label="End Date"
-                  name="endDate"
+                  label="Last FollowUp Date"
+                  name="multiEditDate"
                   type="date"
-                  placeholder={InputPlaceHolder("End Date")}
-                  handleChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    handleDateChange(e, false)
+                  placeholder={InputPlaceHolder("Last FollowUp Date")}
+                  handleChange={(e) => handleDateChange(e, false)}
+                  value={multiEditDate || ""}
+                />
+              )}
+              {valueToEdit.some((item) => item.value === "Applied Skills") && (
+                <MultiSelect
+                  label="Applied Skills"
+                  name="appliedSkills"
+                  className="select-border"
+                  options={skillOptions}
+                  placeholder={InputPlaceHolder("Applied Skills")}
+                  handleChange={(selectedOption: SelectedOption) =>
+                    setMultiEditSkills(selectedOption)
                   }
-                  value={endDate || ""}
+                  onChange={(selectedOption: SelectedOption) => {
+                    // forward to handleChange logic, or just reuse
+                    setMultiEditSkills(selectedOption);
+                  }}
+                  isMulti={true}
+                  value={multiEditSkills}
                 />
               )}
             </Col>

@@ -95,17 +95,12 @@ const JobListing = () => {
     setLoader(true);
 
     try {
-      if (Array.isArray(jobToDelete)) {
-        const deleteRequests = jobToDelete.map((id) => deleteJob([id]));
-
-        // Wait for all delete requests to finish
-        const results = await Promise.all(deleteRequests);
-
-        const allSuccess = results.every((res) => res?.success);
-        if (allSuccess) {
-          toast.success("Job deleted successfully");
+      if (jobToDelete.length >= 1) {
+        const res = await deleteJob(jobToDelete);
+        if (res?.success) {
+          toast.success(res?.message);
         } else {
-          toast.error("Some Job could not be deleted.");
+          toast.error(res?.message);
         }
       }
       // If deleting a single
@@ -114,7 +109,7 @@ const JobListing = () => {
         if (res?.success) {
           toast.success(res?.message);
         } else {
-          toast.error("Failed to delete Job");
+          toast.error(res?.message);
         }
       }
       fetchJob();

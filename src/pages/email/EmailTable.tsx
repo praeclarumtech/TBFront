@@ -111,7 +111,11 @@ const EmailTable = () => {
         <input
           type="checkbox"
           onChange={handleSelectAll}
-          checked={selectedApplicants.length === emails.length}
+          checked={
+            emails.length > 0
+              ? selectedApplicants.length === emails.length
+              : false
+          }
         />
       ),
       accessorKey: "select",
