@@ -617,7 +617,7 @@ const Applicant = () => {
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchAll(event.target.value);
-       setPagination((prev) => ({
+    setPagination((prev) => ({
       ...prev,
       pageIndex: 0,
     }));
@@ -757,11 +757,12 @@ const Applicant = () => {
       .map((app) => ({ email: app.email, name: app.name }));
     navigate("/email/compose", {
       state: {
-        email_to: emails.map((app) => app.email).join(", "),
-        email_bcc: "",
+        email_to: "",
+        email_bcc: emails.map((app) => app.email).join(", "),
         subject: "",
         description: "",
         name: emails.map((app) => app.name),
+        fromPage: location.pathname,
       },
     });
   };
@@ -1443,7 +1444,7 @@ const Applicant = () => {
                   <Tooltip.Content
                     side="bottom"
                     sideOffset={4}
-                    className="px-2 py-1 text-sm text-white rounded shadow-lg bg-gray-700"
+                    className="px-2 py-1 text-sm text-white bg-gray-700 rounded shadow-lg"
                   >
                     {row?.original?.isFavorite
                       ? "Remove from Favorites"
