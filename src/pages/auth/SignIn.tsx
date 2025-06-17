@@ -12,19 +12,14 @@ import BaseInput from "components/BaseComponents/BaseInput";
 import BaseButton from "components/BaseComponents/BaseButton";
 import appConstants from "constants/constant";
 import {
-  errorHandle, InputPlaceHolder, setAuthData,
+  errorHandle,
+  InputPlaceHolder,
+  setAuthData,
   // setItem
 } from "utils/commonFunctions";
 
-
-const {
-  projectTitle,
-  Modules,
-  validationMessages,
-  emailRegex,
-  OK,
-  SUCCESS,
-} = appConstants;
+const { projectTitle, Modules, validationMessages, emailRegex, OK, SUCCESS } =
+  appConstants;
 
 const SignIn = () => {
   document.title = Modules.Login + " | " + projectTitle;
@@ -64,9 +59,9 @@ const SignIn = () => {
           //   setItem("id", id);
           //   navigate("/dashboard");
           //   toast.success(res?.message);
-    // }
+          // }
           if (res?.statusCode === OK && res?.success === SUCCESS) {
-            setAuthData(res.data); 
+            setAuthData(res.data);
             navigate("/dashboard");
             toast.success(res?.message);
           } else {
@@ -93,7 +88,7 @@ const SignIn = () => {
                   Talent<span className="text-primary bold ">Box</span>{" "}
                 </h4>
                 <p className="mb-6 justify-center text-center  text-base">
-                 Sign In using your Credential
+                  Sign In using your Credentials
                 </p>
               </div>
 
@@ -155,7 +150,7 @@ const SignIn = () => {
                           className="fs-5"
                           onClick={() => navigate("/sign-up")}
                         >
-                          Create An Account{" "}
+                          Create an Account{" "}
                         </a>
                       </div>
                       <div>

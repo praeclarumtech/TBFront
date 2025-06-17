@@ -43,7 +43,8 @@ const EmailForm = () => {
   const hasMounted = useMounted();
   const navigate = useNavigate();
   const location = useLocation();
-  const initialEmail = location.state?.email_to || "";
+  const initialEmailBcc = location.state?.email_bcc || "";
+
   const fromPage = location.state?.fromPage || "/email";
   // const initialName = location.state?.name || "";
 
@@ -54,7 +55,6 @@ const EmailForm = () => {
   const bccTooltipRef = useRef<HTMLDivElement>(null);
   const [toInputFocused, setToInputFocused] = useState(false);
   const [bccInputFocused, setBccInputFocused] = useState(false);
-
   const getTemplateType = async () => {
     const response = await viewEmailTemplate({ limit: 1000 });
     const types = response.data.templates.map((template: any) => template.type);
@@ -125,8 +125,8 @@ const EmailForm = () => {
   const validation = useFormik({
     initialValues: {
       email_template: "",
-      email_to: initialEmail,
-      email_bcc: "",
+      email_to: "talentboxhr5@gmail.com",
+      email_bcc: initialEmailBcc || "",
       subject: "",
       description: "",
       sendQrCode: false,
@@ -181,11 +181,11 @@ const EmailForm = () => {
           .filter((email: string) => email.length > 0);
 
         const emailBccArray = values.email_bcc
-          ? values.email_bcc
-              .split(",")
-              .map((email: string) => email.trim())
-              .filter((email) => email.length > 0)
-          : [];
+          // ? values.email_bcc
+          .split(",")
+          .map((email: string) => email.trim())
+          .filter((email: string) => email.length > 0);
+        // : [];
 
         const formData = new FormData();
 
@@ -210,12 +210,6 @@ const EmailForm = () => {
         toast.success("Email sent successfully!");
         validation.resetForm();
         setTimeout(() => {
-          // navigate("/email");
-          // if (initialEmail) {
-          //   navigate("/applicants");
-          // } else {
-          //   navigate("/email");
-          // }
           switch (fromPage) {
             case "/email":
               navigate("/email");
@@ -284,7 +278,7 @@ const EmailForm = () => {
       : arr.join(", ");
     return (
       <div style={{ position: "relative", marginBottom: 8 }}>
-        <label className="block font-medium mb-1">To</label>
+        <label className="block mb-1 font-medium">To</label>
         {toInputFocused || arr.length === 0 ? (
           <BaseInput
             name="email_to"
@@ -404,7 +398,7 @@ const EmailForm = () => {
       : arr.join(", ");
     return (
       <div style={{ position: "relative", marginBottom: 8 }}>
-        <label className="block font-medium mb-1">Bcc</label>
+        <label className="block mb-1 font-medium">Bcc</label>
         {bccInputFocused || arr.length === 0 ? (
           <BaseInput
             name="email_bcc"
@@ -421,8 +415,16 @@ const EmailForm = () => {
               setBccInputFocused(false);
             }}
             value={validation.values.email_bcc}
-            error={validation.errors.email_bcc}
-            touched={validation.touched.email_bcc}
+            error={
+              typeof validation.errors.email_bcc === "string"
+                ? validation.errors.email_bcc
+                : undefined
+            }
+            touched={
+              typeof validation.touched.email_bcc === "boolean"
+                ? validation.touched.email_bcc
+                : undefined
+            }
           />
         ) : (
           <div
@@ -512,11 +514,7 @@ const EmailForm = () => {
           <div className="bg-white rounded-lg shadow">
             <div className="relative p-8">
               <button
-                className="absolute flex items-center text-gray-600 left-5 top-5 hover:text-gray-800"
-                // onClick={() =>
-                //   // navigate(fromPage === "/applicants" ? "/applicants" : "/email")
-                //   navigate(fromPage)
-                // }
+                className="absolute flex items-center text-gray-600 left-5 top-5 hover:text-gray-800" 
                 onClick={() => {
                   switch (fromPage) {
                     case "/email":
@@ -621,7 +619,7 @@ const EmailForm = () => {
                           name="sendQrCode"
                           checked={validation.values.sendQrCode}
                           onChange={validation.handleChange}
-                          className="w-4 h-4 mr-2 text-primary border-gray-300 rounded focus:ring-primary"
+                          className="w-4 h-4 mr-2 border-gray-300 rounded text-primary focus:ring-primary"
                         />
                         <label
                           htmlFor="sendQrCode"

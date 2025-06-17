@@ -18,8 +18,6 @@ import { toast } from "react-toastify";
 import { Label } from "reactstrap";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-// import sanitizeHtml from "sanitize-html";
-// import Skeleton from "react-loading-skeleton";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 
@@ -104,18 +102,26 @@ const JobForm = () => {
     },
     validationSchema: Yup.object({
       job_subject: Yup.string()
+
         .min(1, "Subject must be at least 1.")
         .required("Subject is required"),
-      contract_duration: Yup.string()
-        .min(1, "Skill Name must be at least 1.")
-        .required("Duration is required"),
+      contract_duration: Yup.string().when(
+        "job_type",
+        (jobType: unknown, schema) => {
+          if (typeof jobType === "string" && jobType !== "contract") {
+            return schema.required("Contract duration is required");
+          }
+          return schema.notRequired();
+        }
+      ),
+
       job_details: Yup.string()
         .min(1, "Job Details Name must be at least 1.")
         .required("Job Details is required"),
       job_type: Yup.string().required("Job Type is required"),
       time_zone: Yup.string().required("Select Time Zone"),
-      min_salary: Yup.string().required("Please Enter minimum Salary"),
-      max_salary: Yup.string().required("Please Enter maximum Salary"),
+      // min_salary: Yup.string().required("Please Enter minimum Salary"),
+      // max_salary: Yup.string().required("Please Enter maximum Salary"),
     }),
 
     onSubmit: async (values) => {
@@ -183,7 +189,7 @@ const JobForm = () => {
                     <Skeleton active />
                   </div>
                 ) : (
-                  <Row className="mb-4 g-3">
+                  <Row className="mt-4 mb-4 g-3">
                     <Col xs={12} md={6}>
                       <BaseInput
                         label="Job Title"
@@ -191,11 +197,10 @@ const JobForm = () => {
                         type="text"
                         placeholder={"e.g. React Developer"}
                         handleChange={(e) => {
-                          const value = e.target.value.replace(
-                            /[^A-Za-z\s]/g,
-                            ""
+                          validation.setFieldValue(
+                            "job_subject",
+                            e.target.value
                           );
-                          validation.setFieldValue("job_subject", value);
                         }}
                         handleBlur={validation.handleBlur}
                         value={validation.values.job_subject}
@@ -205,11 +210,49 @@ const JobForm = () => {
                         isRequired={true}
                       />
                     </Col>
-
                     <Col xs={12} md={6}>
+                      <BaseSelect
+                        label="Job Type"
+                        name="job_type"
+                        className="select-border"
+                        options={jobTypeOpyions}
+                        placeholder={"Select Type"}
+                        handleChange={(selectedOption: SelectedOption) => {
+                          validation.setFieldValue(
+                            "job_type",
+                            selectedOption?.value || ""
+                          );
+                        }}
+                        handleBlur={validation.handleBlur}
+                        value={
+                          dynamicFind(
+                            jobTypeOpyions,
+                            validation.values.job_type
+                          ) || ""
+                        }
+                        isRequired={true}
+                        menuPortalTarget={
+                          typeof window !== "undefined" ? document.body : null
+                        }
+                        menuPosition="fixed"
+                        styles={{
+                          menuPortal: (base: any) => ({
+                            ...base,
+                            zIndex: 9999,
+                          }),
+                          menuList: (provided: any) => ({
+                            ...provided,
+                            maxHeight: 200,
+                            overflowY: "auto",
+                          }),
+                        }}
+                      />
+                    </Col>
+                    <Col xs={12} md={6} lg={4}>
                       <BaseInput
                         label="Contract Duration"
                         name="contract_duration"
+                        disabled={validation.values.job_type === "contract"}
                         type="text"
                         placeholder={"e.g. 6 Months"}
                         handleChange={(e) => {
@@ -239,46 +282,26 @@ const JobForm = () => {
                         touched={validation.touched.min_salary}
                         error={validation.errors.min_salary}
                         passwordToggle={false}
-                        isRequired={true}
+                        isRequired={false}
                       />
                     </Col>
 
-                    <Col xs={12} md={6} lg={4}>
-                      <BaseSelect
-                        label="Job Type"
-                        name="job_type"
-                        className="select-border"
-                        options={jobTypeOpyions}
-                        placeholder={"Contract"}
-                        handleChange={(selectedOption: SelectedOption) => {
-                          validation.setFieldValue(
-                            "job_type",
-                            selectedOption?.value || ""
-                          );
+                    <Col xs={12} md={8} lg={4}>
+                      <BaseInput
+                        label="Max Salary"
+                        name="max_salary"
+                        type="text"
+                        placeholder={InputPlaceHolder("Maximum Salary")}
+                        handleChange={(e) => {
+                          const value = e.target.value.replace(/[^0-9]/g, "");
+                          validation.setFieldValue("max_salary", value);
                         }}
                         handleBlur={validation.handleBlur}
-                        value={
-                          dynamicFind(
-                            jobTypeOpyions,
-                            validation.values.job_type
-                          ) || ""
-                        }
+                        value={validation.values.max_salary}
+                        touched={validation.touched.max_salary}
+                        error={validation.errors.max_salary}
+                        passwordToggle={false}
                         isRequired={false}
-                        menuPortalTarget={
-                          typeof window !== "undefined" ? document.body : null
-                        }
-                        menuPosition="fixed"
-                        styles={{
-                          menuPortal: (base: any) => ({
-                            ...base,
-                            zIndex: 9999,
-                          }),
-                          menuList: (provided: any) => ({
-                            ...provided,
-                            maxHeight: 200,
-                            overflowY: "auto",
-                          }),
-                        }}
                       />
                     </Col>
 
@@ -321,24 +344,6 @@ const JobForm = () => {
                       />
                     </Col>
 
-                    <Col xs={12} md={8} lg={4}>
-                      <BaseInput
-                        label="Max Salary"
-                        name="max_salary"
-                        type="text"
-                        placeholder={InputPlaceHolder("Maximum Salary")}
-                        handleChange={(e) => {
-                          const value = e.target.value.replace(/[^0-9]/g, "");
-                          validation.setFieldValue("max_salary", value);
-                        }}
-                        handleBlur={validation.handleBlur}
-                        value={validation.values.max_salary}
-                        touched={validation.touched.max_salary}
-                        error={validation.errors.max_salary}
-                        passwordToggle={false}
-                        isRequired={true}
-                      />
-                    </Col>
                     <Col xs={12} md={8} lg={4}>
                       <Label
                         // htmlFor={name}

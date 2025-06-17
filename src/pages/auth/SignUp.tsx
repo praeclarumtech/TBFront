@@ -127,7 +127,7 @@ const SignUp = () => {
                 </h4>
                 {/* </Link> */}
                 <p className="justify-center mb-6 text-center text-base ">
-                Create An Account
+                  Create an Account
                 </p>
               </div>
 
@@ -250,7 +250,6 @@ const SignUp = () => {
                         className="w-100"
                         type="submit"
                         loader={loader}
-                       
                       >
                         {ButtonEnums.Submit}
                       </BaseButton>
@@ -259,7 +258,7 @@ const SignUp = () => {
                       <div className="mb-2 mb-md-0">
                         <div onClick={() => navigate("/")} className="fs-5">
                           {/* Already member? <a className="cursor-pointer text-primary">Login</a>{" "} */}
-                          Already Have an Account?{" "}
+                          Already have an account?{" "}
                           <a className="cursor-pointer text-primary">Login</a>{" "}
                         </div>
                       </div>

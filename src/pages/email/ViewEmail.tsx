@@ -3,20 +3,12 @@ import { useEffect, useState } from "react";
 // import { Modal } from "react-bootstrap";
 import { getEmailDetails } from "api/emailApi";
 import { errorHandle } from "utils/commonFunctions";
-// import { Typography, Box } from "@mui/material";
-// import {
-//   FaEnvelope,
-//   FaListAlt,
-//   FaUserAlt,
-//   FaCode,
-//   FaRegFileAlt,
-// } from "react-icons/fa";
 import Skeleton from "react-loading-skeleton";
 import { MailTwoTone } from "@ant-design/icons";
 import { Modal, Badge, Card, Row, Col, Tag } from "antd";
 import appConstants from "constants/constant";
 import "react-quill/dist/quill.snow.css";
-
+import { Popover } from "antd";
 const { projectTitle, Modules } = appConstants;
 
 const ViewModal = ({ show, onHide, applicantId }: any) => {
@@ -105,119 +97,8 @@ const ViewModal = ({ show, onHide, applicantId }: any) => {
     <Badge count={"N/A"} style={{ backgroundColor: "#f50" }} />
   );
 
-  // console.log(
-  //   "heloooooooooooooooooooooooooooooooooooooooooo",
-  //   formData?.email?.email_bcc
-  // );
-
   const emailBccData = formData?.email?.email_bcc;
-
-  // console.log("email_bcc value:", emailBccData); // Debugging log
-
-  const email_bcc =
-    Array.isArray(emailBccData) && emailBccData.length > 0
-      ? emailBccData.join(", ")
-      : "N/A";
-
-  // console.log("email_bcc value:", email_bcc);
   return (
-    // <Modal show={show} onHide={onHide} size="lg" centered>
-    //   <Modal.Header closeButton>
-    //     <Modal.Title>
-    //       <Box className="flex items-center ">
-    //         <FaEnvelope className="mr-2 text-primary" />
-    //         <Typography variant="body1" className="text-gray-600">
-    //           <span className=" !text-black">Email</span>
-    //         </Typography>
-    //       </Box>
-    //     </Modal.Title>
-    //   </Modal.Header>
-    //   <Modal.Body>
-    //     {loading ? (
-    //       <>
-    //       <p>Loading...</p>
-    //       <Skeleton  count={5}/>
-    //       </>
-    //     ) : (
-    //       formData && (
-    //         <div className="p-3 mx-2">
-    //           <Box className="flex items-center mb-4">
-    //             <FaUserAlt className="mr-2 text-primary" />
-    //             <Typography variant="body1" className="text-gray-600">
-    //               <span className="  !text-black">Name:</span>
-    //               <span>
-    //                 {" " +
-    //                   capitalizeWords(
-    //                     formData?.email?.applicantDetails?.name?.firstName || ""
-    //                   )}{" "}
-    //                 {capitalizeWords(
-    //                   formData?.email?.applicantDetails?.name?.middleName || ""
-    //                 )}{" "}
-    //                 {capitalizeWords(
-    //                   formData?.email?.applicantDetails?.name?.lastName || ""
-    //                 )}
-    //               </span>
-    //             </Typography>
-    //           </Box>
-
-    //           <Box className="flex items-center mb-4">
-    //             <FaListAlt className="mr-2 text-primary" />
-    //             <Typography variant="body1" className="text-gray-600">
-    //               <span className=" !text-black">Applied Skills:</span>
-    //               <span>
-    //                 {formData?.email?.applicantDetails?.appliedSkills?.length >
-    //                 0
-    //                   ? capitalizeWords(
-    //                       " " +
-    //                         formData?.email?.applicantDetails?.appliedSkills.join(
-    //                           ", "
-    //                         )
-    //                     )
-    //                   : "No skills listed"}
-    //               </span>
-    //             </Typography>
-    //           </Box>
-
-    //           <Box className="flex items-center mb-4">
-    //             <FaEnvelope className="mr-2 text-primary" />
-    //             <Typography variant="body1" className="text-gray-600">
-    //               <span className=" !text-black">To Email:</span>
-    //               <span>{" " + formData?.email?.email_to || "N/A"}</span>
-    //             </Typography>
-    //           </Box>
-
-    //           <Box className="flex items-center mb-4">
-    //             <FaRegFileAlt className="mr-2 text-primary" />
-    //             <Typography variant="body1" className="text-gray-600">
-    //               <span className=" !text-black">Bcc Email:</span>
-    //               <span>{" " + formData?.email?.email_bcc || "N/A"}</span>
-    //             </Typography>
-    //           </Box>
-
-    //           <Box className="flex items-center mb-4">
-    //             <FaEnvelope className="mr-2 text-primary" />
-    //             <Typography variant="body1" className="text-gray-600">
-    //               <span className="  !text-black">Subject:</span>
-    //               <span>{" " + formData?.email?.subject || "N/A"}</span>
-    //             </Typography>
-    //           </Box>
-
-    //           <Box className="flex items-center mb-4">
-    //             <FaCode className="mr-2 text-primary" />
-    //             <Typography variant="body1" className="text-gray-600">
-    //               <span className=" !text-black">Description:</span>
-    //               <span>
-    //                 {" " + formData?.email?.description ||
-    //                   "No description provided"}
-    //               </span>
-    //             </Typography>
-    //           </Box>
-    //         </div>
-    //       )
-    //     )}
-    //   </Modal.Body>
-    // </Modal>
-
     <Modal
       open={show}
       onCancel={onHide}
@@ -288,11 +169,64 @@ const ViewModal = ({ show, onHide, applicantId }: any) => {
                 <DetailsRow
                   label="Email BCC"
                   value={
-                    email_bcc ? (
-                      <Tag color="yellow">{email_bcc}</Tag>
+                    Array.isArray(emailBccData) && emailBccData.length > 0 ? (
+                      <>
+                        {/* Show first 4 emails */}
+                        {emailBccData
+                          .slice(0, 3)
+                          .map((email: string, index: number) => (
+                            <Tag
+                              key={index}
+                              color="magenta"
+                              style={{ marginBottom: "4px" }}
+                            >
+                              {email}
+                            </Tag>
+                          ))}
+
+                        {/* Show +more as a clickable popover */}
+                        {emailBccData.length > 3 && (
+                          <Popover
+                            content={
+                              <div
+                                style={{
+                                  maxHeight: "200px",
+                                  overflowY: "auto",
+                                  paddingRight: "10px",
+                                  color: "#fff",
+                                }}
+                              >
+                                {emailBccData
+                                  .slice(3)
+                                  .map((email: string, index: number) => (
+                                    <div key={index}>{email},</div>
+                                  ))}
+                              </div>
+                            }
+                            title={
+                              <span style={{ color: "#fff" }}>
+                                More BCC Emails
+                              </span>
+                            }
+                            trigger="click"
+                            placement="bottomLeft"
+                            overlayInnerStyle={{
+                              backgroundColor: "#1f1f1f", // Dark background
+                              color: "#fff",
+                              borderRadius: "8px",
+                              padding: "10px",
+                              // textColor: "white",
+                            }}
+                          >
+                            <Tag color="blue" style={{ cursor: "pointer" }}>
+                              +{emailBccData.length - 3} more
+                            </Tag>
+                          </Popover>
+                        )}
+                      </>
                     ) : (
                       <Badge
-                        count={"N/A"}
+                        count="N/A"
                         style={{ backgroundColor: "#faad14" }}
                       />
                     )
