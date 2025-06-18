@@ -92,6 +92,7 @@ const StepperForm = () => {
     lastFollowUpDate: "",
     linkedinUrl: "",
     clientCvUrl: "",
+    gitHubUrl: "",
     clientFeedback: "",
     meta: {},
   });
@@ -183,6 +184,7 @@ const StepperForm = () => {
       permanentAddress: formData.permanentAddress,
       linkedinUrl: formData.linkedinUrl,
       clientCvUrl: formData.clientCvUrl,
+      gitHubUrl: formData.gitHubUrl,
       clientFeedback: formData.clientFeedback,
       meta: formData.meta,
     };

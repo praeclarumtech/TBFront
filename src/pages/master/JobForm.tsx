@@ -15,11 +15,12 @@ import { Skeleton } from "antd";
 import { SelectedOption } from "interfaces/applicant.interface";
 import { createJob, updateJob, viewJobById } from "api/apiJob";
 import { toast } from "react-toastify";
-import { Label } from "reactstrap";
+import { FormFeedback, Label } from "reactstrap";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
 const { projectTitle, Modules, jobTypeOpyions, timeZoneOptions } = appConstants;
 const quillModules = {
@@ -40,21 +41,25 @@ const quillModules = {
 };
 
 const JobForm = () => {
-  document.title = Modules.CreateApplicantForm + " | " + projectTitle;
+  document.title = Modules.Jobs + " | " + projectTitle;
   const [loading, setLoading] = useState<boolean>(false);
   const { id: _id } = useParams();
-  // const isEditMode = Boolean(_id);
+
+  const [searchParams] = useSearchParams();
+  const isEditMode = searchParams.get("mode") === "edit";
+
   const navigate = useNavigate();
-  console.log(_id);
+
+  const formTitle = isEditMode ? "Update" : "Create";
+  const submitButtonText = isEditMode ? "Update" : "Add";
+
   useEffect(() => {
     if (_id) {
-      console.log("Calling API with ID:", _id);
       setLoading(true);
       viewJobById({ _id })
         .then((res: any) => {
           if (res.success && res.data) {
             const job = res.data;
-            console.log(job);
             validation.setValues({
               job_subject: job.job_subject || "",
               job_details: job.job_details || "",
@@ -86,6 +91,11 @@ const JobForm = () => {
     validation.handleSubmit();
   };
 
+  const handleCancle = () => {
+    validation.resetForm();
+    navigate("/job-listing");
+  };
+
   const validation: any = useFormik({
     enableReinitialize: true,
     initialValues: {
@@ -98,7 +108,6 @@ const JobForm = () => {
       min_salary: "",
       max_salary: "",
       contract_duration: "",
-      description: "", // if you're using a separate textarea for this
     },
     validationSchema: Yup.object({
       job_subject: Yup.string()
@@ -181,7 +190,10 @@ const JobForm = () => {
           <CardBody>
             <Row>
               <Row>
-                <h4 className="pt-2 pl-2 fw-bold">Create Job Requirement</h4>
+                <h4 className="pt-2 pl-2 fw-bold">
+                  {" "}
+                  {formTitle} Job Requirement
+                </h4>
               </Row>
               <div>
                 {loading ? (
@@ -326,6 +338,8 @@ const JobForm = () => {
                             validation.values.time_zone
                           ) || ""
                         }
+                        touched={validation.touched.time_zone}
+                        error={validation.errors.time_zone}
                         menuPortalTarget={
                           typeof window !== "undefined" ? document.body : null
                         }
@@ -371,13 +385,13 @@ const JobForm = () => {
                             : "";
                           validation.setFieldValue("start_time", formattedTime);
                         }}
-                        onBlur={validation.handleBlur.start_time}
+                        onBlur={validation.handleBlur}
                       />
                       {validation.touched.start_time &&
                         validation.errors.start_time && (
-                          <div className="text-danger">
+                          <FormFeedback className="d-block">
                             {validation.errors.start_time}
-                          </div>
+                          </FormFeedback>
                         )}
                     </Col>
                     <Col xs={12} md={8} lg={4}>
@@ -406,13 +420,13 @@ const JobForm = () => {
                             : "";
                           validation.setFieldValue("end_time", formattedTime);
                         }}
-                        onBlur={validation.handleBlur.end_time}
+                        onBlur={validation.handleBlur}
                       />
                       {validation.touched.end_time &&
                         validation.errors.end_time && (
-                          <div className="text-danger">
+                          <FormFeedback className="d-block">
                             {validation.errors.end_time}
-                          </div>
+                          </FormFeedback>
                         )}
                     </Col>
                     <Col xs={12} md={12} lg={12}>
@@ -434,17 +448,31 @@ const JobForm = () => {
                         className="bg-white [&_.ql-editor]:min-h-[200px] [&_.ql-editor]:max-h-[300px]"
                         style={{ minHeight: "250px" }}
                       />
+                      {validation.touched.job_details &&
+                        validation.errors.job_details && (
+                          <FormFeedback className="d-block">
+                            {validation.errors.job_details}
+                          </FormFeedback>
+                        )}
                     </Col>
                   </Row>
                 )}
                 <div className="gap-3 mt-4 d-flex flex-column flex-md-row justify-content-end">
+                  <BaseButton
+                    color="secondary"
+                    className="order-0 order-md-1"
+                    type="button"
+                    onClick={handleCancle}
+                  >
+                    Cancle
+                  </BaseButton>
                   <BaseButton
                     color="primary"
                     className="order-0 order-md-1"
                     type="submit"
                     onClick={handleSubmit}
                   >
-                    Submit
+                    {submitButtonText}
                   </BaseButton>
                 </div>
               </div>

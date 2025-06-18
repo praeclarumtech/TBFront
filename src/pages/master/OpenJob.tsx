@@ -39,10 +39,14 @@ const OpenJob = () => {
     title,
     icon,
     children,
+    className = "",
+    style = {},
   }: {
     title: string;
     icon: JSX.Element;
     children: React.ReactNode;
+    className?: string;
+    style?: React.CSSProperties;
   }) => (
     <Card
       title={
@@ -51,7 +55,8 @@ const OpenJob = () => {
           <span className="ml-2 text-blue-600">{title}</span>
         </div>
       }
-      className="custom-card"
+      className={`custom-card ${className}`}
+      style={style}
     >
       {children}
     </Card>
@@ -76,10 +81,11 @@ const OpenJob = () => {
   if (!formData) return null;
 
   return (
-    <div className="p-6 min-h-screen d-flex bg-gray-200 items-center justify-center">
+    <div className="items-center justify-center min-h-screen p-6 bg-gray-200 d-flex">
       <Card className="w-[800px]  d-flex justify-content-center ">
         <DetailsCard
           title="Job Details"
+          style={{ border: "none", boxShadow: "none" }}
           icon={
             <span style={{ fontSize: "20px", marginBottom: "5px" }}>💼</span>
           }

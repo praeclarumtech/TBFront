@@ -34,8 +34,7 @@ const { projectTitle, Modules, workPreferenceType, communicationOptions } =
 const ApplyNow = () => {
   const location = useLocation();
   const jobId = location.state?.jobId;
-  console.log("this is in qr Form", jobId);
-  document.title = Modules.CreateApplicantForm + " | " + projectTitle;
+  document.title = Modules.Jobs + " | " + projectTitle;
   const [loading, setLoading] = useState<boolean>(false);
   const [buttonloading, setButtonLoading] = useState<boolean>(false);
   //   const [emailError, setEmailError] = useState("");
@@ -397,13 +396,6 @@ const ApplyNow = () => {
                         ) => {
                           const emailValue = e.target.value;
                           validation.setFieldValue("email", emailValue);
-
-                          //   setEmailError("");
-                          //   const emailError = await checkExistingField(
-                          //     "email",
-                          //     emailValue
-                          //   );
-                          //   validation.setFieldError("email", emailError);
                         }}
                         handleBlur={validation.handleBlur}
                         value={validation.values.email}
@@ -433,19 +425,11 @@ const ApplyNow = () => {
                             "phoneNumber",
                             sanitizedValue
                           );
-                          //   const phoneError = await checkExistingField(
-                          //     "phoneNumber",
-                          //     sanitizedValue
-                          //   );
-                          //   validation.setFieldError("phoneNumber", phoneError);
                         }}
                         handleBlur={validation.handleBlur}
                         value={validation.values.phoneNumber}
                         touched={validation.touched.phoneNumber}
-                        error={
-                          validation.errors.phoneNumber
-                          //   || phoneNumberError
-                        }
+                        error={validation.errors.phoneNumber}
                         passwordToggle={false}
                         isRequired={true}
                       />
@@ -915,7 +899,7 @@ const ApplyNow = () => {
                     >
                       <div className="w-100">
                         <label
-                          className="form-label text-gray-700 font-semibold"
+                          className="font-semibold text-gray-700 form-label"
                           htmlFor="resume-upload"
                         >
                           Resume Upload
@@ -956,7 +940,7 @@ const ApplyNow = () => {
                               </span>
                               <button
                                 type="button"
-                                className="btn btn-link text-danger ms-2 p-0"
+                                className="p-0 btn btn-link text-danger ms-2"
                                 style={{ fontSize: 18 }}
                                 onClick={() => {
                                   setResumeFile(null);
@@ -978,24 +962,32 @@ const ApplyNow = () => {
                         </small>
                       </div>
                     </Col>
+                    <Col
+                      xs={12}
+                      sm={6}
+                      md={6}
+                      lg={6}
+                      className="w-full mb-3 d-flex align-items-end"
+                    >
+                      <div className="gap-3 w-100 d-flex flex-column flex-md-row justify-content-end">
+                        <BaseButton
+                          color="primary"
+                          type="submit"
+                          className="max-w-full d-flex align-items-center justify-content-center position-relative"
+                        >
+                          {buttonloading ? (
+                            <>
+                              <Spinner size="sm" className="me-2" />
+                              {!id ? "Submitng..." : "Updating..."}
+                            </>
+                          ) : (
+                            <>{!id ? "Submit" : "Update"}</>
+                          )}
+                        </BaseButton>
+                      </div>
+                    </Col>
                   </Row>
                 )}
-                <div className="gap-3 mt-4 d-flex flex-column flex-md-row justify-content-end">
-                  <BaseButton
-                    color="primary"
-                    type="submit"
-                    className="max-w-full d-flex align-items-center justify-content-center"
-                  >
-                    {buttonloading ? (
-                      <>
-                        <Spinner size="sm" className="me-2" />
-                        {!id ? "Submitng..." : "Updating..."}
-                      </>
-                    ) : (
-                      <>{!id ? "Submit" : "Update"}</>
-                    )}
-                  </BaseButton>
-                </div>
               </Form>
             </div>
           </Row>

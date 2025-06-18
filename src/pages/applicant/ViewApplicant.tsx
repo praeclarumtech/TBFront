@@ -74,6 +74,7 @@ interface ApplicantDetails {
   feedback: string;
   practicalFeedback: string;
   communicationSkill: number;
+  gitHubUrl: string;
   rating: number;
   referral: string;
   cgpa: number | null;
@@ -148,7 +149,6 @@ const ViewModal: React.FC<ViewModalProps> = ({
   const [showFavModal, setShowFavModal] = useState(false);
   const [isFav, setIsFav] = useState(false);
 
-
   const getDetailsApplicants = () => {
     if (!applicantId) return;
 
@@ -162,15 +162,15 @@ const ViewModal: React.FC<ViewModalProps> = ({
       .then((res) => {
         if (res.success) {
           setFormData(res.data);
-          setLoading(false)
+          setLoading(false);
         }
       })
       .catch((error) => errorHandle(error))
       .finally(() => setLoading(false));
-  }
+  };
 
   useEffect(() => {
-    getDetailsApplicants(); 
+    getDetailsApplicants();
   }, [applicantId, source]);
 
   if (!show) return null;
@@ -187,7 +187,6 @@ const ViewModal: React.FC<ViewModalProps> = ({
     updateApplicant({ isFavorite: !isFav }, id)
       .then((res: any) => {
         if (res.success) {
-
           if (isFav) {
             toast.success("Applicant removed from favorite list");
           } else {
@@ -250,7 +249,6 @@ const ViewModal: React.FC<ViewModalProps> = ({
                     cursor: "pointer",
                   }}
                   onClick={() => handleConfirmFav(formData?.isFavorite)}
-
                 />
               ) : (
                 <i
@@ -656,6 +654,23 @@ const ViewModal: React.FC<ViewModalProps> = ({
                           className="text-blue-500 underline"
                         >
                           View Resume
+                        </a>
+                      ) : (
+                        "-"
+                      )
+                    }
+                  />
+                  <DetailsRow
+                    label="Git-hub"
+                    value={
+                      formData.gitHubUrl ? (
+                        <a
+                          href={formData.gitHubUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-500 underline"
+                        >
+                          Git-hub URL
                         </a>
                       ) : (
                         "-"

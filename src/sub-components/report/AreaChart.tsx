@@ -126,7 +126,8 @@ const PieChart = () => {
           </Dropdown>
         </div>
         {/* Time Range Dropdown */}
-
+      </div>
+      <div className="mb-2 d-flex justify-content-end">
         {filterType === "Date" && (
           <div className="gap-2 mt-2 d-flex flex-column">
             <div className="gap-2 d-flex">
@@ -156,7 +157,6 @@ const PieChart = () => {
           </div>
         )}
       </div>
-
       {/* Chart Container */}
       <div
         style={{

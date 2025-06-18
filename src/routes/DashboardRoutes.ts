@@ -60,12 +60,12 @@ export const DashboardMenu: DashboardMenuProps[] = [
   //   link: "/master/passing-year",
   // },
 
-  {
-    id: uuid(),
-    title: "Job Create",
-    icon: "plus",
-    link: "/master/job",
-  },
+  // {
+  //   id: uuid(),
+  //   title: "Job Create",
+  //   icon: "plus",
+  //   link: "/master/job",
+  // },
   {
     id: uuid(),
     title: "Add Skills",
@@ -120,10 +120,4 @@ export const DashboardMenu: DashboardMenuProps[] = [
     icon: "plus",
     link: "/master/city",
   },
-  // {
-  //   id: uuid(),
-  //   title: "Open Job",
-  //   icon: "plus",
-  //   link: "/master/job3/:id",
-  // },
 ];

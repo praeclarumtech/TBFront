@@ -57,14 +57,11 @@ const JobListing = () => {
       };
 
       if (searchAll) {
-        // params.search = searchAll;
-        params.job_subject = searchAll;
-        // params.job_type = searchAll;
+        params.search = searchAll;
       }
       const res = await viewAllJob(params);
       if (res?.success) {
         setJob(res?.data?.item || []);
-        console.log(job);
         setTotalRecords(res.data?.totalRecords || 0);
       } else {
         toast.error(res?.message || "Failed to fetch Jobs");
@@ -311,7 +308,9 @@ const JobListing = () => {
   };
 
   const handleEdit = (jobId: string) => {
-    navigate(`/master/edit-job/${jobId}`);
+    // navigate(`/master/edit-job/${jobId}`);
+    navigate(`/master/edit-job/${jobId}?mode=edit`);
+    // state: { isEditMode: true };
   };
 
   const formTitle =
@@ -331,7 +330,10 @@ const JobListing = () => {
   const navigate = useNavigate();
 
   const handleRedirect = () => {
-    navigate("/master/job");
+    // navigate("/master/job");
+    navigate("/master/job", {
+      state: { source: "jobListing" },
+    });
   };
 
   return (

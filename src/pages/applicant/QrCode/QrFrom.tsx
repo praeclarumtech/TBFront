@@ -34,7 +34,6 @@ const { projectTitle, Modules, workPreferenceType, communicationOptions } =
 const QrFrom = () => {
   const location = useLocation();
   const jobId = location.state?.jobId;
-  console.log("this is in qr Form", jobId);
   document.title = Modules.CreateApplicantForm + " | " + projectTitle;
   const [loading, setLoading] = useState<boolean>(false);
   const [buttonloading, setButtonLoading] = useState<boolean>(false);
@@ -920,7 +919,7 @@ const QrFrom = () => {
                     >
                       <div className="w-100">
                         <label
-                          className="form-label text-gray-700 font-semibold"
+                          className="font-semibold text-gray-700 form-label"
                           htmlFor="resume-upload"
                         >
                           Resume Upload
@@ -961,7 +960,7 @@ const QrFrom = () => {
                               </span>
                               <button
                                 type="button"
-                                className="btn btn-link text-danger ms-2 p-0"
+                                className="p-0 btn btn-link text-danger ms-2"
                                 style={{ fontSize: 18 }}
                                 onClick={() => {
                                   setResumeFile(null);

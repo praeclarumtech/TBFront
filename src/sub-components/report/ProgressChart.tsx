@@ -35,7 +35,6 @@ const Charts = () => {
 
   const labels = Object.keys(statusOfApplication).map(formatLabel);
   const values = Object.values(statusOfApplication);
-
   const colors = ["#660099", "#d40000", "#0000FF", "#004225", "#FCE903"];
 
   const barChartOptions: ApexOptions = {
@@ -77,21 +76,38 @@ const Charts = () => {
       labels: {
         style: {
           fontSize: "12px",
-          fontWeight: "bold", // ✅ Bold y-axis labels ("Hold", "Pending", etc.)
+          fontWeight: "bold",
         },
       },
     },
     colors: colors,
+    tooltip: {
+      custom: function ({ series, seriesIndex, dataPointIndex, w }) {
+        const label = w.globals.labels[dataPointIndex];
+        const value = series[seriesIndex][dataPointIndex];
+        const color = colors[dataPointIndex];
+
+        return `
+          <div style="padding:10px 15px; background:white; border-radius:8px; box-shadow:0px 4px 12px rgba(0,0,0,0.1); font-family:Arial, sans-serif;">
+            <div style="font-weight:600; color:#4B5563; font-size:14px; margin-bottom:5px;">${label}</div>
+            <div style="display:flex; align-items:center;">
+              <span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:${color}; margin-right:8px;"></span>
+              <span style="color:#111827; font-weight:600;">Applications:</span>
+              <span style="margin-left:5px; font-weight:700;">${value}</span>
+            </div>
+          </div>
+        `;
+      },
+    },
     legend: {
       show: true,
       fontSize: "12px",
-      // fontWeight: 700,
       labels: {
         colors: "#000",
       },
       markers: {
-        size: 7, // overall size of the marker
-        shape: "circle", // try this to round marker if supported
+        size: 7,
+        shape: "circle",
       },
     },
   };
