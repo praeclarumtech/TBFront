@@ -279,7 +279,6 @@ const EmailForm = () => {
     return (
       <div style={{ position: "relative", marginBottom: 8 }}>
         <label className="block mb-1 font-medium">To</label>
-        <label className="block mb-1 font-medium">To</label>
         {toInputFocused || arr.length === 0 ? (
           <BaseInput
             name="email_to"
