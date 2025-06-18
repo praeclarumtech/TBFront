@@ -279,6 +279,7 @@ const EmailForm = () => {
     return (
       <div style={{ position: "relative", marginBottom: 8 }}>
         <label className="block mb-1 font-medium">To</label>
+        <label className="block mb-1 font-medium">To</label>
         {toInputFocused || arr.length === 0 ? (
           <BaseInput
             name="email_to"
@@ -514,7 +515,11 @@ const EmailForm = () => {
           <div className="bg-white rounded-lg shadow">
             <div className="relative p-8">
               <button
-                className="absolute flex items-center text-gray-600 left-5 top-5 hover:text-gray-800" 
+                className="absolute flex items-center text-gray-600 left-5 top-5 hover:text-gray-800"
+                // onClick={() =>
+                //   // navigate(fromPage === "/applicants" ? "/applicants" : "/email")
+                //   navigate(fromPage)
+                // }
                 onClick={() => {
                   switch (fromPage) {
                     case "/email":
@@ -655,7 +660,6 @@ const EmailForm = () => {
           </div>
         </div>
       </div>
-      {/* <ToastContainer position="top-right" autoClose={5000} /> */}
     </>
   );
 };

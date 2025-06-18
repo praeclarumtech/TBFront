@@ -22,7 +22,7 @@ import moment from "moment";
 import { ViewAppliedSkills } from "api/skillsApi";
 import { viewAllDesignation } from "api/designation";
 import { viewRoleSkill, getSkillsByAppliedRole } from "api/roleApi";
- 
+
 const {
   projectTitle,
   Modules,
@@ -30,31 +30,34 @@ const {
   anyHandOnOffers,
   workPreferenceType,
 } = appConstants;
- 
+
 const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
   document.title = Modules.CreateApplicantForm + " | " + projectTitle;
   document.title = Modules.CreateApplicantForm + " | " + projectTitle;
- 
+
   const [skillOptions, setSkillOptions] = useState<any[]>([]);
   const [selectedMulti, setSelectedMulti] = useState<any>([]);
- 
+
   const [designationOptions, setDesignationOptions] = useState<any[]>([]);
   const [roleOptions, setRoleOptions] = useState<any[]>([]);
- 
+
   const [loading, setLoading] = useState<boolean>(false);
- 
+
   const [roleSkills, setRoleSkills] = useState<string[]>([]);
- 
-  const [technologyExperience, setTechnologyExperience] = useState<{ [skill: string]: string }>(initialValues.meta || {});
- 
+
+  const [technologyExperience, setTechnologyExperience] = useState<{
+    [skill: string]: string;
+  }>(initialValues.meta || {});
+
   const formattedlastFollowUpDate = initialValues.lastFollowUpDate
     ? moment(initialValues.lastFollowUpDate).format("YYYY-MM-DD")
     : "";
- 
-  const initialDesignationValue = initialValues?.currentCompanyDesignation || "";
- 
+
+  const initialDesignationValue =
+    initialValues?.currentCompanyDesignation || "";
+
   const initialAppliedRoleValue = initialValues?.appliedRole || "";
- 
+
   const validation: any = useFormik({
     enableReinitialize: true,
     initialValues: {
@@ -76,6 +79,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
       otherSkills: initialValues?.otherSkills || "",
       referral: initialValues?.referral || "",
       resumeUrl: initialValues?.resumeUrl || "",
+      gitHubUrl: initialValues?.gitHubUrl || "",
       rating: initialValues?.rating || "",
       portfolioUrl: initialValues?.portfolioUrl || "",
       currentCompanyDesignation: initialDesignationValue,
@@ -89,9 +93,9 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
     validationSchema: jobApplicantSchema,
     onSubmit: (data: any) => {
       setLoading(true);
- 
+
       const appliedSkillsNames = selectedMulti.map((item: any) => item.label);
- 
+
       const appliedRole = dynamicFind(roleOptions, data.appliedRole);
       const appliedRoleName = appliedRole ? appliedRole.label : "";
       const currentDesignation = dynamicFind(
@@ -101,7 +105,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
       const currentCompanyDesignation = currentDesignation
         ? currentDesignation.label
         : "";
- 
+
       onNext({
         ...data,
         appliedSkills: appliedSkillsNames,
@@ -109,11 +113,11 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
         appliedRole: appliedRoleName,
         roleSkills,
       });
- 
+
       setLoading(false);
     },
   });
- 
+
   useEffect(() => {
     const fetchDesignations = async () => {
       try {
@@ -124,14 +128,17 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
           value: item._id,
         }));
         setDesignationOptions(options);
- 
+
         // Set initial designation if it exists
         if (initialValues?.currentCompanyDesignation) {
           const selectedDesignation = options.find(
-            (opt:any) => opt.label === initialValues.currentCompanyDesignation
+            (opt: any) => opt.label === initialValues.currentCompanyDesignation
           );
           if (selectedDesignation) {
-            validation.setFieldValue("currentCompanyDesignation", selectedDesignation.value);
+            validation.setFieldValue(
+              "currentCompanyDesignation",
+              selectedDesignation.value
+            );
           }
         }
       } catch (error) {
@@ -140,7 +147,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
     };
     fetchDesignations();
   }, [initialValues]);
- 
+
   useEffect(() => {
     const fetchRoles = async () => {
       try {
@@ -151,11 +158,11 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
           value: item._id,
         }));
         setRoleOptions(options);
- 
+
         // Set initial role if it exists
         if (initialValues?.appliedRole) {
           const selectedRole = options.find(
-            (opt:any) => opt.label === initialValues.appliedRole
+            (opt: any) => opt.label === initialValues.appliedRole
           );
           if (selectedRole) {
             validation.setFieldValue("appliedRole", selectedRole.value);
@@ -169,7 +176,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
     };
     fetchRoles();
   }, [initialValues]);
- 
+
   useEffect(() => {
     if (
       validation.values.appliedRole &&
@@ -181,7 +188,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
         (opt) => opt.value === roleId
       );
       const roleLabel = selectedDesignation?.label;
- 
+
       if (roleLabel) {
         viewRoleSkill({ page: 1, pageSize: 50, limit: 5000 })
           .then((response) => {
@@ -190,13 +197,13 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
               const selectedRoleSkills = allRoleSkills.find(
                 (item: any) => item.appliedRole === roleLabel
               );
- 
+
               if (selectedRoleSkills) {
                 const skillIDs: string[] = selectedRoleSkills.skill || [];
                 const skillLabels = skillOptions
                   .filter((item: any) => skillIDs.includes(item.value))
                   .map((item: any) => item.label);
- 
+
                 setRoleSkills(skillLabels);
               }
             }
@@ -205,7 +212,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
       }
     }
   }, [designationOptions, skillOptions, validation.values.appliedRole]);
- 
+
   useEffect(() => {
     setLoading(true);
     const fetchSkills = async () => {
@@ -215,14 +222,14 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
         const limit = 1000;
         const response = await ViewAppliedSkills({ page, pageSize, limit });
         const skillData = response?.data.data || [];
- 
+
         setSkillOptions(
           skillData.map((item: any) => ({
             label: item.skills,
             value: item._id,
           }))
         );
- 
+
         if (
           initialValues?.appliedSkills &&
           initialValues?.appliedSkills.length
@@ -235,7 +242,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
               label: item.skills,
               value: item._id,
             }));
- 
+
           setSelectedMulti(selectedSkills);
         }
       } catch (error) {
@@ -244,58 +251,62 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
         setLoading(false);
       }
     };
- 
+
     fetchSkills();
   }, [initialValues]);
- 
+
   useEffect(() => {
     // If editing and a role is already selected, fetch its skills
-    if (validation.values.appliedRole && roleOptions.length > 0 && skillOptions.length > 0) {
-      const selectedRole = roleOptions.find(opt => opt.value === validation.values.appliedRole);
+    if (
+      validation.values.appliedRole &&
+      roleOptions.length > 0 &&
+      skillOptions.length > 0
+    ) {
+      const selectedRole = roleOptions.find(
+        (opt) => opt.value === validation.values.appliedRole
+      );
       const roleLabel = selectedRole?.label;
       if (roleLabel) {
         getSkillsByAppliedRole(roleLabel)
-          .then(response => {
-            const skillIds = (response?.data?.[0]?.skill || []);
+          .then((response) => {
+            const skillIds = response?.data?.[0]?.skill || [];
             setRoleSkills(getSkillLabelsFromIds(skillIds));
           })
           .catch(() => setRoleSkills([]));
       }
     }
   }, [validation.values.appliedRole, roleOptions, skillOptions]);
- 
+
   useEffect(() => {
     setTechnologyExperience(initialValues.meta || {});
   }, [initialValues.meta]);
- 
+
   const handleMultiSkill = (selectedMulti: any) => {
     const ids = selectedMulti?.map((item: any) => item.value) || [];
     validation.setFieldValue("appliedSkills", ids);
     setSelectedMulti(selectedMulti);
   };
- 
- 
- 
+
   // Utility to map skill IDs to labels
   const getSkillLabelsFromIds = (ids: string[]) => {
     return skillOptions
       .filter((item: any) => ids.includes(item.value))
       .map((item: any) => item.label);
   };
- 
- const handleRoleChange = async (SelectedOptionRole: any) => {
+
+  const handleRoleChange = async (SelectedOptionRole: any) => {
     if (SelectedOptionRole) {
       const roleId = SelectedOptionRole.value;
       validation.setFieldValue("appliedRole", roleId);
- 
+
       // Find the role label (name) from roleOptions
       const selectedRole = roleOptions.find((opt) => opt.value === roleId);
       const roleLabel = selectedRole?.label;
- 
+
       if (roleLabel) {
         try {
           const response = await getSkillsByAppliedRole(roleLabel);
-          const skillIds = (response?.data?.[0]?.skill || []);
+          const skillIds = response?.data?.[0]?.skill || [];
           setRoleSkills(getSkillLabelsFromIds(skillIds));
           setTechnologyExperience({});
         } catch {
@@ -313,7 +324,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
       setTechnologyExperience({});
     }
   };
- 
+
   const handleTechnologyExperienceChange = (skill: string, value: string) => {
     const updated = { ...technologyExperience, [skill]: value };
     setTechnologyExperience(updated);
@@ -872,10 +883,8 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     handleChange={handleRoleChange}
                     handleBlur={validation.appliedRole}
                     value={
-                      dynamicFind(
-                        roleOptions,
-                        validation.values.appliedRole
-                      ) || ""
+                      dynamicFind(roleOptions, validation.values.appliedRole) ||
+                      ""
                     }
                     touched={validation.touched.appliedRole}
                     error={validation.errors.appliedRole}
@@ -885,18 +894,31 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
 
                 {roleSkills.length > 0 && (
                   <div className="mb-4">
-                    <h5>Technologies for {roleOptions.find(opt => opt.value === validation.values.appliedRole)?.label}:</h5>
+                    <h5>
+                      Technologies for{" "}
+                      {
+                        roleOptions.find(
+                          (opt) => opt.value === validation.values.appliedRole
+                        )?.label
+                      }
+                      :
+                    </h5>
                     <Row>
                       {roleSkills.map((skill) => (
                         <Col key={skill} xs={12} sm={6} md={3} className="mb-3">
-                          <label><b>{skill} Exp.(Yrs)</b></label>
+                          <label>
+                            <b>{skill} Exp.(Yrs)</b>
+                          </label>
                           <input
                             type="text"
                             className="form-control"
                             placeholder={skill}
                             value={technologyExperience[skill] || ""}
-                            onChange={e => {
-                              const value = e.target.value.replace(/[^0-9.]/g, "");
+                            onChange={(e) => {
+                              const value = e.target.value.replace(
+                                /[^0-9.]/g,
+                                ""
+                              );
                               handleTechnologyExperienceChange(skill, value);
                             }}
                           />
@@ -1008,6 +1030,22 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     passwordToggle={false}
                   />
                 </Col>
+                <Col xs={12} md={6} lg={4} sm={12} className="mb-3">
+                  <BaseInput
+                    label="Git-Hub URL"
+                    name="gitHubUrl"
+                    type="url"
+                    placeholder={InputPlaceHolder("Git-hub URL")}
+                    handleChange={validation.handleChange}
+                    handleBlur={validation.handleBlur}
+                    value={validation.values.gitHubUrl}
+                    touched={validation.touched.gitHubUrl}
+                    error={validation.errors.gitHubUrl}
+                    passwordToggle={false}
+                    // title="Please Upload Resume on Google Drive and share pulic url (Only PDF files allowed)"
+                    isRequired={false}
+                  />
+                </Col>
                 <Col xs={12} md={12} lg={4} sm={12} className="mb-3">
                   <BaseInput
                     label="Client CV URL (Optional)"
@@ -1020,30 +1058,6 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     touched={validation.touched.clientCvUrl}
                     error={validation.errors.clientCvUrl}
                     passwordToggle={false}
-                  />
-                </Col>
-                <Col
-                  xs={12}
-                  sm={12}
-                  md={12}
-                  lg={8}
-                  className="!md:mb-3 !mb-3 mb-sm-0"
-                >
-                  <BaseTextarea
-                    label="Client Feedback (Optional)"
-                    name="clientFeedback"
-                    className="mb-3"
-                    placeholder={InputPlaceHolder(
-                      "Feedback (Optional)"
-                    )}
-                    handleChange={validation.handleChange}
-                    handleBlur={validation.handleBlur}
-                    value={validation.values.clientFeedback}
-                    touched={validation.touched.clientFeedback}
-                    error={validation.errors.clientFeedback}
-                    passwordToggle={false}
-                    rows={2}
-                    cols={50}
                   />
                 </Col>
                 <Col xs={12} md={12} lg={4} sm={12} className="!mb-3  mb-sm-0">
@@ -1065,15 +1079,36 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                   xs={12}
                   sm={12}
                   md={12}
-                  lg={8}
+                  lg={6}
+                  className="!md:mb-3 !mb-3 mb-sm-0"
+                >
+                  <BaseTextarea
+                    label="Client Feedback (Optional)"
+                    name="clientFeedback"
+                    className="mb-3"
+                    placeholder={InputPlaceHolder("Feedback (Optional)")}
+                    handleChange={validation.handleChange}
+                    handleBlur={validation.handleBlur}
+                    value={validation.values.clientFeedback}
+                    touched={validation.touched.clientFeedback}
+                    error={validation.errors.clientFeedback}
+                    passwordToggle={false}
+                    rows={2}
+                    cols={50}
+                  />
+                </Col>
+
+                <Col
+                  xs={12}
+                  sm={12}
+                  md={12}
+                  lg={6}
                   className="!md:mb-3 !mb-3  mb-sm-0"
                 >
                   <BaseTextarea
                     label="Practical Feedback (Optional)"
                     name="practicalFeedback"
-                    placeholder={InputPlaceHolder(
-                      "Feedback (Optional)"
-                    )}
+                    placeholder={InputPlaceHolder("Feedback (Optional)")}
                     handleChange={validation.handleChange}
                     handleBlur={validation.handleBlur}
                     value={validation.values.practicalFeedback}

@@ -14,16 +14,13 @@ export const createSkill = async (data?: object) => {
   return response?.data;
 };
 
-// export const viewAllSkill = async (
-//   params: { page?: number; pageSize?: number; limit?: number,  searchS?: string;
-//   } = {}
-// ) => {
-//   const response = await authServices.get(`${VIEW_ALL_SKILL}`, { params });
-//   return response?.data;
-// };
-
 export const viewAllSkill = async (
-  params: { page?: number; pageSize?: number; limit?: number; search?: string } = {}
+  params: {
+    page?: number;
+    pageSize?: number;
+    limit?: number;
+    search?: string;
+  } = {}
 ) => {
   // If searchS is provided, exclude pagination parameters
   // if (params.search) {
@@ -35,7 +32,6 @@ export const viewAllSkill = async (
   const response = await authServices.get(`${VIEW_ALL_SKILL}`, { params });
   return response?.data;
 };
-
 
 export const viewSkillById = async (data: { _id: string } = { _id: "" }) => {
   const response = await authServices.get(`${VIEW_SKILL}/${data?._id}`);

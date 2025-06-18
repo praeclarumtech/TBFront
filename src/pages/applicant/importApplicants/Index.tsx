@@ -224,7 +224,7 @@ function ImportApplicant() {
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchAll(event.target.value);
-       setPagination((prev) => ({
+    setPagination((prev) => ({
       ...prev,
       pageIndex: 0,
     }));

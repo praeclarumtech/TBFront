@@ -27,7 +27,7 @@ const Profile = () => {
   const [touched, setTouched] = useState(false);
   const [loadingImage, setLoadingImage] = useState<boolean>(false);
   const [formData, setFormData] = useState<ProfileFormData>({
-    profilePicture: "",
+    profilePicture: "/images/avatar/avatar.png",
     userName: "",
     firstName: "",
     lastName: "",
@@ -66,7 +66,8 @@ const Profile = () => {
   useEffect(() => {
     if (profileData) {
       setFormData({
-        profilePicture: profileData.profilePicture || "",
+        profilePicture:
+          profileData.profilePicture || "/images/avatar/avatar.png",
         userName: profileData.userName || "",
         firstName: profileData.firstName || "",
         lastName: profileData.lastName || "",
@@ -77,7 +78,6 @@ const Profile = () => {
         designation: profileData.designation || "",
       });
 
-     
       setImagePreview(
         profileData.profilePicture
           ? `${appEnv.API_ENDPOINT}/uploads/profile/${profileData.profilePicture}`
@@ -102,8 +102,6 @@ const Profile = () => {
 
     const formDataToSend = new FormData();
 
-
-
     for (const key in formData) {
       if (key === "profilePicture") {
         if (formData[key] instanceof File) {
@@ -127,7 +125,7 @@ const Profile = () => {
 
       if (response) {
         toast.success(response?.message || "Profile updated successfully!");
-      
+
         setLoading(false);
 
         setImagePreview(
@@ -135,7 +133,6 @@ const Profile = () => {
             ? `${appEnv.API_ENDPOINT}/uploads/profile/${response.data.profilePicture}`
             : imagePreview
         );
-     
       }
     } catch (error) {
       // if (error && statusCode === 400) {
@@ -214,15 +211,15 @@ const Profile = () => {
         <Col xl={12} lg={12} md={12} xs={12}>
           <Card>
             {loading ? (
-              <div className="d-flex justify-content-center my-5">
+              <div className="my-5 d-flex justify-content-center">
                 <Spinner animation="border" role="status">
                   <span className="visually-hidden">Loading...</span>
                 </Spinner>
               </div>
             ) : (
               <Card.Body>
-                <div className="w-full max-w-4xl mx-auto px-4 py-4">
-                  <h5 className="text-2xl font-semibold mb-4 text-start justify-start ">
+                <div className="w-full max-w-4xl px-4 py-4 mx-auto">
+                  <h5 className="justify-start mb-4 text-2xl font-semibold text-start ">
                     Profile
                   </h5>
                   {hasMounted && (
@@ -240,7 +237,7 @@ const Profile = () => {
                               src={imagePreview}
                               crossOrigin="anonymous"
                               alt="Profile Preview"
-                              className="rounded-full w-28 h-28 object-cover mb-4 border-4 border-blue-500"
+                              className="object-cover mb-4 border-4 border-blue-500 rounded-full w-28 h-28"
                             />
                           )}
                         </div>
@@ -265,7 +262,7 @@ const Profile = () => {
                           >
                             Change
                           </button>
-                           {/* <button
+                          {/* <button
                             type="button"
                             className="text-sm px-4 py-1.5 bg-red-100 text-red-600 rounded-md  "
                             onClick={handleProfilePicRemove}
@@ -282,10 +279,9 @@ const Profile = () => {
                           sm={12}
                           xl={6}
                           lg={6}
-                          className="md:mb-4 lg:mb-4 xl:mb-4 mb-3  "
+                          className="mb-3 md:mb-4 lg:mb-4 xl:mb-4 "
                         >
                           <BaseInput
-                            
                             label="Username"
                             name="userName"
                             type="text"
@@ -301,7 +297,7 @@ const Profile = () => {
                           sm={12}
                           xl={6}
                           lg={6}
-                          className="md:mb-4 lg:mb-4 xl:mb-4 sm:mb-4 mb-3 "
+                          className="mb-3 md:mb-4 lg:mb-4 xl:mb-4 sm:mb-4 "
                         >
                           <BaseInput
                             className=""
@@ -321,7 +317,7 @@ const Profile = () => {
                           sm={12}
                           xl={6}
                           lg={6}
-                          className="md:mb-4 lg:mb-4 xl:mb-4 mb-3 "
+                          className="mb-3 md:mb-4 lg:mb-4 xl:mb-4 "
                         >
                           <BaseInput
                             label="First Name"
@@ -345,7 +341,7 @@ const Profile = () => {
                           sm={12}
                           xl={6}
                           lg={6}
-                          className="md:mb-4 lg:mb-4 xl:mb-4 mb-3  "
+                          className="mb-3 md:mb-4 lg:mb-4 xl:mb-4 "
                         >
                           <BaseInput
                             label="Last Name"
@@ -372,7 +368,7 @@ const Profile = () => {
                           sm={12}
                           xl={6}
                           lg={6}
-                          className=" mb-3 md:mb-4 lg:mb-4 xl:mb-4  "
+                          className="mb-3 md:mb-4 lg:mb-4 xl:mb-4"
                         >
                           <BaseInput
                             label="Phone Number"
@@ -399,7 +395,7 @@ const Profile = () => {
                           sm={12}
                           xl={6}
                           lg={6}
-                          className="md:mb-4 lg:mb-4 xl:mb-4 mb-3  "
+                          className="mb-3 md:mb-4 lg:mb-4 xl:mb-4 "
                         >
                           <BaseInput
                             label="Designation"
@@ -425,7 +421,7 @@ const Profile = () => {
                           sm={12}
                           xl={6}
                           lg={6}
-                          className="md:mb-4 lg:mb-4 xl:mb-4 mb-3  "
+                          className="mb-3 md:mb-4 lg:mb-4 xl:mb-4 "
                         >
                           <BaseSelect
                             label="Gender"
@@ -449,7 +445,7 @@ const Profile = () => {
                           sm={12}
                           xl={6}
                           lg={6}
-                          className="md:mb-4 lg:mb-4 xl:mb-4 mb-4  "
+                          className="mb-4 md:mb-4 lg:mb-4 xl:mb-4 "
                         >
                           <BaseInput
                             label="Date Of Birth"
@@ -483,7 +479,7 @@ const Profile = () => {
                           </BaseButton>
                           <BaseButton
                             type="submit"
-                            className="bg-primary text-white"
+                            className="text-white bg-primary"
                             variant="primary"
                             disabled={loading}
                           >

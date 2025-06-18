@@ -5,7 +5,7 @@ import { changePassword } from "api/usersApi";
 import { toast } from "react-toastify";
 import BaseInput from "components/BaseComponents/BaseInput";
 import { useFormik } from "formik";
-import { SetStateAction, Dispatch, useState } from "react";
+import { SetStateAction, Dispatch, useState, useEffect } from "react";
 import appConstants from "constants/constant";
 import {
   errorHandle,
@@ -31,7 +31,16 @@ interface ChangePasswordProps {
 }
 
 const ChangePassword = ({ showModal, setShowModal }: ChangePasswordProps) => {
-  document.title = Modules.ChangePassword + " | " + projectTitle;
+  useEffect(() => {
+    if (showModal) {
+      document.title = Modules.ChangePassword + " | " + projectTitle;
+    }
+    return () => {
+      if (showModal) {
+        document.title = projectTitle;
+      }
+    };
+  }, [showModal]);
   const hasMounted = useMounted();
   const [loader, setLoader] = useState<boolean>(false);
   const [showOldPassword, setShowOldPassword] = useState<boolean>(false);

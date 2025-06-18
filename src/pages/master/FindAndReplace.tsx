@@ -30,7 +30,9 @@ const FindAndReplace = () => {
     useState<SelectedOption | null>(null);
   const [skillOptions, setSkillOptions] = useState<SelectedOption1[]>([]);
   const [roleOptions, setRoleOptions] = useState<SelectedOption1[]>([]);
-  const [qualificationOptions, setQualificationOptions] = useState<SelectedOption1[]>([]);
+  const [qualificationOptions, setQualificationOptions] = useState<
+    SelectedOption1[]
+  >([]);
   const [editingSkill, setEditingSkill] = useState<any>(null);
 
   const validation = useFormik({
@@ -287,14 +289,21 @@ const FindAndReplace = () => {
                                 ? validation.errors.field
                                 : undefined
                             }
-                            menuPortalTarget={typeof window !== "undefined" ? document.body : null}
+                            menuPortalTarget={
+                              typeof window !== "undefined"
+                                ? document.body
+                                : null
+                            }
                             menuPosition="fixed"
                             styles={{
-                              menuPortal: (base: any) => ({ ...base, zIndex: 9999 }),
+                              menuPortal: (base: any) => ({
+                                ...base,
+                                zIndex: 9999,
+                              }),
                               menuList: (provided: any) => ({
                                 ...provided,
                                 maxHeight: 200,
-                                overflowY: 'auto',
+                                overflowY: "auto",
                               }),
                             }}
                           />
@@ -364,14 +373,21 @@ const FindAndReplace = () => {
                                   ? validation.errors.ReplaceValue
                                   : undefined
                               }
-                              menuPortalTarget={typeof window !== "undefined" ? document.body : null}
+                              menuPortalTarget={
+                                typeof window !== "undefined"
+                                  ? document.body
+                                  : null
+                              }
                               menuPosition="fixed"
                               styles={{
-                                menuPortal: (base: any) => ({ ...base, zIndex: 9999 }),
+                                menuPortal: (base: any) => ({
+                                  ...base,
+                                  zIndex: 9999,
+                                }),
                                 menuList: (provided: any) => ({
                                   ...provided,
                                   maxHeight: 200,
-                                  overflowY: 'auto',
+                                  overflowY: "auto",
                                 }),
                               }}
                             />
@@ -401,14 +417,21 @@ const FindAndReplace = () => {
                                   ? validation.errors.ReplaceValue
                                   : undefined
                               }
-                              menuPortalTarget={typeof window !== "undefined" ? document.body : null}
+                              menuPortalTarget={
+                                typeof window !== "undefined"
+                                  ? document.body
+                                  : null
+                              }
                               menuPosition="fixed"
                               styles={{
-                                menuPortal: (base: any) => ({ ...base, zIndex: 9999 }),
+                                menuPortal: (base: any) => ({
+                                  ...base,
+                                  zIndex: 9999,
+                                }),
                                 menuList: (provided: any) => ({
                                   ...provided,
                                   maxHeight: 200,
-                                  overflowY: 'auto',
+                                  overflowY: "auto",
                                 }),
                               }}
                             />
@@ -438,10 +461,17 @@ const FindAndReplace = () => {
                                   ? validation.errors.ReplaceValue
                                   : undefined
                               }
-                              menuPortalTarget={typeof window !== "undefined" ? document.body : null}
+                              menuPortalTarget={
+                                typeof window !== "undefined"
+                                  ? document.body
+                                  : null
+                              }
                               menuPosition="fixed"
                               styles={{
-                                menuPortal: (base: any) => ({ ...base, zIndex: 9999 }),
+                                menuPortal: (base: any) => ({
+                                  ...base,
+                                  zIndex: 9999,
+                                }),
                                 menuList: (provided: any) => ({
                                   ...provided,
                                   maxHeight: 200,
@@ -452,7 +482,11 @@ const FindAndReplace = () => {
                           </Col>
                         )}
 
-                        {!["appliedSkills", "appliedRole", "qualification"].includes(findAndReplaceOption?.value || "") && (
+                        {![
+                          "appliedSkills",
+                          "appliedRole",
+                          "qualification",
+                        ].includes(findAndReplaceOption?.value || "") && (
                           <Col xs={10} md={8} lg={8}>
                             <BaseInput
                               label="Replace"

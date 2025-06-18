@@ -9,8 +9,6 @@ import { authServices } from "./apiServices";
 
 export const viewAllJob = async (params: {
   search?: string;
-  job_subject?: string;
-  job_type?: string;
   page?: number;
   pageSize?: number;
   limit?: number;

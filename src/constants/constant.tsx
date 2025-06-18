@@ -68,7 +68,7 @@ const appConstants = Object.freeze({
   },
   projectTitle: "Talent Box",
   passwordRegex:
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]+$/,
   emailRegex: /^[^\s@]+@[^\s@]+\.[^\s@]{2,3}(?![^.\s])/,
   numberRegex: /^\d{10}$/,
   zipcodeRegex: /^\d{6}$/,
@@ -452,16 +452,16 @@ const appConstants = Object.freeze({
 
   jobTypeOpyions: [
     { label: "Internship", value: "internship" },
-    { label: "FULL_TIME", value: "full-time" },
-    { label: "PART_TIME", value: "part-time" },
-    { label: "CONTRACT", value: "contract" },
-    { label: "FREELANCE", value: "freelance" },
+    { label: "Full-time", value: "full-time" },
+    { label: "Part-time", value: "part-time" },
+    { label: "Contract", value: "contract" },
+    { label: "Freelance", value: "freelance" },
   ],
 
   timeZoneOptions: [
-    {label: "IST", value: "IST" },
-    {label: "UTC", value: "UTC" },
-    {label: "EST", value: "EST" }
-  ]
+    { label: "IST", value: "IST" },
+    { label: "UTC", value: "UTC" },
+    { label: "EST", value: "EST" },
+  ],
 });
 export default appConstants;

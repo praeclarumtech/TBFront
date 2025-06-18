@@ -139,7 +139,9 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
                 <span className="  !text-black pt-3">Date of Birth:</span>
                 <span>
                   {" "}
-                  {data?.dateOfBirth ? new Date(data.dateOfBirth).toLocaleDateString() : ""}
+                  {data?.dateOfBirth
+                    ? new Date(data.dateOfBirth).toLocaleDateString()
+                    : ""}
                 </span>
               </Typography>
               <Typography>
@@ -176,7 +178,7 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
                 <span className="text-base  !text-black pt-3">Gender :</span>
                 <span>{" " + capitalizeWords(data?.gender)}</span>
               </Typography>
-               <Typography>
+              <Typography>
                 <span className="text-base  !text-black pt-3">Country:</span>
                 <span>
                   {" " +
@@ -262,7 +264,7 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
                 <span>
                   {" "}
                   {data.appliedSkills?.length > 0
-                    ? (data.appliedSkills.join(", "))
+                    ? data.appliedSkills.join(", ")
                     : "No skills listed"}
                 </span>
               </Typography>
@@ -303,7 +305,10 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
                   Relevant Skills Experience:
                 </span>
               </Typography>
-              {(data.roleSkills && data.roleSkills.length > 0 ? data.roleSkills : Object.keys(data.meta || {})).map((skill: string) => (
+              {(data.roleSkills && data.roleSkills.length > 0
+                ? data.roleSkills
+                : Object.keys(data.meta || {})
+              ).map((skill: string) => (
                 <Typography key={skill} className="text-gray-700">
                   <span className="!text-black ">
                     {capitalizeWords(skill)}:
@@ -363,7 +368,8 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
               <Typography>
                 <span className="  !text-black pt-3">Last Follow Up Date:</span>
                 <span>
-                   {data?.lastFollowUpDate && !isNaN(new Date(data.lastFollowUpDate).getTime())
+                  {data?.lastFollowUpDate &&
+                  !isNaN(new Date(data.lastFollowUpDate).getTime())
                     ? " " + new Date(data.lastFollowUpDate).toLocaleDateString()
                     : " "}
                 </span>
@@ -440,6 +446,17 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
                   className="text-blue-600 "
                 >
                   {" " + data?.practicalUrl}
+                </a>
+              </Typography>
+              <Typography className="mt-2">
+                <span className="text-black ">Git-hub URL:</span>
+                <a
+                  href={data?.gitHubUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 "
+                >
+                  {" " + data?.gitHubUrl}
                 </a>
               </Typography>
             </Col>
