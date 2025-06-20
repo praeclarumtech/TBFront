@@ -271,7 +271,7 @@ const EmailForm = () => {
     const arr = validation.values.email_to
       .split(",")
       .map((e: string) => e.trim())
-      .filter(Boolean);
+      .filter((e) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e));
     const showMore = arr.length > 2;
     const displayEmails = showMore
       ? arr.slice(0, 2).join(", ") + ", "
@@ -391,7 +391,7 @@ const EmailForm = () => {
     const arr = validation.values.email_bcc
       .split(",")
       .map((e: string) => e.trim())
-      .filter(Boolean);
+      .filter((e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e));
     const showMore = arr.length > 2;
     const displayEmails = showMore
       ? arr.slice(0, 2).join(", ") + ", "
