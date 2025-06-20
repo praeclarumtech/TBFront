@@ -18,7 +18,11 @@ import {
   updateApplicantQR,
   createApplicantQR,
 } from "../../../api/applicantApi";
-import { SelectedOption, QrApplicants } from "interfaces/applicant.interface";
+import {
+  SelectedOption,
+  QrApplicants,
+  City,
+} from "interfaces/applicant.interface";
 import { ViewAppliedSkills } from "api/skillsApi";
 import { viewAllDesignation } from "api/designation";
 import BaseButton from "components/BaseComponents/BaseButton";
@@ -27,6 +31,8 @@ import { toast } from "react-toastify";
 import { viewRoleSkill } from "api/roleApi";
 import uploadCloud from "assets/fonts/feather-icons/icons/upload-cloud.svg";
 import { useLocation } from "react-router-dom";
+import { viewAllCity } from "api/cityApis";
+import { viewAllState } from "api/stateApi";
 
 const { projectTitle, Modules, workPreferenceType, communicationOptions } =
   appConstants;
@@ -45,7 +51,10 @@ const QrFrom = () => {
   const [formData, setFormData] = useState<any>();
   const [roleOptions, setRoleOptions] = useState<any[]>([]);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
+  const [cities, setCities] = useState<City[]>([]);
+  const [states, setStates] = useState<City[]>([]);
   const [jobID, setJobID] = useState<any>();
+  const [addedBy, setAddedBy] = useState<any>();
   const navigate = useNavigate();
 
   const { id } = useParams();
@@ -157,8 +166,61 @@ const QrFrom = () => {
   };
 
   useEffect(() => {
+    const getState = async () => {
+      try {
+        // const params = { country_id: selectedCountryId };
+        const stateData = await viewAllState();
+        if (stateData?.data) {
+          setStates(
+            stateData.data.item.map(
+              (state: {
+                state_name: string;
+                _id: string;
+                country_id: string;
+              }) => ({
+                label: state.state_name,
+                value: state._id,
+                country_id: state.country_id,
+              })
+            )
+          );
+        }
+      } catch (error) {
+        errorHandle(error);
+      }
+    };
+
+    getState();
+  }, []);
+
+  useEffect(() => {
+    const getCities = async (selectedStateId?: string) => {
+      try {
+        const params = { state_id: selectedStateId };
+        const cityData = await viewAllCity(params);
+        if (cityData?.data) {
+          setCities(
+            cityData.data.item.map(
+              (city: { city_name: string; _id: string; state_id: string }) => ({
+                label: city.city_name,
+                value: city._id,
+                state_id: city.state_id,
+              })
+            )
+          );
+        }
+      } catch (error) {
+        errorHandle(error);
+      }
+    };
+
+    getCities();
+  }, []);
+
+  useEffect(() => {
     getApplicant(id);
     setJobID(jobId);
+    setAddedBy("addedBy");
   }, [id, jobId]);
 
   useEffect(() => {
@@ -189,6 +251,9 @@ const QrFrom = () => {
       relevantSkillExperience: initialValues?.relevantSkillExperience || "",
       appliedRole: initialValues?.appliedRole || "",
       job_id: jobID || "",
+      state: initialValues?.state || "",
+      currentCity: initialValues?.currentCity || "",
+      addedBy: addedBy || "",
     },
     validationSchema: QrApplicants,
 
@@ -232,6 +297,9 @@ const QrFrom = () => {
         );
         formData.append("appliedRole", value.appliedRole);
         formData.append("job_id", value.job_id);
+        formData.append("state", value.state);
+        formData.append("currentCity", value.currentCity);
+        formData.append("addedBy", value.addedBy);
         if (resumeFile) {
           formData.append("attachments", resumeFile);
         }
@@ -325,6 +393,11 @@ const QrFrom = () => {
     }
   };
 
+  const handleStateChange = (selectedOption: SelectedOption) => {
+    const selectedValue = selectedOption?.label || "";
+    validation.setFieldValue("state", selectedValue);
+  };
+
   return (
     <Fragment>
       <div className="pt-3 page-content"></div>
@@ -347,7 +420,7 @@ const QrFrom = () => {
                     </Spinner>
                   </div>
                 ) : (
-                  <Row className="mb-3 g-3">
+                  <Row className="mb-2 g-3">
                     <Col xs={12} sm={6} md={6} lg={3}>
                       <BaseInput
                         label="First Name"
@@ -457,7 +530,7 @@ const QrFrom = () => {
 
                     {/* Job Details */}
 
-                    <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
+                    <Col xs={12} sm={6} md={6} lg={3}>
                       <MultiSelect
                         label="Applied Skills"
                         name="appliedSkills"
@@ -469,10 +542,10 @@ const QrFrom = () => {
                         touched={validation.touched.appliedSkills}
                         error={validation.errors.appliedSkills}
                         handleBlur={validation.handleBlur}
-                        isRequired={false}
+                        isRequired={true}
                       />
                     </Col>
-                    <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
+                    <Col xs={12} sm={6} md={6} lg={3}>
                       <BaseInput
                         label="Other Skills (Optional)"
                         name="otherSkills"
@@ -488,7 +561,7 @@ const QrFrom = () => {
                         passwordToggle={false}
                       />
                     </Col>
-                    <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
+                    <Col xs={12} sm={6} md={6} lg={3}>
                       <BaseSelect
                         label="Applied Role"
                         name="appliedRole"
@@ -508,7 +581,7 @@ const QrFrom = () => {
                         isRequired={true}
                       />
                     </Col>
-                    <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
+                    <Col xs={12} sm={6} md={6} lg={3}>
                       <BaseSelect
                         label="Current Company Designation"
                         name="currentCompanyDesignation"
@@ -534,7 +607,7 @@ const QrFrom = () => {
                       />
                     </Col>
 
-                    <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
+                    <Col xs={12} sm={6} md={6} lg={3}>
                       <BaseInput
                         label="Total Experience(Year)"
                         name="totalExperience"
@@ -591,10 +664,10 @@ const QrFrom = () => {
                         touched={validation.touched.totalExperience}
                         error={validation.errors.totalExperience}
                         passwordToggle={false}
-                        isRequired={false}
+                        isRequired={true}
                       />
                     </Col>
-                    <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
+                    <Col xs={12} sm={6} md={6} lg={3}>
                       <BaseInput
                         label="Relevant Experience(Year)"
                         name="relevantSkillExperience"
@@ -666,10 +739,10 @@ const QrFrom = () => {
                         touched={validation.touched.relevantSkillExperience}
                         error={validation.errors.relevantSkillExperience}
                         passwordToggle={false}
-                        isRequired={false}
+                        isRequired={true}
                       />
                     </Col>
-                    <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
+                    <Col xs={12} sm={6} md={6} lg={3}>
                       <BaseSelect
                         label="English Communication(out of 10)"
                         name="communicationSkill"
@@ -691,10 +764,10 @@ const QrFrom = () => {
                         }
                         touched={validation.touched.communicationSkill}
                         error={validation.errors.communicationSkill}
-                        isRequired={false}
+                        isRequired={true}
                       />
                     </Col>
-                    <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
+                    <Col xs={12} sm={6} md={6} lg={3}>
                       <BaseInput
                         label="Current Package (LPA)"
                         name="currentPkg"
@@ -753,7 +826,7 @@ const QrFrom = () => {
                       />
                     </Col>
 
-                    <Col xs={12} sm={6} md={6} lg={3} className="mb-3 mb-sm-0">
+                    <Col xs={12} sm={6} md={6} lg={3} className="mb-2 mb-sm-0">
                       <BaseInput
                         label="Expected Package (LPA)"
                         name="expectedPkg"
@@ -811,7 +884,7 @@ const QrFrom = () => {
                         isRequired={false}
                       />
                     </Col>
-                    <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
+                    <Col xs={12} sm={6} md={6} lg={3}>
                       <BaseInput
                         label="Notice Period (Days)"
                         name="noticePeriod"
@@ -869,7 +942,7 @@ const QrFrom = () => {
                         isRequired={false}
                       />
                     </Col>
-                    <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
+                    <Col xs={12} sm={6} md={6} lg={3}>
                       <BaseSelect
                         label="Work Preference"
                         name="workPreference"
@@ -894,7 +967,7 @@ const QrFrom = () => {
                         isRequired={false}
                       />
                     </Col>
-                    <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
+                    <Col xs={12} sm={6} md={6} lg={3}>
                       <BaseInput
                         label="Linkedin URL (Optional)"
                         name="linkedinUrl"
@@ -910,12 +983,60 @@ const QrFrom = () => {
                         passwordToggle={false}
                       />
                     </Col>
+                    <Col xs={12} md={6} lg={3}>
+                      <BaseSelect
+                        label="State"
+                        name="state"
+                        className="select-border"
+                        options={states}
+                        placeholder={InputPlaceHolder("State")}
+                        handleChange={handleStateChange}
+                        handleBlur={validation.handleBlur}
+                        value={
+                          dynamicFind(
+                            states,
+                            validation.values.state,
+                            "location"
+                          ) || ""
+                        }
+                        touched={validation.touched.state}
+                        error={validation.errors.state}
+                        isRequired={true}
+                      />
+                    </Col>
+
+                    <Col xs={12} md={6} lg={3}>
+                      <BaseSelect
+                        label="City"
+                        name="currentCity"
+                        className="select-border"
+                        options={cities}
+                        placeholder={InputPlaceHolder("City")}
+                        handleChange={(selectedOption: SelectedOption) => {
+                          validation.setFieldValue(
+                            "currentCity",
+                            selectedOption?.label || ""
+                          );
+                        }}
+                        handleBlur={validation.handleBlur}
+                        value={
+                          dynamicFind(
+                            cities,
+                            validation.values.currentCity,
+                            "location"
+                          ) || ""
+                        }
+                        touched={validation.touched.currentCity}
+                        error={validation.errors.currentCity}
+                        isRequired={false}
+                      />
+                    </Col>
                     <Col
                       xs={12}
-                      sm={6}
-                      md={6}
-                      lg={6}
-                      className="mb-3 d-flex align-items-end"
+                      sm={8}
+                      md={8}
+                      lg={8}
+                      className="mb-2 d-flex align-items-end"
                     >
                       <div className="w-100">
                         <label
@@ -982,24 +1103,26 @@ const QrFrom = () => {
                         </small>
                       </div>
                     </Col>
+                    <Col xs={12} sm={4} md={4} lg={4}>
+                      <div className="gap-3 mt-4 d-flex flex-column flex-md-row justify-content-end align-items-center">
+                        <BaseButton
+                          color="primary"
+                          type="submit"
+                          className="max-w-full mt-5 d-flex align-items-center justify-content-center"
+                        >
+                          {buttonloading ? (
+                            <>
+                              <Spinner size="sm" className="me-2" />
+                              {!id ? "Submitng..." : "Updating..."}
+                            </>
+                          ) : (
+                            <>{!id ? "Submit" : "Update"}</>
+                          )}
+                        </BaseButton>
+                      </div>
+                    </Col>
                   </Row>
                 )}
-                <div className="gap-3 mt-4 d-flex flex-column flex-md-row justify-content-end">
-                  <BaseButton
-                    color="primary"
-                    type="submit"
-                    className="max-w-full d-flex align-items-center justify-content-center"
-                  >
-                    {buttonloading ? (
-                      <>
-                        <Spinner size="sm" className="me-2" />
-                        {!id ? "Submitng..." : "Updating..."}
-                      </>
-                    ) : (
-                      <>{!id ? "Submit" : "Update"}</>
-                    )}
-                  </BaseButton>
-                </div>
               </Form>
             </div>
           </Row>

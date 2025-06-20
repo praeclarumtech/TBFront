@@ -272,4 +272,29 @@ export const QrApplicants = Yup.object({
   linkedinUrl: Yup.string().url("Please enter a valid URL."),
   otherSkills: Yup.string(),
   appliedRole: Yup.string().required("Applied role is required"),
+  state: Yup.string().required("State is requied"),
+  totalExperience: Yup.string().required("Total Experience Required"),
+  appliedSkills: Yup.array()
+    .of(Yup.string().required("Skill is required"))
+    .min(1, "At least one skill is required"),
+  relevantSkillExperience: Yup.string()
+    .matches(
+      /^\d+(\.\d{1,2})?$/,
+      "Enter a valid number for relevant experience."
+    )
+    // .required("Relevant experience is required.")
+    .test(
+      "relevant-less-than-total",
+      "Relevant experience cannot be more than total experience.",
+      function (value) {
+        const { totalExperience } = this.parent;
+        const total = parseFloat(totalExperience);
+        const relevant = parseFloat(value ?? "0");
+        return isNaN(total) || isNaN(relevant) || relevant <= total;
+      }
+    ),
+  communicationSkill: Yup.number()
+    .required("Communication rating is required!")
+    .min(1, "Rating must be between 1 and 10.")
+    .max(10, "Rating must be between 1 and 10."),
 });
