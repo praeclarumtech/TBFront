@@ -220,7 +220,7 @@ const QrFrom = () => {
   useEffect(() => {
     getApplicant(id);
     setJobID(jobId);
-    setAddedBy("Guest");
+    setAddedBy("guest ");
   }, [id, jobId]);
 
   useEffect(() => {
