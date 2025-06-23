@@ -2,17 +2,21 @@
 import { Row, Col, Container, Card, CardBody } from "react-bootstrap";
 import { Fragment, useEffect, useState } from "react";
 import BaseButton from "components/BaseComponents/BaseButton";
-import { BaseSelect } from "components/BaseComponents/BaseSelect";
+import { BaseSelect, MultiSelect } from "components/BaseComponents/BaseSelect";
 import BaseInput from "components/BaseComponents/BaseInput";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { dynamicFind, InputPlaceHolder } from "utils/commonFunctions";
+import {
+  dynamicFind,
+  errorHandle,
+  InputPlaceHolder,
+} from "utils/commonFunctions";
 import appConstants from "constants/constant";
 import { TimePicker } from "antd";
 import dayjs from "dayjs";
 // import BaseTextarea from "components/BaseComponents/BaseTextArea";
 import { Skeleton } from "antd";
-import { SelectedOption } from "interfaces/applicant.interface";
+import { City, SelectedOption } from "interfaces/applicant.interface";
 import { createJob, updateJob, viewJobById } from "api/apiJob";
 import { toast } from "react-toastify";
 import { FormFeedback, Label } from "reactstrap";
@@ -21,6 +25,8 @@ import "react-quill/dist/quill.snow.css";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
+import { ViewAppliedSkills } from "api/skillsApi";
+import { viewAllCity } from "api/cityApis";
 
 const { projectTitle, Modules, jobTypeOpyions, timeZoneOptions } = appConstants;
 const quillModules = {
@@ -47,12 +53,13 @@ const JobForm = () => {
 
   const [searchParams] = useSearchParams();
   const isEditMode = searchParams.get("mode") === "edit";
-
   const navigate = useNavigate();
 
   const formTitle = isEditMode ? "Update" : "Create";
   const submitButtonText = isEditMode ? "Update" : "Add";
-
+  const [selectedMulti, setSelectedMulti] = useState<any[]>([]);
+  const [skillOptions, setSkillOptions] = useState<any[]>([]);
+  const [cities, setCities] = useState<City[]>([]);
   useEffect(() => {
     if (_id) {
       setLoading(true);
@@ -87,6 +94,59 @@ const JobForm = () => {
     }
   }, [_id]);
 
+  useEffect(() => {
+    setLoading(true);
+    const fetchSkills = async () => {
+      try {
+        const page = 1;
+        const pageSize = 50;
+        const limit = 1000;
+        const response = await ViewAppliedSkills({ page, pageSize, limit });
+        const skillData = response?.data.data || [];
+
+        setSkillOptions(
+          skillData.map((item: any) => ({
+            label: item.skills,
+            value: item._id,
+          }))
+        );
+      } catch (error) {
+        errorHandle(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSkills();
+  }, []);
+
+  useEffect(() => {
+    const getCities = async () => {
+      try {
+        setLoading(true);
+
+        const cityData = await viewAllCity();
+        if (cityData?.data) {
+          setCities(
+            cityData.data.item.map(
+              (city: { city_name: string; _id: string; state_id: string }) => ({
+                label: city.city_name,
+                value: city._id,
+                state_id: city.state_id,
+              })
+            )
+          );
+        }
+      } catch (error) {
+        errorHandle(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getCities();
+  }, []);
+
   const handleSubmit = () => {
     validation.handleSubmit();
   };
@@ -108,6 +168,8 @@ const JobForm = () => {
       min_salary: "",
       max_salary: "",
       contract_duration: "",
+      required_skills: "",
+      job_location: "",
     },
     validationSchema: Yup.object({
       job_subject: Yup.string()
@@ -129,6 +191,9 @@ const JobForm = () => {
         .required("Job Details is required"),
       job_type: Yup.string().required("Job Type is required"),
       time_zone: Yup.string().required("Select Time Zone"),
+      required_skills: Yup.array()
+        .of(Yup.string())
+        .min(1, "Please select at least one skill"),
       // min_salary: Yup.string().required("Please Enter minimum Salary"),
       // max_salary: Yup.string().required("Please Enter maximum Salary"),
     }),
@@ -145,6 +210,8 @@ const JobForm = () => {
         min_salary: values.min_salary,
         max_salary: values.max_salary,
         contract_duration: values.contract_duration,
+        required_skills: values.required_skills,
+        job_location: values.job_location,
       };
       const apiCall = _id ? updateJob(_id, payload) : createJob(payload);
 
@@ -182,6 +249,11 @@ const JobForm = () => {
     },
   });
 
+  const handleMultiSkill = (selectedMulti: any) => {
+    const ids = selectedMulti?.map((item: any) => item.label) || [];
+    validation.setFieldValue("required_skills", ids);
+    setSelectedMulti(selectedMulti);
+  };
   return (
     <Fragment>
       <div className="pt-3 page-content"></div>
@@ -202,7 +274,7 @@ const JobForm = () => {
                   </div>
                 ) : (
                   <Row className="mt-4 mb-4 g-3">
-                    <Col xs={12} md={6}>
+                    <Col xs={12} md={12}>
                       <BaseInput
                         label="Job Title"
                         name="job_subject"
@@ -222,7 +294,7 @@ const JobForm = () => {
                         isRequired={true}
                       />
                     </Col>
-                    <Col xs={12} md={6}>
+                    <Col xs={12} md={4}>
                       <BaseSelect
                         label="Job Type"
                         name="job_type"
@@ -276,6 +348,21 @@ const JobForm = () => {
                         touched={validation.touched.contract_duration}
                         error={validation.errors.contract_duration}
                         passwordToggle={false}
+                        isRequired={true}
+                      />
+                    </Col>
+                    <Col xs={12} sm={12} md={12} lg={4} className="mb-3">
+                      <MultiSelect
+                        label="Required Skills"
+                        name="required_skills"
+                        className="select-border"
+                        value={selectedMulti || []}
+                        isMulti={true}
+                        onChange={handleMultiSkill}
+                        options={skillOptions}
+                        touched={validation.touched.required_skills}
+                        error={validation.errors.required_skills}
+                        handleBlur={validation.handleBlur}
                         isRequired={true}
                       />
                     </Col>
@@ -357,10 +444,34 @@ const JobForm = () => {
                         }}
                       />
                     </Col>
-
+                    <Col xs={12} md={6} lg={4}>
+                      <BaseSelect
+                        label="Job Location"
+                        name="job_location"
+                        className="select-border"
+                        options={cities}
+                        placeholder={InputPlaceHolder("Job Location")}
+                        handleChange={(selectedOption: SelectedOption) => {
+                          validation.setFieldValue(
+                            "job_location",
+                            selectedOption?.label || ""
+                          );
+                        }}
+                        handleBlur={validation.handleBlur}
+                        value={
+                          dynamicFind(
+                            cities,
+                            validation.values.job_location,
+                            "location"
+                          ) || ""
+                        }
+                        touched={validation.touched.job_location}
+                        error={validation.errors.job_location}
+                        isRequired={false}
+                      />
+                    </Col>
                     <Col xs={12} md={8} lg={4}>
                       <Label
-                        // htmlFor={name}
                         className="font-semibold text-gray-700 form-label"
                       >
                         Start Time

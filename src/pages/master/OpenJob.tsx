@@ -77,18 +77,24 @@ const OpenJob = () => {
     </p>
   );
 
-  if (loading) return <Skeleton active className="mt-28 " />;
+  if (loading)
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-200">
+        <Skeleton active className="w-[800px]" />
+      </div>
+    );
   if (!formData) return null;
 
   return (
     <div className="items-center justify-center min-h-screen p-6 bg-gray-200 d-flex">
-      <Card className="w-[800px]  d-flex justify-content-center ">
+      <Card className="w-[800px]  d-flex justify-content-center flex flex-wrap">
         <DetailsCard
           title="Job Details"
           style={{ border: "none", boxShadow: "none" }}
           icon={
             <span style={{ fontSize: "20px", marginBottom: "5px" }}>💼</span>
           }
+          className="w-[800px] "
         >
           <Row gutter={[16, 16]}>
             <Col span={24}>
@@ -103,13 +109,33 @@ const OpenJob = () => {
                 }
               />
             </Col>
-            <Col span={12}>
+            <Col span={24}>
               <DetailsRow
                 label="Job Subject"
-                value={<Tag color="magenta">{formData.job_subject}</Tag>}
+                // value={<Tag color="magenta">{formData.job_subject}</Tag>}
+                value={
+                  <div style={{ maxWidth: "100%", wordBreak: "break-word" }}>
+                    <Tag
+                      color="magenta"
+                      style={{
+                        display: "inline-block",
+                        whiteSpace: "normal",
+                        wordBreak: "break-word",
+                        overflowWrap: "break-word",
+                        maxWidth: "100%",
+                      }}
+                    >
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: formData.job_subject,
+                        }}
+                      />
+                    </Tag>
+                  </div>
+                }
               />
             </Col>
-            <Col span={12}>
+            <Col span={24}>
               <DetailsRow
                 label="Job Type"
                 value={<Tag color="geekblue">{formData.job_type}</Tag>}

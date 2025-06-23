@@ -206,14 +206,31 @@ const ViewJob = ({ show, onHide, jobId }: any) => {
                     />
                   </Col>
                 </Row>
-                <Row gutter={[16, 16]}>
-                  <Col span={24}>
+                <Row gutter={[24, 24]}>
+                  <Col span={12}>
                     <DetailsRow
                       label="Time Zone"
                       value={
                         formData?.time_zone ? (
                           // <div className="flex flex-wrap py-1">
                           <Tag color="gold">{formData?.time_zone}</Tag>
+                        ) : (
+                          // </div>
+                          <Badge
+                            count={"N/A"}
+                            style={{ backgroundColor: "#faad14" }}
+                          />
+                        )
+                      }
+                    />
+                  </Col>
+                  <Col span={12}>
+                    <DetailsRow
+                      label="Location"
+                      value={
+                        formData?.job_location ? (
+                          // <div className="flex flex-wrap py-1">
+                          <Tag color="lime">{formData?.job_location}</Tag>
                         ) : (
                           // </div>
                           <Badge
@@ -264,6 +281,39 @@ const ViewJob = ({ show, onHide, jobId }: any) => {
                 <Row gutter={[16, 16]}>
                   <Col span={24}>
                     <DetailsRow
+                      label="Required Skills"
+                      value={
+                        formData.required_skills.length > 0 ? (
+                          <div
+                            className="flex flex-wrap gap-2 py-1"
+                            style={{
+                              rowGap: "8px",
+                              columnGap: "8px",
+                            }}
+                          >
+                            {formData?.required_skills.map((skill: any) => (
+                              <Tag
+                                color="cyan"
+                                key={skill}
+                                style={{
+                                  fontSize: "0.85rem",
+                                  padding: "2px 8px",
+                                }}
+                              >
+                                {skill}
+                              </Tag>
+                            ))}
+                          </div>
+                        ) : (
+                          "-"
+                        )
+                      }
+                    />
+                  </Col>
+                </Row>
+                <Row gutter={[16, 16]}>
+                  <Col span={24}>
+                    <DetailsRow
                       label="Job Details"
                       value={
                         formData?.job_details ? (
@@ -287,16 +337,6 @@ const ViewJob = ({ show, onHide, jobId }: any) => {
                 </Row>
               </Col>
             </Row>
-            {/* <div className="gap-3 mt-4 d-flex flex-column flex-md-row justify-content-center">
-              <BaseButton
-                color="primary"
-                className="order-0 order-md-1"
-                type="submit"
-                // onClick={handleSubmit}
-              >
-                Apply Now
-              </BaseButton>
-            </div> */}
           </DetailsCard>
         </div>
       ) : null}
