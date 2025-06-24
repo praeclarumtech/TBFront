@@ -38,6 +38,7 @@ const PieChart = () => {
       const end = formatDateTime(endDate);
 
       const response = await getaddedbyReport(start, end);
+      console.log(response);
       setApplication(response?.data || {});
     } catch (error) {
       console.error("API Error:", error);
@@ -46,15 +47,6 @@ const PieChart = () => {
       setIsLoading(false);
     }
   };
-
-  // const fetchAddedByReport = async () => {
-  //   setIsLoading(true);
-  //   try {
-  //     let params: any = {};
-  //     if (startDate && endDate) {
-  //       params.startDate = startDate;
-  //       params.endDate = endDate;
-  //     }
 
   const filterReset = () => {
     setFilterType("");
@@ -67,13 +59,14 @@ const PieChart = () => {
   }, [filterType, startDate, endDate]);
 
   // Define the fixed order of categories
-  const fixedCategories = ["Resume", "Manual", "Csv"];
+  const fixedCategories = ["Resume", "Manual", "Csv", "guest"];
 
   // Map backend values to display labels
   const labelDisplayMap: Record<string, string> = {
     Csv: "CSV",
     Resume: "Resume",
     Manual: "Manual",
+    guest: "Guest",
   };
 
   // Build labels and values in fixed order
@@ -87,14 +80,24 @@ const PieChart = () => {
         label: "Applications",
         data: values,
         backgroundColor: [
-          "#36A2EB", // Resume
-          "#FFCE56", // Manual
-          "#FF6384", // CSV
+          "#0000FF", // Resume
+          "#004225", // Manual
+          "#d40000", // CSV
+          "#FCE903", //Guest
         ],
         borderWidth: 1,
       },
     ],
   };
+
+  // const options: ChartOptions<"pie"> = {
+  //   responsive: true,
+  //   plugins: {
+  //     legend: {
+  //       position: "bottom",
+  //     },
+  //   },
+  // };
 
   const options: ChartOptions<"pie"> = {
     responsive: true,
@@ -102,9 +105,19 @@ const PieChart = () => {
       legend: {
         position: "bottom",
       },
+      tooltip: {
+        bodyColor: "#ffffff",
+        titleColor: "#ffffff",
+      },
+      datalabels: {
+        color: "#ffffff", // White text inside slices
+        font: {
+          size: 12,
+        },
+        formatter: (value) => value, // Show raw value
+      },
     },
   };
-
   return (
     <>
       {/* Dropdown Row */}
@@ -162,13 +175,13 @@ const PieChart = () => {
         style={{
           width: "100%",
           maxWidth: "100%",
-          height: "300px",
+          height: "350px",
           overflow: "hidden",
         }}
         className="d-flex justify-content-center align-items-center"
       >
         {isLoading ? (
-          <Skeleton height={300} borderRadius={"50%"} width={300} />
+          <Skeleton height={350} borderRadius={"50%"} width={350} />
         ) : (
           <Pie data={data} options={options} />
         )}
