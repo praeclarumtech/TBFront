@@ -3,13 +3,28 @@ import { useEffect, useState } from "react";
 import { errorHandle } from "utils/commonFunctions";
 
 import { EyeFilled } from "@ant-design/icons";
-import { Modal, Badge, Card, Row, Col, Tag, Skeleton } from "antd";
+import { Modal, Badge, Card, Row, Col, Tag, Skeleton, Result } from "antd";
 
 import { viewJobById } from "api/apiJob";
 // import BaseButton from "components/BaseComponents/BaseButton";
 
+interface JobDetails {
+  job_id?: string;
+  job_subject?: string;
+  min_salary?: number;
+  max_salary?: number;
+  job_type?: string;
+  contract_duration?: string;
+  time_zone?: string;
+  job_location?: string;
+  start_time?: string;
+  end_time?: string;
+  required_skills?: string[];
+  job_details?: string;
+}
+
 const ViewJob = ({ show, onHide, jobId }: any) => {
-  const [formData, setFormData] = useState<any>(null);
+  const [formData, setFormData] = useState<JobDetails>({});
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
@@ -20,8 +35,7 @@ const ViewJob = ({ show, onHide, jobId }: any) => {
       try {
         const res = await viewJobById(jobId);
         const roleData = res?.data;
-        console.log(roleData);
-        console.log(res);
+
         if (res?.success && roleData) {
           setFormData(roleData);
         }
@@ -34,8 +48,6 @@ const ViewJob = ({ show, onHide, jobId }: any) => {
 
     loadDetails();
   }, [jobId]);
-
-  console.log(formData);
 
   if (!show) return null;
 
@@ -283,6 +295,7 @@ const ViewJob = ({ show, onHide, jobId }: any) => {
                     <DetailsRow
                       label="Required Skills"
                       value={
+                        Array.isArray(formData.required_skills) &&
                         formData.required_skills.length > 0 ? (
                           <div
                             className="flex flex-wrap gap-2 py-1"
@@ -291,7 +304,7 @@ const ViewJob = ({ show, onHide, jobId }: any) => {
                               columnGap: "8px",
                             }}
                           >
-                            {formData?.required_skills.map((skill: any) => (
+                            {formData.required_skills.map((skill: any) => (
                               <Tag
                                 color="cyan"
                                 key={skill}
@@ -339,7 +352,9 @@ const ViewJob = ({ show, onHide, jobId }: any) => {
             </Row>
           </DetailsCard>
         </div>
-      ) : null}
+      ) : (
+        <Result title="No Job Data Found" />
+      )}
     </Modal>
   );
 };

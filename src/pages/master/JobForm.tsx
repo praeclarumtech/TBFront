@@ -60,39 +60,6 @@ const JobForm = () => {
   const [selectedMulti, setSelectedMulti] = useState<any[]>([]);
   const [skillOptions, setSkillOptions] = useState<any[]>([]);
   const [cities, setCities] = useState<City[]>([]);
-  useEffect(() => {
-    if (_id) {
-      setLoading(true);
-      viewJobById({ _id })
-        .then((res: any) => {
-          if (res.success && res.data) {
-            const job = res.data;
-            validation.setValues({
-              job_subject: job.job_subject || "",
-              job_details: job.job_details || "",
-              job_type: job.job_type || "",
-              time_zone: job.time_zone || "",
-              start_time: job.start_time
-                ? dayjs(job.start_time, ["hh:mm A", "HH:mm"]).format("hh:mm A")
-                : "",
-              end_time: job.end_time
-                ? dayjs(job.end_time, ["hh:mm A", "HH:mm"]).format("hh:mm A")
-                : "",
-              min_salary: job.min_salary || "",
-              max_salary: job.max_salary || "",
-              contract_duration: job.contract_duration || "",
-            });
-          }
-        })
-        .catch((err) => {
-          console.error("Error fetching job:", err);
-          toast.error("Failed to load job details");
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    }
-  }, [_id]);
 
   useEffect(() => {
     setLoading(true);
@@ -120,6 +87,42 @@ const JobForm = () => {
     fetchSkills();
   }, []);
 
+  useEffect(() => {
+    if (_id) {
+      setLoading(true);
+      viewJobById({ _id })
+        .then((res: any) => {
+          if (res.success && res.data) {
+            const job = res.data;
+            validation.setValues({
+              job_subject: job.job_subject || "",
+              job_details: job.job_details || "",
+              job_type: job.job_type || "",
+              time_zone: job.time_zone || "",
+              start_time: job.start_time
+                ? dayjs(job.start_time, ["hh:mm A", "HH:mm"]).format("hh:mm A")
+                : "",
+              end_time: job.end_time
+                ? dayjs(job.end_time, ["hh:mm A", "HH:mm"]).format("hh:mm A")
+                : "",
+              min_salary: job.min_salary || "",
+              max_salary: job.max_salary || "",
+              contract_duration: job.contract_duration || "",
+              required_skills: job.required_skills || [],
+              job_location: job.job_location || "",
+            });
+            console.log(validation.value);
+          }
+        })
+        .catch((err) => {
+          console.error("Error fetching job:", err);
+          toast.error("Failed to load job details");
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  }, [_id]);
   useEffect(() => {
     const getCities = async () => {
       try {
@@ -248,6 +251,19 @@ const JobForm = () => {
         });
     },
   });
+
+  useEffect(() => {
+    if (
+      Array.isArray(validation.values.required_skills) &&
+      validation.values.required_skills.length > 0 &&
+      skillOptions.length > 0
+    ) {
+      const matched = skillOptions.filter((option: any) =>
+        validation.values.required_skills.includes(option.label)
+      );
+      setSelectedMulti(matched);
+    }
+  }, [validation.values.required_skills, skillOptions, _id]);
 
   const handleMultiSkill = (selectedMulti: any) => {
     const ids = selectedMulti?.map((item: any) => item.label) || [];
@@ -471,9 +487,7 @@ const JobForm = () => {
                       />
                     </Col>
                     <Col xs={12} md={8} lg={4}>
-                      <Label
-                        className="font-semibold text-gray-700 form-label"
-                      >
+                      <Label className="font-semibold text-gray-700 form-label">
                         Start Time
                         {<span className="text-red-500">*</span>}
                       </Label>
