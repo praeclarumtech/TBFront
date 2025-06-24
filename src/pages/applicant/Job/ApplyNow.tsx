@@ -18,7 +18,11 @@ import {
   updateApplicantQR,
   createApplicantQR,
 } from "../../../api/applicantApi";
-import { SelectedOption, QrApplicants } from "interfaces/applicant.interface";
+import {
+  SelectedOption,
+  QrApplicants,
+  City,
+} from "interfaces/applicant.interface";
 import { ViewAppliedSkills } from "api/skillsApi";
 import { viewAllDesignation } from "api/designation";
 import BaseButton from "components/BaseComponents/BaseButton";
@@ -27,6 +31,8 @@ import { toast } from "react-toastify";
 import { viewRoleSkill } from "api/roleApi";
 import uploadCloud from "assets/fonts/feather-icons/icons/upload-cloud.svg";
 import { useLocation } from "react-router-dom";
+import { viewAllCity } from "api/cityApis";
+import { viewAllState } from "api/stateApi";
 
 const { projectTitle, Modules, workPreferenceType, communicationOptions } =
   appConstants;
@@ -46,6 +52,9 @@ const ApplyNow = () => {
   const [roleOptions, setRoleOptions] = useState<any[]>([]);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [jobID, setJobID] = useState<any>();
+  const [addedBy, setAddedBy] = useState<any>();
+  const [cities, setCities] = useState<City[]>([]);
+  const [states, setStates] = useState<City[]>([]);
   const navigate = useNavigate();
 
   const { id } = useParams();
@@ -157,8 +166,61 @@ const ApplyNow = () => {
   };
 
   useEffect(() => {
+    const getState = async () => {
+      try {
+        // const params = { country_id: selectedCountryId };
+        const stateData = await viewAllState();
+        if (stateData?.data) {
+          setStates(
+            stateData.data.item.map(
+              (state: {
+                state_name: string;
+                _id: string;
+                country_id: string;
+              }) => ({
+                label: state.state_name,
+                value: state._id,
+                country_id: state.country_id,
+              })
+            )
+          );
+        }
+      } catch (error) {
+        errorHandle(error);
+      }
+    };
+
+    getState();
+  }, []);
+
+  useEffect(() => {
+    const getCities = async (selectedStateId?: string) => {
+      try {
+        const params = { state_id: selectedStateId };
+        const cityData = await viewAllCity(params);
+        if (cityData?.data) {
+          setCities(
+            cityData.data.item.map(
+              (city: { city_name: string; _id: string; state_id: string }) => ({
+                label: city.city_name,
+                value: city._id,
+                state_id: city.state_id,
+              })
+            )
+          );
+        }
+      } catch (error) {
+        errorHandle(error);
+      }
+    };
+
+    getCities();
+  }, []);
+
+  useEffect(() => {
     getApplicant(id);
     setJobID(jobId);
+    setAddedBy("guest");
   }, [id, jobId]);
 
   useEffect(() => {
@@ -189,6 +251,9 @@ const ApplyNow = () => {
       relevantSkillExperience: initialValues?.relevantSkillExperience || "",
       appliedRole: initialValues?.appliedRole || "",
       job_id: jobID || "",
+      addedBy: addedBy || "",
+      state: initialValues?.state || "",
+      currentCity: initialValues?.currentCity || "",
     },
     validationSchema: QrApplicants,
 
@@ -221,8 +286,12 @@ const ApplyNow = () => {
           "relevantSkillExperience",
           value.relevantSkillExperience
         );
+        formData.append("state", value.state);
+        formData.append("currentCity", value.currentCity);
         formData.append("appliedRole", value.appliedRole);
         formData.append("job_id", value.job_id);
+        formData.append("addedBy", value.addedBy);
+
         if (resumeFile) {
           formData.append("attachments", resumeFile);
         }
@@ -314,6 +383,11 @@ const ApplyNow = () => {
       validation.setFieldValue("appliedRole", "");
       validation.setFieldValue("meta", {});
     }
+  };
+
+  const handleStateChange = (selectedOption: SelectedOption) => {
+    const selectedValue = selectedOption?.label || "";
+    validation.setFieldValue("state", selectedValue);
   };
 
   return (
@@ -890,12 +964,60 @@ const ApplyNow = () => {
                         passwordToggle={false}
                       />
                     </Col>
+                    <Col xs={12} md={6} lg={3}>
+                      <BaseSelect
+                        label="State"
+                        name="state"
+                        className="select-border"
+                        options={states}
+                        placeholder={InputPlaceHolder("State")}
+                        handleChange={handleStateChange}
+                        handleBlur={validation.handleBlur}
+                        value={
+                          dynamicFind(
+                            states,
+                            validation.values.state,
+                            "location"
+                          ) || ""
+                        }
+                        touched={validation.touched.state}
+                        error={validation.errors.state}
+                        isRequired={true}
+                      />
+                    </Col>
+
+                    <Col xs={12} md={6} lg={3}>
+                      <BaseSelect
+                        label="City"
+                        name="currentCity"
+                        className="select-border"
+                        options={cities}
+                        placeholder={InputPlaceHolder("City")}
+                        handleChange={(selectedOption: SelectedOption) => {
+                          validation.setFieldValue(
+                            "currentCity",
+                            selectedOption?.label || ""
+                          );
+                        }}
+                        handleBlur={validation.handleBlur}
+                        value={
+                          dynamicFind(
+                            cities,
+                            validation.values.currentCity,
+                            "location"
+                          ) || ""
+                        }
+                        touched={validation.touched.currentCity}
+                        error={validation.errors.currentCity}
+                        isRequired={false}
+                      />
+                    </Col>
                     <Col
                       xs={12}
-                      sm={6}
-                      md={6}
-                      lg={6}
-                      className="mb-3 d-flex align-items-end"
+                      sm={8}
+                      md={8}
+                      lg={8}
+                      className="mb-2 d-flex align-items-end"
                     >
                       <div className="w-100">
                         <label
@@ -962,18 +1084,12 @@ const ApplyNow = () => {
                         </small>
                       </div>
                     </Col>
-                    <Col
-                      xs={12}
-                      sm={6}
-                      md={6}
-                      lg={6}
-                      className="w-full mb-3 d-flex align-items-end"
-                    >
-                      <div className="gap-3 w-100 d-flex flex-column flex-md-row justify-content-end">
+                    <Col xs={12} sm={4} md={4} lg={4}>
+                      <div className="gap-3 mt-4 d-flex flex-column flex-md-row justify-content-end align-items-center">
                         <BaseButton
                           color="primary"
                           type="submit"
-                          className="max-w-full d-flex align-items-center justify-content-center position-relative"
+                          className="max-w-full mt-5 d-flex align-items-center justify-content-center"
                         >
                           {buttonloading ? (
                             <>
