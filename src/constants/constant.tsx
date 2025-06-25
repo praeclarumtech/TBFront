@@ -369,11 +369,14 @@ const appConstants = Object.freeze({
     { value: "hybrid", label: "Hybrid" },
   ],
   statusOptions: [
-    { label: "Hold", value: "hold" },
-    { label: "Processing", value: "in-process" },
-    { label: "Selected", value: "selected" },
+    { label: "Applied", value: "applied" },
+    { label: "In Progress", value: "in progress" },
+    { label: "Shortlisted", value: "shortlisted" },
     { label: "Rejected", value: "rejected" },
-    { label: "Pending", value: "pending" },
+    { label: "Selected", value: "selected" },
+    { label: "On Hold", value: "on hold" },
+    { label: "Onboarded", value: "onboarded" },
+    { label: "Leaved", value: "leaved" },
   ],
 
   interviewStageOptions: [

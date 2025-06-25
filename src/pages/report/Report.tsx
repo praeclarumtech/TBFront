@@ -98,9 +98,9 @@ const Report = () => {
               <Card className="p-3 shadow-sm rounded-4 w-100">
                 <Card.Body className="d-flex flex-column">
                   {/* Top right total applicants */}
-                  <div className="d-flex justify-content-end mb-2">
+                  <div className="mb-2 d-flex justify-content-end">
                     <div
-                      className="bg-light-primary text-dark p-2 rounded-3 text-end"
+                      className="p-2 bg-light-primary text-dark rounded-3 text-end"
                       style={{
                         minWidth: "120px",
                         fontWeight: 600,
@@ -115,7 +115,7 @@ const Report = () => {
                   {/* Main charts row */}
                   <Row>
                     <Col md={6} sm={12}>
-                      <h4 className="fw-bold mb-3">
+                      <h4 className="mb-3 fw-bold">
                         Interview Rounds Progress Report
                       </h4>
                       <div className="mt-2 w-100">
@@ -177,7 +177,7 @@ const Report = () => {
                       </div>
                     </Col>
                     <Col md={6} sm={12} className="mt-4 mt-md-0">
-                      <h4 className="fw-bold mb-3">
+                      <h4 className="mb-3 fw-bold">
                         Application Status Analytics
                       </h4>
                       <div className="mt-2 chart-container">
@@ -194,7 +194,7 @@ const Report = () => {
                         selectedFilter={selectedFilter}
                       />
                     </div>
-                    <div className="chart-container mt-3">
+                    <div className="mt-3 chart-container">
                       <ColumnChart selectedFilter={selectedFilter} />
                     </div>
                   </Row>
