@@ -77,6 +77,14 @@ export const MobileNotifications = () => {
               <i className="fe fe-user me-2"></i> Edit Profile
             </Dropdown.Item>
             <Dropdown.Item
+              eventKey="3"
+              onClick={() => {
+                navigate("/userManagement");
+              }}
+            >
+              <i className="fe fe-user me-2"></i> User Management
+            </Dropdown.Item>
+            <Dropdown.Item
               onClick={() => {
                 setShowModal(true);
               }}

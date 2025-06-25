@@ -8,6 +8,8 @@ export const VERIFY_OTP = "user/sendEmail/verifyOtp";
 export const SEND_OTP = "user/sendEmail";
 export const FORGOT_PASSWORD = "user/forgotPassword";
 export const GET_PROFILE = "user/getProfileByToken";
+export const GET_ALL_USERS = "user/listOfUsers";
+export const UPDATE_USER_STATUS = "user/updateStatus";
 
 //Applicant module
 export const LIST_APPLICANT = "applicants/viewAllApplicant";

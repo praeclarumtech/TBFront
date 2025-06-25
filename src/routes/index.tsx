@@ -39,6 +39,7 @@ import JobForm from "pages/master/JobForm";
 import JobListing from "pages/applicant/Job/JobListing";
 import OpenJob from "pages/master/OpenJob";
 import ApplyNow from "pages/applicant/Job/ApplyNow";
+import UserManagement from "pages/UserProfile/UserManagement";
 
 const RenderRouter: React.FC = () => {
   const {
@@ -88,6 +89,7 @@ const RenderRouter: React.FC = () => {
           />
           <Route path={"job-listing"} element={<JobListing />} />
           <Route path={"userProfile"} element={<Profile />} />
+          <Route path={"userManagement"} element={<UserManagement />} />
           <Route
             path={CHANGE_PASSWORD.path}
             element={
