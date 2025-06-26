@@ -14,10 +14,13 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import * as Tooltip from "@radix-ui/react-tooltip";
 
-import { deleteJob, viewAllJob } from "api/apiJob";
+import { deleteJob, updateJob, viewAllJob } from "api/apiJob";
 import ViewJob from "pages/master/ViewJob";
 
 import { ContentCopyOutlined } from "@mui/icons-material";
+import { Switch } from "antd";
+import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
+import BaseFav from "components/BaseComponents/BaseFav";
 
 const { projectTitle, Modules, handleResponse } = appConstants;
 
@@ -35,7 +38,9 @@ const JobListing = () => {
     limit: 50,
   });
   const [isLoading, setIsLoading] = useState(false);
-
+  const [showStatusModal, setShowStatusModal] = useState(false);
+  const [isActiveStatus, setIsActiveStatus] = useState(false);
+  const [selectedStatusId, setSelectedStatusId] = useState<string>("");
   const [selectedJob, setSelectedJob] = useState<string[]>([]);
   const [selectedId, setSelectedId] = useState<string[]>([]);
   const [searchAll, setSearchAll] = useState<string>("");
@@ -89,7 +94,7 @@ const JobListing = () => {
       return;
     }
 
-    setLoader(true);
+    setIsLoading(true);
 
     try {
       if (jobToDelete.length >= 1) {
@@ -114,7 +119,7 @@ const JobListing = () => {
       toast.error("Something went wrong!");
       console.error(error);
     } finally {
-      setLoader(false);
+      setIsLoading(false);
       setShowDeleteModal(false);
       setJobToDelete([]);
       setSelectedJob([]);
@@ -198,6 +203,7 @@ const JobListing = () => {
         accessorKey: "contract_duration",
         enableColumnFilter: false,
       },
+
       {
         header: "Action",
         cell: (cell: { row: { original: any } }) => (
@@ -208,6 +214,7 @@ const JobListing = () => {
                   <button
                     className="btn btn-sm btn-soft-success bg-primary"
                     onClick={() => handleView(cell?.row?.original)}
+                    disabled={!cell?.row?.original.isActive}
                   >
                     <i className="text-white ri-eye-fill" />
                   </button>
@@ -229,6 +236,7 @@ const JobListing = () => {
                   <button
                     className="btn btn-sm btn-soft-success bg-secondary"
                     onClick={() => handleEdit(cell?.row?.original?._id)}
+                    disabled={!cell?.row?.original.isActive}
                   >
                     <i className="text-white align-bottom ri-pencil-fill" />
                   </button>
@@ -252,6 +260,7 @@ const JobListing = () => {
                   <button
                     className="text-white btn btn-sm btn-soft-danger bg-danger"
                     onClick={() => handleDelete(cell?.row?.original)}
+                    disabled={!cell?.row?.original.isActive}
                   >
                     <i className="align-bottom ri-delete-bin-5-fill" />
                   </button>
@@ -273,6 +282,7 @@ const JobListing = () => {
                     className="text-white btn btn-sm btn-soft-danger bg-info"
                     // onClick={() => handleopen(cell?.row?.original?._id)}
                     onClick={() => handleCopyLink(cell?.row?.original?._id)}
+                    disabled={!cell?.row?.original.isActive}
                   >
                     <ContentCopyOutlined fontSize="inherit" />
                   </button>
@@ -292,11 +302,57 @@ const JobListing = () => {
           </div>
         ),
       },
+      {
+        header: "Status",
+        accessorKey: "isActive",
+        cell: (cell: any) => {
+          const id = cell.row.original._id;
+          const isActive = cell.getValue();
+
+          return (
+            <Switch
+              size="small"
+              checked={isActive}
+              onClick={() => handleConfirmStatus(isActive, id)}
+              checkedChildren={<CheckOutlined />}
+              unCheckedChildren={<CloseOutlined />}
+            />
+          );
+        },
+        enableColumnFilter: false,
+      },
     ],
     [selectedJob, job]
   );
 
-  const [loader, setLoader] = useState(false);
+  const handleConfirmStatus = (isActive: boolean, id: string) => {
+    setShowStatusModal(true);
+    setIsActiveStatus(isActive);
+    setSelectedStatusId(id);
+  };
+  const updateStatusData = (isActive: boolean, id: string) => {
+    updateJob(id, { isActive: !isActive })
+      .then((res: any) => {
+        if (res.success) {
+          toast.success(res.message || "Status updated successfully");
+          setShowStatusModal(false);
+          fetchJob();
+        }
+      })
+      .catch((error) => {
+        const errorMessages = error?.response?.data?.details;
+        if (errorMessages && Array.isArray(errorMessages)) {
+          errorMessages.forEach((errorMessage) => {
+            toast.error(errorMessage);
+          });
+        } else {
+          toast.error("An error occurred while updating the applicant.");
+        }
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  };
 
   const handleView = (id: string[]) => {
     setSelectedId(id);
@@ -308,9 +364,7 @@ const JobListing = () => {
   };
 
   const handleEdit = (jobId: string) => {
-    // navigate(`/master/edit-job/${jobId}`);
     navigate(`/master/edit-job/${jobId}?mode=edit`);
-    // state: { isEditMode: true };
   };
 
   const formTitle =
@@ -330,7 +384,6 @@ const JobListing = () => {
   const navigate = useNavigate();
 
   const handleRedirect = () => {
-    // navigate("/master/job");
     navigate("/master/job", {
       state: { source: "jobListing" },
     });
@@ -338,6 +391,13 @@ const JobListing = () => {
 
   return (
     <Fragment>
+      <BaseFav
+        show={showStatusModal}
+        onCloseClick={() => setShowStatusModal(false)}
+        onYesClick={() => updateStatusData(isActiveStatus, selectedStatusId)}
+        flag={isActiveStatus}
+      />
+
       {showViewModal && selectedId && (
         <ViewJob
           show={showViewModal}
@@ -349,7 +409,7 @@ const JobListing = () => {
         show={showDeleteModal}
         onCloseClick={closeDeleteModal}
         onDeleteClick={confirmDelete}
-        loader={loader}
+        loader={isLoading}
       />
       <div className="pt-1 page-content"></div>
       <Container fluid>
@@ -430,7 +490,7 @@ const JobListing = () => {
                               totalRecords={totalRecords}
                               pagination={pagination}
                               setPagination={setPagination}
-                              loader={loader}
+                              loader={isLoading}
                               customPadding="0.3rem 1.5rem"
                               rowHeight="10px !important"
                             />

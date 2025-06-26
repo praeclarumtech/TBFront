@@ -446,6 +446,7 @@ const appConstants = Object.freeze({
     { label: "Resume", value: "Resume" },
     { label: "Manual", value: "Manual" },
     { label: "CSV", value: "Csv" },
+    { label: "Guest", value: "guest" },
   ],
 
   activeStatusOptions: [
