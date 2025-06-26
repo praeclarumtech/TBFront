@@ -12,7 +12,6 @@ import {
   getCurrentUser,
   InputPlaceHolder,
 } from "utils/commonFunctions";
-// import { jwtDecode } from "jwt-decode";
 import BaseModal from "components/BaseComponents/BaseModal";
 import Loader from "components/BaseComponents/Loader";
 
