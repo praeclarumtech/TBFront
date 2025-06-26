@@ -20,9 +20,6 @@ const ActiveModal: React.FC<ActiveModalProps> = ({
           </h5>
         </p>
         <div className="d-flex justify-content-center gap-3 mt-4">
-          <Button color="secondary" onClick={onCloseClick}>
-            Cancel
-          </Button>
           <Button color="primary" onClick={onYesClick} disabled={loader}>
             {loader ? (
               <>
@@ -32,6 +29,9 @@ const ActiveModal: React.FC<ActiveModalProps> = ({
             ) : (
               <>{flag ? "Deactivate" : "Active"}</>
             )}
+          </Button>
+           <Button color="secondary" onClick={onCloseClick}>
+            Cancel
           </Button>
         </div>
       </ModalBody>

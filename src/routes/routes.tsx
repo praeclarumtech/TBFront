@@ -29,6 +29,7 @@ import JobForm from "pages/master/JobForm";
 import JobListing from "pages/applicant/Job/JobListing";
 import OpenJob from "pages/master/OpenJob";
 import ApplyNow from "pages/applicant/Job/ApplyNow";
+import UserManagement from "pages/UserProfile/UserManagement";
 
 const routes = {
   ROOT: {
@@ -73,6 +74,11 @@ const routes = {
     title: "User Profile",
     path: "/userprofile",
     element: Profile,
+  },
+  USERMANAGEMENT: {
+    title: "User Management",
+    path: "/userManagement",
+    element: UserManagement,
   },
   APPLICANTS: {
     title: "Applicants",
