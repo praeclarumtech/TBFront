@@ -294,12 +294,33 @@ const Dashboard = () => {
           >
             <style>
               {`
-                .applicant-stats-scroll::-webkit-scrollbar {
-                  display: none;
-                 }
-                .applicant-stats-scroll {
-                   -ms-overflow-style: none; /* IE and Edge */
+                  .applicant-stats-scroll {
+                    -ms-overflow-style: none; /* IE and Edge */
                     scrollbar-width: none;    /* Firefox */
+                  }
+
+                  .applicant-stats-scroll::-webkit-scrollbar {
+                    width: 0; /* hidden */
+                    height: 0; /* hidden */
+                  }
+
+                  .applicant-stats-scroll:hover {
+                    -ms-overflow-style: auto; /* IE and Edge */
+                    scrollbar-width: thin;    /* Firefox */
+                  }
+
+                  .applicant-stats-scroll:hover::-webkit-scrollbar {
+                    width: 8px; /* visible */
+                    height: 8px; /* visible for horizontal scroll */
+                  }
+
+                  .applicant-stats-scroll:hover::-webkit-scrollbar-thumb {
+                    background: rgba(0,0,0,0.3); /* thumb color */
+                    border-radius: 4px;
+                  }
+
+                  .applicant-stats-scroll:hover::-webkit-scrollbar-track {
+                    background: transparent; /* optional */
                   }
               `}
             </style>
