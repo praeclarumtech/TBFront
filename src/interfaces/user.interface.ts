@@ -5,7 +5,6 @@ export interface ProfileFormData {
   lastName: string;
   email: string;
   phoneNumber: string;
-  gender: string;
   dateOfBirth: string;
   designation: string;
   [key: string]: any;
