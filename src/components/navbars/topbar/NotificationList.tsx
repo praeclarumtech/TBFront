@@ -1,4 +1,6 @@
-import SimpleBar from "simplebar-react";
+// @ts-ignore
+import SimpleBar from 'simplebar-react';
+import 'simplebar-react/dist/simplebar.min.css';
 import { ListGroup, Row, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
 // import "simplebar/dist/simplebar.min.css";
@@ -22,7 +24,7 @@ export const NotificationList: React.FC<NotificationListProps> = ({
               <Row>
                 <Col>
                   <Link to="#" className="text-muted">
-                    <h5 className=" mb-1">{item.sender}</h5>
+                    <h5 className="mb-1 ">{item.sender}</h5>
                     <p className="mb-0"> {item.message}</p>
                   </Link>
                 </Col>

@@ -30,6 +30,7 @@ import JobListing from "pages/applicant/Job/JobListing";
 import OpenJob from "pages/master/OpenJob";
 import ApplyNow from "pages/applicant/Job/ApplyNow";
 import UserManagement from "pages/UserProfile/UserManagement";
+import UserProfileEdit from "pages/UserProfile/UserProfileEdit";
 
 const routes = {
   ROOT: {
@@ -72,8 +73,13 @@ const routes = {
   },
   USERPROFILE: {
     title: "User Profile",
-    path: "/userprofile",
+    path: "/userprofile/:_id",
     element: Profile,
+  },
+    USERPROFILE_EDIT: {
+    title: "User Profile Edit",
+    path: "/userprofileEdit/:_id",
+    element: UserProfileEdit,
   },
   USERMANAGEMENT: {
     title: "User Management",

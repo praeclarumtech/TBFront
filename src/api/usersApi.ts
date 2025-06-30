@@ -33,8 +33,8 @@ export const updateProfile = async (id?: string, data?: object) => {
   return response?.data;
 };
 
-export const viewProfile = async (id?: string, data?: object) => {
-  const response = await authServices.get(`${VIEWPROFILE}/${id}`, data);
+export const viewProfile = async (id?: string) => {
+  const response = await authServices.get(`${VIEWPROFILE}/${id}`);
   return response?.data;
 };
 
@@ -65,9 +65,8 @@ export const getAllUsers = async (data?: object) => {
   const response = await authServices.get(`${GET_ALL_USERS}`, data);
   return response?.data;
 };
- 
+
 export const updateUserStatus = async (id?: string, data?: object) => {
   const response = await authServices.put(`${UPDATE_USER_STATUS}/${id}`, data);
   return response?.data;
 };
- 

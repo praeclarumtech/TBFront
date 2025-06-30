@@ -11,6 +11,8 @@ import Skeleton from "react-loading-skeleton";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import TableContainer from "components/BaseComponents/TableContainer";
 import * as Tooltip from "@radix-ui/react-tooltip";
+import { useNavigate } from "react-router-dom";
+import ViewProfile from "./ViewProfile";
 
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
@@ -21,7 +23,9 @@ const UserManagement = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [totalRecords, setTotalRecords] = useState(0);
   const [tableLoader, setTableLoader] = useState(false);
-
+  const navigate = useNavigate();
+  const [showViewModal, setShowViewModal] = useState(false);
+  const [selectedId, setSelectedId] = useState("");
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 50,
@@ -158,6 +162,50 @@ const UserManagement = () => {
               <Tooltip.Root>
                 <Tooltip.Trigger asChild>
                   <button
+                    className="text-white btn btn-sm btn-soft-secondary bg-secondary"
+                    onClick={() =>
+                      navigate(`/userprofileEdit/${row?.original?._id}`)
+                    }
+                    disabled={!row.original.isActive}
+                  >
+                    <i className="ri-pencil-fill" />
+                  </button>
+                </Tooltip.Trigger>
+                <Tooltip.Portal>
+                  <Tooltip.Content
+                    side="bottom"
+                    sideOffset={4}
+                    className="px-2 py-1 text-sm text-white rounded shadow-lg bg-secondary"
+                  >
+                    Edit
+                    <Tooltip.Arrow style={{ fill: "#637381" }} />
+                  </Tooltip.Content>
+                </Tooltip.Portal>
+              </Tooltip.Root>
+              <Tooltip.Root>
+                <Tooltip.Trigger asChild>
+                  <button
+                    className="btn btn-sm btn-soft-success bg-primary"
+                    onClick={() => handleView(row?.original?._id)}
+                  >
+                    <i className="text-white ri-eye-fill" />
+                  </button>
+                </Tooltip.Trigger>
+                <Tooltip.Portal>
+                  <Tooltip.Content
+                    side="bottom"
+                    sideOffset={4}
+                    className="px-2 py-1 text-xs text-white rounded shadow-lg bg-primary"
+                  >
+                    View
+                    <Tooltip.Arrow style={{ fill: "#624bff" }} />
+                  </Tooltip.Content>
+                </Tooltip.Portal>
+              </Tooltip.Root>
+
+              <Tooltip.Root>
+                <Tooltip.Trigger asChild>
+                  <button
                     className="text-white btn btn-sm btn-soft-danger bg-danger"
                     onClick={() => handleDeleteUser(row.original._id)}
                     disabled={!row.original.isActive}
@@ -184,8 +232,22 @@ const UserManagement = () => {
     [users]
   );
 
+  const handleView = (_id: string) => {
+    setSelectedId(_id);
+    setShowViewModal(true);
+  };
+  const handleCloseModal = () => {
+    setShowViewModal(false);
+  };
   return (
     <>
+      {showViewModal && selectedId && (
+        <ViewProfile
+          show={showViewModal}
+          onHide={handleCloseModal}
+          _id={selectedId}
+        />
+      )}
       <ActiveModal
         show={showActiveModal}
         loader={isLoading}
