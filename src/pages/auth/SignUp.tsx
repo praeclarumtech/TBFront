@@ -126,7 +126,7 @@ const SignUp = () => {
                   Talent<span className="text-primary bold ">Box</span>{" "}
                 </h4>
                 {/* </Link> */}
-                <p className="justify-center mb-6 text-center text-base ">
+                <p className="justify-center mb-6 text-base text-center ">
                   Create an Account
                 </p>
               </div>

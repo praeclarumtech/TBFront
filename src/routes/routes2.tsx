@@ -28,6 +28,7 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import JobForm from "pages/master/JobForm";
+import UserProfileEdit from "pages/UserProfile/UserProfileEdit";
 // import OpenJob from "pages/master/OpenJob";
 
 const routess = {
@@ -58,6 +59,11 @@ const routess = {
     title: "Change Password",
     path: "/change-password",
     element: ChangePassword,
+  },
+  USERPROFILE_ADD: {
+    title: "User Profile Add",
+    path: "/userprofileEdit",
+    element: UserProfileEdit,
   },
   SIGN_UP: {
     title: "Sign Up",

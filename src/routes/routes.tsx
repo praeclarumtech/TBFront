@@ -81,6 +81,11 @@ const routes = {
     path: "/userprofileEdit/:_id",
     element: UserProfileEdit,
   },
+      USERPROFILE_ADD: {
+    title: "User Profile Add",
+    path: "/userprofileAdd",
+    element: UserProfileEdit,
+  },
   USERMANAGEMENT: {
     title: "User Management",
     path: "/userManagement",

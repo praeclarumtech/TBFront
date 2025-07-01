@@ -91,6 +91,8 @@ const RenderRouter: React.FC = () => {
           <Route path={"job-listing"} element={<JobListing />} />
           <Route path={"userProfile"} element={<Profile />} />
           <Route path={"userprofileEdit/:_id"} element={<UserProfileEdit />} />
+          <Route path={"userprofileAdd"} element={<UserProfileEdit />} />
+
           <Route path={"userManagement"} element={<UserManagement />} />
           <Route
             path={CHANGE_PASSWORD.path}

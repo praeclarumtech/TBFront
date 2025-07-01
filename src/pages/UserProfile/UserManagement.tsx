@@ -13,6 +13,10 @@ import TableContainer from "components/BaseComponents/TableContainer";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import { useNavigate } from "react-router-dom";
 import ViewProfile from "./ViewProfile";
+import BaseButton from "components/BaseComponents/BaseButton";
+import appConstants from "constants/constant";
+
+const { handleResponse } = appConstants;
 
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
@@ -30,6 +34,8 @@ const UserManagement = () => {
     pageIndex: 0,
     pageSize: 50,
   });
+  const [searchAll, setSearchAll] = useState<string>("");
+
   // const [tableLoader, setTableLoader] = useState(false);
   const handleUpdateUserStatus = async (id: string, value: AnyObject) => {
     setIsLoading(true);
@@ -58,9 +64,24 @@ const UserManagement = () => {
 
   const fetchUsers = async () => {
     setTableLoader(true);
+
     try {
-      const response = await getAllUsers();
-      setUsers(response?.data?.item || []);
+      const params: {
+        search?: string;
+        page?: number;
+        pageSize?: number;
+        limit?: number;
+      } = {
+        page: pagination.pageIndex + 1,
+        pageSize: pagination.pageSize,
+        limit: 50,
+      };
+      const searchValue = searchAll?.trim();
+      if (searchValue) {
+        params.search = searchValue;
+      }
+      const response = await getAllUsers(params);
+      setUsers(response?.data?.item || response?.data?.results || []);
       setTotalRecords(response?.data?.totalRecords || 0);
     } catch (error) {
       console.error("Error fetching total applicants:", error);
@@ -71,7 +92,7 @@ const UserManagement = () => {
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [pagination.pageIndex, pagination.pageSize, searchAll]);
 
   const closeActiveModal = () => {
     setShowActiveModal(false);
@@ -111,6 +132,12 @@ const UserManagement = () => {
 
   const columns = useMemo(
     () => [
+      {
+        header: "Sr. No.",
+        accessorKey: "serialNumber",
+        cell: ({ row }: any) => row.index + 1,
+        enableColumnFilter: false,
+      },
       {
         header: "User Name",
         accessorKey: "userName",
@@ -239,6 +266,19 @@ const UserManagement = () => {
   const handleCloseModal = () => {
     setShowViewModal(false);
   };
+
+  const handleAdd = () => {
+    navigate("/userprofileAdd");
+  };
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchAll(event.target.value);
+    setPagination((prev) => ({
+      ...prev,
+      pageIndex: 0,
+    }));
+  };
+
   return (
     <>
       {showViewModal && selectedId && (
@@ -269,16 +309,33 @@ const UserManagement = () => {
       <Container fluid>
         <div className="mt-2">
           <Card>
-            <Row className="fw-bold text-dark d-flex align-items-center">
+            <Row className="fw-bold text-dark d-flex ">
               <Col
-                sm={12}
-                lg={12}
-                className="flex-wrap mt-4 mb-2 d-flex justify-content-between align-items-center "
+                sm={6}
+                lg={6}
+                md={6}
+                className="flex-wrap mt-4 mb-2 d-flex align-items-center "
               >
                 <div className="ml-6 text-2xl font-bold">User Management</div>
               </Col>
+              <Col sm={6} lg={6} md={6} className="mt-4 mb-2 ">
+                <div className="items-end justify-end mr-6 d-flex">
+                  <div className="mr-3">
+                    <input
+                      id="search-bar-0"
+                      className="h-10 form-control search"
+                      placeholder="Search..."
+                      onChange={handleSearchChange}
+                      value={searchAll}
+                    />
+                  </div>
+                  <BaseButton color="primary" onClick={handleAdd}>
+                    + Add
+                  </BaseButton>
+                </div>
+              </Col>
             </Row>
-            {users.length === 0 ? (
+            {isLoading ? (
               <div className="m-3">
                 <Skeleton count={10} />
               </div>
@@ -339,23 +396,30 @@ const UserManagement = () => {
               //   ))}
               // </div>
               <div className="pt-4 bg-white">
-                <Card.Body>
-                  <TableContainer
-                    // isHeaderTitle="Users"
-                    columns={columns}
-                    data={users}
-                    customPageSize={50}
-                    theadClass="table-light text-muted"
-                    SearchPlaceholder="Search..."
-                    tableClass="!text-nowrap !mb-0 !responsive !table-responsive-sm !table-hover !table-outline-none !mb-0"
-                    totalRecords={totalRecords}
-                    pagination={pagination}
-                    setPagination={setPagination}
-                    loader={tableLoader}
-                    customPadding="0.3rem 1.5rem"
-                    rowHeight="10px !important"
-                  />
-                </Card.Body>
+                {users?.length > 0 ? (
+                  <Card.Body>
+                    <TableContainer
+                      // isHeaderTitle="Users"
+                      columns={columns}
+                      data={users}
+                      customPageSize={50}
+                      theadClass="table-light text-muted"
+                      SearchPlaceholder="Search..."
+                      tableClass="!text-nowrap !mb-0 !responsive !table-responsive-sm !table-hover !table-outline-none !mb-0"
+                      totalRecords={totalRecords}
+                      pagination={pagination}
+                      setPagination={setPagination}
+                      loader={tableLoader}
+                      customPadding="0.3rem 1.5rem"
+                      rowHeight="10px !important"
+                    />
+                  </Card.Body>
+                ) : (
+                  <div className="py-4 text-center">
+                    <i className="ri-search-line d-block fs-1 text-success"></i>
+                    {handleResponse?.dataNotFound}
+                  </div>
+                )}
               </div>
             )}
           </Card>

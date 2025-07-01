@@ -62,17 +62,17 @@ export const DesktopNotifications = () => {
             aria-labelledby="dropdownUser"
             show
           >
-            {/* <Dropdown.Item as="div" className="px-4 pb-0 pt-2" bsPrefix=" ">
+            {/* <Dropdown.Item as="div" className="px-4 pt-2 pb-0" bsPrefix=" ">
             <div className="lh-1 ">
-              <h5 className=" justify-center text-center">
+              <h5 className="justify-center text-center ">
                 {user?.userName}
               </h5>
-              <span className="text-sm text-muted justify-center text-center">
+              <span className="justify-center text-sm text-center text-muted">
                 {user?.role?.charAt(0)?.toUpperCase() +
                   user?.role?.slice(1)?.toLowerCase()}
               </span>
             </div>
-            <div className=" dropdown-divider mt-3 mb-2"></div>
+            <div className="mt-3 mb-2 dropdown-divider"></div>
           </Dropdown.Item> */}
             <Dropdown.Item
               as="div"
@@ -85,8 +85,24 @@ export const DesktopNotifications = () => {
                 </span>
               </div>
 
-              <div className="dropdown-divider my-0"></div>
+              <div className="my-0 dropdown-divider"></div>
             </Dropdown.Item>
+            {user.role === "admin" ? (
+              <Dropdown.Item
+                eventKey="3"
+                onClick={() => {
+                  navigate("/userManagement");
+                }}
+                active={
+                  location.pathname === "/userManagement" ||
+                  location.pathname === "/userprofileAdd"
+                }
+              >
+                <i className="fe fe-user me-2"></i> User Management
+              </Dropdown.Item>
+            ) : (
+              <></>
+            )}
             <Dropdown.Item
               eventKey="2"
               onClick={() => {
@@ -95,14 +111,7 @@ export const DesktopNotifications = () => {
             >
               <i className="fe fe-user me-2"></i> Edit Profile
             </Dropdown.Item>
-             <Dropdown.Item
-              eventKey="3"
-              onClick={() => {
-                navigate("/userManagement");
-              }}
-            >
-              <i className="fe fe-user me-2"></i> User Management
-            </Dropdown.Item>
+
             <Dropdown.Item
               onClick={() => {
                 setShowModal(true);
