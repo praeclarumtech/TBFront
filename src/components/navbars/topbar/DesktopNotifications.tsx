@@ -62,18 +62,6 @@ export const DesktopNotifications = () => {
             aria-labelledby="dropdownUser"
             show
           >
-            {/* <Dropdown.Item as="div" className="px-4 pt-2 pb-0" bsPrefix=" ">
-            <div className="lh-1 ">
-              <h5 className="justify-center text-center ">
-                {user?.userName}
-              </h5>
-              <span className="justify-center text-sm text-center text-muted">
-                {user?.role?.charAt(0)?.toUpperCase() +
-                  user?.role?.slice(1)?.toLowerCase()}
-              </span>
-            </div>
-            <div className="mt-3 mb-2 dropdown-divider"></div>
-          </Dropdown.Item> */}
             <Dropdown.Item
               as="div"
               className="px-4 py-2 d-flex flex-column align-items-center justify-content-between"

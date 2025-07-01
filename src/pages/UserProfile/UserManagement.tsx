@@ -113,22 +113,6 @@ const UserManagement = () => {
     setShowDeleteModal(true);
   };
 
-  // const handleRowClick = (role: string) => {
-  //   switch (role) {
-  //     case "admin":
-  //       return "purple";
-  //     case "user":
-  //       return "volcano";
-  //     case "vendor":
-  //       return "cyan";
-  //     case "guest":
-  //       return "magenta";
-  //     case "hr":
-  //       return "green";
-  //     default:
-  //       return "default";
-  //   }
-  // };
 
   const columns = useMemo(
     () => [
@@ -340,61 +324,6 @@ const UserManagement = () => {
                 <Skeleton count={10} />
               </div>
             ) : (
-              // <div className="grid grid-cols-1 gap-6 p-4 sm:grid-cols-2 xl:grid-cols-3">
-              //   {users.map((user: any) => (
-              //     <Badge.Ribbon
-              //       text={user?.role}
-              //       color={handleRowClick(user?.role)}
-              //     >
-              //       <div
-              //         key={user?._id}
-              //         className="p-6 transition-all duration-200 bg-white border border-gray-100 shadow-xl rounded-2xl hover:shadow-2xl"
-              //       >
-              //         <h2 className="text-lg font-semibold text-gray-800 truncate">
-              //           {user?.userName}
-              //         </h2>
-              //         <p className="mb-2 text-sm text-gray-500 break-all">
-              //           {user?.email}
-              //         </p>
-              //         <p
-              //           className={`text-sm font-semibold ${
-              //             user.isActive ? "text-green-600" : "text-red-500"
-              //           }`}
-              //         >
-              //           {user.isActive ? "Active" : "Deactive"}
-              //         </p>
-
-              //         <div className="flex flex-wrap gap-3 mt-4">
-              //           <button
-              //             onClick={() =>
-              //               handleUpdateUserStatusModal(user._id, user.isActive)
-              //             }
-              //             className={`flex items-center gap-2 px-4 py-2 rounded-md text-white text-sm ${
-              //               user.isActive
-              //                 ? "bg-gray-600 hover:bg-gray-700"
-              //                 : "bg-green-600 hover:bg-green-700"
-              //             }`}
-              //           >
-              //             <i
-              //               className={`ri-${
-              //                 user.isActive ? "close-circle" : "check-line"
-              //               }`}
-              //             ></i>
-              //             {user.isActive ? "Deactivate" : "Activate"}
-              //           </button>
-
-              //           <button
-              //             onClick={() => handleDeleteUser(user._id)}
-              //             disabled={isLoading}
-              //             className="flex items-center gap-2 px-4 py-2 text-sm text-white bg-red-600 rounded-md hover:bg-red-700"
-              //           >
-              //             <i className="ri-delete-bin-6-line"></i> Delete
-              //           </button>
-              //         </div>
-              //       </div>
-              //     </Badge.Ribbon>
-              //   ))}
-              // </div>
               <div className="pt-4 bg-white">
                 {users?.length > 0 ? (
                   <Card.Body>
