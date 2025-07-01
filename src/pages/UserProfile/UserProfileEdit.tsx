@@ -108,7 +108,7 @@ const UserProfileEdit = () => {
       role: Yup.string().required(RequiredField("Role")),
     }),
     onSubmit: (values, { resetForm }) => {
-      console.log("insubmit");
+      // console.log("insubmit");
       setLoading(true);
       const payload = {
         userName: values.userName,
@@ -141,7 +141,7 @@ const UserProfileEdit = () => {
         });
     },
   });
-  console.log("validation", validation.isSubmitting, validation.errors);
+  // console.log("validation", validation.isSubmitting, validation.errors);
 
   useEffect(() => {
     if (isEditMode) {
