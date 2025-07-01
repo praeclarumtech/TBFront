@@ -97,15 +97,15 @@ const ViewProfile = ({ show, onHide, _id }: any) => {
                   label="Email"
                   value={
                     formData?.email ? (
-                    //   <Tag color="purple">
-                        <a
-                          href={`mailto:${formData?.email}`}
-                          className="hover:underline"
-                        >
-                          {formData?.email}
-                        </a>
-                    //   </Tag>
+                      //   <Tag color="purple">
+                      <a
+                        href={`mailto:${formData?.email}`}
+                        className="hover:underline"
+                      >
+                        {formData?.email}
+                      </a>
                     ) : (
+                      //   </Tag>
                       <Badge
                         count={"N/A"}
                         style={{ backgroundColor: "#52c41a" }}
@@ -164,6 +164,21 @@ const ViewProfile = ({ show, onHide, _id }: any) => {
             </Col>
             <Col span={12}>
               <DetailsRow
+                label="Number"
+                value={
+                  formData?.phoneNumber ? (
+                    <Tag color="magenta">{formData?.phoneNumber}</Tag>
+                  ) : (
+                    <Badge
+                      count={"N/A"}
+                      style={{ backgroundColor: "#52c41a" }}
+                    />
+                  )
+                }
+              />
+            </Col>
+            <Col span={12}>
+              <DetailsRow
                 label="Birthday"
                 value={
                   formData?.dateOfBirth ? (
@@ -198,9 +213,13 @@ const ViewProfile = ({ show, onHide, _id }: any) => {
                       disabled
                     />
                   ) : (
-                    <Badge
-                      count={"N/A"}
-                      style={{ backgroundColor: "#52c41a" }}
+                    <Switch
+                      size="small"
+                      checked={formData?.isActive}
+                      //   onClick={() => handleUpdateUserStatusModal(id, isActive)} // ✅ Handler only runs on user interaction
+                      checkedChildren={<CheckOutlined />}
+                      unCheckedChildren={<CloseOutlined />}
+                      disabled
                     />
                   )
                 }

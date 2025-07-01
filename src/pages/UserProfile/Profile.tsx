@@ -167,13 +167,7 @@ const Profile = () => {
     }
   };
 
-  // const handleProfilePicRemove = () => {
-  //   setFormData((prevState) => ({
-  //     ...prevState,
-  //     profilePicture: "",
-  //   }));
-  //   setImagePreview("/images/avatar/avatar.png");
-  // };
+
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const date = e.target.value;
 

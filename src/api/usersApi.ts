@@ -10,6 +10,7 @@ import {
   GET_PROFILE,
   GET_ALL_USERS,
   UPDATE_USER_STATUS,
+  USERADD,
 } from "./apiRoutes";
 import { authServices } from "./apiServices";
 
@@ -25,6 +26,11 @@ export const getProfile = async (data: object) => {
 
 export const register = async (data: object) => {
   const response = await authServices.post(`${REGISTER}`, data);
+  return response?.data;
+};
+
+export const userAdd = async (data: object) => {
+  const response = await authServices.post(`${USERADD}`, data);
   return response?.data;
 };
 
@@ -61,10 +67,18 @@ export const forgotPassword = async (data: object) => {
   return response?.data;
 };
 
-export const getAllUsers = async (data?: object) => {
-  const response = await authServices.get(`${GET_ALL_USERS}`, data);
+export const getAllUsers = async (
+  params: {
+    page?: number;
+    pageSize?: number;
+    limit?: number;
+    search?: string;
+  } = {}
+) => {
+  const response = await authServices.get(`${GET_ALL_USERS}`, { params });
   return response?.data;
 };
+
 
 export const updateUserStatus = async (id?: string, data?: object) => {
   const response = await authServices.put(`${UPDATE_USER_STATUS}/${id}`, data);

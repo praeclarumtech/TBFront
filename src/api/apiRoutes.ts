@@ -1,6 +1,7 @@
 //User module
 export const LOGIN = "user/login";
 export const REGISTER = "user/register";
+export const USERADD = "user/create";
 export const UPDATEPROFILE = "user/updateProfile";
 export const VIEWPROFILE = "user/viewProfileById";
 export const CHANGEPASSWORD = "user/changePassword";
