@@ -25,8 +25,7 @@ import { useLocation } from "react-router-dom";
 import { useFormik } from "formik";
 import { SelectedOption } from "interfaces/applicant.interface";
 import { BaseSelect } from "components/BaseComponents/BaseSelect";
-import { Skeleton, Switch } from "antd";
-import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
+import { Skeleton } from "antd";
 
 const {
   projectTitle,
@@ -75,6 +74,15 @@ const UserProfileEdit = () => {
     // Remove the empty option if not needed
   ];
 
+  interface StatusOption {
+    label: string;
+    value: string;
+  }
+  const status: StatusOption[] = [
+    { label: "Active", value: "true" },
+    { label: "In Active", value: "false" },
+  ];
+
   const { _id } = useParams();
   const isEditMode = Boolean(_id);
 
@@ -91,6 +99,7 @@ const UserProfileEdit = () => {
       password: "Admin@123",
       confirmPassword: "Admin@123",
       role: "",
+      isActive: "true",
     },
     validationSchema: Yup.object({
       userName: Yup.string().required(RequiredField("Username")),
@@ -122,6 +131,7 @@ const UserProfileEdit = () => {
         role: values.role,
         password: values.password,
         confirmPassword: values.confirmPassword,
+        isActive: values.isActive === "true",
       };
 
       userAdd(payload)
@@ -180,7 +190,11 @@ const UserProfileEdit = () => {
         phoneNumber: profileData.phoneNumber || "",
         dateOfBirth: profileData.dateOfBirth || "",
         designation: profileData.designation || "",
-        isActive: profileData.isActive || "",
+        isActive:
+          typeof profileData.isActive === "boolean"
+            ? String(profileData.isActive)
+            : "",
+
         // password: profileData.password || "",
         password: "",
         confirmPassword: "",
@@ -319,9 +333,6 @@ const UserProfileEdit = () => {
             <Card className="overflow-visible">
               {loading ? (
                 <div className="m-10 my-5 d-flex justify-content-center">
-                  {/* <Spinner animation="border" role="status">
-                  <span className="visually-hidden">Loading...</span>
-                </Spinner> */}
                   <Skeleton active />
                 </div>
               ) : (
@@ -330,21 +341,7 @@ const UserProfileEdit = () => {
                     <h5 className="justify-start mb-4 text-2xl font-semibold text-start ">
                       {isEditMode ? "Profile" : "Add User"}
                     </h5>
-                    {/* <div > */}
-                    <span className="!justify-end">User Active:- </span>
-                    <Switch
-                      size="default"
-                      checked={formData.isActive}
-                      onClick={() => {
-                        setFormData({
-                          ...formData,
-                          isActive: !formData.isActive,
-                        });
-                      }}
-                      checkedChildren={<CheckOutlined />}
-                      unCheckedChildren={<CloseOutlined />}
-                    />
-                    {/* </div> */}
+
                     {hasMounted && isEditMode && (
                       <form onSubmit={handleSubmitEdit}>
                         <div className="flex flex-col items-center mb-4">
@@ -588,6 +585,50 @@ const UserProfileEdit = () => {
                             sm={12}
                             xl={6}
                             lg={6}
+                            className="mb-3 md:mb-4 lg:mb-4 xl:mb-4 sm:mb-4"
+                          >
+                            <BaseSelect
+                              label="Status"
+                              name="isActive"
+                              className="select-border"
+                              options={status}
+                              placeholder={InputPlaceHolder("Status")}
+                              handleChange={(
+                                selectedOption: SelectedOption
+                              ) => {
+                                formData.isActive = selectedOption?.value || "";
+                              }}
+                              handleBlur={validation.handleBlur}
+                              value={
+                                dynamicFind(status, formData?.isActive) || ""
+                              }
+                              isRequired={false}
+                              menuPortalTarget={
+                                typeof window !== "undefined"
+                                  ? document.body
+                                  : null
+                              }
+                              menuPosition="fixed"
+                              styles={{
+                                menuPortal: (base: any) => ({
+                                  ...base,
+                                  zIndex: 9999,
+                                }),
+                                menuList: (provided: any) => ({
+                                  ...provided,
+                                  maxHeight: 200,
+                                  overflowY: "auto",
+                                }),
+                              }}
+                            />
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col
+                            md={6}
+                            sm={12}
+                            xl={6}
+                            lg={6}
                             className="mb-4 md:mb-4 lg:mb-4 xl:mb-4 "
                           >
                             <BaseInput
@@ -607,8 +648,6 @@ const UserProfileEdit = () => {
                               isRequired={false}
                             />
                           </Col>
-                        </Row>
-                        <Row>
                           <Col
                             md={6}
                             sm={12}
@@ -781,6 +820,58 @@ const UserProfileEdit = () => {
                             lg={6}
                             className="mb-3 md:mb-4 lg:mb-4 xl:mb-4 sm:mb-4"
                           >
+                            <BaseSelect
+                              label="Status"
+                              name="isActive"
+                              className="select-border"
+                              options={status}
+                              placeholder={InputPlaceHolder("Status")}
+                              handleChange={(
+                                selectedOption: SelectedOption
+                              ) => {
+                                validation.setFieldValue(
+                                  "isActive",
+                                  selectedOption?.value || ""
+                                );
+                              }}
+                              handleBlur={validation.handleBlur}
+                              value={
+                                dynamicFind(
+                                  status,
+                                  validation.values.isActive
+                                ) || ""
+                              }
+                              touched={validation.touched.isActive}
+                              error={validation.errors.isActive}
+                              isRequired={true}
+                              menuPortalTarget={
+                                typeof window !== "undefined"
+                                  ? document.body
+                                  : null
+                              }
+                              menuPosition="fixed"
+                              styles={{
+                                menuPortal: (base: any) => ({
+                                  ...base,
+                                  zIndex: 9999,
+                                }),
+                                menuList: (provided: any) => ({
+                                  ...provided,
+                                  maxHeight: 200,
+                                  overflowY: "auto",
+                                }),
+                              }}
+                            />
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col
+                            md={6}
+                            sm={12}
+                            xl={6}
+                            lg={6}
+                            className="mb-3 md:mb-4 lg:mb-4 xl:mb-4 sm:mb-4"
+                          >
                             <BaseInput
                               label="Password"
                               name="password"
@@ -802,8 +893,6 @@ const UserProfileEdit = () => {
                               isRequired={true}
                             />
                           </Col>
-                        </Row>
-                        <Row>
                           <Col
                             md={6}
                             sm={12}
