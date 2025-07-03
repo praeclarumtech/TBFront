@@ -1,4 +1,3 @@
-
 import { Row, Col, Card, Form } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
@@ -28,7 +27,7 @@ const UpdatePassword = () => {
   const hasMounted = useMounted();
   const navigate = useNavigate();
   const location = useLocation();
-  const { email } = location.state;
+  const email = location.state || "email";
 
   const [passwordShow, setPasswordShow] = useState<boolean>(false);
   const [confirmPassword, setConfirmPassword] = useState<boolean>(false);
@@ -61,7 +60,7 @@ const UpdatePassword = () => {
       const payload = {
         newPassword: values.newPassword,
         confirmPassword: values.confirmPassword,
-        email,
+        email: values.email || email,
       };
       forgotPassword(payload)
         .then((res) => {
@@ -109,6 +108,24 @@ const UpdatePassword = () => {
                   return false;
                 }}
               >
+                {email === "email" ? (
+                  <Form.Group className="mb-3" controlId="email">
+                    <BaseInput
+                      label="Email"
+                      name="email"
+                      type="email"
+                      placeholder={InputPlaceHolder("Email")}
+                      handleChange={validation.handleChange}
+                      handleBlur={validation.handleBlur}
+                      value={validation.values.email}
+                      touched={validation.touched.email}
+                      error={validation.errors.email}
+                      isRequired={true}
+                    />
+                  </Form.Group>
+                ) : (
+                  <></>
+                )}
                 <Form.Group className="mb-3" controlId="email">
                   <BaseInput
                     label={"New Password"}
@@ -128,10 +145,10 @@ const UpdatePassword = () => {
 
                 <Form.Group className="mb-3" controlId="email">
                   <BaseInput
-                    label={"Confirm Passeord"}
+                    label={"Confirm Password"}
                     name="confirmPassword"
                     type={confirmPassword ? "text" : "password"}
-                    placeholder={InputPlaceHolder("confirm passeord")}
+                    placeholder={InputPlaceHolder("confirm password")}
                     handleChange={validation.handleChange}
                     handleBlur={validation.handleBlur}
                     value={validation.values.confirmPassword}

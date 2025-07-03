@@ -161,130 +161,8 @@ const Dashboard = () => {
       <div>
         <div className="pb-23"></div>
         <Container fluid className="px-6 mt-n23">
-          {/* <Row className="pt-3 bg-primary mx-n6 mb-n6 mt-n8">
-            <Col xl={2} lg={4} md={6} xs={6} className="mb-3">
-              <StatRightTopIcon
-                title="Total Applicants"
-                icon={
-                  <PeopleFill
-                    size={25}
-                    strokeWidth={2.5}
-                    onClick={() => navigate("/applicants")}
-                    className="cursor-pointer fw-bold"
-                  />
-                }
-                data={totalApplicants}
-                error={error}
-                classes="icon-shape icon-lg rounded-2 bg-light-primary text-primary fw-bold"
-                isLoading={isLoading}
-              />
-            </Col>
-            <Col xl={2} lg={4} md={6} xs={6} className="mb-3">
-              <StatRightTopIcon
-                title="In Process"
-                icon={<ClockFill size={25} style={{ fontWeight: "bold" }} />}
-                data={inProcessApplicants}
-                error={error}
-                classes="icon-shape icon-lg rounded-2 bg-light-info text-info"
-                isLoading={isLoading}
-              />
-            </Col>
-            <Col xl={2} lg={4} md={6} xs={6} className="mb-3">
-              <StatRightTopIcon
-                title="On Hold"
-                // icon={<GraphUp size={25} />}
-                icon={<HCircleFill size={25} style={{ fontWeight: "bold" }} />}
-                data={holdApplicants}
-                error={error}
-                classes="icon-shape icon-lg rounded-2 bg-light-warning text-warning"
-                isLoading={isLoading}
-              />
-            </Col>
-            {/* <Col xl={2} lg={4} md={6} xs={6} className="mb-3">
-              <StatRightTopIcon
-                title="Total Pending"
-                icon={
-                  <ExclamationCircleFill
-                    size={25}
-                    style={{ fontWeight: "bold" }}
-                  />
-                }
-                data={pendingApplicants}
-                error={error}
-                classes="icon-shape icon-lg rounded-2 bg-light-warning text-warning"
-                isLoading={isLoading}
-              />
-            </Col>
-            <Col xl={2} lg={4} md={6} xs={6} className="mb-3">
-              <StatRightTopIcon
-                title="Selected"
-                icon={
-                  <CheckCircleFilled
-                    style={{ fontSize: 25, fontWeight: "bold" }}
-                  />
-                }
-                data={selectedApplicants}
-                error={error}
-                classes="icon-shape icon-lg rounded-2 bg-light-success text-success"
-                isLoading={isLoading}
-              />
-            </Col>
-            <Col xl={2} lg={4} md={6} xs={6} className="mb-3">
-              <StatRightTopIcon
-                title="Rejected"
-                icon={<XCircleFill size={25} style={{ fontWeight: "bold" }} />}
-                data={rejectedApplicants}
-                error={error}
-                classes="icon-shape icon-lg rounded-2 bg-light-danger text-danger"
-                isLoading={isLoading}
-              />
-            </Col>
-            <Col xl={2} lg={4} md={6} xs={6} className="mb-3">
-              <StatRightTopIcon
-                title="Applied"
-                icon={<PeopleFill size={25} className="fw-bold" />}
-                data={appliedApplicants}
-                error={error}
-                classes="icon-shape icon-lg rounded-2 bg-light-primary text-primary fw-bold"
-                isLoading={isLoading}
-              />
-            </Col>
-
-            <Col xl={2} lg={4} md={6} xs={6} className="mb-3">
-              <StatRightTopIcon
-                title="Shortlisted"
-                icon={<CheckCircleFilled style={{ fontSize: 25 }} />}
-                data={shortListedApplicants}
-                error={error}
-                classes="icon-shape icon-lg rounded-2 bg-light-info text-info"
-                isLoading={isLoading}
-              />
-            </Col>
-
-            <Col xl={2} lg={4} md={6} xs={6} className="mb-3">
-              <StatRightTopIcon
-                title="Onboarded"
-                icon={<CheckCircleFilled style={{ fontSize: 25 }} />}
-                data={onboardedApplicants}
-                error={error}
-                classes="icon-shape icon-lg rounded-2 bg-light-success text-success"
-                isLoading={isLoading}
-              />
-            </Col>
-
-            <Col xl={2} lg={4} md={6} xs={6} className="mb-3">
-              <StatRightTopIcon
-                title="Leaved"
-                icon={<XCircleFill size={25} />}
-                data={leavedApplicants}
-                error={error}
-                classes="icon-shape icon-lg rounded-2 bg-light-danger text-danger"
-                isLoading={isLoading}
-              />
-            </Col>
-          </Row> */}
           <div
-            className="pt-3 applicant-stats-scroll bg-primary mx-n6 mb-n6 mt-n8"
+            className="pt-3 pb-4 applicant-stats-scroll bg-primary mx-n6 mb-n5 mt-n8"
             style={{
               display: "flex",
               overflowX: "auto",
@@ -305,7 +183,7 @@ const Dashboard = () => {
                   }
 
                   .applicant-stats-scroll:hover {
-                    -ms-overflow-style: auto; /* IE and Edge */
+                    -ms-overflow-style: thin; /* IE and Edge */
                     scrollbar-width: thin;    /* Firefox */
                   }
 
@@ -317,11 +195,12 @@ const Dashboard = () => {
                   .applicant-stats-scroll:hover::-webkit-scrollbar-thumb {
                     background: rgba(0,0,0,0.3); /* thumb color */
                     border-radius: 4px;
+                    height: 12px;
                   }
 
-                  .applicant-stats-scroll:hover::-webkit-scrollbar-track {
-                    background: transparent; /* optional */
-                  }
+                  // .applicant-stats-scroll:hover::-webkit-scrollbar-track {
+                  //   background: transparent; /* optional */
+                  // }
               `}
             </style>
 

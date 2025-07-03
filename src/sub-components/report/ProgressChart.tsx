@@ -35,7 +35,22 @@ const Charts = () => {
 
   const labels = Object.keys(statusOfApplication).map(formatLabel);
   const values = Object.values(statusOfApplication);
-  const colors = ["#660099", "#d40000", "#0000FF", "#004225", "#FCE903"];
+
+  // Chart.js default colors:
+  const chartJsColors = [
+    "#FF6384", // red
+    "#9966FF", // purple
+    "#36A2EB", // blue
+    "#FFCE56", // yellow
+    "#4BC0C0", // teal
+    "#FF9F40", // orange
+    "#00A950", // green
+  ];
+
+  // Apply colors in sequence
+  const colors = labels.map((_, index) => {
+    return chartJsColors[index % chartJsColors.length];
+  });
 
   const barChartOptions: ApexOptions = {
     chart: {
@@ -51,6 +66,7 @@ const Charts = () => {
         distributed: true,
       },
     },
+    colors: colors,
     dataLabels: {
       enabled: true,
       offsetX: 25,
@@ -80,12 +96,11 @@ const Charts = () => {
         },
       },
     },
-    colors: colors,
     tooltip: {
       custom: function ({ series, seriesIndex, dataPointIndex, w }) {
         const label = w.globals.labels[dataPointIndex];
         const value = series[seriesIndex][dataPointIndex];
-        const color = colors[dataPointIndex];
+        const color = w.globals.colors[dataPointIndex];
 
         return `
           <div style="padding:10px 15px; background:white; border-radius:8px; box-shadow:0px 4px 12px rgba(0,0,0,0.1); font-family:Arial, sans-serif;">

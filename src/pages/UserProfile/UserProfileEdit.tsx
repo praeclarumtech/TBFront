@@ -43,6 +43,8 @@ const UserProfileEdit = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState("");
   const [touched, setTouched] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] =
+    useState<boolean>(false);
 
   const [loadingImage, setLoadingImage] = useState<boolean>(false);
   const [formData, setFormData] = useState<ProfileFormData>({
@@ -54,6 +56,9 @@ const UserProfileEdit = () => {
     phoneNumber: "",
     dateOfBirth: "",
     designation: "",
+    isActive: "",
+    password: "",
+    confirmPassword: "",
   });
   interface RoleOption {
     label: string;
@@ -67,6 +72,15 @@ const UserProfileEdit = () => {
     { label: "Vendor", value: "vendor" },
     { label: "Guest", value: "guest" },
     // Remove the empty option if not needed
+  ];
+
+  interface StatusOption {
+    label: string;
+    value: string;
+  }
+  const status: StatusOption[] = [
+    { label: "Active", value: "true" },
+    { label: "In Active", value: "false" },
   ];
 
   const { _id } = useParams();
@@ -85,6 +99,7 @@ const UserProfileEdit = () => {
       password: "Admin@123",
       confirmPassword: "Admin@123",
       role: "",
+      isActive: "true",
     },
     validationSchema: Yup.object({
       userName: Yup.string().required(RequiredField("Username")),
@@ -115,7 +130,8 @@ const UserProfileEdit = () => {
         email: values.email,
         role: values.role,
         password: values.password,
-        confirmPassword: values.password,
+        confirmPassword: values.confirmPassword,
+        isActive: values.isActive === "true",
       };
 
       userAdd(payload)
@@ -174,6 +190,14 @@ const UserProfileEdit = () => {
         phoneNumber: profileData.phoneNumber || "",
         dateOfBirth: profileData.dateOfBirth || "",
         designation: profileData.designation || "",
+        isActive:
+          typeof profileData.isActive === "boolean"
+            ? String(profileData.isActive)
+            : "",
+
+        // password: profileData.password || "",
+        password: "",
+        confirmPassword: "",
       });
 
       setImagePreview(
@@ -191,8 +215,14 @@ const UserProfileEdit = () => {
 
   const handleSubmitEdit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match");
+      // toast.error("Passwords do not match");
+      // return;
+    }
     if (error) {
-      toast.error("Kindly correct the errors before submitting the changes.");
+      toast.error(error);
+      setError("");
       return;
     }
 
@@ -303,9 +333,6 @@ const UserProfileEdit = () => {
             <Card className="overflow-visible">
               {loading ? (
                 <div className="m-10 my-5 d-flex justify-content-center">
-                  {/* <Spinner animation="border" role="status">
-                  <span className="visually-hidden">Loading...</span>
-                </Spinner> */}
                   <Skeleton active />
                 </div>
               ) : (
@@ -314,6 +341,7 @@ const UserProfileEdit = () => {
                     <h5 className="justify-start mb-4 text-2xl font-semibold text-start ">
                       {isEditMode ? "Profile" : "Add User"}
                     </h5>
+
                     {hasMounted && isEditMode && (
                       <form onSubmit={handleSubmitEdit}>
                         <div className="flex flex-col items-center mb-4">
@@ -343,6 +371,7 @@ const UserProfileEdit = () => {
                               id="profilePicInput"
                               onChange={handleProfilePicChange}
                             />
+
                             <button
                               type="button"
                               className="text-sm px-4 py-1.5 bg-gray-200 rounded-md"
@@ -551,6 +580,120 @@ const UserProfileEdit = () => {
                               handleBlur={handleBlur}
                             />
                           </Col>
+                          <Col
+                            md={6}
+                            sm={12}
+                            xl={6}
+                            lg={6}
+                            className="mb-3 md:mb-4 lg:mb-4 xl:mb-4 sm:mb-4"
+                          >
+                            <BaseSelect
+                              label="Status"
+                              name="isActive"
+                              className="select-border"
+                              options={status}
+                              placeholder={InputPlaceHolder("Status")}
+                              handleChange={(
+                                selectedOption: SelectedOption
+                              ) => {
+                                formData.isActive = selectedOption?.value || "";
+                              }}
+                              handleBlur={validation.handleBlur}
+                              value={
+                                dynamicFind(status, formData?.isActive) || ""
+                              }
+                              isRequired={false}
+                              menuPortalTarget={
+                                typeof window !== "undefined"
+                                  ? document.body
+                                  : null
+                              }
+                              menuPosition="fixed"
+                              styles={{
+                                menuPortal: (base: any) => ({
+                                  ...base,
+                                  zIndex: 9999,
+                                }),
+                                menuList: (provided: any) => ({
+                                  ...provided,
+                                  maxHeight: 200,
+                                  overflowY: "auto",
+                                }),
+                              }}
+                            />
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col
+                            md={6}
+                            sm={12}
+                            xl={6}
+                            lg={6}
+                            className="mb-4 md:mb-4 lg:mb-4 xl:mb-4 "
+                          >
+                            <BaseInput
+                              label="Password"
+                              name="password"
+                              type="password"
+                              placeholder={InputPlaceHolder("Password")}
+                              handleChange={(e) => {
+                                setFormData({
+                                  ...formData,
+                                  password: e.target.value, // Don't sanitize emails - let backend validation handle it
+                                });
+                              }}
+                              handleBlur={validation.handleBlur}
+                              value={formData?.password}
+                              passwordToggle={true}
+                              isRequired={false}
+                            />
+                          </Col>
+                          <Col
+                            md={6}
+                            sm={12}
+                            xl={6}
+                            lg={6}
+                            className="mb-4 md:mb-4 lg:mb-4 xl:mb-4 "
+                          >
+                            <BaseInput
+                              label="Confirm Password"
+                              name="confirmPassword"
+                              type={showConfirmPassword ? "text" : "password"}
+                              placeholder={InputPlaceHolder("confirm password")}
+                              handleChange={(e) => {
+                                const confirmPassword = e.target.value;
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  confirmPassword: confirmPassword,
+                                }));
+                                // Live check
+                                if (
+                                  formData.password &&
+                                  formData.password !== confirmPassword
+                                ) {
+                                  setError("Passwords do not match");
+                                } else {
+                                  setError("");
+                                }
+                              }}
+                              value={formData.confirmPassword}
+                              passwordToggle={true}
+                              onclick={() =>
+                                setShowConfirmPassword(!showConfirmPassword)
+                              }
+                            />
+                            {error && (
+                              <div
+                                style={{
+                                  color: "red",
+                                  fontSize: "0.8rem",
+                                  marginTop: "0.25rem",
+                                }}
+                              >
+                                {error}
+                              </div>
+                            )}
+                          </Col>
                         </Row>
                         <div className="flex justify-end gap-4 ">
                           <>
@@ -677,6 +820,58 @@ const UserProfileEdit = () => {
                             lg={6}
                             className="mb-3 md:mb-4 lg:mb-4 xl:mb-4 sm:mb-4"
                           >
+                            <BaseSelect
+                              label="Status"
+                              name="isActive"
+                              className="select-border"
+                              options={status}
+                              placeholder={InputPlaceHolder("Status")}
+                              handleChange={(
+                                selectedOption: SelectedOption
+                              ) => {
+                                validation.setFieldValue(
+                                  "isActive",
+                                  selectedOption?.value || ""
+                                );
+                              }}
+                              handleBlur={validation.handleBlur}
+                              value={
+                                dynamicFind(
+                                  status,
+                                  validation.values.isActive
+                                ) || ""
+                              }
+                              touched={validation.touched.isActive}
+                              error={validation.errors.isActive}
+                              isRequired={true}
+                              menuPortalTarget={
+                                typeof window !== "undefined"
+                                  ? document.body
+                                  : null
+                              }
+                              menuPosition="fixed"
+                              styles={{
+                                menuPortal: (base: any) => ({
+                                  ...base,
+                                  zIndex: 9999,
+                                }),
+                                menuList: (provided: any) => ({
+                                  ...provided,
+                                  maxHeight: 200,
+                                  overflowY: "auto",
+                                }),
+                              }}
+                            />
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col
+                            md={6}
+                            sm={12}
+                            xl={6}
+                            lg={6}
+                            className="mb-3 md:mb-4 lg:mb-4 xl:mb-4 sm:mb-4"
+                          >
                             <BaseInput
                               label="Password"
                               name="password"
@@ -684,27 +879,41 @@ const UserProfileEdit = () => {
                               placeholder={InputPlaceHolder("Password")}
                               handleChange={(e) => {
                                 const newPassword = e.target.value;
-                                // Update both password and confirmPassword fields
+
                                 validation.setFieldValue(
                                   "password",
-                                  newPassword
-                                );
-                                validation.setFieldValue(
-                                  "confirmPassword",
                                   newPassword
                                 );
                               }}
                               handleBlur={validation.handleBlur}
                               value={validation.values.password}
-                              touched={
-                                validation.touched.password ||
-                                validation.touched.confirmPassword
-                              }
-                              error={
-                                validation.errors.password ||
-                                validation.errors.confirmPassword
-                              }
+                              touched={validation.touched.password}
+                              error={validation.errors.password}
                               passwordToggle={true}
+                              isRequired={true}
+                            />
+                          </Col>
+                          <Col
+                            md={6}
+                            sm={12}
+                            xl={6}
+                            lg={6}
+                            className="mb-3 md:mb-4 lg:mb-4 xl:mb-4 sm:mb-4"
+                          >
+                            <BaseInput
+                              label="Confirm Password"
+                              name="confirmPassword"
+                              type={showConfirmPassword ? "text" : "password"}
+                              placeholder={InputPlaceHolder("confirm password")}
+                              handleChange={validation.handleChange}
+                              handleBlur={validation.handleBlur}
+                              value={validation.values.confirmPassword}
+                              touched={validation.touched.confirmPassword}
+                              error={validation.errors.confirmPassword}
+                              passwordToggle={true}
+                              onclick={() =>
+                                setShowConfirmPassword(!showConfirmPassword)
+                              }
                               isRequired={true}
                             />
                           </Col>
