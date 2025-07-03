@@ -593,10 +593,18 @@ const UserProfileEdit = () => {
                               className="select-border"
                               options={status}
                               placeholder={InputPlaceHolder("Status")}
+                              // handleChange={(
+                              //   selectedOption: SelectedOption
+                              // ) => {
+                              //   formData.isActive = selectedOption?.value || "";
+                              // }}
                               handleChange={(
                                 selectedOption: SelectedOption
                               ) => {
-                                formData.isActive = selectedOption?.value || "";
+                                setFormData({
+                                  ...formData,
+                                  isActive: selectedOption?.value || "",
+                                });
                               }}
                               handleBlur={validation.handleBlur}
                               value={
