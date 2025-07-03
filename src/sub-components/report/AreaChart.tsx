@@ -6,13 +6,14 @@ import {
   Tooltip,
   Legend,
   ChartOptions,
+  Colors,
 } from "chart.js";
 import { Dropdown } from "react-bootstrap";
 import Skeleton from "react-loading-skeleton";
 import { getaddedbyReport } from "api/reportApi"; // <-- Make sure this path is correct
 import BaseButton from "components/BaseComponents/BaseButton";
 
-ChartJS.register(ArcElement, Tooltip, Legend);
+ChartJS.register(ArcElement, Tooltip, Legend, Colors);
 
 const PieChart = () => {
   const [application, setApplication] = useState<Record<string, number>>({});
@@ -38,7 +39,6 @@ const PieChart = () => {
       const end = formatDateTime(endDate);
 
       const response = await getaddedbyReport(start, end);
-      console.log(response);
       setApplication(response?.data || {});
     } catch (error) {
       console.error("API Error:", error);
@@ -79,12 +79,6 @@ const PieChart = () => {
       {
         label: "Applications",
         data: values,
-        backgroundColor: [
-          "#0000FF", // Resume
-          "#004225", // Manual
-          "#d40000", // CSV
-          "#FCE903", //Guest
-        ],
         borderWidth: 1,
       },
     ],

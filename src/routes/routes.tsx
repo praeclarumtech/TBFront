@@ -146,6 +146,11 @@ const routes = {
     path: "/applicants/qr-code-success",
     element: SuccessPage,
   },
+    EMAIL_SEND: {
+    title: "Success",
+    path: "/email/email-sent",
+    element: SuccessPage,
+  },
   JOB_OPEN: {
     title: "Job Submit",
     path: "master/job3/:id",

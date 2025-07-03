@@ -113,7 +113,6 @@ const UserManagement = () => {
     setShowDeleteModal(true);
   };
 
-
   const columns = useMemo(
     () => [
       {
@@ -319,7 +318,7 @@ const UserManagement = () => {
                 </div>
               </Col>
             </Row>
-            {isLoading ? (
+            {tableLoader ? (
               <div className="m-3">
                 <Skeleton count={10} />
               </div>

@@ -31,7 +31,7 @@ const BaseInput = ({
       {label && (
         <Label
           htmlFor={name}
-          className="form-label text-gray-700 font-semibold"
+          className="font-semibold text-gray-700 form-label"
         >
           {label}
           {isRequired && <span className="text-red-500">*</span>}
@@ -63,7 +63,7 @@ const BaseInput = ({
         ) : (
           <div>
             {/* Password Input Field */}
-            <div className="inline-flex w-full">
+            <div className="relative inline-flex w-full">
               <Input
                 name={name}
                 value={value || ""}
@@ -81,7 +81,7 @@ const BaseInput = ({
               <BaseButton
                 color="link"
                 onClick={togglePasswordVisibility}
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 "
+                className="absolute text-gray-500 transform -translate-y-1/2 right-4 top-1/2 "
                 type="button"
                 id="password-addon"
               >

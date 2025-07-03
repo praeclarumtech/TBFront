@@ -12,7 +12,6 @@ import { useState } from "react";
 import appConstants from "constants/constant";
 import { errorHandle, InputPlaceHolder } from "utils/commonFunctions";
 
-
 const {
   projectTitle,
   CREATED,
@@ -46,7 +45,8 @@ const ForgetPassword = () => {
       sendOtp(values)
         .then((res) => {
           if (res?.statusCode === CREATED && res?.success === SUCCESS) {
-            navigate("/email-verify", { state: { email } });
+            // navigate("/email-verify", { state: { email } });
+            navigate("/email/email-sent", { state: { email } });
             toast.success(res?.message);
           } else {
             toast.error(res?.message);
@@ -73,7 +73,7 @@ const ForgetPassword = () => {
                   alt=""
                 /> */}
 
-                <h4 className="text-dark font-bold text-3xl justify-center text-center ">
+                <h4 className="justify-center text-3xl font-bold text-center text-dark ">
                   Talent<span className="text-primary bold ">Box</span>{" "}
                 </h4>
               </Link>
@@ -121,7 +121,7 @@ const ForgetPassword = () => {
                   Don&apos;t have an account?{" "}
                   <a
                     onClick={() => navigate("/sign-up")}
-                    className="text-primary cursor-pointer"
+                    className="cursor-pointer text-primary"
                   >
                     Sign Up
                   </a>

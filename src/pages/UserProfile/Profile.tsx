@@ -10,14 +10,14 @@ import { ProfileFormData } from "interfaces/user.interface";
 import { toast } from "react-toastify";
 import appEnv from "config/appEnv";
 import BaseInput from "components/BaseComponents/BaseInput";
-import { dynamicFind, InputPlaceHolder } from "utils/commonFunctions";
-import { BaseSelect } from "components/BaseComponents/BaseSelect";
-import { SelectedOption } from "interfaces/applicant.interface";
+import { InputPlaceHolder } from "utils/commonFunctions";
+// import { BaseSelect } from "components/BaseComponents/BaseSelect";
+// import { SelectedOption } from "interfaces/applicant.interface";
 import BaseButton from "components/BaseComponents/BaseButton";
 import { useNavigate } from "react-router";
 // import { statusCode } from '../../interfaces/global.interface';
 
-const { projectTitle, Modules, gendersType } = appConstants;
+const { projectTitle, Modules } = appConstants;
 const Profile = () => {
   document.title = Modules.Profile + " | " + projectTitle;
   const hasMounted = useMounted();
@@ -33,7 +33,6 @@ const Profile = () => {
     lastName: "",
     email: "",
     phoneNumber: "",
-    gender: "",
     dateOfBirth: "",
     designation: "",
   });
@@ -73,7 +72,6 @@ const Profile = () => {
         lastName: profileData.lastName || "",
         email: profileData.email || "",
         phoneNumber: profileData.phoneNumber || "",
-        gender: profileData.gender || "",
         dateOfBirth: profileData.dateOfBirth || "",
         designation: profileData.designation || "",
       });
@@ -133,6 +131,7 @@ const Profile = () => {
             ? `${appEnv.API_ENDPOINT}/uploads/profile/${response.data.profilePicture}`
             : imagePreview
         );
+        navigate("/dashboard");
       }
     } catch (error) {
       // if (error && statusCode === 400) {
@@ -166,7 +165,6 @@ const Profile = () => {
       fileReader.readAsDataURL(file);
     }
   };
-
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const date = e.target.value;
@@ -410,7 +408,9 @@ const Profile = () => {
                       </Row>
 
                       <Row>
-                        <Col
+                        {/* gender field removed */}
+
+                        {/* <Col
                           md={6}
                           sm={12}
                           xl={6}
@@ -433,7 +433,7 @@ const Profile = () => {
                               dynamicFind(gendersType, formData.gender) || ""
                             }
                           />
-                        </Col>
+                        </Col> */}
                         <Col
                           md={6}
                           sm={12}

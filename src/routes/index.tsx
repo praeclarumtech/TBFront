@@ -61,6 +61,7 @@ const RenderRouter: React.FC = () => {
     JOB_ADD_QR_CODE,
     JOB_EDIT_QR_CODE,
     JOB_OPEN,
+    EMAIL_SEND,
   } = routes;
 
   const router = createBrowserRouter(
@@ -77,6 +78,7 @@ const RenderRouter: React.FC = () => {
         <Route path={APPLICANT_ADD_QR_CODE.path} element={<QrFrom />} />
         <Route path={APPLICANT_EDIT_QR_CODE.path} element={<QrFrom />} />
         <Route path={APPLICANT_SUCCESS.path} element={<SuccessPage />} />
+        <Route path={EMAIL_SEND.path} element={<SuccessPage />} />
 
         <Route element={<PrivateRoute component={() => <RootLayout />} />}>
           <Route
