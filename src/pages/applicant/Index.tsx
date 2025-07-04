@@ -743,7 +743,7 @@ const Applicant = () => {
     if (selectedApplicant) {
       navigate("/email/compose", {
         state: {
-          email_to: selectedApplicant.email,
+          email_bcc: selectedApplicant.email,
           name: selectedApplicant.name,
           fromPage: location.pathname,
         },

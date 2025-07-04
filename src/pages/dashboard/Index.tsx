@@ -66,7 +66,7 @@ const Dashboard = () => {
     setIsLoading(true);
     try {
       const data = await getTotalApplicants();
-      console.log(data);
+
       setTotalApplicants(data.data.totalApplicants);
       setHoldApplicants(data.data.holdApplicants);
       // setPendingApplicants(data.data.pendingApplicants);

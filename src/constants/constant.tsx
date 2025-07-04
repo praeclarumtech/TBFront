@@ -414,7 +414,11 @@ const appConstants = Object.freeze({
     { label: "Yes", value: true },
     { label: "No", value: false },
   ],
-
+  SalaryFrequency: [
+    { label: "Monthly", value: "monthly" },
+    { label: "Quaterly", value: "quaterly" },
+    { label: "Yearly", value: "yearly" },
+  ],
   noticePeriodOptions: [
     { value: "0", label: "Immediate" },
     { value: "1-10", label: "1-10 days" },

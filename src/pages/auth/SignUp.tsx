@@ -17,6 +17,7 @@ import {
   InputPlaceHolder,
   RequiredField,
 } from "utils/commonFunctions";
+import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 
 const {
   projectTitle,
@@ -40,6 +41,7 @@ const SignUp = () => {
   const roleType = [
     { label: "HR", value: "hr" },
     { label: "Admin", value: "admin" },
+    { label: "Guest", value: "guest" },
   ];
 
   const validation = useFormik({
@@ -242,12 +244,27 @@ const SignUp = () => {
                     </Form.Check>
                   </div> */}
 
-                  <div>
+                  {/* <div>
                     <div className="d-grid">
+                      <div className="mt-2 mb-2 w-50">
+                        <GoogleOAuthProvider clientId="YOUR_CLIENT_ID_HERE">
+                          <GoogleLogin
+                            onSuccess={(credentialResponse) => {
+                              console.log(
+                                "Google Credential (ID Token):",
+                                credentialResponse.credential
+                              );
+                            }}
+                            onError={() => {
+                              console.log("Login Failed");
+                            }}
+                          />
+                        </GoogleOAuthProvider>
+                      </div>
                       <BaseButton
                         color="primary"
                         disabled={loader}
-                        className="w-100"
+                        className="w-50"
                         type="submit"
                         loader={loader}
                       >
@@ -257,7 +274,7 @@ const SignUp = () => {
                     <div className="mt-4 d-md-flex justify-content-between">
                       <div className="mb-2 mb-md-0">
                         <div onClick={() => navigate("/")} className="fs-5">
-                          {/* Already member? <a className="cursor-pointer text-primary">Login</a>{" "} */}
+                          {/* Already member? <a className="cursor-pointer text-primary">Login</a>{" "} 
                           Already have an account?{" "}
                           <a className="cursor-pointer text-primary">Login</a>{" "}
                         </div>
@@ -266,6 +283,53 @@ const SignUp = () => {
                         <div
                           onClick={() => navigate("/forgot-password")}
                           className=" fs-5"
+                        >
+                          <a className="cursor-pointer text-primary">
+                            Forgot your password?
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>  */}
+                  <div>
+                    <div className="gap-3 mt-2 mb-2 d-flex">
+                      <div className="w-50">
+                        <GoogleOAuthProvider clientId="YOUR_CLIENT_ID_HERE">
+                          <GoogleLogin
+                            onSuccess={(credentialResponse) => {
+                              console.log(
+                                "Google Credential (ID Token):",
+                                credentialResponse.credential
+                              );
+                            }}
+                            onError={() => {
+                              console.log("Login Failed");
+                            }}
+                          />
+                        </GoogleOAuthProvider>
+                      </div>
+                      <BaseButton
+                        color="primary"
+                        disabled={loader}
+                        className="w-50"
+                        type="submit"
+                        loader={loader}
+                      >
+                        {ButtonEnums.Submit}
+                      </BaseButton>
+                    </div>
+
+                    <div className="mt-4 d-md-flex justify-content-between">
+                      <div className="mb-2 mb-md-0">
+                        <div onClick={() => navigate("/")} className="fs-5">
+                          Already have an account?{" "}
+                          <a className="cursor-pointer text-primary">Login</a>
+                        </div>
+                      </div>
+                      <div>
+                        <div
+                          onClick={() => navigate("/forgot-password")}
+                          className="fs-5"
                         >
                           <a className="cursor-pointer text-primary">
                             Forgot your password?
