@@ -162,3 +162,10 @@ export const CREATE_JOB = "/job";
 export const DELETE_JOB = "/job/delete";
 export const VIEW_JOB_ID = "/job";
 export const UPDATE_JOB = "/job";
+export const VIEW_JOB_PUBLIC = "/job/public/viewJobs";
+
+//Vendor
+
+export const VIEW_APPLIED_JOB_USER = "/vendor/myApplications";
+export const JOB_SCORE = "/job/jobScore"
+export const ADD_JOB_APPLICATION = "job/addJobApplication"

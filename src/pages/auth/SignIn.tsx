@@ -17,15 +17,18 @@ import {
   setAuthData,
   // setItem
 } from "utils/commonFunctions";
+import { jwtDecode } from "jwt-decode";
+import { useLocation } from "react-router-dom";
 
 const { projectTitle, Modules, validationMessages, emailRegex, OK, SUCCESS } =
   appConstants;
 
 const SignIn = () => {
   document.title = Modules.Login + " | " + projectTitle;
-
   const navigate = useNavigate();
   const [loader, setLoader] = useState(false);
+  const location = useLocation();
+  const from = location?.state?.from || "/";
 
   const validation: any = useFormik({
     enableReinitialize: true,
@@ -49,20 +52,17 @@ const SignIn = () => {
       setLoader(true);
       login(payload)
         .then((res) => {
-          // if (res?.statusCode === OK && res?.success === SUCCESS) {
-          //   setItem("authUser", res?.data);
-
-          //   const decode = jwtDecode<any>(res?.data);
-          //   const role = decode.role;
-          //   const id = decode.id;
-          //   setItem("role", role);
-          //   setItem("id", id);
-          //   navigate("/dashboard");
-          //   toast.success(res?.message);
-          // }
           if (res?.statusCode === OK && res?.success === SUCCESS) {
             setAuthData(res.data);
-            navigate("/dashboard");
+
+            const decoded: any = jwtDecode(res.data);
+            const role = decoded.role;
+
+            if (role === "guest") {
+              navigate(from, { replace: true });
+            } else {
+              navigate("/dashboard");
+            }
             toast.success(res?.message);
           } else {
             toast.error(res?.message);
@@ -84,10 +84,10 @@ const SignIn = () => {
           <Card className="smooth-shadow-md">
             <Card.Body className="p-6">
               <div className="mb-4">
-                <h4 className="text-dark font-bold text-3xl justify-center text-center ">
+                <h4 className="justify-center text-3xl font-bold text-center text-dark ">
                   Talent<span className="text-primary bold ">Box</span>{" "}
                 </h4>
-                <p className="mb-6 justify-center text-center  text-base">
+                <p className="justify-center mb-6 text-base text-center">
                   Sign In using your Credentials
                 </p>
               </div>
@@ -143,7 +143,7 @@ const SignIn = () => {
                         Sign In
                       </BaseButton>
                     </div>
-                    <div className="d-md-flex justify-content-between mt-4">
+                    <div className="mt-4 d-md-flex justify-content-between">
                       <div className="mb-2 mb-md-0">
                         <a
                           href="#"
@@ -156,7 +156,7 @@ const SignIn = () => {
                       <div>
                         <a
                           href="#"
-                          className="text-primary cursor-pointer fs-5"
+                          className="cursor-pointer text-primary fs-5"
                           onClick={() => navigate("/forgot-password")}
                         >
                           Forgot your password?

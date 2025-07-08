@@ -65,7 +65,7 @@ const UpdatePassword = () => {
       forgotPassword(payload)
         .then((res) => {
           if (res?.statusCode === ACCEPTED && res?.success === SUCCESS) {
-            navigate("/");
+            navigate("/login");
             toast.success(res?.message);
           } else {
             toast.error(res?.message);
@@ -176,7 +176,7 @@ const UpdatePassword = () => {
                 <span>
                   Don&apos;t have an account?{" "}
                   <a
-                    onClick={() => navigate("/")}
+                    onClick={() => navigate("/login")}
                     className="cursor-pointer text-primary"
                   >
                     Sign In

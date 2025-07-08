@@ -4,6 +4,7 @@ import {
   UPDATE_JOB,
   VIEW_ALL_JOB,
   VIEW_JOB_ID,
+  VIEW_JOB_PUBLIC,
 } from "./apiRoutes";
 import { authServices } from "./apiServices";
 
@@ -38,5 +39,25 @@ export const viewJobById = async (data: { _id: any } = { _id: "" }) => {
 
 export const updateJob = async (id: string, data: any) => {
   const response = await authServices.put(`${UPDATE_JOB}/${id}`, data);
+  return response?.data;
+};
+
+export const viewAllJobPublic = async (params: {
+  search?: string;
+  page?: number;
+  pageSize?: number;
+  limit?: number;
+  salary_frequency?: string;
+  required_skills?: string;
+  min_experience?: string;
+  work_preference?: string;
+  min_salary?: number;
+  job_subject?: string;
+  job_description?: string;
+  job_location?: string;
+}) => {
+  const response = await authServices.get(`${VIEW_JOB_PUBLIC}`, {
+    params,
+  });
   return response?.data;
 };

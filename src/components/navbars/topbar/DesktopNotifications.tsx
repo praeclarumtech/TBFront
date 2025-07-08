@@ -110,7 +110,7 @@ export const DesktopNotifications = () => {
             <Dropdown.Item
               onClick={() => {
                 logout();
-                navigate("/");
+                navigate("/login");
                 window.location.reload();
               }}
             >

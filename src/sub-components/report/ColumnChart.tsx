@@ -1,8 +1,10 @@
 
+
 import { useEffect, useState } from "react";
 import Chart from "react-apexcharts";
 import { getCityState } from "api/reportApi";
 import Skeleton from "react-loading-skeleton";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
   selectedFilter: string;
@@ -14,6 +16,8 @@ const ColumnChart = ({ selectedFilter }: Props) => {
   const [dataSeries, setDataSeries] = useState<number[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchData();
@@ -52,11 +56,25 @@ const ColumnChart = ({ selectedFilter }: Props) => {
   else if (maxValue > 200) stepSize = 75;
   const yAxisMax = Math.ceil(maxValue / stepSize) * stepSize;
   const tickCount = Math.max(5, yAxisMax / stepSize);
+
   const chartOptions = {
     chart: {
       height: 350,
       type: "bar" as const,
       toolbar: { show: false },
+      events: {
+        dataPointSelection: (_event: any, _chartContext: any, config: any) => {
+          const dataPointIndex = config.dataPointIndex;
+          const clickedLabel = categories[dataPointIndex];
+          if (clickedLabel) {
+            navigate(
+              `/applicants?filter=${encodeURIComponent(
+                clickedLabel
+              )}&type=${selectedFilter}`
+            );
+          }
+        },
+      },
     },
     plotOptions: {
       bar: {
@@ -106,18 +124,16 @@ const ColumnChart = ({ selectedFilter }: Props) => {
         formatter: (val: number) => `${val}`,
       },
     },
-   
     tooltip: {
       custom: ({ series, seriesIndex, dataPointIndex }: any) => {
         const fullLabel = categories[dataPointIndex];
         const value = series[seriesIndex][dataPointIndex];
         return `<div style="padding: 8px;color:#212B36;">
-              <strong style="color:#624BFF; ">${fullLabel}</strong><br />
+              <strong style="color:#624BFF;">${fullLabel}</strong><br />
               ${value} Applicants
             </div>`;
       },
     },
-
     grid: {
       padding: {
         bottom: 40,
