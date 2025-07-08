@@ -59,14 +59,14 @@ export const MobileNotifications = () => {
             align="end"
             aria-labelledby="dropdownUser"
           >
-            <Dropdown.Item as="div" className="px-4 pb-0 pt-2" bsPrefix=" ">
+            <Dropdown.Item as="div" className="px-4 pt-2 pb-0" bsPrefix=" ">
               <div className="lh-1 ">
                 <h5 className="mb-1">{user?.userName}</h5>
                 <span className="text-[12px] text-muted text-center">
                   {user?.role?.toUpperCase()}
                 </span>
               </div>
-              <div className=" dropdown-divider mt-3 mb-2"></div>
+              <div className="mt-3 mb-2  dropdown-divider"></div>
             </Dropdown.Item>
             <Dropdown.Item
               eventKey="2"
@@ -94,7 +94,7 @@ export const MobileNotifications = () => {
             <Dropdown.Item
               onClick={() => {
                 logout();
-                navigate("/");
+                navigate("/login");
                 window.location.reload();
               }}
             >

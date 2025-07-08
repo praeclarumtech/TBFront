@@ -60,6 +60,7 @@ import { viewRoleSkill } from "api/roleApi";
 import ConfirmModal from "components/BaseComponents/BaseConfirmModal";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import BaseFav from "components/BaseComponents/BaseFav";
+import { useLocation } from "react-router-dom";
 
 const {
   exportableFieldOption,
@@ -78,6 +79,15 @@ const {
 type Anchor = "top" | "right" | "bottom";
 const Applicant = () => {
   document.title = Modules.Applicant + " | " + projectTitle;
+
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const filterFromChart = params.get("filter");
+  const filterTypeChart = params.get("type");
+  const applicantStatusChart = params.get("applicantStatusChart");
+  const addedByChart = params.get("addedByChart");
+  console.log("Clicked filter:", filterFromChart);
+
   const navigate = useNavigate();
   const [loader, setLoader] = useState(false);
   const [applicant, setApplicant] = useState<any[]>([]);
@@ -268,7 +278,9 @@ const Applicant = () => {
       if (addedBy) {
         params.addedBy = addedBy.map((role: any) => role.value).join(",");
       }
-
+      if (addedByChart) {
+        params.addedBy = addedByChart;
+      }
       if (startDate) {
         params.startDate = startDate;
       }
@@ -278,7 +290,9 @@ const Applicant = () => {
       if (filterStatus) {
         params.status = filterStatus.value;
       }
-
+      if (applicantStatusChart) {
+        params.status = applicantStatusChart;
+      }
       if (filterDesignation) {
         params.currentCompanyDesignation = filterDesignation.value;
       }
@@ -305,6 +319,13 @@ const Applicant = () => {
         params.isFavorite = filterFavorite.value;
       }
 
+      if (filterFromChart) {
+        if (filterTypeChart === "city") {
+          params.currentCity = filterFromChart;
+        } else if (filterTypeChart === "state") {
+          params.state = filterFromChart;
+        }
+      }
       const res = await listOfApplicants(params);
       setApplicant(res?.data?.item || res?.data?.results || []);
       setTotalRecords(res?.data?.totalRecords || 0);
@@ -361,6 +382,8 @@ const Applicant = () => {
     filterActiveStatus,
     filterAppliedRole,
     filterFavorite,
+    filterFromChart,
+    applicantStatusChart,
   ]);
 
   const fetchAppliedRole = async () => {
@@ -743,7 +766,7 @@ const Applicant = () => {
     if (selectedApplicant) {
       navigate("/email/compose", {
         state: {
-          email_to: selectedApplicant.email,
+          email_bcc: selectedApplicant.email,
           name: selectedApplicant.name,
           fromPage: location.pathname,
         },

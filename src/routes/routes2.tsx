@@ -29,6 +29,8 @@ import {
 } from "@ant-design/icons";
 import JobForm from "pages/master/JobForm";
 import UserProfileEdit from "pages/UserProfile/UserProfileEdit";
+import SignIn from "pages/auth/SignIn";
+import Vendor from "pages/Vendor/Vendor";
 // import OpenJob from "pages/master/OpenJob";
 
 const routess = {
@@ -39,6 +41,16 @@ const routess = {
   APP: {
     path: "/app",
     title: "",
+  },
+  LOGIN: {
+    path: "/login",
+    title: "Login",
+    element: SignIn,
+  },
+  VENDOR: {
+    title: "Vendor",
+    path: "/",
+    element: Vendor,
   },
   FORGET_PASSWORD: {
     title: "Forgot Password",

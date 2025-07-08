@@ -39,8 +39,14 @@ import JobForm from "pages/master/JobForm";
 import JobListing from "pages/applicant/Job/JobListing";
 import OpenJob from "pages/master/OpenJob";
 import ApplyNow from "pages/applicant/Job/ApplyNow";
+import Vendor from "pages/Vendor/Vendor";
+import SearchJob from "pages/Vendor/SearchJob";
+import DetailedJob from "pages/Vendor/DetailedJob";
+import ApplyNowJob from "pages/Vendor/ApplyNowJob";
 import UserManagement from "pages/UserProfile/UserManagement";
 import UserProfileEdit from "pages/UserProfile/UserProfileEdit";
+import AppliedJobList from "pages/Vendor/AppliedJobList";
+import VendorLayout from "layouts/VendorLayout";
 
 const RenderRouter: React.FC = () => {
   const {
@@ -62,17 +68,33 @@ const RenderRouter: React.FC = () => {
     JOB_EDIT_QR_CODE,
     JOB_OPEN,
     EMAIL_SEND,
+    JOB_SEARCH,
+    DETAILED_JOB,
+    APPLY_NOW_JOB,
+    APPLY_JOB_LIST,
+    LOGIN,
   } = routes;
 
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path={ROOT.path} errorElement={<RootBoundary />}>
-        <Route index element={<SignIn />} />
+        {/* <Route index element={<SignIn />} /> */}
+        <Route path={LOGIN.path} element={<SignIn />} />
         <Route path={SIGN_UP.path} element={<SignUp />} />
         <Route path={FORGET_PASSWORD.path} element={<ForgetPassword />} />
         <Route path={VERIFY_EMAIL.path} element={<EmailVerification />} />
         <Route path={UPDATE_PASSWORD.path} element={<UpdatePassword />} />
-        <Route path={JOB_OPEN.path} element={<OpenJob />} />
+        <Route element={<VendorLayout />}>
+          <Route index element={<Vendor />} />
+
+          {/* <Route path={VENDOR.path} element={<Vendor />} /> */}
+          <Route path={APPLY_NOW_JOB.path} element={<ApplyNowJob />} />
+          <Route path={APPLY_JOB_LIST.path} element={<AppliedJobList />} />
+          <Route path={JOB_SEARCH.path} element={<SearchJob />} />
+          <Route path={DETAILED_JOB.path} element={<DetailedJob />} />
+          <Route path={JOB_OPEN.path} element={<OpenJob />} />
+        </Route>
+
         <Route path={JOB_ADD_QR_CODE.path} element={<ApplyNow />} />
         <Route path={JOB_EDIT_QR_CODE.path} element={<ApplyNow />} />
         <Route path={APPLICANT_ADD_QR_CODE.path} element={<QrFrom />} />
@@ -91,6 +113,7 @@ const RenderRouter: React.FC = () => {
             element={<ImportApplicantTables />}
           />
           <Route path={"job-listing"} element={<JobListing />} />
+
           <Route path={"userProfile"} element={<Profile />} />
           <Route path={"userprofileEdit/:_id"} element={<UserProfileEdit />} />
           <Route path={"userprofileAdd"} element={<UserProfileEdit />} />

@@ -3,10 +3,12 @@ import Chart from "react-apexcharts";
 import { ApexOptions } from "apexcharts";
 import { getStatusOfApplication } from "api/reportApi";
 import Skeleton from "react-loading-skeleton";
+import { useNavigate } from "react-router-dom";
 
 const Charts = () => {
   const [statusOfApplication, setStatusOfApplication] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchStatusOfApplication();
@@ -57,6 +59,20 @@ const Charts = () => {
       type: "bar",
       height: 320,
       toolbar: { show: false },
+      events: {
+        dataPointSelection: function (_event, _chartContext, config) {
+          const dataPointIndex = config.dataPointIndex;
+          const clickedLabel = labels[dataPointIndex];
+          console.log("Clicked label:", clickedLabel);
+          if (clickedLabel) {
+            navigate(
+              `/applicants?applicantStatusChart=${encodeURIComponent(
+                clickedLabel
+              )}`
+            );
+          }
+        },
+      },
     },
     plotOptions: {
       bar: {
@@ -79,6 +95,7 @@ const Charts = () => {
         return val.toString();
       },
     },
+
     xaxis: {
       categories: labels,
       labels: {
