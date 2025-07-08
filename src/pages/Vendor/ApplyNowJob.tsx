@@ -83,36 +83,6 @@ const ApplyNowJob = () => {
       if (response?.success) {
         setScore(response.data.score);
         toast.success("Resume scored successfully!");
-
-        // Start 60s countdown
-        let seconds = 60;
-
-        // Show toast with initial countdown
-        countdownToastId.current = toast.info(
-          `Form will reset in ${seconds}s`,
-          {
-            autoClose: false,
-            closeOnClick: false,
-            draggable: false,
-            toastId: "countdown-toast",
-          }
-        );
-
-        // Start timer
-        const interval = setInterval(() => {
-          seconds -= 1;
-
-          if (countdownToastId.current) {
-            toast.update(countdownToastId.current, {
-              render: `Form will reset in ${seconds}s`,
-            });
-          }
-
-          if (seconds <= 0) {
-            clearInterval(interval);
-            handleRemoveFile();
-          }
-        }, 1000);
       } else {
         throw new Error(response?.message || "Scoring failed");
       }

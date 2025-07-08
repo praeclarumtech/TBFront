@@ -90,7 +90,7 @@ const SignUp = () => {
             toast.success(res?.message);
             resetForm();
             resetData();
-            navigate("/");
+            navigate("/login");
           } else {
             toast.error(res?.message);
           }
@@ -321,7 +321,7 @@ const SignUp = () => {
 
                     <div className="mt-4 d-md-flex justify-content-between">
                       <div className="mb-2 mb-md-0">
-                        <div onClick={() => navigate("/")} className="fs-5">
+                        <div onClick={() => navigate("/login")} className="fs-5">
                           Already have an account?{" "}
                           <a className="cursor-pointer text-primary">Login</a>
                         </div>

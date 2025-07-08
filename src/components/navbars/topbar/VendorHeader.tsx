@@ -20,8 +20,8 @@ const VendorHeader = () => {
   else if (path.includes("/detailed-job/:id")) selectedKey = "jobs";
   else if (path.includes("/job-search")) selectedKey = "search-jobs";
   else if (path.includes("/jobs")) selectedKey = "jobs";
-  else if (path.includes("/Vendor")) selectedKey = "home";
-  else if (path.includes("/")) selectedKey = "login";
+  else if (path.includes("/")) selectedKey = "home";
+  else if (path.includes("/login")) selectedKey = "login";
 
   const handleNavigate = (key: string) => {
     switch (key) {
@@ -32,7 +32,7 @@ const VendorHeader = () => {
       case "view-applications":
         if (!isLoggedIn) {
           var path = "/Vendor/appliedJobList";
-          navigate("/", {
+          navigate("/login", {
             state: {
               from: path || "/dashboard",
             },
@@ -42,14 +42,14 @@ const VendorHeader = () => {
         }
         break;
       case "login":
-        navigate("/");
+        navigate("/login");
         break;
       case "logout":
         localStorage.removeItem("authUser"); // Clear login token
-        navigate("/");
+        navigate("/login");
         break;
       case "home":
-        navigate("/Vendor");
+        navigate("/");
         break;
       default:
         break;

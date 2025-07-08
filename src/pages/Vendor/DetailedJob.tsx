@@ -43,8 +43,7 @@ const DetailedJob = () => {
   const handleNavigate = () => {
     // navigate("/Vendor/applyNow");
     if (!isLoggedIn) {
-      console.log("console", location.pathname);
-      navigate("/", { state: { from: location.pathname } }); // 👈 Or your specific login route
+      navigate("/login", { state: { from: location.pathname } }); // 👈 Or your specific login route
     } else {
       navigate("/Vendor/applyNow", { state: { jobId: formData._id } });
     }
@@ -129,8 +128,8 @@ const DetailedJob = () => {
                   label="Job Subject"
                   value={
                     <div style={{ maxWidth: "100%", wordBreak: "break-word" }}>
-                      <Tag
-                        color="magenta"
+                      <div
+                        // color="magenta"
                         style={{
                           display: "inline-block",
                           whiteSpace: "normal",
@@ -144,7 +143,7 @@ const DetailedJob = () => {
                             __html: formData.job_subject,
                           }}
                         />
-                      </Tag>
+                      </div>
                     </div>
                   }
                 />

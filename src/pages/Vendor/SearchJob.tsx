@@ -789,20 +789,20 @@ const SearchJob = () => {
 
   return (
     <Container fluid>
-      <Row className="pt-3">
+      <Row>
         <Col
           xs={12}
           sm={6}
           md={4}
           lg={3}
-          className="sticky top-[64px] h-[calc(100vh-64px)] overflow-y-auto"
+          className="sticky top-[64px] h-[calc(100vh-64px)] overflow-y-auto pt-3"
         >
           {/* <div className="static max-h-screen "> */}
           <div className="bg-white rounded shadow">{drawerList()}</div>
           {/* </div> */}
         </Col>
 
-        <Col xs={12} sm={6} md={8} lg={9}>
+        <Col xs={12} sm={6} md={8} lg={9} className="pt-3">
           {loading ? (
             <Skeleton count={5} />
           ) : formData?.length > 0 ? (

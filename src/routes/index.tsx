@@ -68,23 +68,26 @@ const RenderRouter: React.FC = () => {
     JOB_EDIT_QR_CODE,
     JOB_OPEN,
     EMAIL_SEND,
-    VENDOR,
     JOB_SEARCH,
     DETAILED_JOB,
     APPLY_NOW_JOB,
     APPLY_JOB_LIST,
+    LOGIN,
   } = routes;
 
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path={ROOT.path} errorElement={<RootBoundary />}>
-        <Route index element={<SignIn />} />
+        {/* <Route index element={<SignIn />} /> */}
+        <Route path={LOGIN.path} element={<SignIn />} />
         <Route path={SIGN_UP.path} element={<SignUp />} />
         <Route path={FORGET_PASSWORD.path} element={<ForgetPassword />} />
         <Route path={VERIFY_EMAIL.path} element={<EmailVerification />} />
         <Route path={UPDATE_PASSWORD.path} element={<UpdatePassword />} />
         <Route element={<VendorLayout />}>
-          <Route path={VENDOR.path} element={<Vendor />} />
+          <Route index element={<Vendor />} />
+
+          {/* <Route path={VENDOR.path} element={<Vendor />} /> */}
           <Route path={APPLY_NOW_JOB.path} element={<ApplyNowJob />} />
           <Route path={APPLY_JOB_LIST.path} element={<AppliedJobList />} />
           <Route path={JOB_SEARCH.path} element={<SearchJob />} />

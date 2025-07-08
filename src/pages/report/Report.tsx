@@ -15,6 +15,7 @@ import { getTotalApplicants } from "api/dashboardApi";
 import AreaChart from "sub-components/report/AreaChart";
 import appConstants from "constants/constant";
 import ColumnChart from "sub-components/report/ColumnChart";
+import { useNavigate } from "react-router-dom";
 
 const { projectTitle, Modules } = appConstants;
 
@@ -45,6 +46,8 @@ const ActionMenu = ({
 
 const Report = () => {
   document.title = Modules.Reports + " | " + projectTitle;
+  const navigate = useNavigate();
+
   const [applicantsOnProcess1, setApplicantsOnProcess1] = useState([]);
   const [applicantsOnProcess2, setApplicantsOnProcess2] = useState([]);
   const [applicantsOnProcess3, setApplicantsOnProcess3] = useState([]);
@@ -89,6 +92,10 @@ const Report = () => {
     }
   };
 
+  const handleNavigate = () => {
+    navigate("/applicants");
+  };
+
   return (
     <Fragment>
       <div className="min-h-screen">
@@ -100,13 +107,14 @@ const Report = () => {
                   {/* Top right total applicants */}
                   <div className="mb-2 d-flex justify-content-end">
                     <div
-                      className="p-2 bg-light-primary text-dark rounded-3 text-end"
+                      className="p-2 bg-light-primary text-dark rounded-3 text-end hover:cursor-pointer"
                       style={{
                         minWidth: "120px",
                         fontWeight: 600,
                         fontSize: "15px",
                         border: "1px solid #e3e6ed",
                       }}
+                      onClick={handleNavigate}
                     >
                       Total Applicants:{" "}
                       <span style={{ fontWeight: 700 }}>{totalApplicants}</span>

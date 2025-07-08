@@ -144,14 +144,7 @@ const AppliedJobList = () => {
 
   return (
     <Fragment>
-      {/* 
-      {showViewModal && selectedId && (
-        <ViewJob
-          show={showViewModal}
-          onHide={handleCloseModal}
-          jobId={selectedId}
-        />
-      )} */}
+  
       <DeleteModal
         show={showDeleteModal}
         onCloseClick={closeDeleteModal}

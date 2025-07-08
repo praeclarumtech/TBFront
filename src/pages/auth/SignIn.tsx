@@ -25,11 +25,10 @@ const { projectTitle, Modules, validationMessages, emailRegex, OK, SUCCESS } =
 
 const SignIn = () => {
   document.title = Modules.Login + " | " + projectTitle;
-
   const navigate = useNavigate();
   const [loader, setLoader] = useState(false);
   const location = useLocation();
-  const from = location?.state?.from || "/Vendor";
+  const from = location?.state?.from || "/";
 
   const validation: any = useFormik({
     enableReinitialize: true,

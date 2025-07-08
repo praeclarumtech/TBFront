@@ -36,6 +36,7 @@ import ApplyNowJob from "pages/Vendor/ApplyNowJob";
 import UserManagement from "pages/UserProfile/UserManagement";
 import UserProfileEdit from "pages/UserProfile/UserProfileEdit";
 import AppliedJobList from "pages/Vendor/AppliedJobList";
+import SignIn from "pages/auth/SignIn";
 
 const routes = {
   ROOT: {
@@ -45,6 +46,11 @@ const routes = {
   APP: {
     path: "/app",
     title: "",
+  },
+  LOGIN: {
+    path: "/login",
+    title: "Login",
+    element: SignIn,
   },
   FORGET_PASSWORD: {
     title: "Forgot Password",
@@ -81,12 +87,12 @@ const routes = {
     path: "/userprofile/:_id",
     element: Profile,
   },
-    USERPROFILE_EDIT: {
+  USERPROFILE_EDIT: {
     title: "User Profile Edit",
     path: "/userprofileEdit/:_id",
     element: UserProfileEdit,
   },
-      USERPROFILE_ADD: {
+  USERPROFILE_ADD: {
     title: "User Profile Add",
     path: "/userprofileAdd",
     element: UserProfileEdit,
@@ -151,7 +157,7 @@ const routes = {
     path: "/applicants/qr-code-success",
     element: SuccessPage,
   },
-    EMAIL_SEND: {
+  EMAIL_SEND: {
     title: "Success",
     path: "/email/email-sent",
     element: SuccessPage,
@@ -163,9 +169,14 @@ const routes = {
   },
   VENDOR: {
     title: "Vendor",
-    path: "/Vendor",
+    path: "/",
     element: Vendor,
   },
+  // VENDOR: {
+  //   title: "Vendor",
+  //   path: "/Vendor",
+  //   element: Vendor,
+  // },
   JOB_SEARCH: {
     title: "Job-search",
     path: "/Vendor/job-search",
@@ -181,7 +192,7 @@ const routes = {
     path: "/Vendor/applyNow",
     element: ApplyNowJob,
   },
-    APPLY_JOB_LIST: {
+  APPLY_JOB_LIST: {
     title: "apply job list",
     path: "/Vendor/appliedJobList",
     element: AppliedJobList,
