@@ -17,7 +17,7 @@ import {
   InputPlaceHolder,
   RequiredField,
 } from "utils/commonFunctions";
-import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
+// import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 
 const {
   projectTitle,
@@ -51,7 +51,7 @@ const SignUp = () => {
       email: "",
       password: "",
       confirmPassword: "",
-      role: "",
+      role: "guest",
     },
     validationSchema: Yup.object({
       userName: Yup.string().required(RequiredField("Username")),
@@ -113,7 +113,7 @@ const SignUp = () => {
     validation.initialValues.email = "";
     validation.initialValues.password = "";
     validation.initialValues.confirmPassword = "";
-    validation.setFieldValue("role", null);
+    validation.setFieldValue("role", "guest");
   };
 
   return (
@@ -234,66 +234,9 @@ const SignUp = () => {
                     />
                   </Form.Group>
 
-                  {/* <div className="mb-3">
-                    <Form.Check type="checkbox" id="check-api-checkbox">
-                      <Form.Check.Input type="checkbox" />
-                      <Form.Check.Label>
-                        I agree to the <Link to="#"> Terms of Service </Link>{" "}
-                        and <Link to="#"> Privacy Policy.</Link>
-                      </Form.Check.Label>
-                    </Form.Check>
-                  </div> */}
-
-                  {/* <div>
-                    <div className="d-grid">
-                      <div className="mt-2 mb-2 w-50">
-                        <GoogleOAuthProvider clientId="YOUR_CLIENT_ID_HERE">
-                          <GoogleLogin
-                            onSuccess={(credentialResponse) => {
-                              console.log(
-                                "Google Credential (ID Token):",
-                                credentialResponse.credential
-                              );
-                            }}
-                            onError={() => {
-                              console.log("Login Failed");
-                            }}
-                          />
-                        </GoogleOAuthProvider>
-                      </div>
-                      <BaseButton
-                        color="primary"
-                        disabled={loader}
-                        className="w-50"
-                        type="submit"
-                        loader={loader}
-                      >
-                        {ButtonEnums.Submit}
-                      </BaseButton>
-                    </div>
-                    <div className="mt-4 d-md-flex justify-content-between">
-                      <div className="mb-2 mb-md-0">
-                        <div onClick={() => navigate("/")} className="fs-5">
-                          {/* Already member? <a className="cursor-pointer text-primary">Login</a>{" "} 
-                          Already have an account?{" "}
-                          <a className="cursor-pointer text-primary">Login</a>{" "}
-                        </div>
-                      </div>
-                      <div>
-                        <div
-                          onClick={() => navigate("/forgot-password")}
-                          className=" fs-5"
-                        >
-                          <a className="cursor-pointer text-primary">
-                            Forgot your password?
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-                  </div>  */}
                   <div>
                     <div className="gap-3 mt-2 mb-2 d-flex">
-                      <div className="w-50">
+                      {/* <div className="w-50">
                         <GoogleOAuthProvider clientId="YOUR_CLIENT_ID_HERE">
                           <GoogleLogin
                             onSuccess={(credentialResponse) => {
@@ -307,11 +250,12 @@ const SignUp = () => {
                             }}
                           />
                         </GoogleOAuthProvider>
-                      </div>
+                      </div> */}
                       <BaseButton
                         color="primary"
                         disabled={loader}
-                        className="w-50"
+                        // className="w-50"
+                        className="w-full"
                         type="submit"
                         loader={loader}
                       >
@@ -321,7 +265,10 @@ const SignUp = () => {
 
                     <div className="mt-4 d-md-flex justify-content-between">
                       <div className="mb-2 mb-md-0">
-                        <div onClick={() => navigate("/login")} className="fs-5">
+                        <div
+                          onClick={() => navigate("/login")}
+                          className="fs-5"
+                        >
                           Already have an account?{" "}
                           <a className="cursor-pointer text-primary">Login</a>
                         </div>

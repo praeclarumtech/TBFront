@@ -20,7 +20,7 @@ const Vendor = () => {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const toastIdRef = useRef<React.ReactText | null>(null);
-
+const jdFileInputRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
     resetForm();
   }, []);
@@ -52,10 +52,18 @@ const Vendor = () => {
 
   const handleRemoveFile = () => {
     setFile(null);
+
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
   };
+
+  const handleRemoveFileJd = () => {
+  setJdFile(null);
+  if (jdFileInputRef.current) {
+    jdFileInputRef.current.value = "";
+  }
+};
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -82,28 +90,6 @@ const Vendor = () => {
       if (result?.success) {
         setScore(result.data.score);
         message.success("Resume scored successfully!");
-
-        // Start toast countdown to auto-reset
-        let seconds = 60;
-        toastIdRef.current = toast.info(`Form will reset in ${seconds}s`, {
-          closeOnClick: false,
-          draggable: false,
-        });
-
-        const interval = setInterval(() => {
-          seconds -= 1;
-
-          if (toastIdRef.current) {
-            toast.update(toastIdRef.current, {
-              render: `Form will reset in ${seconds}s`,
-            });
-          }
-
-          if (seconds <= 0) {
-            clearInterval(interval);
-            resetForm();
-          }
-        }, 1000);
       } else {
         message.error(result?.message || "Failed to get score.");
       }
@@ -183,18 +169,28 @@ const Vendor = () => {
             />
           </div>
 
-          <div>
+          <div className="relative">
             <input
               type="file"
+              ref={jdFileInputRef}
               accept=".pdf,.docx,.txt"
               onChange={handleJdFileChange}
               className="w-full p-2 border rounded"
             />
             {jdFile && (
-              <p className="mt-1 text-sm text-gray-600">{jdFile.name}</p>
+              <button
+                onClick={handleRemoveFileJd}
+                type="button"
+                className="absolute text-lg font-bold text-red-500 -translate-y-1/2 right-2 top-1/2"
+                title="Remove file"
+              >
+                &times;
+              </button>
             )}
           </div>
-
+          {jdFile && (
+            <p className="mt-1 text-sm text-gray-600">{jdFile.name}</p>
+          )}
           <button
             type="submit"
             className="px-4 py-2 text-white rounded bg-primary"

@@ -16,8 +16,8 @@ const VendorHeader = () => {
   // const pathre = "/Vendor/appliedJobList";
   let selectedKey = "home";
   if (path.includes("/appliedJobList")) selectedKey = "view-applications";
-  else if (path.includes("/applyNow")) selectedKey = "jobs";
-  else if (path.includes("/detailed-job/:id")) selectedKey = "jobs";
+  else if (path.includes("/applyNow")) selectedKey = "search-jobs";
+  else if (path.includes("/detailed-job/")) selectedKey = "search-jobs";
   else if (path.includes("/job-search")) selectedKey = "search-jobs";
   else if (path.includes("/jobs")) selectedKey = "jobs";
   else if (path.includes("/")) selectedKey = "home";

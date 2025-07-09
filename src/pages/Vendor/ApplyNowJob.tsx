@@ -1,18 +1,268 @@
-import { Skeleton } from "antd";
+// import { Skeleton } from "antd";
+// import appConstants from "constants/constant";
+// import { useState, useRef, useEffect, Fragment } from "react";
+// import React from "react";
+// import BaseButton from "components/BaseComponents/BaseButton";
+// import { viewJobById } from "api/apiJob";
+// import { errorHandle } from "utils/commonFunctions";
+// import { useLocation, useNavigate } from "react-router-dom";
+// import { toast } from "react-toastify";
+// import { addJobApplicant } from "api/apiVendor";
+// import { ArrowLeftOutlined } from "@ant-design/icons";
+// import ViewJd from "./ViewJd";
+
+// const { projectTitle } = appConstants;
+
+// const ApplyNowJob = () => {
+//   document.title = projectTitle;
+//   const navigate = useNavigate();
+//   const [formData, setFormData] = useState<any>(null);
+//   const [loading, setLoading] = useState(false);
+//   const [file, setFile] = useState<File | null>(null);
+//   const [score, setScore] = useState<number | null>(null);
+//   const [uploading, setUploading] = useState(false);
+//   const [progress, setProgress] = useState(0);
+//   const [applied, setApplied] = useState(false);
+//   const fileInputRef = useRef<HTMLInputElement>(null);
+//   const countdownToastId = useRef<React.ReactText | null>(null);
+//   const location = useLocation();
+//   const _id = location.state?.jobId;
+//   const [selectedId, setSelectedId] = useState<string[]>([]);
+//   const [showViewModal, setShowViewModal] = useState<boolean>(false);
+
+//   useEffect(() => {
+//     const fetchJob = async () => {
+//       if (!_id) return;
+//       setLoading(true);
+//       try {
+//         const res = await viewJobById({ _id });
+//         if (res?.success) {
+//           setFormData(res.data);
+//         }
+//       } catch (err) {
+//         errorHandle(err);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     fetchJob();
+//   }, [_id]);
+
+//   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+//     const files = e.target.files;
+//     if (!files || files.length === 0) return;
+
+//     const selected = files[0];
+//     const ext = selected.name.split(".").pop()?.toLowerCase();
+//     if (!["pdf", "docx"].includes(ext || "")) {
+//       toast.error("Only PDF or DOCX files allowed.");
+//       return;
+//     }
+//     console.log("object");
+//     setFile(selected);
+//   };
+
+//   const handleRemoveFile = () => {
+//     setFile(null);
+//     setScore(null);
+
+//     if (fileInputRef.current) fileInputRef.current.value = "";
+//     if (countdownToastId.current) toast.dismiss(countdownToastId.current);
+//   };
+
+//   const handleSubmit = async (e: React.FormEvent) => {
+//     e.preventDefault();
+
+//     if (!file) {
+//       toast.error("Please select a resume file to score.");
+//       return;
+//     }
+
+//     setUploading(true);
+//     setProgress(0);
+
+//     try {
+//       const response = await addJobApplicant(file, formData.job_id);
+//       if (response?.success) {
+//         setScore(response.data.score);
+//         toast.success("Resume scored successfully!");
+//         setApplied(true);
+//       } else {
+//         throw new Error(response?.message || "Scoring failed");
+//       }
+//     } catch (err: any) {
+//       const message =
+//         err?.response?.data?.message ||
+//         err?.response?.data?.error ||
+//         err.message ||
+//         "Unexpected error.";
+//       toast.error(message);
+//     } finally {
+//       setUploading(false);
+//       setProgress(100);
+//     }
+//   };
+//   const handlApplied = () => {
+//     navigate("/Vendor/appliedJobList");
+//   };
+
+//   if (loading)
+//     return (
+//       <div className="flex items-center justify-center min-h-screen bg-gray-100">
+//         <Skeleton active className="w-[800px]" />
+//       </div>
+//     );
+
+//   const handleView = (id: string[]) => {
+//     console.log("id is:-", id);
+//     setSelectedId(id);
+//     setShowViewModal(true);
+//   };
+//   const handleCloseModal = () => {
+//     setShowViewModal(false);
+//   };
+
+//   return (
+//     <Fragment>
+//       {showViewModal && selectedId && (
+//         <ViewJd
+//           show={showViewModal}
+//           onHide={handleCloseModal}
+//           _id={selectedId}
+//         />
+//       )}
+//       <div className="flex items-center justify-center flex-1 p-6 mt-6">
+//         <div className="p-6 bg-white shadow-md lg:w-1/2 rounded-xl">
+//           <button
+//             type="button"
+//             onClick={() => navigate(-1)} // go back one step in history
+//             className="mb-4 text-sm font-medium text-blue-600 underline"
+//           >
+//             <ArrowLeftOutlined /> Back
+//           </button>
+
+//           <h1 className="mb-4 font-semibold text-center text-primary">
+//             Apply For Job: {formData?.job_subject}
+//           </h1>
+
+//           <form className="mt-4 space-y-4" onSubmit={handleSubmit}>
+//             <div>
+//               <label>
+//                 Please read the job description before applying.{" "}
+//                 <a
+//                   className="text-blue-600 underline cursor-pointer"
+//                   onClick={() => handleView(formData?._id)}
+//                 >
+//                   Click here
+//                 </a>{" "}
+//                 to view the job description.
+//               </label>
+//             </div>
+
+//             <div>
+//               <label className="block mb-2 text-sm font-medium">
+//                 Upload Your Resume (PDF or DOCX)
+//               </label>
+
+//               <div className="relative">
+//                 <input
+//                   type="file"
+//                   accept=".pdf,.docx"
+//                   ref={fileInputRef}
+//                   onChange={handleFileChange}
+//                   className="w-full p-2 pr-10 border rounded select-border"
+//                 />
+//                 {file && (
+//                   <button
+//                     onClick={handleRemoveFile}
+//                     type="button"
+//                     className="absolute text-lg font-bold text-red-500 -translate-y-1/2 right-2 top-1/2"
+//                     title="Remove file"
+//                   >
+//                     &times;
+//                   </button>
+//                 )}
+//               </div>
+//             </div>
+
+//             {uploading && (
+//               <div className="w-full mt-2">
+//                 <div className="h-2 overflow-hidden bg-gray-200 rounded-full">
+//                   <div
+//                     className="h-full transition-all bg-blue-500"
+//                     style={{ width: `${progress}%` }}
+//                   />
+//                 </div>
+//                 <p className="mt-1 text-sm text-center text-gray-600">
+//                   Scoring... {progress}%
+//                 </p>
+//               </div>
+//             )}
+
+//             {score === null && (
+//               <div className="flex justify-center mt-4">
+//                 <BaseButton
+//                   type="submit"
+//                   className="px-4 py-2 text-white rounded bg-primary"
+//                   disabled={uploading}
+//                 >
+//                   {uploading ? "Scoring..." : "Get Your JobScore"}
+//                 </BaseButton>
+//               </div>
+//             )}
+//             {applied === true ? (
+//               <div className="flex justify-center mt-4">
+//                 <BaseButton
+//                   type="submit"
+//                   className="px-4 py-2 text-white rounded bg-primary"
+//                   onClick={handlApplied}
+//                 >
+//                   View Appplied Application
+//                 </BaseButton>
+//               </div>
+//             ) : (
+//               <></>
+//             )}
+//             {score !== null && (
+//               <div className="mt-4 text-lg font-semibold text-center text-green-600">
+//                 Your JobScore:{" "}
+//                 <span className="inline-block px-3 py-1 ml-2 text-white bg-green-500 rounded-full">
+//                   {score}%
+//                 </span>
+//               </div>
+//             )}
+//           </form>
+//         </div>
+//       </div>
+//     </Fragment>
+//   );
+// };
+
+// export default ApplyNowJob;
+
+import React, { useState, useEffect, Fragment } from "react";
+import { Upload, message, Skeleton } from "antd";
+import type { UploadProps } from "antd";
+import { InboxOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import appConstants from "constants/constant";
-import { useState, useRef, useEffect } from "react";
-import React from "react";
 import BaseButton from "components/BaseComponents/BaseButton";
 import { viewJobById } from "api/apiJob";
 import { errorHandle } from "utils/commonFunctions";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { addJobApplicant } from "api/apiVendor";
+import ViewJd from "./ViewJd";
 
+const { Dragger } = Upload;
 const { projectTitle } = appConstants;
 
 const ApplyNowJob = () => {
   document.title = projectTitle;
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  const _id = location.state?.jobId;
 
   const [formData, setFormData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
@@ -20,11 +270,10 @@ const ApplyNowJob = () => {
   const [score, setScore] = useState<number | null>(null);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [applied, setApplied] = useState(false);
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const countdownToastId = useRef<React.ReactText | null>(null);
-  const location = useLocation();
-  const _id = location.state?.jobId;
+  const [selectedId, setSelectedId] = useState<string[]>([]);
+  const [showViewModal, setShowViewModal] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchJob = async () => {
@@ -45,33 +294,11 @@ const ApplyNowJob = () => {
     fetchJob();
   }, [_id]);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files || files.length === 0) return;
-
-    const selected = files[0];
-    const ext = selected.name.split(".").pop()?.toLowerCase();
-    if (!["pdf", "docx"].includes(ext || "")) {
-      toast.error("Only PDF or DOCX files allowed.");
-      return;
-    }
-    console.log("object");
-    setFile(selected);
-  };
-
-  const handleRemoveFile = () => {
-    setFile(null);
-    setScore(null);
-
-    if (fileInputRef.current) fileInputRef.current.value = "";
-    if (countdownToastId.current) toast.dismiss(countdownToastId.current);
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!file) {
-      toast.error("Please select a resume file to score.");
+      toast.error("Please upload a resume file first.");
       return;
     }
 
@@ -83,6 +310,7 @@ const ApplyNowJob = () => {
       if (response?.success) {
         setScore(response.data.score);
         toast.success("Resume scored successfully!");
+        setApplied(true);
       } else {
         throw new Error(response?.message || "Scoring failed");
       }
@@ -99,6 +327,39 @@ const ApplyNowJob = () => {
     }
   };
 
+  const handlApplied = () => {
+    navigate("/Vendor/appliedJobList");
+  };
+
+  const handleView = (id: string[]) => {
+    console.log("id is:-", id);
+    setSelectedId(id);
+    setShowViewModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowViewModal(false);
+  };
+
+  const uploadProps: UploadProps = {
+    name: "file",
+    multiple: false,
+    accept: ".pdf,.docx",
+    beforeUpload(file) {
+      const ext = file.name.split(".").pop()?.toLowerCase();
+      if (!["pdf", "docx"].includes(ext || "")) {
+        message.error("Only PDF or DOCX files allowed.");
+        return Upload.LIST_IGNORE; // blocks upload
+      }
+      setFile(file); // store file for handleSubmit
+      message.success(`${file.name} selected.`);
+      return false; // prevent auto upload
+    },
+    onDrop(e) {
+      console.log("Dropped files", e.dataTransfer.files);
+    },
+  };
+
   if (loading)
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -107,86 +368,110 @@ const ApplyNowJob = () => {
     );
 
   return (
-    <div className="flex items-center justify-center flex-1 p-6 mt-10">
-      <div className="p-6 bg-white shadow-md lg:w-1/2 rounded-xl">
-        <h1 className="mb-4 font-semibold text-center text-primary">
-          Apply For Job: {formData?.job_subject}
-        </h1>
+    <Fragment>
+      {showViewModal && selectedId && (
+        <ViewJd
+          show={showViewModal}
+          onHide={handleCloseModal}
+          _id={selectedId}
+        />
+      )}
+      <div className="flex items-center justify-center flex-1 p-6 ">
+        <div className="p-6 bg-white shadow-md lg:w-1/2 rounded-xl">
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            className="mb-4 text-sm font-medium text-blue-600 underline"
+          >
+            <ArrowLeftOutlined /> Back
+          </button>
 
-        <form className="mt-4 space-y-4" onSubmit={handleSubmit}>
-          <div>
-            <label>
-              Please read the job description before applying.{" "}
-              <a className="text-blue-600 underline cursor-pointer">
-                Click here
-              </a>{" "}
-              to view the job description.
-            </label>
-          </div>
+          <h1 className="mb-4 font-semibold text-center text-primary">
+            Apply For Job: {formData?.job_subject}
+          </h1>
 
-          <div>
-            <label className="block mb-2 text-sm font-medium">
-              Upload Your Resume (PDF or DOCX)
-            </label>
-
-            <div className="relative">
-              <input
-                type="file"
-                accept=".pdf,.docx"
-                ref={fileInputRef}
-                onChange={handleFileChange}
-                className="w-full p-2 pr-10 border rounded select-border"
-              />
-              {file && (
-                <button
-                  onClick={handleRemoveFile}
-                  type="button"
-                  className="absolute text-lg font-bold text-red-500 -translate-y-1/2 right-2 top-1/2"
-                  title="Remove file"
+          <form className="mt-4 space-y-4" onSubmit={handleSubmit}>
+            <div>
+              <label>
+                Please read the job description before applying.{" "}
+                <a
+                  className="text-blue-600 underline cursor-pointer"
+                  onClick={() => handleView(formData?._id)}
                 >
-                  &times;
-                </button>
-              )}
+                  Click here
+                </a>{" "}
+                to view the job description.
+              </label>
             </div>
-          </div>
 
-          {uploading && (
-            <div className="w-full mt-2">
-              <div className="h-2 overflow-hidden bg-gray-200 rounded-full">
-                <div
-                  className="h-full transition-all bg-blue-500"
-                  style={{ width: `${progress}%` }}
-                />
+            <div>
+              <label className="block mb-2 text-sm font-medium">
+                Upload Your Resume (PDF or DOCX)
+              </label>
+
+              <Dragger {...uploadProps}>
+                <p className="ant-upload-drag-icon">
+                  <InboxOutlined />
+                </p>
+                <p className="ant-upload-text">
+                  Click or drag file to this area to upload
+                </p>
+                <p className="ant-upload-hint">
+                  Support for a single resume upload. PDF or DOCX only.
+                </p>
+              </Dragger>
+            </div>
+
+            {uploading && (
+              <div className="w-full mt-2">
+                <div className="h-2 overflow-hidden bg-gray-200 rounded-full">
+                  <div
+                    className="h-full transition-all bg-blue-500"
+                    style={{ width: `${progress}%` }}
+                  />
+                </div>
+                <p className="mt-1 text-sm text-center text-gray-600">
+                  Scoring... {progress}%
+                </p>
               </div>
-              <p className="mt-1 text-sm text-center text-gray-600">
-                Scoring... {progress}%
-              </p>
-            </div>
-          )}
+            )}
 
-          {score === null && (
-            <div className="flex justify-center mt-4">
-              <BaseButton
-                type="submit"
-                className="px-4 py-2 text-white rounded bg-primary"
-                disabled={uploading}
-              >
-                {uploading ? "Scoring..." : "Get Your JobScore"}
-              </BaseButton>
-            </div>
-          )}
+            {score === null && (
+              <div className="flex justify-center mt-4">
+                <BaseButton
+                  type="submit"
+                  className="px-4 py-2 text-white rounded bg-primary"
+                  disabled={uploading}
+                >
+                  {uploading ? "Scoring..." : "Get Your JobScore"}
+                </BaseButton>
+              </div>
+            )}
 
-          {score !== null && (
-            <div className="mt-4 text-lg font-semibold text-center text-green-600">
-              Your JobScore:{" "}
-              <span className="inline-block px-3 py-1 ml-2 text-white bg-green-500 rounded-full">
-                {score}%
-              </span>
-            </div>
-          )}
-        </form>
+            {applied && (
+              <div className="flex justify-center mt-4">
+                <BaseButton
+                  type="button"
+                  className="px-4 py-2 text-white rounded bg-primary"
+                  onClick={handlApplied}
+                >
+                  View Applied Application
+                </BaseButton>
+              </div>
+            )}
+
+            {score !== null && (
+              <div className="mt-4 text-lg font-semibold text-center text-green-600">
+                Your JobScore:{" "}
+                <span className="inline-block px-3 py-1 ml-2 text-white bg-green-500 rounded-full">
+                  {score}%
+                </span>
+              </div>
+            )}
+          </form>
+        </div>
       </div>
-    </div>
+    </Fragment>
   );
 };
 
