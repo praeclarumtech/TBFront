@@ -110,6 +110,7 @@ const JobForm = () => {
               contract_duration: job.contract_duration || "",
               required_skills: job.required_skills || [],
               job_location: job.job_location || "",
+              sub_description: job.sub_description || "",
             });
             console.log(validation.value);
           }
@@ -173,6 +174,7 @@ const JobForm = () => {
       contract_duration: "",
       required_skills: "",
       job_location: "",
+      sub_description: "",
     },
     validationSchema: Yup.object({
       job_subject: Yup.string()
@@ -197,6 +199,18 @@ const JobForm = () => {
       required_skills: Yup.array()
         .of(Yup.string())
         .min(1, "Please select at least one skill"),
+      sub_description: Yup.string()
+        .required("Sub Description is required")
+        .test(
+          "word-count",
+          "Sub Description must be 1 to 80 words.",
+          (value) => {
+            if (!value) return false;
+            const wordCount = value.trim().split(/\s+/).length;
+            return wordCount >= 1 && wordCount <= 80;
+          }
+        ),
+
       // min_salary: Yup.string().required("Please Enter minimum Salary"),
       // max_salary: Yup.string().required("Please Enter maximum Salary"),
     }),
@@ -215,6 +229,7 @@ const JobForm = () => {
         contract_duration: values.contract_duration,
         required_skills: values.required_skills,
         job_location: values.job_location,
+        sub_description: values.sub_description,
       };
       const apiCall = _id ? updateJob(_id, payload) : createJob(payload);
 
@@ -289,298 +304,334 @@ const JobForm = () => {
                     <Skeleton active />
                   </div>
                 ) : (
-                  <Row className="mt-4 mb-4 g-3">
-                    <Col xs={12} md={12}>
-                      <BaseInput
-                        label="Job Title"
-                        name="job_subject"
-                        type="text"
-                        placeholder={"e.g. React Developer"}
-                        handleChange={(e) => {
-                          validation.setFieldValue(
-                            "job_subject",
-                            e.target.value
-                          );
-                        }}
-                        handleBlur={validation.handleBlur}
-                        value={validation.values.job_subject}
-                        touched={validation.touched.job_subject}
-                        error={validation.errors.job_subject}
-                        passwordToggle={false}
-                        isRequired={true}
-                      />
-                    </Col>
-                    <Col xs={12} md={4}>
-                      <BaseSelect
-                        label="Job Type"
-                        name="job_type"
-                        className="select-border"
-                        options={jobTypeOpyions}
-                        placeholder={"Select Type"}
-                        handleChange={(selectedOption: SelectedOption) => {
-                          validation.setFieldValue(
-                            "job_type",
-                            selectedOption?.value || ""
-                          );
-                        }}
-                        handleBlur={validation.handleBlur}
-                        value={
-                          dynamicFind(
-                            jobTypeOpyions,
-                            validation.values.job_type
-                          ) || ""
-                        }
-                        isRequired={true}
-                        menuPortalTarget={
-                          typeof window !== "undefined" ? document.body : null
-                        }
-                        menuPosition="fixed"
-                        styles={{
-                          menuPortal: (base: any) => ({
-                            ...base,
-                            zIndex: 9999,
-                          }),
-                          menuList: (provided: any) => ({
-                            ...provided,
-                            maxHeight: 200,
-                            overflowY: "auto",
-                          }),
-                        }}
-                      />
-                    </Col>
-                    <Col xs={12} md={6} lg={4}>
-                      <BaseInput
-                        label="Contract Duration"
-                        name="contract_duration"
-                        disabled={validation.values.job_type === "contract"}
-                        type="text"
-                        placeholder={"e.g. 6 Months"}
-                        handleChange={(e) => {
-                          const value = e.target.value;
-                          validation.setFieldValue("contract_duration", value);
-                        }}
-                        handleBlur={validation.handleBlur}
-                        value={validation.values.contract_duration}
-                        touched={validation.touched.contract_duration}
-                        error={validation.errors.contract_duration}
-                        passwordToggle={false}
-                        isRequired={true}
-                      />
-                    </Col>
-                    <Col xs={12} sm={12} md={12} lg={4} className="mb-3">
-                      <MultiSelect
-                        label="Required Skills"
-                        name="required_skills"
-                        className="select-border"
-                        value={selectedMulti || []}
-                        isMulti={true}
-                        onChange={handleMultiSkill}
-                        options={skillOptions}
-                        touched={validation.touched.required_skills}
-                        error={validation.errors.required_skills}
-                        handleBlur={validation.handleBlur}
-                        isRequired={true}
-                      />
-                    </Col>
-                    <Col xs={12} md={6} lg={4}>
-                      <BaseInput
-                        label="Min Salary"
-                        name="min_salary"
-                        type="text"
-                        placeholder={InputPlaceHolder("Minimum Salary")}
-                        handleChange={(e) => {
-                          const value = e.target.value.replace(/[^0-9]/g, "");
-                          validation.setFieldValue("min_salary", value);
-                        }}
-                        handleBlur={validation.handleBlur}
-                        value={validation.values.min_salary}
-                        touched={validation.touched.min_salary}
-                        error={validation.errors.min_salary}
-                        passwordToggle={false}
-                        isRequired={false}
-                      />
-                    </Col>
+                  <>
+                    <Row className="mt-4 mb-4 g-3">
+                      <Col xs={12} md={12}>
+                        <BaseInput
+                          label="Job Title"
+                          name="job_subject"
+                          type="text"
+                          placeholder={"e.g. React Developer"}
+                          handleChange={(e) => {
+                            validation.setFieldValue(
+                              "job_subject",
+                              e.target.value
+                            );
+                          }}
+                          handleBlur={validation.handleBlur}
+                          value={validation.values.job_subject}
+                          touched={validation.touched.job_subject}
+                          error={validation.errors.job_subject}
+                          passwordToggle={false}
+                          isRequired={true}
+                        />
+                      </Col>
+                      <Col xs={12} md={4}>
+                        <BaseSelect
+                          label="Job Type"
+                          name="job_type"
+                          className="select-border"
+                          options={jobTypeOpyions}
+                          placeholder={"Select Type"}
+                          handleChange={(selectedOption: SelectedOption) => {
+                            validation.setFieldValue(
+                              "job_type",
+                              selectedOption?.value || ""
+                            );
+                          }}
+                          handleBlur={validation.handleBlur}
+                          value={
+                            dynamicFind(
+                              jobTypeOpyions,
+                              validation.values.job_type
+                            ) || ""
+                          }
+                          isRequired={true}
+                          menuPortalTarget={
+                            typeof window !== "undefined" ? document.body : null
+                          }
+                          menuPosition="fixed"
+                          styles={{
+                            menuPortal: (base: any) => ({
+                              ...base,
+                              zIndex: 9999,
+                            }),
+                            menuList: (provided: any) => ({
+                              ...provided,
+                              maxHeight: 200,
+                              overflowY: "auto",
+                            }),
+                          }}
+                        />
+                      </Col>
+                      <Col xs={12} md={6} lg={4}>
+                        <BaseInput
+                          label="Contract Duration"
+                          name="contract_duration"
+                          disabled={validation.values.job_type === "contract"}
+                          type="text"
+                          placeholder={"e.g. 6 Months"}
+                          handleChange={(e) => {
+                            const value = e.target.value;
+                            validation.setFieldValue(
+                              "contract_duration",
+                              value
+                            );
+                          }}
+                          handleBlur={validation.handleBlur}
+                          value={validation.values.contract_duration}
+                          touched={validation.touched.contract_duration}
+                          error={validation.errors.contract_duration}
+                          passwordToggle={false}
+                          isRequired={true}
+                        />
+                      </Col>
+                      <Col xs={12} sm={12} md={12} lg={4} className="mb-3">
+                        <MultiSelect
+                          label="Required Skills"
+                          name="required_skills"
+                          className="select-border"
+                          value={selectedMulti || []}
+                          isMulti={true}
+                          onChange={handleMultiSkill}
+                          options={skillOptions}
+                          touched={validation.touched.required_skills}
+                          error={validation.errors.required_skills}
+                          handleBlur={validation.handleBlur}
+                          isRequired={true}
+                        />
+                      </Col>
+                      <Col xs={12} md={6} lg={4}>
+                        <BaseInput
+                          label="Min Salary"
+                          name="min_salary"
+                          type="text"
+                          placeholder={InputPlaceHolder("Minimum Salary")}
+                          handleChange={(e) => {
+                            const value = e.target.value.replace(/[^0-9]/g, "");
+                            validation.setFieldValue("min_salary", value);
+                          }}
+                          handleBlur={validation.handleBlur}
+                          value={validation.values.min_salary}
+                          touched={validation.touched.min_salary}
+                          error={validation.errors.min_salary}
+                          passwordToggle={false}
+                          isRequired={false}
+                        />
+                      </Col>
 
-                    <Col xs={12} md={8} lg={4}>
-                      <BaseInput
-                        label="Max Salary"
-                        name="max_salary"
-                        type="text"
-                        placeholder={InputPlaceHolder("Maximum Salary")}
-                        handleChange={(e) => {
-                          const value = e.target.value.replace(/[^0-9]/g, "");
-                          validation.setFieldValue("max_salary", value);
-                        }}
-                        handleBlur={validation.handleBlur}
-                        value={validation.values.max_salary}
-                        touched={validation.touched.max_salary}
-                        error={validation.errors.max_salary}
-                        passwordToggle={false}
-                        isRequired={false}
-                      />
-                    </Col>
+                      <Col xs={12} md={8} lg={4}>
+                        <BaseInput
+                          label="Max Salary"
+                          name="max_salary"
+                          type="text"
+                          placeholder={InputPlaceHolder("Maximum Salary")}
+                          handleChange={(e) => {
+                            const value = e.target.value.replace(/[^0-9]/g, "");
+                            validation.setFieldValue("max_salary", value);
+                          }}
+                          handleBlur={validation.handleBlur}
+                          value={validation.values.max_salary}
+                          touched={validation.touched.max_salary}
+                          error={validation.errors.max_salary}
+                          passwordToggle={false}
+                          isRequired={false}
+                        />
+                      </Col>
 
-                    <Col xs={12} md={6} lg={4}>
-                      <BaseSelect
-                        label="Time Zone"
-                        name="time_zone"
-                        className="select-border"
-                        options={timeZoneOptions}
-                        placeholder={"IST, UTC, ETC..."}
-                        isRequired={true}
-                        handleChange={(selectedOption: SelectedOption) => {
-                          validation.setFieldValue(
-                            "time_zone",
-                            selectedOption?.value || ""
-                          );
-                        }}
-                        handleBlur={validation.handleBlur}
-                        value={
-                          dynamicFind(
-                            timeZoneOptions,
-                            validation.values.time_zone
-                          ) || ""
-                        }
-                        touched={validation.touched.time_zone}
-                        error={validation.errors.time_zone}
-                        menuPortalTarget={
-                          typeof window !== "undefined" ? document.body : null
-                        }
-                        menuPosition="fixed"
-                        styles={{
-                          menuPortal: (base: any) => ({
-                            ...base,
-                            zIndex: 9999,
-                          }),
-                          menuList: (provided: any) => ({
-                            ...provided,
-                            maxHeight: 200,
-                            overflowY: "auto",
-                          }),
-                        }}
-                      />
-                    </Col>
-                    <Col xs={12} md={6} lg={4}>
-                      <BaseSelect
-                        label="Job Location"
-                        name="job_location"
-                        className="select-border"
-                        options={cities}
-                        placeholder={InputPlaceHolder("Job Location")}
-                        handleChange={(selectedOption: SelectedOption) => {
-                          validation.setFieldValue(
-                            "job_location",
-                            selectedOption?.label || ""
-                          );
-                        }}
-                        handleBlur={validation.handleBlur}
-                        value={
-                          dynamicFind(
-                            cities,
-                            validation.values.job_location,
-                            "location"
-                          ) || ""
-                        }
-                        touched={validation.touched.job_location}
-                        error={validation.errors.job_location}
-                        isRequired={false}
-                      />
-                    </Col>
-                    <Col xs={12} md={8} lg={4}>
-                      <Label className="font-semibold text-gray-700 form-label">
-                        Start Time
-                        {<span className="text-red-500">*</span>}
-                      </Label>
-                      <TimePicker
-                        name="start_time"
-                        format="hh:mm A"
-                        placeholder="e.g. 10:00 AM"
-                        changeOnScroll
-                        needConfirm={false}
-                        use12Hours
-                        className="w-100 h-[40px] form-control custom-placeholder"
-                        value={
-                          validation.values.start_time
-                            ? dayjs(validation.values.start_time, "hh:mm A")
-                            : null
-                        }
-                        onChange={(time) => {
-                          const formattedTime = time
-                            ? time.format("hh:mm A")
-                            : "";
-                          validation.setFieldValue("start_time", formattedTime);
-                        }}
-                        onBlur={validation.handleBlur}
-                      />
-                      {validation.touched.start_time &&
-                        validation.errors.start_time && (
-                          <FormFeedback className="d-block">
-                            {validation.errors.start_time}
-                          </FormFeedback>
-                        )}
-                    </Col>
-                    <Col xs={12} md={8} lg={4}>
-                      <Label
-                        // htmlFor={name}
-                        className="font-semibold text-gray-700 form-label"
-                      >
-                        End Time
-                        {<span className="text-red-500">*</span>}
-                      </Label>
-                      <TimePicker
-                        name="end_time"
-                        format="hh:mm A"
-                        use12Hours
-                        changeOnScroll
-                        needConfirm={false}
-                        className="w-100 h-[40px] form-control"
-                        value={
-                          validation.values.end_time
-                            ? dayjs(validation.values.end_time, "hh:mm A")
-                            : null
-                        }
-                        onChange={(time) => {
-                          const formattedTime = time
-                            ? time.format("hh:mm A")
-                            : "";
-                          validation.setFieldValue("end_time", formattedTime);
-                        }}
-                        onBlur={validation.handleBlur}
-                      />
-                      {validation.touched.end_time &&
-                        validation.errors.end_time && (
-                          <FormFeedback className="d-block">
-                            {validation.errors.end_time}
-                          </FormFeedback>
-                        )}
-                    </Col>
-                    <Col xs={12} md={12} lg={12}>
-                      <Label className="font-semibold text-gray-700 form-label">
-                        Job Details
-                        {<span className="text-red-500">*</span>}
-                      </Label>
-                      <ReactQuill
-                        placeholder="Brief job details here"
-                        theme="snow"
-                        value={validation.values.job_details}
-                        onChange={(content) =>
-                          validation.setFieldValue("job_details", content)
-                        }
-                        onBlur={() =>
-                          validation.setFieldTouched("job_details", true, true)
-                        }
-                        modules={quillModules}
-                        className="bg-white [&_.ql-editor]:min-h-[200px] [&_.ql-editor]:max-h-[300px]"
-                        style={{ minHeight: "250px" }}
-                      />
-                      {validation.touched.job_details &&
-                        validation.errors.job_details && (
-                          <FormFeedback className="d-block">
-                            {validation.errors.job_details}
-                          </FormFeedback>
-                        )}
-                    </Col>
-                  </Row>
+                      <Col xs={12} md={6} lg={4}>
+                        <BaseSelect
+                          label="Time Zone"
+                          name="time_zone"
+                          className="select-border"
+                          options={timeZoneOptions}
+                          placeholder={"IST, UTC, ETC..."}
+                          isRequired={true}
+                          handleChange={(selectedOption: SelectedOption) => {
+                            validation.setFieldValue(
+                              "time_zone",
+                              selectedOption?.value || ""
+                            );
+                          }}
+                          handleBlur={validation.handleBlur}
+                          value={
+                            dynamicFind(
+                              timeZoneOptions,
+                              validation.values.time_zone
+                            ) || ""
+                          }
+                          touched={validation.touched.time_zone}
+                          error={validation.errors.time_zone}
+                          menuPortalTarget={
+                            typeof window !== "undefined" ? document.body : null
+                          }
+                          menuPosition="fixed"
+                          styles={{
+                            menuPortal: (base: any) => ({
+                              ...base,
+                              zIndex: 9999,
+                            }),
+                            menuList: (provided: any) => ({
+                              ...provided,
+                              maxHeight: 200,
+                              overflowY: "auto",
+                            }),
+                          }}
+                        />
+                      </Col>
+                      <Col xs={12} md={6} lg={4}>
+                        <BaseSelect
+                          label="Job Location"
+                          name="job_location"
+                          className="select-border"
+                          options={cities}
+                          placeholder={InputPlaceHolder("Job Location")}
+                          handleChange={(selectedOption: SelectedOption) => {
+                            validation.setFieldValue(
+                              "job_location",
+                              selectedOption?.label || ""
+                            );
+                          }}
+                          handleBlur={validation.handleBlur}
+                          value={
+                            dynamicFind(
+                              cities,
+                              validation.values.job_location,
+                              "location"
+                            ) || ""
+                          }
+                          touched={validation.touched.job_location}
+                          error={validation.errors.job_location}
+                          isRequired={false}
+                        />
+                      </Col>
+                      <Col xs={12} md={8} lg={4}>
+                        <Label className="font-semibold text-gray-700 form-label">
+                          Start Time
+                          {<span className="text-red-500">*</span>}
+                        </Label>
+                        <TimePicker
+                          name="start_time"
+                          format="hh:mm A"
+                          placeholder="e.g. 10:00 AM"
+                          changeOnScroll
+                          needConfirm={false}
+                          use12Hours
+                          className="w-100 h-[40px] form-control custom-placeholder"
+                          value={
+                            validation.values.start_time
+                              ? dayjs(validation.values.start_time, "hh:mm A")
+                              : null
+                          }
+                          onChange={(time) => {
+                            const formattedTime = time
+                              ? time.format("hh:mm A")
+                              : "";
+                            validation.setFieldValue(
+                              "start_time",
+                              formattedTime
+                            );
+                          }}
+                          onBlur={validation.handleBlur}
+                        />
+                        {validation.touched.start_time &&
+                          validation.errors.start_time && (
+                            <FormFeedback className="d-block">
+                              {validation.errors.start_time}
+                            </FormFeedback>
+                          )}
+                      </Col>
+                      <Col xs={12} md={8} lg={4}>
+                        <Label
+                          // htmlFor={name}
+                          className="font-semibold text-gray-700 form-label"
+                        >
+                          End Time
+                          {<span className="text-red-500">*</span>}
+                        </Label>
+                        <TimePicker
+                          name="end_time"
+                          format="hh:mm A"
+                          use12Hours
+                          changeOnScroll
+                          needConfirm={false}
+                          className="w-100 h-[40px] form-control"
+                          value={
+                            validation.values.end_time
+                              ? dayjs(validation.values.end_time, "hh:mm A")
+                              : null
+                          }
+                          onChange={(time) => {
+                            const formattedTime = time
+                              ? time.format("hh:mm A")
+                              : "";
+                            validation.setFieldValue("end_time", formattedTime);
+                          }}
+                          onBlur={validation.handleBlur}
+                        />
+                        {validation.touched.end_time &&
+                          validation.errors.end_time && (
+                            <FormFeedback className="d-block">
+                              {validation.errors.end_time}
+                            </FormFeedback>
+                          )}
+                      </Col>
+                    </Row>
+                    <Row className="mt-4 mb-4 g-3">
+                      <Col xs={12} md={12}>
+                        <BaseInput
+                          label="Sub Descrition"
+                          name="sub_description"
+                          type="text"
+                          placeholder={"Brief job details here e.g. 2 3 lines"}
+                          handleChange={(e) => {
+                            validation.setFieldValue(
+                              "sub_description",
+                              e.target.value
+                            );
+                          }}
+                          handleBlur={validation.handleBlur}
+                          value={validation.values.sub_description}
+                          touched={validation.touched.sub_description}
+                          error={validation.errors.sub_description}
+                          passwordToggle={false}
+                          isRequired={true}
+                        />
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col xs={12} md={12} lg={12}>
+                        <Label className="font-semibold text-gray-700 form-label">
+                          Job Details
+                          {<span className="text-red-500">*</span>}
+                        </Label>
+                        <ReactQuill
+                          placeholder="Comprehensive job details here"
+                          theme="snow"
+                          value={validation.values.job_details}
+                          onChange={(content) =>
+                            validation.setFieldValue("job_details", content)
+                          }
+                          onBlur={() =>
+                            validation.setFieldTouched(
+                              "job_details",
+                              true,
+                              true
+                            )
+                          }
+                          modules={quillModules}
+                          className="bg-white [&_.ql-editor]:min-h-[200px] [&_.ql-editor]:max-h-[300px]"
+                          style={{ minHeight: "250px" }}
+                        />
+                        {validation.touched.job_details &&
+                          validation.errors.job_details && (
+                            <FormFeedback className="d-block">
+                              {validation.errors.job_details}
+                            </FormFeedback>
+                          )}
+                      </Col>
+                    </Row>
+                  </>
                 )}
                 <div className="gap-3 mt-4 d-flex flex-column flex-md-row justify-content-end">
                   <BaseButton
