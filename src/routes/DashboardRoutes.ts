@@ -31,12 +31,13 @@ export const DashboardMenu: DashboardMenuProps[] = [
     icon: "users",
     link: "/job-listing",
   },
-  {
-    id: uuid(),
-    title: "Vendor",
-    icon: "bar-chart",
-    link: "/",
-  },
+  //comment vendot route
+  // {
+  //   id: uuid(),
+  //   title: "Vendor",
+  //   icon: "bar-chart",
+  //   link: "/",
+  // },
   {
     id: uuid(),
     title: "Analysis",

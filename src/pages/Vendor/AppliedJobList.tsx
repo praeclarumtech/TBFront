@@ -16,13 +16,15 @@ import { deleteJob } from "api/apiJob";
 // import ViewJob from "pages/master/ViewJob";
 
 import { viewAppliedJob } from "api/apiVendor";
+import { useNavigate } from "react-router";
+import { ArrowLeftOutlined } from "@ant-design/icons";
 
 const { projectTitle, Modules, handleResponse } = appConstants;
 
 const AppliedJobList = () => {
   document.title = Modules.Jobs + " | " + projectTitle;
   const [job, setJob] = useState<any[]>([]);
-
+  const navigate = useNavigate();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [jobToDelete, setJobToDelete] = useState<any>([]);
 
@@ -105,7 +107,24 @@ const AppliedJobList = () => {
         header: "Job Title",
         accessorKey: "job_subject",
         enableColumnFilter: false,
+        cell: (cell: any) => {
+          // You can’t use hooks inside config, so handle it outside
+          const name = cell.row.original.job_subject;
+          return (
+            <span
+              style={{
+                color: "blue",
+                cursor: "pointer",
+                textDecoration: "underline",
+              }}
+              onClick={() => handleView(cell.row.original._id)}
+            >
+              {name}
+            </span>
+          );
+        },
       },
+
       {
         header: "Job Score",
         accessorKey: "score",
@@ -142,9 +161,11 @@ const AppliedJobList = () => {
     setSelectedJob([]);
   };
 
+  const handleView = (id: string) => {
+    navigate(`/Vendor/detailed-job/${id}`);
+  };
   return (
     <Fragment>
-  
       <DeleteModal
         show={showDeleteModal}
         onCloseClick={closeDeleteModal}
@@ -158,6 +179,13 @@ const AppliedJobList = () => {
             <Card className="my-3 mb-3">
               <CardBody>
                 <Row className="flex h-full">
+                  <button
+                    type="button"
+                    onClick={() => navigate(-1)}
+                    className="text-start text-sm font-medium text-blue-600 underline"
+                  >
+                    <ArrowLeftOutlined /> Back
+                  </button>
                   <Row className="mt-1 fw-bold text-dark d-flex align-items-center">
                     <Col
                       sm={12}

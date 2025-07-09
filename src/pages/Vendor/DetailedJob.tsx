@@ -13,6 +13,7 @@ import {
 import { errorHandle } from "utils/commonFunctions";
 import BaseButton from "components/BaseComponents/BaseButton";
 import { useNavigate } from "react-router-dom";
+
 const DetailedJob = () => {
   const { id: _id } = useParams();
   const [formData, setFormData] = useState<any>(null);
@@ -264,7 +265,15 @@ const DetailedJob = () => {
               </Col>
             </Row>
 
-            <div className="flex justify-center mt-4">
+            <div className="flex justify-center mt-4 gap-4">
+              <BaseButton
+                type="button"
+                color="secondary"
+                onClick={() => navigate(-1)} // go back one step in history
+                // className="text-sm font-medium"
+              >
+                Back
+              </BaseButton>
               <BaseButton color="primary" onClick={handleNavigate}>
                 Apply Now
               </BaseButton>
