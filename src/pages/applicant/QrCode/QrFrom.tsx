@@ -314,13 +314,20 @@ const QrFrom = () => {
         }
       } catch (error: any) {
         setButtonLoading(false);
+        const message =
+          error?.response?.data?.message ||
+          error?.response?.data?.error ||
+          error.message ||
+          "Unexpected error.";
         const errorMessages = error?.response?.data?.details;
         if (errorMessages && Array.isArray(errorMessages)) {
           errorMessages.forEach((errorMessage: string) => {
             toast.error(errorMessage);
           });
         } else {
-          toast.error("An error occurred while updating the applicant.");
+          toast.error(
+            message || "An error occurred while updating the applicant."
+          );
         }
       } finally {
         setButtonLoading(false);
