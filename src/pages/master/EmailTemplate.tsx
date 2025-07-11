@@ -318,9 +318,9 @@ const AddEmailTemplate = () => {
       description: editingEmailTemplate ? editingEmailTemplate.description : "",
     },
     validationSchema: Yup.object({
-      type: Yup.string().required("Template name is required"),
-      subject: Yup.string().required("Subject is required"),
-      description: Yup.string().required("Description is required"),
+      type: Yup.string().required("Template name is required!"),
+      subject: Yup.string().required("Subject is required!"),
+      description: Yup.string().required("Description is required!"),
     }),
     onSubmit: (values) => {
       setLoader(true);

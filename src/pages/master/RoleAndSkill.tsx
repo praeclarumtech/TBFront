@@ -445,7 +445,7 @@ const UpdateSkill = () => {
       addRole: Yup.string()
         .min(1, "Skill Name must be at least 1.")
         .max(50, "Skill name must be between 1 to 50 characters.")
-        .required("Role is required"),
+        .required("Role is required!"),
       addSkill: Yup.array()
         .min(1, "Select at least one skill")
         .of(
@@ -454,7 +454,7 @@ const UpdateSkill = () => {
             value: Yup.string().required(),
           })
         )
-        .required("Skill is required"),
+        .required("Skill is required!"),
     }),
     onSubmit: (values) => {
       setLoader(true);

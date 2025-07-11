@@ -32,7 +32,7 @@ export const jobApplicantSchema = Yup.object({
   maritalStatus: Yup.string(),
   // maritalStatus: Yup.string().required("Marital status is required."),
   currentCompanyDesignation: Yup.string().required(
-    "Current Company Designation is required"
+    "Current company designation is required!"
   ),
   appliedRole: Yup.string().required("Applied role is required!"),
   anyHandOnOffers: Yup.boolean(),
@@ -217,12 +217,14 @@ export const QrApplicants = Yup.object({
     .min(2, "First name must be at least 2 characters.")
     .matches(/^[A-Za-z\s]+$/, "First name can only contain letters.")
     .trim(),
+
   lastName: Yup.string()
     .required("Last name is required")
     .max(15, "Last name cannot exceed 15 characters.")
     .min(2, "Last name must be at least 2 characters.")
     .matches(/^[A-Za-z\s]+$/, "Last name can only contain letters.")
     .trim(),
+
   email: Yup.string()
     .email("Please enter a valid email address.")
     .required("Email is required")
@@ -233,56 +235,97 @@ export const QrApplicants = Yup.object({
         if (!value) return false;
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const emails = value.split(",").map((e) => e.trim());
-
         return emails.every(
           (email) => emailRegex.test(email) && email.length <= 100
         );
       }
     ),
+
   phoneNumber: Yup.string()
-    .matches(/^[0-9]{10}$/, "Please enter a valid 10-digit phone number.")
-    .required("Phone number is required"),
+    .required("Phone number is required")
+    .matches(/^[0-9]{10}$/, "Please enter a valid 10-digit phone number."),
+
   preferredLocations: Yup.string()
-    // .required("Preferred location is required!")
+    .required("Preferred location is required")
     .min(2, "Please specify at least one location."),
+
   lastFollowUpDate: Yup.date(),
-  maritalStatus: Yup.string(),
-  // maritalStatus: Yup.string().required("Marital status is required."),
+
+  maritalStatus: Yup.string().required("Marital status is required."),
+
   currentCompanyDesignation: Yup.string().required(
     "Current Company Designation is required"
   ),
+
   anyHandOnOffers: Yup.boolean(),
+
   currentCompanyName: Yup.string()
+    .required("Current company name is required")
     .trim()
     .matches(/^[A-Za-z0-9\s&.-]+$/, "Please enter a valid company name."),
-  currentPkg: Yup.string().matches(
-    /^\d+(\.\d{1,2})?$/,
-    "Please enter a valid current package."
-  ),
-  expectedPkg: Yup.string().matches(
-    /^\d+(\.\d{1,2})?$/,
-    "Please enter a valid expected package."
-  ),
-  negotiation: Yup.string(),
-  noticePeriod: Yup.string().min(0, "Notice period cannot be negative."),
-  workPreference: Yup.string().oneOf(
-    ["remote", "onsite", "hybrid"],
-    "Please select a valid work preference."
-  ),
-  linkedinUrl: Yup.string().url("Please enter a valid URL."),
-  otherSkills: Yup.string(),
+
+  currentPkg: Yup.string()
+    .required("Current package is required")
+    .matches(/^\d+(\.\d{1,2})?$/, "Please enter a valid current package.")
+    .test("not-zero", "Current package must be greater than 0.", (value) => {
+      const num = parseFloat(value || "0");
+      return num > 0;
+    }),
+
+  expectedPkg: Yup.string()
+    .required("Expected package is required")
+    .matches(/^\d+(\.\d{1,2})?$/, "Please enter a valid expected package.")
+    .test("not-zero", "Expected package must be greater than 0.", (value) => {
+      const num = parseFloat(value || "0");
+      return num > 0;
+    }),
+
+  negotiation: Yup.string().required("Negotiation status is required"),
+
+  noticePeriod: Yup.string()
+    .required("Notice period is required")
+    .matches(/^\d+(\.\d{1,2})?$/, "Please enter a valid notice period.")
+    .test(
+      "greater-than-zero",
+      "Notice period must be greater than 0.",
+      (value) => {
+        const num = parseFloat(value || "0");
+        return num > 0;
+      }
+    ),
+
+  // workPreference: Yup.string()
+  //   .oneOf(
+  //     ["remote", "onsite", "hybrid"],
+  //     "Please select a valid work preference."
+  //   )
+  //   .required("Work preference is required"),
+
+  // linkedinUrl: Yup.string()
+  //   .url("Please enter a valid URL.")
+  //   .required("LinkedIn URL is required"),
+
+  otherSkills: Yup.string().required("Other skills are required"),
+
   appliedRole: Yup.string().required("Applied role is required"),
-  state: Yup.string().required("State is requied"),
-  totalExperience: Yup.string().required("Total Experience Required"),
+
+  state: Yup.string().required("State is required"),
+
+  currentCity: Yup.string().required("City is required"),
+
+  totalExperience: Yup.string().required("Total experience is required"),
+
   appliedSkills: Yup.array()
     .of(Yup.string().required("Skill is required"))
-    .min(1, "At least one skill is required"),
+    .min(1, "At least one skill is required")
+    .required("Applied skills are required"),
+
   relevantSkillExperience: Yup.string()
+    .required("Relevant experience is required.")
     .matches(
       /^\d+(\.\d{1,2})?$/,
       "Enter a valid number for relevant experience."
     )
-    // .required("Relevant experience is required.")
     .test(
       "relevant-less-than-total",
       "Relevant experience cannot be more than total experience.",
@@ -293,8 +336,9 @@ export const QrApplicants = Yup.object({
         return isNaN(total) || isNaN(relevant) || relevant <= total;
       }
     ),
+  // currentPkg: Yup.string().required("Total experience is required"),
   communicationSkill: Yup.number()
-    .required("Communication rating is required!")
+    .required("Communication rating is required")
     .min(1, "Rating must be between 1 and 10.")
     .max(10, "Rating must be between 1 and 10."),
 });
