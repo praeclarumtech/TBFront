@@ -180,12 +180,12 @@ const JobForm = () => {
       job_subject: Yup.string()
 
         .min(1, "Subject must be at least 1.")
-        .required("Subject is required"),
+        .required("Subject is required!"),
       contract_duration: Yup.string().when(
         "job_type",
         (jobType: unknown, schema) => {
           if (typeof jobType === "string" && jobType !== "contract") {
-            return schema.required("Contract duration is required");
+            return schema.required("Contract duration is required!");
           }
           return schema.notRequired();
         }
@@ -193,14 +193,14 @@ const JobForm = () => {
 
       job_details: Yup.string()
         .min(1, "Job Details Name must be at least 1.")
-        .required("Job Details is required"),
-      job_type: Yup.string().required("Job Type is required"),
-      time_zone: Yup.string().required("Select Time Zone"),
+        .required("Job details is required!"),
+      job_type: Yup.string().required("Job type is required!"),
+      time_zone: Yup.string().required("Select time zone"),
       required_skills: Yup.array()
         .of(Yup.string())
         .min(1, "Please select at least one skill"),
       sub_description: Yup.string()
-        .required("Sub Description is required")
+        .required("Sub description is required!")
         .test(
           "word-count",
           "Sub Description must be 1 to 80 words.",
@@ -232,33 +232,33 @@ const JobForm = () => {
         sub_description: values.sub_description,
       };
       const apiCall = _id ? updateJob(_id, payload) : createJob(payload);
-
       apiCall
         .then((res: any) => {
           if (res?.success) {
             toast.success(res?.message || `Data Added successfully`);
-            // Reset editing state
             validation.resetForm();
-            navigate("/job-listing"); // Clear form data after submission
-          }
-          if (res?.success === "false") {
+            navigate("/job-listing");
+          } else {
             const errorMsg =
-              res.details?.length > 0
+              res?.details?.length > 0
                 ? res.details.join(", ")
                 : res.message || "Failed to add job";
-
             toast.error(errorMsg);
           }
         })
         .catch((error) => {
           console.error("Error adding job:", error);
-          const errorMessages = error?.response?.data?.details;
-          if (errorMessages && Array.isArray(errorMessages)) {
-            errorMessages.forEach((errorMessage) => {
-              toast.error(errorMessage);
+
+          const errorData = error?.response?.data;
+
+          if (errorData?.details && Array.isArray(errorData.details)) {
+            errorData.details.forEach((msg: any) => {
+              toast.error(msg);
             });
+          } else if (errorData?.message) {
+            toast.error(errorData.message);
           } else {
-            toast.error("An error occurred while updating the applicant.");
+            toast.error("An error occurred while updating the job.");
           }
         })
         .finally(() => {

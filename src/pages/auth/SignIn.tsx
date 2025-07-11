@@ -20,8 +20,7 @@ import {
 import { jwtDecode } from "jwt-decode";
 import { useLocation } from "react-router-dom";
 
-const { projectTitle, Modules, validationMessages, emailRegex, OK, SUCCESS } =
-  appConstants;
+const { projectTitle, Modules, validationMessages, OK, SUCCESS } = appConstants;
 
 const SignIn = () => {
   document.title = Modules.Login + " | " + projectTitle;
@@ -38,9 +37,18 @@ const SignIn = () => {
     },
     validationSchema: Yup.object({
       email: Yup.string()
-        .required(validationMessages.required("Email"))
-        .email(validationMessages.format("Email"))
-        .matches(emailRegex, validationMessages.format("Email")),
+        .required(validationMessages.required("Email or Username"))
+        .test(
+          "is-email-or-username",
+          "Must be a valid email or username",
+          (value) => {
+            if (!value) return false;
+            const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+            const isUsername = /^[a-zA-Z0-9_.-]+$/.test(value);
+            return isEmail || isUsername;
+          }
+        ),
+
       password: Yup.string().required(validationMessages.required("Password")),
     }),
     onSubmit: (value) => {
@@ -102,10 +110,10 @@ const SignIn = () => {
                 >
                   <Form.Group className="mb-3" controlId="username">
                     <BaseInput
-                      label="Email"
+                      label="Email or username"
                       name="email"
                       type="text"
-                      placeholder={InputPlaceHolder("Email")}
+                      placeholder={InputPlaceHolder("Email or username")}
                       handleChange={validation.handleChange}
                       handleBlur={validation.handleBlur}
                       value={validation.values.email}

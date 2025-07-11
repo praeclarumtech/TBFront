@@ -42,6 +42,7 @@ const SignUp = () => {
     { label: "HR", value: "hr" },
     { label: "Admin", value: "admin" },
     { label: "Guest", value: "guest" },
+    { label: "Vendor", value: "vendor" },
   ];
 
   const validation = useFormik({

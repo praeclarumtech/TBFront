@@ -86,7 +86,6 @@ const Applicant = () => {
   const filterTypeChart = params.get("type");
   const applicantStatusChart = params.get("applicantStatusChart");
   const addedByChart = params.get("addedByChart");
-  console.log("Clicked filter:", filterFromChart);
 
   const navigate = useNavigate();
   const [loader, setLoader] = useState(false);

@@ -265,7 +265,7 @@ const AddDegree = () => {
       degreeName: Yup.string()
         .min(1, "Qualification Name must be at least 1.")
         .max(50, "Qualification name must be between 1 to 50 characters.")
-        .required("Qualification name is required"),
+        .required("Qualification name is required!"),
     }),
 
     onSubmit: (values) => {

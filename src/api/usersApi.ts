@@ -73,12 +73,12 @@ export const getAllUsers = async (
     pageSize?: number;
     limit?: number;
     search?: string;
+    role?: string;
   } = {}
 ) => {
   const response = await authServices.get(`${GET_ALL_USERS}`, { params });
   return response?.data;
 };
-
 
 export const updateUserStatus = async (id?: string, data?: object) => {
   const response = await authServices.put(`${UPDATE_USER_STATUS}/${id}`, data);

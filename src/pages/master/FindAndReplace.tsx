@@ -43,7 +43,7 @@ const FindAndReplace = () => {
       ReplaceValue: "",
     },
     validationSchema: Yup.object({
-      field: Yup.string().required("Please Select Field"),
+      field: Yup.string().required("Please select field"),
       findValue: Yup.string().required("Please enter value to find"),
       ReplaceValue: Yup.string().required("Please enter value to find"),
     }),
