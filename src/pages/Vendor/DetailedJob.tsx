@@ -95,7 +95,7 @@ const DetailedJob = () => {
   if (loading)
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-200">
-        <Skeleton active className="w-[800px]" />
+        <Skeleton active className="max-w-[800px]" />
       </div>
     );
   if (!formData) return null;
@@ -103,7 +103,7 @@ const DetailedJob = () => {
   return (
     <>
       <div className="items-center justify-center min-h-screen bg-gray-200 d-flex">
-        <Card className="w-[800px]  d-flex justify-content-center ">
+        <Card className="max-w-[800px]  d-flex justify-content-center ">
           <DetailsCard
             title="Job Details"
             style={{ border: "none", boxShadow: "none" }}
@@ -112,7 +112,7 @@ const DetailedJob = () => {
             }
           >
             <Row gutter={[16, 16]}>
-              {/* <Col span={24}>
+              {/* <Col  xs={24} md={12}>
                 <DetailsRow
                   label="Job ID"
                   value={
@@ -124,7 +124,7 @@ const DetailedJob = () => {
                   }
                 /> 
               </Col>*/}
-              <Col span={24}>
+              <Col xs={24} md={24}>
                 <DetailsRow
                   label="Job Subject"
                   value={
@@ -152,43 +152,43 @@ const DetailedJob = () => {
 
               {/* </Col> */}
 
-              <Col span={12}>
+              <Col xs={24} md={12}>
                 <DetailsRow
                   label="Time Zone"
                   value={<Tag color="red">{formData.time_zone}</Tag>}
                 />
               </Col>
-              <Col span={12}>
+              <Col xs={24} md={12}>
                 <DetailsRow
                   label="Contract Duration"
                   value={<Tag color="gold">{formData.contract_duration}</Tag>}
                 />
               </Col>
-              <Col span={12}>
+              <Col xs={24} md={12}>
                 <DetailsRow
                   label="Location"
                   value={<Tag color="cyan">{formData.job_location}</Tag>}
                 />
               </Col>
-              <Col span={12}>
+              <Col xs={24} md={12}>
                 <DetailsRow
                   label="Job Type"
                   value={<Tag color="geekblue">{formData.job_type}</Tag>}
                 />
               </Col>
-              <Col span={12}>
+              <Col xs={24} md={12}>
                 <DetailsRow
                   label="Start Time"
                   value={<Tag color="lime">{formData.start_time}</Tag>}
                 />
               </Col>
-              <Col span={12}>
+              <Col xs={24} md={12}>
                 <DetailsRow
                   label="End Time"
                   value={<Tag color="orange">{formData.end_time}</Tag>}
                 />
               </Col>
-              <Col span={12}>
+              <Col xs={24} md={12}>
                 <DetailsRow
                   label="Posting Date"
                   value={
@@ -205,7 +205,7 @@ const DetailedJob = () => {
                   }
                 />
               </Col>
-              <Col span={12}>
+              <Col xs={24} md={12}>
                 <DetailsRow
                   label="Deadline"
                   value={
@@ -224,25 +224,25 @@ const DetailedJob = () => {
                   }
                 />
               </Col>
-              <Col span={8}>
+              <Col xs={24} md={8}>
                 <DetailsRow
                   label="Minimum Salary"
                   value={<Tag color="red">{formData.min_salary}</Tag>}
                 />
               </Col>
-              <Col span={8}>
+              <Col xs={24} md={8}>
                 <DetailsRow
                   label="Maximum Salary"
                   value={<Tag color="green">{formData.max_salary}</Tag>}
                 />
               </Col>
-              <Col span={8}>
+              <Col xs={24} md={8}>
                 <DetailsRow
                   label="Currency"
                   value={<Tag color="orange">{formData.salary_currency}</Tag>}
                 />
               </Col>
-              <Col span={24}>
+              <Col xs={24} md={12}>
                 <DetailsRow
                   label="Required Skills"
                   value={formData.required_skills?.map((skill: string) => (

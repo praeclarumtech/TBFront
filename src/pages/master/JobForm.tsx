@@ -232,33 +232,33 @@ const JobForm = () => {
         sub_description: values.sub_description,
       };
       const apiCall = _id ? updateJob(_id, payload) : createJob(payload);
-
       apiCall
         .then((res: any) => {
           if (res?.success) {
             toast.success(res?.message || `Data Added successfully`);
-            // Reset editing state
             validation.resetForm();
-            navigate("/job-listing"); // Clear form data after submission
-          }
-          if (res?.success === "false") {
+            navigate("/job-listing");
+          } else {
             const errorMsg =
-              res.details?.length > 0
+              res?.details?.length > 0
                 ? res.details.join(", ")
                 : res.message || "Failed to add job";
-
             toast.error(errorMsg);
           }
         })
         .catch((error) => {
           console.error("Error adding job:", error);
-          const errorMessages = error?.response?.data?.details;
-          if (errorMessages && Array.isArray(errorMessages)) {
-            errorMessages.forEach((errorMessage) => {
-              toast.error(errorMessage);
+
+          const errorData = error?.response?.data;
+
+          if (errorData?.details && Array.isArray(errorData.details)) {
+            errorData.details.forEach((msg: any) => {
+              toast.error(msg);
             });
+          } else if (errorData?.message) {
+            toast.error(errorData.message);
           } else {
-            toast.error("An error occurred while updating the applicant.");
+            toast.error("An error occurred while updating the job.");
           }
         })
         .finally(() => {

@@ -147,6 +147,7 @@ const appConstants = Object.freeze({
     State: "State",
     City: "City",
     Jobs: "Jobs",
+    Vendor: "Vendor",
   },
   passingYearType: [
     { label: "2005", value: 2005 },
@@ -470,6 +471,17 @@ const appConstants = Object.freeze({
     { label: "IST", value: "IST" },
     { label: "UTC", value: "UTC" },
     { label: "EST", value: "EST" },
+  ],
+  companyType: [
+    { label: "Product-based Company", value: "product" },
+    { label: "Service-based Company", value: "service" },
+    { label: "Product & Service", value: "both" },
+  ],
+  hireResourceOptions: [
+    { label: "Corp-to-Corp (C2C)", value: "c2c" },
+    { label: "Contract-to-Hire (C2H)", value: "c2h" },
+    { label: "In-House", value: "in-house" },
+    { label: "All", value: "all" },
   ],
 });
 export default appConstants;

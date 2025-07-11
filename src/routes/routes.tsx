@@ -37,6 +37,7 @@ import UserManagement from "pages/UserProfile/UserManagement";
 import UserProfileEdit from "pages/UserProfile/UserProfileEdit";
 import AppliedJobList from "pages/Vendor/AppliedJobList";
 import SignIn from "pages/auth/SignIn";
+import VendorList from "pages/Vendor/VendorList";
 
 const routes = {
   ROOT: {
@@ -171,6 +172,11 @@ const routes = {
     title: "Vendor",
     path: "/",
     element: Vendor,
+  },
+  VENDOR_LIST: {
+    title: "vendor-List",
+    path: "/vendorList",
+    element: VendorList,
   },
   // VENDOR: {
   //   title: "Vendor",

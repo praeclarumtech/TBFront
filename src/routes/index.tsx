@@ -47,6 +47,7 @@ import UserManagement from "pages/UserProfile/UserManagement";
 import UserProfileEdit from "pages/UserProfile/UserProfileEdit";
 import AppliedJobList from "pages/Vendor/AppliedJobList";
 import VendorLayout from "layouts/VendorLayout";
+import VendorList from "pages/Vendor/VendorList";
 
 const RenderRouter: React.FC = () => {
   const {
@@ -113,7 +114,7 @@ const RenderRouter: React.FC = () => {
             element={<ImportApplicantTables />}
           />
           <Route path={"job-listing"} element={<JobListing />} />
-
+          <Route path={"/vendorList"} element={<VendorList />} />
           <Route path={"userProfile"} element={<Profile />} />
           <Route path={"userprofileEdit/:_id"} element={<UserProfileEdit />} />
           <Route path={"userprofileAdd"} element={<UserProfileEdit />} />

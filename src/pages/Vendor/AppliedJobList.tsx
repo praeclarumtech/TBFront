@@ -44,6 +44,8 @@ const AppliedJobList = () => {
       const res = await viewAppliedJob();
 
       if (res?.success) {
+        // const allApplications = res?.data?.applications;
+        // console.log("array:", allApplications);
         const allApplications =
           res.data?.flatMap((applicant: any) => applicant.applications) || [];
         setJob(allApplications);
