@@ -44,10 +44,7 @@ const AppliedJobList = () => {
       const res = await viewAppliedJob();
 
       if (res?.success) {
-        // const allApplications = res?.data?.applications;
-        // console.log("array:", allApplications);
-        const allApplications =
-          res.data?.flatMap((applicant: any) => applicant.applications) || [];
+        const allApplications = res?.data?.applications;
         setJob(allApplications);
         setTotalRecords(allApplications.length);
       } else {
@@ -136,11 +133,21 @@ const AppliedJobList = () => {
       {
         header: "Application Status",
         accessorKey: "status",
-        cell: ({ getValue }: any) => {
-          const status = getValue();
-          return status === "Submitted"
-            ? "Stage 1 - Submitted"
-            : "Stage 2 - interview";
+        cell: ({ row }) => {
+          const status = row.original.status;
+
+          const statusLabels: Record<string, string> = {
+            applied: "Stage 1 - Applied",
+            "in progress": "Stage 2 - In Progress",
+            shortlisted: "Stage 3 - Shortlisted",
+            selected: "Stage 4 - Selected",
+            rejected: "Stage 5 - Rejected",
+            "on hold": "Stage 6 - On Hold",
+            onboarded: "Stage 7 - Onboarded",
+            leaved: "Stage 8 - Leaved",
+          };
+
+          return statusLabels[status?.toLowerCase()] || status || "N/A";
         },
         enableColumnFilter: false,
       },
@@ -184,7 +191,7 @@ const AppliedJobList = () => {
                   <button
                     type="button"
                     onClick={() => navigate(-1)}
-                    className="text-start text-sm font-medium text-blue-600 underline"
+                    className="text-sm font-medium text-blue-600 underline text-start"
                   >
                     <ArrowLeftOutlined /> Back
                   </button>
