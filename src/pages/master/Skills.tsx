@@ -307,7 +307,7 @@ const AddSkill = () => {
       addSkills: Yup.string()
         .min(1, "Skill Name must be at least 1.")
         .max(50, "Skill name must be between 1 to 50 characters.")
-        .required("Skill name is required"),
+        .required("Skill name is required!"),
     }),
     onSubmit: (values) => {
       setLoader(true);

@@ -365,7 +365,7 @@ const State = () => {
         .min(1, "State Name must be at least 1.")
         .max(50, "State name must be between 1 to 50 characters.")
         .required("State is required"),
-      country_id: Yup.string().required("Country is required"),
+      country_id: Yup.string().required("Country is required!"),
     }),
     onSubmit: (values) => {
       setLoader(true);

@@ -309,7 +309,7 @@ const AddDesignation = () => {
       designationName: Yup.string()
         .min(1, "Designation Name must be at least 1.")
         .max(50, "Designation name must be between 1 to 50 characters.")
-        .required("Designation name is required"),
+        .required("Designation name is required!"),
     }),
 
     onSubmit: (values) => {
