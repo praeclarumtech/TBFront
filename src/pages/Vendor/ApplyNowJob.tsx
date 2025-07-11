@@ -66,9 +66,9 @@ const ApplyNowJob = () => {
     try {
       const response = await addJobApplicant(file, formData.job_id);
       if (response?.success) {
-        setScore(response.data.score);
-        toast.success("Resume scored successfully!");
         setApplied(true);
+        setScore(response.data.applicant.score);
+        toast.success(response?.message || "Resume scored successfully!");
       } else {
         throw new Error(response?.message || "Scoring failed");
       }

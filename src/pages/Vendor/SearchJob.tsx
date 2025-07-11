@@ -26,11 +26,16 @@ import { toast } from "react-toastify";
 import { ViewAppliedSkills } from "api/skillsApi";
 import { useNavigate } from "react-router-dom";
 import { viewAllCity } from "api/cityApis";
+import Offcanvas from "react-bootstrap/esm/Offcanvas";
 
 const { SalaryFrequency, workPreferenceType } = appConstants;
 
 const SearchJob = () => {
   const navigate = useNavigate();
+
+  const [showFilter, setShowFilter] = useState(false);
+
+  const toggleFilter = () => setShowFilter(!showFilter);
 
   const [skillOptions, setSkillOptions] = useState<SelectedOption1[]>([]);
   const [filterExpectedPkg, setFilterExpectedPkg] = useState<number>(0);
@@ -312,12 +317,21 @@ const SearchJob = () => {
   return (
     <Container fluid>
       <Row>
+        <Col xs={12} className="pt-3">
+          <BaseButton
+            color="primary"
+            className="mb-3 md:hidden"
+            onClick={toggleFilter}
+          >
+            Filters
+          </BaseButton>
+        </Col>
         <Col
           xs={12}
           sm={6}
           md={4}
           lg={3}
-          className="sticky top-[64px] h-[calc(100vh-64px)] overflow-y-auto pt-3"
+          className="hidden md:block sticky top-[64px] h-[calc(100vh-64px)] overflow-y-auto pt-3"
         >
           {/* <div className="static max-h-screen "> */}
           <div className="bg-white rounded shadow">{drawerList()}</div>
@@ -408,6 +422,12 @@ const SearchJob = () => {
           )}
         </Col>
       </Row>
+      <Offcanvas show={showFilter} onHide={toggleFilter} placement="start">
+        <Offcanvas.Header closeButton>
+          <Offcanvas.Title>Filters</Offcanvas.Title>
+        </Offcanvas.Header>
+        <Offcanvas.Body>{drawerList()}</Offcanvas.Body>
+      </Offcanvas>
     </Container>
   );
 };

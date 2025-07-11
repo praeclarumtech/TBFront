@@ -116,7 +116,7 @@ const ViewProfile = ({ show, onHide, _id }: any) => {
               </Col>
             </Row>
             <Row gutter={[24, 24]}>
-              <Col span={12}>
+              <Col xs={24} md={12}>
                 <DetailsRow
                   label="User-Name"
                   value={
@@ -131,7 +131,7 @@ const ViewProfile = ({ show, onHide, _id }: any) => {
                   }
                 />
               </Col>
-              <Col span={12}>
+              <Col xs={24} md={12}>
                 <DetailsRow
                   label="Role"
                   value={
@@ -220,6 +220,87 @@ const ViewProfile = ({ show, onHide, _id }: any) => {
                       checkedChildren={<CheckOutlined />}
                       unCheckedChildren={<CloseOutlined />}
                       disabled
+                    />
+                  )
+                }
+              />
+            </Col>
+          </DetailsCard>
+          <DetailsCard title="View Company Information" icon={<>💼</>}>
+            <Col span={12}>
+              <DetailsRow
+                label="Name"
+                value={
+                  formData?.vendorProfileId?.company_name ? (
+                    <Tag color="geekblue">
+                      {formData?.vendorProfileId?.company_name}
+                    </Tag>
+                  ) : (
+                    <Badge
+                      count={"N/A"}
+                      style={{ backgroundColor: "#52c41a" }}
+                    />
+                  )
+                }
+              />
+            </Col>
+            <Col span={12}>
+              <DetailsRow
+                label="Mail"
+                value={
+                  formData?.vendorProfileId?.company_email ? (
+                    <a
+                      href={`mailto:${formData?.vendorProfileId?.company_email}`}
+                      className="hover:underline"
+                    >
+                      {formData?.vendorProfileId?.company_email}
+                    </a>
+                  ) : (
+                    <Badge
+                      count={"N/A"}
+                      style={{ backgroundColor: "#52c41a" }}
+                    />
+                  )
+                }
+              />
+            </Col>
+            <Col span={12}>
+              <DetailsRow
+                label="Website"
+                value={
+                  formData?.vendorProfileId?.company_linkedin_profile ? (
+                    <a
+                      href={`mailto:${formData?.vendorProfileId?.company_linkedin_profile}`}
+                      className="hover:underline"
+                    >
+                      {/* {formData?.vendorProfileId?.company_linkedin_profile} */}
+                      {"Comapany linked-in"}
+                    </a>
+                  ) : (
+                    <Badge
+                      count={"N/A"}
+                      style={{ backgroundColor: "#52c41a" }}
+                    />
+                  )
+                }
+              />
+            </Col>
+            <Col span={12}>
+              <DetailsRow
+                label="Company Link"
+                value={
+                  formData?.vendorProfileId?.company_linkedin_profile ? (
+                    <a
+                      href={`mailto:${formData?.vendorProfileId?.company_linkedin_profile}`}
+                      className="hover:underline"
+                    >
+                      {/* {formData?.vendorProfileId?.company_linkedin_profile} */}
+                      {"Comapany linked-in"}
+                    </a>
+                  ) : (
+                    <Badge
+                      count={"N/A"}
+                      style={{ backgroundColor: "#52c41a" }}
                     />
                   )
                 }

@@ -9,12 +9,16 @@ import {
   // ExclamationCircleFill,
   XCircleFill,
   ClockFill,
-  HCircleFill,
+  CheckCircleFill,
+  ClipboardCheckFill,
+  DoorOpenFill,
+  HourglassSplit,
+  PersonCheckFill,
+  PersonPlusFill,
 } from "react-bootstrap-icons";
 import ApplicantsDeatils from "sub-components/dashboard/ApplicantsDetails";
 import { getChartDetails, getTotalApplicants } from "api/dashboardApi";
 import appConstants from "constants/constant";
-import { CheckCircleFilled } from "@ant-design/icons";
 
 const { projectTitle, Modules } = appConstants;
 
@@ -87,7 +91,7 @@ const Dashboard = () => {
 
   const applicantStats = [
     {
-      title: "Total ",
+      title: "Total",
       value: totalApplicants,
       icon: <PeopleFill size={25} />,
       color: "primary",
@@ -95,49 +99,49 @@ const Dashboard = () => {
     {
       title: "Applied",
       value: appliedApplicants,
-      icon: <PeopleFill size={25} />,
+      icon: <PersonPlusFill size={25} />, // applied => new applicant
       color: "secondary",
     },
     {
       title: "In Process",
       value: inProcessApplicants,
-      icon: <ClockFill size={25} />,
+      icon: <ClockFill size={25} />, // in process => clock
       color: "info",
     },
     {
       title: "Shortlisted",
       value: shortListedApplicants,
-      icon: <CheckCircleFilled style={{ fontSize: 25 }} />,
+      icon: <ClipboardCheckFill size={25} />, // shortlisted => checklist
       color: "info",
     },
     {
       title: "Selected",
       value: selectedApplicants,
-      icon: <CheckCircleFilled style={{ fontSize: 25 }} />,
+      icon: <CheckCircleFill size={25} />, // selected => check mark
       color: "success",
     },
     {
       title: "Onboarded",
       value: onboardedApplicants,
-      icon: <CheckCircleFilled style={{ fontSize: 25 }} />,
+      icon: <PersonCheckFill size={25} />, // onboarded => person with check
       color: "success",
     },
     {
       title: "On Hold",
       value: holdApplicants,
-      icon: <HCircleFill size={25} />,
+      icon: <HourglassSplit size={25} />, // on hold => hourglass
       color: "warning",
     },
     {
       title: "Rejected",
       value: rejectedApplicants,
-      icon: <XCircleFill size={25} />,
+      icon: <XCircleFill size={25} />, // rejected => cross
       color: "danger",
     },
     {
       title: "Leaved",
       value: leavedApplicants,
-      icon: <XCircleFill size={25} />,
+      icon: <DoorOpenFill size={25} />, // leaved => door open
       color: "danger",
     },
   ];

@@ -10,14 +10,17 @@ import { ProfileFormData } from "interfaces/user.interface";
 import { toast } from "react-toastify";
 import appEnv from "config/appEnv";
 import BaseInput from "components/BaseComponents/BaseInput";
-import { InputPlaceHolder } from "utils/commonFunctions";
+import { dynamicFind, InputPlaceHolder } from "utils/commonFunctions";
 // import { BaseSelect } from "components/BaseComponents/BaseSelect";
 // import { SelectedOption } from "interfaces/applicant.interface";
 import BaseButton from "components/BaseComponents/BaseButton";
 import { useNavigate } from "react-router";
+import { SelectedOption } from "interfaces/applicant.interface";
+import { BaseSelect } from "components/BaseComponents/BaseSelect";
 // import { statusCode } from '../../interfaces/global.interface';
 
-const { projectTitle, Modules } = appConstants;
+const { projectTitle, Modules, companyType, hireResourceOptions } =
+  appConstants;
 const Profile = () => {
   document.title = Modules.Profile + " | " + projectTitle;
   const hasMounted = useMounted();
@@ -35,6 +38,17 @@ const Profile = () => {
     phoneNumber: "",
     dateOfBirth: "",
     designation: "",
+    role: "",
+    company_name: "",
+    company_email: "",
+    company_phone_number: "",
+    company_location: "",
+    company_type: "",
+    hire_resources: "",
+    company_strength: "",
+    company_linkedin_profile: "",
+    company_website: "",
+    whatsapp_number: "",
   });
 
   const [imagePreview, setImagePreview] = useState<string>(
@@ -74,6 +88,19 @@ const Profile = () => {
         phoneNumber: profileData.phoneNumber || "",
         dateOfBirth: profileData.dateOfBirth || "",
         designation: profileData.designation || "",
+        role: profileData.role || "",
+        whatsapp_number: profileData.whatsapp_number || "",
+        company_name: profileData.vendorProfileId?.company_name || "",
+        company_email: profileData.vendorProfileId?.company_email || "",
+        company_phone_number:
+          profileData.vendorProfileId?.company_phone_number || "",
+        company_location: profileData.vendorProfileId?.company_location || "",
+        company_type: profileData.vendorProfileId?.company_type || "",
+        hire_resources: profileData.vendorProfileId?.hire_resources || "",
+        company_strength: profileData.vendorProfileId?.company_strength || "",
+        company_linkedin_profile:
+          profileData.vendorProfileId?.company_linkedin_profile || "",
+        company_website: profileData.vendorProfileId?.company_website || "",
       });
 
       setImagePreview(
@@ -89,18 +116,86 @@ const Profile = () => {
     setFormData((prevState) => ({ ...prevState, [id]: value }));
   };
 
+  // const handleSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   if (error) {
+  //     toast.error("Kindly correct the errors before submitting the changes.");
+  //     return;
+  //   }
+  //   // const profilePicture = event.target.files?.[0];
+  //   // if (!profilePicture) return;
+
+  //   const formDataToSend = new FormData();
+
+  //   for (const key in formData) {
+  //     if (key === "profilePicture") {
+  //       if (formData[key] instanceof File) {
+  //         formDataToSend.append(key, formData[key]);
+  //       } else if (formData[key] === "") {
+  //         formDataToSend.append(key, "null");
+  //       }
+  //     } else {
+  //       formDataToSend.append(key, String(formData[key]));
+  //     }
+  //   }
+
+  //   try {
+  //     setLoading(true);
+
+  //     if (!id) {
+  //       toast.error("User ID is missing or invalid.");
+  //       return;
+  //     }
+  //     const response = await updateProfile(id, formDataToSend);
+
+  //     if (response) {
+  //       toast.success(response?.message || "Profile updated successfully!");
+
+  //       setLoading(false);
+
+  //       setImagePreview(
+  //         response?.data?.profilePicture
+  //           ? `${appEnv.API_ENDPOINT}/uploads/profile/${response.data.profilePicture}`
+  //           : imagePreview
+  //       );
+  //       navigate("/dashboard");
+  //     }
+  //   } catch (error) {
+  //     // if (error && statusCode === 400) {
+
+  //     toast.error(error instanceof Error ? error.message : "An error occurred");
+  //     // }
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (error) {
       toast.error("Kindly correct the errors before submitting the changes.");
       return;
     }
-    // const profilePicture = event.target.files?.[0];
-    // if (!profilePicture) return;
 
     const formDataToSend = new FormData();
-
+    const isVendor = formData?.role === "vendor";
     for (const key in formData) {
+      // Skip empty vendor fields if user is NOT vendor
+      if (!isVendor && key.startsWith("company_")) continue; // 👈 Add this condition
+      if (
+        !isVendor &&
+        [
+          "company_type",
+          "hire_resources",
+          "company_strength",
+          "company_linkedin_profile",
+          "company_website",
+          "whatsapp_number",
+        ].includes(key)
+      )
+        continue;
+
       if (key === "profilePicture") {
         if (formData[key] instanceof File) {
           formDataToSend.append(key, formData[key]);
@@ -119,25 +214,22 @@ const Profile = () => {
         toast.error("User ID is missing or invalid.");
         return;
       }
+
       const response = await updateProfile(id, formDataToSend);
 
       if (response) {
         toast.success(response?.message || "Profile updated successfully!");
-
-        setLoading(false);
 
         setImagePreview(
           response?.data?.profilePicture
             ? `${appEnv.API_ENDPOINT}/uploads/profile/${response.data.profilePicture}`
             : imagePreview
         );
+
         navigate("/dashboard");
       }
     } catch (error) {
-      // if (error && statusCode === 400) {
-
       toast.error(error instanceof Error ? error.message : "An error occurred");
-      // }
     } finally {
       setLoading(false);
     }
@@ -461,8 +553,335 @@ const Profile = () => {
                             handleBlur={handleBlur}
                           />
                         </Col>
+                        {formData.role === "vendor" ? (
+                          <Col
+                            md={6}
+                            sm={12}
+                            xl={6}
+                            lg={6}
+                            className="mb-3 md:mb-4 lg:mb-4 xl:mb-4"
+                          >
+                            <BaseInput
+                              label="Whatsapp Number"
+                              name="whatsapp_number"
+                              type="text"
+                              placeholder={InputPlaceHolder("Whatsapp Number")}
+                              handleChange={(e) => {
+                                const rawValue = e.target.value.replace(
+                                  /\D/g,
+                                  ""
+                                );
+                                const sanitizedValue = rawValue.slice(0, 10);
+                                setFormData({
+                                  ...formData,
+                                  whatsapp_number: sanitizedValue,
+                                });
+                              }}
+                              value={formData?.whatsapp_number}
+                              // disabled
+                            />
+                          </Col>
+                        ) : (
+                          <></>
+                        )}
                       </Row>
-
+                      {formData.role === "vendor" ? (
+                        <div>
+                          {/* <Row className="mb-4 h3 fw-bold">Company Details</Row> */}
+                          <Row>
+                            <Col
+                              md={6}
+                              sm={12}
+                              xl={6}
+                              lg={6}
+                              className="mb-3 md:mb-4 lg:mb-4 xl:mb-4 "
+                            >
+                              <BaseInput
+                                label="Comapny Name"
+                                name="company_name"
+                                type="text"
+                                placeholder={InputPlaceHolder("Company Name")}
+                                handleChange={(e) => {
+                                  const value = e.target.value;
+                                  setFormData({
+                                    ...formData,
+                                    company_name: value,
+                                  });
+                                }}
+                                value={formData.company_name}
+                                passwordToggle={false}
+                              />
+                            </Col>
+                            <Col
+                              md={6}
+                              sm={12}
+                              xl={6}
+                              lg={6}
+                              className="mb-3 md:mb-4 lg:mb-4 xl:mb-4 sm:mb-4 "
+                            >
+                              <BaseInput
+                                className=""
+                                label="Comapny Email"
+                                name="company_email"
+                                type="email"
+                                placeholder={InputPlaceHolder("Comapny Email")}
+                                handleChange={(e) => {
+                                  const value = e.target.value;
+                                  setFormData({
+                                    ...formData,
+                                    company_email: value,
+                                  });
+                                }}
+                                value={formData?.company_email}
+                              />
+                            </Col>
+                          </Row>
+                          <Row>
+                            <Col
+                              md={6}
+                              sm={12}
+                              xl={6}
+                              lg={6}
+                              className="mb-3 md:mb-4 lg:mb-4 xl:mb-4"
+                            >
+                              <BaseInput
+                                label="Comapny Phone Number"
+                                name="company_phone_number"
+                                type="text"
+                                placeholder={InputPlaceHolder("Phone Number")}
+                                handleChange={(e) => {
+                                  const rawValue = e.target.value.replace(
+                                    /\D/g,
+                                    ""
+                                  );
+                                  const sanitizedValue = rawValue.slice(0, 10);
+                                  setFormData({
+                                    ...formData,
+                                    company_phone_number: sanitizedValue,
+                                  });
+                                }}
+                                value={formData?.company_phone_number}
+                                // disabled
+                              />
+                            </Col>
+                            <Col
+                              md={6}
+                              sm={12}
+                              xl={6}
+                              lg={6}
+                              className="mb-3 md:mb-4 lg:mb-4 xl:mb-4"
+                            >
+                              <BaseInput
+                                label="Comapny Location"
+                                name="company_location"
+                                type="text"
+                                placeholder={InputPlaceHolder(
+                                  "Comapny Location"
+                                )}
+                                handleChange={(e) => {
+                                  const rawValue = e.target.value;
+                                  // const sanitizedValue = rawValue.slice(0, 10);
+                                  setFormData({
+                                    ...formData,
+                                    company_location: rawValue,
+                                  });
+                                }}
+                                value={formData?.company_location}
+                                // disabled
+                              />
+                            </Col>
+                          </Row>
+                          <Row>
+                            <Col
+                              md={6}
+                              sm={12}
+                              xl={6}
+                              lg={6}
+                              className="mb-3 md:mb-4 lg:mb-4 xl:mb-4 sm:mb-4"
+                            >
+                              <BaseSelect
+                                label="Hire Resources"
+                                name="hire_resources"
+                                className="select-border"
+                                options={hireResourceOptions}
+                                placeholder={InputPlaceHolder("Type")}
+                                handleChange={(
+                                  selectedOption: SelectedOption
+                                ) => {
+                                  setFormData({
+                                    ...formData,
+                                    hire_resources: selectedOption?.value || "",
+                                  });
+                                }}
+                                handleBlur={formData.handleBlur}
+                                value={
+                                  dynamicFind(
+                                    hireResourceOptions,
+                                    formData?.hire_resources
+                                  ) || ""
+                                }
+                                isRequired={false}
+                                menuPortalTarget={
+                                  typeof window !== "undefined"
+                                    ? document.body
+                                    : null
+                                }
+                                menuPosition="fixed"
+                                styles={{
+                                  menuPortal: (base: any) => ({
+                                    ...base,
+                                    zIndex: 9999,
+                                  }),
+                                  menuList: (provided: any) => ({
+                                    ...provided,
+                                    maxHeight: 200,
+                                    overflowY: "auto",
+                                  }),
+                                }}
+                              />
+                            </Col>
+                            <Col
+                              md={6}
+                              sm={12}
+                              xl={6}
+                              lg={6}
+                              className="mb-3 md:mb-4 lg:mb-4 xl:mb-4 sm:mb-4"
+                            >
+                              <BaseSelect
+                                label="Comapny Type"
+                                name="company_type"
+                                className="select-border"
+                                options={companyType}
+                                placeholder={InputPlaceHolder("Type")}
+                                handleChange={(
+                                  selectedOption: SelectedOption
+                                ) => {
+                                  setFormData({
+                                    ...formData,
+                                    company_type: selectedOption?.value || "",
+                                  });
+                                }}
+                                handleBlur={formData.handleBlur}
+                                value={
+                                  dynamicFind(
+                                    companyType,
+                                    formData?.company_type
+                                  ) || ""
+                                }
+                                isRequired={false}
+                                menuPortalTarget={
+                                  typeof window !== "undefined"
+                                    ? document.body
+                                    : null
+                                }
+                                menuPosition="fixed"
+                                styles={{
+                                  menuPortal: (base: any) => ({
+                                    ...base,
+                                    zIndex: 9999,
+                                  }),
+                                  menuList: (provided: any) => ({
+                                    ...provided,
+                                    maxHeight: 200,
+                                    overflowY: "auto",
+                                  }),
+                                }}
+                              />
+                            </Col>
+                          </Row>
+                          <Row>
+                            <Col
+                              md={6}
+                              sm={12}
+                              xl={6}
+                              lg={6}
+                              className="mb-3 md:mb-4 lg:mb-4 xl:mb-4"
+                            >
+                              <BaseInput
+                                label="Comapny Strangth"
+                                name="company_strength"
+                                type="text"
+                                placeholder={InputPlaceHolder(
+                                  "Comapny Strangth"
+                                )}
+                                handleChange={(e) => {
+                                  const rawValue = e.target.value.replace(
+                                    /\D/g,
+                                    ""
+                                  );
+                                  const sanitizedValue = rawValue.slice(0, 10);
+                                  setFormData({
+                                    ...formData,
+                                    company_strength: sanitizedValue,
+                                  });
+                                }}
+                                value={formData?.company_strength}
+                                // disabled
+                              />
+                            </Col>
+                          </Row>
+                          <Row>
+                            <Col
+                              md={6}
+                              sm={12}
+                              xl={6}
+                              lg={6}
+                              className="mb-3 md:mb-4 lg:mb-4 xl:mb-4"
+                            >
+                              <BaseInput
+                                label="Company Linkedin URL"
+                                name="company_linkedin_profile"
+                                type="url"
+                                placeholder={InputPlaceHolder(
+                                  "Company Linkedin URL"
+                                )}
+                                handleChange={(e) => {
+                                  const rawValue = e.target.value;
+                                  setFormData({
+                                    ...formData,
+                                    company_linkedin_profile: rawValue,
+                                  });
+                                }}
+                                handleBlur={handleBlur}
+                                value={formData.company_linkedin_profile}
+                                // touched={"linkedinUrl"}
+                                // error={error.linkedinUrl}
+                                passwordToggle={false}
+                              />
+                            </Col>
+                            <Col
+                              md={6}
+                              sm={12}
+                              xl={6}
+                              lg={6}
+                              className="mb-3 md:mb-4 lg:mb-4 xl:mb-4"
+                            >
+                              <BaseInput
+                                label="Company Website"
+                                name="company_website"
+                                type="url"
+                                placeholder={InputPlaceHolder(
+                                  "Company Website"
+                                )}
+                                handleChange={(e) => {
+                                  const rawValue = e.target.value;
+                                  setFormData({
+                                    ...formData,
+                                    company_website: rawValue,
+                                  });
+                                }}
+                                handleBlur={handleBlur}
+                                value={formData.company_website}
+                                // touched={"linkedinUrl"}
+                                // error={error.linkedinUrl}
+                                passwordToggle={false}
+                              />
+                            </Col>
+                          </Row>
+                        </div>
+                      ) : (
+                        <></>
+                      )}
                       <div className="flex justify-end gap-4 ">
                         <>
                           <BaseButton
