@@ -32,7 +32,7 @@ export const jobApplicantSchema = Yup.object({
   maritalStatus: Yup.string(),
   // maritalStatus: Yup.string().required("Marital status is required."),
   currentCompanyDesignation: Yup.string().required(
-    "Current Company Designation is required"
+    "Current company designation is required!"
   ),
   appliedRole: Yup.string().required("Applied role is required!"),
   anyHandOnOffers: Yup.boolean(),
@@ -266,34 +266,52 @@ export const QrApplicants = Yup.object({
 
   currentPkg: Yup.string()
     .required("Current package is required")
-    .matches(/^\d+(\.\d{1,2})?$/, "Please enter a valid current package."),
+    .matches(/^\d+(\.\d{1,2})?$/, "Please enter a valid current package.")
+    .test("not-zero", "Current package must be greater than 0.", (value) => {
+      const num = parseFloat(value || "0");
+      return num > 0;
+    }),
 
   expectedPkg: Yup.string()
     .required("Expected package is required")
-    .matches(/^\d+(\.\d{1,2})?$/, "Please enter a valid expected package."),
+    .matches(/^\d+(\.\d{1,2})?$/, "Please enter a valid expected package.")
+    .test("not-zero", "Expected package must be greater than 0.", (value) => {
+      const num = parseFloat(value || "0");
+      return num > 0;
+    }),
 
   negotiation: Yup.string().required("Negotiation status is required"),
 
   noticePeriod: Yup.string()
     .required("Notice period is required")
-    .min(0, "Notice period cannot be negative."),
+    .matches(/^\d+(\.\d{1,2})?$/, "Please enter a valid notice period.")
+    .test(
+      "greater-than-zero",
+      "Notice period must be greater than 0.",
+      (value) => {
+        const num = parseFloat(value || "0");
+        return num > 0;
+      }
+    ),
 
-  workPreference: Yup.string()
-    .oneOf(
-      ["remote", "onsite", "hybrid"],
-      "Please select a valid work preference."
-    )
-    .required("Work preference is required"),
+  // workPreference: Yup.string()
+  //   .oneOf(
+  //     ["remote", "onsite", "hybrid"],
+  //     "Please select a valid work preference."
+  //   )
+  //   .required("Work preference is required"),
 
-  linkedinUrl: Yup.string()
-    .url("Please enter a valid URL.")
-    .required("LinkedIn URL is required"),
+  // linkedinUrl: Yup.string()
+  //   .url("Please enter a valid URL.")
+  //   .required("LinkedIn URL is required"),
 
   otherSkills: Yup.string().required("Other skills are required"),
 
   appliedRole: Yup.string().required("Applied role is required"),
 
   state: Yup.string().required("State is required"),
+
+  currentCity: Yup.string().required("City is required"),
 
   totalExperience: Yup.string().required("Total experience is required"),
 
@@ -318,7 +336,7 @@ export const QrApplicants = Yup.object({
         return isNaN(total) || isNaN(relevant) || relevant <= total;
       }
     ),
-
+  // currentPkg: Yup.string().required("Total experience is required"),
   communicationSkill: Yup.number()
     .required("Communication rating is required")
     .min(1, "Rating must be between 1 and 10.")

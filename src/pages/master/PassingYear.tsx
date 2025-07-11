@@ -47,7 +47,7 @@ const PassingYear = () => {
         .integer("Year must be a whole number")
         .min(1900, "Year must be after 1900")
         .max(new Date().getFullYear(), "Year cannot be in the future")
-        .required("Year is required"),
+        .required("Year is required!"),
     }),
 
     onSubmit: async (values, { resetForm }) => {
@@ -102,12 +102,12 @@ const PassingYear = () => {
       {
         header: "Action",
         cell: (cell: { row: { original: PassingYearData } }) => (
-          <div className="hstack gap-2">
+          <div className="gap-2 hstack">
             <BaseButton
               className="btn btn-sm btn-soft-primary"
               onClick={() => handleEdit(cell.row.original)}
             >
-              <i className="ri-edit-line align-bottom" />
+              <i className="align-bottom ri-edit-line" />
             </BaseButton>
             <BaseButton
               className="btn btn-sm btn-soft-danger"
@@ -116,7 +116,7 @@ const PassingYear = () => {
                 setDeleteModal(true);
               }}
             >
-              <i className="ri-delete-bin-6-fill align-bottom" />
+              <i className="align-bottom ri-delete-bin-6-fill" />
             </BaseButton>
           </div>
         ),
@@ -130,7 +130,7 @@ const PassingYear = () => {
       <Container fluid>
         <Row>
           <Col>
-            <Card className="mb-3 my-3">
+            <Card className="my-3 mb-3">
               <CardBody>
                 <Row>
                   <Col xl={5} className="fw-bold h4 ms-4">
@@ -158,10 +158,10 @@ const PassingYear = () => {
                       xs={9}
                       md={5}
                       lg={5}
-                      className="d-flex justify-content-end px-1"
+                      className="px-1 d-flex justify-content-end"
                     >
                       <BaseButton
-                        className="btn btn-outline-dark text-white"
+                        className="text-white btn btn-outline-dark"
                         type="button"
                         onClick={() => {
                           validation.resetForm();
@@ -171,7 +171,7 @@ const PassingYear = () => {
                         Cancel
                       </BaseButton>
                       <BaseButton
-                        className="ms-3 px-5 btn btn-success"
+                        className="px-5 ms-3 btn btn-success"
                         type="submit"
                       >
                         {editingYear ? "Update" : "Add"}
@@ -185,7 +185,7 @@ const PassingYear = () => {
                       {loader ? (
                         <Loader />
                       ) : (
-                        <div className="card-body pt-0">
+                        <div className="pt-0 card-body">
                           {passingYears.length > 0 ? (
                             <TableContainer
                               isHeaderTitle="Passing Year"

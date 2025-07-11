@@ -257,18 +257,15 @@ const QrFrom = () => {
     },
     validationSchema: QrApplicants,
 
-    onSubmit: async (
-      value: any
-      // , { setSubmitting }
-    ) => {
+    onSubmit: async (value: any, { setSubmitting }) => {
       setButtonLoading(true);
-      // if (emailError) {
-      //   // Optional: show a message or toast
-      //   console.warn("Email validation error:", emailError);
-      //   setSubmitting(false);
-      //   setButtonLoading(false);
-      //   return; // prevent submission
-      // }
+      if (emailError) {
+        // Optional: show a message or toast
+        console.warn("Email validation error:", emailError);
+        setSubmitting(false);
+        setButtonLoading(false);
+        return; // prevent submission
+      }
       try {
         const formData = new FormData();
         formData.append("name[firstName]", value.firstName);
@@ -781,8 +778,7 @@ const QrFrom = () => {
                         type="text"
                         placeholder={InputPlaceHolder("Current package")}
                         handleChange={(e) => {
-                          let value = e.target.value;
-                          value = value.replace(/[^0-9.]/g, "");
+                          let value = e.target.value.replace(/[^0-9.]/g, "");
 
                           const parts = value.split(".");
                           if (parts.length > 2) {
@@ -793,19 +789,8 @@ const QrFrom = () => {
                             value = parts[0] + "." + parts[1].slice(0, 2);
                           }
 
-                          const numValue = parseFloat(value);
-
-                          if (
-                            !isNaN(numValue) &&
-                            numValue >= 0 &&
-                            numValue <= 1000
-                          ) {
-                            validation.setFieldValue("currentPkg", value);
-                          } else if (value === "" || value === ".") {
-                            validation.setFieldValue("currentPkg", value);
-                          } else if (!value) {
-                            validation.setFieldValue("currentPkg", "");
-                          }
+                          e.target.value = value;
+                          validation.handleChange(e); // ✅ Let Formik handle value + validation
                         }}
                         handleBlur={(e) => {
                           const value = e.target.value;
@@ -814,22 +799,24 @@ const QrFrom = () => {
                             const numValue = parseFloat(value);
                             if (numValue >= 0 && numValue <= 1000) {
                               validation.setFieldValue(
-                                "currentPkg",
-                                numValue.toFixed(2)
+                                e.target.name,
+                                numValue.toFixed(2),
+                                true
                               );
                             } else {
-                              validation.setFieldValue("currentPkg", "");
+                              validation.setFieldValue(e.target.name, "", true);
                             }
                           } else {
-                            validation.setFieldValue("currentPkg", "");
+                            validation.setFieldValue(e.target.name, "", true);
                           }
-                          validation.handleBlur(e);
+
+                          validation.handleBlur(e); // ✅ Mark field as touched
                         }}
                         value={validation.values.currentPkg}
                         touched={validation.touched.currentPkg}
                         error={validation.errors.currentPkg}
                         passwordToggle={false}
-                        isRequired={false}
+                        isRequired={true}
                       />
                     </Col>
 
@@ -840,8 +827,7 @@ const QrFrom = () => {
                         type="text"
                         placeholder={InputPlaceHolder("Expected Package")}
                         handleChange={(e) => {
-                          let value = e.target.value;
-                          value = value.replace(/[^0-9.]/g, "");
+                          let value = e.target.value.replace(/[^0-9.]/g, "");
 
                           const parts = value.split(".");
                           if (parts.length > 2) {
@@ -852,19 +838,8 @@ const QrFrom = () => {
                             value = parts[0] + "." + parts[1].slice(0, 2);
                           }
 
-                          const numValue = parseFloat(value);
-
-                          if (
-                            !isNaN(numValue) &&
-                            numValue >= 0 &&
-                            numValue <= 1000
-                          ) {
-                            validation.setFieldValue("expectedPkg", value);
-                          } else if (value === "" || value === ".") {
-                            validation.setFieldValue("expectedPkg", value);
-                          } else if (!value) {
-                            validation.setFieldValue("expectedPkg", "");
-                          }
+                          e.target.value = value;
+                          validation.handleChange(e); // ✅ Let Formik handle value + validation
                         }}
                         handleBlur={(e) => {
                           const value = e.target.value;
@@ -873,24 +848,27 @@ const QrFrom = () => {
                             const numValue = parseFloat(value);
                             if (numValue >= 0 && numValue <= 1000) {
                               validation.setFieldValue(
-                                "expectedPkg",
-                                numValue.toFixed(2)
+                                e.target.name,
+                                numValue.toFixed(2),
+                                true
                               );
                             } else {
-                              validation.setFieldValue("expectedPkg", "");
+                              validation.setFieldValue(e.target.name, "", true);
                             }
                           } else {
-                            validation.setFieldValue("expectedPkg", "");
+                            validation.setFieldValue(e.target.name, "", true);
                           }
-                          validation.handleBlur(e);
+
+                          validation.handleBlur(e); // ✅ Mark field as touched
                         }}
                         value={validation.values.expectedPkg}
                         touched={validation.touched.expectedPkg}
                         error={validation.errors.expectedPkg}
                         passwordToggle={false}
-                        isRequired={false}
+                        isRequired={true}
                       />
                     </Col>
+
                     <Col xs={12} sm={6} md={6} lg={3}>
                       <BaseInput
                         label="Notice Period (Days)"
@@ -946,7 +924,7 @@ const QrFrom = () => {
                         touched={validation.touched.noticePeriod}
                         error={validation.errors.noticePeriod}
                         passwordToggle={false}
-                        isRequired={false}
+                        isRequired={true}
                       />
                     </Col>
                     <Col xs={12} sm={6} md={6} lg={3}>
@@ -1035,7 +1013,7 @@ const QrFrom = () => {
                         }
                         touched={validation.touched.currentCity}
                         error={validation.errors.currentCity}
-                        isRequired={false}
+                        isRequired={true}
                       />
                     </Col>
                     <Col
