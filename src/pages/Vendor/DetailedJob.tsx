@@ -13,9 +13,12 @@ import {
 import { errorHandle } from "utils/commonFunctions";
 import BaseButton from "components/BaseComponents/BaseButton";
 import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 const DetailedJob = () => {
   const { id: _id } = useParams();
+  const location = useLocation();
+  const isFromAppliedJob = location.state?.from === "/appliedJobList";
   const [formData, setFormData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -265,7 +268,7 @@ const DetailedJob = () => {
               </Col>
             </Row>
 
-            <div className="flex justify-center mt-4 gap-4">
+            <div className="flex justify-center gap-4 mt-4">
               <BaseButton
                 type="button"
                 color="secondary"
@@ -274,8 +277,12 @@ const DetailedJob = () => {
               >
                 Back
               </BaseButton>
-              <BaseButton color="primary" onClick={handleNavigate}>
-                Apply Now
+              <BaseButton
+                color="primary"
+                onClick={handleNavigate}
+                disabled={isFromAppliedJob}
+              >
+                {isFromAppliedJob ? "Applied" : "Apply Now"}
               </BaseButton>
             </div>
           </DetailsCard>

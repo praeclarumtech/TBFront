@@ -116,7 +116,7 @@ const AppliedJobList = () => {
                 cursor: "pointer",
                 textDecoration: "underline",
               }}
-              onClick={() => handleView(cell.row.original._id)}
+              onClick={() => handleView(cell.row.original.job_id)}
             >
               {name}
             </span>
@@ -171,7 +171,9 @@ const AppliedJobList = () => {
   };
 
   const handleView = (id: string) => {
-    navigate(`/Vendor/detailed-job/${id}`);
+    navigate(`/Vendor/detailed-job/${id}`, {
+      state: { from: "/appliedJobList" },
+    });
   };
   return (
     <Fragment>
