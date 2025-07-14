@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, Fragment } from "react";
 import { Upload, message, Skeleton } from "antd";
 import type { UploadProps } from "antd";
@@ -107,11 +106,20 @@ const ApplyNowJob = () => {
       const ext = file.name.split(".").pop()?.toLowerCase();
       if (!["pdf", "docx"].includes(ext || "")) {
         message.error("Only PDF or DOCX files allowed.");
-        return Upload.LIST_IGNORE; // blocks upload
+        return Upload.LIST_IGNORE;
       }
-      setFile(file); // store file for handleSubmit
-      message.success(`${file.name} selected.`);
       return false; // prevent auto upload
+    },
+    onChange(info) {
+      const { fileList } = info;
+      if (fileList.length > 1) {
+        message.error("Only one file can be uploaded.");
+        // Remove extra files:
+        info.fileList.splice(1);
+      } else {
+        setFile(fileList[0].originFileObj || null);
+        message.success(`${fileList[0].name} selected.`);
+      }
     },
     onDrop(e) {
       console.log("Dropped files", e.dataTransfer.files);

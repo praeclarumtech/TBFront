@@ -157,17 +157,19 @@ const UserProfileEdit = () => {
         password: values.password,
         confirmPassword: values.confirmPassword,
         isActive: values.isActive === "true",
-        company_name: values.company_name,
-        company_email: values.company_email,
-        company_phone_number: values.company_phone_number,
-        company_location: values.company_location,
-        hire_resources: values.hire_resources,
-        company_type: values.company_type,
-        company_strength: values.company_strength,
-        company_linkedin_profile: values.company_linkedin_profile,
-        company_website: values.company_website,
-        whatsapp_number: values.whatsapp_number,
-        vendor_linkedin_profile: values.vendor_linkedin_profile,
+        ...(values.role === "vendor" && {
+          company_name: values.company_name,
+          company_email: values.company_email,
+          company_phone_number: values.company_phone_number,
+          company_location: values.company_location,
+          hire_resources: values.hire_resources,
+          company_type: values.company_type,
+          company_strength: values.company_strength,
+          company_linkedin_profile: values.company_linkedin_profile,
+          company_website: values.company_website,
+          whatsapp_number: values.whatsapp_number,
+          vendor_linkedin_profile: values.vendor_linkedin_profile,
+        }),
       };
 
       userAdd(payload)
@@ -178,7 +180,10 @@ const UserProfileEdit = () => {
             // resetData();
             navigate("/userManagement");
           } else {
-            toast.error(res?.message);
+            const msg = Array.isArray(res.message)
+              ? res.message.join(", \n")
+              : res.message;
+            toast.error(msg);
           }
         })
         .catch((error) => {
