@@ -12,6 +12,7 @@ import appConstants from "constants/constant";
 import { CloseOutlined } from "@ant-design/icons";
 import { toast } from "react-toastify";
 import BaseFav from "components/BaseComponents/BaseFav";
+import { getApplicantDetailsInVendor } from "api/apiVendor";
 
 const { projectTitle, Modules } = appConstants;
 
@@ -153,11 +154,15 @@ const ViewModal: React.FC<ViewModalProps> = ({
     if (!applicantId) return;
 
     setLoading(true);
-    const apiCall =
-      source === "import"
-        ? getImportedApplicantDetails(applicantId)
-        : getApplicantDetails(applicantId);
+    let apiCall;
 
+    if (source === "import") {
+      apiCall = getImportedApplicantDetails(applicantId);
+    } else if (source === "vendor") {
+      apiCall = getApplicantDetailsInVendor(applicantId);
+    } else {
+      apiCall = getApplicantDetails(applicantId);
+    }
     apiCall
       .then((res) => {
         if (res.success) {

@@ -19,6 +19,7 @@ import {
 import ApplicantsDeatils from "sub-components/dashboard/ApplicantsDetails";
 import { getChartDetails, getTotalApplicants } from "api/dashboardApi";
 import appConstants from "constants/constant";
+import { useNavigate } from "react-router-dom";
 
 const { projectTitle, Modules } = appConstants;
 
@@ -56,6 +57,7 @@ const Dashboard = () => {
   const [chartLoading, setChartLoading] = useState<boolean>(true);
   const location = useLocation();
   const applicantIds = location.state?.applicantIds || [];
+  const navigate = useNavigate();
 
   const handleResetFilter = () => {
     setSelectedTechnology(null);
@@ -160,6 +162,31 @@ const Dashboard = () => {
     }
   };
 
+  const handleCardClick = (status: string) => {
+    const filter = status.toLowerCase().replace(/\s+/g, " ");
+    console.log("Clicked:", status);
+    if (status === "Total") {
+      navigate("/applicants");
+    } else if (status === "Applied") {
+      navigate(`/applicants?status=${encodeURIComponent(filter)}`);
+    } else if (status === "In Process") {
+      const encodedStatus = encodeURIComponent("in progress");
+      navigate(`/applicants?status=${encodedStatus}`);
+    } else if (status === "Shortlisted") {
+      navigate(`/applicants?status=${encodeURIComponent(filter)}`);
+    } else if (status === "Selected") {
+      navigate(`/applicants?status=${encodeURIComponent(filter)}`);
+    } else if (status === "Onboarded") {
+      navigate(`/applicants?status=${encodeURIComponent(filter)}`);
+    } else if (status === "On Hold") {
+      navigate(`/applicants?status=${encodeURIComponent(filter)}`);
+    } else if (status === "Rejected") {
+      navigate(`/applicants?status=${encodeURIComponent(filter)}`);
+    } else if (status === "Leaved") {
+      navigate(`/applicants?status=${encodeURIComponent(filter)}`);
+    }
+  };
+
   return (
     <Fragment>
       <div>
@@ -211,8 +238,9 @@ const Dashboard = () => {
             {applicantStats.map((stat, index) => (
               <div
                 key={index}
-                className="flex-shrink-0"
+                className="flex-shrink-0 cursor-pointer"
                 style={{ minWidth: "200px" }}
+                onClick={() => handleCardClick(stat.title)}
               >
                 <StatRightTopIcon
                   title={stat.title}

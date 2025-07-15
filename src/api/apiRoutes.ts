@@ -167,5 +167,9 @@ export const VIEW_JOB_PUBLIC = "/job/public/viewJobs";
 //Vendor
 
 export const VIEW_APPLIED_JOB_USER = "/vendor/myApplications";
-export const JOB_SCORE = "/job/jobScore"
-export const ADD_JOB_APPLICATION = "job/addJobApplication"
+export const JOB_SCORE = "/job/jobScore";
+export const ADD_JOB_APPLICATION = "job/addJobApplication";
+export const VIEW_APPLIED_JOB_APPLICANTS = "/vendor/viewApplications";
+export const VIEW_APPLICANT_BY_ID_VENDOR = "vendor/viewApplicantionsById";
+export const UPDATE_APPLICANT_STAGE_VENDOR = "/vendor/updateApplicantStatus";
+export const DELETE_APPLICANT_VENDOR = "/vendor/deleteApplicant";
