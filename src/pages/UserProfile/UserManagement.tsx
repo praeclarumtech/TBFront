@@ -15,9 +15,21 @@ import { useNavigate } from "react-router-dom";
 import ViewProfile from "./ViewProfile";
 import BaseButton from "components/BaseComponents/BaseButton";
 import appConstants from "constants/constant";
+import Box from "@mui/material/Box";
+import {
+  Divider,
+  Drawer,
+  IconButton,
+  List,
+  useMediaQuery,
+} from "@mui/material";
+import { Close } from "@mui/icons-material";
+import { BaseSelect } from "components/BaseComponents/BaseSelect";
+import React from "react";
+import { SelectedOption } from "interfaces/applicant.interface";
 
-const { handleResponse } = appConstants;
-
+const { handleResponse, roleType } = appConstants;
+type Anchor = "top" | "right" | "bottom";
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -35,6 +47,26 @@ const UserManagement = () => {
     pageSize: 50,
   });
   const [searchAll, setSearchAll] = useState<string>("");
+  const [state, setState] = React.useState({
+    right: false,
+  });
+  const isMobile = window.innerWidth <= 767;
+  const isDesktop = useMediaQuery("(min-width: 768px)");
+  const [roleFilter, setRoleFilter] = useState<SelectedOption | null>(null);
+
+  const toggleDrawer =
+    (anchor: Anchor, open: boolean) =>
+    (event: React.KeyboardEvent | React.MouseEvent) => {
+      if (
+        event.type === "keydown" &&
+        ((event as React.KeyboardEvent).key === "Tab" ||
+          (event as React.KeyboardEvent).key === "Shift")
+      ) {
+        return;
+      }
+
+      setState({ ...state, [anchor]: open });
+    };
 
   // const [tableLoader, setTableLoader] = useState(false);
   const handleUpdateUserStatus = async (id: string, value: AnyObject) => {
@@ -71,12 +103,16 @@ const UserManagement = () => {
         page?: number;
         pageSize?: number;
         limit?: number;
+        role?: string;
       } = {
         page: pagination.pageIndex + 1,
         pageSize: pagination.pageSize,
         limit: 50,
       };
       const searchValue = searchAll?.trim();
+      if (roleFilter) {
+        params.role = encodeURIComponent(roleFilter.value);
+      }
       if (searchValue) {
         params.search = searchValue;
       }
@@ -92,7 +128,7 @@ const UserManagement = () => {
 
   useEffect(() => {
     fetchUsers();
-  }, [pagination.pageIndex, pagination.pageSize, searchAll]);
+  }, [pagination.pageIndex, pagination.pageSize, searchAll, roleFilter]);
 
   const closeActiveModal = () => {
     setShowActiveModal(false);
@@ -262,6 +298,86 @@ const UserManagement = () => {
     }));
   };
 
+  const handleRoleChange = (selectedOption: SelectedOption) => {
+    setRoleFilter(selectedOption);
+  };
+
+  const drawerList = (anchor: Anchor) => (
+    <Box
+      sx={{
+        // width: anchor === "top" || anchor === "bottom" ? "auto" : 400,
+        padding: "16px",
+        marginTop: anchor === "top" ? "64px" : 0,
+        width: isDesktop ? 400 : 250,
+      }}
+      role="presentation"
+    >
+      <div
+        style={{
+          position: "sticky",
+          top: 0,
+          background: "#fff",
+          zIndex: 100,
+          paddingBottom: "8px",
+          paddingTop: "8px",
+        }}
+      >
+        <Row className="flex items-center justify-between">
+          <Col>
+            <h3>Apply Filters</h3>
+          </Col>
+          <Col className="text-end">
+            <IconButton
+              onClick={toggleDrawer("right", false)}
+              sx={{ position: "absolute", top: 0, right: 0, zIndex: 10 }}
+            >
+              <Close />
+            </IconButton>
+          </Col>
+        </Row>
+      </div>
+      <List>
+        <BaseSelect
+          label="Role"
+          name="role"
+          className="mb-1 select-border "
+          options={roleType}
+          placeholder="Role"
+          handleChange={handleRoleChange}
+          value={roleFilter}
+        />
+      </List>
+
+      <Divider />
+      <div
+        style={{
+          position: "sticky",
+          bottom: 0,
+          background: "#fff",
+          zIndex: 100,
+          paddingTop: "8px",
+          paddingBottom: "8px",
+        }}
+      >
+        <Row>
+          <Col className="text-end">
+            <BaseButton
+              color="primary"
+              onClick={resetFilters}
+              sx={{ width: "auto" }}
+            >
+              Reset Filters
+            </BaseButton>
+          </Col>
+        </Row>
+      </div>
+    </Box>
+  );
+  const resetFilters = () => {
+    setRoleFilter(null);
+    fetchUsers();
+  };
+
   return (
     <>
       {showViewModal && selectedId && (
@@ -297,11 +413,30 @@ const UserManagement = () => {
                 sm={6}
                 lg={6}
                 md={6}
-                className="flex-wrap mt-4 mb-2 d-flex align-items-center "
+                className="flex-wrap mt-4 mb-4 d-flex align-items-center "
               >
-                <div className="ml-6 text-2xl font-bold">User Management</div>
+                <div className="ml-6">
+                  <button
+                    // className="primary"
+                    onClick={toggleDrawer("right", true)}
+                    className={`btn btn-primary d-block d-md-inline-block ${
+                      isMobile ? "w-[150px]" : "w-auto"
+                    }`}
+                  >
+                    {" "}
+                    <i className="mx-1 fa fa-filter"></i>Filters
+                  </button>
+                  <Drawer
+                    className="!mt-16"
+                    anchor="right"
+                    open={state["right"]}
+                    onClose={toggleDrawer("right", false)}
+                  >
+                    {drawerList("right")}
+                  </Drawer>
+                </div>
               </Col>
-              <Col sm={6} lg={6} md={6} className="mt-4 mb-2 ">
+              <Col sm={6} lg={6} md={6} className="mt-4 mb-4">
                 <div className="items-end justify-end mr-6 d-flex">
                   <div className="mr-3">
                     <input
@@ -318,12 +453,15 @@ const UserManagement = () => {
                 </div>
               </Col>
             </Row>
+          </Card>
+          <Card className="mt-3">
+            <div className="pt-5 pl-5 text-2xl font-bold">User Management</div>
             {tableLoader ? (
               <div className="m-3">
                 <Skeleton count={10} />
               </div>
             ) : (
-              <div className="pt-4 bg-white">
+              <div className="bg-white ">
                 {users?.length > 0 ? (
                   <Card.Body>
                     <TableContainer

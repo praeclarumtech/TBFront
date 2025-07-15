@@ -266,6 +266,78 @@ const ViewProfile = ({ show, onHide, _id }: any) => {
             </Col>
             <Col span={12}>
               <DetailsRow
+                label="Company Strength"
+                value={
+                  formData?.vendorProfileId?.company_strength ? (
+                    <Tag color="gold">
+                      {formData?.vendorProfileId?.company_strength}
+                    </Tag>
+                  ) : (
+                    <Badge
+                      count={"N/A"}
+                      style={{ backgroundColor: "#52c41a" }}
+                    />
+                  )
+                }
+              />
+            </Col>
+            <Col span={12}>
+              <DetailsRow
+                label="Company Type"
+                value={
+                  formData?.vendorProfileId?.company_type ? (
+                    <Tag color="gold">
+                      {formData?.vendorProfileId?.company_type}
+                    </Tag>
+                  ) : (
+                    <Badge
+                      count={"N/A"}
+                      style={{ backgroundColor: "#52c41a" }}
+                    />
+                  )
+                }
+              />
+            </Col>
+            <Col span={12}>
+              <DetailsRow
+                label="Company Number"
+                value={
+                  formData?.vendorProfileId?.company_phone_number ? (
+                    <Tag color="gold">
+                      {formData?.vendorProfileId?.company_phone_number}
+                    </Tag>
+                  ) : (
+                    <Badge
+                      count={"N/A"}
+                      style={{ backgroundColor: "#52c41a" }}
+                    />
+                  )
+                }
+              />
+            </Col>
+            <Col span={12}>
+              <DetailsRow
+                label="Vendor Linked-In"
+                value={
+                  formData?.vendorProfileId?.vendor_linkedin_profile ? (
+                    <a
+                      href={`mailto:${formData?.vendorProfileId?.vendor_linkedin_profile}`}
+                      className="hover:underline"
+                    >
+                      {/* {formData?.vendorProfileId?.company_linkedin_profile} */}
+                      {"Vendor linked-in"}
+                    </a>
+                  ) : (
+                    <Badge
+                      count={"N/A"}
+                      style={{ backgroundColor: "#52c41a" }}
+                    />
+                  )
+                }
+              />
+            </Col>
+            <Col span={12}>
+              <DetailsRow
                 label="Website"
                 value={
                   formData?.vendorProfileId?.company_linkedin_profile ? (

@@ -483,5 +483,12 @@ const appConstants = Object.freeze({
     { label: "In-House", value: "in-house" },
     { label: "All", value: "all" },
   ],
+  roleType: [
+    { label: "HR", value: "hr" },
+    { label: "Admin", value: "admin" },
+    // { label: "User", value: "user" },
+    { label: "Vendor", value: "vendor" },
+    { label: "Guest", value: "guest" },
+  ],
 });
 export default appConstants;

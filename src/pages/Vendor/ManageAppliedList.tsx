@@ -10,16 +10,9 @@ import * as Tooltip from "@radix-ui/react-tooltip";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "react-loading-skeleton/dist/skeleton.css";
-import {
-  listOfApplicants,
-  updateStage,
-  updateStatus,
-  ExportApplicant,
-  deleteMultipleApplicant,
-  updateApplicant,
-} from "api/applicantApi";
+import { ExportApplicant } from "api/applicantApi";
 
-import ViewModal from "./ViewApplicant";
+import ViewModal from "../applicant/ViewApplicant";
 import BaseInput from "components/BaseComponents/BaseInput";
 import DeleteModal from "components/BaseComponents/DeleteModal";
 import Box from "@mui/material/Box";
@@ -52,15 +45,21 @@ import { IconButton, useMediaQuery } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import BaseModal from "components/BaseComponents/BaseModal";
 import CheckboxMultiSelect from "components/BaseComponents/CheckboxMultiSelect";
-import { Switch } from "antd";
+// import { Switch } from "antd";
 
-import ActiveModal from "components/BaseComponents/ActiveModal";
-import { activeApplicant, inActiveApplicant } from "api/apiActive";
+// import ActiveModal from "components/BaseComponents/ActiveModal";
+// import { activeApplicant, inActiveApplicant } from "api/apiActive";
 import { viewRoleSkill } from "api/roleApi";
 import ConfirmModal from "components/BaseComponents/BaseConfirmModal";
-import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
-import BaseFav from "components/BaseComponents/BaseFav";
+// import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
+// import BaseFav from "components/BaseComponents/BaseFav";
 import { useLocation } from "react-router-dom";
+import {
+  deleteApplicantVendor,
+  updateStageVendor,
+  updateStatusVendor,
+  viewAllJobApplicants,
+} from "api/apiVendor";
 
 const {
   exportableFieldOption,
@@ -77,7 +76,7 @@ const {
 } = appConstants;
 
 type Anchor = "top" | "right" | "bottom";
-const Applicant = () => {
+const ManageAppliedList = () => {
   document.title = Modules.Applicant + " | " + projectTitle;
 
   const location = useLocation();
@@ -140,7 +139,7 @@ const Applicant = () => {
   const [appliedRoleOptions, setAppliedRoleOptions] = useState<
     SelectedOption[]
   >([]);
-  const [sourcePage, setSourcePage] = useState("main");
+  const [sourcePage, setSourcePage] = useState("vendor");
 
   const [loading, setLoading] = useState<boolean>(false);
   const [modelLoading, setModelLoading] = useState<boolean>(false);
@@ -157,9 +156,9 @@ const Applicant = () => {
     []
   );
   const [states, setStates] = useState<City[]>([]);
-  const [selectedRecord, setSelectedRecord] = useState<string | null>(null);
-  const [dataActive, SetDataActive] = useState(true);
-  const [showActiveModal, setShowActiveModal] = useState(false);
+  //   const [selectedRecord, setSelectedRecord] = useState<string | null>(null);
+  //   const [dataActive, SetDataActive] = useState(true);
+  //   const [showActiveModal, setShowActiveModal] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const [filterActiveStatus, setFilterActiveStatus] =
     useState<SelectedOption | null>(null);
@@ -328,9 +327,9 @@ const Applicant = () => {
       if (filterStatusDashboard) {
         params.status = filterStatusDashboard;
       }
-      const res = await listOfApplicants(params);
-      setApplicant(res?.data?.item || res?.data?.results || []);
-      setTotalRecords(res?.data?.totalRecords || 0);
+      const res = await viewAllJobApplicants(params);
+      setApplicant(res?.data?.applications || res?.data?.results || []);
+      setTotalRecords(res?.data?.pagination?.totalCount || 0);
     } catch (error: any) {
       const details = error?.response?.data?.details;
       if (Array.isArray(details)) {
@@ -527,52 +526,52 @@ const Applicant = () => {
     }
   };
 
-  const handleConfirm = async () => {
-    if (!selectedRecord) {
-      console.warn("No record selected");
-      return;
-    }
-    setModelLoading(true);
-    try {
-      switch (dataActive) {
-        case true: {
-          // console.log("Deactivating user...");
-          const res = await inActiveApplicant(selectedRecord);
-          if (res.success) {
-            setModelLoading(false);
-            setShowActiveModal(false);
-            toast.success(res.message);
-          }
-          break;
-        }
-        case false: {
-          // console.log("Activating user...");
-          const res = await activeApplicant(selectedRecord);
-          if (res.success) {
-            setModelLoading(false);
-            setShowActiveModal(false);
-            toast.success(res.message);
-          }
-          break;
-        }
-        default:
-          console.warn("Unknown status value:", dataActive);
-      }
-    } catch (error) {
-      console.error("Failed to toggle status:", error);
-    } finally {
-      setModelLoading(false);
-      setShowActiveModal(false);
-      fetchApplicants();
-    }
-  };
+  //   const handleConfirm = async () => {
+  //     if (!selectedRecord) {
+  //       console.warn("No record selected");
+  //       return;
+  //     }
+  //     setModelLoading(true);
+  //     try {
+  //       switch (dataActive) {
+  //         case true: {
+  //           // console.log("Deactivating user...");
+  //           const res = await inActiveApplicant(selectedRecord);
+  //           if (res.success) {
+  //             setModelLoading(false);
+  //             setShowActiveModal(false);
+  //             toast.success(res.message);
+  //           }
+  //           break;
+  //         }
+  //         case false: {
+  //           // console.log("Activating user...");
+  //           const res = await activeApplicant(selectedRecord);
+  //           if (res.success) {
+  //             setModelLoading(false);
+  //             setShowActiveModal(false);
+  //             toast.success(res.message);
+  //           }
+  //           break;
+  //         }
+  //         default:
+  //           console.warn("Unknown status value:", dataActive);
+  //       }
+  //     } catch (error) {
+  //       console.error("Failed to toggle status:", error);
+  //     } finally {
+  //       setModelLoading(false);
+  //       setShowActiveModal(false);
+  //       fetchApplicants();
+  //     }
+  //   };
 
   useEffect(() => {
     fetchAppliedRole();
     fetchSkills();
     getCities();
     getStates();
-    handleConfirm();
+    // handleConfirm();
   }, []);
 
   const handleExperienceChange = (e: React.ChangeEvent<any>) => {
@@ -718,9 +717,9 @@ const Applicant = () => {
     setSelectedApplicants([]);
   };
 
-  const closeActiveModal = () => {
-    setShowActiveModal(false);
-  };
+  //   const closeActiveModal = () => {
+  //     setShowActiveModal(false);
+  //   };
 
   const handleDeleteAll = () => {
     if (selectedApplicants.length > 0) {
@@ -733,7 +732,7 @@ const Applicant = () => {
     multipleApplicantDelete: string[] | undefined | null
   ) => {
     setLoader(true);
-    deleteMultipleApplicant(multipleApplicantDelete)
+    deleteApplicantVendor(multipleApplicantDelete)
       .then((res) => {
         toast.success(res?.message);
         fetchApplicants();
@@ -758,24 +757,24 @@ const Applicant = () => {
     setShowViewModal(false);
   };
 
-  const handleEdit = (applicantId: string) => {
-    navigate(`/applicants/edit-applicant/${applicantId}`);
-  };
+  //   const handleEdit = (applicantId: string) => {
+  //     navigate(`/applicants/edit-applicant/${applicantId}`);
+  //   };
 
-  const handleEmail = (applicantId: string) => {
-    const selectedApplicant = applicant.find(
-      (applicant) => applicant._id === applicantId
-    );
-    if (selectedApplicant) {
-      navigate("/email/compose", {
-        state: {
-          email_bcc: selectedApplicant.email,
-          name: selectedApplicant.name,
-          fromPage: location.pathname,
-        },
-      });
-    }
-  };
+  //   const handleEmail = (applicantId: string) => {
+  //     const selectedApplicant = applicant.find(
+  //       (applicant) => applicant._id === applicantId
+  //     );
+  //     if (selectedApplicant) {
+  //       navigate("/email/compose", {
+  //         state: {
+  //           email_bcc: selectedApplicant.email,
+  //           name: selectedApplicant.name,
+  //           fromPage: location.pathname,
+  //         },
+  //       });
+  //     }
+  //   };
 
   const handleSendEmail = () => {
     const emails = applicant
@@ -1037,7 +1036,6 @@ const Applicant = () => {
             setFilterAppliedRole(selectedOptions)
           }
         />
-
         <BaseSlider
           label="Experience (in years)"
           name="experience"
@@ -1306,7 +1304,7 @@ const Applicant = () => {
                 style={truncateText}
                 className="text-blue-600 underline cursor-pointer truncated-text hover:text-blue-800"
                 title={fullName}
-                onClick={() => handleView(info.row.original._id, "main")}
+                onClick={() => handleView(info.row.original._id, "vendor")}
               >
                 {fullName}
               </div>
@@ -1347,6 +1345,25 @@ const Applicant = () => {
         enableColumnFilter: false,
       },
       {
+        header: "Job ID",
+        accessorKey: "job_id.job_id",
+        cell: (cell: any) => {
+          const job = cell.row.original.job_id;
+          return job?.job_id || "-";
+        },
+        enableColumnFilter: false,
+      },
+      {
+        header: "Job Title",
+        accessorKey: "job_id.job_subject",
+        cell: (cell: any) => {
+          const job = cell.row.original.job_id;
+          return job?.job_subject || "-";
+        },
+        enableColumnFilter: false,
+      },
+
+      {
         header: "Action",
         cell: ({ row }: any) => (
           <div className="flex gap-2">
@@ -1356,7 +1373,7 @@ const Applicant = () => {
                 <Tooltip.Trigger asChild>
                   <button
                     className="btn btn-sm btn-soft-success bg-primary"
-                    onClick={() => handleView(row.original._id, "main")}
+                    onClick={() => handleView(row.original._id, "vendor")}
                     disabled={!row.original.isActive}
                   >
                     <i className="text-white ri-eye-fill" />
@@ -1375,7 +1392,7 @@ const Applicant = () => {
               </Tooltip.Root>
 
               {/* Edit Button with Tooltip */}
-              <Tooltip.Root>
+              {/* <Tooltip.Root>
                 <Tooltip.Trigger asChild>
                   <button
                     className="text-white btn btn-sm btn-soft-secondary bg-secondary"
@@ -1395,7 +1412,7 @@ const Applicant = () => {
                     <Tooltip.Arrow style={{ fill: "#637381" }} />
                   </Tooltip.Content>
                 </Tooltip.Portal>
-              </Tooltip.Root>
+              </Tooltip.Root> */}
 
               <Tooltip.Root>
                 <Tooltip.Trigger asChild>
@@ -1419,7 +1436,7 @@ const Applicant = () => {
                 </Tooltip.Portal>
               </Tooltip.Root>
 
-              <Tooltip.Root>
+              {/* <Tooltip.Root>
                 <Tooltip.Trigger asChild>
                   <button
                     className="text-white btn btn-sm btn-soft-success bg-success"
@@ -1439,8 +1456,9 @@ const Applicant = () => {
                     <Tooltip.Arrow style={{ fill: "#198754" }} />
                   </Tooltip.Content>
                 </Tooltip.Portal>
-              </Tooltip.Root>
-              <Tooltip.Root>
+              </Tooltip.Root> */}
+
+              {/* <Tooltip.Root>
                 <Tooltip.Trigger asChild>
                   {row?.original?.isFavorite ? (
                     <i
@@ -1478,7 +1496,7 @@ const Applicant = () => {
                     <Tooltip.Arrow style={{ fill: "#454f5b" }} />
                   </Tooltip.Content>
                 </Tooltip.Portal>
-              </Tooltip.Root>
+              </Tooltip.Root> */}
             </Tooltip.Provider>
           </div>
         ),
@@ -1505,7 +1523,7 @@ const Applicant = () => {
                 updatedApplicant[applicantIndex].interviewStage =
                   selectedOption.value;
                 setApplicant(updatedApplicant);
-                updateStage(
+                updateStageVendor(
                   { interviewStage: selectedOption.value },
                   cell.row.original._id
                 )
@@ -1542,7 +1560,7 @@ const Applicant = () => {
               if (applicantIndex > -1) {
                 updatedApplicant[applicantIndex].status = selectedOption.value;
                 setApplicant(updatedApplicant);
-                updateStatus(
+                updateStatusVendor(
                   { status: selectedOption.value },
                   cell.row.original._id
                 )
@@ -1559,35 +1577,35 @@ const Applicant = () => {
         ),
         enableColumnFilter: false,
       },
-      {
-        header: "Status",
-        accessorKey: "isActive",
-        cell: (cell: any) => {
-          const id = cell.row.original._id;
-          const isActive = cell.getValue();
+      //   {
+      //     header: "Status",
+      //     accessorKey: "isActive",
+      //     cell: (cell: any) => {
+      //       const id = cell.row.original._id;
+      //       const isActive = cell.getValue();
 
-          return (
-            <Switch
-              size="small"
-              checked={isActive}
-              onClick={() => handleToggleSwitch(id, isActive)} // ✅ Handler only runs on user interaction
-              checkedChildren={<CheckOutlined />}
-              unCheckedChildren={<CloseOutlined />}
-            />
-          );
-        },
-        enableColumnFilter: false,
-      },
+      //       return (
+      //         <Switch
+      //           size="small"
+      //           checked={isActive}
+      //           onClick={() => handleToggleSwitch(id, isActive)} // ✅ Handler only runs on user interaction
+      //           checkedChildren={<CheckOutlined />}
+      //           unCheckedChildren={<CloseOutlined />}
+      //         />
+      //       );
+      //     },
+      //     enableColumnFilter: false,
+      //   },
     ],
     [applicant, selectedApplicants]
   );
 
-  const handleToggleSwitch = (id: any, isActive: any) => {
-    setSelectedRecord(id);
-    SetDataActive(isActive);
-    // setPendingChecked(checked);
-    setShowActiveModal(true);
-  };
+  //   const handleToggleSwitch = (id: any, isActive: any) => {
+  //     setSelectedRecord(id);
+  //     SetDataActive(isActive);
+  //     // setPendingChecked(checked);
+  //     setShowActiveModal(true);
+  //   };
 
   const handleNavigate = () => {
     navigate("/applicants/add-applicant");
@@ -1611,38 +1629,38 @@ const Applicant = () => {
     setExportableFields([]);
   };
 
-  const [showFavModal, setShowFavModal] = useState(false);
-  const [isFav, setIsFav] = useState(false);
+  //   const [showFavModal, setShowFavModal] = useState(false);
+  //   const [isFav, setIsFav] = useState(false);
 
-  const handleConfirmFav = (isFav: boolean = false, id: string | null) => {
-    setShowFavModal(true);
-    setIsFav(isFav);
-    setSelectedApplicantId(id);
-  };
+  //   const handleConfirmFav = (isFav: boolean = false, id: string | null) => {
+  //     setShowFavModal(true);
+  //     setIsFav(isFav);
+  //     setSelectedApplicantId(id);
+  //   };
 
-  const updateApplicantData = (isFav: boolean, id: string | null) => {
-    updateApplicant({ isFavorite: !isFav }, id)
-      .then((res: any) => {
-        if (res.success) {
-          toast.success("Applicant added to favorite list");
-          setShowFavModal(false);
-          fetchApplicants();
-        }
-      })
-      .catch((error) => {
-        const errorMessages = error?.response?.data?.details;
-        if (errorMessages && Array.isArray(errorMessages)) {
-          errorMessages.forEach((errorMessage) => {
-            toast.error(errorMessage);
-          });
-        } else {
-          toast.error("An error occurred while updating the applicant.");
-        }
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
+  //   const updateApplicantData = (isFav: boolean, id: string | null) => {
+  //     updateApplicant({ isFavorite: !isFav }, id)
+  //       .then((res: any) => {
+  //         if (res.success) {
+  //           toast.success("Applicant added to favorite list");
+  //           setShowFavModal(false);
+  //           fetchApplicants();
+  //         }
+  //       })
+  //       .catch((error) => {
+  //         const errorMessages = error?.response?.data?.details;
+  //         if (errorMessages && Array.isArray(errorMessages)) {
+  //           errorMessages.forEach((errorMessage) => {
+  //             toast.error(errorMessage);
+  //           });
+  //         } else {
+  //           toast.error("An error occurred while updating the applicant.");
+  //         }
+  //       })
+  //       .finally(() => {
+  //         setLoading(false);
+  //       });
+  //   };
 
   return (
     <Fragment>
@@ -1723,7 +1741,7 @@ const Applicant = () => {
           </div>
         }
       />
-      {showActiveModal ? (
+      {/* {showActiveModal ? (
         <ActiveModal
           show={showActiveModal}
           loader={modelLoading}
@@ -1733,7 +1751,7 @@ const Applicant = () => {
         />
       ) : (
         <></>
-      )}
+      )} */}
 
       {showViewModal && selectedApplicantId && (
         <ViewModal
@@ -1755,12 +1773,12 @@ const Applicant = () => {
         loader={loader}
       />
 
-      <BaseFav
+      {/* <BaseFav
         show={showFavModal}
         onCloseClick={() => setShowFavModal(false)}
         onYesClick={() => updateApplicantData(isFav, selectedApplicantId)}
         flag={isFav}
-      />
+      /> */}
 
       <Container fluid>
         <Row>
@@ -1940,4 +1958,4 @@ const customStyles = {
   }),
 };
 
-export default Applicant;
+export default ManageAppliedList;
