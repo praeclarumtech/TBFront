@@ -133,7 +133,7 @@ const EmailForm = () => {
     },
     validationSchema: Yup.object({
       email_to: Yup.string()
-        .required("Recipient email is required")
+        .required("Recipient email is required.")
         .test("valid-emails", "Invalid email address", (value) => {
           const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
           const emails = value?.split(",").map((email) => email.trim());
@@ -149,8 +149,8 @@ const EmailForm = () => {
           return emails.every((email) => emailRegex.test(email));
         }
       ),
-      subject: Yup.string().required("Subject is required"),
-      description: Yup.string().required("Description is required"),
+      subject: Yup.string().required("Subject is required."),
+      description: Yup.string().required("Description is required."),
       sendQrCode: Yup.boolean(),
     }),
     validateOnBlur: true,

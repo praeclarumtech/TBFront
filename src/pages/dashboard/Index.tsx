@@ -17,7 +17,7 @@ import {
   PersonPlusFill,
 } from "react-bootstrap-icons";
 import ApplicantsDeatils from "sub-components/dashboard/ApplicantsDetails";
-import { getChartDetails, getTotalApplicants } from "api/dashboardApi";
+import { getTotalApplicants } from "api/dashboardApi";
 import appConstants from "constants/constant";
 import { useNavigate } from "react-router-dom";
 
@@ -54,7 +54,6 @@ const Dashboard = () => {
   );
   const [leavedApplicants, setLeavedApplicants] = useState<number | null>(null);
 
-  const [chartLoading, setChartLoading] = useState<boolean>(true);
   const location = useLocation();
   const applicantIds = location.state?.applicantIds || [];
   const navigate = useNavigate();
@@ -65,7 +64,6 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchTotalApplicants();
-    fetchChart();
   }, []);
 
   const fetchTotalApplicants = async () => {
@@ -75,7 +73,6 @@ const Dashboard = () => {
 
       setTotalApplicants(data.data.totalApplicants);
       setHoldApplicants(data.data.holdApplicants);
-      // setPendingApplicants(data.data.pendingApplicants);
       setInProcessApplicants(data.data.inProgressApplicants); // renamed key
       setRejectedApplicants(data.data.rejectedApplicants);
       setSelectedApplicants(data.data.selectedApplicants);
@@ -147,20 +144,6 @@ const Dashboard = () => {
       color: "danger",
     },
   ];
-
-  const [chartData, setChartData] = useState<any>([]);
-  const fetchChart = async () => {
-    if (!applicantIds) return;
-    setChartLoading(true);
-    try {
-      const data = await getChartDetails(applicantIds);
-      setChartData(data?.data);
-    } catch (error) {
-      setError("error");
-    } finally {
-      setChartLoading(false);
-    }
-  };
 
   const handleCardClick = (status: string) => {
     const filter = status.toLowerCase().replace(/\s+/g, " ");
@@ -258,8 +241,7 @@ const Dashboard = () => {
             <Col xl={12}>
               <ApplicantsDeatils
                 setSelectedTechnology={setSelectedTechnology}
-                setData={chartData}
-                isloading={chartLoading}
+                ids={applicantIds}
               />
             </Col>
             <Col xl={12}>

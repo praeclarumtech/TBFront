@@ -177,17 +177,48 @@ const OpenJob = () => {
                 value={<Tag color="red">{formData.end_time}</Tag>}
               />
             </Col>
-            <Col span={24}>
-              <DetailsRow
-                label="Job Details"
-                value={
-                  <div
-                    className="ql-editor"
-                    dangerouslySetInnerHTML={{ __html: formData.job_details }}
-                  />
-                }
-              />
-            </Col>
+            <Row gutter={[16, 16]}>
+              <Col span={24}>
+                <DetailsRow
+                  label="Job Description"
+                  value={
+                    <div
+                      className="ql-editor"
+                      style={{
+                        wordBreak: "break-all",
+                        overflowWrap: "break-word",
+                        whiteSpace: "pre-wrap",
+                      }}
+                      dangerouslySetInnerHTML={{
+                        __html: formData.sub_description || "",
+                      }}
+                    />
+                  }
+                />
+              </Col>
+            </Row>
+            <Row gutter={[16, 16]}>
+              <Col span={24}>
+                <DetailsRow
+                  label="Job Details"
+                  value={
+                    <div style={{ maxWidth: "100%", overflowX: "auto" }}>
+                      <div
+                        className="ql-editor"
+                        style={{
+                          wordBreak: "break-all",
+                          overflowWrap: "break-word",
+                          whiteSpace: "pre-wrap",
+                        }}
+                        dangerouslySetInnerHTML={{
+                          __html: formData.job_details || "",
+                        }}
+                      />
+                    </div>
+                  }
+                />
+              </Col>
+            </Row>
           </Row>
           <div className="flex justify-center mt-4">
             <BaseButton color="primary" onClick={handleNavigate}>

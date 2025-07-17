@@ -1,9 +1,9 @@
 import { Fragment, useEffect, useState } from "react";
 import Chart from "react-apexcharts";
 import { ApexOptions } from "apexcharts";
-import { getStatusOfApplication } from "api/reportApi";
 import Skeleton from "react-loading-skeleton";
 import { useNavigate } from "react-router-dom";
+import { getTotalApplicants } from "api/dashboardApi";
 
 const Charts = () => {
   const [statusOfApplication, setStatusOfApplication] = useState({});
@@ -17,7 +17,7 @@ const Charts = () => {
   const fetchStatusOfApplication = async () => {
     setIsLoading(true);
     try {
-      const data = await getStatusOfApplication();
+      const data = await getTotalApplicants();
       setStatusOfApplication(data.data);
     } catch (error) {
       console.error("API Error:", error);
@@ -34,9 +34,13 @@ const Charts = () => {
       .trim()
       .replace(/\b\w/g, (char) => char.toUpperCase());
   };
+  // Filter out `totalApplicants`
+  const filteredEntries = Object.entries(statusOfApplication).filter(
+    ([key]) => key !== "totalApplicants"
+  );
 
-  const labels = Object.keys(statusOfApplication).map(formatLabel);
-  const values = Object.values(statusOfApplication);
+  const labels = filteredEntries.map(([key]) => formatLabel(key));
+  const values = filteredEntries.map(([_, value]) => value);
 
   // Chart.js default colors:
   const chartJsColors = [

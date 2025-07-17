@@ -19,13 +19,12 @@ export interface ChildrenItemProps {
 export interface DashboardMenuProps {
   id: string;
   title: string;
+  icon?: string;
   link?: string;
   grouptitle?: boolean;
-  children?: ChildrenItemProps[];
-  icon?: string;
   badge?: string;
   badgecolor?: string;
-  name?: string;
+  children?: DashboardMenuProps[]; // recursive
 }
 
 export interface CustomToggleProps {

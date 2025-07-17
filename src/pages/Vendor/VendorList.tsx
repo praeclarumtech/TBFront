@@ -37,7 +37,6 @@ const VendorList = () => {
   const [searchAll, setSearchAll] = useState<string>("");
   // const [tableLoader, setTableLoader] = useState(false);
 
-  
   const handleUpdateUserStatus = async (id: string, value: AnyObject) => {
     setIsLoading(true);
     await updateUserStatus(id, value)
@@ -133,16 +132,35 @@ const VendorList = () => {
         enableColumnFilter: false,
       },
       {
-        header: "User Name",
+        header: "Username",
         accessorKey: "userName",
 
         filterFn: "fuzzy",
         enableColumnFilter: false,
       },
-      {
-        header: "Role",
-        accessorKey: "role",
+      // {
+      //   header: "Role",
+      //   accessorKey: "role",
 
+      //   enableColumnFilter: false,
+      // },
+      {
+        header: "Name",
+        accessorKey: "firstName", // or any real field; just so TanStack maps it
+        cell: (info: any) => {
+          const firstName = info.row.original?.firstName?.trim() || "";
+          const lastName = info.row.original?.lastName?.trim() || "";
+          const fullName = `${firstName} ${lastName}`.trim();
+
+          return (
+            <div
+              className="text-blue-600 underline cursor-pointer hover:text-blue-800"
+              title={fullName}
+            >
+              {fullName || "-"}
+            </div>
+          );
+        },
         enableColumnFilter: false,
       },
       {
@@ -256,7 +274,11 @@ const VendorList = () => {
   };
 
   const handleAdd = () => {
-    navigate("/userprofileAdd");
+    navigate("/userprofileAdd", {
+      state: {
+        from: "Vendor",
+      },
+    });
   };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -304,7 +326,7 @@ const VendorList = () => {
                 md={6}
                 className="flex-wrap mt-4 d-flex align-items-center "
               >
-                <div className="ml-6 text-2xl font-bold">Vendor</div>
+                <div className="ml-6 text-2xl font-bold">Vendors</div>
               </Col>
               <Col sm={6} lg={6} md={6} className="mt-4">
                 <div className="items-end justify-end mr-6 d-flex">

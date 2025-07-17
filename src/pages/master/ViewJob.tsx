@@ -21,6 +21,7 @@ interface JobDetails {
   end_time?: string;
   required_skills?: string[];
   job_details?: string;
+  sub_description?: string;
 }
 
 const ViewJob = ({ show, onHide, jobId }: any) => {
@@ -325,7 +326,7 @@ const ViewJob = ({ show, onHide, jobId }: any) => {
                   </Col>
                 </Row>
                 <Row gutter={[16, 16]}>
-                  <Col span={24}>
+                  {/* <Col span={24}>
                     <DetailsRow
                       label="Job Details"
                       value={
@@ -344,6 +345,46 @@ const ViewJob = ({ show, onHide, jobId }: any) => {
                             style={{ backgroundColor: "#faad14" }}
                           />
                         )
+                      }
+                    />
+                  </Col> */}
+                  <Col span={24}>
+                    <DetailsRow
+                      label="Job Description"
+                      value={
+                        <div
+                          className="ql-editor"
+                          style={{
+                            wordBreak: "break-all",
+                            overflowWrap: "break-word",
+                            whiteSpace: "pre-wrap",
+                          }}
+                          dangerouslySetInnerHTML={{
+                            __html: formData.sub_description || "",
+                          }}
+                        />
+                      }
+                    />
+                  </Col>
+                </Row>
+                <Row gutter={[16, 16]}>
+                  <Col span={24}>
+                    <DetailsRow
+                      label="Job Details"
+                      value={
+                        <div style={{ maxWidth: "100%", overflowX: "auto" }}>
+                          <div
+                            className="ql-editor"
+                            style={{
+                              wordBreak: "break-all",
+                              overflowWrap: "break-word",
+                              whiteSpace: "pre-wrap",
+                            }}
+                            dangerouslySetInnerHTML={{
+                              __html: formData.job_details || "",
+                            }}
+                          />
+                        </div>
                       }
                     />
                   </Col>

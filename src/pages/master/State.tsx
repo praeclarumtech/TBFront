@@ -229,62 +229,6 @@ const State = () => {
         accessorKey: "state_name",
         enableColumnFilter: false,
       },
-      //   {
-      //     header: "Country",
-      //     accessorKey: "country_id",
-      //     enableColumnFilter: false,
-      //   },
-      // {
-      //   header: "Action",
-      //   cell: (cell: { row: { original: any } }) => (
-      //     <div className="gap-2 hstack">
-      //       {/* <BaseButton
-      //         id={`usage-${cell?.row?.original?.id}`}
-      //         color="primary"
-      //         className="btn btn-sm btn-soft-success usage-list"
-      //         onClick={() => handleView(cell.row.original)}
-      //       >
-      //         <i className="align-bottom ri-eye-fill" />
-      //         <ReactTooltip
-      //           place="bottom"
-      //           variant="info"
-      //           content="View"
-      //           anchorId={`usage-${cell?.row?.original?.id}`}
-      //         />
-      //       </BaseButton> */}
-      //       <BaseButton
-      //         id={`edit-${cell?.row?.original?._id}`}
-      //         color="primary"
-      //         className="btn btn-sm btn-soft-warning edit-list"
-      //         onClick={() => handleEdit(cell?.row?.original)}
-      //       >
-      //         <i className="align-bottom ri-pencil-fill" />
-      //       </BaseButton>
-      //       <BaseButton
-      //         color="danger"
-      //         id={`delete-${cell?.row?.original?._id}`}
-      //         className="btn btn-sm btn-soft-danger bg-danger"
-      //         onClick={() => handleDelete(cell?.row?.original)}
-      //       >
-      //         <i className="align-bottom ri-delete-bin-fill" />
-      //       </BaseButton>
-
-      //       {/* Tooltips should be outside buttons */}
-      //       <ReactTooltip
-      //         place="bottom"
-      //         variant="warning"
-      //         content="Edit"
-      //         anchorId={`edit-${cell?.row?.original?._id}`}
-      //       />
-      //       <ReactTooltip
-      //         place="bottom"
-      //         variant="error"
-      //         content="Delete"
-      //         anchorId={`delete-${cell?.row?.original?._id}`}
-      //       />
-      //     </div>
-      //   ),
-      // },
       {
         header: "Action",
         cell: (cell: { row: { original: any } }) => (
@@ -364,8 +308,8 @@ const State = () => {
       state_name: Yup.string()
         .min(1, "State Name must be at least 1.")
         .max(50, "State name must be between 1 to 50 characters.")
-        .required("State is required"),
-      country_id: Yup.string().required("Country is required!"),
+        .required("State is required."),
+      country_id: Yup.string().required("Country is required."),
     }),
     onSubmit: (values) => {
       setLoader(true);

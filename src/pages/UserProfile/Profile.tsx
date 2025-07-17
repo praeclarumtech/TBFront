@@ -361,8 +361,8 @@ const Profile = () => {
                         <Col
                           md={6}
                           sm={12}
-                          xl={6}
-                          lg={6}
+                          xl={3}
+                          lg={3}
                           className="mb-3 md:mb-4 lg:mb-4 xl:mb-4 "
                         >
                           <BaseInput
@@ -372,6 +372,25 @@ const Profile = () => {
                             placeholder={InputPlaceHolder("Username")}
                             handleChange={handleInputChange}
                             value={formData.userName}
+                            disabled
+                            passwordToggle={false}
+                          />
+                        </Col>
+                        <Col
+                          md={6}
+                          sm={12}
+                          xl={3}
+                          lg={3}
+                          className="mb-3 md:mb-4 lg:mb-4 xl:mb-4 "
+                        >
+                          <BaseInput
+                            label="Role"
+                            name="role"
+                            type="text"
+                            className="cursor-not-allowed"
+                            placeholder={InputPlaceHolder("Role")}
+                            handleChange={handleInputChange}
+                            value={formData.role}
                             disabled
                             passwordToggle={false}
                           />

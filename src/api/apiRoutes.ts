@@ -90,6 +90,8 @@ export const DELETE_MANY_DEGREE = "degree/delete/deleteManyDegree";
 //Dashboard Module
 export const TOTAL_APPLICANTS = "/dashboard/applicant/count";
 export const RECENT_APPLICANTS = "/applicants/viewAllApplicant?appliedSkills=";
+export const RECENT_APPLICANTS_VENDOR =
+  "/vendor/viewApplications?appliedSkills=";
 export const SKILL_EXPORT = "applicants/exportCsv";
 // export const APPLICANTS_DETAILS = "/reports/applicants/categoryWiseSkillCount?category="
 export const APPLICANTS_DETAILS =

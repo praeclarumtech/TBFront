@@ -12,8 +12,10 @@ const VendorHeader = () => {
   const token = localStorage.getItem("authUser");
   const isLoggedIn = !!token && token !== "undefined" && token.trim() !== "";
 
+  const userRole = localStorage.getItem("role")?.trim();
+
   const path = location.pathname;
-  // const pathre = "/Vendor/appliedJobList";
+
   let selectedKey = "home";
   if (path.includes("/appliedJobList")) selectedKey = "view-applications";
   else if (path.includes("/applyNow")) selectedKey = "search-jobs";
@@ -28,7 +30,9 @@ const VendorHeader = () => {
       case "search-jobs":
         navigate("/Vendor/job-search");
         break;
-
+      case "dashboard":
+        navigate("/dashboard");
+        break;
       case "view-applications":
         if (!isLoggedIn) {
           var path = "/Vendor/appliedJobList";
@@ -81,6 +85,13 @@ const VendorHeader = () => {
           flexGrow: 1,
         }}
       >
+        {userRole === "admin" && isLoggedIn ? (
+          <Menu.Item key="dashboard">
+            Dashboard <i className="fe fe-arrow-up-right me-2"></i>
+          </Menu.Item>
+        ) : (
+          <></>
+        )}
         <Menu.Item key="home">Home</Menu.Item>
         <SubMenu key="jobs-menu" title="Jobs">
           <Menu.Item key="search-jobs">Search Jobs</Menu.Item>

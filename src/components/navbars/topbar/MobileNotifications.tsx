@@ -66,7 +66,7 @@ export const MobileNotifications = () => {
                   {user?.role?.toUpperCase()}
                 </span>
               </div>
-              <div className="mt-3 mb-2  dropdown-divider"></div>
+              <div className="mt-3 mb-2 dropdown-divider"></div>
             </Dropdown.Item>
             <Dropdown.Item
               eventKey="2"
@@ -76,14 +76,32 @@ export const MobileNotifications = () => {
             >
               <i className="fe fe-user me-2"></i> Edit Profile
             </Dropdown.Item>
-            <Dropdown.Item
-              eventKey="3"
-              onClick={() => {
-                navigate("/userManagement");
-              }}
-            >
-              <i className="fe fe-user me-2"></i> User Management
-            </Dropdown.Item>
+            {user.role === "admin" ? (
+              <>
+                <Dropdown.Item
+                  eventKey="3"
+                  onClick={() => {
+                    navigate("/userManagement");
+                  }}
+                  active={
+                    location.pathname === "/userManagement" ||
+                    location.pathname === "/userprofileAdd"
+                  }
+                >
+                  <i className="fe fe-user me-2"></i> User Management
+                </Dropdown.Item>
+                <Dropdown.Item
+                  eventKey="3"
+                  onClick={() => {
+                    navigate("/");
+                  }}
+                >
+                   <i className="fe fe-arrow-up-left me-2"></i>  Change Module
+                </Dropdown.Item>
+              </>
+            ) : (
+              <></>
+            )}
             <Dropdown.Item
               onClick={() => {
                 setShowModal(true);

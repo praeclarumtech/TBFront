@@ -331,14 +331,8 @@ const ManageAppliedList = () => {
       setApplicant(res?.data?.applications || res?.data?.results || []);
       setTotalRecords(res?.data?.pagination?.totalCount || 0);
     } catch (error: any) {
-      const details = error?.response?.data?.details;
-      if (Array.isArray(details)) {
-        details.forEach((msg: string) => {
-          toast.error(msg, {
-            closeOnClick: true,
-            autoClose: 5000,
-          });
-        });
+      if (error) {
+        toast.error(error?.response?.data?.message);
       } else {
         toast.error("Failed to fetch applicants.. Please try again.", {
           closeOnClick: true,
@@ -691,21 +685,21 @@ const ManageAppliedList = () => {
     }
   };
 
-  const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.checked) {
-      setSelectedApplicants(applicant.map((app) => app._id));
-    } else {
-      setSelectedApplicants([]);
-    }
-  };
+  // const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   if (event.target.checked) {
+  //     setSelectedApplicants(applicant.map((app) => app._id));
+  //   } else {
+  //     setSelectedApplicants([]);
+  //   }
+  // };
 
-  const handleSelectApplicant = (applicantId: string) => {
-    setSelectedApplicants((prev) =>
-      prev.includes(applicantId)
-        ? prev.filter((id) => id !== applicantId)
-        : [...prev, applicantId]
-    );
-  };
+  // const handleSelectApplicant = (applicantId: string) => {
+  //   setSelectedApplicants((prev) =>
+  //     prev.includes(applicantId)
+  //       ? prev.filter((id) => id !== applicantId)
+  //       : [...prev, applicantId]
+  //   );
+  // };
 
   const handleDeleteSingle = (applicantId: string) => {
     setMultipleApplicantsDelete([applicantId]);
@@ -1270,24 +1264,24 @@ const ManageAppliedList = () => {
 
   const columns = useMemo(
     () => [
-      {
-        header: (
-          <input
-            type="checkbox"
-            onChange={handleSelectAll}
-            checked={selectedApplicants.length === applicant.length}
-          />
-        ),
-        accessorKey: "select",
-        cell: (info: any) => (
-          <input
-            type="checkbox"
-            checked={selectedApplicants.includes(info.row.original._id)}
-            onChange={() => handleSelectApplicant(info.row.original._id)}
-          />
-        ),
-        enableColumnFilter: false,
-      },
+      // {
+      //   header: (
+      //     <input
+      //       type="checkbox"
+      //       onChange={handleSelectAll}
+      //       checked={selectedApplicants.length === applicant.length}
+      //     />
+      //   ),
+      //   accessorKey: "select",
+      //   cell: (info: any) => (
+      //     <input
+      //       type="checkbox"
+      //       checked={selectedApplicants.includes(info.row.original._id)}
+      //       onChange={() => handleSelectApplicant(info.row.original._id)}
+      //     />
+      //   ),
+      //   enableColumnFilter: false,
+      // },
       {
         header: "Applicant Name",
         accessorKey: "name",

@@ -194,58 +194,6 @@ const Country = () => {
         accessorKey: "country_name",
         enableColumnFilter: false,
       },
-
-      // {
-      //   header: "Action",
-      //   cell: (cell: { row: { original: any } }) => (
-      //     <div className="gap-2 hstack">
-      //       {/* <BaseButton
-      //         id={`usage-${cell?.row?.original?.id}`}
-      //         color="primary"
-      //         className="btn btn-sm btn-soft-success usage-list"
-      //         onClick={() => handleView(cell.row.original)}
-      //       >
-      //         <i className="align-bottom ri-eye-fill" />
-      //         <ReactTooltip
-      //           place="bottom"
-      //           variant="info"
-      //           content="View"
-      //           anchorId={`usage-${cell?.row?.original?.id}`}
-      //         />
-      //       </BaseButton> */}
-      //       <BaseButton
-      //         id={`edit-${cell?.row?.original?._id}`}
-      //         color="primary"
-      //         className="btn btn-sm btn-soft-warning edit-list"
-      //         onClick={() => handleEdit(cell?.row?.original)}
-      //       >
-      //         <i className="align-bottom ri-pencil-fill" />
-      //       </BaseButton>
-      //       <BaseButton
-      //         color="danger"
-      //         id={`delete-${cell?.row?.original?._id}`}
-      //         className="btn btn-sm btn-soft-danger bg-danger"
-      //         onClick={() => handleDelete(cell?.row?.original)}
-      //       >
-      //         <i className="align-bottom ri-delete-bin-fill" />
-      //       </BaseButton>
-
-      //       {/* Tooltips should be outside buttons */}
-      //       <ReactTooltip
-      //         place="bottom"
-      //         variant="warning"
-      //         content="Edit"
-      //         anchorId={`edit-${cell?.row?.original?._id}`}
-      //       />
-      //       <ReactTooltip
-      //         place="bottom"
-      //         variant="error"
-      //         content="Delete"
-      //         anchorId={`delete-${cell?.row?.original?._id}`}
-      //       />
-      //     </div>
-      //   ),
-      // },
       {
         header: "Action",
         cell: (cell: { row: { original: any } }) => (
@@ -324,7 +272,7 @@ const Country = () => {
       country_name: Yup.string()
         .min(1, "Country Name must be at least 1.")
         .max(50, "Country name must be between 1 to 50 characters.")
-        .required("Country is required!"),
+        .required("Country is required."),
     }),
     onSubmit: (values) => {
       setLoader(true);
@@ -385,7 +333,7 @@ const Country = () => {
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchAll(event.target.value);
-       setPagination((prev) => ({
+    setPagination((prev) => ({
       ...prev,
       pageIndex: 0,
     }));

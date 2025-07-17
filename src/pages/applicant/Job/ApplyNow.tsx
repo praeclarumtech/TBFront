@@ -528,18 +528,17 @@ const ApplyNow = () => {
                     </Col>
                     <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
                       <BaseInput
-                        label="Other Skills (Optional)"
+                        label="Other Skills"
                         name="otherSkills"
                         type="text"
-                        placeholder={InputPlaceHolder(
-                          "Other Skills (Optional)"
-                        )}
+                        placeholder={InputPlaceHolder("Other Skills")}
                         handleChange={validation.handleChange}
                         handleBlur={validation.handleBlur}
                         value={validation.values.otherSkills}
                         touched={validation.touched.otherSkills}
                         error={validation.errors.otherSkills}
                         passwordToggle={false}
+                        isRequired={true}
                       />
                     </Col>
                     <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
@@ -645,7 +644,7 @@ const ApplyNow = () => {
                         touched={validation.touched.totalExperience}
                         error={validation.errors.totalExperience}
                         passwordToggle={false}
-                        isRequired={false}
+                        isRequired={true}
                       />
                     </Col>
                     <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
@@ -720,7 +719,7 @@ const ApplyNow = () => {
                         touched={validation.touched.relevantSkillExperience}
                         error={validation.errors.relevantSkillExperience}
                         passwordToggle={false}
-                        isRequired={false}
+                        isRequired={true}
                       />
                     </Col>
                     <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
@@ -745,7 +744,7 @@ const ApplyNow = () => {
                         }
                         touched={validation.touched.communicationSkill}
                         error={validation.errors.communicationSkill}
-                        isRequired={false}
+                        isRequired={true}
                       />
                     </Col>
                     <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
@@ -803,7 +802,7 @@ const ApplyNow = () => {
                         touched={validation.touched.currentPkg}
                         error={validation.errors.currentPkg}
                         passwordToggle={false}
-                        isRequired={false}
+                        isRequired={true}
                       />
                     </Col>
 
@@ -862,7 +861,7 @@ const ApplyNow = () => {
                         touched={validation.touched.expectedPkg}
                         error={validation.errors.expectedPkg}
                         passwordToggle={false}
-                        isRequired={false}
+                        isRequired={true}
                       />
                     </Col>
                     <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
@@ -920,7 +919,7 @@ const ApplyNow = () => {
                         touched={validation.touched.noticePeriod}
                         error={validation.errors.noticePeriod}
                         passwordToggle={false}
-                        isRequired={false}
+                        isRequired={true}
                       />
                     </Col>
                     <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
@@ -1009,7 +1008,7 @@ const ApplyNow = () => {
                         }
                         touched={validation.touched.currentCity}
                         error={validation.errors.currentCity}
-                        isRequired={false}
+                        isRequired={true}
                       />
                     </Col>
                     <Col

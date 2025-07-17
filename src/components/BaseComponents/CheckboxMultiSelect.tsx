@@ -6,6 +6,7 @@ import { MultiSelectCheckBoxProps } from "interfaces/global.interface";
 
 const SELECT_ALL = { label: "Select All", value: "__all__" };
 
+// Custom checkbox option with input
 const CheckboxOption = (props: any) => {
   return (
     <components.Option {...props}>
@@ -20,8 +21,17 @@ const CheckboxOption = (props: any) => {
   );
 };
 
-const MultiValueContainer = (props: any) => {
-  return <components.MultiValue {...props} />;
+// ✅ REMOVE individual tags: this hides tags inside input
+const MultiValueContainer = () => null;
+
+// ✅ Show summary instead of tags
+const ValueContainer = ({ children, ...props }: any) => {
+  const count = props.getValue().length;
+  return (
+    <components.ValueContainer {...props}>
+      {count > 0 ? `${count} selected` : children}
+    </components.ValueContainer>
+  );
 };
 
 const CheckboxMultiSelect = ({
@@ -37,9 +47,9 @@ const CheckboxMultiSelect = ({
   className,
   isDisabled,
   placeholder,
+  zIndex,
   showSelectAll = true,
 }: MultiSelectCheckBoxProps) => {
-  // const fullOptions = [SELECT_ALL, ...options];
   const fullOptions = showSelectAll ? [SELECT_ALL, ...options] : options;
   const [selectedOptions, setSelectedOptions] = useState<any[]>(value || []);
 
@@ -95,6 +105,7 @@ const CheckboxMultiSelect = ({
         components={{
           Option: CheckboxOption,
           MultiValue: MultiValueContainer,
+          ValueContainer: ValueContainer,
         }}
         onChange={handleSelectChange}
         options={fullOptions}
@@ -102,16 +113,17 @@ const CheckboxMultiSelect = ({
           ...styles,
           menu: (base) => ({
             ...base,
-            zIndex: 9999,
+            zIndex: zIndex, // zIndex: 9999,
             maxHeight: "300px",
             overflowY: "auto",
           }),
+          menuPortal: (base) => ({ ...base, zIndex: zIndex }), // zIndex: 9999
           control: (base) => ({
             ...base,
-            flexWrap: "wrap",
+            flexWrap: "nowrap",
             minHeight: "38px",
-            maxHeight: "auto",
-            overflowY: "auto",
+            maxHeight: "38px",
+            overflowY: "hidden",
           }),
         }}
         name={name}
@@ -120,7 +132,10 @@ const CheckboxMultiSelect = ({
         isDisabled={isDisabled}
         placeholder={placeholder}
         menuPlacement="auto"
+        menuPosition="fixed"
+        menuPortalTarget={document.body}
       />
+
       {touched && error && (
         <FormFeedback className="d-block">{error}</FormFeedback>
       )}

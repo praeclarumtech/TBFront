@@ -360,8 +360,8 @@ const City = () => {
       city_name: Yup.string()
         .min(1, "City Name must be at least 1.")
         .max(50, "City name must be between 1 to 50 characters.")
-        .required("City is required!"),
-      state_id: Yup.string().required("State is required!"),
+        .required("City is required."),
+      state_id: Yup.string().required("State is required."),
     }),
     onSubmit: (values) => {
       setLoader(true);

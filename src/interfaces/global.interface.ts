@@ -142,6 +142,7 @@ export interface MultiSelectCheckBoxProps {
   handleChange?: (selectedOption: any) => void;
   showSelectAll?: boolean;
   isRequired?: boolean;
+  zIndex?: number;
 }
 
 export interface BaseSelectProps {

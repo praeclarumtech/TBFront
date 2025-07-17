@@ -5,6 +5,7 @@ import { Col, Row, Card } from "react-bootstrap";
 import {
   ExportSkilledApplicant,
   getRecentApplications,
+  getRecentApplicationsVendor,
 } from "api/dashboardApi";
 import appConstants from "constants/constant";
 import { errorHandle, getSerialNumber } from "utils/commonFunctions";
@@ -25,6 +26,9 @@ const RecentApplicants = ({
   const [recentApplicants, setRecentApplicants] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
+  const role = localStorage.getItem("role");
+  console.log("role:-", role);
+
   useEffect(() => {
     fetchRecentApplicants();
   }, [selectedTechnology]); // Refetch when technology changes
@@ -32,8 +36,15 @@ const RecentApplicants = ({
   const fetchRecentApplicants = async () => {
     setIsLoading(true);
     try {
-      const data = await getRecentApplications(selectedTechnology || undefined); // Pass filter
-      setRecentApplicants(data?.data?.item || []);
+      let data;
+      if (role === "vendor") {
+        data = await getRecentApplicationsVendor(
+          selectedTechnology || undefined
+        );
+      } else {
+        data = await getRecentApplications(selectedTechnology || undefined);
+      }
+      setRecentApplicants(data?.data?.item || data?.data?.applications || []);
       // setTotalRecords(data?.data?.totalRecords || []);
     } catch (error) {
       errorHandle(error);
@@ -61,8 +72,10 @@ const RecentApplicants = ({
       }
 
       const blob = new Blob([response], { type: "text/csv" });
-      const safeFileName = decodedSkills.join("-").replace(/[\\/\\?%*:|"<>]/g, "");
-       saveAs(blob, `${safeFileName}-applicants.csv`);
+      const safeFileName = decodedSkills
+        .join("-")
+        .replace(/[\\/\\?%*:|"<>]/g, "");
+      saveAs(blob, `${safeFileName}-applicants.csv`);
 
       toast.success("File downloaded successfully!");
     } catch (error) {
