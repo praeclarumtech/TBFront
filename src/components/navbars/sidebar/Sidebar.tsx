@@ -16,8 +16,8 @@ import {
 const { Sider } = Layout;
 
 interface SidebarProps {
-  collapsed: boolean;
-  toggleCollapse: () => void;
+  showMenu: boolean;
+  toggleMenu: () => void;
 }
 
 // Custom scrollbar styles
@@ -100,7 +100,7 @@ const MenuGroupHeading = ({ title }: { title: string }) => (
   </div>
 );
 
-const Sidebar: React.FC<SidebarProps> = ({ toggleCollapse }) => {
+const Sidebar: React.FC<SidebarProps> = ({ toggleMenu }) => {
   const location = useLocation();
   const [openKeys, setOpenKeys] = useState<string[]>([]);
 
@@ -108,7 +108,7 @@ const Sidebar: React.FC<SidebarProps> = ({ toggleCollapse }) => {
     <Sider
       collapsible
       // collapsed={collapsed}
-      onCollapse={toggleCollapse}
+      onCollapse={toggleMenu}
       trigger={null} // disables default arrow
       // theme="dark"
       className="bg-dark"
