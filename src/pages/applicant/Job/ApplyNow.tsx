@@ -319,7 +319,7 @@ const ApplyNow = () => {
       }
     },
   });
-  console.log("validation", validation.isSubmitting, validation.errors);
+
   //   const checkExistingField = async (field: string, value: string) => {
   //     // if (field === "email") {
   //     //   setEmailError("");
@@ -523,7 +523,7 @@ const ApplyNow = () => {
                         touched={validation.touched.appliedSkills}
                         error={validation.errors.appliedSkills}
                         handleBlur={validation.handleBlur}
-                        isRequired={true}
+                        isRequired={false}
                       />
                     </Col>
                     <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
@@ -531,7 +531,7 @@ const ApplyNow = () => {
                         label="Other Skills"
                         name="otherSkills"
                         type="text"
-                        placeholder={InputPlaceHolder("Other Skills ")}
+                        placeholder={InputPlaceHolder("Other Skills")}
                         handleChange={validation.handleChange}
                         handleBlur={validation.handleBlur}
                         value={validation.values.otherSkills}

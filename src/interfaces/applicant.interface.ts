@@ -266,33 +266,33 @@ export const QrApplicants = Yup.object({
 
   currentPkg: Yup.string()
     .required("Current package is required.")
-    .matches(/^\d+(\.\d{1,2})?$/, "Please enter a valid current package."),
-    // .test("not-zero", "Current package must be greater than 0.", (value) => {
-    //   const num = parseFloat(value || "0");
-    //   return num > 0;
-    // }),
+    .matches(/^\d+(\.\d{1,2})?$/, "Please enter a valid current package.")
+    .test("not-zero", "Current package must be greater than 0.", (value) => {
+      const num = parseFloat(value || "0");
+      return num > 0;
+    }),
 
   expectedPkg: Yup.string()
     .required("Expected package is required.")
-    .matches(/^\d+(\.\d{1,2})?$/, "Please enter a valid expected package."),
-    // .test("not-zero", "Expected package must be greater than 0.", (value) => {
-    //   const num = parseFloat(value || "0");
-    //   return num > 0;
-    // }),
+    .matches(/^\d+(\.\d{1,2})?$/, "Please enter a valid expected package.")
+    .test("not-zero", "Expected package must be greater than 0.", (value) => {
+      const num = parseFloat(value || "0");
+      return num > 0;
+    }),
 
   // negotiation: Yup.string().required("Negotiation status is required."),
 
   noticePeriod: Yup.string()
     .required("Notice period is required.")
-    .matches(/^\d+(\.\d{1,2})?$/, "Please enter a valid notice period."),
-    // .test(
-    //   "greater-than-zero",
-    //   "Notice period must be greater than 0.",
-    //   (value) => {
-    //     const num = parseFloat(value || "0");
-    //     return num > 0;
-    //   }
-    // ),
+    .matches(/^\d+(\.\d{1,2})?$/, "Please enter a valid notice period.")
+    .test(
+      "greater-than-zero",
+      "Notice period must be greater than 0.",
+      (value) => {
+        const num = parseFloat(value || "0");
+        return num > 0;
+      }
+    ),
 
   // workPreference: Yup.string()
   //   .oneOf(
