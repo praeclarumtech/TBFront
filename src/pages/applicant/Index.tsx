@@ -162,7 +162,10 @@ const Applicant = () => {
   const [showActiveModal, setShowActiveModal] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const [filterActiveStatus, setFilterActiveStatus] =
-    useState<SelectedOption | null>(null);
+    useState<SelectedOption | null>({
+      value: "true",
+      label: "Active", // or whatever label you want to display
+    });
   const [filterAppliedRole, setFilterAppliedRole] = useState<SelectedOption[]>(
     []
   );
@@ -225,7 +228,7 @@ const Applicant = () => {
       } = {
         page: pagination.pageIndex + 1,
         pageSize: pagination.pageSize,
-        limit: 50,
+        limit: pagination.pageSize,
       };
 
       if (experienceRange[0] !== 0 || experienceRange[1] !== 25) {
@@ -274,7 +277,7 @@ const Applicant = () => {
           .map((skill) => skill.label)
           .join(",");
       }
-      if (addedBy) {
+      if (addedBy && addedBy.length > 0) {
         params.addedBy = addedBy.map((role: any) => role.value).join(",");
       }
       if (addedByChart) {
@@ -328,6 +331,45 @@ const Applicant = () => {
       if (filterStatusDashboard) {
         params.status = filterStatusDashboard;
       }
+
+      const isAnyFilterApplied =
+        experienceRange[0] !== 0 ||
+        experienceRange[1] !== 25 ||
+        filterNoticePeriod[0] !== 0 ||
+        filterNoticePeriod[1] !== 90 ||
+        filterRating[0] !== 0 ||
+        filterRating[1] !== 10 ||
+        filterEngRating[0] !== 0 ||
+        filterEngRating[1] !== 10 ||
+        filterExpectedPkg[0] !== 0 ||
+        filterExpectedPkg[1] !== 100 ||
+        filterCurrentPkg[0] !== 0 ||
+        filterCurrentPkg[1] !== 100 ||
+        filterWorkPreference ||
+        filterAnyHandOnOffers ||
+        filterCity ||
+        filterState ||
+        appliedSkills.length > 0 ||
+        multipleSkills.length > 0 ||
+        addedByChart ||
+        startDate ||
+        endDate ||
+        filterStatus ||
+        applicantStatusChart ||
+        filterDesignation ||
+        filterInterviewStage ||
+        filterGender ||
+        // (filterActiveStatus && filterActiveStatus.value !== "") ||
+        filterAppliedRole.length > 0 ||
+        filterFavorite ||
+        filterFromChart ||
+        filterStatusDashboard ||
+        (searchAll && searchAll.trim() !== "");
+
+      if (isAnyFilterApplied) {
+        params.isActive = "true";
+      }
+
       const res = await listOfApplicants(params);
       setApplicant(res?.data?.item || res?.data?.results || []);
       setTotalRecords(res?.data?.totalRecords || 0);
@@ -673,7 +715,10 @@ const Applicant = () => {
     setFilterEngRating([0, 10]);
     setFilterState(null);
     setAddedBy([]);
-    setFilterActiveStatus(null);
+    setFilterActiveStatus({
+      value: "true",
+      label: "Active", // Make sure this matches your label convention
+    });
     setFilterAppliedRole([]);
     setFilterFavorite(null);
     fetchApplicants();
@@ -1678,6 +1723,7 @@ const Applicant = () => {
                   onChange={handleColumnSelected}
                   options={exportableFieldOption}
                   isDisabled={exportOption !== ""}
+                  zIndex={9999}
                 />
                 {exportableFields.length > 0 && exportOption === "" && (
                   <button

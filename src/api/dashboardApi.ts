@@ -1,4 +1,4 @@
-import { TOTAL_APPLICANTS,RECENT_APPLICANTS,APPLICANTS_DETAILS, REPORT_ON_SKILL, SKILL_EXPORT } from "./apiRoutes";
+import { TOTAL_APPLICANTS,RECENT_APPLICANTS,APPLICANTS_DETAILS, REPORT_ON_SKILL, SKILL_EXPORT, RECENT_APPLICANTS_VENDOR } from "./apiRoutes";
 import { authServices } from "./apiServices";
 
 export const getTotalApplicants = async () => {
@@ -8,6 +8,12 @@ export const getTotalApplicants = async () => {
 
 export const getRecentApplications = async (appliedSkills = "") => {
   const response = await authServices.get(`${RECENT_APPLICANTS}${appliedSkills || ""}`);
+  return response?.data;
+};
+
+
+export const getRecentApplicationsVendor = async (appliedSkills = "") => {
+  const response = await authServices.get(`${RECENT_APPLICANTS_VENDOR}${appliedSkills || ""}`);
   return response?.data;
 };
 

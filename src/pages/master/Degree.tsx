@@ -164,41 +164,6 @@ const AddDegree = () => {
         accessorKey: "degree",
         enableColumnFilter: false,
       },
-      // {
-      //   header: "Action",
-      //   cell: (cell: { row: { original: any } }) => (
-      //     <div className="gap-2 hstack">
-      //       <BaseButton
-      //         id={`edit-${cell?.row?.original?._id}`}
-      //         color="primary"
-      //         className="btn btn-sm btn-soft-warning edit-list"
-      //         onClick={() => handleEdit(cell?.row?.original)}
-      //       >
-      //         <i className="align-bottom ri-pencil-fill" />
-      //         <ReactTooltip
-      //           place="bottom"
-      //           variant="warning"
-      //           content="Edit"
-      //           anchorId={`edit-${cell?.row?.original?._id}`}
-      //         />
-      //       </BaseButton>
-      //       <BaseButton
-      //         color="danger"
-      //         id={`delete-${cell?.row?.original?._id}`}
-      //         className="btn btn-sm btn-soft-danger bg-danger"
-      //         onClick={() => handleDelete(cell?.row?.original)}
-      //       >
-      //         <i className="align-bottom ri-delete-bin-fill" />
-      //         <ReactTooltip
-      //           place="bottom"
-      //           variant="error"
-      //           content="Delete"
-      //           anchorId={`delete-${cell?.row?.original?._id}`}
-      //         />
-      //       </BaseButton>
-      //     </div>
-      //   ),
-      // },
       {
         header: "Action",
         cell: (cell: { row: { original: any } }) => (
@@ -265,7 +230,7 @@ const AddDegree = () => {
       degreeName: Yup.string()
         .min(1, "Qualification Name must be at least 1.")
         .max(50, "Qualification name must be between 1 to 50 characters.")
-        .required("Qualification name is required!"),
+        .required("Qualification name is required."),
     }),
 
     onSubmit: (values) => {
@@ -332,7 +297,7 @@ const AddDegree = () => {
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchAll(event.target.value);
-       setPagination((prev) => ({
+    setPagination((prev) => ({
       ...prev,
       pageIndex: 0,
     }));

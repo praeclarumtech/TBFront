@@ -14,6 +14,7 @@ import { errorHandle } from "utils/commonFunctions";
 import BaseButton from "components/BaseComponents/BaseButton";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
+import { ArrowLeftOutlined } from "@ant-design/icons";
 
 const DetailedJob = () => {
   const { id: _id } = useParams();
@@ -107,6 +108,13 @@ const DetailedJob = () => {
     <>
       <div className="items-center justify-center min-h-screen bg-gray-200 d-flex">
         <Card className="max-w-[800px]  d-flex justify-content-center ">
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            className="text-sm font-medium text-blue-600 underline text-start"
+          >
+            <ArrowLeftOutlined /> Back
+          </button>
           <DetailsCard
             title="Job Details"
             style={{ border: "none", boxShadow: "none" }}
@@ -257,26 +265,50 @@ const DetailedJob = () => {
               </Col>
               <Col span={24}>
                 <DetailsRow
-                  label="Job Details"
+                  label="Job Description"
                   value={
                     <div
                       className="ql-editor"
-                      dangerouslySetInnerHTML={{ __html: formData.job_details }}
+                      style={{
+                        wordBreak: "break-all",
+                        overflowWrap: "break-word",
+                        whiteSpace: "pre-wrap",
+                      }}
+                      dangerouslySetInnerHTML={{
+                        __html: formData.sub_description,
+                      }}
                     />
+                  }
+                />
+              </Col>
+              <Col span={24}>
+                <DetailsRow
+                  label="Job Details"
+                  value={
+                    <div
+                      style={{
+                        maxWidth: "100%",
+                        overflowX: "auto",
+                      }}
+                    >
+                      <div
+                        className="ql-editor"
+                        style={{
+                          wordBreak: "break-all",
+                          overflowWrap: "break-word",
+                          whiteSpace: "pre-wrap",
+                        }}
+                        dangerouslySetInnerHTML={{
+                          __html: formData.job_details,
+                        }}
+                      />
+                    </div>
                   }
                 />
               </Col>
             </Row>
 
             <div className="flex justify-center gap-4 mt-4">
-              <BaseButton
-                type="button"
-                color="secondary"
-                onClick={() => navigate(-1)} // go back one step in history
-                // className="text-sm font-medium"
-              >
-                Back
-              </BaseButton>
               <BaseButton
                 color="primary"
                 onClick={handleNavigate}

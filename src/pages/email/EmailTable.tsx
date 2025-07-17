@@ -99,7 +99,7 @@ const EmailTable = () => {
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchAll(event.target.value);
-       setPagination((prev) => ({
+    setPagination((prev) => ({
       ...prev,
       pageIndex: 0,
     }));
@@ -174,41 +174,6 @@ const EmailTable = () => {
       cell: ({ row }: { row: any }) =>
         moment(row.original.createdAt).format("YYYY-MM-DD"),
     },
-    // {
-    //   header: "Action",
-    //   cell: (cell: { row: { original: any } }) => (
-    //     <div className="gap-2 hstack">
-    //       <BaseButton
-    //         id={`usage-${cell?.row?.original?.id}`}
-    //         color="primary"
-    //         className="btn btn-sm btn-soft-success usage-list"
-    //         onClick={() => handleView(cell.row.original._id)}
-    //       >
-    //         <i className="align-bottom ri-eye-fill" />
-    //         <ReactTooltip
-    //           place="bottom"
-    //           variant="success"
-    //           content="View"
-    //           anchorId={`usage-${cell?.row?.original?.id}`}
-    //         />
-    //       </BaseButton>
-    //       <BaseButton
-    //         color="danger"
-    //         id={`delete-${cell?.row?.original?._id}`}
-    //         className="btn btn-sm btn-soft-danger bg-danger"
-    //         onClick={() => handleDelete(cell?.row?.original?._id)}
-    //       >
-    //         <i className="align-bottom ri-delete-bin-fill" />
-    //         <ReactTooltip
-    //           place="bottom"
-    //           variant="error"
-    //           content="Delete"
-    //           anchorId={`delete-${cell?.row?.original?._id}`}
-    //         />
-    //       </BaseButton>
-    //     </div>
-    //   ),
-    // },
     {
       header: "Action",
       cell: ({ row }: any) => (

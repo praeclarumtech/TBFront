@@ -2,6 +2,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { CardBody, Col, Row, Table } from "reactstrap";
 import { Link } from "react-router-dom";
+import { Select } from "antd";
 
 import {
   Column,
@@ -51,7 +52,7 @@ const Filter = ({
         value={(columnFilterValue ?? "") as string}
         onChange={(value) => column.setFilterValue(value)}
         placeholder="Search..."
-        className="w-36 border shadow rounded"
+        className="border rounded shadow w-36"
         list={column.id + "list"}
       />
       <div className="h-1" />
@@ -111,7 +112,7 @@ const TableContainer = ({
   // isTaskListFilter,
   isContactsFilter,
   isCompaniesFilter,
-  customPageSize,
+  // customPageSize,
   tableClass,
   theadClass,
   trClass,
@@ -127,7 +128,7 @@ const TableContainer = ({
 }: TableContainerProps) => {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
-
+  const { Option } = Select;
   const fuzzyFilter: FilterFn<any> = (row: any, columnId, value, addMeta) => {
     const itemRank = rankItem(row?.getValue(columnId), value);
 
@@ -167,15 +168,15 @@ const TableContainer = ({
     getCanNextPage,
     getPageOptions,
     setPageIndex,
-    setPageSize,
+    // setPageSize,
     getState,
   } = table;
 
-  useEffect(() => {
-    if (Number(customPageSize)) {
-      setPageSize(Number(customPageSize));
-    }
-  }, [customPageSize, setPageSize]);
+  // useEffect(() => {
+  //   if (Number(customPageSize)) {
+  //     setPageSize(Number(customPageSize));
+  //   }
+  // }, [customPageSize, setPageSize]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
@@ -186,7 +187,7 @@ const TableContainer = ({
   return (
     <Fragment>
       <Row className="mb-3">
-        <CardBody className="pb-0 pt-0">
+        <CardBody className="pt-0 pb-0">
           <form>
             <Row className="d-flex justify-content-between">
               {isHeaderTitle && (
@@ -306,7 +307,7 @@ const TableContainer = ({
                   colSpan={getHeaderGroups()[0]?.headers?.length}
                   className="text-center"
                 >
-                  <div className="flex justify-center items-center py-4">
+                  <div className="flex items-center justify-center py-4">
                     <Loader />
                   </div>
                 </td>
@@ -345,100 +346,16 @@ const TableContainer = ({
         </Table>
       </div>
       {isPagination && (
-        // <Row className="align-items-center mt-2 g-3">
-        //   <div className="col-sm-6">
-        //     <div className="text-muted">Total Records: {totalRecords}</div>
-        //   </div>
-        //   <div className="col-sm-6">
-        //     <ul className="pagination pagination-separated justify-content-end mb-0">
-        //       <li
-        //         className={
-        //           !getCanPreviousPage() ? "page-item disabled" : "page-item"
-        //         }
-        //       >
-        //         <Link
-        //           to="#"
-        //           className="page-link"
-        //           onClick={() =>
-        //             setPagination((prev: { pageIndex: number }) => ({
-        //               ...prev,
-        //               pageIndex: prev.pageIndex - 1,
-        //             }))
-        //           }
-        //         >
-        //           <i className="ri-arrow-left-s-line" />
-        //         </Link>
-        //       </li>
-
-        //       {getPageOptions().map((item: number) => {
-        //         // Show first page, current page ±1, and last page
-        //         const currentPage = getState().pagination.pageIndex;
-        //         const isFirstPage = item === 0;
-        //         const isLastPage = item === getPageOptions().length - 1;
-        //         const isCurrentPageArea = Math.abs(item - currentPage) <= 1;
-
-        //         if (isFirstPage || isLastPage || isCurrentPageArea) {
-        //           return (
-        //             <li
-        //               key={item}
-        //               className={`page-item ${
-        //                 currentPage === item ? "active" : ""
-        //               }`}
-        //             >
-        //               <Link
-        //                 to="#"
-        //                 className="page-link"
-        //                 onClick={() => setPageIndex(item)}
-        //               >
-        //                 {item + 1}
-        //               </Link>
-        //             </li>
-        //           );
-        //         } else if (
-        //           (item === currentPage - 2 && currentPage > 2) ||
-        //           (item === currentPage + 2 &&
-        //             currentPage < getPageOptions().length - 3)
-        //         ) {
-        //           return (
-        //             <li key={item} className="page-item disabled">
-        //               <Link to="#" className="page-link">
-        //                 ...
-        //               </Link>
-        //             </li>
-        //           );
-        //         }
-        //         return null;
-        //       })}
-
-        //       <li
-        //         className={
-        //           !getCanNextPage() ? "page-item disabled" : "page-item"
-        //         }
-        //       >
-        //         <Link
-        //           to="#"
-        //           className="page-link"
-        //           onClick={() =>
-        //             setPagination((prev: { pageIndex: number }) => ({
-        //               ...prev,
-        //               pageIndex: prev.pageIndex + 1,
-        //             }))
-        //           }
-        //         >
-        //           <i className="ri-arrow-right-s-line" />
-        //         </Link>
-        //       </li>
-        //     </ul>
-        //   </div>
-        // </Row>
-
-        <Row className="align-items-center mt-2 g-3">
-          <div className="col-sm-6">
+        <Row className="mt-2 align-items-center g-3">
+          <div className="gap-3 col-sm-6 d-flex align-items-center">
             <div className="text-muted">Total Records: {totalRecords}</div>
+
+            {/* ✅ Ant Design Page Size Selector */}
           </div>
+
           <div className="col-sm-6">
             <ul
-              className="pagination pagination-separated justify-content-end mb-0"
+              className="mb-0 pagination pagination-separated justify-content-end"
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -459,7 +376,7 @@ const TableContainer = ({
               >
                 <Link
                   to="#"
-                  className="page-link border-0 bg-white"
+                  className="bg-white border-0 page-link"
                   onClick={() =>
                     setPagination((prev: { pageIndex: number }) => ({
                       ...prev,
@@ -497,11 +414,9 @@ const TableContainer = ({
                         className="page-link"
                         onClick={() => setPageIndex(item)}
                         style={{
-                          // padding: "4px 10px",
                           margin: "0 2px",
                           display: "inline-block",
                           fontSize: "14px",
-                          // fontWeight: "500",
                           transition: "all 0.2s ease-in-out",
                           textDecoration: "none",
                           color: currentPage === item ? "#fff" : "#666",
@@ -549,7 +464,7 @@ const TableContainer = ({
               >
                 <Link
                   to="#"
-                  className="page-link border-0 bg-white"
+                  className="bg-white border-0 page-link"
                   onClick={() =>
                     setPagination((prev: { pageIndex: number }) => ({
                       ...prev,
@@ -572,6 +487,29 @@ const TableContainer = ({
                   <i className="ri-arrow-right-s-line" />
                 </Link>
               </li>
+              <Select
+                defaultValue={pagination.pageSize}
+                onChange={(value) =>
+                  setPagination((prev: any) => ({
+                    ...prev,
+                    pageSize: value,
+                    pageIndex: 0,
+                  }))
+                }
+                style={{
+                  width: 120,
+                }}
+                dropdownStyle={{
+                  backgroundColor: "#00000",
+                  color: "#000",
+                }}
+              >
+                {[20, 100, 200, 300].map((size) => (
+                  <Option key={size} value={size}>
+                    {size} / page
+                  </Option>
+                ))}
+              </Select>
             </ul>
           </div>
         </Row>

@@ -182,9 +182,7 @@ const ApplyNowJob = () => {
                 <p className="ant-upload-text">
                   Click or drag file to this area to upload
                 </p>
-                <p className="ant-upload-hint">
-                  Support for a single resume upload. PDF or DOCX only.
-                </p>
+                <p className="ant-upload-hint">PDF, DOC, DOCX only. Max 5MB.</p>
               </Dragger>
             </div>
 

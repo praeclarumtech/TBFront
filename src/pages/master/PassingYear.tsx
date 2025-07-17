@@ -47,7 +47,7 @@ const PassingYear = () => {
         .integer("Year must be a whole number")
         .min(1900, "Year must be after 1900")
         .max(new Date().getFullYear(), "Year cannot be in the future")
-        .required("Year is required!"),
+        .required("Year is required."),
     }),
 
     onSubmit: async (values, { resetForm }) => {

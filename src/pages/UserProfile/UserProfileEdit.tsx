@@ -101,6 +101,7 @@ const UserProfileEdit = () => {
   const isEditMode = Boolean(_id);
 
   const location = useLocation();
+
   const [imagePreview, setImagePreview] = useState<string>(
     "/images/avatar/avatar.png"
   );
@@ -110,6 +111,8 @@ const UserProfileEdit = () => {
     initialValues: {
       userName: "",
       email: "",
+      firstName: "",
+      lastName: "",
       password: "Admin@123",
       confirmPassword: "Admin@123",
       role: "",
@@ -132,6 +135,12 @@ const UserProfileEdit = () => {
         .required(validationMessages.required("Email"))
         .email(validationMessages.format("Email"))
         .matches(emailRegex, validationMessages.format("Email")),
+      firstName: Yup.string().required(
+        validationMessages.required("First-name")
+      ),
+
+      lastName: Yup.string().required(validationMessages.required("Last-name")),
+
       password: Yup.string()
         .required(validationMessages.required("Password"))
         .min(8, validationMessages.passwordLength("Password", 8))
@@ -153,6 +162,8 @@ const UserProfileEdit = () => {
       const payload = {
         userName: values.userName,
         email: values.email,
+        firstName: values.firstName,
+        lastName: values.lastName,
         role: values.role,
         password: values.password,
         confirmPassword: values.confirmPassword,
@@ -375,8 +386,15 @@ const UserProfileEdit = () => {
   };
 
   const handleNavigate = () => {
-    navigate("/userManagement");
+    navigate(-1);
   };
+
+  useEffect(() => {
+    if (location.state?.from === "Vendor") {
+      validation.setFieldValue("role", "vendor");
+    }
+  }, [location.state]);
+
   return (
     <Fragment>
       <div className="pt-1 page-content"></div>
@@ -450,8 +468,8 @@ const UserProfileEdit = () => {
                           <Col
                             md={6}
                             sm={12}
-                            xl={6}
-                            lg={6}
+                            xl={3}
+                            lg={3}
                             className="mb-3 md:mb-4 lg:mb-4 xl:mb-4 "
                           >
                             <BaseInput
@@ -469,6 +487,30 @@ const UserProfileEdit = () => {
                               value={formData.userName}
                               touched={touched}
                               error={error}
+                              passwordToggle={false}
+                            />
+                          </Col>
+                          <Col
+                            md={6}
+                            sm={12}
+                            xl={3}
+                            lg={3}
+                            className="mb-3 md:mb-4 lg:mb-4 xl:mb-4 "
+                          >
+                            <BaseInput
+                              label="Role"
+                              name="role"
+                              type="text"
+                              className="cursor-not-allowed"
+                              placeholder={InputPlaceHolder("Role")}
+                              handleChange={(e) => {
+                                setFormData({
+                                  ...formData,
+                                  role: e.target.value,
+                                });
+                              }}
+                              value={formData.role}
+                              disabled
                               passwordToggle={false}
                             />
                           </Col>
@@ -1137,6 +1179,52 @@ const UserProfileEdit = () => {
                             sm={12}
                             xl={6}
                             lg={6}
+                            className="mb-3 md:mb-4 lg:mb-4 xl:mb-4 "
+                          >
+                            <BaseInput
+                              label="First Name"
+                              name="firstName"
+                              className=""
+                              type="text"
+                              placeholder={InputPlaceHolder("First Name")}
+                              handleChange={validation.handleChange}
+                              handleBlur={validation.handleBlur}
+                              value={validation.values.firstName}
+                              touched={validation.touched.firstName}
+                              error={validation.errors.firstName}
+                              passwordToggle={false}
+                              isRequired={true}
+                            />
+                          </Col>
+                          <Col
+                            md={6}
+                            sm={12}
+                            xl={6}
+                            lg={6}
+                            className="mb-3 md:mb-4 lg:mb-4 xl:mb-4 "
+                          >
+                            <BaseInput
+                              label="Last Name"
+                              className=""
+                              name="lastName"
+                              type="text"
+                              placeholder={InputPlaceHolder("Last Name")}
+                              handleChange={validation.handleChange}
+                              handleBlur={validation.handleBlur}
+                              value={validation.values.lastName}
+                              touched={validation.touched.lastName}
+                              error={validation.errors.lastName}
+                              passwordToggle={false}
+                              isRequired={true}
+                            />
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col
+                            md={6}
+                            sm={12}
+                            xl={6}
+                            lg={6}
                             className="mb-3 md:mb-4 lg:mb-4 xl:mb-4 sm:mb-4"
                           >
                             <BaseSelect
@@ -1698,9 +1786,10 @@ const UserProfileEdit = () => {
                             type="submit"
                             loader={loading}
                             color="primary"
-                            disabled={validation.isSubmitting}
+                            // disabled={validation.isSubmitting}
                           >
-                            {validation.isSubmitting ? "Adding..." : "Add"}
+                            add
+                            {/* {validation.isSubmitting ? "Adding..." : "Add"} */}
                           </BaseButton>
                         </div>
                       </form>

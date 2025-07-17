@@ -565,18 +565,17 @@ const QrFrom = () => {
                     </Col>
                     <Col xs={12} sm={6} md={6} lg={3}>
                       <BaseInput
-                        label="Other Skills (Optional)"
+                        label="Other Skills"
                         name="otherSkills"
                         type="text"
-                        placeholder={InputPlaceHolder(
-                          "Other Skills (Optional)"
-                        )}
+                        placeholder={InputPlaceHolder("Other Skills")}
                         handleChange={validation.handleChange}
                         handleBlur={validation.handleBlur}
                         value={validation.values.otherSkills}
                         touched={validation.touched.otherSkills}
                         error={validation.errors.otherSkills}
                         passwordToggle={false}
+                        isRequired={true}
                       />
                     </Col>
                     <Col xs={12} sm={6} md={6} lg={3}>

@@ -86,6 +86,8 @@ interface ApplicantDetails {
   meta: object;
   isFavorite: boolean;
   _id: string;
+  updatedAt?: string;
+  createdAt?: string;
 }
 
 const capitalizeWords = (str?: string) => {
@@ -242,28 +244,31 @@ const ViewModal: React.FC<ViewModalProps> = ({
             <span style={{ fontSize: "16px", fontWeight: "bold" }}>
               Applicant Details
             </span>
-
             <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-              {/* Heart Icon */}
-
-              {formData?.isFavorite ? (
-                <i
-                  className="align-bottom ri-heart-fill text-danger"
-                  style={{
-                    fontSize: "20px",
-                    cursor: "pointer",
-                  }}
-                  onClick={() => handleConfirmFav(formData?.isFavorite)}
-                />
+              {source === "vendor" ? (
+                <></>
               ) : (
-                <i
-                  className="align-bottom ri-heart-line"
-                  style={{
-                    fontSize: "20px",
-                    cursor: "pointer",
-                  }}
-                  onClick={() => handleConfirmFav(formData?.isFavorite)}
-                />
+                <>
+                  {formData?.isFavorite ? (
+                    <i
+                      className="align-bottom ri-heart-fill text-danger"
+                      style={{
+                        fontSize: "20px",
+                        cursor: "pointer",
+                      }}
+                      onClick={() => handleConfirmFav(formData?.isFavorite)}
+                    />
+                  ) : (
+                    <i
+                      className="align-bottom ri-heart-line"
+                      style={{
+                        fontSize: "20px",
+                        cursor: "pointer",
+                      }}
+                      onClick={() => handleConfirmFav(formData?.isFavorite)}
+                    />
+                  )}
+                </>
               )}
               {/* Close Icon */}
               <CloseOutlined
@@ -800,6 +805,10 @@ const ViewModal: React.FC<ViewModalProps> = ({
                   Comment"
                     value={capitalizeWords(formData.comment)}
                   />
+                  <DetailsRow
+                    label="Created At"
+                    value={formData?.createdAt?.split("T")[0] || "-"}
+                  />
                 </Col>
                 <Col span={12}>
                   <DetailsRow
@@ -817,6 +826,11 @@ const ViewModal: React.FC<ViewModalProps> = ({
                   <DetailsRow
                     label="Client Feedback"
                     value={formData.clientFeedback || "-"}
+                  />
+
+                  <DetailsRow
+                    label="Updated At"
+                    value={formData?.updatedAt?.split("T")[0] || "-"}
                   />
                 </Col>
               </Row>

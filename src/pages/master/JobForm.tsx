@@ -178,14 +178,14 @@ const JobForm = () => {
     },
     validationSchema: Yup.object({
       job_subject: Yup.string()
-
         .min(1, "Subject must be at least 1.")
-        .required("Subject is required!"),
+        .required("Subject is required."),
+
       contract_duration: Yup.string().when(
         "job_type",
         (jobType: unknown, schema) => {
           if (typeof jobType === "string" && jobType !== "contract") {
-            return schema.required("Contract duration is required!");
+            return schema.required("Contract duration is required.");
           }
           return schema.notRequired();
         }
@@ -193,14 +193,15 @@ const JobForm = () => {
 
       job_details: Yup.string()
         .min(1, "Job Details Name must be at least 1.")
-        .required("Job details is required!"),
-      job_type: Yup.string().required("Job type is required!"),
-      time_zone: Yup.string().required("Select time zone"),
+        .required("Job details is required."),
+      job_type: Yup.string().required("Job type is required."),
+      time_zone: Yup.string().required("Time zone is required."),
       required_skills: Yup.array()
+        .required("Skills is required.")
         .of(Yup.string())
         .min(1, "Please select at least one skill"),
       sub_description: Yup.string()
-        .required("Sub description is required!")
+        .required("Sub description is required.")
         .test(
           "word-count",
           "Sub Description must be 1 to 80 words.",
@@ -210,6 +211,8 @@ const JobForm = () => {
             return wordCount >= 1 && wordCount <= 80;
           }
         ),
+      end_time: Yup.string().required("End time is required."),
+      start_time: Yup.string().required("Start time is required."),
 
       // min_salary: Yup.string().required("Please Enter minimum Salary"),
       // max_salary: Yup.string().required("Please Enter maximum Salary"),
@@ -368,7 +371,12 @@ const JobForm = () => {
                         <BaseInput
                           label="Contract Duration"
                           name="contract_duration"
-                          disabled={validation.values.job_type === "contract"}
+                          disabled={
+                            validation.values.job_type === "freelance" ||
+                            validation.values.job_type === "part-time" ||
+                            validation.values.job_type === "full-time" ||
+                            validation.values.job_type === "internship"
+                          }
                           type="text"
                           placeholder={"e.g. 6 Months"}
                           handleChange={(e) => {
@@ -383,7 +391,7 @@ const JobForm = () => {
                           touched={validation.touched.contract_duration}
                           error={validation.errors.contract_duration}
                           passwordToggle={false}
-                          isRequired={true}
+                          isRequired={false}
                         />
                       </Col>
                       <Col xs={12} sm={12} md={12} lg={4} className="mb-3">

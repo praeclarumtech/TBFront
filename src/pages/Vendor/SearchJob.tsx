@@ -1,4 +1,3 @@
-
 import { List, Result, Tag } from "antd";
 import BaseButton from "components/BaseComponents/BaseButton";
 import BaseInput from "components/BaseComponents/BaseInput";
@@ -337,88 +336,100 @@ const SearchJob = () => {
           <div className="bg-white rounded shadow">{drawerList()}</div>
           {/* </div> */}
         </Col>
-
         <Col xs={12} sm={6} md={8} lg={9} className="pt-3">
-          {loading ? (
+          {loading || !formData ? (
             <Skeleton count={5} />
-          ) : formData?.length > 0 ? (
-            <div className="space-y-4">
-              {formData.slice(0, 50).map((item: any) => (
-                <Card
-                  key={item._id}
-                  className="p-4 border border-gray-200 rounded-md shadow"
-                >
-                  <CardBody>
-                    <h2
-                      className="text-xl text-blue-600 underline cursor-pointer truncated-text hover:text-blue-800"
-                      onClick={() => handleNavigate(item._id)}
-                    >
-                      {item.job_subject}
-                    </h2>
-
-                    <p className="mt-1 text-sm text-gray-600">
-                      <div
-                        className="ql-editor"
-                        dangerouslySetInnerHTML={{
-                          __html: item.sub_description,
-                        }}
-                      />
-                    </p>
-
-                    <div className="flex flex-wrap gap-2 mt-3 text-sm">
-                      <Tag color="geekblue">Job Type: {item.job_type}</Tag>
-                      <Tag color="geekblue">
-                        Currency: {item.salary_currency}
-                      </Tag>
-                      <Tag color="geekblue">
-                        Payment: {item.salary_frequency}
-                      </Tag>
-                      <Tag color="geekblue">Max Salary: {item.max_salary}</Tag>
-                    </div>
-
-                    <div className="flex flex-wrap gap-2 mt-2 text-sm">
-                      <Tag color="geekblue">
-                        Min Experience: {item.min_experience} years
-                      </Tag>
-                      <Tag color="geekblue">Location: {item.job_location}</Tag>
-                      <Tag color="geekblue">
-                        Deadline:{" "}
-                        {item.application_deadline &&
-                        !isNaN(new Date(item.application_deadline).getTime())
-                          ? new Date(item.application_deadline)
-                              .toISOString()
-                              .slice(0, 10)
-                          : "N/A"}
-                      </Tag>
-                    </div>
-
-                    <div className="mt-2">
-                      <span className="font-medium text-success">
-                        Required Skills:
-                      </span>
-                      <div className="flex flex-wrap gap-2 mt-1">
-                        {item.required_skills?.map((skill: string) => (
-                          <Tag key={skill} color="green">
-                            {skill}
-                          </Tag>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="mt-4">
-                      <BaseButton
-                        color="primary"
-                        onClick={() => handleNavigate(item._id)}
-                      >
-                        Apply Now
-                      </BaseButton>
-                    </div>
-                  </CardBody>
-                </Card>
-              ))}
-            </div>
           ) : (
-            <Result title="No Job Data Found" />
+            (() => {
+              const activeJobs = formData?.filter(
+                (item: any) => item?.isActive === true
+              );
+              return activeJobs?.length > 0 ? (
+                <div className="space-y-4">
+                  {activeJobs.slice(0, 50).map((item: any) => (
+                    <Card
+                      key={item._id}
+                      className="p-4 border border-gray-200 rounded-md shadow"
+                    >
+                      <CardBody>
+                        <h2
+                          className="text-xl text-blue-600 underline cursor-pointer truncated-text hover:text-blue-800"
+                          onClick={() => handleNavigate(item._id)}
+                        >
+                          {item.job_subject}
+                        </h2>
+
+                        <p className="mt-1 text-sm text-gray-600">
+                          <div
+                            className="ql-editor"
+                            dangerouslySetInnerHTML={{
+                              __html: item.sub_description,
+                            }}
+                          />
+                        </p>
+
+                        <div className="flex flex-wrap gap-2 mt-3 text-sm">
+                          <Tag color="geekblue">Job Type: {item.job_type}</Tag>
+                          <Tag color="geekblue">
+                            Currency: {item.salary_currency}
+                          </Tag>
+                          <Tag color="geekblue">
+                            Payment: {item.salary_frequency}
+                          </Tag>
+                          <Tag color="geekblue">
+                            Max Salary: {item.max_salary}
+                          </Tag>
+                        </div>
+
+                        <div className="flex flex-wrap gap-2 mt-2 text-sm">
+                          <Tag color="geekblue">
+                            Min Experience: {item.min_experience} years
+                          </Tag>
+                          <Tag color="geekblue">
+                            Location: {item.job_location}
+                          </Tag>
+                          <Tag color="geekblue">
+                            Deadline:{" "}
+                            {item.application_deadline &&
+                            !isNaN(
+                              new Date(item.application_deadline).getTime()
+                            )
+                              ? new Date(item.application_deadline)
+                                  .toISOString()
+                                  .slice(0, 10)
+                              : "N/A"}
+                          </Tag>
+                        </div>
+
+                        <div className="mt-2">
+                          <span className="font-medium text-success">
+                            Required Skills:
+                          </span>
+                          <div className="flex flex-wrap gap-2 mt-1">
+                            {item.required_skills?.map((skill: string) => (
+                              <Tag key={skill} color="green">
+                                {skill}
+                              </Tag>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="mt-4">
+                          <BaseButton
+                            color="primary"
+                            onClick={() => handleNavigate(item._id)}
+                          >
+                            Apply Now
+                          </BaseButton>
+                        </div>
+                      </CardBody>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <Result title="No Jobs Found" />
+              );
+            })()
           )}
         </Col>
       </Row>

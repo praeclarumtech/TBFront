@@ -203,42 +203,6 @@ const AddDesignation = () => {
         accessorKey: "designation",
         enableColumnFilter: false,
       },
-      // {
-      //   header: "Action",
-      //   cell: (cell: { row: { original: any } }) => (
-      //     <div className="gap-2 hstack">
-      //       <BaseButton
-      //         id={`edit-${cell?.row?.original?._id}`}
-      //         color="primary"
-      //         className="btn btn-sm btn-soft-warning edit-list"
-      //         onClick={() => handleEdit(cell?.row?.original)}
-      //       >
-      //         <i className="align-bottom ri-pencil-fill" />
-      //         <ReactTooltip
-      //           place="bottom"
-      //           variant="warning"
-      //           content="Edit"
-      //           anchorId={`edit-${cell?.row?.original?._id}`}
-      //         />
-      //       </BaseButton>
-      //       <BaseButton
-      //         color="danger"
-      //         id={`delete-${cell?.row?.original?._id}`}
-      //         className="btn btn-sm btn-soft-danger bg-danger"
-      //         onClick={() => handleDelete(cell?.row?.original)}
-      //       >
-      //         <i className="align-bottom ri-delete-bin-fill" />
-      //         <ReactTooltip
-      //           place="bottom"
-      //           variant="error"
-      //           content="Delete"
-      //           anchorId={`delete-${cell?.row?.original?._id}`}
-      //         />
-      //       </BaseButton>
-      //     </div>
-      //   ),
-      // },
-
       {
         header: "Action",
         cell: ({ row }: { row: { original: any } }) => {
@@ -309,7 +273,7 @@ const AddDesignation = () => {
       designationName: Yup.string()
         .min(1, "Designation Name must be at least 1.")
         .max(50, "Designation name must be between 1 to 50 characters.")
-        .required("Designation name is required!"),
+        .required("Designation name is required."),
     }),
 
     onSubmit: (values) => {
