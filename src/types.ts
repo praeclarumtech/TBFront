@@ -16,7 +16,7 @@ export interface ChildrenItemProps {
   badgecolor?: string;
 }
 
-export interface DashboardMenuProps {
+export interface DashboardMenuItem {
   id: string;
   title: string;
   icon?: string;
@@ -24,7 +24,7 @@ export interface DashboardMenuProps {
   grouptitle?: boolean;
   badge?: string;
   badgecolor?: string;
-  children?: DashboardMenuProps[]; // recursive
+  children?: DashboardMenuItem[]; // recursive
 }
 
 export interface CustomToggleProps {
