@@ -27,7 +27,6 @@ const RecentApplicants = ({
   const [isLoading, setIsLoading] = useState(false);
 
   const role = localStorage.getItem("role");
-  console.log("role:-", role);
 
   useEffect(() => {
     fetchRecentApplicants();

@@ -144,6 +144,11 @@ export interface MultiSelectCheckBoxProps {
   isRequired?: boolean;
   zIndex?: number;
 }
+export interface ColumnConfig {
+  id: string;
+  header: string;
+  isVisible?: boolean;
+}
 
 export interface BaseSelectProps {
   label?: string;

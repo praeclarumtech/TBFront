@@ -1296,7 +1296,7 @@ const ManageAppliedList = () => {
             <>
               <div
                 style={truncateText}
-                className="text-blue-600 underline cursor-pointer truncated-text hover:text-blue-800"
+                className="text-[#624bff] underline cursor-pointer truncated-text hover:text-[#3f3481]"
                 title={fullName}
                 onClick={() => handleView(info.row.original._id, "vendor")}
               >

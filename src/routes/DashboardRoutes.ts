@@ -1,7 +1,9 @@
-import { DashboardMenuProps } from "types";
+// src/routes/DashboardMenu.ts
+
+import { DashboardMenuItem } from "types";
 import { v4 as uuid } from "uuid";
 
-export const DashboardMenu: DashboardMenuProps[] = [
+export const DashboardMenu: DashboardMenuItem[] = [
   {
     id: uuid(),
     title: "Dashboard",
@@ -27,28 +29,30 @@ export const DashboardMenu: DashboardMenuProps[] = [
   },
   {
     id: uuid(),
-    title: "Job Listing",
-    icon: "users",
-    link: "/job-listing",
-  },
-  //comment vendot route
-  // {
-  //   id: uuid(),
-  //   title: "Vendor",
-  //   icon: "bar-chart",
-  //   link: "/",
-  // },
-  {
-    id: uuid(),
     title: "Vendors",
-    icon: "bar-chart",
-    link: "/vendorList",
+    grouptitle: true,
   },
   {
     id: uuid(),
-    title: "Vendor Jobs",
-    icon: "users",
-    link: "/appliedJobApplicants",
+    title: "Vendor",
+    icon: "inbox",
+    children: [
+      {
+        id: uuid(),
+        title: "Vendors",
+        link: "/vendorList",
+      },
+      {
+        id: uuid(),
+        title: "Job Listing",
+        link: "/job-listing",
+      },
+      {
+        id: uuid(),
+        title: "Jobs Applicants",
+        link: "/appliedJobApplicants",
+      },
+    ],
   },
   {
     id: uuid(),
@@ -64,7 +68,7 @@ export const DashboardMenu: DashboardMenuProps[] = [
   {
     id: uuid(),
     title: "Reports",
-    icon: "pie-chart",
+    icon: "pie",
     link: "/report",
   },
   {
@@ -72,19 +76,6 @@ export const DashboardMenu: DashboardMenuProps[] = [
     title: "Masters",
     grouptitle: true,
   },
-  // {
-  //   id: uuid(),
-  //   title: "Add Passing Year",
-  //   icon: "monitor",
-  //   link: "/master/passing-year",
-  // },
-
-  // {
-  //   id: uuid(),
-  //   title: "Job Create",
-  //   icon: "plus",
-  //   link: "/master/job",
-  // },
   {
     id: uuid(),
     title: "Add Skills",

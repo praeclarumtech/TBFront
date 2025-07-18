@@ -61,6 +61,7 @@ import ConfirmModal from "components/BaseComponents/BaseConfirmModal";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import BaseFav from "components/BaseComponents/BaseFav";
 import { useLocation } from "react-router-dom";
+import { ColumnConfig } from "interfaces/global.interface";
 
 const {
   exportableFieldOption,
@@ -87,6 +88,7 @@ const Applicant = () => {
   const applicantStatusChart = params.get("applicantStatusChart");
   const addedByChart = params.get("addedByChart");
   const filterStatusDashboard = params.get("status");
+  const progressChart = params.get("progress");
   const navigate = useNavigate();
   const [loader, setLoader] = useState(false);
   const [applicant, setApplicant] = useState<any[]>([]);
@@ -172,6 +174,42 @@ const Applicant = () => {
   const [filterFavorite, setFilterFavorite] = useState<SelectedOption | null>(
     null
   );
+
+  const [availableColumns, setAvailableColumns] = useState<ColumnConfig[]>([
+    { id: "select", header: "Select", isVisible: true },
+    { id: "name", header: "Applicant Name", isVisible: true },
+    { id: "appliedSkills", header: "Skills", isVisible: true },
+    { id: "appliedRole", header: "Role", isVisible: true },
+    { id: "totalExperience", header: "Total Exp", isVisible: true },
+    { id: "action", header: "Action", isVisible: true },
+    { id: "interviewStage", header: "Interview Stage", isVisible: true },
+    { id: "status", header: "Applicant Status", isVisible: true },
+    { id: "isActive", header: "Status", isVisible: true },
+    { id: "currentCity", header: "City", isVisible: false },
+    { id: "gender", header: "Gender", isVisible: false },
+    { id: "qualification", header: "Qualification", isVisible: false },
+    { id: "workPreference", header: "Work Preference", isVisible: false },
+    { id: "currentPkg", header: "Current Pkg", isVisible: false },
+    { id: "expectedPkg", header: "Expected Pkg", isVisible: false },
+    { id: "noticePeriod", header: "Notice Period", isVisible: false },
+    // { id: "totalExperience", header: "Total exp", isVisible: false },
+    {
+      id: "relevantSkillExperience",
+      header: "Relevant Skill Exp",
+      isVisible: false,
+    },
+    {
+      id: "communicationSkill",
+      header: "Communication Skill",
+      isVisible: false,
+    },
+
+    {
+      id: "lastFollowUpDate",
+      header: "Last-Followup Date",
+      isVisible: false,
+    },
+  ]);
 
   const today = new Date().toISOString().split("T")[0];
 
@@ -330,6 +368,9 @@ const Applicant = () => {
       }
       if (filterStatusDashboard) {
         params.status = filterStatusDashboard;
+      }
+      if (progressChart) {
+        params.interviewStage = progressChart;
       }
 
       const isAnyFilterApplied =
@@ -1315,8 +1356,320 @@ const Applicant = () => {
     </Box>
   );
 
-  const columns = useMemo(
-    () => [
+  // const columns = useMemo(
+  //   () => [
+  //     {
+  //       header: (
+  //         <input
+  //           type="checkbox"
+  //           onChange={handleSelectAll}
+  //           checked={selectedApplicants.length === applicant.length}
+  //         />
+  //       ),
+  //       accessorKey: "select",
+  //       cell: (info: any) => (
+  //         <input
+  //           type="checkbox"
+  //           checked={selectedApplicants.includes(info.row.original._id)}
+  //           onChange={() => handleSelectApplicant(info.row.original._id)}
+  //         />
+  //       ),
+  //       enableColumnFilter: false,
+  //     },
+  //     {
+  //       header: "Applicant Name",
+  //       accessorKey: "name",
+  //       cell: (info: any) => {
+  //         const nameObj = info.row.original?.name || {};
+  //         const firstName = nameObj.firstName || "";
+  //         const middleName = nameObj.middleName || "";
+  //         const lastName = nameObj.lastName || "";
+  //         const fullName = `${firstName} ${middleName} ${lastName}`.trim();
+
+  //         return (
+  //           <>
+  //             <div
+  //               style={truncateText}
+  //               className="text-blue-600 underline cursor-pointer truncated-text hover:text-blue-800"
+  //               title={fullName}
+  //               onClick={() => handleView(info.row.original._id, "main")}
+  //             >
+  //               {fullName}
+  //             </div>
+  //             <ReactTooltip
+  //               place="top"
+  //               variant="info"
+  //               content={fullName}
+  //               style={toolipComponents}
+  //             />
+  //           </>
+  //         );
+  //       },
+  //       filterFn: "fuzzy",
+  //       enableColumnFilter: false,
+  //     },
+  //     {
+  //       header: "Skills",
+  //       accessorKey: "appliedSkills",
+  //       cell: (cell: any) => (
+  //         <div
+  //           className="truncated-text"
+  //           style={truncateText}
+  //           title={cell.row.original.appliedSkills?.join(", ")}
+  //         >
+  //           {cell.row.original.appliedSkills?.join(", ")}
+  //         </div>
+  //       ),
+  //       enableColumnFilter: false,
+  //     },
+  //     {
+  //       header: "Role",
+  //       accessorKey: "appliedRole",
+  //       enableColumnFilter: false,
+  //     },
+  //     {
+  //       header: "Total Exp",
+  //       accessorKey: "totalExperience",
+  //       enableColumnFilter: false,
+  //     },
+  //     {
+  //       header: "Action",
+  //       cell: ({ row }: any) => (
+  //         <div className="flex gap-2">
+  //           <Tooltip.Provider delayDuration={50}>
+  //             {/* View Button with Tooltip */}
+  //             <Tooltip.Root>
+  //               <Tooltip.Trigger asChild>
+  //                 <button
+  //                   className="btn btn-sm btn-soft-success bg-primary"
+  //                   onClick={() => handleView(row.original._id, "main")}
+  //                   disabled={!row.original.isActive}
+  //                 >
+  //                   <i className="text-white ri-eye-fill" />
+  //                 </button>
+  //               </Tooltip.Trigger>
+  //               <Tooltip.Portal>
+  //                 <Tooltip.Content
+  //                   side="bottom"
+  //                   sideOffset={4}
+  //                   className="px-2 py-1 text-sm text-white rounded shadow-lg bg-primary"
+  //                 >
+  //                   View
+  //                   <Tooltip.Arrow style={{ fill: "#624bff" }} />
+  //                 </Tooltip.Content>
+  //               </Tooltip.Portal>
+  //             </Tooltip.Root>
+
+  //             {/* Edit Button with Tooltip */}
+  //             <Tooltip.Root>
+  //               <Tooltip.Trigger asChild>
+  //                 <button
+  //                   className="text-white btn btn-sm btn-soft-secondary bg-secondary"
+  //                   onClick={() => handleEdit(row.original._id)}
+  //                   disabled={!row.original.isActive}
+  //                 >
+  //                   <i className="ri-pencil-fill" />
+  //                 </button>
+  //               </Tooltip.Trigger>
+  //               <Tooltip.Portal>
+  //                 <Tooltip.Content
+  //                   side="bottom"
+  //                   sideOffset={4}
+  //                   className="px-2 py-1 text-sm text-white rounded shadow-lg bg-secondary"
+  //                 >
+  //                   Edit
+  //                   <Tooltip.Arrow style={{ fill: "#637381" }} />
+  //                 </Tooltip.Content>
+  //               </Tooltip.Portal>
+  //             </Tooltip.Root>
+
+  //             <Tooltip.Root>
+  //               <Tooltip.Trigger asChild>
+  //                 <button
+  //                   className="text-white btn btn-sm btn-soft-danger bg-danger"
+  //                   onClick={() => handleDeleteSingle(row.original._id)}
+  //                   disabled={!row.original.isActive}
+  //                 >
+  //                   <i className="align-bottom ri-delete-bin-5-fill" />
+  //                 </button>
+  //               </Tooltip.Trigger>
+  //               <Tooltip.Portal>
+  //                 <Tooltip.Content
+  //                   side="bottom"
+  //                   sideOffset={4}
+  //                   className="px-2 py-1 text-sm text-white rounded shadow-lg bg-danger"
+  //                 >
+  //                   Delete
+  //                   <Tooltip.Arrow style={{ fill: "#dc3545" }} />
+  //                 </Tooltip.Content>
+  //               </Tooltip.Portal>
+  //             </Tooltip.Root>
+
+  //             <Tooltip.Root>
+  //               <Tooltip.Trigger asChild>
+  //                 <button
+  //                   className="text-white btn btn-sm btn-soft-success bg-success"
+  //                   onClick={() => handleEmail(row.original._id)}
+  //                   disabled={!row.original.isActive}
+  //                 >
+  //                   <i className="align-bottom ri-mail-close-line" />
+  //                 </button>
+  //               </Tooltip.Trigger>
+  //               <Tooltip.Portal>
+  //                 <Tooltip.Content
+  //                   side="bottom"
+  //                   sideOffset={4}
+  //                   className="px-2 py-1 text-sm text-white rounded shadow-lg bg-success"
+  //                 >
+  //                   Mail
+  //                   <Tooltip.Arrow style={{ fill: "#198754" }} />
+  //                 </Tooltip.Content>
+  //               </Tooltip.Portal>
+  //             </Tooltip.Root>
+  //             <Tooltip.Root>
+  //               <Tooltip.Trigger asChild>
+  //                 {row?.original?.isFavorite ? (
+  //                   <i
+  //                     className="align-bottom ri-heart-fill text-danger"
+  //                     style={{ fontSize: "20px", cursor: "pointer" }}
+  //                     onClick={() =>
+  //                       handleConfirmFav(
+  //                         row?.original?.isFavorite,
+  //                         row?.original?._id
+  //                       )
+  //                     }
+  //                   />
+  //                 ) : (
+  //                   <i
+  //                     className="align-bottom ri-heart-line"
+  //                     style={{ fontSize: "20px", cursor: "pointer" }}
+  //                     onClick={() =>
+  //                       handleConfirmFav(
+  //                         row?.original?.isFavorite,
+  //                         row?.original?._id
+  //                       )
+  //                     }
+  //                   />
+  //                 )}
+  //               </Tooltip.Trigger>
+  //               <Tooltip.Portal>
+  //                 <Tooltip.Content
+  //                   side="bottom"
+  //                   sideOffset={4}
+  //                   className="px-2 py-1 text-sm text-white bg-gray-700 rounded shadow-lg"
+  //                 >
+  //                   {row?.original?.isFavorite
+  //                     ? "Remove from Favorites"
+  //                     : "Add to Favorites"}
+  //                   <Tooltip.Arrow style={{ fill: "#454f5b" }} />
+  //                 </Tooltip.Content>
+  //               </Tooltip.Portal>
+  //             </Tooltip.Root>
+  //           </Tooltip.Provider>
+  //         </div>
+  //       ),
+  //     },
+  //     {
+  //       header: "Interview Stage",
+  //       accessorKey: "interviewStage",
+  //       cell: (cell: any) => (
+  //         <BaseSelect
+  //           name="interviewStage"
+  //           // className="custom-select"
+  //           styles={customStyles}
+  //           options={interviewStageOptions}
+  //           value={dynamicFind(
+  //             interviewStageOptions,
+  //             cell.row.original.interviewStage
+  //           )}
+  //           handleChange={(selectedOption: SelectedOption) => {
+  //             const updatedApplicant = [...applicant];
+  //             const applicantIndex = updatedApplicant.findIndex(
+  //               (item) => item._id === cell.row.original._id
+  //             );
+  //             if (applicantIndex > -1) {
+  //               updatedApplicant[applicantIndex].interviewStage =
+  //                 selectedOption.value;
+  //               setApplicant(updatedApplicant);
+  //               updateStage(
+  //                 { interviewStage: selectedOption.value },
+  //                 cell.row.original._id
+  //               )
+  //                 .then(() => {
+  //                   toast.success(
+  //                     "Applicant Interview Stage updated successfully!"
+  //                   );
+  //                 })
+  //                 .catch((error: any) => {
+  //                   errorHandle(error);
+  //                 });
+  //             }
+  //           }}
+  //           isDisabled={!cell?.row?.original?.isActive}
+  //         />
+  //       ),
+  //       enableColumnFilter: false,
+  //     },
+  //     {
+  //       header: "Applicant Status",
+  //       accessorKey: "status",
+
+  //       cell: (cell: any) => (
+  //         <BaseSelect
+  //           name="status"
+  //           styles={customStyles}
+  //           options={statusOptions}
+  //           value={dynamicFind(statusOptions, cell.row.original.status)}
+  //           handleChange={(selectedOption: SelectedOption) => {
+  //             const updatedApplicant = [...applicant];
+  //             const applicantIndex = updatedApplicant.findIndex(
+  //               (item) => item._id === cell.row.original._id
+  //             );
+  //             if (applicantIndex > -1) {
+  //               updatedApplicant[applicantIndex].status = selectedOption.value;
+  //               setApplicant(updatedApplicant);
+  //               updateStatus(
+  //                 { status: selectedOption.value },
+  //                 cell.row.original._id
+  //               )
+  //                 .then(() => {
+  //                   toast.success("Applicant status updated successfully!");
+  //                 })
+  //                 .catch((error: any) => {
+  //                   errorHandle(error);
+  //                 });
+  //             }
+  //           }}
+  //           isDisabled={!cell?.row?.original?.isActive}
+  //         />
+  //       ),
+  //       enableColumnFilter: false,
+  //     },
+  //     {
+  //       header: "Status",
+  //       accessorKey: "isActive",
+  //       cell: (cell: any) => {
+  //         const id = cell.row.original._id;
+  //         const isActive = cell.getValue();
+
+  //         return (
+  //           <Switch
+  //             size="small"
+  //             checked={isActive}
+  //             onClick={() => handleToggleSwitch(id, isActive)} // ✅ Handler only runs on user interaction
+  //             checkedChildren={<CheckOutlined />}
+  //             unCheckedChildren={<CloseOutlined />}
+  //           />
+  //         );
+  //       },
+  //       enableColumnFilter: false,
+  //     },
+  //   ],
+  //   [applicant, selectedApplicants]
+  // );
+
+  const columns = useMemo(() => {
+    const baseColumns = [
       {
         header: (
           <input
@@ -1326,6 +1679,7 @@ const Applicant = () => {
           />
         ),
         accessorKey: "select",
+        id: "select",
         cell: (info: any) => (
           <input
             type="checkbox"
@@ -1338,6 +1692,7 @@ const Applicant = () => {
       {
         header: "Applicant Name",
         accessorKey: "name",
+        id: "name",
         cell: (info: any) => {
           const nameObj = info.row.original?.name || {};
           const firstName = nameObj.firstName || "";
@@ -1349,7 +1704,7 @@ const Applicant = () => {
             <>
               <div
                 style={truncateText}
-                className="text-blue-600 underline cursor-pointer truncated-text hover:text-blue-800"
+                className="text-[#624bff] underline cursor-pointer truncated-text hover:text-[#3f3481]"
                 title={fullName}
                 onClick={() => handleView(info.row.original._id, "main")}
               >
@@ -1370,6 +1725,7 @@ const Applicant = () => {
       {
         header: "Skills",
         accessorKey: "appliedSkills",
+        id: "appliedSkills",
         cell: (cell: any) => (
           <div
             className="truncated-text"
@@ -1384,11 +1740,73 @@ const Applicant = () => {
       {
         header: "Role",
         accessorKey: "appliedRole",
+        id: "appliedRole",
         enableColumnFilter: false,
       },
       {
         header: "Total Exp",
         accessorKey: "totalExperience",
+        id: "totalExperience",
+        enableColumnFilter: false,
+      },
+      {
+        header: "City",
+        accessorKey: "currentCity",
+        id: "currentCity",
+        enableColumnFilter: false,
+      },
+      {
+        header: "Gender",
+        accessorKey: "gender",
+        id: "gender",
+        enableColumnFilter: false,
+      },
+      {
+        header: "Qualification",
+        accessorKey: "qualification",
+        id: "qualification",
+        enableColumnFilter: false,
+      },
+      {
+        header: "Work Preference",
+        accessorKey: "workPreference",
+        id: "workPreference",
+        enableColumnFilter: false,
+      },
+      {
+        header: "Current Pkg",
+        accessorKey: "currentPkg",
+        id: "currentPkg",
+        enableColumnFilter: false,
+      },
+      {
+        header: "Expected Pkg",
+        accessorKey: "expectedPkg",
+        id: "expectedPkg",
+        enableColumnFilter: false,
+      },
+      {
+        header: "Notice Period",
+        accessorKey: "noticePeriod",
+        id: "noticePeriod",
+        enableColumnFilter: false,
+      },
+      {
+        header: "Relevant Skill Exp",
+        accessorKey: "relevantSkillExperience",
+        id: "relevantSkillExperience",
+        enableColumnFilter: false,
+      },
+      {
+        header: "Communication Skill",
+        accessorKey: "communicationSkill",
+        id: "communicationSkill",
+        enableColumnFilter: false,
+      },
+      {
+        header: "Last-Followup Date",
+        accessorKey: "lastFollowUpDate",
+        id: "lastFollowUpDate",
         enableColumnFilter: false,
       },
       {
@@ -1531,10 +1949,10 @@ const Applicant = () => {
       {
         header: "Interview Stage",
         accessorKey: "interviewStage",
+        id: "interviewStage",
         cell: (cell: any) => (
           <BaseSelect
             name="interviewStage"
-            // className="custom-select"
             styles={customStyles}
             options={interviewStageOptions}
             value={dynamicFind(
@@ -1572,7 +1990,7 @@ const Applicant = () => {
       {
         header: "Applicant Status",
         accessorKey: "status",
-
+        id: "status",
         cell: (cell: any) => (
           <BaseSelect
             name="status"
@@ -1607,6 +2025,7 @@ const Applicant = () => {
       {
         header: "Status",
         accessorKey: "isActive",
+        id: "isActive",
         cell: (cell: any) => {
           const id = cell.row.original._id;
           const isActive = cell.getValue();
@@ -1615,7 +2034,7 @@ const Applicant = () => {
             <Switch
               size="small"
               checked={isActive}
-              onClick={() => handleToggleSwitch(id, isActive)} // ✅ Handler only runs on user interaction
+              onClick={() => handleToggleSwitch(id, isActive)}
               checkedChildren={<CheckOutlined />}
               unCheckedChildren={<CloseOutlined />}
             />
@@ -1623,9 +2042,23 @@ const Applicant = () => {
         },
         enableColumnFilter: false,
       },
-    ],
-    [applicant, selectedApplicants]
-  );
+    ];
+
+    // Filter columns based on visibility settings
+    return baseColumns.filter((column) => {
+      const columnConfig = availableColumns.find((c) => c.id === column.id);
+      return columnConfig?.isVisible !== false;
+    });
+  }, [applicant, selectedApplicants, availableColumns]);
+
+  const handleColumnsChange = (visibleColumns: string[]) => {
+    setAvailableColumns((prev) =>
+      prev.map((col) => ({
+        ...col,
+        isVisible: visibleColumns.includes(col.id),
+      }))
+    );
+  };
 
   const handleToggleSwitch = (id: any, isActive: any) => {
     setSelectedRecord(id);
@@ -1900,6 +2333,8 @@ const Applicant = () => {
                       isHeaderTitle="Applicants"
                       columns={columns}
                       data={applicant}
+                      availableColumns={availableColumns}
+                      onColumnsChange={handleColumnsChange}
                       customPageSize={50}
                       theadClass="table-light text-muted"
                       SearchPlaceholder="Search..."

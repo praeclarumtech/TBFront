@@ -1429,6 +1429,7 @@ const UserProfileEdit = () => {
                                   touched={validation.touched.company_email}
                                   error={validation.errors.company_email}
                                   passwordToggle={false}
+                                  isRequired={true}
                                 />
                               </Col>
                             </Row>
@@ -1495,6 +1496,7 @@ const UserProfileEdit = () => {
                                   touched={validation.touched.company_location}
                                   error={validation.errors.company_location}
                                   passwordToggle={false}
+                                  isRequired={true}
                                 />
                               </Col>
                             </Row>
@@ -1527,7 +1529,7 @@ const UserProfileEdit = () => {
                                       validation.values.hire_resources
                                     ) || ""
                                   }
-                                  isRequired={false}
+                                  isRequired={true}
                                   menuPortalTarget={
                                     typeof window !== "undefined"
                                       ? document.body
@@ -1575,7 +1577,7 @@ const UserProfileEdit = () => {
                                       validation.values.company_type
                                     ) || ""
                                   }
-                                  isRequired={false}
+                                  isRequired={true}
                                   menuPortalTarget={
                                     typeof window !== "undefined"
                                       ? document.body
@@ -1703,6 +1705,7 @@ const UserProfileEdit = () => {
                                     validation.errors.company_linkedin_profile
                                   }
                                   passwordToggle={false}
+                                  isRequired={true}
                                 />
                               </Col>
 
@@ -1732,6 +1735,7 @@ const UserProfileEdit = () => {
                                   touched={validation.touched.company_website}
                                   error={validation.errors.company_website}
                                   passwordToggle={false}
+                                  isRequired={true}
                                 />
                               </Col>
                             </Row>
@@ -1768,6 +1772,7 @@ const UserProfileEdit = () => {
                                     validation.errors.vendor_linkedin_profile
                                   }
                                   passwordToggle={false}
+                                  isRequired={true}
                                 />
                               </Col>
                             </Row>
