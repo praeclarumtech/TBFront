@@ -374,6 +374,7 @@ const Profile = () => {
                             value={formData.userName}
                             disabled
                             passwordToggle={false}
+                            isRequired={true}
                           />
                         </Col>
                         <Col
@@ -393,6 +394,7 @@ const Profile = () => {
                             value={formData.role}
                             disabled
                             passwordToggle={false}
+                            isRequired={true}
                           />
                         </Col>
                         <Col
@@ -410,6 +412,7 @@ const Profile = () => {
                             placeholder={InputPlaceHolder("Email")}
                             handleChange={handleInputChange}
                             value={formData?.email}
+                            isRequired={true}
                             disabled
                           />
                         </Col>
@@ -437,6 +440,7 @@ const Profile = () => {
                             }}
                             value={formData.firstName}
                             passwordToggle={false}
+                            isRequired={true}
                           />
                         </Col>
                         <Col
@@ -460,6 +464,7 @@ const Profile = () => {
                               setFormData({ ...formData, lastName: value });
                             }}
                             value={formData?.lastName}
+                            isRequired={true}
                           />
                         </Col>
                       </Row>
@@ -490,6 +495,8 @@ const Profile = () => {
                               });
                             }}
                             value={formData?.phoneNumber}
+                            isRequired={true}
+
                             // disabled
                           />
                         </Col>
@@ -514,6 +521,7 @@ const Profile = () => {
                             }}
                             value={formData.designation}
                             passwordToggle={false}
+                            isRequired={true}
                           />
                         </Col>
                       </Row>
@@ -570,6 +578,7 @@ const Profile = () => {
                             touched={touched}
                             error={error}
                             handleBlur={handleBlur}
+                            isRequired={true}
                           />
                         </Col>
                         {formData.role === "vendor" ? (
@@ -597,6 +606,8 @@ const Profile = () => {
                                 });
                               }}
                               value={formData?.whatsapp_number}
+                              isRequired={true}
+
                               // disabled
                             />
                           </Col>
@@ -629,6 +640,7 @@ const Profile = () => {
                                 }}
                                 value={formData.company_name}
                                 passwordToggle={false}
+                                isRequired={true}
                               />
                             </Col>
                             <Col
@@ -652,6 +664,7 @@ const Profile = () => {
                                   });
                                 }}
                                 value={formData?.company_email}
+                                isRequired={true}
                               />
                             </Col>
                           </Row>
@@ -680,6 +693,8 @@ const Profile = () => {
                                   });
                                 }}
                                 value={formData?.company_phone_number}
+                                isRequired={true}
+
                                 // disabled
                               />
                             </Col>
@@ -706,6 +721,8 @@ const Profile = () => {
                                   });
                                 }}
                                 value={formData?.company_location}
+                                isRequired={true}
+
                                 // disabled
                               />
                             </Col>
@@ -739,7 +756,7 @@ const Profile = () => {
                                     formData?.hire_resources
                                   ) || ""
                                 }
-                                isRequired={false}
+                                isRequired={true}
                                 menuPortalTarget={
                                   typeof window !== "undefined"
                                     ? document.body
@@ -787,7 +804,7 @@ const Profile = () => {
                                     formData?.company_type
                                   ) || ""
                                 }
-                                isRequired={false}
+                                isRequired={true}
                                 menuPortalTarget={
                                   typeof window !== "undefined"
                                     ? document.body
@@ -835,6 +852,8 @@ const Profile = () => {
                                   });
                                 }}
                                 value={formData?.company_strength}
+                                isRequired={true}
+
                                 // disabled
                               />
                             </Col>
@@ -866,6 +885,7 @@ const Profile = () => {
                                 // touched={"linkedinUrl"}
                                 // error={error.linkedinUrl}
                                 passwordToggle={false}
+                                isRequired={true}
                               />
                             </Col>
                             <Col
@@ -894,6 +914,7 @@ const Profile = () => {
                                 // touched={"linkedinUrl"}
                                 // error={error.linkedinUrl}
                                 passwordToggle={false}
+                                isRequired={true}
                               />
                             </Col>
                           </Row>
