@@ -39,8 +39,17 @@ const ProgressBars: React.FC<ProgressBarsProps> = ({
   }, [value]);
 
   const handleClick = () => {
-    console.log("Clicked progress bar:", label);
-    navigate(`/applicants?progress=${label}`);
+    let clicked = label.toLowerCase().trim();
+    if (clicked.endsWith(" round")) {
+      clicked = clicked.replace(/ round$/, "");
+    }
+    if (clicked === "first interview") {
+      clicked = "first interview round";
+    }
+    if (clicked === "hr") {
+      clicked = "hr round";
+    }
+    navigate(`/applicants?progress=${encodeURIComponent(clicked)}`);
   };
 
   return (

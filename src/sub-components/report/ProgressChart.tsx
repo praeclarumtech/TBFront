@@ -67,11 +67,17 @@ const Charts = () => {
         dataPointSelection: function (_event, _chartContext, config) {
           const dataPointIndex = config.dataPointIndex;
           const clickedLabel = labels[dataPointIndex];
-          console.log("Clicked label:", clickedLabel);
+
           if (clickedLabel) {
+            let formattedLabel = clickedLabel.toLowerCase();
+
+            // Special cases
+            if (formattedLabel === "short listed") {
+              formattedLabel = "shortlisted";
+            }
             navigate(
               `/applicants?applicantStatusChart=${encodeURIComponent(
-                clickedLabel
+                formattedLabel
               )}`
             );
           }

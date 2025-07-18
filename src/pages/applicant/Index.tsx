@@ -88,6 +88,7 @@ const Applicant = () => {
   const applicantStatusChart = params.get("applicantStatusChart");
   const addedByChart = params.get("addedByChart");
   const filterStatusDashboard = params.get("status");
+  const progressChart = params.get("progress");
   const navigate = useNavigate();
   const [loader, setLoader] = useState(false);
   const [applicant, setApplicant] = useState<any[]>([]);
@@ -367,6 +368,9 @@ const Applicant = () => {
       }
       if (filterStatusDashboard) {
         params.status = filterStatusDashboard;
+      }
+      if (progressChart) {
+        params.interviewStage = progressChart;
       }
 
       const isAnyFilterApplied =

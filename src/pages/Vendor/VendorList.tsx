@@ -156,6 +156,7 @@ const VendorList = () => {
             <div
               className="text-[#624bff] underline cursor-pointer truncated-text hover:text-[#3f3481]"
               title={fullName}
+              onClick={() => handleView(info?.row?.original?._id)}
             >
               {fullName || "-"}
             </div>
