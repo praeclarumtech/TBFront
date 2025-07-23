@@ -20,7 +20,7 @@ const Vendor = () => {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const toastIdRef = useRef<React.ReactText | null>(null);
-const jdFileInputRef = useRef<HTMLInputElement>(null);
+  const jdFileInputRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
     resetForm();
   }, []);
@@ -59,11 +59,11 @@ const jdFileInputRef = useRef<HTMLInputElement>(null);
   };
 
   const handleRemoveFileJd = () => {
-  setJdFile(null);
-  if (jdFileInputRef.current) {
-    jdFileInputRef.current.value = "";
-  }
-};
+    setJdFile(null);
+    if (jdFileInputRef.current) {
+      jdFileInputRef.current.value = "";
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -170,6 +170,9 @@ const jdFileInputRef = useRef<HTMLInputElement>(null);
           </div>
 
           <div className="relative">
+            <label className="block mb-1 text-sm font-medium">
+              Choose Job Description (JD) File (PDF, DOCX, TXT)
+            </label>
             <input
               type="file"
               ref={jdFileInputRef}
