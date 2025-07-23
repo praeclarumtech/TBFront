@@ -148,7 +148,7 @@ const UserProfileEdit = () => {
         password: values.password,
         confirmPassword: values.confirmPassword,
         isActive: values.isActive === "true",
-        ...(values.role === "vendor" && {
+        ...((values.role === "vendor" || values.role === "client") && {
           company_name: values.company_name,
           company_email: values.company_email,
           company_phone_number: values.company_phone_number,
