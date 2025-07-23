@@ -167,8 +167,8 @@ const JobForm = () => {
       job_details: "",
       job_type: "",
       time_zone: "",
-      start_time: "",
-      end_time: "",
+      start_time: null as dayjs.Dayjs | null,
+      end_time: null as dayjs.Dayjs | null,
       min_salary: "",
       max_salary: "",
       contract_duration: "",
@@ -225,8 +225,11 @@ const JobForm = () => {
         job_details: values.job_details,
         job_type: values.job_type,
         time_zone: values.time_zone,
-        start_time: values.start_time,
-        end_time: values.end_time,
+        start_time: values.start_time
+          ? values.start_time.format("hh:mm A")
+          : "",
+        end_time: values.end_time ? values.end_time.format("hh:mm A") : "",
+
         min_salary: values.min_salary,
         max_salary: values.max_salary,
         contract_duration: values.contract_duration,
@@ -515,8 +518,7 @@ const JobForm = () => {
                       </Col>
                       <Col xs={12} md={8} lg={4}>
                         <Label className="font-semibold text-gray-700 form-label">
-                          Start Time
-                          {<span className="text-red-500">*</span>}
+                          Start Time <span className="text-red-500">*</span>
                         </Label>
                         <TimePicker
                           name="start_time"
@@ -526,19 +528,9 @@ const JobForm = () => {
                           needConfirm={false}
                           use12Hours
                           className="w-100 h-[40px] form-control custom-placeholder"
-                          value={
-                            validation.values.start_time
-                              ? dayjs(validation.values.start_time, "hh:mm A")
-                              : null
-                          }
+                          value={validation.values.start_time || null} // store dayjs object
                           onChange={(time) => {
-                            const formattedTime = time
-                              ? time.format("hh:mm A")
-                              : "";
-                            validation.setFieldValue(
-                              "start_time",
-                              formattedTime
-                            );
+                            validation.setFieldValue("start_time", time); // set dayjs directly
                           }}
                           onBlur={validation.handleBlur}
                         />
@@ -549,13 +541,10 @@ const JobForm = () => {
                             </FormFeedback>
                           )}
                       </Col>
+
                       <Col xs={12} md={8} lg={4}>
-                        <Label
-                          // htmlFor={name}
-                          className="font-semibold text-gray-700 form-label"
-                        >
-                          End Time
-                          {<span className="text-red-500">*</span>}
+                        <Label className="font-semibold text-gray-700 form-label">
+                          End Time <span className="text-red-500">*</span>
                         </Label>
                         <TimePicker
                           name="end_time"
@@ -564,16 +553,9 @@ const JobForm = () => {
                           changeOnScroll
                           needConfirm={false}
                           className="w-100 h-[40px] form-control"
-                          value={
-                            validation.values.end_time
-                              ? dayjs(validation.values.end_time, "hh:mm A")
-                              : null
-                          }
+                          value={validation.values.end_time || null} // store dayjs object
                           onChange={(time) => {
-                            const formattedTime = time
-                              ? time.format("hh:mm A")
-                              : "";
-                            validation.setFieldValue("end_time", formattedTime);
+                            validation.setFieldValue("end_time", time); // set dayjs directly
                           }}
                           onBlur={validation.handleBlur}
                         />
