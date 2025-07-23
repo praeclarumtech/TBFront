@@ -179,7 +179,7 @@ const Profile = () => {
     }
 
     const formDataToSend = new FormData();
-    const isVendor = formData?.role === "vendor";
+    const isVendor = formData?.role === "vendor" || formData?.role === "client";
     for (const key in formData) {
       // Skip empty vendor fields if user is NOT vendor
       if (!isVendor && key.startsWith("company_")) continue; // 👈 Add this condition
@@ -581,7 +581,8 @@ const Profile = () => {
                             isRequired={true}
                           />
                         </Col>
-                        {formData.role === "vendor" ? (
+                        {formData.role === "vendor" ||
+                        formData.role === "client" ? (
                           <Col
                             md={6}
                             sm={12}
@@ -615,7 +616,8 @@ const Profile = () => {
                           <></>
                         )}
                       </Row>
-                      {formData.role === "vendor" ? (
+                      {formData.role === "vendor" ||
+                      formData.role === "client" ? (
                         <div>
                           {/* <Row className="mb-4 h3 fw-bold">Company Details</Row> */}
                           <Row>

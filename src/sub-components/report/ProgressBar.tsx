@@ -4,6 +4,7 @@ import "react-loading-skeleton/dist/skeleton.css";
 import { getTotalApplicants } from "api/dashboardApi";
 import { ProgressBar } from "react-bootstrap";
 import { useNavigate } from "react-router-dom"; // ✅ Uncomment if you want to navigate on click
+import { getVendorJobApplicats } from "api/reportApi";
 interface ProgressBarsProps {
   value: any;
   colour: string;
@@ -19,10 +20,13 @@ const ProgressBars: React.FC<ProgressBarsProps> = ({
 }) => {
   const [percentage, setPercentage] = useState(0);
   const [totalApplicants, setTotalApplicants] = useState(0);
+  const [vtotalApplicants, setVTotalApplicants] = useState(0);
+
   const navigate = useNavigate(); // ✅ Uncomment if using react-router
 
   useEffect(() => {
     fetchTotalApplicants();
+    fetchVendorApplicants();
   }, []);
 
   const fetchTotalApplicants = async () => {
@@ -34,10 +38,19 @@ const ProgressBars: React.FC<ProgressBarsProps> = ({
     }
   };
 
+  const fetchVendorApplicants = async () => {
+    try {
+      const data = await getVendorJobApplicats();
+      setVTotalApplicants(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     setPercentage(value);
   }, [value]);
-
+  console.log("first", vtotalApplicants);
   const handleClick = () => {
     let clicked = label.toLowerCase().trim();
     if (clicked.endsWith(" round")) {

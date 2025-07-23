@@ -95,7 +95,7 @@ export const DesktopNotifications = () => {
                     navigate("/");
                   }}
                 >
-                  <i className="fe fe-arrow-up-left me-2"></i> Change Module
+                  <i className="fe fe-arrow-up-left me-2"></i> Website
                 </Dropdown.Item>
               </>
             ) : (

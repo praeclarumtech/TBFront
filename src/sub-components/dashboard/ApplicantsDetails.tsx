@@ -7,9 +7,8 @@ import {
   SelectedOption1,
 } from "interfaces/applicant.interface";
 import { useEffect, useState } from "react";
-import { getChartDetails } from "api/dashboardApi";
+import { getChartDetails, ViewAppliedSkillsDashboard } from "api/dashboardApi";
 import { toast } from "react-toastify";
-import { ViewAppliedSkills } from "api/skillsApi";
 
 const ApplicantsDetails = ({
   setSelectedTechnology,
@@ -26,7 +25,7 @@ const ApplicantsDetails = ({
 
   const fetchSkills = async () => {
     try {
-      const response = await ViewAppliedSkills({
+      const response = await ViewAppliedSkillsDashboard({
         page: 1,
         pageSize: 500,
         limit: 500,

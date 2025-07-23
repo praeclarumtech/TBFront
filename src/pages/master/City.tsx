@@ -14,11 +14,7 @@ import BaseInput from "components/BaseComponents/BaseInput";
 import DeleteModal from "components/BaseComponents/DeleteModal";
 import BaseModal from "components/BaseComponents/BaseModal";
 import appConstants from "constants/constant";
-import {
-  errorHandle,
-  // getSerialNumber,
-  InputPlaceHolder,
-} from "utils/commonFunctions";
+import { InputPlaceHolder } from "utils/commonFunctions";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
@@ -73,8 +69,8 @@ const City = () => {
           id: item._id, // if needed
         }))
       );
-    } catch (error) {
-      errorHandle(error);
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || "Something went wrong!");
     } finally {
       setIsLoading(false);
     }
@@ -107,9 +103,8 @@ const City = () => {
       } else {
         toast.error(res?.message || "Failed to fetch Cities");
       }
-    } catch (error) {
-      toast.error("Something went wrong!");
-      console.error(error);
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || "Something went wrong!");
     } finally {
       setIsLoading(false);
     }
@@ -225,62 +220,6 @@ const City = () => {
         accessorKey: "city_name",
         enableColumnFilter: false,
       },
-      //   {
-      //     header: "Country",
-      //     accessorKey: "country_id",
-      //     enableColumnFilter: false,
-      //   },
-      // {
-      //   header: "Action",
-      //   cell: (cell: { row: { original: any } }) => (
-      //     <div className="gap-2 hstack">
-      //       {/* <BaseButton
-      //         id={`usage-${cell?.row?.original?.id}`}
-      //         color="primary"
-      //         className="btn btn-sm btn-soft-success usage-list"
-      //         onClick={() => handleView(cell.row.original)}
-      //       >
-      //         <i className="align-bottom ri-eye-fill" />
-      //         <ReactTooltip
-      //           place="bottom"
-      //           variant="info"
-      //           content="View"
-      //           anchorId={`usage-${cell?.row?.original?.id}`}
-      //         />
-      //       </BaseButton> */}
-      //       <BaseButton
-      //         id={`edit-${cell?.row?.original?._id}`}
-      //         color="primary"
-      //         className="btn btn-sm btn-soft-warning edit-list"
-      //         onClick={() => handleEdit(cell?.row?.original)}
-      //       >
-      //         <i className="align-bottom ri-pencil-fill" />
-      //       </BaseButton>
-      //       <BaseButton
-      //         color="danger"
-      //         id={`delete-${cell?.row?.original?._id}`}
-      //         className="btn btn-sm btn-soft-danger bg-danger"
-      //         onClick={() => handleDelete(cell?.row?.original)}
-      //       >
-      //         <i className="align-bottom ri-delete-bin-fill" />
-      //       </BaseButton>
-
-      //       {/* Tooltips should be outside buttons */}
-      //       <ReactTooltip
-      //         place="bottom"
-      //         variant="warning"
-      //         content="Edit"
-      //         anchorId={`edit-${cell?.row?.original?._id}`}
-      //       />
-      //       <ReactTooltip
-      //         place="bottom"
-      //         variant="error"
-      //         content="Delete"
-      //         anchorId={`delete-${cell?.row?.original?._id}`}
-      //       />
-      //     </div>
-      //   ),
-      // },
       {
         header: "Action",
         cell: (cell: { row: { original: any } }) => (
@@ -429,7 +368,7 @@ const City = () => {
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchAll(event.target.value);
-       setPagination((prev) => ({
+    setPagination((prev) => ({
       ...prev,
       pageIndex: 0,
     }));

@@ -127,6 +127,8 @@ const Applicant = () => {
   const [multipleSkills, setMultipleSkills] = useState<SelectedOption1[]>([]);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [updatedStartDate, setUpdatedStartDate] = useState("");
+  const [updatedEndDate, setUpdatedEndDate] = useState("");
   const [totalRecords, setTotalRecords] = useState(0);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
@@ -243,6 +245,8 @@ const Applicant = () => {
         appliedSkillsOR?: string;
         startDate?: string;
         endDate?: string;
+        updatedStartDate?: string;
+        updatedEndDate?: string;
         noticePeriod?: string;
         status?: string;
         interviewStage?: string;
@@ -326,6 +330,12 @@ const Applicant = () => {
       }
       if (endDate) {
         params.endDate = endDate;
+      }
+      if (updatedStartDate) {
+        params.updatedStartDate = updatedStartDate;
+      }
+      if (updatedEndDate) {
+        params.updatedEndDate = updatedEndDate;
       }
       if (filterStatus) {
         params.status = filterStatus.value;
@@ -412,6 +422,9 @@ const Applicant = () => {
       }
 
       const res = await listOfApplicants(params);
+      if (res.success === false) {
+        toast.error(res.message);
+      }
       setApplicant(res?.data?.item || res?.data?.results || []);
       setTotalRecords(res?.data?.totalRecords || 0);
     } catch (error: any) {
@@ -424,6 +437,7 @@ const Applicant = () => {
           });
         });
       } else {
+        console.log(error);
         toast.error("Failed to fetch applicants.. Please try again.", {
           closeOnClick: true,
           autoClose: 5000,
@@ -470,6 +484,8 @@ const Applicant = () => {
     filterFromChart,
     applicantStatusChart,
     filterStatusDashboard,
+    updatedStartDate,
+    updatedEndDate,
   ]);
 
   const fetchAppliedRole = async () => {
@@ -724,6 +740,17 @@ const Applicant = () => {
     }
   };
 
+  const handleUpdateDateChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    isStartDate: boolean
+  ) => {
+    if (isStartDate) {
+      setUpdatedStartDate(e.target.value);
+    } else {
+      setUpdatedEndDate(e.target.value);
+    }
+  };
+
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchAll(event.target.value);
     setPagination((prev) => ({
@@ -741,6 +768,8 @@ const Applicant = () => {
     setMultipleSkills([]);
     setStartDate("");
     setEndDate("");
+    setUpdatedStartDate("");
+    setUpdatedEndDate("");
     setFilterCity(null);
     setFilterGender(null);
     setFilterInterviewStage(null);
@@ -944,6 +973,8 @@ const Applicant = () => {
 
       if (startDate) queryParams.startDate = startDate;
       if (endDate) queryParams.endDate = endDate;
+      if (updatedStartDate) queryParams.updatedStartDate = updatedStartDate;
+      if (updatedEndDate) queryParams.updatedEndDate = updatedEndDate;
       if (filterStatus) queryParams.status = filterStatus.value;
       if (filterDesignation)
         queryParams.currentCompanyDesignation = filterDesignation.value;
@@ -1302,7 +1333,7 @@ const Applicant = () => {
         <Row className="mb-3">
           <Col xs={6}>
             <BaseInput
-              label="Start Date"
+              label="Created Start Date"
               name="startDate"
               className="mb-1 select-border"
               type="date"
@@ -1316,7 +1347,7 @@ const Applicant = () => {
           </Col>
           <Col xs={6}>
             <BaseInput
-              label="End Date"
+              label="Created End Date"
               name="endDate"
               type="date"
               placeholder={InputPlaceHolder("End Date")}
@@ -1324,6 +1355,35 @@ const Applicant = () => {
                 handleDateChange(e, false)
               }
               value={endDate || ""}
+              max={today}
+            />
+          </Col>
+        </Row>
+        <Row className="mb-3">
+          <Col xs={6}>
+            <BaseInput
+              label="Update Start Date"
+              name="updatedStartDate"
+              className="mb-1 select-border"
+              type="date"
+              placeholder={InputPlaceHolder("Start Date")}
+              handleChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                handleUpdateDateChange(e, true)
+              }
+              value={updatedStartDate || ""}
+              max={today}
+            />
+          </Col>
+          <Col xs={6}>
+            <BaseInput
+              label="Update End Date"
+              name="updatedEndDate"
+              type="date"
+              placeholder={InputPlaceHolder("End Date")}
+              handleChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                handleUpdateDateChange(e, false)
+              }
+              value={updatedEndDate || ""}
               max={today}
             />
           </Col>
@@ -1355,318 +1415,6 @@ const Applicant = () => {
       </div>
     </Box>
   );
-
-  // const columns = useMemo(
-  //   () => [
-  //     {
-  //       header: (
-  //         <input
-  //           type="checkbox"
-  //           onChange={handleSelectAll}
-  //           checked={selectedApplicants.length === applicant.length}
-  //         />
-  //       ),
-  //       accessorKey: "select",
-  //       cell: (info: any) => (
-  //         <input
-  //           type="checkbox"
-  //           checked={selectedApplicants.includes(info.row.original._id)}
-  //           onChange={() => handleSelectApplicant(info.row.original._id)}
-  //         />
-  //       ),
-  //       enableColumnFilter: false,
-  //     },
-  //     {
-  //       header: "Applicant Name",
-  //       accessorKey: "name",
-  //       cell: (info: any) => {
-  //         const nameObj = info.row.original?.name || {};
-  //         const firstName = nameObj.firstName || "";
-  //         const middleName = nameObj.middleName || "";
-  //         const lastName = nameObj.lastName || "";
-  //         const fullName = `${firstName} ${middleName} ${lastName}`.trim();
-
-  //         return (
-  //           <>
-  //             <div
-  //               style={truncateText}
-  //               className="text-blue-600 underline cursor-pointer truncated-text hover:text-blue-800"
-  //               title={fullName}
-  //               onClick={() => handleView(info.row.original._id, "main")}
-  //             >
-  //               {fullName}
-  //             </div>
-  //             <ReactTooltip
-  //               place="top"
-  //               variant="info"
-  //               content={fullName}
-  //               style={toolipComponents}
-  //             />
-  //           </>
-  //         );
-  //       },
-  //       filterFn: "fuzzy",
-  //       enableColumnFilter: false,
-  //     },
-  //     {
-  //       header: "Skills",
-  //       accessorKey: "appliedSkills",
-  //       cell: (cell: any) => (
-  //         <div
-  //           className="truncated-text"
-  //           style={truncateText}
-  //           title={cell.row.original.appliedSkills?.join(", ")}
-  //         >
-  //           {cell.row.original.appliedSkills?.join(", ")}
-  //         </div>
-  //       ),
-  //       enableColumnFilter: false,
-  //     },
-  //     {
-  //       header: "Role",
-  //       accessorKey: "appliedRole",
-  //       enableColumnFilter: false,
-  //     },
-  //     {
-  //       header: "Total Exp",
-  //       accessorKey: "totalExperience",
-  //       enableColumnFilter: false,
-  //     },
-  //     {
-  //       header: "Action",
-  //       cell: ({ row }: any) => (
-  //         <div className="flex gap-2">
-  //           <Tooltip.Provider delayDuration={50}>
-  //             {/* View Button with Tooltip */}
-  //             <Tooltip.Root>
-  //               <Tooltip.Trigger asChild>
-  //                 <button
-  //                   className="btn btn-sm btn-soft-success bg-primary"
-  //                   onClick={() => handleView(row.original._id, "main")}
-  //                   disabled={!row.original.isActive}
-  //                 >
-  //                   <i className="text-white ri-eye-fill" />
-  //                 </button>
-  //               </Tooltip.Trigger>
-  //               <Tooltip.Portal>
-  //                 <Tooltip.Content
-  //                   side="bottom"
-  //                   sideOffset={4}
-  //                   className="px-2 py-1 text-sm text-white rounded shadow-lg bg-primary"
-  //                 >
-  //                   View
-  //                   <Tooltip.Arrow style={{ fill: "#624bff" }} />
-  //                 </Tooltip.Content>
-  //               </Tooltip.Portal>
-  //             </Tooltip.Root>
-
-  //             {/* Edit Button with Tooltip */}
-  //             <Tooltip.Root>
-  //               <Tooltip.Trigger asChild>
-  //                 <button
-  //                   className="text-white btn btn-sm btn-soft-secondary bg-secondary"
-  //                   onClick={() => handleEdit(row.original._id)}
-  //                   disabled={!row.original.isActive}
-  //                 >
-  //                   <i className="ri-pencil-fill" />
-  //                 </button>
-  //               </Tooltip.Trigger>
-  //               <Tooltip.Portal>
-  //                 <Tooltip.Content
-  //                   side="bottom"
-  //                   sideOffset={4}
-  //                   className="px-2 py-1 text-sm text-white rounded shadow-lg bg-secondary"
-  //                 >
-  //                   Edit
-  //                   <Tooltip.Arrow style={{ fill: "#637381" }} />
-  //                 </Tooltip.Content>
-  //               </Tooltip.Portal>
-  //             </Tooltip.Root>
-
-  //             <Tooltip.Root>
-  //               <Tooltip.Trigger asChild>
-  //                 <button
-  //                   className="text-white btn btn-sm btn-soft-danger bg-danger"
-  //                   onClick={() => handleDeleteSingle(row.original._id)}
-  //                   disabled={!row.original.isActive}
-  //                 >
-  //                   <i className="align-bottom ri-delete-bin-5-fill" />
-  //                 </button>
-  //               </Tooltip.Trigger>
-  //               <Tooltip.Portal>
-  //                 <Tooltip.Content
-  //                   side="bottom"
-  //                   sideOffset={4}
-  //                   className="px-2 py-1 text-sm text-white rounded shadow-lg bg-danger"
-  //                 >
-  //                   Delete
-  //                   <Tooltip.Arrow style={{ fill: "#dc3545" }} />
-  //                 </Tooltip.Content>
-  //               </Tooltip.Portal>
-  //             </Tooltip.Root>
-
-  //             <Tooltip.Root>
-  //               <Tooltip.Trigger asChild>
-  //                 <button
-  //                   className="text-white btn btn-sm btn-soft-success bg-success"
-  //                   onClick={() => handleEmail(row.original._id)}
-  //                   disabled={!row.original.isActive}
-  //                 >
-  //                   <i className="align-bottom ri-mail-close-line" />
-  //                 </button>
-  //               </Tooltip.Trigger>
-  //               <Tooltip.Portal>
-  //                 <Tooltip.Content
-  //                   side="bottom"
-  //                   sideOffset={4}
-  //                   className="px-2 py-1 text-sm text-white rounded shadow-lg bg-success"
-  //                 >
-  //                   Mail
-  //                   <Tooltip.Arrow style={{ fill: "#198754" }} />
-  //                 </Tooltip.Content>
-  //               </Tooltip.Portal>
-  //             </Tooltip.Root>
-  //             <Tooltip.Root>
-  //               <Tooltip.Trigger asChild>
-  //                 {row?.original?.isFavorite ? (
-  //                   <i
-  //                     className="align-bottom ri-heart-fill text-danger"
-  //                     style={{ fontSize: "20px", cursor: "pointer" }}
-  //                     onClick={() =>
-  //                       handleConfirmFav(
-  //                         row?.original?.isFavorite,
-  //                         row?.original?._id
-  //                       )
-  //                     }
-  //                   />
-  //                 ) : (
-  //                   <i
-  //                     className="align-bottom ri-heart-line"
-  //                     style={{ fontSize: "20px", cursor: "pointer" }}
-  //                     onClick={() =>
-  //                       handleConfirmFav(
-  //                         row?.original?.isFavorite,
-  //                         row?.original?._id
-  //                       )
-  //                     }
-  //                   />
-  //                 )}
-  //               </Tooltip.Trigger>
-  //               <Tooltip.Portal>
-  //                 <Tooltip.Content
-  //                   side="bottom"
-  //                   sideOffset={4}
-  //                   className="px-2 py-1 text-sm text-white bg-gray-700 rounded shadow-lg"
-  //                 >
-  //                   {row?.original?.isFavorite
-  //                     ? "Remove from Favorites"
-  //                     : "Add to Favorites"}
-  //                   <Tooltip.Arrow style={{ fill: "#454f5b" }} />
-  //                 </Tooltip.Content>
-  //               </Tooltip.Portal>
-  //             </Tooltip.Root>
-  //           </Tooltip.Provider>
-  //         </div>
-  //       ),
-  //     },
-  //     {
-  //       header: "Interview Stage",
-  //       accessorKey: "interviewStage",
-  //       cell: (cell: any) => (
-  //         <BaseSelect
-  //           name="interviewStage"
-  //           // className="custom-select"
-  //           styles={customStyles}
-  //           options={interviewStageOptions}
-  //           value={dynamicFind(
-  //             interviewStageOptions,
-  //             cell.row.original.interviewStage
-  //           )}
-  //           handleChange={(selectedOption: SelectedOption) => {
-  //             const updatedApplicant = [...applicant];
-  //             const applicantIndex = updatedApplicant.findIndex(
-  //               (item) => item._id === cell.row.original._id
-  //             );
-  //             if (applicantIndex > -1) {
-  //               updatedApplicant[applicantIndex].interviewStage =
-  //                 selectedOption.value;
-  //               setApplicant(updatedApplicant);
-  //               updateStage(
-  //                 { interviewStage: selectedOption.value },
-  //                 cell.row.original._id
-  //               )
-  //                 .then(() => {
-  //                   toast.success(
-  //                     "Applicant Interview Stage updated successfully!"
-  //                   );
-  //                 })
-  //                 .catch((error: any) => {
-  //                   errorHandle(error);
-  //                 });
-  //             }
-  //           }}
-  //           isDisabled={!cell?.row?.original?.isActive}
-  //         />
-  //       ),
-  //       enableColumnFilter: false,
-  //     },
-  //     {
-  //       header: "Applicant Status",
-  //       accessorKey: "status",
-
-  //       cell: (cell: any) => (
-  //         <BaseSelect
-  //           name="status"
-  //           styles={customStyles}
-  //           options={statusOptions}
-  //           value={dynamicFind(statusOptions, cell.row.original.status)}
-  //           handleChange={(selectedOption: SelectedOption) => {
-  //             const updatedApplicant = [...applicant];
-  //             const applicantIndex = updatedApplicant.findIndex(
-  //               (item) => item._id === cell.row.original._id
-  //             );
-  //             if (applicantIndex > -1) {
-  //               updatedApplicant[applicantIndex].status = selectedOption.value;
-  //               setApplicant(updatedApplicant);
-  //               updateStatus(
-  //                 { status: selectedOption.value },
-  //                 cell.row.original._id
-  //               )
-  //                 .then(() => {
-  //                   toast.success("Applicant status updated successfully!");
-  //                 })
-  //                 .catch((error: any) => {
-  //                   errorHandle(error);
-  //                 });
-  //             }
-  //           }}
-  //           isDisabled={!cell?.row?.original?.isActive}
-  //         />
-  //       ),
-  //       enableColumnFilter: false,
-  //     },
-  //     {
-  //       header: "Status",
-  //       accessorKey: "isActive",
-  //       cell: (cell: any) => {
-  //         const id = cell.row.original._id;
-  //         const isActive = cell.getValue();
-
-  //         return (
-  //           <Switch
-  //             size="small"
-  //             checked={isActive}
-  //             onClick={() => handleToggleSwitch(id, isActive)} // ✅ Handler only runs on user interaction
-  //             checkedChildren={<CheckOutlined />}
-  //             unCheckedChildren={<CloseOutlined />}
-  //           />
-  //         );
-  //       },
-  //       enableColumnFilter: false,
-  //     },
-  //   ],
-  //   [applicant, selectedApplicants]
-  // );
 
   const columns = useMemo(() => {
     const baseColumns = [

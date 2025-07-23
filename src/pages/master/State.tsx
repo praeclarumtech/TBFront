@@ -14,11 +14,7 @@ import BaseInput from "components/BaseComponents/BaseInput";
 import DeleteModal from "components/BaseComponents/DeleteModal";
 import BaseModal from "components/BaseComponents/BaseModal";
 import appConstants from "constants/constant";
-import {
-  errorHandle,
-  // getSerialNumber,
-  InputPlaceHolder,
-} from "utils/commonFunctions";
+import { InputPlaceHolder } from "utils/commonFunctions";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
@@ -77,8 +73,8 @@ const State = () => {
           id: item._id, // if needed
         }))
       );
-    } catch (error) {
-      errorHandle(error);
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || "Something went wrong!");
     } finally {
       setIsLoading(false);
     }
@@ -111,9 +107,8 @@ const State = () => {
       } else {
         toast.error(res?.message || "Failed to fetch State");
       }
-    } catch (error) {
-      toast.error("Something went wrong!");
-      console.error(error);
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || "Something went wrong!");
     } finally {
       setIsLoading(false);
     }

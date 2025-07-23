@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Layout, Menu } from "antd";
 import {
@@ -11,9 +11,11 @@ import {
   PieChartOutlined,
   PlusOutlined,
   InboxOutlined,
+  TeamOutlined,
 } from "@ant-design/icons";
 
 const { Sider } = Layout;
+const isMobile = window.innerWidth < 768;
 
 interface SidebarProps {
   showMenu: boolean;
@@ -85,7 +87,7 @@ const scrollbarStyles = `
 const styleElement = document.createElement("style");
 styleElement.innerHTML = scrollbarStyles;
 document.head.appendChild(styleElement);
-const role = localStorage.getItem("role");
+
 const MenuGroupHeading = ({ title }: { title: string }) => (
   <div
     style={{
@@ -104,6 +106,11 @@ const MenuGroupHeading = ({ title }: { title: string }) => (
 const Sidebar: React.FC<SidebarProps> = ({ toggleMenu }) => {
   const location = useLocation();
   const [openKeys, setOpenKeys] = useState<string[]>([]);
+  const [role, setRole] = useState<string | null>(null);
+
+  useEffect(() => {
+    setRole(localStorage.getItem("role"));
+  }, [role]);
 
   return (
     <Sider
@@ -167,9 +174,16 @@ const Sidebar: React.FC<SidebarProps> = ({ toggleMenu }) => {
               key="/dashboard"
               icon={<HomeOutlined style={{ fontSize: "18px" }} />}
             >
-              <Link to="/dashboard">Dashboard</Link>
+              <Link
+                to="/dashboard"
+                onClick={() => {
+                  if (isMobile) toggleMenu();
+                }}
+              >
+                Dashboard
+              </Link>
             </Menu.Item>
-            {role !== "vendor" && (
+            {role !== "vendor" && role !== "client" && (
               <>
                 <Menu.ItemGroup
                   key="applicants-group"
@@ -179,118 +193,291 @@ const Sidebar: React.FC<SidebarProps> = ({ toggleMenu }) => {
                   key="/applicants"
                   icon={<UserOutlined style={{ fontSize: "18px" }} />}
                 >
-                  <Link to="/applicants">Applicants</Link>
+                  <Link
+                    to="/applicants"
+                    onClick={() => {
+                      if (isMobile) toggleMenu();
+                    }}
+                  >
+                    Applicants
+                  </Link>
                 </Menu.Item>
                 <Menu.Item
                   key="/import-applicants"
                   icon={<DownloadOutlined style={{ fontSize: "18px" }} />}
                 >
-                  <Link to="/import-applicants">Import Applicants</Link>
+                  <Link
+                    to="/import-applicants"
+                    onClick={() => {
+                      if (isMobile) toggleMenu();
+                    }}
+                  >
+                    Import Applicants
+                  </Link>
                 </Menu.Item>
               </>
             )}
-            <>
-              {/* VENDORS */}
-              <Menu.ItemGroup
-                key="vendors-group"
-                title={<MenuGroupHeading title="VENDORS" />}
-              />
-              <Menu.SubMenu
-                key="vendor-parent"
-                icon={<InboxOutlined style={{ fontSize: "18px" }} />}
-                title="Vendor"
-              >
-                {role !== "vendor" && (
-                  <Menu.Item key="/vendorList">
-                    <Link to="/vendorList">Vendors</Link>
+            {(role === "vendor" || role === "hr" || role === "admin") && (
+              <>
+                {/* VENDORS */}
+                <Menu.ItemGroup
+                  key="vendors-group"
+                  title={<MenuGroupHeading title="VENDORS" />}
+                />
+                <Menu.SubMenu
+                  key="vendor-parent"
+                  icon={<InboxOutlined style={{ fontSize: "18px" }} />}
+                  title="Vendor"
+                >
+                  {role !== "vendor" && (
+                    <Menu.Item key="/vendorList">
+                      <Link
+                        to="/vendorList"
+                        onClick={() => {
+                          if (isMobile) toggleMenu();
+                        }}
+                      >
+                        Vendors
+                      </Link>
+                    </Menu.Item>
+                  )}
+                  <Menu.Item key="/job-listing">
+                    <Link
+                      to="/job-listing"
+                      onClick={() => {
+                        if (isMobile) toggleMenu();
+                      }}
+                    >
+                      Job Listing
+                    </Link>
                   </Menu.Item>
-                )}
-                <Menu.Item key="/job-listing">
-                  <Link to="/job-listing">Job Listing</Link>
-                </Menu.Item>
-                <Menu.Item key="/appliedJobApplicants">
-                  <Link to="/appliedJobApplicants">Jobs Applicants</Link>
-                </Menu.Item>
-              </Menu.SubMenu>
-            </>
+                  <Menu.Item key="/appliedJobApplicants">
+                    <Link
+                      to="/appliedJobApplicants"
+                      onClick={() => {
+                        if (isMobile) toggleMenu();
+                      }}
+                    >
+                      Jobs Applicants
+                    </Link>
+                  </Menu.Item>
+                </Menu.SubMenu>
+              </>
+            )}
 
+            {role === "admin" || role === "client" || role === "hr" ? (
+              <>
+                {/* CLIENT */}
+                <Menu.ItemGroup
+                  key="clint-group"
+                  title={<MenuGroupHeading title="CLIENT" />}
+                />
+                <Menu.SubMenu
+                  key="client-parent"
+                  icon={<TeamOutlined style={{ fontSize: "18px" }} />}
+                  title="client"
+                >
+                  {(role === "admin" || role === "hr") && (
+                    <Menu.Item key="/client">
+                      <Link
+                        to="/client"
+                        onClick={() => {
+                          if (isMobile) toggleMenu();
+                        }}
+                      >
+                        Client
+                      </Link>
+                    </Menu.Item>
+                  )}
+
+                  <Menu.Item key="/job-listingClient">
+                    <Link
+                      to="/job-listingClient"
+                      onClick={() => {
+                        if (isMobile) toggleMenu();
+                      }}
+                    >
+                      Client Job Listing
+                    </Link>
+                  </Menu.Item>
+                  <Menu.Item key="/appliedJobApplicantsClient">
+                    <Link
+                      to="/appliedJobApplicantsClient"
+                      onClick={() => {
+                        if (isMobile) toggleMenu();
+                      }}
+                    > 
+                      Client Applicants
+                    </Link>
+                  </Menu.Item>
+                </Menu.SubMenu>
+              </>
+            ) : (
+              <></>
+            )}
             {/* ANALYSIS */}
             <Menu.ItemGroup
               key="analysis-group"
               title={<MenuGroupHeading title="ANALYSIS" />}
             />
-            <Menu.Item
-              key="/email"
-              icon={<MailOutlined style={{ fontSize: "18px" }} />}
-            >
-              <Link to="/email">Email</Link>
-            </Menu.Item>
+            {role !== "vendor" && role !== "client" && (
+              <Menu.Item
+                key="/email"
+                icon={<MailOutlined style={{ fontSize: "18px" }} />}
+              >
+                <Link
+                  to="/email"
+                  onClick={() => {
+                    if (isMobile) toggleMenu();
+                  }}
+                >
+                  Email
+                </Link>
+              </Menu.Item>
+            )}
+
             <Menu.Item
               key="/report"
               icon={<PieChartOutlined style={{ fontSize: "18px" }} />}
             >
-              <Link to="/report">Reports</Link>
+              <Link
+                to="/report"
+                onClick={() => {
+                  if (isMobile) toggleMenu();
+                }}
+              >
+                Reports
+              </Link>
             </Menu.Item>
-
-            {/* MASTERS */}
-            <Menu.ItemGroup
-              key="masters-group"
-              title={<MenuGroupHeading title="MASTERS" />}
-            />
-            <Menu.Item
-              key="/master/skills"
-              icon={<PlusOutlined style={{ fontSize: "18px" }} />}
-            >
-              <Link to="/master/skills">Add Skills</Link>
-            </Menu.Item>
-            <Menu.Item
-              key="/master/degree"
-              icon={<PlusOutlined style={{ fontSize: "18px" }} />}
-            >
-              <Link to="/master/degree">Add Qualification</Link>
-            </Menu.Item>
-            <Menu.Item
-              key="/master/add-role-skill"
-              icon={<PlusOutlined style={{ fontSize: "18px" }} />}
-            >
-              <Link to="/master/add-role-skill">Add Role And Skill</Link>
-            </Menu.Item>
-            <Menu.Item
-              key="/master/Find-Fields"
-              icon={<PlusOutlined style={{ fontSize: "18px" }} />}
-            >
-              <Link to="/master/Find-Fields">Find And Replace Fields</Link>
-            </Menu.Item>
-            <Menu.Item
-              key="/master/email-template"
-              icon={<PlusOutlined style={{ fontSize: "18px" }} />}
-            >
-              <Link to="/master/email-template">Add Email Template</Link>
-            </Menu.Item>
-            <Menu.Item
-              key="/master/designation"
-              icon={<PlusOutlined style={{ fontSize: "18px" }} />}
-            >
-              <Link to="/master/designation">Add Designation</Link>
-            </Menu.Item>
-            <Menu.Item
-              key="/master/country"
-              icon={<PlusOutlined style={{ fontSize: "18px" }} />}
-            >
-              <Link to="/master/country">Add Country</Link>
-            </Menu.Item>
-            <Menu.Item
-              key="/master/state"
-              icon={<PlusOutlined style={{ fontSize: "18px" }} />}
-            >
-              <Link to="/master/state">Add State</Link>
-            </Menu.Item>
-            <Menu.Item
-              key="/master/city"
-              icon={<PlusOutlined style={{ fontSize: "18px" }} />}
-            >
-              <Link to="/master/city">Add City</Link>
-            </Menu.Item>
+            {role === "admin" || role === "hr" ? (
+              <>
+                {" "}
+                {/* MASTERS */}
+                <Menu.ItemGroup
+                  key="masters-group"
+                  title={<MenuGroupHeading title="MASTERS" />}
+                />
+                <Menu.Item
+                  key="/master/skills"
+                  icon={<PlusOutlined style={{ fontSize: "18px" }} />}
+                >
+                  <Link
+                    to="/master/skills"
+                    onClick={() => {
+                      if (isMobile) toggleMenu();
+                    }}
+                  >
+                    Add Skills
+                  </Link>
+                </Menu.Item>
+                <Menu.Item
+                  key="/master/degree"
+                  icon={<PlusOutlined style={{ fontSize: "18px" }} />}
+                >
+                  <Link
+                    to="/master/degree"
+                    onClick={() => {
+                      if (isMobile) toggleMenu();
+                    }}
+                  >
+                    Add Qualification
+                  </Link>
+                </Menu.Item>
+                <Menu.Item
+                  key="/master/add-role-skill"
+                  icon={<PlusOutlined style={{ fontSize: "18px" }} />}
+                >
+                  <Link
+                    to="/master/add-role-skill"
+                    onClick={() => {
+                      if (isMobile) toggleMenu();
+                    }}
+                  >
+                    Add Role And Skill
+                  </Link>
+                </Menu.Item>
+                <Menu.Item
+                  key="/master/Find-Fields"
+                  icon={<PlusOutlined style={{ fontSize: "18px" }} />}
+                >
+                  <Link
+                    to="/master/Find-Fields"
+                    onClick={() => {
+                      if (isMobile) toggleMenu();
+                    }}
+                  >
+                    Find And Replace Fields
+                  </Link>
+                </Menu.Item>
+                <Menu.Item
+                  key="/master/email-template"
+                  icon={<PlusOutlined style={{ fontSize: "18px" }} />}
+                >
+                  <Link
+                    to="/master/email-template"
+                    onClick={() => {
+                      if (isMobile) toggleMenu();
+                    }}
+                  >
+                    Add Email Template
+                  </Link>
+                </Menu.Item>
+                <Menu.Item
+                  key="/master/designation"
+                  icon={<PlusOutlined style={{ fontSize: "18px" }} />}
+                >
+                  <Link
+                    to="/master/designation"
+                    onClick={() => {
+                      if (isMobile) toggleMenu();
+                    }}
+                  >
+                    Add Designation
+                  </Link>
+                </Menu.Item>
+                <Menu.Item
+                  key="/master/country"
+                  icon={<PlusOutlined style={{ fontSize: "18px" }} />}
+                >
+                  <Link
+                    to="/master/country"
+                    onClick={() => {
+                      if (isMobile) toggleMenu();
+                    }}
+                  >
+                    Add Country
+                  </Link>
+                </Menu.Item>
+                <Menu.Item
+                  key="/master/state"
+                  icon={<PlusOutlined style={{ fontSize: "18px" }} />}
+                >
+                  <Link
+                    to="/master/state"
+                    onClick={() => {
+                      if (isMobile) toggleMenu();
+                    }}
+                  >
+                    Add State
+                  </Link>
+                </Menu.Item>
+                <Menu.Item
+                  key="/master/city"
+                  icon={<PlusOutlined style={{ fontSize: "18px" }} />}
+                >
+                  <Link
+                    to="/master/city"
+                    onClick={() => {
+                      if (isMobile) toggleMenu();
+                    }}
+                  >
+                    Add City
+                  </Link>
+                </Menu.Item>
+              </>
+            ) : (
+              <></>
+            )}
           </Menu>
         </>
       </div>

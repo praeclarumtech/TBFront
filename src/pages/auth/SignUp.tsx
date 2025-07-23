@@ -28,6 +28,7 @@ const {
   emailRegex,
   passwordRegex,
   validationMessages,
+  roleType,
 } = appConstants;
 
 const SignUp = () => {
@@ -37,13 +38,6 @@ const SignUp = () => {
   const [loader, setLoader] = useState(false);
   const [passwordShow, setPasswordShow] = useState<boolean>(false);
   const [confirmPassword, setConfirmPassword] = useState<boolean>(false);
-
-  const roleType = [
-    { label: "HR", value: "hr" },
-    { label: "Admin", value: "admin" },
-    { label: "Guest", value: "guest" },
-    { label: "Vendor", value: "vendor" },
-  ];
 
   const validation = useFormik({
     enableReinitialize: true,

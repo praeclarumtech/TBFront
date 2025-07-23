@@ -417,7 +417,7 @@ const appConstants = Object.freeze({
   ],
   SalaryFrequency: [
     { label: "Monthly", value: "monthly" },
-    { label: "Quaterly", value: "quaterly" },
+    { label: "Hourly", value: "hourly" },
     { label: "Yearly", value: "yearly" },
   ],
   noticePeriodOptions: [
@@ -489,6 +489,7 @@ const appConstants = Object.freeze({
     // { label: "User", value: "user" },
     { label: "Vendor", value: "vendor" },
     { label: "Guest", value: "guest" },
+    { label: "Client", value: "client" },
   ],
 });
 export default appConstants;

@@ -43,6 +43,8 @@ export const listOfApplicants = async (params: {
   appliedSkillsOR?: string;
   startDate?: string;
   endDate?: string;
+  updatedStartDate?: string;
+  updatedEndDate?: string;
   currentCity?: string;
   noticePeriod?: string;
   status?: string;
@@ -333,13 +335,11 @@ export const listOfImportApplicants = async (params: {
 
 export const updateManyApplicants = async (
   applicantIds: string[],
-  updateData: object,
- 
+  updateData: object
 ) => {
   const response = await authServices.put(UPDATE_APPLICANT_MANY, {
     applicantIds: applicantIds,
     updateData: updateData,
-  
   });
 
   return response?.data;

@@ -58,8 +58,8 @@ const AddDegree = () => {
       } else {
         toast.error(res?.message || "Failed to fetch qualification!");
       }
-    } catch (error) {
-      toast.error("Something went wrong!");
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || "Something went wrong!");
       console.error(error);
     } finally {
       setIsLoading(false);

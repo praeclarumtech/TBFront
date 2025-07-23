@@ -91,8 +91,9 @@ const AddEmailTemplate = () => {
       } else {
         toast.error(res?.message || "Failed to fetch email templates");
       }
-    } catch (error) {
-      toast.error("Something went wrong!");
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || "Something went wrong!");
+      // toast.error("Something went wrong!");
       console.error(error);
     } finally {
       setIsLoading(false);

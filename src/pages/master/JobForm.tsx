@@ -28,7 +28,13 @@ import { useSearchParams } from "react-router-dom";
 import { ViewAppliedSkills } from "api/skillsApi";
 import { viewAllCity } from "api/cityApis";
 
-const { projectTitle, Modules, jobTypeOpyions, timeZoneOptions } = appConstants;
+const {
+  projectTitle,
+  Modules,
+  jobTypeOpyions,
+  timeZoneOptions,
+  SalaryFrequency,
+} = appConstants;
 const quillModules = {
   toolbar: [
     [{ header: [1, 2, 3, 4, 5, 6, false] }],
@@ -111,6 +117,7 @@ const JobForm = () => {
               required_skills: job.required_skills || [],
               job_location: job.job_location || "",
               sub_description: job.sub_description || "",
+              salary_frequency: job.salary_frequency || "",
             });
             console.log(validation.value);
           }
@@ -175,6 +182,7 @@ const JobForm = () => {
       required_skills: "",
       job_location: "",
       sub_description: "",
+      salary_frequency: "",
     },
     validationSchema: Yup.object({
       job_subject: Yup.string()
@@ -213,7 +221,7 @@ const JobForm = () => {
         ),
       end_time: Yup.string().required("End time is required."),
       start_time: Yup.string().required("Start time is required."),
-
+      salary_frequency: Yup.string().required("Salary frequency is required."),
       // min_salary: Yup.string().required("Please Enter minimum Salary"),
       // max_salary: Yup.string().required("Please Enter maximum Salary"),
     }),
@@ -236,6 +244,7 @@ const JobForm = () => {
         required_skills: values.required_skills,
         job_location: values.job_location,
         sub_description: values.sub_description,
+        salary_frequency: values.salary_frequency,
       };
       const apiCall = _id ? updateJob(_id, payload) : createJob(payload);
       apiCall
@@ -565,6 +574,48 @@ const JobForm = () => {
                               {validation.errors.end_time}
                             </FormFeedback>
                           )}
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col xs={12} md={6} lg={4}>
+                        <BaseSelect
+                          label="Salary Frequency"
+                          name="salary_frequency"
+                          className="select-border"
+                          options={SalaryFrequency}
+                          placeholder="Salary Frequency"
+                          isRequired={true}
+                          handleChange={(selectedOption: SelectedOption) => {
+                            validation.setFieldValue(
+                              "salary_frequency",
+                              selectedOption?.value || ""
+                            );
+                          }}
+                          handleBlur={validation.handleBlur}
+                          value={
+                            dynamicFind(
+                              SalaryFrequency,
+                              validation.values.salary_frequency
+                            ) || ""
+                          }
+                          touched={validation.touched.salary_frequency}
+                          error={validation.errors.salary_frequency}
+                          menuPortalTarget={
+                            typeof window !== "undefined" ? document.body : null
+                          }
+                          menuPosition="fixed"
+                          styles={{
+                            menuPortal: (base: any) => ({
+                              ...base,
+                              zIndex: 9999,
+                            }),
+                            menuList: (provided: any) => ({
+                              ...provided,
+                              maxHeight: 200,
+                              overflowY: "auto",
+                            }),
+                          }}
+                        />
                       </Col>
                     </Row>
                     <Row className="mt-4 mb-4 g-3">

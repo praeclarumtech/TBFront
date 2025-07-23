@@ -49,6 +49,8 @@ import AppliedJobList from "pages/Vendor/AppliedJobList";
 import VendorLayout from "layouts/VendorLayout";
 import VendorList from "pages/Vendor/VendorList";
 import ManageAppliedList from "pages/Vendor/ManageAppliedList";
+import Client from "pages/Client/Client";
+import ManageAppliedListClient from "pages/Client/ManageAppliedListClient";
 
 const RenderRouter: React.FC = () => {
   const {
@@ -116,10 +118,18 @@ const RenderRouter: React.FC = () => {
           />
           <Route path={"job-listing"} element={<JobListing />} />
           <Route path={"/vendorList"} element={<VendorList />} />
+
           <Route
             path={"/appliedJobApplicants"}
             element={<ManageAppliedList />}
           />
+          <Route path={"/client"} element={<Client />} />
+          <Route
+            path={"/appliedJobApplicantsClient"}
+            element={<ManageAppliedListClient />}
+          />
+          <Route path={"job-listingClient"} element={<JobListing />} />
+
           <Route path={"userProfile"} element={<Profile />} />
           <Route path={"userprofileEdit/:_id"} element={<UserProfileEdit />} />
           <Route path={"userprofileAdd"} element={<UserProfileEdit />} />

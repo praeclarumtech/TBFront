@@ -42,7 +42,7 @@ const {
   statusOptions,
 } = appConstants;
 
-const ManageAppliedList = () => {
+const ManageAppliedListClient = () => {
   document.title = Modules.Applicant + " | " + projectTitle;
 
   const location = useLocation();
@@ -212,25 +212,6 @@ const ManageAppliedList = () => {
   const handleCloseModal = () => {
     setShowViewModal(false);
   };
-
-  //   const handleEdit = (applicantId: string) => {
-  //     navigate(`/applicants/edit-applicant/${applicantId}`);
-  //   };
-
-  //   const handleEmail = (applicantId: string) => {
-  //     const selectedApplicant = applicant.find(
-  //       (applicant) => applicant._id === applicantId
-  //     );
-  //     if (selectedApplicant) {
-  //       navigate("/email/compose", {
-  //         state: {
-  //           email_bcc: selectedApplicant.email,
-  //           name: selectedApplicant.name,
-  //           fromPage: location.pathname,
-  //         },
-  //       });
-  //     }
-  //   };
 
   const handleExportExcel = async (source: string) => {
     try {
@@ -885,4 +866,4 @@ const customStyles = {
   }),
 };
 
-export default ManageAppliedList;
+export default ManageAppliedListClient;
