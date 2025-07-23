@@ -37,6 +37,8 @@ const {
   validationMessages,
   companyType,
   hireResourceOptions,
+  roleType,
+  activeStatusOptions,
 } = appConstants;
 const UserProfileEdit = () => {
   document.title = Modules.Profile + " | " + projectTitle;
@@ -74,28 +76,6 @@ const UserProfileEdit = () => {
     whatsapp_number: "",
     vendor_linkedin_profile: "",
   });
-  interface RoleOption {
-    label: string;
-    value: string;
-  }
-
-  const roleType: RoleOption[] = [
-    { label: "HR", value: "hr" },
-    { label: "Admin", value: "admin" },
-    // { label: "User", value: "user" },
-    { label: "Vendor", value: "vendor" },
-    { label: "Guest", value: "guest" },
-    // Remove the empty option if not needed
-  ];
-
-  interface StatusOption {
-    label: string;
-    value: string;
-  }
-  const status: StatusOption[] = [
-    { label: "Active", value: "true" },
-    { label: "In Active", value: "false" },
-  ];
 
   const { _id } = useParams();
   const isEditMode = Boolean(_id);
@@ -168,7 +148,7 @@ const UserProfileEdit = () => {
         password: values.password,
         confirmPassword: values.confirmPassword,
         isActive: values.isActive === "true",
-        ...(values.role === "vendor" && {
+        ...((values.role === "vendor" || values.role === "client") && {
           company_name: values.company_name,
           company_email: values.company_email,
           company_phone_number: values.company_phone_number,
@@ -686,7 +666,7 @@ const UserProfileEdit = () => {
                               label="Status"
                               name="isActive"
                               className="select-border"
-                              options={status}
+                              options={activeStatusOptions}
                               placeholder={InputPlaceHolder("Status")}
                               // handleChange={(
                               //   selectedOption: SelectedOption
@@ -703,7 +683,10 @@ const UserProfileEdit = () => {
                               }}
                               handleBlur={validation.handleBlur}
                               value={
-                                dynamicFind(status, formData?.isActive) || ""
+                                dynamicFind(
+                                  activeStatusOptions,
+                                  formData?.isActive
+                                ) || ""
                               }
                               isRequired={false}
                               menuPortalTarget={
@@ -798,7 +781,8 @@ const UserProfileEdit = () => {
                             )}
                           </Col>
                         </Row>
-                        {formData?.role === "vendor" ? (
+                        {formData?.role === "vendor" ||
+                        formData?.role === "client" ? (
                           <div>
                             {/* <Row className="mb-4 h3 fw-bold">Company Details</Row> */}
                             <Row>
@@ -1279,7 +1263,7 @@ const UserProfileEdit = () => {
                               label="Status"
                               name="isActive"
                               className="select-border"
-                              options={status}
+                              options={activeStatusOptions}
                               placeholder={InputPlaceHolder("Status")}
                               handleChange={(
                                 selectedOption: SelectedOption
@@ -1292,7 +1276,7 @@ const UserProfileEdit = () => {
                               handleBlur={validation.handleBlur}
                               value={
                                 dynamicFind(
-                                  status,
+                                  activeStatusOptions,
                                   validation.values.isActive
                                 ) || ""
                               }
@@ -1373,7 +1357,8 @@ const UserProfileEdit = () => {
                             />
                           </Col>
                         </Row>
-                        {validation.values.role === "vendor" ? (
+                        {validation.values.role === "vendor" ||
+                        validation.values.role === "client" ? (
                           <div>
                             {/* <Row className="mb-4 h3 fw-bold">Company Details</Row> */}
                             <Row>
@@ -1748,12 +1733,10 @@ const UserProfileEdit = () => {
                                 className="mb-3 md:mb-4 lg:mb-4 xl:mb-4"
                               >
                                 <BaseInput
-                                  label="Vendor LinkedIn URL"
+                                  label="LinkedIn URL"
                                   name="vendor_linkedin_profile"
                                   type="url"
-                                  placeholder={InputPlaceHolder(
-                                    "Vendor LinkedIn URL"
-                                  )}
+                                  placeholder={InputPlaceHolder("LinkedIn URL")}
                                   handleChange={(e) => {
                                     const rawValue = e.target.value;
                                     validation.setFieldValue(

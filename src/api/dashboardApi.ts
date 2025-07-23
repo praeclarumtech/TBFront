@@ -1,4 +1,4 @@
-import { TOTAL_APPLICANTS,RECENT_APPLICANTS,APPLICANTS_DETAILS, REPORT_ON_SKILL, SKILL_EXPORT, RECENT_APPLICANTS_VENDOR } from "./apiRoutes";
+import { TOTAL_APPLICANTS,RECENT_APPLICANTS,APPLICANTS_DETAILS, REPORT_ON_SKILL, SKILL_EXPORT, RECENT_APPLICANTS_VENDOR, SKILL_DASHBOARD } from "./apiRoutes";
 import { authServices } from "./apiServices";
 
 export const getTotalApplicants = async () => {
@@ -47,4 +47,11 @@ export const ExportSkilledApplicant = async (
       }
   );
   return response.data;
+};
+
+export const ViewAppliedSkillsDashboard = async (
+  params: { page?: number; pageSize?: number; limit?: number } = {}
+) => {
+  const response = await authServices.get(`${SKILL_DASHBOARD}`, { params });
+  return response?.data;
 };

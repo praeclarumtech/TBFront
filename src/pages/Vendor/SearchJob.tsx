@@ -376,6 +376,7 @@ const SearchJob = () => {
                           <Tag color="geekblue">
                             Payment: {item.salary_frequency}
                           </Tag>
+                          <Tag color="red">Min Salary: {item.min_salary}</Tag>
                           <Tag color="geekblue">
                             Max Salary: {item.max_salary}
                           </Tag>

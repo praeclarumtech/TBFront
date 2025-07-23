@@ -14,11 +14,7 @@ import BaseInput from "components/BaseComponents/BaseInput";
 import DeleteModal from "components/BaseComponents/DeleteModal";
 import BaseModal from "components/BaseComponents/BaseModal";
 import appConstants from "constants/constant";
-import {
-  errorHandle,
-  // getSerialNumber,
-  InputPlaceHolder,
-} from "utils/commonFunctions";
+import { InputPlaceHolder } from "utils/commonFunctions";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import {
@@ -78,8 +74,8 @@ const UpdateSkill = () => {
           id: item._id, // if needed
         }))
       );
-    } catch (error) {
-      errorHandle(error);
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || "Something went wrong!");
     } finally {
       setIsLoading(false);
     }
@@ -150,8 +146,8 @@ const UpdateSkill = () => {
       } else {
         toast.error(res?.message || "Failed to fetch skills");
       }
-    } catch (error) {
-      toast.error("Something went wrong!");
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || "Something went wrong!");
       console.error(error);
     } finally {
       setIsLoading(false);

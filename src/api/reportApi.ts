@@ -5,6 +5,7 @@ import {
   APPLICATION,
   CITY_STATE,
   ADDEDBY_REPORT,
+  VENDOR_JOB_APPLICANTS,
 } from "./apiRoutes";
 import { authServices } from "./apiServices";
 
@@ -41,5 +42,10 @@ export const getaddedbyReport = async (startDate: string, endDate: string) => {
       startDate
     )}&endDate=${decodeURIComponent(endDate)}`
   );
+  return response?.data;
+};
+
+export const getVendorJobApplicats = async () => {
+  const response = await authServices.get(`${VENDOR_JOB_APPLICANTS}`);
   return response?.data;
 };

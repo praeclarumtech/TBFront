@@ -91,7 +91,9 @@ const FindAndReplace = () => {
             toast.error(res?.message || "Something went wrong");
           }
         })
-        .catch((error) => toast.error(error || "Somthing went wrong"));
+        .catch((error: any) =>
+          toast.error(error?.response?.data?.message || "Something went wrong!")
+        );
     } else {
       // Validation errors exist
       validation.setTouched({
@@ -158,20 +160,7 @@ const FindAndReplace = () => {
           }))
         );
       } catch (error: any) {
-        const details = error?.response?.data?.details;
-        if (Array.isArray(details)) {
-          details.forEach((msg: string) => {
-            toast.error(msg, {
-              closeOnClick: true,
-              autoClose: 5000,
-            });
-          });
-        } else {
-          toast.error("Failed to fetch skills.. Please try again.", {
-            closeOnClick: true,
-            autoClose: 5000,
-          });
-        }
+        toast.error(error?.response?.data?.message || "Something went wrong!");
       }
     };
 
@@ -191,20 +180,7 @@ const FindAndReplace = () => {
           }))
         );
       } catch (error: any) {
-        const details = error?.response?.data?.details;
-        if (Array.isArray(details)) {
-          details.forEach((msg: string) => {
-            toast.error(msg, {
-              closeOnClick: true,
-              autoClose: 5000,
-            });
-          });
-        } else {
-          toast.error("Failed to fetch roles.. Please try again.", {
-            closeOnClick: true,
-            autoClose: 5000,
-          });
-        }
+        toast.error(error?.response?.data?.message || "Something went wrong!");
       }
     };
 
@@ -224,20 +200,7 @@ const FindAndReplace = () => {
           }))
         );
       } catch (error: any) {
-        const details = error?.response?.data?.details;
-        if (Array.isArray(details)) {
-          details.forEach((msg: string) => {
-            toast.error(msg, {
-              closeOnClick: true,
-              autoClose: 5000,
-            });
-          });
-        } else {
-          toast.error("Failed to fetch qualifications.. Please try again.", {
-            closeOnClick: true,
-            autoClose: 5000,
-          });
-        }
+        toast.error(error?.response?.data?.message || "Something went wrong!");
       }
     };
 

@@ -57,6 +57,7 @@ const Report = () => {
   const [errorS, setErrorS] = useState<string | null>(null);
   const [selectedFilter, setSelectedFilter] = useState("city");
   const [totalApplicants, setTotalApplicants] = useState(0);
+  const [role, setRole] = useState<string | null>(null);
 
   useEffect(() => {
     fetchApplicantsOnProcess();
@@ -92,8 +93,16 @@ const Report = () => {
     }
   };
 
+  useEffect(() => {
+    setRole(localStorage.getItem("role"));
+  }, [role]);
+
   const handleNavigate = () => {
-    navigate("/applicants");
+    if (role === "admin") {
+      navigate("/applicants");
+    } else {
+      navigate("/appliedJobApplicants");
+    }
   };
 
   return (
@@ -206,12 +215,14 @@ const Report = () => {
                       <ColumnChart selectedFilter={selectedFilter} />
                     </div>
                   </Row>
-                  <Row className="mt-4">
-                    <h4 className="fw-bold">Applicants</h4>
-                    <div className="mt-3 chart-container">
-                      <AreaChart />
-                    </div>
-                  </Row>
+                  {role !== "vendor" && role !== "client" && (
+                    <Row className="mt-4">
+                      <h4 className="fw-bold">Applicants</h4>
+                      <div className="mt-3 chart-container">
+                        <AreaChart />
+                      </div>
+                    </Row>
+                  )}
                 </Card.Body>
               </Card>
             </Col>

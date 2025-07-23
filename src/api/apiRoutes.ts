@@ -98,6 +98,7 @@ export const APPLICANTS_DETAILS =
   "/reports/applicants/technologyStatistics?category=";
 export const REPORT_ON_SKILL = "reports/applicants/applicantSkillStatistics";
 
+
 //Report Module
 // export const SKILL_STATISTICS = "/reports/applicants/categoryWiseSkillCount?category="
 export const SKILL_STATISTICS =
@@ -110,6 +111,9 @@ export const STATUS_OF_APPLICATION = "/reports/applicants/statusByPercentage";
 export const APPLICATION =
   "/reports/applicants/getApplicationsByDate?calendarType=";
 export const ADDEDBY_REPORT = "/reports/applicants/applicantCountByAddedBy";
+export const VENDOR_JOB_APPLICANTS = "/vendor/job-applicant-report";
+export const SKILL_DASHBOARD = "/skill/dashboard/viewSkills";
+
 
 //Find And Replace
 
