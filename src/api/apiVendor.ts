@@ -96,6 +96,7 @@ export const viewAllJobApplicants = async (
     applicantName?: string;
     searchSkills?: string;
     isAcrive?: boolean;
+    filterBy?: string;
   } = {}
 ) => {
   const response = await authServices.get(`${VIEW_APPLIED_JOB_APPLICANTS}`, {
@@ -134,7 +135,10 @@ export const updateStageVendor = async (
   return response?.data;
 };
 
-export const updateStatusVendor = async (data: { status: string }, id: string) => {
+export const updateStatusVendor = async (
+  data: { status: string },
+  id: string
+) => {
   const response = await authServices.put(
     `${UPDATE_APPLICANT_STAGE_VENDOR}/${id}`,
     data

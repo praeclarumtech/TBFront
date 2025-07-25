@@ -21,13 +21,14 @@ import { ContentCopyOutlined } from "@mui/icons-material";
 import { Switch } from "antd";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import BaseFav from "components/BaseComponents/BaseFav";
+import { useLocation } from "react-router-dom";
 
 const { projectTitle, Modules, handleResponse } = appConstants;
 
 const JobListing = () => {
   document.title = Modules.Jobs + " | " + projectTitle;
   const [job, setJob] = useState<any[]>([]);
-
+  const location = useLocation();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [jobToDelete, setJobToDelete] = useState<any>([]);
 
@@ -45,6 +46,14 @@ const JobListing = () => {
   const [selectedId, setSelectedId] = useState<string[]>([]);
   const [searchAll, setSearchAll] = useState<string>("");
   const [showViewModal, setShowViewModal] = useState<boolean>(false);
+  const [currentLocation, setCurrentLocation] = useState<string>("");
+
+  useEffect(() => {
+    // Set the current location when the component mounts
+    setCurrentLocation(location.pathname);
+    console.log("Location state:", currentLocation);
+  }, [location.pathname]);
+
   const fetchJob = async () => {
     setIsLoading(true);
     try {
@@ -55,6 +64,7 @@ const JobListing = () => {
         search?: string;
         job_subject?: string;
         job_type?: string;
+        filterBy?: string;
       } = {
         page: pagination.pageIndex + 1,
         pageSize: pagination.pageSize,
@@ -63,6 +73,11 @@ const JobListing = () => {
 
       if (searchAll) {
         params.search = searchAll;
+      }
+      if (currentLocation === "/job-listingClient") {
+        params.filterBy = "client";
+      } else if (currentLocation === "/job-listing") {
+        params.filterBy = "vendor";
       }
       const res = await viewAllJob(params);
       if (res?.success) {
@@ -81,7 +96,7 @@ const JobListing = () => {
 
   useEffect(() => {
     fetchJob();
-  }, [pagination.pageIndex, pagination.pageSize, searchAll]);
+  }, [pagination.pageIndex, pagination.pageSize, searchAll, currentLocation]);
 
   const handleDelete = (job: any) => {
     setJobToDelete(job);

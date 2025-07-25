@@ -120,6 +120,7 @@ const ManageAppliedListClient = () => {
         isActive?: string;
         appliedRole?: string;
         isFavorite?: string;
+        filterBy?: string;
       } = {
         page: pagination.pageIndex + 1,
         pageSize: pagination.pageSize,
@@ -136,6 +137,8 @@ const ManageAppliedListClient = () => {
       if (filterStatusDashboard) {
         params.status = filterStatusDashboard;
       }
+
+      params.filterBy = "client";
       const res = await viewAllJobApplicants(params);
       setApplicant(res?.data?.applications || res?.data?.results || []);
       setTotalRecords(res?.data?.pagination?.totalCount || 0);

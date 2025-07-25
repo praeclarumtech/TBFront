@@ -194,7 +194,8 @@ const Applicant = () => {
     { id: "currentPkg", header: "Current Pkg", isVisible: false },
     { id: "expectedPkg", header: "Expected Pkg", isVisible: false },
     { id: "noticePeriod", header: "Notice Period", isVisible: false },
-    // { id: "totalExperience", header: "Total exp", isVisible: false },
+    { id: "updatedAt", header: "Update Date", isVisible: false },
+    { id: "createdAt", header: "Create Date", isVisible: false },
     {
       id: "relevantSkillExperience",
       header: "Relevant Skill Exp",
@@ -1436,6 +1437,7 @@ const Applicant = () => {
           />
         ),
         enableColumnFilter: false,
+        enableSorting: false,
       },
       {
         header: "Applicant Name",
@@ -1537,6 +1539,18 @@ const Applicant = () => {
         header: "Notice Period",
         accessorKey: "noticePeriod",
         id: "noticePeriod",
+        enableColumnFilter: false,
+      },
+      {
+        header: "Create Date",
+        accessorKey: "createdAt",
+        id: "createdAt",
+        enableColumnFilter: false,
+      },
+      {
+        header: "Updated Date",
+        accessorKey: "updatedAt",
+        id: "updatedAt",
         enableColumnFilter: false,
       },
       {
