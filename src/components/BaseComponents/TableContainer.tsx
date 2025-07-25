@@ -216,13 +216,13 @@ const TableContainer = ({
           <form>
             <Row className="d-flex justify-content-between">
               {isHeaderTitle && (
-                <Col lg={7} sm={3}>
+                <Col lg={7} sm={6}>
                   <h4 className="fw-bold text-dark">{isHeaderTitle}</h4>
                 </Col>
               )}
 
               {availableColumns && (
-                <Col sm={2} xs={1}>
+                <Col lg={5} sm={6} className="d-flex justify-content-end">
                   <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown}>
                     <DropdownToggle caret className="px-3" color="primary">
                       Columns
