@@ -120,6 +120,7 @@ const ManageAppliedList = () => {
         isActive?: string;
         appliedRole?: string;
         isFavorite?: string;
+        filterBy?: string;
       } = {
         page: pagination.pageIndex + 1,
         pageSize: pagination.pageSize,
@@ -136,6 +137,9 @@ const ManageAppliedList = () => {
       if (filterStatusDashboard) {
         params.status = filterStatusDashboard;
       }
+
+      params.filterBy = "vendor";
+
       const res = await viewAllJobApplicants(params);
       setApplicant(res?.data?.applications || res?.data?.results || []);
       setTotalRecords(res?.data?.pagination?.totalCount || 0);
@@ -212,25 +216,6 @@ const ManageAppliedList = () => {
   const handleCloseModal = () => {
     setShowViewModal(false);
   };
-
-  //   const handleEdit = (applicantId: string) => {
-  //     navigate(`/applicants/edit-applicant/${applicantId}`);
-  //   };
-
-  //   const handleEmail = (applicantId: string) => {
-  //     const selectedApplicant = applicant.find(
-  //       (applicant) => applicant._id === applicantId
-  //     );
-  //     if (selectedApplicant) {
-  //       navigate("/email/compose", {
-  //         state: {
-  //           email_bcc: selectedApplicant.email,
-  //           name: selectedApplicant.name,
-  //           fromPage: location.pathname,
-  //         },
-  //       });
-  //     }
-  //   };
 
   const handleExportExcel = async (source: string) => {
     try {
@@ -432,29 +417,6 @@ const ManageAppliedList = () => {
                 </Tooltip.Portal>
               </Tooltip.Root>
 
-              {/* Edit Button with Tooltip */}
-              {/* <Tooltip.Root>
-                <Tooltip.Trigger asChild>
-                  <button
-                    className="text-white btn btn-sm btn-soft-secondary bg-secondary"
-                    onClick={() => handleEdit(row.original._id)}
-                    disabled={!row.original.isActive}
-                  >
-                    <i className="ri-pencil-fill" />
-                  </button>
-                </Tooltip.Trigger>
-                <Tooltip.Portal>
-                  <Tooltip.Content
-                    side="bottom"
-                    sideOffset={4}
-                    className="px-2 py-1 text-sm text-white rounded shadow-lg bg-secondary"
-                  >
-                    Edit
-                    <Tooltip.Arrow style={{ fill: "#637381" }} />
-                  </Tooltip.Content>
-                </Tooltip.Portal>
-              </Tooltip.Root> */}
-
               <Tooltip.Root>
                 <Tooltip.Trigger asChild>
                   <button
@@ -476,68 +438,6 @@ const ManageAppliedList = () => {
                   </Tooltip.Content>
                 </Tooltip.Portal>
               </Tooltip.Root>
-
-              {/* <Tooltip.Root>
-                <Tooltip.Trigger asChild>
-                  <button
-                    className="text-white btn btn-sm btn-soft-success bg-success"
-                    onClick={() => handleEmail(row.original._id)}
-                    disabled={!row.original.isActive}
-                  >
-                    <i className="align-bottom ri-mail-close-line" />
-                  </button>
-                </Tooltip.Trigger>
-                <Tooltip.Portal>
-                  <Tooltip.Content
-                    side="bottom"
-                    sideOffset={4}
-                    className="px-2 py-1 text-sm text-white rounded shadow-lg bg-success"
-                  >
-                    Mail
-                    <Tooltip.Arrow style={{ fill: "#198754" }} />
-                  </Tooltip.Content>
-                </Tooltip.Portal>
-              </Tooltip.Root> */}
-
-              {/* <Tooltip.Root>
-                <Tooltip.Trigger asChild>
-                  {row?.original?.isFavorite ? (
-                    <i
-                      className="align-bottom ri-heart-fill text-danger"
-                      style={{ fontSize: "20px", cursor: "pointer" }}
-                      onClick={() =>
-                        handleConfirmFav(
-                          row?.original?.isFavorite,
-                          row?.original?._id
-                        )
-                      }
-                    />
-                  ) : (
-                    <i
-                      className="align-bottom ri-heart-line"
-                      style={{ fontSize: "20px", cursor: "pointer" }}
-                      onClick={() =>
-                        handleConfirmFav(
-                          row?.original?.isFavorite,
-                          row?.original?._id
-                        )
-                      }
-                    />
-                  )}
-                </Tooltip.Trigger>
-                <Tooltip.Portal>
-                  <Tooltip.Content
-                    side="bottom"
-                    sideOffset={4}
-                    className="px-2 py-1 text-sm text-white bg-gray-700 rounded shadow-lg"
-                  >
-                    {row?.original?.isFavorite
-                      ? "Remove from Favorites"
-                      : "Add to Favorites"}
-                    <Tooltip.Arrow style={{ fill: "#454f5b" }} />
-                  </Tooltip.Content>
-                </Tooltip.Portal>
-              </Tooltip.Root> */}
             </Tooltip.Provider>
           </div>
         ),
@@ -618,35 +518,9 @@ const ManageAppliedList = () => {
         ),
         enableColumnFilter: false,
       },
-      //   {
-      //     header: "Status",
-      //     accessorKey: "isActive",
-      //     cell: (cell: any) => {
-      //       const id = cell.row.original._id;
-      //       const isActive = cell.getValue();
-
-      //       return (
-      //         <Switch
-      //           size="small"
-      //           checked={isActive}
-      //           onClick={() => handleToggleSwitch(id, isActive)} // ✅ Handler only runs on user interaction
-      //           checkedChildren={<CheckOutlined />}
-      //           unCheckedChildren={<CloseOutlined />}
-      //         />
-      //       );
-      //     },
-      //     enableColumnFilter: false,
-      //   },
     ],
     [applicant, selectedApplicants]
   );
-
-  //   const handleToggleSwitch = (id: any, isActive: any) => {
-  //     setSelectedRecord(id);
-  //     SetDataActive(isActive);
-  //     // setPendingChecked(checked);
-  //     setShowActiveModal(true);
-  //   };
 
   const ModalTitle = () => (
     <div className="flex items-center">
@@ -744,17 +618,6 @@ const ManageAppliedList = () => {
           </div>
         }
       />
-      {/* {showActiveModal ? (
-        <ActiveModal
-          show={showActiveModal}
-          loader={modelLoading}
-          onYesClick={() => handleConfirm()}
-          onCloseClick={closeActiveModal}
-          flag={dataActive}
-        />
-      ) : (
-        <></>
-      )} */}
 
       {showViewModal && selectedApplicantId && (
         <ViewModal
@@ -775,13 +638,6 @@ const ManageAppliedList = () => {
         }
         loader={loader}
       />
-
-      {/* <BaseFav
-        show={showFavModal}
-        onCloseClick={() => setShowFavModal(false)}
-        onYesClick={() => updateApplicantData(isFav, selectedApplicantId)}
-        flag={isFav}
-      /> */}
 
       <Container fluid>
         <Row className="my-3">

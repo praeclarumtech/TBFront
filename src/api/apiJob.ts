@@ -13,6 +13,7 @@ export const viewAllJob = async (params: {
   page?: number;
   pageSize?: number;
   limit?: number;
+  filterBy?: string;
 }) => {
   const response = await authServices.get(`${VIEW_ALL_JOB}`, {
     params,
