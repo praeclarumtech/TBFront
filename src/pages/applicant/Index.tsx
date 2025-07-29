@@ -2106,7 +2106,7 @@ const Applicant = () => {
                 {tableLoader || loading ? (
                   <div className="py-4 text-center">
                     <Skeleton count={1} className="mb-5 min-h-10" />
-                    <Skeleton count={5} />Applicants
+                    <Skeleton count={5} />
                   </div>
                 ) : applicant.length > 0 ? (
                   <div className="pt-4 card-body">
