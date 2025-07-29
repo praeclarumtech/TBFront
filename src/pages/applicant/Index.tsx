@@ -62,6 +62,7 @@ import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import BaseFav from "components/BaseComponents/BaseFav";
 import { useLocation } from "react-router-dom";
 import { ColumnConfig } from "interfaces/global.interface";
+import moment from "moment";
 
 const {
   exportableFieldOption,
@@ -1545,12 +1546,30 @@ const Applicant = () => {
         header: "Create Date",
         accessorKey: "createdAt",
         id: "createdAt",
+        cell: (cell: any) => (
+          <div
+            className="truncated-text"
+            style={truncateText}
+            title={cell.row.original.createdAt}
+          >
+            {moment(cell.row.original.createdAt).format("DD-MM-YYYY")}
+          </div>
+        ),
         enableColumnFilter: false,
       },
       {
         header: "Updated Date",
         accessorKey: "updatedAt",
         id: "updatedAt",
+        cell: (cell: any) => (
+          <div
+            className="truncated-text"
+            style={truncateText}
+            title={cell.row.original.updatedAt}
+          >
+              {moment(cell.row.original.updatedAt).format("DD-MM-YYYY")}
+          </div>
+        ),
         enableColumnFilter: false,
       },
       {
@@ -2087,7 +2106,7 @@ const Applicant = () => {
                 {tableLoader || loading ? (
                   <div className="py-4 text-center">
                     <Skeleton count={1} className="mb-5 min-h-10" />
-                    <Skeleton count={5} />
+                    <Skeleton count={5} />Applicants
                   </div>
                 ) : applicant.length > 0 ? (
                   <div className="pt-4 card-body">
