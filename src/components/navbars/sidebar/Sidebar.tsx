@@ -275,7 +275,7 @@ const Sidebar: React.FC<SidebarProps> = ({ toggleMenu }) => {
                 <Menu.SubMenu
                   key="client-parent"
                   icon={<TeamOutlined style={{ fontSize: "18px" }} />}
-                  title="client"
+                  title="Client"
                 >
                   {(role === "admin" || role === "hr") && (
                     <Menu.Item key="/client">
@@ -285,7 +285,7 @@ const Sidebar: React.FC<SidebarProps> = ({ toggleMenu }) => {
                           if (isMobile) toggleMenu();
                         }}
                       >
-                        Client
+                        Clients
                       </Link>
                     </Menu.Item>
                   )}
@@ -307,7 +307,7 @@ const Sidebar: React.FC<SidebarProps> = ({ toggleMenu }) => {
                         if (isMobile) toggleMenu();
                       }}
                     > 
-                      Client Applicants
+                      Jobs Applicants
                     </Link>
                   </Menu.Item>
                 </Menu.SubMenu>
