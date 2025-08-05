@@ -4,7 +4,7 @@ import appConstants from "constants/constant";
 import { jwtDecode } from "jwt-decode";
 import { toast } from "react-toastify";
 
-const {  handleResponse, NOT_FOUND } = appConstants;
+const { handleResponse, NOT_FOUND } = appConstants;
 
 export const ACCESS_TOKEN = "authUser";
 export const EXPIRES_AT = "expiresAt";
@@ -13,16 +13,16 @@ export const removeAppTokens = (): void => {
   localStorage.removeItem(ACCESS_TOKEN);
   sessionStorage.clear();
   localStorage.removeItem(EXPIRES_AT);
-  localStorage.removeItem("authUser");  
+  localStorage.removeItem("access_token");
   localStorage.removeItem("id");
   localStorage.removeItem("role");
 };
 const removeItem = (key: string) => {
   sessionStorage.removeItem(key);
   localStorage.removeItem(key);
-    localStorage.removeItem("authUser");
-    localStorage.removeItem("id");
-    localStorage.removeItem("role");
+  localStorage.removeItem("authUser");
+  localStorage.removeItem("id");
+  localStorage.removeItem("role");
 };
 
 // export const isAuthenticated = (): boolean => {
@@ -63,6 +63,7 @@ export const setAuthData = (token: string) => {
 
 export const logout = () => {
   removeAppTokens();
+  removeItem("access_token");
   removeItem(ACCESS_TOKEN);
   removeItem(EXPIRES_AT);
   removeItem("role");
@@ -126,10 +127,9 @@ export const dynamicFind = (array: any, validation: any, flag = "all") => {
   if (flag === "location") {
     return array?.find((option: any) => option?.label === validation);
   }
- 
+
   return array?.find((option: any) => option?.value === validation);
 };
- 
 
 export const errorHandle = (error: any) => {
   if (error?.response?.data?.statusCode === NOT_FOUND) {

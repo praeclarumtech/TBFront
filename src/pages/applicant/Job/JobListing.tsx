@@ -20,8 +20,8 @@ import ViewJob from "pages/master/ViewJob";
 import { ContentCopyOutlined } from "@mui/icons-material";
 import { Switch } from "antd";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
-import BaseFav from "components/BaseComponents/BaseFav";
 import { useLocation } from "react-router-dom";
+import ActiveModal from "components/BaseComponents/ActiveModal";
 
 const { projectTitle, Modules, handleResponse } = appConstants;
 
@@ -31,6 +31,7 @@ const JobListing = () => {
   const location = useLocation();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [jobToDelete, setJobToDelete] = useState<any>([]);
+  const [modelLoading, setModelLoading] = useState<boolean>(false);
 
   const [totalRecords, setTotalRecords] = useState(0);
   const [pagination, setPagination] = useState({
@@ -346,6 +347,7 @@ const JobListing = () => {
     setSelectedStatusId(id);
   };
   const updateStatusData = (isActive: boolean, id: string) => {
+    setModelLoading(true)
     updateJob(id, { isActive: !isActive })
       .then((res: any) => {
         if (res.success) {
@@ -365,7 +367,7 @@ const JobListing = () => {
         }
       })
       .finally(() => {
-        setIsLoading(false);
+        setModelLoading(false);
       });
   };
 
@@ -406,13 +408,18 @@ const JobListing = () => {
 
   return (
     <Fragment>
-      <BaseFav
-        show={showStatusModal}
-        onCloseClick={() => setShowStatusModal(false)}
-        onYesClick={() => updateStatusData(isActiveStatus, selectedStatusId)}
-        flag={isActiveStatus}
-      />
 
+{showStatusModal ? (
+        <ActiveModal
+          show={showStatusModal}
+          loader={modelLoading}
+          onYesClick={() => updateStatusData(isActiveStatus, selectedStatusId)}
+          onCloseClick={() => setShowStatusModal(false)}
+          flag={isActiveStatus}
+        />
+      ) : (
+        <></>
+      )}
       {showViewModal && selectedId && (
         <ViewJob
           show={showViewModal}

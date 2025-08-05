@@ -1,6 +1,7 @@
 import {
   ADD_JOB_APPLICATION,
   DELETE_APPLICANT_VENDOR,
+  IMPORT_VENDOR,
   JOB_SCORE,
   UPDATE_APPLICANT_STAGE_VENDOR,
   VIEW_APPLICANT_BY_ID_VENDOR,
@@ -145,4 +146,20 @@ export const updateStatusVendor = async (
   );
 
   return response?.data;
+};
+
+export const importVendor = async (
+  formData: FormData,
+  config?: { onUploadProgress?: (progressEvent: any) => void; params?: any }
+) => {
+  const url = `${IMPORT_VENDOR}`;
+
+  const response = await authServices.post(url, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+    params: config?.params,
+    ...config,
+    timeout: 300000,
+  });
+
+  return response.data;
 };

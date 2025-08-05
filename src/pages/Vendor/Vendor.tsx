@@ -1,8 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { message } from "antd";
 import appConstants from "constants/constant";
 import { useState, useRef, useEffect } from "react";
 import React from "react";
 import { toast } from "react-toastify";
+// import "react-toastify/dist/ReactToastify.css";
 import "react-toastify/dist/ReactToastify.css";
 import { getJobScore } from "api/apiVendor";
 
@@ -39,14 +42,30 @@ const Vendor = () => {
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        // 5MB in bytes
+        // alert("File size should not exceed 5MB.");
+        toast.warning("File size should not exceed 5MB.");
+        e.target.value = ""; // Clear the input
+        return;
+      }
+      setFile(file);
     }
   };
 
   const handleJdFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setJdFile(e.target.files[0]);
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        // 5MB in bytes
+        // alert("File size should not exceed 5MB.");
+        toast.warning("File size should not exceed 5MB.");
+        e.target.value = ""; // Clear the input
+        return;
+      }
+      setJdFile(file);
     }
   };
 
@@ -89,13 +108,13 @@ const Vendor = () => {
 
       if (result?.success) {
         setScore(result.data.score);
-        message.success("Resume scored successfully!");
+        toast.success(result?.message || "Resume scored successfully!");
       } else {
-        message.error(result?.message || "Failed to get score.");
+        toast.error(result?.message || "Failed to get score.");
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      message.error("Something went wrong.");
+      toast.error(err?.response?.data || "Something went wrong.");
     } finally {
       setLoading(false);
     }
