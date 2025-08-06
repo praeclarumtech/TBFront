@@ -13,6 +13,7 @@ import {
   InboxOutlined,
   TeamOutlined,
 } from "@ant-design/icons";
+import Logosvg from "components/BaseComponents/Logosvg";
 
 const { Sider } = Layout;
 const isMobile = window.innerWidth < 768;
@@ -138,10 +139,8 @@ const Sidebar: React.FC<SidebarProps> = ({ toggleMenu }) => {
         }}
         className="mt-3"
       >
-        <Link to="/dashboard" className="navbar-brand">
-          <h4 className="text-3xl font-bold text-white">
-            Talent<span className="text-primary ">Box</span>
-          </h4>{" "}
+        <Link to="/dashboard">
+          <Logosvg  />
         </Link>
       </div>
 
@@ -306,7 +305,7 @@ const Sidebar: React.FC<SidebarProps> = ({ toggleMenu }) => {
                       onClick={() => {
                         if (isMobile) toggleMenu();
                       }}
-                    > 
+                    >
                       Jobs Applicants
                     </Link>
                   </Menu.Item>

@@ -19,6 +19,7 @@ import {
 } from "utils/commonFunctions";
 import { jwtDecode } from "jwt-decode";
 import { useLocation } from "react-router-dom";
+import Logo from "components/BaseComponents/Logo";
 
 const { projectTitle, Modules, validationMessages, OK, SUCCESS } = appConstants;
 
@@ -91,13 +92,11 @@ const SignIn = () => {
         <Col xxl={4} lg={6} md={8} xs={12} className="py-8 py-xl-0">
           <Card className="smooth-shadow-md">
             <Card.Body className="p-6">
-              <div className="mb-4">
-                <h4 className="justify-center text-3xl font-bold text-center text-dark ">
-                  Talent<span className="text-primary bold ">Box</span>{" "}
-                </h4>
-                <p className="justify-center mb-6 text-base text-center">
+              <div className="flex flex-col items-center">
+                <Logo />
+                <p className="justify-center mb-6 text-base text-center mt-2">
                   Sign In using your Credentials
-                </p>
+                </p> 
               </div>
 
               {hasMounted && (

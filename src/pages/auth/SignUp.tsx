@@ -17,6 +17,7 @@ import {
   InputPlaceHolder,
   RequiredField,
 } from "utils/commonFunctions";
+import Logo from "components/BaseComponents/Logo";
 // import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 
 const {
@@ -117,13 +118,18 @@ const SignUp = () => {
         <Col xxl={4} lg={6} md={8} xs={12} className="py-8 py-xl-0">
           <Card className="smooth-shadow-md">
             <Card.Body className="p-6">
-              <div className="mb-4">
-                {/* <Link to="/"> */}
+              {/* <div className="mb-4">
                 <h4 className="justify-center text-3xl font-bold text-center text-dark ">
                   Talent<span className="text-primary bold ">Box</span>{" "}
                 </h4>
-                {/* </Link> */}
                 <p className="justify-center mb-6 text-base text-center ">
+                  Create an Account
+                </p>
+              </div> */}
+
+              <div className="flex flex-col items-center">
+                <Logo />
+                <p className="justify-center mb-6 text-base text-center mt-2">
                   Create an Account
                 </p>
               </div>
@@ -268,7 +274,7 @@ const SignUp = () => {
                           <a className="cursor-pointer text-primary">Login</a>
                         </div>
                       </div>
-                      <div>
+                      {/* <div>
                         <div
                           onClick={() => navigate("/forgot-password")}
                           className="fs-5"
@@ -277,7 +283,7 @@ const SignUp = () => {
                             Forgot your password?
                           </a>
                         </div>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </Form>

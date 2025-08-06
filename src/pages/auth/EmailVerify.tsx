@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Row, Col, Card, CardBody } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
@@ -6,6 +7,7 @@ import BaseButton from "components/BaseComponents/BaseButton";
 import { verifyOtp } from "api/usersApi";
 import appConstants from "constants/constant";
 import { errorHandle } from "utils/commonFunctions";
+import Logo from "components/BaseComponents/Logo";
 
 const { OK, SUCCESS } = appConstants;
 
@@ -55,12 +57,13 @@ const EmailVerification = () => {
       <Col md={6} lg={4}>
         <Card className="p-4 smooth-shadow-md">
           <CardBody>
-            <h4 className="justify-center text-3xl font-bold text-center text-dark ">
-              Talent<span className="text-primary bold ">Box</span>{" "}
-            </h4>
-            <p className="text-center">
-              Please enter the 4-digit code sent to <b>{email}</b>
-            </p>
+
+            <div className="flex flex-col items-center">
+                <Logo />
+                <p className="justify-center mb-6 text-base text-center mt-2">
+                Please enter the 4-digit code sent to <b>{email}</b>
+                </p>
+              </div>
             <Row className="mb-3 justify-content-center">
               {[...Array(4)].map((_, index) => (
                 <Col key={index} xs={2} className="p-1">

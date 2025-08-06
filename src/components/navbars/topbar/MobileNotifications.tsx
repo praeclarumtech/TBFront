@@ -3,7 +3,6 @@ import { ListGroup, Dropdown, Image } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import { User } from "interfaces/dashboard.interface";
 import { getProfile } from "api/usersApi";
-import appEnv from "config/appEnv";
 import ChangePassword from "pages/auth/ChangePassword";
 import { logout } from "utils/commonFunctions";
 
@@ -15,19 +14,11 @@ export const MobileNotifications = () => {
     role: "",
     profilePicture: " ",
   });
-  const [imagePreview, setImagePreview] = useState<string>(
-    "/images/avatar/avatar.png"
-  );
   useEffect(() => {
     const fetchProfile = async () => {
       const token = localStorage.getItem("authUser");
       const response = await getProfile({ token });
       setUser(response.data);
-      setImagePreview(
-        response?.data?.profilePicture
-          ? `${appEnv.API_ENDPOINT}/uploads/profile/${response?.data?.profilePicture}`
-          : "/images/avatar/avatar.png"
-      );
     };
     fetchProfile();
   }, []);
@@ -49,7 +40,7 @@ export const MobileNotifications = () => {
               <Image
                 alt="avatar"
                 crossOrigin="anonymous"
-                src={imagePreview}
+                src={"/images/avatar/avatar.png"}
                 className="rounded-circle"
               />
             </div>
@@ -96,7 +87,7 @@ export const MobileNotifications = () => {
                     navigate("/");
                   }}
                 >
-                   <i className="fe fe-arrow-up-left me-2"></i>  Change Module
+                  <i className="fe fe-arrow-up-left me-2"></i> Change Module
                 </Dropdown.Item>
               </>
             ) : (
