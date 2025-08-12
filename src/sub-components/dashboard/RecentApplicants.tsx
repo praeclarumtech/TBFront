@@ -23,28 +23,38 @@ const RecentApplicants = ({
   selectedTechnology: string | null;
   onResetFilter: () => void;
 }) => {
+  const role = localStorage.getItem("role");
   const [recentApplicants, setRecentApplicants] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const role = localStorage.getItem("role");
-
   useEffect(() => {
     fetchRecentApplicants();
-  }, [selectedTechnology]); // Refetch when technology changes
+  }, [selectedTechnology]);
 
   const fetchRecentApplicants = async () => {
     setIsLoading(true);
     try {
+      const params: {
+        page: number;
+        pageSize: number;
+        limit: number;
+        appliedSkills?: string;
+      } = {
+        page: 1,
+        pageSize: 1,
+        limit: 10,
+      };
+      if (selectedTechnology) {
+        params.appliedSkills = selectedTechnology;
+        params.limit = 1000;
+      }
       let data;
       if (role === "vendor") {
-        data = await getRecentApplicationsVendor(
-          selectedTechnology || undefined
-        );
+        data = await getRecentApplicationsVendor(params);
       } else {
-        data = await getRecentApplications(selectedTechnology || undefined);
+        data = await getRecentApplications(params);
       }
       setRecentApplicants(data?.data?.item || data?.data?.applications || []);
-      // setTotalRecords(data?.data?.totalRecords || []);
     } catch (error) {
       errorHandle(error);
       console.log("Error loading recent applicants");

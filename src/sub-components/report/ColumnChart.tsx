@@ -1,5 +1,3 @@
-
-
 import { useEffect, useState } from "react";
 import Chart from "react-apexcharts";
 import { getCityState } from "api/reportApi";

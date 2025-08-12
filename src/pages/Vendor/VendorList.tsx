@@ -2,7 +2,7 @@
 import { getAllUsers, updateUserStatus } from "api/usersApi";
 import ActiveModal from "components/BaseComponents/ActiveModal";
 import DeleteModal from "components/BaseComponents/DeleteModal";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Card, Col, Container, Row } from "react-bootstrap";
 import { toast } from "react-toastify";
 import { AnyObject } from "yup";
@@ -15,6 +15,9 @@ import { useNavigate } from "react-router-dom";
 import ViewProfile from "../UserProfile/ViewProfile";
 import BaseButton from "components/BaseComponents/BaseButton";
 import appConstants from "constants/constant";
+import { FaExclamationTriangle } from "react-icons/fa";
+import { importVendor } from "api/apiVendor";
+import BasePopUpModal from "components/BaseComponents/BasePopUpModal";
 
 const { handleResponse } = appConstants;
 
@@ -34,8 +37,14 @@ const VendorList = () => {
     pageIndex: 0,
     pageSize: 50,
   });
+  const [importLoader, setImportLoader] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [importProgress, setImportProgress] = useState(0);
+  const [isImporting, setIsImporting] = useState(false);
   const [searchAll, setSearchAll] = useState<string>("");
   // const [tableLoader, setTableLoader] = useState(false);
+  const [showPopupModal, setShowPopupModal] = useState(false);
+  const [uploadedFile, setUploadedFile] = useState<FormData | null>(null);
 
   const handleUpdateUserStatus = async (id: string, value: AnyObject) => {
     setIsLoading(true);
@@ -290,6 +299,138 @@ const VendorList = () => {
     }));
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    const validExtensions = ["csv", "xlsx", "xls", "xltx"];
+
+    const firstExtension = files[0].name.split(".").pop()?.toLowerCase() ?? "";
+
+    if (validExtensions.includes(firstExtension)) {
+      handleFileImport(e);
+    } else {
+      toast.error(
+        "Unsupported file type. Please upload a CSV, Excel, Word, or PDF file."
+      );
+    }
+  };
+
+  const handleFileImport = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const fileExtension = file.name.split(".").pop()?.toLowerCase();
+    if (!["csv", "xlsx", "xls", ".xltx"].includes(fileExtension || "")) {
+      toast.error("Please upload a valid CSV or Excel file");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      // 5MB
+      toast("Large file detected. Import may take a few minutes.", {
+        icon: <FaExclamationTriangle />,
+        autoClose: 4000,
+      });
+    }
+
+    setImportLoader(true);
+    setIsImporting(true);
+    setImportProgress(0);
+
+    try {
+      const formData = new FormData();
+      formData.append("csvFile", file);
+      setUploadedFile(formData);
+      const updateFlag = "false";
+      const response = await importVendor(formData, {
+        params: { updateFlag },
+        onUploadProgress: (progressEvent: { loaded: number; total: any }) => {
+          const progress = Math.round(
+            (progressEvent.loaded * 100) / (progressEvent.total || 100)
+          );
+          setImportProgress(progress);
+        },
+      });
+
+      if (response?.success) {
+        toast.success(response?.message || "File imported successfully!");
+      } else if (!response?.success && response.statusCode === 400) {
+        // setShowPopupModal(true);
+        const messages = response?.message;
+        if (messages && Array.isArray(messages)) {
+          messages.forEach((messages) => {
+            toast.error(messages);
+          });
+        }
+        toast.error(response.message || "Import failed");
+      } else if (!response?.success && response.statusCode === 409) {
+        setShowPopupModal(true);
+        toast.error(response.message || "Import failed");
+        // fetchDuplicateData();
+      }
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to import file");
+    } finally {
+      // fetchApplicants();
+      fetchUsers();
+      setImportLoader(false);
+      setIsImporting(false);
+      setImportProgress(0);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+      // fetchDuplicateData();
+    }
+  };
+
+  const handleModalConfirm = async () => {
+    if (!uploadedFile) return;
+
+    setImportLoader(true);
+    setIsImporting(true);
+    setImportProgress(0);
+
+    try {
+      const formData = new FormData();
+      formData.append("csvFile", uploadedFile.get("csvFile") as Blob);
+      const updateFlag = "true";
+
+      const response = await importVendor(formData, {
+        params: { updateFlag },
+        onUploadProgress: (progressEvent) => {
+          const progress = Math.round(
+            (progressEvent.loaded * 100) / (progressEvent.total || 100)
+          );
+          setImportProgress(progress);
+        },
+      });
+
+      if (response?.success) {
+        toast.success(
+          response?.message || "Existing applicants updated successfully!"
+        );
+        setShowPopupModal(false);
+        await fetchUsers();
+      } else {
+        throw new Error(response?.message || "Update failed");
+      }
+    } catch (error: any) {
+      toast.error(error.message || "Failed to update applicants");
+    } finally {
+      setImportLoader(false);
+      setIsImporting(false);
+      setImportProgress(0);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
+
+  const handleModalCancel = () => {
+    setShowPopupModal(false);
+  };
   return (
     <>
       {showViewModal && selectedId && (
@@ -308,7 +449,16 @@ const VendorList = () => {
         onCloseClick={closeActiveModal}
         flag={!dataActive}
       />
-
+      <BasePopUpModal
+        isOpen={showPopupModal}
+        onRequestClose={() => setShowPopupModal(false)}
+        title="Duplicate Records Found"
+        message="Do you want to update the existing applicants?"
+        confirmAction={handleModalConfirm}
+        cancelAction={handleModalCancel}
+        confirmText="Yes, Update"
+        cancelText="No, Don't Update"
+      />
       <DeleteModal
         show={showDeleteModal}
         onCloseClick={closeDeleteModal}
@@ -320,7 +470,7 @@ const VendorList = () => {
       <Container fluid>
         <div className="mt-2">
           <Card>
-            <Row className="fw-bold text-dark d-flex ">
+            <Row className="fw-bold text-dark d-flex">
               <Col
                 sm={6}
                 lg={6}
@@ -330,8 +480,8 @@ const VendorList = () => {
                 <div className="ml-6 text-2xl font-bold">Vendors</div>
               </Col>
               <Col sm={6} lg={6} md={6} className="mt-4">
-                <div className="items-end justify-end mr-6 d-flex">
-                  <div className="mr-3">
+                <div className="items-end justify-end mr-6 d-flex gap-3">
+                  <div>
                     <input
                       id="search-bar-0"
                       className="h-10 form-control search"
@@ -340,7 +490,59 @@ const VendorList = () => {
                       value={searchAll}
                     />
                   </div>
-                  <BaseButton color="primary" onClick={handleAdd}>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    multiple
+                    accept=".csv,.xlsx,.xls,.xls,.doc,.pdf,.xltx,.docx"
+                    style={{ display: "none" }}
+                    onChange={handleFileChange}
+                    disabled={isImporting}
+                  />
+                  <BaseButton
+                    color="primary"
+                    className="position-relative"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={importLoader}
+                  >
+                    {importLoader ? (
+                      <>
+                        <i className="align-bottom ri-loader-4-line animate-spin me-1" />
+                        {isImporting
+                          ? `Importing... ${importProgress}%`
+                          : "Processing..."}
+                      </>
+                    ) : (
+                      <>
+                        <i className="align-bottom ri-download-2-line me-1" />
+                        Import
+                      </>
+                    )}
+                    {isImporting && (
+                      <div
+                        className="bottom-0 progress position-absolute start-0"
+                        style={{
+                          height: "4px",
+                          width: "100%",
+                          borderRadius: "0 0 4px 4px",
+                        }}
+                      >
+                        <div
+                          className="progress-bar"
+                          role="progressbar"
+                          style={{ width: `${importProgress}%` }}
+                          aria-valuenow={importProgress}
+                          aria-valuemin={0}
+                          aria-valuemax={100}
+                        />
+                      </div>
+                    )}
+                  </BaseButton>
+                  <BaseButton
+                    color="primary"
+                    className="position-relative w-100%"
+                    onClick={handleAdd}
+                  >
                     + Add
                   </BaseButton>
                 </div>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, Fragment } from "react";
 import { Upload, message, Skeleton } from "antd";
-import type { UploadProps } from "antd";
+import type { UploadFile, UploadProps } from "antd";
 import { InboxOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import appConstants from "constants/constant";
 import BaseButton from "components/BaseComponents/BaseButton";
@@ -31,6 +31,7 @@ const ApplyNowJob = () => {
 
   const [selectedId, setSelectedId] = useState<string[]>([]);
   const [showViewModal, setShowViewModal] = useState<boolean>(false);
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
 
   useEffect(() => {
     const fetchJob = async () => {
@@ -101,25 +102,48 @@ const ApplyNowJob = () => {
   const uploadProps: UploadProps = {
     name: "file",
     multiple: false,
-    accept: ".pdf,.docx",
+    accept: ".pdf,.doc,.docx",
+    fileList,
     beforeUpload(file) {
       const ext = file.name.split(".").pop()?.toLowerCase();
-      if (!["pdf", "docx"].includes(ext || "")) {
-        message.error("Only PDF or DOCX files allowed.");
+      const isAllowedType = ["pdf", "doc", "docx"].includes(ext || "");
+      const isUnderSizeLimit = file.size <= 5 * 1024 * 1024;
+
+      if (!isAllowedType) {
+        message.error("Only PDF, DOC, or DOCX files are allowed.");
         return Upload.LIST_IGNORE;
       }
-      return false; // prevent auto upload
+
+      if (!isUnderSizeLimit) {
+        message.error("File size must be 5MB or less.");
+        return Upload.LIST_IGNORE;
+      }
+
+      return false; // Prevent auto-upload
     },
     onChange(info) {
-      const { fileList } = info;
-      if (fileList.length > 1) {
+      const incomingList = info.fileList;
+
+      if (incomingList.length > 1) {
         message.error("Only one file can be uploaded.");
-        // Remove extra files:
-        info.fileList.splice(1);
-      } else {
-        setFile(fileList[0].originFileObj || null);
-        message.success(`${fileList[0].name} selected.`);
+        setFileList([]);
+        setFile(null);
+        return;
       }
+
+      const selected = incomingList[0]?.originFileObj;
+      if (selected) {
+        setFileList([incomingList[0]]);
+        setFile(selected); // ✅ Here’s your line
+        message.success(`${incomingList[0].name} selected.`);
+      } else {
+        setFileList([]);
+        setFile(null);
+      }
+    },
+    onRemove() {
+      setFileList([]);
+      setFile(null);
     },
     onDrop(e) {
       console.log("Dropped files", e.dataTransfer.files);
