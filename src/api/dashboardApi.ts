@@ -6,14 +6,27 @@ export const getTotalApplicants = async () => {
   return response?.data;
 };
 
-export const getRecentApplications = async (appliedSkills = "") => {
-  const response = await authServices.get(`${RECENT_APPLICANTS}${appliedSkills || ""}`);
+export const getRecentApplications = async (params: {
+  page: number;
+  pageSize: number;
+  limit: number;
+  appliedSkills?: string;
+}) => {
+  const query = new URLSearchParams(params as any).toString();
+  const response = await authServices.get(`${RECENT_APPLICANTS}?${query}`);
   return response?.data;
 };
 
 
-export const getRecentApplicationsVendor = async (appliedSkills = "") => {
-  const response = await authServices.get(`${RECENT_APPLICANTS_VENDOR}${appliedSkills || ""}`);
+
+export const getRecentApplicationsVendor = async (params: {
+  page: number;
+  pageSize: number;
+  limit: number;
+  appliedSkills?: string;
+}) => {
+  const query = new URLSearchParams(params as any).toString();
+  const response = await authServices.get(`${RECENT_APPLICANTS_VENDOR}?${query}`);
   return response?.data;
 };
 

@@ -89,7 +89,7 @@ export const DELETE_MANY_DEGREE = "degree/delete/deleteManyDegree";
 
 //Dashboard Module
 export const TOTAL_APPLICANTS = "/dashboard/applicant/count";
-export const RECENT_APPLICANTS = "/applicants/viewAllApplicant?appliedSkills=";
+export const RECENT_APPLICANTS = "/applicants/viewAllApplicant";
 export const RECENT_APPLICANTS_VENDOR =
   "/vendor/viewApplications?appliedSkills=";
 export const SKILL_EXPORT = "applicants/exportCsv";
@@ -97,7 +97,6 @@ export const SKILL_EXPORT = "applicants/exportCsv";
 export const APPLICANTS_DETAILS =
   "/reports/applicants/technologyStatistics?category=";
 export const REPORT_ON_SKILL = "reports/applicants/applicantSkillStatistics";
-
 
 //Report Module
 // export const SKILL_STATISTICS = "/reports/applicants/categoryWiseSkillCount?category="
@@ -113,7 +112,6 @@ export const APPLICATION =
 export const ADDEDBY_REPORT = "/reports/applicants/applicantCountByAddedBy";
 export const VENDOR_JOB_APPLICANTS = "/vendor/job-applicant-report";
 export const SKILL_DASHBOARD = "/skill/dashboard/viewSkills";
-
 
 //Find And Replace
 
@@ -179,3 +177,4 @@ export const VIEW_APPLIED_JOB_APPLICANTS = "/vendor/viewApplications";
 export const VIEW_APPLICANT_BY_ID_VENDOR = "vendor/viewApplicantionsById";
 export const UPDATE_APPLICANT_STAGE_VENDOR = "/vendor/updateApplicantStatus";
 export const DELETE_APPLICANT_VENDOR = "/vendor/deleteApplicant";
+export const IMPORT_VENDOR = "/vendor/import";

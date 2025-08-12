@@ -500,7 +500,7 @@ const EmailTable = () => {
               <div className="row gy-2 gx-2 align-items-center justify-content-between">
                 {/* Email Count */}
                 <div className="col-auto d-flex align-items-center">
-                  <span className="inline-block px-5 py-2 mr-4 text-base font-medium tracking-wide text-white align-middle rounded-lg shadow-sm bg-primary">
+                  <span className="inline-block px-5 py-2 mr-4 text-base font-medium tracking-wide text-white align-middle rounded-lg shadow-sm bg-primary cursor-not-allowed">
                     Sent Emails: {emailCount}
                   </span>
                 </div>

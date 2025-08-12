@@ -94,44 +94,6 @@ const JobForm = () => {
   }, []);
 
   useEffect(() => {
-    if (_id) {
-      setLoading(true);
-      viewJobById({ _id })
-        .then((res: any) => {
-          if (res.success && res.data) {
-            const job = res.data;
-            validation.setValues({
-              job_subject: job.job_subject || "",
-              job_details: job.job_details || "",
-              job_type: job.job_type || "",
-              time_zone: job.time_zone || "",
-              start_time: job.start_time
-                ? dayjs(job.start_time, ["hh:mm A", "HH:mm"]).format("hh:mm A")
-                : "",
-              end_time: job.end_time
-                ? dayjs(job.end_time, ["hh:mm A", "HH:mm"]).format("hh:mm A")
-                : "",
-              min_salary: job.min_salary || "",
-              max_salary: job.max_salary || "",
-              contract_duration: job.contract_duration || "",
-              required_skills: job.required_skills || [],
-              job_location: job.job_location || "",
-              sub_description: job.sub_description || "",
-              salary_frequency: job.salary_frequency || "",
-            });
-            console.log(validation.value);
-          }
-        })
-        .catch((err) => {
-          console.error("Error fetching job:", err);
-          toast.error("Failed to load job details");
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    }
-  }, [_id]);
-  useEffect(() => {
     const getCities = async () => {
       try {
         setLoading(true);
@@ -300,6 +262,44 @@ const JobForm = () => {
     validation.setFieldValue("required_skills", ids);
     setSelectedMulti(selectedMulti);
   };
+
+  useEffect(() => {
+    if (_id) {
+      setLoading(true);
+      viewJobById({ _id })
+        .then((res: any) => {
+          if (res.success && res.data) {
+            const job = res.data;
+            validation.setValues({
+              job_subject: job.job_subject || "",
+              job_details: job.job_details || "",
+              job_type: job.job_type || "",
+              time_zone: job.time_zone || "",
+              start_time: job.start_time
+          ? dayjs(job.start_time, ["hh:mm A", "HH:mm"])
+          : null,
+        end_time: job.end_time
+          ? dayjs(job.end_time, ["hh:mm A", "HH:mm"])
+          : null,
+              min_salary: job.min_salary || "",
+              max_salary: job.max_salary || "",
+              contract_duration: job.contract_duration || "",
+              required_skills: job.required_skills || [],
+              job_location: job.job_location || "",
+              sub_description: job.sub_description || "",
+              salary_frequency: job.salary_frequency || "",
+            });
+          }
+        })
+        .catch((err) => {
+          console.error("Error fetching job:", err);
+          toast.error("Failed to load job details");
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  }, [_id]);
   return (
     <Fragment>
       <div className="pt-3 page-content"></div>
