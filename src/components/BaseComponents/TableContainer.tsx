@@ -214,64 +214,15 @@ const TableContainer = ({
       <Row className="mb-3">
         <CardBody className="pt-0 pb-0">
           <form>
-            <Row className="d-flex justify-content-between">
+            <Row className="align-items-center">
               {isHeaderTitle && (
                 <Col lg={7} sm={6}>
                   <h4 className="fw-bold text-dark">{isHeaderTitle}</h4>
                 </Col>
               )}
 
-              {availableColumns && (
-                <Col lg={5} sm={6} className="d-flex justify-content-end">
-                  <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown}>
-                    <DropdownToggle caret className="px-3" color="primary">
-                      Columns
-                    </DropdownToggle>
-                    <DropdownMenu
-                      className="p-3 mt-3"
-                      style={{
-                        minWidth: "250px",
-                        maxHeight: "300px", // Fixed height
-                        overflowY: "auto", // Makes it scrollable vertically
-                        overflowX: "hidden", // Prevents horizontal scrolling
-                      }}
-                    >
-                      <div className="d-flex flex-column">
-                        {localAvailableColumns.map((column) => (
-                          <>
-                            <style>{`
-    .ant-checkbox-checked .ant-checkbox-inner {
-      background-color: #624bff !important;
-      border-color: #624bff !important;
-    }
-    .ant-checkbox-checked .ant-checkbox-inner::after {
-      border-color: white !important;
-    }
-  `}</style>
-
-                            <Checkbox
-                              key={column.id}
-                              checked={column.isVisible !== false}
-                              onChange={() => toggleColumnVisibility(column.id)}
-                              style={{
-                                marginBottom: "8px",
-                                whiteSpace: "nowrap", // Prevents text wrapping
-                                overflow: "hidden", // Hides overflow
-                                textOverflow: "ellipsis", // Adds ... if text is too long
-                              }}
-                            >
-                              {column.header}
-                            </Checkbox>
-                          </>
-                        ))}
-                      </div>
-                    </DropdownMenu>
-                  </Dropdown>
-                </Col>
-              )}
-
-              {isGlobalFilter && (
-                <Col sm={availableColumns ? 3 : 4}>
+              <Col className="d-flex justify-content-end align-items-center">
+                {isGlobalFilter && (
                   <div
                     className={
                       isProductsFilter ||
@@ -290,8 +241,43 @@ const TableContainer = ({
                     />
                     <i className="bx bx-search-alt search-icon"></i>
                   </div>
-                </Col>
-              )}
+                )}
+
+                {availableColumns && (
+                  <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown}>
+                    <DropdownToggle caret className="px-3" color="primary">
+                      Columns
+                    </DropdownToggle>
+                    <DropdownMenu
+                      className="p-3 mt-3"
+                      style={{
+                        minWidth: "250px",
+                        maxHeight: "300px",
+                        overflowY: "auto",
+                        overflowX: "hidden",
+                      }}
+                    >
+                      <div className="d-flex flex-column">
+                        {localAvailableColumns.map((column) => (
+                          <Checkbox
+                            key={column.id}
+                            checked={column.isVisible !== false}
+                            onChange={() => toggleColumnVisibility(column.id)}
+                            style={{
+                              marginBottom: "8px",
+                              whiteSpace: "nowrap",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                            }}
+                          >
+                            {column.header}
+                          </Checkbox>
+                        ))}
+                      </div>
+                    </DropdownMenu>
+                  </Dropdown>
+                )}
+              </Col>
             </Row>
           </form>
         </CardBody>
