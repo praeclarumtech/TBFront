@@ -9,7 +9,7 @@ export const viewAllCountry = async (
 };
 
 export const createCountry = async (data: {
-  country_name: string; // Depending on whether it accepts single or multiple skills
+  country_name: string;
 }) => {
   const { country_name } = data;
   const response = await authServices.post(`${CREATE_COUNTRY}`, {
@@ -21,7 +21,7 @@ export const createCountry = async (data: {
 export const updateCountry = async (data: {
   _id: string;
 
-  country_name: string[]; // Depending on whether it accepts single or multiple skills
+  country_name: string[];
 }) => {
   const { _id, country_name } = data;
   const response = await authServices.put(`${UPDATE_COUNTRY}/${_id}`, {
