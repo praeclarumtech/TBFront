@@ -95,8 +95,8 @@ const SignIn = () => {
               <div className="flex flex-col items-center">
                 <Logo />
                 <p className="justify-center mb-6 text-base text-center mt-2">
-                  Sign In using your Credentials
-                </p> 
+                  Sign in using your Credentials
+                </p>
               </div>
 
               {hasMounted && (
