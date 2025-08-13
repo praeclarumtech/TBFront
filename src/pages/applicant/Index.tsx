@@ -1567,7 +1567,7 @@ const Applicant = () => {
             style={truncateText}
             title={cell.row.original.updatedAt}
           >
-              {moment(cell.row.original.updatedAt).format("DD-MM-YYYY")}
+            {moment(cell.row.original.updatedAt).format("DD-MM-YYYY")}
           </div>
         ),
         enableColumnFilter: false,
@@ -2033,7 +2033,7 @@ const Applicant = () => {
                     <div className="mb-2 col-12 col-md-3 mb-md-0 d-flex justify-content-start">
                       <button
                         onClick={toggleDrawer("right", true)}
-                        className="btn btn-primary d-block d-md-inline-block"
+                        className="btn btn-secondary d-block d-md-inline-block"
                         style={{
                           width: isMobile ? "150px" : "auto",
                         }}
