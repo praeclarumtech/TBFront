@@ -383,7 +383,7 @@ const TableContainer = ({
         </Table>
       </div>
       {isPagination && (
-        <Row className="mt-2 align-items-center g-3">
+        <Row className="align-items-center g-3">
           <div className="gap-3 col-sm-6 d-flex align-items-center">
             <div className="text-muted">Total Records: {totalRecords}</div>
           </div>

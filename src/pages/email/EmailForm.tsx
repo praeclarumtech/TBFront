@@ -509,7 +509,7 @@ const EmailForm = () => {
 
   return (
     <>
-      <div className="mt-6 mx-9">
+      <div className="my-6 mx-9">
         <div className="w-100">
           <div className="bg-white rounded-lg shadow">
             <div className="relative p-8">

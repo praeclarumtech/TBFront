@@ -470,7 +470,7 @@ const EmailTable = () => {
   );
 
   return (
-    <div className="container mx-auto">
+    <div className="container mx-auto mb-3">
       <DeleteModal
         show={showDeleteModal}
         onCloseClick={() => {

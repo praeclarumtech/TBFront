@@ -39,11 +39,15 @@ const VendorList = () => {
     pageIndex: 0,
     pageSize: 50,
   });
+
   const [importLoader, setImportLoader] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [importProgress, setImportProgress] = useState(0);
   const [isImporting, setIsImporting] = useState(false);
   const [searchAll, setSearchAll] = useState<string>("");
+
+  const isImportVisible = false;
+
   // const [tableLoader, setTableLoader] = useState(false);
   const [availableColumns, setAvailableColumns] = useState<ColumnConfig[]>([
     { id: "serialNumber", header: "Sr. No.", isVisible: true },
@@ -685,7 +689,7 @@ const VendorList = () => {
         loader={isLoading}
       />
       <Container fluid>
-        <div className="mt-2">
+        <div className="mt-2 mb-2">
           <Card>
             <Row className="fw-bold text-dark d-flex">
               <Col
@@ -716,45 +720,48 @@ const VendorList = () => {
                     onChange={handleFileChange}
                     disabled={isImporting}
                   />
-                  <BaseButton
-                    color="primary"
-                    className="position-relative"
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={importLoader}
-                  >
-                    {importLoader ? (
-                      <>
-                        <i className="align-bottom ri-loader-4-line animate-spin me-1" />
-                        {isImporting
-                          ? `Importing... ${importProgress}%`
-                          : "Processing..."}
-                      </>
-                    ) : (
-                      <>
-                        <i className="align-bottom ri-download-2-line me-1" />
-                        Import
-                      </>
-                    )}
-                    {isImporting && (
-                      <div
-                        className="bottom-0 progress position-absolute start-0"
-                        style={{
-                          height: "4px",
-                          width: "100%",
-                          borderRadius: "0 0 4px 4px",
-                        }}
-                      >
+                  {isImportVisible && (
+                    <BaseButton
+                      color="primary"
+                      className="position-relative"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={importLoader}
+                    >
+                      {importLoader ? (
+                        <>
+                          <i className="align-bottom ri-loader-4-line animate-spin me-1" />
+                          {isImporting
+                            ? `Importing... ${importProgress}%`
+                            : "Processing..."}
+                        </>
+                      ) : (
+                        <>
+                          <i className="align-bottom ri-download-2-line me-1" />
+                          Import
+                        </>
+                      )}
+                      {isImporting && (
                         <div
-                          className="progress-bar"
-                          role="progressbar"
-                          style={{ width: `${importProgress}%` }}
-                          aria-valuenow={importProgress}
-                          aria-valuemin={0}
-                          aria-valuemax={100}
-                        />
-                      </div>
-                    )}
-                  </BaseButton>
+                          className="bottom-0 progress position-absolute start-0"
+                          style={{
+                            height: "4px",
+                            width: "100%",
+                            borderRadius: "0 0 4px 4px",
+                          }}
+                        >
+                          <div
+                            className="progress-bar"
+                            role="progressbar"
+                            style={{ width: `${importProgress}%` }}
+                            aria-valuenow={importProgress}
+                            aria-valuemin={0}
+                            aria-valuemax={100}
+                          />
+                        </div>
+                      )}
+                    </BaseButton>
+                  )}
+
                   <BaseButton
                     color="primary"
                     className="position-relative w-100%"
@@ -770,7 +777,7 @@ const VendorList = () => {
                 <Skeleton count={10} />
               </div>
             ) : (
-              <div className="pt-4 bg-white">
+              <div className="pt-2 bg-white ">
                 {users?.length > 0 ? (
                   <Card.Body>
                     <TableContainer

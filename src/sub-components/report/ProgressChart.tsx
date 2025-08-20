@@ -15,7 +15,7 @@ const Charts = () => {
   }, []);
 
   const fetchStatusOfApplication = async () => {
-    setIsLoading(true);
+    setIsLoading(true); 
     try {
       const data = await getTotalApplicants();
       setStatusOfApplication(data.data);
