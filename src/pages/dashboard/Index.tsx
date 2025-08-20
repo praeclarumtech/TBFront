@@ -174,7 +174,7 @@ const Dashboard = () => {
     <Fragment>
       <div>
         <div className="pb-23"></div>
-        <Container fluid className="px-6 mt-n23">
+        <Container fluid className="px-6 mt-n23 pb-6">
           <div
             className="pt-3 pb-4 applicant-stats-scroll bg-primary mx-n6 mb-n5 mt-n8"
             style={{

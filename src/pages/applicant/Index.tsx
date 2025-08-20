@@ -1568,6 +1568,7 @@ const Applicant = () => {
             title={cell.row.original.updatedAt}
           >
             {moment(cell.row.original.updatedAt).format("DD-MM-YYYY")}
+            {/* {moment(cell.row.original.updatedAt).format("DD-MM-YYYY")} */}
           </div>
         ),
         enableColumnFilter: false,
@@ -2025,118 +2026,121 @@ const Applicant = () => {
       <Container fluid>
         <Row>
           <div>
-            <Card className="my-3 mb-3">
+            <Card className="my-3 ">
               <CardBody>
-                <div className="container">
-                  <div className="row align-items-center">
-                    {/* Filter Button */}
-                    <div className="mb-2 col-12 col-md-3 mb-md-0 d-flex justify-content-start">
-                      <button
-                        onClick={toggleDrawer("right", true)}
-                        className="btn btn-secondary d-block d-md-inline-block"
-                        style={{
-                          width: isMobile ? "150px" : "auto",
-                        }}
-                      >
-                        <i className="mx-1 fa fa-filter"></i> Filters
-                      </button>
-                      <Drawer
-                        className="!mt-16"
-                        anchor="right"
-                        open={state["right"]}
-                        onClose={toggleDrawer("right", false)}
-                      >
-                        {drawerList("right")}
-                      </Drawer>
-                    </div>
-
-                    {/* Search & Buttons */}
-                    <div className="flex-wrap gap-2 col-12 col-md-9 d-flex justify-content-end">
-                      <input
-                        id="search-bar-0"
-                        className="h-10 form-control search w-100 w-md-auto"
-                        placeholder="Search..."
-                        onChange={handleSearchChange}
-                        value={searchAll}
-                      />
-
-                      {selectedApplicants.length > 0 && (
-                        <>
-                          <BaseButton
-                            className="border-0 btn bg-danger"
-                            onClick={handleDeleteAll}
-                          >
-                            <i className="ri-delete-bin-fill" />
-                          </BaseButton>
-
-                          <BaseButton
-                            className="btn bg-primary"
-                            onClick={handleSendEmail}
-                          >
-                            <i className="ri-mail-close-line" />
-                          </BaseButton>
-                        </>
-                      )}
-
-                      <BaseButton
-                        color="primary"
-                        className="ml-2 bg-green-900 btn btn-soft-secondary edit-list"
-                        onClick={() => handleExportModalShow()}
-                      >
-                        <i className="ri-upload-2-line me-1" />
-                        Export
-                      </BaseButton>
-
-                      <BaseButton color="success" onClick={handleNavigate}>
-                        <i className="ri-add-line me-1" />
-                        Add
-                      </BaseButton>
-                    </div>
+                {/* <div className="container"> */}
+                <div className="row align-items-center">
+                  {/* Filter Button */}
+                  <div className="mb-2 col-12 col-md-3 mb-md-0 d-flex justify-content-start">
+                    <h4 className="fw-bold text-dark">Applicants</h4>{" "}
                   </div>
+
+                  {/* Search & Buttons */}
+                  <div className="flex-wrap gap-2 col-12 col-md-9 d-flex justify-content-end">
+                    <button
+                      onClick={toggleDrawer("right", true)}
+                      className="btn btn-primary d-block d-md-inline-block"
+                      style={{
+                        width: isMobile ? "150px" : "auto",
+                      }}
+                    >
+                      <i className="mx-1 fa fa-filter"></i> Filters
+                    </button>
+                    <Drawer
+                      className="!mt-16"
+                      anchor="right"
+                      open={state["right"]}
+                      onClose={toggleDrawer("right", false)}
+                    >
+                      {drawerList("right")}
+                    </Drawer>
+                    <input
+                      id="search-bar-0"
+                      className="h-10 form-control search w-100 w-md-auto"
+                      placeholder="Search..."
+                      onChange={handleSearchChange}
+                      value={searchAll}
+                    />
+
+                    {selectedApplicants.length > 0 && (
+                      <>
+                        <BaseButton
+                          className="border-0 btn bg-danger"
+                          onClick={handleDeleteAll}
+                        >
+                          <i className="ri-delete-bin-fill" />
+                        </BaseButton>
+
+                        <BaseButton
+                          className="btn bg-primary"
+                          onClick={handleSendEmail}
+                        >
+                          <i className="ri-mail-close-line" />
+                        </BaseButton>
+                      </>
+                    )}
+
+                    <BaseButton
+                      color="primary"
+                      className="bg-green-900 btn btn-soft-secondary edit-list"
+                      onClick={() => handleExportModalShow()}
+                    >
+                      <i className="ri-upload-2-line me-1" />
+                      Export
+                    </BaseButton>
+
+                    <BaseButton color="success" onClick={handleNavigate}>
+                      <i className="ri-add-line me-1" />
+                      Add
+                    </BaseButton>
+                  </div>
+                </div>
+                {/* </div> */}
+                {/* </CardBody> */}
+                {/* </Card> */}
+                {/* </div> */}
+                {/* </Row> */}
+                {/* <Divider className="pt-[12px]" /> */}
+                {/* <Row>
+          <Col lg={12}>
+            <Card> */}
+                <div className="pt-0 ">
+                  {tableLoader || loading ? (
+                    <div className="py-4 text-center">
+                      <Skeleton count={1} className="mb-5 min-h-10" />
+                      <Skeleton count={5} />
+                    </div>
+                  ) : applicant.length > 0 ? (
+                    <div className="pt-[12px]">
+                      <TableContainer
+                        // isHeaderTitle="Applicants"
+                        columns={columns}
+                        data={applicant}
+                        availableColumns={availableColumns}
+                        onColumnsChange={handleColumnsChange}
+                        customPageSize={50}
+                        theadClass="table-light text-muted"
+                        thClass="!pt-2 !pb-2"
+                        SearchPlaceholder="Search..."
+                        tableClass="!text-nowrap !mb-0 !responsive !table-responsive-sm !table-hover !table-outline-none !mb-0"
+                        totalRecords={totalRecords}
+                        pagination={pagination}
+                        setPagination={setPagination}
+                        loader={tableLoader}
+                        customPadding="0.1rem 1.5rem"
+                        rowHeight="6px !important"
+                      />
+                    </div>
+                  ) : (
+                    <div className="pt-4 text-center">
+                      <i className="ri-search-line d-block fs-1 text-success"></i>
+                      {"Total Record: " + totalRecords}
+                    </div>
+                  )}
                 </div>
               </CardBody>
             </Card>
           </div>
-        </Row>
-
-        <Row>
-          <Col lg={12}>
-            <Card>
-              <div className="pt-0 card-body">
-                {tableLoader || loading ? (
-                  <div className="py-4 text-center">
-                    <Skeleton count={1} className="mb-5 min-h-10" />
-                    <Skeleton count={5} />
-                  </div>
-                ) : applicant.length > 0 ? (
-                  <div className="pt-4 card-body">
-                    <TableContainer
-                      isHeaderTitle="Applicants"
-                      columns={columns}
-                      data={applicant}
-                      availableColumns={availableColumns}
-                      onColumnsChange={handleColumnsChange}
-                      customPageSize={50}
-                      theadClass="table-light text-muted"
-                      SearchPlaceholder="Search..."
-                      tableClass="!text-nowrap !mb-0 !responsive !table-responsive-sm !table-hover !table-outline-none !mb-0"
-                      totalRecords={totalRecords}
-                      pagination={pagination}
-                      setPagination={setPagination}
-                      loader={tableLoader}
-                      customPadding="0.3rem 1.5rem"
-                      rowHeight="10px !important"
-                    />
-                  </div>
-                ) : (
-                  <div className="pt-4 text-center">
-                    <i className="ri-search-line d-block fs-1 text-success"></i>
-                    {"Total Record: " + totalRecords}
-                  </div>
-                )}
-              </div>
-            </Card>
-          </Col>
         </Row>
       </Container>
     </Fragment>

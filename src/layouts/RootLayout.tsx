@@ -58,11 +58,9 @@ const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
             style={{
               // ...contentShiftStyle,
               marginTop: "66px",
-              marginBottom: "50px",
-              paddingBottom: "20px",
+              marginBottom: isMobile ? "56px" : "34px",
               overflow: "auto",
               overflowY: "auto",
-              // height: "calc(100vh - 104px)",
               right: 0,
               zIndex: 10,
             }}

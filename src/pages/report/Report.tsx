@@ -108,7 +108,7 @@ const Report = () => {
   return (
     <Fragment>
       <div className="min-h-screen">
-        <Container fluid className="px-3 pt-5">
+        <Container fluid className="px-3 py-3 py-sm-4 py-md-4">
           <Row className="gy-3">
             <Col className="report-section-width">
               <Card className="p-3 shadow-sm rounded-4 w-100">
@@ -131,7 +131,7 @@ const Report = () => {
                   </div>
                   {/* Main charts row */}
                   <Row>
-                    <Col md={6} sm={12}>
+                    <Col lg={6} md={12} sm={12}>
                       <h4 className="mb-3 fw-bold">
                         Interview Rounds Progress Report
                       </h4>
@@ -193,7 +193,7 @@ const Report = () => {
                         </div>
                       </div>
                     </Col>
-                    <Col md={6} sm={12} className="mt-4 mt-md-0">
+                    <Col lg={6} md={12} sm={12} className="mt-4 mt-md-0">
                       <h4 className="mb-3 fw-bold">
                         Application Status Analytics
                       </h4>

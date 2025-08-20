@@ -17,13 +17,13 @@ export const removeAppTokens = (): void => {
   localStorage.removeItem("id");
   localStorage.removeItem("role");
 };
-const removeItem = (key: string) => {
-  sessionStorage.removeItem(key);
-  localStorage.removeItem(key);
-  localStorage.removeItem("authUser");
-  localStorage.removeItem("id");
-  localStorage.removeItem("role");
-};
+// const removeItem = (key: string) => {
+//   sessionStorage.removeItem(key);
+//   localStorage.removeItem(key);
+//   localStorage.removeItem("authUser");
+//   localStorage.removeItem("id");
+//   localStorage.removeItem("role");
+// };
 
 // export const isAuthenticated = (): boolean => {
 //   if (typeof window == "undefined") return false;
@@ -63,11 +63,11 @@ export const setAuthData = (token: string) => {
 
 export const logout = () => {
   removeAppTokens();
-  removeItem("access_token");
-  removeItem(ACCESS_TOKEN);
-  removeItem(EXPIRES_AT);
-  removeItem("role");
-  removeItem("id");
+  // removeItem("access_token");
+  // removeItem(ACCESS_TOKEN);
+  // removeItem(EXPIRES_AT);
+  // removeItem("role");
+  // removeItem("id");
 };
 
 export const InputPlaceHolder = (fieldName: string) => {
