@@ -660,6 +660,7 @@ const Client = () => {
           show={showViewModal}
           onHide={handleCloseModal}
           _id={selectedId}
+          module="user"
         />
       )}
       <ActiveModal

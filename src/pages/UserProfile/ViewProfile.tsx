@@ -7,28 +7,48 @@ import { Modal, Badge, Card, Row, Col, Tag, Switch } from "antd";
 
 import { viewProfile } from "api/usersApi";
 import { toast } from "react-toastify";
+import { viewRoleById } from "api/roleApi";
+import { UserRole } from "interfaces/role.interface";
+import { capitalizeWords } from "utils/commonFunctions";
 
-const ViewProfile = ({ show, onHide, _id }: any) => {
+const ViewProfile = ({ show, onHide, _id, module }: any) => {
   const [formData, setFormData] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(false);
-  console.log(_id);
-  useEffect(() => {
-    const fetchProfile = async () => {
-      setLoading(true);
-      try {
-        const response = await viewProfile(_id);
-        setFormData(response?.data);
-      } catch (error) {
-        toast.error(
-          error instanceof Error ? error.message : "An error occurred"
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
+  const [roles, setRoles] = useState<UserRole | null>(null);
 
-    fetchProfile();
-  }, [_id]);
+  const [loading, setLoading] = useState<boolean>(false);
+  console.log("first", _id);
+  module === "user"
+    ? useEffect(() => {
+        const fetchProfile = async () => {
+          setLoading(true);
+          try {
+            const response = await viewProfile(_id);
+            setFormData(response?.data);
+          } catch (error) {
+            toast.error(
+              error instanceof Error ? error.message : "An error occurred"
+            );
+          } finally {
+            setLoading(false);
+          }
+        };
+
+        fetchProfile();
+      }, [_id])
+    : useEffect(() => {
+        const fetchRoles = async () => {
+          setLoading(true);
+          try {
+            const res = await viewRoleById({ _id });
+            setRoles(res?.data);
+          } catch (error) {
+            console.error("Error fetching roles", error);
+          } finally {
+            setLoading(false);
+          }
+        };
+        fetchRoles();
+      }, [_id]);
 
   if (!show) return null;
 
@@ -63,7 +83,7 @@ const ViewProfile = ({ show, onHide, _id }: any) => {
   }: // className,
   {
     label: string;
-    value?: string | number | JSX.Element;
+    value?: string | number | JSX.Element | React.ReactNode;
     icon?: JSX.Element;
     // className?: string;
   }) => (
@@ -72,7 +92,8 @@ const ViewProfile = ({ show, onHide, _id }: any) => {
       <strong>{label}:</strong> {value || "-"}
     </p>
   );
-
+  const name = roles?.name;
+  const finalName = capitalizeWords(name);
   return (
     <Modal
       open={show}
@@ -84,7 +105,7 @@ const ViewProfile = ({ show, onHide, _id }: any) => {
     >
       {loading ? (
         <Skeleton count={5} />
-      ) : formData ? (
+      ) : module === "user" && formData ? (
         <div className="space-y-4">
           {/* Personal Details */}
           <DetailsCard
@@ -384,7 +405,91 @@ const ViewProfile = ({ show, onHide, _id }: any) => {
             <></>
           )}
         </div>
-      ) : null}
+      ) : (
+        <div className="space-y-4">
+          <DetailsCard
+            title="View Role Information"
+            icon={<EyeFilled className="text-blue-500" />}
+          >
+            <Row gutter={[24, 24]}>
+              <Col xs={24} md={12}>
+                <DetailsRow
+                  label="Role Name"
+                  value={
+                    roles?.name ? (
+                      <Tag color="cyan">{finalName}</Tag>
+                    ) : (
+                      <Tag color="default">N/A</Tag>
+                    )
+                  }
+                />
+              </Col>
+
+              <Col xs={24} md={12}>
+                <DetailsRow
+                  label="Status"
+                  value={
+                    roles?.status ? (
+                      <Tag color={roles.status === "active" ? "green" : "red"}>
+                        {roles.status}
+                      </Tag>
+                    ) : (
+                      <Tag color="default">N/A</Tag>
+                    )
+                  }
+                />
+              </Col>
+
+              <Col xs={24} md={12}>
+                <DetailsRow
+                  label="Access Modules"
+                  value={
+                    roles?.accessModules?.length ? (
+                      <div
+                        style={{
+                          display: "flex",
+                          flexWrap: "wrap",
+                          gap: "4px",
+                        }}
+                      >
+                        {roles.accessModules.map((m) => (
+                          <Tag key={m} color="magenta">
+                            {m}
+                          </Tag>
+                        ))}
+                      </div>
+                    ) : (
+                      <Tag color="magenta">N/A</Tag>
+                    )
+                  }
+                />
+              </Col>
+
+              <Col xs={24} md={12}>
+                <DetailsRow
+                  label="Created At"
+                  value={
+                    roles?.createdAt
+                      ? new Date(roles.createdAt).toLocaleString()
+                      : "N/A"
+                  }
+                />
+              </Col>
+
+              <Col xs={24} md={12}>
+                <DetailsRow
+                  label="Updated At"
+                  value={
+                    roles?.updatedAt
+                      ? new Date(roles.updatedAt).toLocaleString()
+                      : "N/A"
+                  }
+                />
+              </Col>
+            </Row>
+          </DetailsCard>
+        </div>
+      )}
     </Modal>
   );
 };

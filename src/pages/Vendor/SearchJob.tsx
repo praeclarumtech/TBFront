@@ -322,7 +322,7 @@ const SearchJob = () => {
             className="mb-3 md:hidden"
             onClick={toggleFilter}
           >
-            Filters
+            <i className="mx-1 fa fa-filter"></i> Filters
           </BaseButton>
         </Col>
         <Col
@@ -336,7 +336,7 @@ const SearchJob = () => {
           <div className="bg-white rounded shadow">{drawerList()}</div>
           {/* </div> */}
         </Col>
-        <Col xs={12} sm={6} md={8} lg={9} className="pt-3">
+        <Col xs={12} sm={12} md={8} lg={9} className="pt-3">
           {loading || !formData ? (
             <Skeleton count={5} />
           ) : (

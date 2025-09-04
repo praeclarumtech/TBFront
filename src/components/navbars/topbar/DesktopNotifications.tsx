@@ -41,7 +41,7 @@ export const DesktopNotifications = () => {
               <Image
                 alt="avatar"
                 crossOrigin="anonymous"
-                src={'/images/avatar/avatar.png'}
+                src={"/images/avatar/avatar.png"}
                 className="rounded-circle"
               />
             </div>
@@ -68,7 +68,7 @@ export const DesktopNotifications = () => {
             {user.role === "admin" ? (
               <>
                 <Dropdown.Item
-                  eventKey="3"
+                  eventKey="1"
                   onClick={() => {
                     navigate("/userManagement");
                   }}
@@ -78,6 +78,15 @@ export const DesktopNotifications = () => {
                   }
                 >
                   <i className="fe fe-user me-2"></i> User Management
+                </Dropdown.Item>
+                <Dropdown.Item
+                  eventKey="2"
+                  onClick={() => {
+                    navigate("/roles");
+                  }}
+                  active={location.pathname === "/roles"}
+                >
+                  <i className="fe fe-user me-2"></i> Role
                 </Dropdown.Item>
                 <Dropdown.Item
                   eventKey="3"
@@ -92,7 +101,7 @@ export const DesktopNotifications = () => {
               <></>
             )}
             <Dropdown.Item
-              eventKey="2"
+              eventKey="4"
               onClick={() => {
                 navigate("/userProfile");
               }}
