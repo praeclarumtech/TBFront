@@ -217,10 +217,18 @@ const Report = () => {
                   </Row>
                   {role !== "vendor" && role !== "client" && (
                     <Row className="mt-4">
-                      <h4 className="fw-bold">Applicants</h4>
-                      <div className="mt-3 chart-container">
-                        <AreaChart />
-                      </div>
+                      <Col xs={12} sm={12} md={12} lg={6} xl={6}>
+                        <h4 className="fw-bold">Applicants Added-by</h4>
+                        <div className="mt-3 chart-container">
+                          <AreaChart />
+                        </div>
+                      </Col>
+                      {/* <Col xs={12} sm={12} md={12} lg={6} xl={6}>
+                        <h4 className="fw-bold">Chart Report</h4>
+                        <div className="mt-3 chart-container">
+                          <PieChart2 />
+                        </div>
+                      </Col> */}
                     </Row>
                   )}
                 </Card.Body>

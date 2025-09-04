@@ -1,43 +1,34 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { getAllUsers, updateUserStatus } from "api/usersApi";
-import ActiveModal from "components/BaseComponents/ActiveModal";
-import DeleteModal from "components/BaseComponents/DeleteModal";
+
 import { useEffect, useMemo, useState } from "react";
 import { Card, Col, Container, Row } from "react-bootstrap";
-import { toast } from "react-toastify";
-import { AnyObject } from "yup";
-import { Switch } from "antd";
+
 import Skeleton from "react-loading-skeleton";
-import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import TableContainer from "components/BaseComponents/TableContainer";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import { useNavigate } from "react-router-dom";
-import ViewProfile from "./ViewProfile";
 import BaseButton from "components/BaseComponents/BaseButton";
 import appConstants from "constants/constant";
-import Box from "@mui/material/Box";
-import {
-  Divider,
-  Drawer,
-  IconButton,
-  List,
-  useMediaQuery,
-} from "@mui/material";
-import { Close } from "@mui/icons-material";
-import { BaseSelect } from "components/BaseComponents/BaseSelect";
-import React from "react";
-import { SelectedOption } from "interfaces/applicant.interface";
 
-const { handleResponse, roleType } = appConstants;
+import React from "react";
+
+import { getRole } from "api/roleApi";
+import AddRole from "./AddRole";
+import { capitalizeWords } from "utils/commonFunctions";
+import ViewProfile from "./ViewProfile";
+import { UserRole } from "interfaces/role.interface";
+
+const { Modules, projectTitle, handleResponse } = appConstants;
 type Anchor = "top" | "right" | "bottom";
-const UserManagement = () => {
-  const [users, setUsers] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [showActiveModal, setShowActiveModal] = useState(false);
-  const [selectedRecord, setSelectedRecord] = useState<string | null>(null);
-  const [dataActive, SetDataActive] = useState(true);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [totalRecords, setTotalRecords] = useState(0);
+const Roles = () => {
+  document.title = Modules.Role + " | " + projectTitle;
+
+  const [roles, setRoles] = useState<UserRole | null>(null);
+  // const [isLoading, setIsLoading] = useState(false);
+  // const [showActiveModal, setShowActiveModal] = useState(false);
+  // const [selectedRecord, setSelectedRecord] = useState<string | null>(null);
+  // const [dataActive, SetDataActive] = useState(true);
+  // const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [tableLoader, setTableLoader] = useState(false);
   const navigate = useNavigate();
   const [showViewModal, setShowViewModal] = useState(false);
@@ -51,9 +42,9 @@ const UserManagement = () => {
     right: false,
   });
   const isMobile = window.innerWidth <= 767;
-  const isDesktop = useMediaQuery("(min-width: 768px)");
-  const [roleFilter, setRoleFilter] = useState<SelectedOption | null>(null);
-
+  const [showAddRoleModal, setShowAddRoleModal] = useState(false);
+  const [editingRoleId, setEditingRoleId] = useState<string | null>(null);
+  const [totalRecords, setTotalRecords] = useState("");
   const toggleDrawer =
     (anchor: Anchor, open: boolean) =>
     (event: React.KeyboardEvent | React.MouseEvent) => {
@@ -68,87 +59,55 @@ const UserManagement = () => {
       setState({ ...state, [anchor]: open });
     };
 
-  // const [tableLoader, setTableLoader] = useState(false);
-  const handleUpdateUserStatus = async (id: string, value: AnyObject) => {
-    setIsLoading(true);
-    await updateUserStatus(id, value)
-      .then((res) => {
-        if (res?.success === true && res.statusCode === 202) {
-          toast.success(res?.message);
-          setShowActiveModal(false);
-          setShowDeleteModal(false);
-          fetchUsers();
-        } else {
-          toast.error(res?.message);
-        }
-      })
-      .catch((err) => {
-        toast.error(err?.message);
-        setShowActiveModal(false);
-        setShowDeleteModal(false);
-      })
-      .finally(() => {
-        setIsLoading(false);
-        setShowActiveModal(false);
-        setShowDeleteModal(false);
-      });
-  };
-
-  const fetchUsers = async () => {
+  const fetchRoles = async () => {
     setTableLoader(true);
-
     try {
-      const params: {
-        search?: string;
-        page?: number;
-        pageSize?: number;
-        limit?: number;
-        role?: string;
-      } = {
-        page: pagination.pageIndex + 1,
-        pageSize: pagination.pageSize,
-        limit: 50,
-      };
-      const searchValue = searchAll?.trim();
-      if (roleFilter) {
-        params.role = encodeURIComponent(roleFilter.value);
-      }
-      if (searchValue) {
-        params.search = searchValue;
-      }
-      const response = await getAllUsers(params);
-      setUsers(response?.data?.item || response?.data?.results || []);
-      setTotalRecords(response?.data?.totalRecords || 0);
+      const res = await getRole();
+      setRoles(res?.data);
+      setTotalRecords(res?.data?.length || 0);
     } catch (error) {
-      console.error("Error fetching total applicants:", error);
+      console.error("Error fetching roles", error);
     } finally {
       setTableLoader(false);
     }
   };
 
   useEffect(() => {
-    fetchUsers();
-  }, [pagination.pageIndex, pagination.pageSize, searchAll, roleFilter]);
+    fetchRoles();
+  }, []);
 
-  const closeActiveModal = () => {
-    setShowActiveModal(false);
+  const handleAssign = (
+    roleId: string,
+    roleName: string,
+    accessModules: string[]
+  ) => {
+    navigate("/permission", {
+      state: { _id: roleId, roleName, accessModules },
+    });
   };
+  // const handleUpdateUserStatusModal = (id: any, isActive: any) => {
+  //   setSelectedRecord(id);
+  //   SetDataActive(!isActive);
+  //   setShowActiveModal(true);
+  // };
 
-  const handleUpdateUserStatusModal = (id: any, isActive: any) => {
-    setSelectedRecord(id);
-    SetDataActive(!isActive);
-    setShowActiveModal(true);
-  };
+  // const closeDeleteModal = () => {
+  //   setShowDeleteModal(false);
+  // };
 
-  const closeDeleteModal = () => {
-    setShowDeleteModal(false);
-  };
-
-  const handleDeleteUser = (id: string) => {
-    setSelectedRecord(id);
-    setShowDeleteModal(true);
-  };
-
+  // const handleDeleteUser = (id: string) => {
+  //   setSelectedRecord(id);
+  //   setShowDeleteModal(true);
+  // };
+  // const handleAssign = (_id: string, roleName: string) => {
+  //   const currRole = localStorage.getItem("role");
+  //   const accessModules = localStorage.getItem("accessModules");
+  //   if (currRole === roleName) {
+  //     navigate("/permission", { state: { _id, accessModules } });
+  //   } else {
+  //     navigate("/permission", { state: _id });
+  //   }
+  // };
   const columns = useMemo(
     () => [
       {
@@ -158,44 +117,55 @@ const UserManagement = () => {
         enableColumnFilter: false,
       },
       {
-        header: "User Name",
-        accessorKey: "userName",
+        header: "Role Name",
+        accessorKey: "name",
+        cell: ({ cell }: any) => {
+          const name = cell.getValue();
+          const finalName = capitalizeWords(name);
+          // return <>{finalName}</>;
+          return finalName;
+        },
 
-        filterFn: "fuzzy",
         enableColumnFilter: false,
       },
       {
-        header: "Role",
-        accessorKey: "role",
-
+        header: "Assign Functionality",
         enableColumnFilter: false,
+        cell: ({ row }: { row: any }) => (
+          <span
+            onClick={() =>
+              handleAssign(
+                row.original._id, // role ID
+                row.original.name, // role name
+                row.original.accessModules // permissions (not displayed)
+              )
+            }
+            className="flex items-center gap-2 text-blue-500 hover:text-blue-600 transition-colors text-sm font-medium cursor-pointer "
+          >
+            <span className="text-lg">+</span>
+            Assign
+          </span>
+        ),
       },
-      {
-        header: "Email",
-        accessorKey: "email",
-        enableColumnFilter: false,
-      },
-      // {
-      //   header: "Total Exp",
-      //   accessorKey: "totalExperience",
-      //   enableColumnFilter: false,
-      // },
 
       {
         header: "Status",
-        accessorKey: "isActive",
+        accessorKey: "status",
         cell: (cell: any) => {
-          const id = cell.row.original._id;
+          // const id = cell.row.original._id;
           const isActive = cell.getValue();
 
           return (
-            <Switch
-              size="small"
-              checked={isActive}
-              onClick={() => handleUpdateUserStatusModal(id, isActive)} // ✅ Handler only runs on user interaction
-              checkedChildren={<CheckOutlined />}
-              unCheckedChildren={<CloseOutlined />}
-            />
+            <span
+              // onClick={() => handleUpdateUserStatusModal(id, isActive)}
+              className={`px-3 py-1 rounded-full text-sm font-medium cursor-pointer ${
+                isActive === "active"
+                  ? "bg-green-100 text-green-600" // ✅ Active
+                  : "bg-red-100 text-red-600" // ❌ Inactive
+              }`}
+            >
+              {isActive === "active" ? "Active" : "Inactive"}
+            </span>
           );
         },
         enableColumnFilter: false,
@@ -228,6 +198,7 @@ const UserManagement = () => {
                   </Tooltip.Content>
                 </Tooltip.Portal>
               </Tooltip.Root>
+
               <Tooltip.Root>
                 <Tooltip.Trigger asChild>
                   <button
@@ -253,7 +224,7 @@ const UserManagement = () => {
                 <Tooltip.Trigger asChild>
                   <button
                     className="text-white btn btn-sm btn-soft-danger bg-danger"
-                    onClick={() => handleDeleteUser(row.original._id)}
+                    // onClick={() => handleDeleteUser(row.original._id)}
                     disabled={!row.original.isActive}
                   >
                     <i className="align-bottom ri-delete-bin-5-fill" />
@@ -275,7 +246,7 @@ const UserManagement = () => {
         ),
       },
     ],
-    [users]
+    [roles]
   );
 
   const handleView = (_id: string) => {
@@ -286,10 +257,6 @@ const UserManagement = () => {
     setShowViewModal(false);
   };
 
-  const handleAdd = () => {
-    navigate("/userprofileAdd");
-  };
-
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchAll(event.target.value);
     setPagination((prev) => ({
@@ -298,84 +265,14 @@ const UserManagement = () => {
     }));
   };
 
-  const handleRoleChange = (selectedOption: SelectedOption) => {
-    setRoleFilter(selectedOption);
+  const handleAdd = () => {
+    setEditingRoleId(null); // Clear any editing ID for "Add" mode
+    setShowAddRoleModal(true); // Show the modal
   };
 
-  const drawerList = (anchor: Anchor) => (
-    <Box
-      sx={{
-        // width: anchor === "top" || anchor === "bottom" ? "auto" : 400,
-        padding: "16px",
-        marginTop: anchor === "top" ? "64px" : 0,
-        width: isDesktop ? 400 : 250,
-      }}
-      role="presentation"
-    >
-      <div
-        style={{
-          position: "sticky",
-          top: 0,
-          background: "#fff",
-          zIndex: 100,
-          paddingBottom: "8px",
-          paddingTop: "8px",
-        }}
-      >
-        <Row className="flex items-center justify-between">
-          <Col>
-            <h3>Apply Filters</h3>
-          </Col>
-          <Col className="text-end">
-            <IconButton
-              onClick={toggleDrawer("right", false)}
-              sx={{ position: "absolute", top: 0, right: 0, zIndex: 10 }}
-            >
-              <Close />
-            </IconButton>
-          </Col>
-        </Row>
-      </div>
-      <List>
-        <BaseSelect
-          label="Role"
-          name="role"
-          className="mb-1 select-border "
-          options={roleType}
-          placeholder="Role"
-          handleChange={handleRoleChange}
-          value={roleFilter}
-        />
-      </List>
-
-      <Divider />
-      <div
-        style={{
-          position: "sticky",
-          bottom: 0,
-          background: "#fff",
-          zIndex: 100,
-          paddingTop: "8px",
-          paddingBottom: "8px",
-        }}
-      >
-        <Row>
-          <Col className="text-end">
-            <BaseButton
-              color="primary"
-              onClick={resetFilters}
-              sx={{ width: "auto" }}
-            >
-              Reset Filters
-            </BaseButton>
-          </Col>
-        </Row>
-      </div>
-    </Box>
-  );
-  const resetFilters = () => {
-    setRoleFilter(null);
-    fetchUsers();
+  const handleHideModal = () => {
+    setShowAddRoleModal(false);
+    setEditingRoleId(null); // Clear editing ID when closing
   };
 
   return (
@@ -385,27 +282,17 @@ const UserManagement = () => {
           show={showViewModal}
           onHide={handleCloseModal}
           _id={selectedId}
-          module ={"user"}
+          module={"roles"}
         />
       )}
-      <ActiveModal
-        show={showActiveModal}
-        loader={isLoading}
-        onYesClick={() =>
-          handleUpdateUserStatus(selectedRecord || "", { isActive: dataActive })
-        }
-        onCloseClick={closeActiveModal}
-        flag={!dataActive}
-      />
-
-      <DeleteModal
+      {/* <DeleteModal
         show={showDeleteModal}
         onCloseClick={closeDeleteModal}
         onDeleteClick={() =>
           handleUpdateUserStatus(selectedRecord || "", { isDeleted: true })
         }
         loader={isLoading}
-      />
+      /> */}
       <Container fluid>
         <div className="mt-2">
           <Card>
@@ -427,14 +314,6 @@ const UserManagement = () => {
                     {" "}
                     <i className="mx-1 fa fa-filter"></i>Filters
                   </button>
-                  <Drawer
-                    className="!mt-16"
-                    anchor="right"
-                    open={state["right"]}
-                    onClose={toggleDrawer("right", false)}
-                  >
-                    {drawerList("right")}
-                  </Drawer>
                 </div>
               </Col>
               <Col sm={6} lg={6} md={6} className="mt-4 mb-4">
@@ -451,29 +330,35 @@ const UserManagement = () => {
                   <BaseButton color="primary" onClick={handleAdd}>
                     + Add
                   </BaseButton>
+                  <AddRole
+                    show={showAddRoleModal}
+                    onHide={handleHideModal}
+                    _id={editingRoleId}
+                  />
                 </div>
               </Col>
             </Row>
           </Card>
+
           <Card className="mt-3">
-            <div className="pt-5 pl-5 text-2xl font-bold">User Management</div>
+            <div className="pt-5 pl-5 text-2xl font-bold">Roles</div>
             {tableLoader ? (
               <div className="m-3">
                 <Skeleton count={10} />
               </div>
             ) : (
               <div className="bg-white ">
-                {users?.length > 0 ? (
+                {roles ? (
                   <Card.Body>
                     <TableContainer
                       // isHeaderTitle="Users"
                       columns={columns}
-                      data={users}
+                      data={roles}
+                      totalRecords={totalRecords}
                       customPageSize={50}
                       theadClass="table-light text-muted"
                       SearchPlaceholder="Search..."
                       tableClass="!text-nowrap !mb-0 !responsive !table-responsive-sm !table-hover !table-outline-none !mb-0"
-                      totalRecords={totalRecords}
                       pagination={pagination}
                       setPagination={setPagination}
                       loader={tableLoader}
@@ -496,4 +381,4 @@ const UserManagement = () => {
   );
 };
 
-export default UserManagement;
+export default Roles;

@@ -122,7 +122,7 @@ const Applicant = () => {
   const [filterCurrentPkg, setFilterCurrentPkg] = useState<number[]>([0, 100]);
   const [filterDesignation, SetFilterDesignation] =
     useState<SelectedOption | null>(null);
-  const [filterCity, setFilterCity] = useState<SelectedOption | null>(null);
+  const [filterCity, setFilterCity] = useState<SelectedOption1[]>([]);
   const [filterState, setFilterState] = useState<SelectedOption | null>(null);
   const [appliedSkills, setAppliedSkills] = useState<SelectedOption1[]>([]);
   const [multipleSkills, setMultipleSkills] = useState<SelectedOption1[]>([]);
@@ -185,8 +185,8 @@ const Applicant = () => {
     { id: "appliedRole", header: "Role", isVisible: true },
     { id: "totalExperience", header: "Total Exp", isVisible: true },
     { id: "action", header: "Action", isVisible: true },
-    { id: "interviewStage", header: "Interview Stage", isVisible: true },
-    { id: "status", header: "Applicant Status", isVisible: true },
+    { id: "interviewStage", header: "Interview Stage", isVisible: false },
+    { id: "status", header: "Applicant Status", isVisible: false },
     { id: "isActive", header: "Status", isVisible: true },
     { id: "currentCity", header: "City", isVisible: false },
     { id: "gender", header: "Gender", isVisible: false },
@@ -302,9 +302,12 @@ const Applicant = () => {
       if (filterAnyHandOnOffers) {
         params.anyHandOnOffers = filterAnyHandOnOffers.value;
       }
-      if (filterCity) {
-        // params.currentCity = filterCity.label;
-        params.currentCity = encodeURIComponent(filterCity.label);
+      // if (filterCity) {
+      //   // params.currentCity = filterCity.label;
+      //   params.currentCity = encodeURIComponent(filterCity.label);
+      // }
+      if (filterCity.length > 0) {
+        params.currentCity = filterCity.map((city) => city.label).join(",");
       }
       if (filterState) {
         // params.state = filterState.label;
@@ -772,7 +775,7 @@ const Applicant = () => {
     setEndDate("");
     setUpdatedStartDate("");
     setUpdatedEndDate("");
-    setFilterCity(null);
+    setFilterCity([]);
     setFilterGender(null);
     setFilterInterviewStage(null);
     setFilterStatus(null);
@@ -796,18 +799,18 @@ const Applicant = () => {
     fetchApplicants();
   };
 
-  const handleCityChange = (selectedOption: SelectedOption) => {
-    setFilterCity(selectedOption);
+  // const handleCityChange = (selectedOption: SelectedOption) => {
+  //   setFilterCity(selectedOption);
 
-    if (selectedOption) {
-      const selectedCityId = selectedOption.value;
-      const selectedCity = cities.find((city) => city.value === selectedCityId);
+  //   if (selectedOption) {
+  //     const selectedCityId = selectedOption.value;
+  //     const selectedCity = cities.find((city) => city.value === selectedCityId);
 
-      if (selectedCity) {
-        // console.log("Selected city name:", selectedCity.label);
-      }
-    }
-  };
+  //     if (selectedCity) {
+  //       // console.log("Selected city name:", selectedCity.label);
+  //     }
+  //   }
+  // };
 
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
@@ -953,8 +956,13 @@ const Applicant = () => {
       if (filterAnyHandOnOffers) {
         queryParams.anyHandOnOffers = filterAnyHandOnOffers.value;
       }
-      if (filterCity) {
-        queryParams.currentCity = encodeURIComponent(filterCity.label);
+      // if (filterCity) {
+      //   queryParams.currentCity = encodeURIComponent(filterCity.label);
+      // }
+      if (filterCity.length > 0) {
+        queryParams.currentCity = filterCity
+          .map((city) => city.label)
+          .join(",");
       }
       if (filterState) {
         queryParams.state = encodeURIComponent(filterState.label);
@@ -1170,7 +1178,7 @@ const Applicant = () => {
           valueLabelDisplay="auto"
           disabled={false}
         />
-        <BaseSelect
+        {/* <BaseSelect
           label="City"
           name="city"
           className="mb-1 select-border "
@@ -1178,6 +1186,18 @@ const Applicant = () => {
           placeholder="City"
           handleChange={handleCityChange}
           value={filterCity}
+        /> */}
+        <MultiSelect
+          label="City"
+          name="city"
+          className="mb-1 select-border"
+          options={cities}
+          placeholder="City"
+          value={filterCity}
+          isMulti={true}
+          onChange={(selectedOptions: SelectedOption1[]) =>
+            setFilterCity(selectedOptions)
+          }
         />
         <BaseSelect
           label="State"
@@ -1853,7 +1873,6 @@ const Applicant = () => {
     navigate("/applicants/add-applicant");
   };
 
-  const isMobile = window.innerWidth <= 767;
   const ModalTitle = () => (
     <div className="flex items-center">
       <i className="mr-2 fas fa-file-export" style={{ fontSize: 24 }}></i>
@@ -2034,9 +2053,8 @@ const Applicant = () => {
                   <div className="mb-2 col-12 col-md-3 mb-md-0 d-flex justify-content-start">
                     <h4 className="fw-bold text-dark">Applicants</h4>{" "}
                   </div>
-
                   {/* Search & Buttons */}
-                  <div className="flex-wrap gap-2 col-12 col-md-9 d-flex justify-content-end">
+                  {/* <div className="flex-wrap gap-2 col-12 col-md-9 d-flex justify-content-end">
                     <button
                       onClick={toggleDrawer("right", true)}
                       className="btn btn-primary d-block d-md-inline-block"
@@ -2093,6 +2111,126 @@ const Applicant = () => {
                       <i className="ri-add-line me-1" />
                       Add
                     </BaseButton>
+                  </div> */}
+                  <div className="col-12 col-md-9">
+                    {/* MOBILE LAYOUT */}
+                    <div className="d-md-none">
+                      {/* Search and Filter in same row - compact */}
+                      <div className="flex gap-2 mb-2">
+                        <input
+                          id="search-bar-0"
+                          className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder="Search..."
+                          onChange={handleSearchChange}
+                          value={searchAll}
+                        />
+                        <button
+                          onClick={toggleDrawer("right", true)}
+                          className="px-3 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 whitespace-nowrap"
+                        >
+                          <i className="fa fa-filter mr-1"></i>Filter
+                        </button>
+                      </div>
+
+                      {/* Conditional buttons for selected applicants */}
+                      {selectedApplicants.length > 0 && (
+                        <div className="flex gap-2 mb-2">
+                          <BaseButton
+                            className="flex-1 px-3 py-2 text-sm bg-red-600 text-white rounded-md hover:bg-red-700"
+                            onClick={handleDeleteAll}
+                          >
+                            <i className="ri-delete-bin-fill mr-1" />
+                            Delete
+                          </BaseButton>
+                          <BaseButton
+                            className="flex-1 px-3 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                            onClick={handleSendEmail}
+                          >
+                            <i className="ri-mail-close-line mr-1" />
+                            Email
+                          </BaseButton>
+                        </div>
+                      )}
+
+                      {/* Export and Add buttons */}
+                      <div className="flex gap-2">
+                        <BaseButton
+                          className="flex-1 px-3 py-2 text-sm bg-green-700 text-white rounded-md hover:bg-green-800"
+                          onClick={() => handleExportModalShow()}
+                        >
+                          <i className="ri-upload-2-line mr-1" />
+                          Export
+                        </BaseButton>
+                        <BaseButton
+                          className="flex-1 px-3 py-2 text-sm bg-green-600 text-white rounded-md hover:bg-green-700"
+                          onClick={handleNavigate}
+                        >
+                          <i className="ri-add-line mr-1" />
+                          Add
+                        </BaseButton>
+                      </div>
+                    </div>
+
+                    {/* DESKTOP LAYOUT */}
+                    <div className="d-none d-md-flex justify-content-end align-items-center gap-2">
+                      <input
+                        id="search-bar-0"
+                        className="form-control me-3"
+                        style={{ width: "250px" }}
+                        placeholder="Search..."
+                        onChange={handleSearchChange}
+                        value={searchAll}
+                      />
+
+                      <button
+                        onClick={toggleDrawer("right", true)}
+                        className="btn btn-primary"
+                      >
+                        <i className="mx-1 fa fa-filter"></i> Filters
+                      </button>
+
+                      {selectedApplicants.length > 0 && (
+                        <>
+                          <BaseButton
+                            className="border-0 btn bg-danger"
+                            onClick={handleDeleteAll}
+                          >
+                            <i className="ri-delete-bin-fill" />
+                          </BaseButton>
+
+                          <BaseButton
+                            className="btn bg-primary"
+                            onClick={handleSendEmail}
+                          >
+                            <i className="ri-mail-close-line" />
+                          </BaseButton>
+                        </>
+                      )}
+
+                      <BaseButton
+                        color="primary"
+                        className="bg-green-900 btn btn-soft-secondary edit-list"
+                        onClick={() => handleExportModalShow()}
+                      >
+                        <i className="ri-upload-2-line me-1" />
+                        Export
+                      </BaseButton>
+
+                      <BaseButton color="success" onClick={handleNavigate}>
+                        <i className="ri-add-line me-1" />
+                        Add
+                      </BaseButton>
+                    </div>
+
+                    {/* Drawer - outside both layouts */}
+                    <Drawer
+                      className="!mt-16"
+                      anchor="right"
+                      open={state["right"]}
+                      onClose={toggleDrawer("right", false)}
+                    >
+                      {drawerList("right")}
+                    </Drawer>
                   </div>
                 </div>
                 {/* </div> */}

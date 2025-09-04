@@ -18,6 +18,7 @@ export const MobileNotifications = () => {
     const fetchProfile = async () => {
       const token = localStorage.getItem("authUser");
       const response = await getProfile({ token });
+      // localStorage.setItem("accessModules", response.data.accessModules);
       setUser(response.data);
     };
     fetchProfile();
@@ -70,7 +71,7 @@ export const MobileNotifications = () => {
             {user.role === "admin" ? (
               <>
                 <Dropdown.Item
-                  eventKey="3"
+                  eventKey="4"
                   onClick={() => {
                     navigate("/userManagement");
                   }}
@@ -84,15 +85,25 @@ export const MobileNotifications = () => {
                 <Dropdown.Item
                   eventKey="3"
                   onClick={() => {
+                    navigate("/roles");
+                  }}
+                  active={location.pathname === "/roles"}
+                >
+                  <i className="fe fe-user me-2"></i> Role
+                </Dropdown.Item>
+                <Dropdown.Item
+                  eventKey="5"
+                  onClick={() => {
                     navigate("/");
                   }}
                 >
-                  <i className="fe fe-arrow-up-left me-2"></i> Change Module
+                  <i className="fe fe-arrow-up-left me-2"></i> Website
                 </Dropdown.Item>
               </>
             ) : (
               <></>
             )}
+
             <Dropdown.Item
               onClick={() => {
                 setShowModal(true);

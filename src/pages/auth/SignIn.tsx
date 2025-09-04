@@ -17,10 +17,8 @@ import {
   setAuthData,
   // setItem
 } from "utils/commonFunctions";
-import { jwtDecode } from "jwt-decode";
 import { useLocation } from "react-router-dom";
 import Logo from "components/BaseComponents/Logo";
-
 const { projectTitle, Modules, validationMessages, OK, SUCCESS } = appConstants;
 
 const SignIn = () => {
@@ -62,22 +60,30 @@ const SignIn = () => {
       login(payload)
         .then((res) => {
           if (res?.statusCode === OK && res?.success === SUCCESS) {
-            setAuthData(res.data);
+            try {
+              setAuthData(res.data);
 
-            const decoded: any = jwtDecode(res.data);
-            const role = decoded.role;
-
-            if (role === "guest") {
-              navigate(from, { replace: true });
-            } else {
-              navigate("/dashboard");
+              // Decode for role checking
+              // const decoded: any = jwtDecode(res.data.user);
+              const role = res.data.user.roleId.name;
+              console.log(role);
+              if (role === "guest") {
+                navigate(from, { replace: true });
+              } else {
+                navigate("/dashboard");
+              }
+              toast.success(res?.message);
+            } catch (authError: any) {
+              console.error("Auth setup failed:", authError);
+              toast.error("Authentication setup failed: " + authError.message);
             }
-            toast.success(res?.message);
           } else {
-            toast.error(res?.message);
+            console.log("Login failed - invalid response:", res);
+            toast.error(res?.message || "Login failed");
           }
         })
         .catch((error) => {
+          console.error("Login API call failed:", error);
           errorHandle(error);
           setLoader(false);
         })

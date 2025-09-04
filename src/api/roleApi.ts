@@ -1,22 +1,37 @@
-import { ADD_ROLE_AND_SKILL, VIEW_ROLE_AND_SKILL, UPDATE_ROLE_AND_SKILL, DELETE_ROLE_AND_SKILL, VIEW_ROLE_AND_SKILL_ID, VIEW_SKILLS_BY_APPLIED_ROLE } from "./apiRoutes";
+import {
+  ADD_ROLE_AND_SKILL,
+  VIEW_ROLE_AND_SKILL,
+  UPDATE_ROLE_AND_SKILL,
+  DELETE_ROLE_AND_SKILL,
+  VIEW_ROLE_AND_SKILL_ID,
+  VIEW_SKILLS_BY_APPLIED_ROLE,
+  LIST_ROLE,
+  ADD_ROLE,
+  LIST_ROLE_BY_ID,
+  UPDATE_ROLE,
+} from "./apiRoutes";
 
 import { authServices } from "./apiServices";
 
-
-export const addRoleSkill = async (data:{ 
-
+export const addRoleSkill = async (data: {
   appliedRole: string;
   skillIds: string[]; // Depending on whether it accepts single or multiple skills
 }) => {
   const { appliedRole, skillIds } = data;
-  const response = await authServices.post(`${ADD_ROLE_AND_SKILL}`, {appliedRole, skillIds});
+  const response = await authServices.post(`${ADD_ROLE_AND_SKILL}`, {
+    appliedRole,
+    skillIds,
+  });
   return response?.data;
 };
 
-
-
 export const viewRoleSkill = async (
-  params: { page?: number; pageSize?: number; limit?: number; search?:string } = {}
+  params: {
+    page?: number;
+    pageSize?: number;
+    limit?: number;
+    search?: string;
+  } = {}
 ) => {
   // if (params.search ) {
   //   const {  limit, ...searchParams } = params;
@@ -28,26 +43,32 @@ export const viewRoleSkill = async (
 };
 
 // Update the API function to match the endpoint requirements
-export const updateRoleSkill = async (data: { 
+export const updateRoleSkill = async (data: {
   _id: string;
   appliedRole: string;
   skillIds: string[]; // Depending on whether it accepts single or multiple skills
 }) => {
   const { _id, appliedRole, skillIds } = data;
-  const response = await authServices.put(
-    `${UPDATE_ROLE_AND_SKILL}/${_id}`, 
-    { appliedRole, skillIds }
-  );
+  const response = await authServices.put(`${UPDATE_ROLE_AND_SKILL}/${_id}`, {
+    appliedRole,
+    skillIds,
+  });
   return response?.data;
 };
 
 export const deleteRoleSkill = async (data: { _id: string } = { _id: "" }) => {
-  const response = await authServices.delete(`${DELETE_ROLE_AND_SKILL}/${data?._id}`);
+  const response = await authServices.delete(
+    `${DELETE_ROLE_AND_SKILL}/${data?._id}`
+  );
   return response?.data;
 };
 
-export const viewRoleSkillById = async (data: { _id: string } = { _id: "" }) => {
-  const response = await authServices.get(`${VIEW_ROLE_AND_SKILL_ID}/${data?._id}`);
+export const viewRoleSkillById = async (
+  data: { _id: string } = { _id: "" }
+) => {
+  const response = await authServices.get(
+    `${VIEW_ROLE_AND_SKILL_ID}/${data?._id}`
+  );
   return response?.data;
 };
 
@@ -55,5 +76,35 @@ export const getSkillsByAppliedRole = async (appliedRole: string) => {
   const response = await authServices.get(`${VIEW_SKILLS_BY_APPLIED_ROLE}`, {
     params: { appliedRole },
   });
+  return response?.data;
+};
+
+export const getRole = async () => {
+  const response = await authServices.get(`${LIST_ROLE}`);
+  return response?.data;
+};
+
+export const addRole = async (
+  name: string,
+  status: string // Depending on whether it accepts single or multiple skills
+) => {
+
+  const response = await authServices.post(`${ADD_ROLE}`, {
+    name,
+    status,
+  });
+  return response?.data;
+};
+
+export const viewRoleById = async (data: { _id: any } = { _id: "" }) => {
+  const response = await authServices.get(`${LIST_ROLE_BY_ID}/${data?._id}`);
+  return response?.data;
+};
+
+export const updateRole = async (
+  data: object,
+  id: string | undefined | null
+) => {
+  const response = await authServices.put(`${UPDATE_ROLE}/${id}`, data);
   return response?.data;
 };
