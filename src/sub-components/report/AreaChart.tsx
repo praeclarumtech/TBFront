@@ -1,22 +1,13 @@
-import { useEffect, useState, useRef } from "react";
-import { Pie } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  ArcElement,
-  Tooltip,
-  Legend,
-  ChartOptions,
-  Colors,
-} from "chart.js";
+import { useEffect, useState } from "react";
+import Highcharts from "highcharts";
+import HighchartsReact from "highcharts-react-official";
 import { Dropdown } from "react-bootstrap";
 import Skeleton from "react-loading-skeleton";
-import { getaddedbyReport } from "api/reportApi"; // ✅ Make sure your path is right
+import { getaddedbyReport } from "api/reportApi";
 import BaseButton from "components/BaseComponents/BaseButton";
-import { useNavigate } from "react-router-dom"; // ✅ Uncomment if you want to navigate on click
+import { useNavigate } from "react-router-dom";
 
-ChartJS.register(ArcElement, Tooltip, Legend, Colors);
-
-const PieChart = () => {
+const AreaChart = () => {
   const [application, setApplication] = useState<Record<string, number>>({});
   const [isLoading, setIsLoading] = useState(true);
 
@@ -25,11 +16,7 @@ const PieChart = () => {
   const [endDate, setEndDate] = useState("");
 
   const today = new Date().toISOString().split("T")[0];
-
-  // ✅ Correct type for react-chartjs-2 v5+
-  const chartRef = useRef<ChartJS<"pie", number[], unknown>>(null);
-
-  const navigate = useNavigate(); // ✅ Uncomment if using react-router
+  const navigate = useNavigate();
 
   const formatDateTime = (date: string) => {
     if (!date) return "";
@@ -42,7 +29,6 @@ const PieChart = () => {
     try {
       const start = formatDateTime(startDate);
       const end = formatDateTime(endDate);
-
       const response = await getaddedbyReport(start, end);
       setApplication(response?.data || {});
     } catch (error) {
@@ -72,66 +58,54 @@ const PieChart = () => {
     guest: "Guest",
   };
 
-  const labels = fixedCategories.map((key) => labelDisplayMap[key] || key);
-  const values = fixedCategories.map((key) => application[key] || 0);
+  const chartData = fixedCategories.map((key) => ({
+    name: labelDisplayMap[key] || key,
+    y: application[key] || 0,
+  }));
 
-  const data = {
-    labels,
-    datasets: [
+  const options: Highcharts.Options = {
+    chart: {
+      type: "pie",
+      height: 350,
+      backgroundColor: "transparent",
+      animation: true, // ✅ enable smooth animation
+    },
+    title: { text: "" },
+    tooltip: {
+      pointFormat: "<b>{point.y}</b>",
+    },
+    credits: {
+      enabled: false, // ✅ This disables the "Highcharts.com" link
+    },
+    plotOptions: {
+      pie: {
+        allowPointSelect: true,
+        cursor: "pointer",
+        dataLabels: {
+          enabled: true,
+          format: "<b>{point.name}</b>: {point.y}",
+        },
+        showInLegend: true,
+        animation: {
+          duration: 1500,
+        },
+        events: {
+          click: (event) => {
+            const clickedLabel = event.point.name;
+            navigate(
+              `/applicants?addedByChart=${encodeURIComponent(clickedLabel)}`
+            );
+          },
+        },
+      },
+    },
+    series: [
       {
-        label: "Applications",
-        data: values,
-        borderWidth: 1,
+        type: "pie",
+        name: "Applications",
+        data: chartData,
       },
     ],
-  };
-
-  const options: ChartOptions<"pie"> = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: "bottom",
-      },
-      tooltip: {
-        bodyColor: "#ffffff",
-        titleColor: "#ffffff",
-      },
-      datalabels: {
-        color: "#ffffff",
-        font: {
-          size: 12,
-        },
-        formatter: (value) => value,
-      },
-    },
-    onHover: (event, chartElement) => {
-      if (event.native) {
-        const target = event.native.target as HTMLElement;
-        target.style.cursor = chartElement.length ? "pointer" : "default";
-      }
-    },
-  };
-
-  const handleSliceClick = (event: any) => {
-    const chart = chartRef.current;
-    if (!chart) return;
-
-    const elements = chart.getElementsAtEventForMode(
-      event,
-      "nearest",
-      { intersect: true },
-      false
-    );
-
-    if (elements.length > 0) {
-      const firstElement = elements[0];
-      const dataIndex = firstElement.index;
-      const clickedLabel = labels[dataIndex];
-      console.log("Clicked label:", clickedLabel);
-
-      // ✅ Example: navigate if needed
-      navigate(`/applicants?addedByChart=${encodeURIComponent(clickedLabel)}`);
-    }
   };
 
   return (
@@ -155,6 +129,7 @@ const PieChart = () => {
         </div>
       </div>
 
+      {/* Date Filter Inputs */}
       <div className="mb-2 d-flex justify-content-end">
         {filterType === "Date" && (
           <div className="gap-2 mt-2 d-flex flex-column">
@@ -186,7 +161,7 @@ const PieChart = () => {
         )}
       </div>
 
-      {/* Chart Container */}
+      {/* Chart */}
       <div
         style={{
           width: "100%",
@@ -199,16 +174,11 @@ const PieChart = () => {
         {isLoading ? (
           <Skeleton height={350} borderRadius={"50%"} width={350} />
         ) : (
-          <Pie
-            ref={chartRef}
-            data={data}
-            options={options}
-            onClick={handleSliceClick}
-          />
+          <HighchartsReact highcharts={Highcharts} options={options} />
         )}
       </div>
     </>
   );
 };
 
-export default PieChart;
+export default AreaChart;

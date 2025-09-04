@@ -148,6 +148,8 @@ const appConstants = Object.freeze({
     City: "City",
     Jobs: "Jobs",
     Vendor: "Vendor",
+    Role: "Roles",
+    Permission: "Permission",
   },
   passingYearType: [
     { label: "2005", value: 2005 },

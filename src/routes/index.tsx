@@ -51,6 +51,8 @@ import VendorList from "pages/Vendor/VendorList";
 import ManageAppliedList from "pages/Vendor/ManageAppliedList";
 import Client from "pages/Client/Client";
 import ManageAppliedListClient from "pages/Client/ManageAppliedListClient";
+import Roles from "pages/UserProfile/Roles";
+import Permission from "pages/UserProfile/Permission";
 
 const RenderRouter: React.FC = () => {
   const {
@@ -135,6 +137,8 @@ const RenderRouter: React.FC = () => {
           <Route path={"userprofileAdd"} element={<UserProfileEdit />} />
 
           <Route path={"userManagement"} element={<UserManagement />} />
+          <Route path={"roles"} element={<Roles />} />
+          <Route path={"permission"} element={<Permission />} />
           <Route
             path={CHANGE_PASSWORD.path}
             element={

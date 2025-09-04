@@ -1,7 +1,9 @@
 import React from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { isAuthenticated } from "../utils/commonFunctions";
+// import AutoLogout from "../components/AutoLogout";
 import routes from "./routes";
+import AutoLogout from "hooks/useAutoLogout";
 
 interface PrivateRouteProps {
   component: React.ComponentType;
@@ -18,7 +20,12 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({
     );
   }
 
-  return <Component />;
+  return (
+    <>
+      <AutoLogout />
+      <Component />
+    </>
+  );
 };
 
 export default PrivateRoute;

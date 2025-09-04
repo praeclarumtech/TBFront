@@ -113,6 +113,11 @@ export const ADDEDBY_REPORT = "/reports/applicants/applicantCountByAddedBy";
 export const VENDOR_JOB_APPLICANTS = "/vendor/job-applicant-report";
 export const SKILL_DASHBOARD = "/skill/dashboard/viewSkills";
 
+export const LIST_ROLE = "/role/list";
+export const LIST_ROLE_BY_ID = "/role/view";
+export const ADD_ROLE = "/role/create";
+export const UPDATE_ROLE = "/role/update";
+
 //Find And Replace
 
 export const FIND_AND_REPLACE_ALL = "appliedRole/skillOrAppliedRoleReplaceAll";

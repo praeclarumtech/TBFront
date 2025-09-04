@@ -1375,7 +1375,7 @@ function ImportApplicant() {
         </BaseModal>
 
         <Row>
-          <Col lg={12}>
+          <Col lg={12} className="pb-3">
             <Card>
               <div className="pt-0 card-body">
                 {tableLoader ? (

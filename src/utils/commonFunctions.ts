@@ -16,6 +16,7 @@ export const removeAppTokens = (): void => {
   localStorage.removeItem("access_token");
   localStorage.removeItem("id");
   localStorage.removeItem("role");
+  localStorage.removeItem("accessModules");
 };
 const removeItem = (key: string) => {
   sessionStorage.removeItem(key);
@@ -23,28 +24,8 @@ const removeItem = (key: string) => {
   localStorage.removeItem("authUser");
   localStorage.removeItem("id");
   localStorage.removeItem("role");
+  localStorage.removeItem("accessModules");
 };
-
-// export const isAuthenticated = (): boolean => {
-//   if (typeof window == "undefined") return false;
-
-//   try {
-//     const token = localStorage.getItem(ACCESS_TOKEN);
-//     if (token) {
-//       const user: JWTDecodedUser = jwtDecode(token);
-//       const dateNow = new Date();
-
-//       if (user?.exp > dateNow.getTime() / 1000) {
-//         return true;
-//       }
-//       removeAppTokens();
-//     }
-//   } catch (error) {
-//     removeAppTokens();
-//   }
-
-//   return false;
-// };
 
 export const isAuthenticated = () => {
   const token = getItem(ACCESS_TOKEN);
@@ -52,13 +33,41 @@ export const isAuthenticated = () => {
   return !!token && Date.now() < parseInt(expiresAt || 0);
 };
 
-export const setAuthData = (token: string) => {
-  const decoded: any = jwtDecode(token);
-  const expireTime = Date.now() + 24 * 60 * 60 * 1000;
-  setItem(ACCESS_TOKEN, token);
-  setItem(EXPIRES_AT, expireTime.toString());
-  setItem("role", decoded.role);
-  setItem("id", decoded.id);
+export const setAuthData = (data: any) => {
+  try {
+    // Extract the token string from the data object
+    const token = data?.token;
+    const user = data?.user;
+
+    // Validate token
+    if (!token || typeof token !== "string") {
+      console.error("setAuthData: Invalid token in data object", {
+        data,
+        token,
+        tokenType: typeof token,
+      });
+      throw new Error(`Token must be a non-empty string. Got: ${typeof token}`);
+    }
+
+    const decoded: any = jwtDecode(token);
+
+    const expireTime = Date.now() + 24 * 60 * 60 * 1000;
+
+    // Store token data
+    setItem(ACCESS_TOKEN, token);
+    setItem(EXPIRES_AT, expireTime.toString());
+    setItem("role", decoded.role);
+    setItem("id", decoded.id);
+    setItem("accessModules", user.roleId.accessModules);
+
+    // Store user data if available
+
+    console.log("setAuthData completed successfully");
+  } catch (error: any) {
+    console.error("setAuthData failed:", error);
+    console.error("Error stack:", error.stack);
+    throw error; // Re-throw to let the calling code handle it
+  }
 };
 
 export const logout = () => {
@@ -68,6 +77,7 @@ export const logout = () => {
   removeItem(EXPIRES_AT);
   removeItem("role");
   removeItem("id");
+  removeItem("accessModules");
 };
 
 export const InputPlaceHolder = (fieldName: string) => {
