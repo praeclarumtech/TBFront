@@ -62,9 +62,9 @@ const SignIn = () => {
       login(payload)
         .then((res) => {
           if (res?.statusCode === OK && res?.success === SUCCESS) {
-            setAuthData(res.data);
+            setAuthData(res?.data?.token);
 
-            const decoded: any = jwtDecode(res.data);
+            const decoded: any = jwtDecode(res?.data?.token);
             const role = decoded.role;
 
             if (role === "guest") {
