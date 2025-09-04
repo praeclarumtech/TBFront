@@ -34,7 +34,7 @@ function AddRole({ show, onHide, _id }: any) {
     }
     return "";
   };
-
+  console.log("loader use", loader);
   const handleCancel = () => {
     setRoleName("");
     setRoleNameTouched(false);
