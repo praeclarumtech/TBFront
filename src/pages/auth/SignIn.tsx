@@ -61,11 +61,11 @@ const SignIn = () => {
         .then((res) => {
           if (res?.statusCode === OK && res?.success === SUCCESS) {
             try {
-              setAuthData(res.data.token);
+              setAuthData(res.data);
 
               // Decode for role checking
               // const decoded: any = jwtDecode(res.data.user);
-              const role = res.data.user.roleId.name;
+              const role = res?.data?.user?.roleId?.name;
               console.log(role);
               if (role === "guest") {
                 navigate(from, { replace: true });

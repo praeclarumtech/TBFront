@@ -58,7 +58,7 @@ export const setAuthData = (data: any) => {
     setItem(EXPIRES_AT, expireTime.toString());
     setItem("role", decoded.role);
     setItem("id", decoded.id);
-    setItem("accessModules", user.roleId.accessModules);
+    setItem("accessModules", user?.roleId?.accessModules);
 
     // Store user data if available
 
