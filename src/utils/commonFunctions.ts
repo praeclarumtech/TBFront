@@ -110,6 +110,7 @@ const getItem = (key: string) => {
   try {
     return JSON.parse(val);
   } catch (e: any) {
+    console.error("getItem failed:", e);
     return val;
   }
 };
