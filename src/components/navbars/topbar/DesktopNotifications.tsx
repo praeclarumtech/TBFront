@@ -1,113 +1,134 @@
+import { getProfile } from "api/usersApi";
+import { useEffect, useState } from "react";
 import { ListGroup, Dropdown, Image } from "react-bootstrap";
-import { Link } from "react-router-dom";
-import { NotificationProps } from "types";
-import { NotificationList } from "./NotificationList";
-// import Settings from "../../../pages/dashboard/pages/Settings";
 import { useNavigate } from "react-router-dom";
-interface DesktopNotificationProps {
-  data: NotificationProps[];
-}
+import { User } from "interfaces/dashboard.interface";
+import ChangePassword from "pages/auth/ChangePassword";
+import { logout } from "utils/commonFunctions";
 
-export const DesktopNotifications: React.FC<DesktopNotificationProps> = ({
-
-  
-  data,
-}) => {
-
+export const DesktopNotifications = () => {
   const navigate = useNavigate();
-  
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [user, setUser] = useState<User>({
+    userName: "",
+    role: "",
+    profilePicture: " ",
+  });
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const token = localStorage.getItem("authUser");
+      const response = await getProfile({ token });
+      setUser(response.data);
+    };
+    fetchProfile();
+  }, []);
+
   return (
-    <ListGroup
-      as="ul"
-      bsPrefix="navbar-nav"
-      className="navbar-right-wrap ms-auto d-flex nav-top-wrap"
-    >
-      <Dropdown as="li" className="stopevent">
-        <Dropdown.Toggle
-          as="a"
-          bsPrefix=" "
-          id="dropdownNotification"
-          className="btn btn-light btn-icon rounded-circle indicator indicator-primary text-muted"
-        >
-          <i className="fe fe-bell"></i>
-        </Dropdown.Toggle>
-        <Dropdown.Menu
-          className="dashboard-dropdown notifications-dropdown dropdown-menu-lg dropdown-menu-end py-0"
-          aria-labelledby="dropdownNotification"
-          align="end"
-          show
-        >
-          <Dropdown.Item className="mt-3" bsPrefix=" " as="div">
-            <div className="border-bottom px-3 pt-0 pb-3 d-flex justify-content-between align-items-end">
-              <span className="h4 mb-0">Notifications</span>
-              <Link to="/" className="text-muted">
-                <span className="align-middle">
-                  <i className="fe fe-settings me-1"></i>
+    <>
+      <ListGroup
+        as="ul"
+        bsPrefix="navbar-nav"
+        className="navbar-right-wrap ms-auto d-flex nav-top-wrap"
+      >
+        <Dropdown as="li" className="ms-2">
+          <Dropdown.Toggle
+            as="a"
+            bsPrefix=" "
+            className="rounded-circle"
+            id="dropdownUser"
+          >
+            <div className="avatar avatar-md avatar-indicators avatar-online">
+              <Image
+                alt="avatar"
+                crossOrigin="anonymous"
+                src={"/images/avatar/avatar.png"}
+                className="rounded-circle"
+              />
+            </div>
+          </Dropdown.Toggle>
+          <Dropdown.Menu
+            className="dropdown-menu dropdown-menu-end "
+            align="end"
+            aria-labelledby="dropdownUser"
+            show
+          >
+            <Dropdown.Item
+              as="div"
+              className="px-4 py-2 d-flex flex-column align-items-center justify-content-between"
+            >
+              <div className="inline-flex items-center space-x-2">
+                <h5 className="mb-0">{user?.userName}</h5>
+                <span className="text-sm text-muted">
+                  {user?.role?.toUpperCase()}
                 </span>
-              </Link>
-            </div>
+              </div>
 
-            <NotificationList notificationItems={data} />
-            <div className="border-top px-3 pt-3 pb-3">
-              <Link
-                to="/dashboard/notification-history"
-                className="text-link fw-semi-bold"
-              >
-                See all Notifications
-              </Link>
-            </div>
-          </Dropdown.Item>
-        </Dropdown.Menu>
-      </Dropdown>
-      <Dropdown as="li" className="ms-2">
-        <Dropdown.Toggle
-          as="a"
-          bsPrefix=" "
-          className="rounded-circle"
-          id="dropdownUser"
-        >
-          <div className="avatar avatar-md avatar-indicators avatar-online">
-            <Image
-              alt="avatar"
-              src="/images/avatar/avatar-1.jpg"
-              className="rounded-circle"
-            />
-          </div>
-        </Dropdown.Toggle>
-        <Dropdown.Menu
-          className="dropdown-menu dropdown-menu-end "
-          align="end"
-          aria-labelledby="dropdownUser"
-          show
-        >
-          <Dropdown.Item as="div" className="px-4 pb-0 pt-2" bsPrefix=" ">
-            <div className="lh-1 ">
-              <h5 className="mb-1">Om </h5>
-              <Link to="#" className="text-inherit fs-6">
-                View my profile
-              </Link>
-            </div>
-            <div className=" dropdown-divider mt-3 mb-2"></div>
-          </Dropdown.Item>
-          {/* <Dropdown.Item eventKey="2">
-            <Link to="/Settings"> <i className="fe fe-user me-2"></i> Profile</Link>
+              <div className="my-0 dropdown-divider"></div>
+            </Dropdown.Item>
+            {user.role === "admin" ? (
+              <>
+                <Dropdown.Item
+                  eventKey="1"
+                  onClick={() => {
+                    navigate("/userManagement");
+                  }}
+                  active={
+                    location.pathname === "/userManagement" ||
+                    location.pathname === "/userprofileAdd"
+                  }
+                >
+                  <i className="fe fe-user me-2"></i> User Management
+                </Dropdown.Item>
+                <Dropdown.Item
+                  eventKey="2"
+                  onClick={() => {
+                    navigate("/roles");
+                  }}
+                  active={location.pathname === "/roles"}
+                >
+                  <i className="fe fe-user me-2"></i> Role
+                </Dropdown.Item>
+                <Dropdown.Item
+                  eventKey="3"
+                  onClick={() => {
+                    navigate("/");
+                  }}
+                >
+                  <i className="fe fe-arrow-up-left me-2"></i> Website
+                </Dropdown.Item>
+              </>
+            ) : (
+              <></>
+            )}
+            <Dropdown.Item
+              eventKey="4"
+              onClick={() => {
+                navigate("/userProfile");
+              }}
+            >
+              <i className="fe fe-user me-2"></i> Edit Profile
+            </Dropdown.Item>
 
-          </Dropdown.Item> */}
-
-          <Dropdown.Item eventKey="2">
-            <button onClick={() => navigate("/pages/Settings")}>
-              <i className="fe fe-user me-2"></i> Profile
-            </button>
-          </Dropdown.Item>
-
-          <Dropdown.Item>
-            <i className="fe fe-settings me-2"></i> Account Settings
-          </Dropdown.Item>
-          <Dropdown.Item>
-            <i className="fe fe-power me-2"></i>Sign Out
-          </Dropdown.Item>
-        </Dropdown.Menu>
-      </Dropdown>
-    </ListGroup>
+            <Dropdown.Item
+              onClick={() => {
+                setShowModal(true);
+              }}
+            >
+              <i className="fe fe-lock me-2"></i> Change Password
+            </Dropdown.Item>
+            <Dropdown.Item
+              onClick={() => {
+                logout();
+                navigate("/login");
+                window.location.reload();
+              }}
+            >
+              <i className="fe fe-power me-2"></i>Sign Out
+            </Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
+      </ListGroup>
+      <ChangePassword showModal={showModal} setShowModal={setShowModal} />
+    </>
   );
 };

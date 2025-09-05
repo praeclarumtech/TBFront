@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 //import node module libraries
 import { useContext } from "react";
 import { useAccordionButton, AccordionContext } from "react-bootstrap";

@@ -24,14 +24,14 @@
     height: 100% !important;
     overflow-y: auto;
   }
-  .navbar-brand {
-    padding: 1rem 1.5rem 1.5rem;
-    margin-right: 0px;
-    display: block;
-    img {
-      height: 1.875rem;
-    }
-  }
+  // .navbar-brand {
+  //   padding: 1rem 1.5rem 1.5rem;
+  //   margin-right: 0px;
+  //   display: block;
+  //   img {
+  //     height: 1.875rem;
+  //   }
+  // }
   .navbar-heading {
     color: $gray-700;
     padding: 1rem 1.5rem;
@@ -147,4 +147,9 @@
 
 .collapse.in {
   display: block;
+}
+
+.logo path {
+  fill: #ffffff;
+  height: 40px;
 }

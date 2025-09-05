@@ -1,15 +1,14 @@
+// src/routes/DashboardMenu.ts
 
-
-import { DashboardMenuProps } from "types";
+import { DashboardMenuItem } from "types";
 import { v4 as uuid } from "uuid";
 
-
-export const DashboardMenu: DashboardMenuProps[] = [
+export const DashboardMenu: DashboardMenuItem[] = [
   {
     id: uuid(),
     title: "Dashboard",
     icon: "home",
-    link: "/",
+    link: "/dashboard",
   },
   {
     id: uuid(),
@@ -19,16 +18,41 @@ export const DashboardMenu: DashboardMenuProps[] = [
   {
     id: uuid(),
     title: "Applicants",
-    icon: "layers",
-
-    link: '/applicants'
+    icon: "users",
+    link: "/applicants",
   },
-
   {
     id: uuid(),
-    title: "Add Applicant",
-    icon: "layout",
-    link: "/add_applicants",
+    title: "Import Applicants",
+    icon: "download",
+    link: "/import-applicants",
+  },
+  {
+    id: uuid(),
+    title: "Vendors",
+    grouptitle: true,
+  },
+  {
+    id: uuid(),
+    title: "Vendor",
+    icon: "inbox",
+    children: [
+      {
+        id: uuid(),
+        title: "Vendors",
+        link: "/vendorList",
+      },
+      {
+        id: uuid(),
+        title: "Job Listing",
+        link: "/job-listing",
+      },
+      {
+        id: uuid(),
+        title: "Jobs Applicants",
+        link: "/appliedJobApplicants",
+      },
+    ],
   },
   {
     id: uuid(),
@@ -38,16 +62,14 @@ export const DashboardMenu: DashboardMenuProps[] = [
   {
     id: uuid(),
     title: "Email",
-    icon: "monitor",
-    link: '/email',
+    icon: "mail",
+    link: "/email",
   },
-
   {
     id: uuid(),
     title: "Reports",
-    icon: "corner-left-down",
-
-    link: '/reports',
+    icon: "pie",
+    link: "/report",
   },
   {
     id: uuid(),
@@ -56,16 +78,56 @@ export const DashboardMenu: DashboardMenuProps[] = [
   },
   {
     id: uuid(),
-    title: "Master",
-    icon: "clipboard",
-    link: "/documentation",
-    children: [
-      { id: uuid(), link: "/pages/profile", name: "Add Passing Year" },
-      { id: uuid(), link: "/pages/settings", name: "Add Skills" },
-      { id: uuid(), link: "/pages/billing", name: "Billing" },
-      { id: uuid(), link: "/pages/pricing", name: "Pricing" },
-      { id: uuid(), link: "/not-found", name: "404 Error" },
-    ],
+    title: "Add Skills",
+    icon: "plus",
+    link: "/master/skills",
   },
-
+  {
+    id: uuid(),
+    title: "Add Qualification",
+    icon: "plus",
+    link: "/master/degree",
+  },
+  {
+    id: uuid(),
+    title: "Add Role And Skill",
+    icon: "plus",
+    link: "/master/add-role-skill",
+  },
+  {
+    id: uuid(),
+    title: "Find And Replace Fields",
+    icon: "plus",
+    link: "/master/Find-Fields",
+  },
+  {
+    id: uuid(),
+    title: "Add Email Template",
+    icon: "plus",
+    link: "/master/email-template",
+  },
+  {
+    id: uuid(),
+    title: "Add Designation",
+    icon: "plus",
+    link: "/master/designation",
+  },
+  {
+    id: uuid(),
+    title: "Add Country",
+    icon: "plus",
+    link: "/master/country",
+  },
+  {
+    id: uuid(),
+    title: "Add State",
+    icon: "plus",
+    link: "/master/state",
+  },
+  {
+    id: uuid(),
+    title: "Add City",
+    icon: "plus",
+    link: "/master/city",
+  },
 ];

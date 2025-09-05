@@ -1,0 +1,187 @@
+import { Row, Col, Card, Form } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import * as Yup from "yup";
+// import custom hook
+import { useMounted } from "hooks/useMounted";
+import { forgotPassword } from "api/usersApi";
+import { toast } from "react-toastify";
+import BaseInput from "components/BaseComponents/BaseInput";
+import BaseButton from "components/BaseComponents/BaseButton";
+import { useFormik } from "formik";
+import { useState } from "react";
+import { useLocation } from "react-router";
+import appConstants from "constants/constant";
+import { errorHandle, InputPlaceHolder } from "utils/commonFunctions";
+import Logo from "components/BaseComponents/Logo";
+
+const {
+  projectTitle,
+  Modules,
+  SUCCESS,
+  passwordRegex,
+  validationMessages,
+  ACCEPTED,
+} = appConstants;
+
+const UpdatePassword = () => {
+  document.title = Modules.UpdatePassword + " | " + projectTitle;
+  const hasMounted = useMounted();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const email = location.state || "email";
+
+  const [passwordShow, setPasswordShow] = useState<boolean>(false);
+  const [confirmPassword, setConfirmPassword] = useState<boolean>(false);
+  const [loader, setLoader] = useState<boolean>(false);
+
+  const validation = useFormik({
+    enableReinitialize: true,
+
+    initialValues: {
+      email: "",
+      newPassword: "",
+      confirmPassword: "",
+    },
+    validationSchema: Yup.object({
+      newPassword: Yup.string()
+        .required(validationMessages.required("Password"))
+        .min(8, validationMessages.passwordLength("Password", 8))
+        .matches(
+          passwordRegex,
+          validationMessages.passwordComplexity("Password")
+        ),
+      confirmPassword: Yup.string()
+        .required(validationMessages.required("Confirm Password"))
+        .oneOf(
+          [Yup.ref("newPassword")],
+          "Password and confirm password should be same."
+        ),
+    }),
+    onSubmit: (values) => {
+      const payload = {
+        newPassword: values.newPassword,
+        confirmPassword: values.confirmPassword,
+        email: values.email || email,
+      };
+      forgotPassword(payload)
+        .then((res) => {
+          if (res?.statusCode === ACCEPTED && res?.success === SUCCESS) {
+            navigate("/login");
+            toast.success(res?.message);
+          } else {
+            toast.error(res?.message);
+          }
+        })
+        .catch((error) => {
+          errorHandle(error);
+        })
+        .finally(() => setLoader(false));
+    },
+  });
+
+  return (
+    <Row className="align-items-center justify-content-center g-0 min-vh-100">
+      <Col xxl={4} lg={6} md={8} xs={12} className="py-8 py-xl-0">
+        <Card className="smooth-shadow-md">
+          <Card.Body className="p-6">
+
+              <div className="flex flex-col items-center">
+                <Logo />
+                <p className="justify-center mb-6 text-base text-center mt-2">
+                Don&apos;t worry, we&apos;ll send you an email to reset your
+                password.
+                </p>
+              </div>
+            {/* </div> */}
+            {hasMounted && (
+              <Form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  validation.handleSubmit();
+                  return false;
+                }}
+              >
+                {email === "email" ? (
+                  <Form.Group className="mb-3" controlId="email">
+                    <BaseInput
+                      label="Email"
+                      name="email"
+                      type="email"
+                      placeholder={InputPlaceHolder("Email")}
+                      handleChange={validation.handleChange}
+                      handleBlur={validation.handleBlur}
+                      value={validation.values.email}
+                      touched={validation.touched.email}
+                      error={validation.errors.email}
+                      isRequired={true}
+                    />
+                  </Form.Group>
+                ) : (
+                  <></>
+                )}
+                <Form.Group className="mb-3" controlId="email">
+                  <BaseInput
+                    label={"New Password"}
+                    name="newPassword"
+                    type="password"
+                    placeholder={InputPlaceHolder("new password")}
+                    handleChange={validation.handleChange}
+                    handleBlur={validation.handleBlur}
+                    value={validation.values.newPassword}
+                    touched={validation.touched.newPassword}
+                    error={validation.errors.newPassword}
+                    passwordToggle={true}
+                    onclick={() => setPasswordShow(!passwordShow)}
+                    isRequired={true}
+                  />
+                </Form.Group>
+
+                <Form.Group className="mb-3" controlId="email">
+                  <BaseInput
+                    label={"Confirm Password"}
+                    name="confirmPassword"
+                    type={confirmPassword ? "text" : "password"}
+                    placeholder={InputPlaceHolder("confirm password")}
+                    handleChange={validation.handleChange}
+                    handleBlur={validation.handleBlur}
+                    value={validation.values.confirmPassword}
+                    touched={validation.touched.confirmPassword}
+                    error={validation.errors.confirmPassword}
+                    passwordToggle={true}
+                    onclick={() => {
+                      setConfirmPassword(!confirmPassword);
+                    }}
+                    isRequired={true}
+                  />
+                </Form.Group>
+
+                <div className="mb-3 d-grid">
+                  <BaseButton
+                    color="primary"
+                    disabled={loader}
+                    className="w-100"
+                    type="submit"
+                    loader={loader}
+                  >
+                    Reset Password{" "}
+                  </BaseButton>
+                </div>
+                <span>
+                  Don&apos;t have an account?{" "}
+                  <a
+                    onClick={() => navigate("/login")}
+                    className="cursor-pointer text-primary"
+                  >
+                    Sign In
+                  </a>
+                </span>
+              </Form>
+            )}
+          </Card.Body>
+        </Card>
+      </Col>
+    </Row>
+  );
+};
+
+export default UpdatePassword;

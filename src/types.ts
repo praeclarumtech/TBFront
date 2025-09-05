@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface NotificationProps {
   id: string;
   sender: string;
@@ -8,22 +9,22 @@ export interface ChildrenItemProps {
   id: string;
   title?: string;
   name?: string;
-  link: string;
+  link?: string | null;
   children?: ChildrenItemProps[];
   icon?: string;
   badge?: string;
   badgecolor?: string;
 }
 
-export interface DashboardMenuProps {
+export interface DashboardMenuItem {
   id: string;
   title: string;
+  icon?: string;
   link?: string;
   grouptitle?: boolean;
-  children?: ChildrenItemProps[];
-  icon?: string;
   badge?: string;
   badgecolor?: string;
+  children?: DashboardMenuItem[]; // recursive
 }
 
 export interface CustomToggleProps {
@@ -98,29 +99,6 @@ export interface FeaturesDataProps {
   description: string;
 }
 
-export interface ChildrenItemProps {
-  id: string;
-  title?: string;
-  name?: string;
-  link: string;
-  children?: ChildrenItemProps[];
-  icon?: string;
-  badge?: string;
-  badgecolor?: string;
-}
-
-export interface DashboardMenuProps {
-  id: string;
-  title: string;
-  link?: string;
-  grouptitle?: boolean;
-  children?: ChildrenItemProps[];
-  icon?: string;
-  badge?: string;
-  badgecolor?: string;
-}
-
-
 export interface Applicant {
   data: any;
   currentPkg: string;
@@ -154,9 +132,8 @@ export interface Applicant {
   resume: string;
   totalExperience: number;
   relevantSkillExperience: number;
-  
   rating: number;
-  url: string;
+  resumeUrl: string;
   current_Pkg: string;
   expectedpkg: string;
   noticePeriod: string;
@@ -183,17 +160,8 @@ export interface Applicant {
   };
   readyForWork: string;
   workPreference: string;
-  
-
-  applicationNo: number; // Updated to match API
-
-
-  passingYear: number; // Updated to match API
-
-
-  aboutUs: string; // Updated to match API
-
-  interviewStage: string; // Updated to match API
-
- 
+  applicationNo: number;
+  passingYear: number;
+  aboutUs: string;
+  interviewStage: string;
 }

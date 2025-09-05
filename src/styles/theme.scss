@@ -61,3 +61,6 @@
     color: $primary;
   }
 }
+.custom-card .ant-card-body {
+  @apply p-3;
+}

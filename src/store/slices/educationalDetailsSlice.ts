@@ -1,7 +1,7 @@
 // src/redux/slices/educationalDetailsSlice.ts
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-interface EducationalDetailsState {
+interface EducationalDetails {
   qualification: string;
   degree: string;
   passingYear: string;
@@ -10,33 +10,41 @@ interface EducationalDetailsState {
   totalExperience: number;
   relevantSkillExperience: number;
   referral: string;
-  url: string;
+  resumeUrl: string;
   rating: number;
+  maritalStatus: string;
+  CurrentCompanyDesignation: string;
+  portfolioUrl: string;
 }
 
-const initialState: EducationalDetailsState = {
-  qualification: '',
-  degree: '',
-  passingYear: '',
+const initialState: EducationalDetails = {
+  qualification: "",
+  degree: "",
+  passingYear: "",
   appliedSkills: [],
-  otherSkills: '',
+  otherSkills: "",
   totalExperience: 0,
   relevantSkillExperience: 0,
-  referral: '',
-  url: '',
-  rating: 0
+  referral: "",
+  resumeUrl: "",
+  rating: 0,
+  maritalStatus: "",
+  CurrentCompanyDesignation: "",
+  portfolioUrl: "",
 };
 
 const educationalDetailsSlice = createSlice({
-  name: 'educationalDetails',
+  name: "educationalDetails",
   initialState,
   reducers: {
-    setEducationalDetails: (state, action: PayloadAction<Partial<EducationalDetailsState>>) => {
+    setEducationalDetails: (
+      state,
+      action: PayloadAction<Partial<EducationalDetails>>
+    ) => {
       return { ...state, ...action.payload };
     },
-    resetEducationalDetails: () => initialState
   },
 });
 
-export const { setEducationalDetails, resetEducationalDetails } = educationalDetailsSlice.actions;
+export const { setEducationalDetails } = educationalDetailsSlice.actions;
 export default educationalDetailsSlice.reducer;

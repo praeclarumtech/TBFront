@@ -1,304 +1,381 @@
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { Layout, Menu } from "antd";
+import {
+  HomeOutlined,
+  UserOutlined,
+  DownloadOutlined,
+  MailOutlined,
+  PieChartOutlined,
+  PlusOutlined,
+  InboxOutlined,
+  TeamOutlined,
+} from "@ant-design/icons";
+import Logosvg from "components/BaseComponents/Logosvg";
 
-// import node module libraries
-import { Fragment, JSXElementConstructor, Key, ReactElement, ReactNode, ReactPortal } from "react";
-import { Link } from "react-router-dom";
-import { useLocation } from "react-router-dom";
-import { useMediaQuery } from "react-responsive";
-import { ListGroup, Card, Image, Badge } from "react-bootstrap";
-import { Accordion } from "react-bootstrap";
-import { CustomToggle } from "./CustomToggle";
-import { CustomToggleLevelTwo } from "./CustomToggleLevelTwo";
-
-// import simple bar scrolling used for notification item scrolling
-import SimpleBar from "simplebar-react";
-
-// import routes file
-import { DashboardMenu } from "routes/DashboardRoutes";
-import { DashboardMenuProps } from "typ3es";
+const { Sider } = Layout;
 
 interface SidebarProps {
   showMenu: boolean;
   toggleMenu: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ showMenu, toggleMenu }) => {
-  const location = useLocation();
-  const generateLink = (item: any) => {
-    const location = useLocation();
+// Custom scrollbar styles
+const scrollbarStyles = `
+ .custom-scrollbar {
+  overflow-y: hidden;
+  height: 100%;
+}
 
-    const isMobile = useMediaQuery({ maxWidth: 767 });
-    return (
-      <Link
-        to={item.link}
-        className={`nav-link ${
-          location.pathname === item.link ? "active" : ""
-        }`}
-        onClick={() => (isMobile ? toggleMenu() : showMenu)}
-      >
-        {item.name}
-        {item.badge && (
-          <Badge className="ms-1" bg={item.badgecolor || "primary"}>
-            {item.badge}
-          </Badge>
-        )}
-      </Link>
-    );
+.custom-scrollbar:hover {
+  overflow-y: auto;
+}
+
+/* WebKit scrollbar styles */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #141414; /* same as your bg-dark */
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #444; /* slightly lighter for visibility */
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #666; /* slightly lighter on hover */
+}
+  .custom-sidebar .ant-menu-item,
+.custom-sidebar .ant-menu-submenu-title {
+  color: #fff !important;
+}
+
+.custom-sidebar .ant-menu-item a {
+  color: #fff !important;
+}
+
+.custom-sidebar .ant-menu-item .anticon,
+.custom-sidebar .ant-menu-submenu-title .anticon {
+  color: #fff !important;
+}
+
+.custom-sidebar .ant-menu-submenu-arrow {
+  color: #fff !important;
+}
+
+/* Optional: highlight selected item with a subtle background */
+.custom-sidebar .ant-menu-item-selected {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Optional: hover background for clarity */
+.custom-sidebar .ant-menu-item:hover,
+.custom-sidebar .ant-menu-submenu-title:hover {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+  .custom-sidebar .ant-menu-submenu .ant-menu {
+  background-color: #141414 !important; /* update to your exact bg-dark hex */
+}
+`;
+
+const styleElement = document.createElement("style");
+styleElement.innerHTML = scrollbarStyles;
+document.head.appendChild(styleElement);
+
+// custom heading
+const MenuGroupHeading = ({ title }: { title: string }) => (
+  <div
+    style={{
+      padding: "16px 24px 8px",
+      color: "#8c8c8c",
+      fontSize: "12px",
+      fontWeight: "600",
+      textTransform: "uppercase",
+      letterSpacing: "1px",
+    }}
+  >
+    {title}
+  </div>
+);
+
+const Sidebar: React.FC<SidebarProps> = ({ toggleMenu }) => {
+  const location = useLocation();
+  const [openKeys, setOpenKeys] = useState<string[]>([]);
+  const [modules, setModules] = useState<any[]>([]);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("accessModules");
+    if (stored && stored !== "undefined" && stored !== "null") {
+      try {
+        setModules(JSON.parse(stored));
+      } catch (err) {
+        console.error("Invalid accessModules in localStorage", err);
+        setModules([]); // fallback
+      }
+    } else {
+      setModules([]); // fallback if nothing valid
+    }
+  }, []);
+
+  const handleCloseMenu = () => {
+    const currentWidth = window.innerWidth;
+    const isMobileNow = currentWidth < 768; // or your mobile breakpoint
+
+    if (isMobileNow) {
+      toggleMenu();
+    }
   };
 
   return (
-    <Fragment>
-      <SimpleBar style={{ maxHeight: "100vh" }}>
-        <div className="nav-scroller">
-          <Link to="/" className="navbar-brand">
-            {/* <Image src="/images/brand/logo/talentbox-logo.png" alt="" /> */}
-            <h4 className="text-white text-3xl font-bold ">Talent<span className="text-primary ">Box</span> </h4>
-          </Link>
-        </div>
-        {/* Dashboard Menu */}
-        <Accordion
-          defaultActiveKey="0"
-          as="ul"
-          className="navbar-nav flex-column"
+    <Sider
+      collapsible
+      onCollapse={toggleMenu}
+      trigger={null}
+      className="bg-dark"
+      width={250}
+      style={{
+        height: "100vh",
+        position: "sticky",
+        top: 0,
+        left: 0,
+      }}
+    >
+      {/* Logo */}
+      <div
+        className="custom-scrollbar mt-3"
+        style={{
+          height: 64,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "0 16px",
+        }}
+      >
+        <Link to="/dashboard">
+          <Logosvg />
+        </Link>
+      </div>
+
+      {/* Sidebar menu */}
+      <div
+        className="custom-scrollbar"
+        style={{
+          height: "calc(100vh - 64px)",
+          overflowY: "auto",
+          paddingBottom: "20px",
+        }}
+      >
+        <Menu
+          mode="inline"
+          theme="dark"
+          className="font-semibold bg-dark"
+          selectedKeys={[location.pathname]}
+          openKeys={openKeys}
+          onOpenChange={setOpenKeys}
+          style={{ borderRight: 0 }}
         >
-          {DashboardMenu.map(function (
-            menu: DashboardMenuProps,
-            index: number
-          ) {
-            if (menu.grouptitle) {
-              return (
-                <Card bsPrefix="nav-item" key={menu.id}>
-                  {/* group title item */}
-                  <div className="navbar-heading">{menu.title}</div>
-                  {/* end of group title item */}
-                </Card>
-              );
-            } else {
-              if (menu.children) {
+          {/* Always show Dashboard */}
+          <Menu.Item
+            key="/dashboard"
+            icon={<HomeOutlined style={{ fontSize: 18 }} />}
+          >
+            <Link to="/dashboard" onClick={handleCloseMenu}>
+              Dashboard
+            </Link>
+          </Menu.Item>
+
+          {/* Loop through allowed modules */}
+          {modules.map((mod) => {
+            switch (mod.toLowerCase()) {
+              case "applicants":
                 return (
-                  <Fragment key={menu.id}>
-                    {/* main menu / root menu level / root items */}
-                    <CustomToggle eventKey={menu.id} icon={menu.icon}>
-                      {menu.title}
-                      {menu.badge ? (
-                        <Badge
-                          className="ms-1"
-                          bg={menu.badgecolor ? menu.badgecolor : "primary"}
-                        >
-                          {menu.badge}
-                        </Badge>
-                      ) : (
-                        ""
-                      )}
-                    </CustomToggle>
-                    <Accordion.Collapse
-                      eventKey={menu.id}
-                      as="li"
-                      bsPrefix="nav-item"
+                  <Menu.ItemGroup
+                    key="applicants-group"
+                    title={<MenuGroupHeading title="APPLICANTS" />}
+                  >
+                    <Menu.Item
+                      key="/applicants"
+                      icon={<UserOutlined style={{ fontSize: 18 }} />}
                     >
-                      <ListGroup
-                        as="ul"
-                        bsPrefix=""
-                        className="nav flex-column"
-                      >
-                        {menu.children.map(function (
-                          menuLevel1Item: { children: { children: never[]; title: string | number | boolean | ReactElement<unknown, string | JSXElementConstructor<unknown>> | Iterable<ReactNode> | ReactPortal | null | undefined; badge: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; badgecolor: string | undefined; }[]; id: Key | null | undefined; title: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; badge: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; badgecolor: string | undefined; },
-                          menuLevel1Index: Key | null | undefined
-                        ) {
-                          const childKey = `${menu.id}-${menuLevel1Index}`;
-                          if (menuLevel1Item.children) {
-                            return (
-                              <ListGroup.Item
-                                as="li"
-                                bsPrefix="nav-item"
-                                key={menuLevel1Item.id}
-                              >
-                                {/* first level menu started  */}
-                                <Accordion
-                                  // defaultActiveKey="0"
-                                  className="navbar-nav flex-column"
-                                >
-                                  <CustomToggleLevelTwo eventKey={childKey}>
-                                    {menuLevel1Item.title}
-                                    {menuLevel1Item.badge ? (
-                                      <Badge
-                                        className="ms-1"
-                                        bg={
-                                          menuLevel1Item.badgecolor
-                                            ? menuLevel1Item.badgecolor
-                                            : "primary"
-                                        }
-                                      >
-                                        {menuLevel1Item.badge}
-                                      </Badge>
-                                    ) : (
-                                      ""
-                                    )}
-                                  </CustomToggleLevelTwo>
-                                  <Accordion.Collapse
-                                    eventKey={childKey}
-                                    bsPrefix="nav-item"
-                                  >
-                                    <ListGroup
-                                      as="ul"
-                                      bsPrefix=""
-                                      className="nav flex-column"
-                                    >
-                                      {/* second level menu started  */}
-                                      {menuLevel1Item.children.map(function (
-                                        menuLevel2Item: { children: any[]; title: string | number | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; badge: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; badgecolor: string | undefined; },
-                                        menuLevel2Index: Key | null | undefined
-                                      ) {
-                                        const childKey = `${menuLevel1Index}-${menuLevel2Index}`;
-                                        if (menuLevel2Item.children) {
-                                          return (
-                                            <ListGroup.Item
-                                              as="li"
-                                              bsPrefix="nav-item"
-                                              key={menuLevel2Index}
-                                            >
-                                              {/* second level accordion menu started  */}
-                                              <Accordion
-                                                // defaultActiveKey="0"
-                                                className="navbar-nav flex-column"
-                                              >
-                                                <CustomToggleLevelTwo
-                                                  eventKey={childKey}
-                                                >
-                                                  {menuLevel2Item.title}
-                                                  {menuLevel2Item.badge ? (
-                                                    <Badge
-                                                      className="ms-1"
-                                                      bg={
-                                                        menuLevel2Item.badgecolor
-                                                          ? menuLevel2Item.badgecolor
-                                                          : "primary"
-                                                      }
-                                                    >
-                                                      {menuLevel2Item.badge}
-                                                    </Badge>
-                                                  ) : (
-                                                    ""
-                                                  )}
-                                                </CustomToggleLevelTwo>
-                                                <Accordion.Collapse
-                                                  eventKey={childKey}
-                                                  bsPrefix="nav-item"
-                                                >
-                                                  <ListGroup
-                                                    as="ul"
-                                                    bsPrefix=""
-                                                    className="nav flex-column"
-                                                  >
-                                                    {/* third level menu started  */}
-                                                    {menuLevel2Item.children.map(
-                                                      function (
-                                                        menuLevel3Item,
-                                                        menuLevel3Index
-                                                      ) {
-                                                        return (
-                                                          <ListGroup.Item
-                                                            key={
-                                                              menuLevel3Index
-                                                            }
-                                                            as="li"
-                                                            bsPrefix="nav-item"
-                                                          >
-                                                            {generateLink(
-                                                              menuLevel3Item
-                                                            )}
-                                                          </ListGroup.Item>
-                                                        );
-                                                      }
-                                                    )}
-                                                    {/* end of third level menu  */}
-                                                  </ListGroup>
-                                                </Accordion.Collapse>
-                                              </Accordion>
-                                              {/* end of second level accordion */}
-                                            </ListGroup.Item>
-                                          );
-                                        } else {
-                                          return (
-                                            <ListGroup.Item
-                                              key={menuLevel2Index}
-                                              as="li"
-                                              bsPrefix="nav-item"
-                                            >
-                                              {generateLink(menuLevel2Item)}
-                                            </ListGroup.Item>
-                                          );
-                                        }
-                                      })}
-                                      {/* end of second level menu  */}
-                                    </ListGroup>
-                                  </Accordion.Collapse>
-                                </Accordion>
-                                {/* end of first level menu */}
-                              </ListGroup.Item>
-                            );
-                          } else {
-                            return (
-                              <ListGroup.Item
-                                as="li"
-                                bsPrefix="nav-item"
-                                key={menuLevel1Index}
-                              >
-                                {/* first level menu items */}
-                                {generateLink(menuLevel1Item)}
-                                {/* end of first level menu items */}
-                              </ListGroup.Item>
-                            );
-                          }
-                        })}
-                      </ListGroup>
-                    </Accordion.Collapse>
-                    {/* end of main menu / menu level 1 / root items */}
-                  </Fragment>
+                      <Link to="/applicants" onClick={handleCloseMenu}>
+                        Applicants
+                      </Link>
+                    </Menu.Item>
+                    <Menu.Item
+                      key="/import-applicants"
+                      icon={<DownloadOutlined style={{ fontSize: 18 }} />}
+                    >
+                      <Link to="/import-applicants" onClick={handleCloseMenu}>
+                        Import Applicants
+                      </Link>
+                    </Menu.Item>
+                  </Menu.ItemGroup>
                 );
-              } else {
+
+              case "vendor":
                 return (
-                  <Card bsPrefix="nav-item" key={index}>
-                    {/* menu item without any childern items like Documentation and Changelog items*/}
-                    <Link
-                      to={menu.link ?? "#"}
-                      className={`nav-link ${
-                        location.pathname === menu.link ? "active" : ""
-                      } ${
-                        menu.title === "Free Download"
-                          ? "bg-primary text-white"
-                          : ""
-                      }`}
+                  <Menu.ItemGroup
+                    key="vendors-group"
+                    title={<MenuGroupHeading title="VENDORS" />}
+                  >
+                    <Menu.SubMenu
+                      key="vendor-parent"
+                      icon={<InboxOutlined style={{ fontSize: 18 }} />}
+                      title="Vendor"
                     >
-                      {typeof menu.icon === "string" ? (
-                        <i className={`nav-icon fe fe-${menu.icon} me-2`}></i>
-                      ) : (
-                        menu.icon
-                      )}
-                      {menu.title}
-                      {menu.badge ? (
-                        <Badge
-                          className="ms-1"
-                          bg={menu.badgecolor ? menu.badgecolor : "primary"}
+                      <Menu.Item key="/vendorList">
+                        <Link to="/vendorList" onClick={handleCloseMenu}>
+                          Vendors
+                        </Link>
+                      </Menu.Item>
+                      <Menu.Item key="/job-listing">
+                        <Link to="/job-listing" onClick={handleCloseMenu}>
+                          Job Listing
+                        </Link>
+                      </Menu.Item>
+                      <Menu.Item key="/appliedJobApplicants">
+                        <Link
+                          to="/appliedJobApplicants"
+                          onClick={handleCloseMenu}
                         >
-                          {menu.badge}
-                        </Badge>
-                      ) : (
-                        ""
-                      )}
-                    </Link>
-                    {/* end of menu item without any childern items */}
-                  </Card>
+                          Jobs Applicants
+                        </Link>
+                      </Menu.Item>
+                    </Menu.SubMenu>
+                  </Menu.ItemGroup>
+                );
+
+              case "client":
+                return (
+                  <Menu.ItemGroup
+                    key="client-group"
+                    title={<MenuGroupHeading title="CLIENT" />}
+                  >
+                    <Menu.SubMenu
+                      key="client-parent"
+                      icon={<TeamOutlined style={{ fontSize: 18 }} />}
+                      title="Client"
+                    >
+                      <Menu.Item key="/client">
+                        <Link to="/client" onClick={handleCloseMenu}>
+                          Clients
+                        </Link>
+                      </Menu.Item>
+                      <Menu.Item key="/job-listingClient">
+                        <Link to="/job-listingClient" onClick={handleCloseMenu}>
+                          Client Job Listing
+                        </Link>
+                      </Menu.Item>
+                      <Menu.Item key="/appliedJobApplicantsClient">
+                        <Link
+                          to="/appliedJobApplicantsClient"
+                          onClick={handleCloseMenu}
+                        >
+                          Jobs Applicants
+                        </Link>
+                      </Menu.Item>
+                    </Menu.SubMenu>
+                  </Menu.ItemGroup>
+                );
+
+              case "email":
+                return (
+                  <Menu.ItemGroup
+                    key="email-group"
+                    title={<MenuGroupHeading title="EMAIL" />}
+                  >
+                    <Menu.Item
+                      key="/email"
+                      icon={<MailOutlined style={{ fontSize: 18 }} />}
+                    >
+                      <Link to="/email" onClick={handleCloseMenu}>
+                        Email
+                      </Link>
+                    </Menu.Item>
+                  </Menu.ItemGroup>
+                );
+
+              case "reports":
+                return (
+                  <Menu.ItemGroup
+                    key="reports-group"
+                    title={<MenuGroupHeading title="REPORTS" />}
+                  >
+                    <Menu.Item
+                      key="/report"
+                      icon={<PieChartOutlined style={{ fontSize: 18 }} />}
+                    >
+                      <Link to="/report" onClick={handleCloseMenu}>
+                        Reports
+                      </Link>
+                    </Menu.Item>
+                  </Menu.ItemGroup>
+                );
+              case "master": {
+                const masterRoutes = [
+                  { key: "/master/skills", label: "Add Skill" },
+                  { key: "/master/degree", label: "Add Qualification" },
+                  {
+                    key: "/master/add-role-skill",
+                    label: "Add Role and Skill",
+                  },
+                  { key: "/master/Find-Fields", label: "Find and Replace" },
+                  {
+                    key: "/master/email-template",
+                    label: "Add Email Template",
+                  },
+                  { key: "/master/designation", label: "Add Designation" },
+                  { key: "/master/country", label: "Add Country" },
+                  { key: "/master/state", label: "Add State" },
+                  { key: "/master/city", label: "Add City" },
+                ];
+
+                // if user has "master", show all
+                // const hasMasterAccess = modules.includes("master");
+
+                // otherwise filter by allowed sub-permissions
+                const allowedMasters = masterRoutes.filter((route) =>
+                  modules.includes(route.label)
+                );
+
+                if (allowedMasters.length === 0) return null;
+
+                return (
+                  <Menu.ItemGroup
+                    key="masters-group"
+                    title={<MenuGroupHeading title="MASTERS" />}
+                  >
+                    <Menu.SubMenu
+                      key="masters-parent"
+                      icon={<PlusOutlined style={{ fontSize: 18 }} />}
+                      title="Masters"
+                    >
+                      {allowedMasters.map((route) => (
+                        <Menu.Item key={route.key}>
+                          <Link to={route.key} onClick={handleCloseMenu}>
+                            {route.label}
+                          </Link>
+                        </Menu.Item>
+                      ))}
+                    </Menu.SubMenu>
+                  </Menu.ItemGroup>
                 );
               }
+
+              default:
+                return null;
             }
           })}
-        </Accordion>
-        {/* end of Dashboard Menu */}
-      </SimpleBar>
-    </Fragment>
+        </Menu>
+      </div>
+    </Sider>
   );
 };
 
 export default Sidebar;
-

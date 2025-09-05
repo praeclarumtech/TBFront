@@ -1,0 +1,17 @@
+
+/* For Webkit browsers like Chrome, Safari, and newer versions of Edge */
+input[type="number"].no-spinner::-webkit-outer-spin-button,
+input[type="number"].no-spinner::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+
+    margin: 0;
+}
+
+/* For Firefox (Gecko engine) */
+/* input[type="number"].no-spinner {
+    -moz-appearance: textfield;
+    /* Disable the spin buttons */
+/* } */
+*/ input[type="number"].no-spinner {
+    appearance: textfield;
+}

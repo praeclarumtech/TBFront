@@ -1,84 +1,49 @@
-// // redux/slices/personalDetailsSlice.ts
-// import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-// interface PersonalDetailsState {
-//   firstName: string;
-//   middleName: string;
-//   lastName: string;
-//   dateOfBirth: string;
-//   email: string;
-//   phoneNumber: string;
-//   whatsappNumber: string;
-//   gender: string;
-//   country: string;
-//   state: string;
-//   city: string;
-//   pincode: string;
-//   fullAddress: string;
-// }
-
-// const initialState: PersonalDetailsState = {
-//   firstName: '',
-//   middleName: '',
-//   lastName: '',
-//   dateOfBirth: '',
-//   email: '',
-//   phoneNumber: '',
-//   whatsappNumber: '',
-//   gender: '',
-//   country: '',
-//   state: '',
-//   city: '',
-//   pincode: '',
-//   fullAddress: ''
-// };
-
-// const personalDetailsSlice = createSlice({
-//   name: 'personalDetails',
-//   initialState,
-//   reducers: {
-//     setPersonalDetails: (state, action: PayloadAction<PersonalDetailsState>) => {
-//       return { ...state, ...action.payload };
-//     },
-//   },
-// });
-
-// export const { setPersonalDetails } = personalDetailsSlice.actions;
-// export default personalDetailsSlice.reducer;
-// src/redux/slices/personalDetailsSlice.ts
-
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface PersonalDetailsState {
   firstName: string;
   middleName: string;
   lastName: string;
-  dateOfBirth: string;
+  dateOfBirth: Date;
   email: string;
   phoneNumber: string;
   whatsappNumber: string;
   gender: string;
   country: string;
   state: string;
-  city: string;
-  pincode: string;
-  fullAddress: string;
+  // city: string;
+  // pincode: string;
+  // fullAddress: string;
+  currentPincode: string;
+  currentCity: string;
+  homeTownCity: string;
+  homePincode: string;
+  preferredLocations: string;
+  currentLocation: string;
 }
 
 const initialState: PersonalDetailsState = {
   firstName: '',
   middleName: '',
   lastName: '',
-  dateOfBirth: '',
+  dateOfBirth: new Date(),
   email: '',
   phoneNumber: '',
   whatsappNumber: '',
   gender: '',
   country: '',
   state: '',
-  city: '',
-  pincode: '',
-  fullAddress: ''
+  // city: '',
+  // pincode: '',
+  // fullAddress: ''
+  currentPincode: '',
+  currentCity: '',
+  homeTownCity: '',
+  homePincode: '',
+  preferredLocations: '',
+  currentLocation: '',
+
+
 };
 
 const personalDetailsSlice = createSlice({
