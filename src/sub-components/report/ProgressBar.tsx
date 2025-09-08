@@ -75,7 +75,7 @@ const ProgressBars: React.FC<ProgressBarsProps> = ({
           <div onClick={handleClick} className="hover:cursor-pointer">
             <ProgressBar
               now={percentage}
-              max={totalApplicants}
+              max={totalApplicants || vtotalApplicants}
               variant={colour}
               className="!h-[10px]"
             />
