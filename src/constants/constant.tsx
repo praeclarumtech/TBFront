@@ -371,6 +371,11 @@ const appConstants = Object.freeze({
     { value: "onsite", label: "Onsite" },
     { value: "hybrid", label: "Hybrid" },
   ],
+  noticePeriodType: [
+    { value: "30", label: "30" },
+    { value: "60", label: "60" },
+    { value: "90", label: "90" },
+  ],
   statusOptions: [
     { label: "Applied", value: "applied" },
     { label: "In Progress", value: "in progress" },

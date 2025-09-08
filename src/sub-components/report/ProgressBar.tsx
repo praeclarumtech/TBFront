@@ -50,7 +50,6 @@ const ProgressBars: React.FC<ProgressBarsProps> = ({
   useEffect(() => {
     setPercentage(value);
   }, [value]);
-  console.log("first", vtotalApplicants);
   const handleClick = () => {
     let clicked = label.toLowerCase().trim();
     if (clicked.endsWith(" round")) {

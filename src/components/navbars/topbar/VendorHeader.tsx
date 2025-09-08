@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Header } from "antd/es/layout/layout";
 import { Menu } from "antd";
@@ -27,6 +26,7 @@ const VendorHeader = () => {
       "accessModules",
     ];
     keysToRemove.forEach((key) => localStorage.removeItem(key));
+    // toast.error("Session Expired!");
     setIsLoggedIn(false);
     setUserRole(null);
   };
@@ -38,12 +38,6 @@ const VendorHeader = () => {
       const roleFromStorage = localStorage.getItem("role");
       const role = roleFromStorage ? roleFromStorage.trim() : null;
       const tokenExpiry = localStorage.getItem("expiresAt");
-
-      console.log("🔍 Checking auth status on component mount/update:");
-      console.log("Token exists:", !!token);
-      console.log("Token value:", token ? "***hidden***" : "null");
-      console.log("Role:", role);
-      console.log("Token expiry:", tokenExpiry);
 
       // Check if token exists and is not empty
       if (!token || token === "undefined" || token.trim() === "") {
@@ -61,8 +55,6 @@ const VendorHeader = () => {
         return false;
       }
 
-      // Only set as logged in if token is valid AND not expired
-      console.log("✅ User is authenticated");
       setIsLoggedIn(true);
       setUserRole(role);
       setIsAuthChecked(true);
@@ -77,10 +69,6 @@ const VendorHeader = () => {
 
   // INITIAL AUTH CHECK ON COMPONENT MOUNT
   useEffect(() => {
-    console.log(
-      "🚀 VendorHeader component mounted, checking authentication..."
-    );
-
     // Perform initial authentication check
     const isAuthenticated = checkAuthStatus();
 
@@ -90,9 +78,6 @@ const VendorHeader = () => {
       (location.pathname.includes("/dashboard") ||
         location.pathname.includes("/appliedJobList"))
     ) {
-      console.log(
-        "🔄 Redirecting to login - user on protected route without valid auth"
-      );
       navigate("/login", {
         state: { from: location.pathname },
       });
@@ -101,7 +86,6 @@ const VendorHeader = () => {
     // Listen for storage changes (useful for multi-tab scenarios)
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === "authUser" || e.key === "role" || e.key === "expiresAt") {
-        console.log("📱 Storage changed in another tab, re-checking auth");
         const isAuth = checkAuthStatus();
         // If auth status changed to false while on protected route
         if (
@@ -117,7 +101,6 @@ const VendorHeader = () => {
     window.addEventListener("storage", handleStorageChange);
 
     return () => {
-      console.log("🧹 Cleaning up VendorHeader event listeners");
       window.removeEventListener("storage", handleStorageChange);
     };
   }, [location, navigate]);
@@ -125,7 +108,6 @@ const VendorHeader = () => {
   // RE-CHECK AUTH STATUS WHEN LOCATION CHANGES
   useEffect(() => {
     if (isAuthChecked) {
-      console.log("📍 Location changed, re-checking auth status");
       checkAuthStatus();
     }
   }, [location.pathname]);
@@ -165,7 +147,6 @@ const VendorHeader = () => {
 
   const handleNavigate = (key: string) => {
     // Always check auth status before navigation to protected routes
-    console.log(`🔄 Navigation requested to: ${key}`);
     const isCurrentlyAuthenticated = checkAuthStatus();
 
     switch (key) {
@@ -191,14 +172,12 @@ const VendorHeader = () => {
 
       case "view-applications":
         if (!isCurrentlyAuthenticated) {
-          console.log("🔒 Applications access denied - redirecting to login");
           navigate("/login", {
             state: {
               from: "/Vendor/appliedJobList",
             },
           });
         } else {
-          console.log("✅ Applications access granted");
           navigate("/Vendor/appliedJobList");
         }
         break;
@@ -208,7 +187,6 @@ const VendorHeader = () => {
         break;
 
       case "logout":
-        console.log("👋 Logging out user");
         // Clear all auth-related data
         logout();
         clearAuthData(); // Additional cleanup to ensure everything is cleared

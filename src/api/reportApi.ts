@@ -6,6 +6,8 @@ import {
   CITY_STATE,
   ADDEDBY_REPORT,
   VENDOR_JOB_APPLICANTS,
+  APPLICANTS_GENDER_WORKPREF_NOTICE,
+  ROLE_APPLICANTS,
 } from "./apiRoutes";
 import { authServices } from "./apiServices";
 
@@ -47,5 +49,25 @@ export const getaddedbyReport = async (startDate: string, endDate: string) => {
 
 export const getVendorJobApplicats = async () => {
   const response = await authServices.get(`${VENDOR_JOB_APPLICANTS}`);
+  return response?.data;
+};
+
+export const getApplicationsByGenderWorkNotice = async (params: {
+  gender?: string;
+  workPreference?: string;
+  search?: string;
+  noticePeriod?: string;
+}) => {
+  const response = await authServices.get(
+    `${APPLICANTS_GENDER_WORKPREF_NOTICE}`,
+    {
+      params,
+    }
+  );
+  return response?.data;
+};
+
+export const getRoleWiseReport = async () => {
+  const response = await authServices.get(`${ROLE_APPLICANTS}`);
   return response?.data;
 };
