@@ -50,7 +50,6 @@ const ProgressBars: React.FC<ProgressBarsProps> = ({
   useEffect(() => {
     setPercentage(value);
   }, [value]);
-  console.log("first", vtotalApplicants);
   const handleClick = () => {
     let clicked = label.toLowerCase().trim();
     if (clicked.endsWith(" round")) {
@@ -76,7 +75,7 @@ const ProgressBars: React.FC<ProgressBarsProps> = ({
           <div onClick={handleClick} className="hover:cursor-pointer">
             <ProgressBar
               now={percentage}
-              max={totalApplicants}
+              max={totalApplicants || vtotalApplicants}
               variant={colour}
               className="!h-[10px]"
             />

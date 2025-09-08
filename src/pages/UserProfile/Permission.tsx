@@ -118,9 +118,6 @@ const Permission: React.FC = () => {
               onChange={setSelected}
             />
           </div>
-          <div className="mt-4 text-sm">
-            <strong>Selected Modules:</strong> {JSON.stringify(selected)}
-          </div>
           <div className="justify-end gap-2 d-flex">
             <BaseButton color="secondary" onClick={resetSelection}>
               Cancel

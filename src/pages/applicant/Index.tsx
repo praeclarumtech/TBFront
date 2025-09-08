@@ -1884,7 +1884,7 @@ const Applicant = () => {
     setExportableFields([]);
   };
 
-  const handlecancelClose = () => {
+  const handlecancelClose: () => void = () => {
     setShowExportModal(false);
     setExportOption("");
     setExportableFields([]);
@@ -2053,65 +2053,7 @@ const Applicant = () => {
                   <div className="mb-2 col-12 col-md-3 mb-md-0 d-flex justify-content-start">
                     <h4 className="fw-bold text-dark">Applicants</h4>{" "}
                   </div>
-                  {/* Search & Buttons */}
-                  {/* <div className="flex-wrap gap-2 col-12 col-md-9 d-flex justify-content-end">
-                    <button
-                      onClick={toggleDrawer("right", true)}
-                      className="btn btn-primary d-block d-md-inline-block"
-                      style={{
-                        width: isMobile ? "150px" : "auto",
-                      }}
-                    >
-                      <i className="mx-1 fa fa-filter"></i> Filters
-                    </button>
-                    <Drawer
-                      className="!mt-16"
-                      anchor="right"
-                      open={state["right"]}
-                      onClose={toggleDrawer("right", false)}
-                    >
-                      {drawerList("right")}
-                    </Drawer>
-                    <input
-                      id="search-bar-0"
-                      className="h-10 form-control search w-100 w-md-auto"
-                      placeholder="Search..."
-                      onChange={handleSearchChange}
-                      value={searchAll}
-                    />
 
-                    {selectedApplicants.length > 0 && (
-                      <>
-                        <BaseButton
-                          className="border-0 btn bg-danger"
-                          onClick={handleDeleteAll}
-                        >
-                          <i className="ri-delete-bin-fill" />
-                        </BaseButton>
-
-                        <BaseButton
-                          className="btn bg-primary"
-                          onClick={handleSendEmail}
-                        >
-                          <i className="ri-mail-close-line" />
-                        </BaseButton>
-                      </>
-                    )}
-
-                    <BaseButton
-                      color="primary"
-                      className="bg-green-900 btn btn-soft-secondary edit-list"
-                      onClick={() => handleExportModalShow()}
-                    >
-                      <i className="ri-upload-2-line me-1" />
-                      Export
-                    </BaseButton>
-
-                    <BaseButton color="success" onClick={handleNavigate}>
-                      <i className="ri-add-line me-1" />
-                      Add
-                    </BaseButton>
-                  </div> */}
                   <div className="col-12 col-md-9">
                     {/* MOBILE LAYOUT */}
                     <div className="d-md-none">
@@ -2119,7 +2061,7 @@ const Applicant = () => {
                       <div className="flex gap-2 mb-2">
                         <input
                           id="search-bar-0"
-                          className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 "
                           placeholder="Search..."
                           onChange={handleSearchChange}
                           value={searchAll}
@@ -2233,15 +2175,6 @@ const Applicant = () => {
                     </Drawer>
                   </div>
                 </div>
-                {/* </div> */}
-                {/* </CardBody> */}
-                {/* </Card> */}
-                {/* </div> */}
-                {/* </Row> */}
-                {/* <Divider className="pt-[12px]" /> */}
-                {/* <Row>
-          <Col lg={12}>
-            <Card> */}
                 <div className="pt-0 ">
                   {tableLoader || loading ? (
                     <div className="py-4 text-center">
