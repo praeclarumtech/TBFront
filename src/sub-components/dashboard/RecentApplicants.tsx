@@ -159,7 +159,12 @@ const RecentApplicants = ({
                 </BaseButton>
                 <BaseButton
                   color="success"
-                  onClick={() => handleExportExcel([selectedTechnology])}
+                  onClick={
+                    role === "admin"
+                      ? () => handleExportExcel([selectedTechnology])
+                      : () => toast.error(" You don’t have permission ")
+                  }
+                  // disabled={role !== "admin"}
                 >
                   <i className="ri-upload-2-line me-1" />
                   Export

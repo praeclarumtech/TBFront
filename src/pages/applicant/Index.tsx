@@ -17,6 +17,7 @@ import {
   ExportApplicant,
   deleteMultipleApplicant,
   updateApplicant,
+  saveFilters,
 } from "api/applicantApi";
 
 import ViewModal from "./ViewApplicant";
@@ -427,6 +428,11 @@ const Applicant = () => {
       }
 
       const res = await listOfApplicants(params);
+      const userId = localStorage.getItem("id");
+      const save = await saveFilters(userId, params);
+      if (save.success) {
+        console.log("first", save);
+      }
       if (res.success === false) {
         toast.error(res.message);
       }

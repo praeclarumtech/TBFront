@@ -45,7 +45,8 @@ export const IMPORT_APPLICANT_LIST = "applicants/viewResumeAndCsvApplicant";
 export const UPDATE_APPLICANT_MANY = "applicants/updateManyApplicant";
 export const UPDATE_IMPORTED_APPLICANTS_STATUS =
   "applicants/update/importApplicantstatus";
-
+export const FILTER_SAVE = "applicants/userFilter";
+export const GET_SAVED_FILTERS = "applicants/userFilter/:id";
 //Email module
 export const SEND_EMAIL = "email/applicant/sendEmail";
 export const VIEW_ALL_EMAIL = "email/applicant/getAllEmails";

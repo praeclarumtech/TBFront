@@ -20,6 +20,7 @@ import ApplicantsDeatils from "sub-components/dashboard/ApplicantsDetails";
 import { getTotalApplicants } from "api/dashboardApi";
 import appConstants from "constants/constant";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const { projectTitle, Modules } = appConstants;
 
@@ -57,6 +58,8 @@ const Dashboard = () => {
   const location = useLocation();
   const applicantIds = location.state?.applicantIds || [];
   const navigate = useNavigate();
+  const getRole = localStorage.getItem("role");
+  console.log("first", getRole);
 
   const handleResetFilter = () => {
     setSelectedTechnology(null);
@@ -223,7 +226,11 @@ const Dashboard = () => {
                 key={index}
                 className="flex-shrink-0 cursor-pointer"
                 style={{ minWidth: "200px" }}
-                onClick={() => handleCardClick(stat.title)}
+                onClick={
+                  getRole === "admin"
+                    ? () => handleCardClick(stat.title)
+                    : () => toast.error("You don't have permission")
+                }
               >
                 <StatRightTopIcon
                   title={stat.title}

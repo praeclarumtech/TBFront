@@ -159,12 +159,13 @@ const Roles = () => {
             <span
               // onClick={() => handleUpdateUserStatusModal(id, isActive)}
               className={`px-3 py-1 rounded-full text-sm font-medium cursor-pointer ${
-                isActive === "active"
+                isActive === true
                   ? "bg-green-100 text-green-600" // ✅ Active
                   : "bg-red-100 text-red-600" // ❌ Inactive
               }`}
+              
             >
-              {isActive === "active" ? "Active" : "Inactive"}
+              {isActive === true ? "Active" : "Inactive"}
             </span>
           );
         },
