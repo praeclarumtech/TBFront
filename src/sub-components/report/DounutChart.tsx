@@ -4,21 +4,24 @@ import HighchartsReact from "highcharts-react-official";
 import Skeleton from "react-loading-skeleton";
 import { useNavigate } from "react-router-dom";
 import { getRoleWiseReport } from "api/reportApi";
+import { Dropdown } from "react-bootstrap";
 
 const Charts = () => {
-  const [roleData, setRoleData] = useState({});
+  const [roleData, setRoleData] = useState<any>([]);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    fetchRoleData();
-  }, []);
+  const [chartType, setChartType] = useState<
+    "vendor" | "client" | "hr" | "admin" | "guest" | "all"
+  >("all");
 
   const fetchRoleData = async () => {
     setIsLoading(true);
     try {
-      const data = await getRoleWiseReport();
-      setRoleData(data.data);
+      const data = await getRoleWiseReport({ role: chartType });
+      console.log("first", data);
+      console.log("datatatata", data?.data);
+      setRoleData([data?.data]);
+      console.log("first", roleData);
     } catch (error) {
       console.error("API Error:", error);
     } finally {
@@ -26,28 +29,31 @@ const Charts = () => {
     }
   };
 
-  const formatLabel = (text: string) => {
-    return text.charAt(0).toUpperCase() + text.slice(1);
-  };
+  useEffect(() => {
+    fetchRoleData();
+  }, [chartType]);
+  // const formatLabel = (text: string) => {
+  //   return text.charAt(0).toUpperCase() + text.slice(1);
+  // };
 
-  const labels = Object.keys(roleData).map((key) => formatLabel(key));
-  const values = Object.values(roleData) as number[];
+  // const labels = Object.keys(roleData).map((key) => formatLabel(key));
+  // const values = Object.values(roleData) as number[];
 
-  const chartJsColors = [
-    "#FF6384",
-    "#9966FF",
-    "#36A2EB",
-    "#FFCE56",
-    "#4BC0C0",
-    "#FF9F40",
-    "#00A950",
-  ];
+  // const chartJsColors = [
+  //   "#FF6384",
+  //   "#9966FF",
+  //   "#36A2EB",
+  //   "#FFCE56",
+  //   "#4BC0C0",
+  //   "#FF9F40",
+  //   "#00A950",
+  // ];
 
-  const chartData = labels.map((label, index) => ({
-    name: label,
-    y: values[index],
-    color: chartJsColors[index % chartJsColors.length],
-  }));
+  // const chartData = labels.map((label, index) => ({
+  //   name: label,
+  //   y: values[index],
+  //   color: chartJsColors[index % chartJsColors.length],
+  // }));
 
   const doughnutOptions: Highcharts.Options = {
     chart: {
@@ -118,7 +124,7 @@ const Charts = () => {
       {
         type: "pie",
         name: "Roles",
-        data: chartData,
+        data: roleData,
       },
     ],
     credits: {
@@ -132,7 +138,37 @@ const Charts = () => {
         {isLoading ? (
           <Skeleton height={400} />
         ) : (
-          <HighchartsReact highcharts={Highcharts} options={doughnutOptions} />
+          <>
+            <div className="justify-content-end">
+              <Dropdown onSelect={(val) => val && setChartType(val as any)}>
+                <Dropdown.Toggle
+                  variant="outline-primary"
+                  className="min-h-[40px]"
+                >
+                  {chartType === "all"
+                    ? "All"
+                    : chartType === "hr"
+                    ? "Hr"
+                    : chartType === "vendor"
+                    ? "Vendor"
+                    : chartType === "client"
+                    ? "Client"
+                    : "admin"}
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  <Dropdown.Item eventKey="all">All</Dropdown.Item>
+                  <Dropdown.Item eventKey="admin">Admin</Dropdown.Item>
+                  <Dropdown.Item eventKey="hr">Hr</Dropdown.Item>
+                  <Dropdown.Item eventKey="vendor">Vendor</Dropdown.Item>
+                  <Dropdown.Item eventKey="client">Client</Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            </div>
+            <HighchartsReact
+              highcharts={Highcharts}
+              options={doughnutOptions}
+            />
+          </>
         )}
       </div>
     </Fragment>
