@@ -26,6 +26,8 @@ const VendorHeader = () => {
       "accessModules",
     ];
     keysToRemove.forEach((key) => localStorage.removeItem(key));
+    toast.error("🔒 Session expired - please log in again");
+
     // toast.error("Session Expired!");
     setIsLoggedIn(false);
     setUserRole(null);

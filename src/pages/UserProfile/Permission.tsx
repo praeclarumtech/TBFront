@@ -9,7 +9,7 @@ import React, { useState } from "react";
 import { Card } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router";
 import { toast } from "react-toastify";
-import { capitalizeWords } from "utils/commonFunctions";
+import { capitalizeWords, getCurrentUserRole } from "utils/commonFunctions";
 
 const modules: Module[] = [
   {
@@ -62,12 +62,12 @@ const modules: Module[] = [
 const { projectTitle, Modules } = appConstants;
 const Permission: React.FC = () => {
   document.title = Modules.Permission + " | " + projectTitle;
-
+  const currentRole = getCurrentUserRole();
   const location = useLocation();
   const { _id, roleName, accessModules } = location.state || {};
   const navigate = useNavigate();
   const [selected, setSelected] = useState<string[]>(accessModules || []);
-
+  const [loader, setLoader] = useState(false);
   const resetSelection = () => {
     setSelected([]);
   };
@@ -78,21 +78,24 @@ const Permission: React.FC = () => {
 
   const updateRoles = async () => {
     try {
-      const response = await updateRole(
-        { accessModules: selected }, // payload
-        _id // role id
-      );
+      setLoader(true);
+      const response = await updateRole(_id, { accessModules: selected });
       if (response?.success) {
         toast.success("Permission Given Successfully");
-        localStorage.setItem("accessModules", JSON.stringify(selected));
+        if (currentRole === roleName) {
+          localStorage.setItem("accessModules", JSON.stringify(selected));
+        }
         resetSelection();
         navigate(-1);
         setTimeout(() => {
           window.location.reload();
         }, 50);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.log("error", error);
+      toast.error(error.response.data.error || error.response.statusText);
+    } finally {
+      setLoader(false);
     }
   };
 
@@ -122,7 +125,11 @@ const Permission: React.FC = () => {
             <BaseButton color="secondary" onClick={resetSelection}>
               Cancel
             </BaseButton>
-            <BaseButton color="primary" onClick={saveInformation}>
+            <BaseButton
+              color="primary"
+              onClick={saveInformation}
+              loader={loader}
+            >
               Assign
             </BaseButton>
           </div>

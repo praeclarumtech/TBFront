@@ -10,10 +10,10 @@ interface AutoLogoutProps {
   onLogout?: () => void; // callback before logout
 }
 
-const AutoLogout = ({ 
-  warningThreshold = 5 * 60 * 1000, // 5 minutes default
+const AutoLogout = ({
+  warningThreshold = 5 * 60 * 60 * 1000, // 5 minutes default
   onWarning,
-  onLogout 
+  onLogout,
 }: AutoLogoutProps) => {
   const navigate = useNavigate();
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -35,20 +35,20 @@ const AutoLogout = ({
     try {
       // Call optional callback before logout
       onLogout?.();
-      
+
       logout();
-      
+
       // Clear session data
       localStorage.clear();
       sessionStorage.clear();
-      
+
       // Clear timers
       clearTimers();
-      
+
       // Redirect to login
       navigate(routes.ROOT.path, { replace: true });
     } catch (error) {
-      console.error('Error during auto-logout:', error);
+      console.error("Error during auto-logout:", error);
       // Still proceed with navigation even if logout fails
       navigate(routes.ROOT.path, { replace: true });
     }
@@ -63,7 +63,7 @@ const AutoLogout = ({
 
   const checkSession = useCallback(() => {
     const expiresAt = localStorage.getItem(EXPIRES_AT);
-    
+
     // Clear existing timers
     clearTimers();
     warningShownRef.current = false;
@@ -75,17 +75,17 @@ const AutoLogout = ({
     }
 
     const expirationTime = parseInt(expiresAt, 10);
-    
+
     // Validate the timestamp
     if (isNaN(expirationTime)) {
-      console.warn('Invalid expiration timestamp found');
+      console.warn("Invalid expiration timestamp found");
       handleLogout();
       return;
     }
 
     const currentTime = Date.now();
     const timeout = expirationTime - currentTime;
-    
+
     // If already expired, logout immediately
     if (timeout <= 0) {
       handleLogout();
@@ -132,16 +132,16 @@ const AutoLogout = ({
     };
 
     // Add event listeners
-    window.addEventListener('focus', handleFocus);
-    window.addEventListener('storage', handleStorageChange);
-    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener("focus", handleFocus);
+    window.addEventListener("storage", handleStorageChange);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     // Cleanup function
     return () => {
       clearTimers();
-      window.removeEventListener('focus', handleFocus);
-      window.removeEventListener('storage', handleStorageChange);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener("focus", handleFocus);
+      window.removeEventListener("storage", handleStorageChange);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, [checkSession, handleLogout, clearTimers]);
 

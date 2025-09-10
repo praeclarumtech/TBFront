@@ -9,6 +9,7 @@ import {
   ADD_ROLE,
   LIST_ROLE_BY_ID,
   UPDATE_ROLE,
+  DELETE_ROLE,
 } from "./apiRoutes";
 
 import { authServices } from "./apiServices";
@@ -88,7 +89,6 @@ export const addRole = async (
   name: string,
   status: string // Depending on whether it accepts single or multiple skills
 ) => {
-
   const response = await authServices.post(`${ADD_ROLE}`, {
     name,
     status,
@@ -101,10 +101,12 @@ export const viewRoleById = async (data: { _id: any } = { _id: "" }) => {
   return response?.data;
 };
 
-export const updateRole = async (
-  data: object,
-  id: string | undefined | null
-) => {
+export const updateRole = async (id?: string, data?: object ) => {
   const response = await authServices.put(`${UPDATE_ROLE}/${id}`, data);
+  return response?.data;
+};
+
+export const deleteRole = async (data: { _id: any } = { _id: "" }) => {
+  const response = await authServices.delete(`${DELETE_ROLE}/${data?._id}`);
   return response?.data;
 };

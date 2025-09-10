@@ -74,7 +74,6 @@ export const logout = () => {
   removeItem("role");
   removeItem("id");
   removeItem("accessModules");
-  toast.error("🔒 Session expired - please log in again");
 };
 
 export const InputPlaceHolder = (fieldName: string) => {
@@ -162,6 +161,20 @@ export const getCurrentUser = () => {
     const decoded: any = jwtDecode(token);
     return decoded && typeof decoded === "object" ? decoded : null;
   } catch {
+    return null;
+  }
+};
+
+// utils/auth.ts
+
+export const getCurrentUserRole = (): string | null => {
+  try {
+    const user = localStorage.getItem("role");
+    if (!user) return null;
+
+    return user;
+  } catch (error) {
+    console.error("Error parsing currentUser from localStorage:", error);
     return null;
   }
 };
