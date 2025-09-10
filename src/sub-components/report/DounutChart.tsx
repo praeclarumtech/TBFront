@@ -1,65 +1,24 @@
-import { useEffect, useState } from "react";
-import {
-  Chart as ChartJS,
-  ArcElement,
-  Tooltip,
-  Legend,
-  ChartOptions,
-} from "chart.js";
-import { Doughnut } from "react-chartjs-2";
-import { getCityState } from "api/reportApi";
+import { Fragment, useEffect, useState } from "react";
+import Highcharts from "highcharts";
+import HighchartsReact from "highcharts-react-official";
 import Skeleton from "react-loading-skeleton";
+import { useNavigate } from "react-router-dom";
+import { getRoleWiseReport } from "api/reportApi";
 
-ChartJS.register(ArcElement, Tooltip, Legend);
-
-type DounutChartProps = {
-  selectedFilter: string;
-};
-
-// Custom plugin to render text in the center
-const centerTextPlugin = {
-  id: "centerText",
-  // beforeDraw: (chart: any) => {
-    // const { width, height, ctx } = chart;
-    // ctx.save();
-
-    // const text = "City and State wise\nApplicants"; // Add a line break for better formatting
-    // const fontSize = Math.min(width / 18, height / 9, 18);
-
-    // ctx.font = `600 ${fontSize}px Arial`;
-    // ctx.textBaseline = "middle";
-    // ctx.textAlign = "center";
-    // ctx.fillStyle = "#000"; // Slightly darker for better visibility
-
-    // const textX = width / 2;
-    // const textY = height / 2 - fontSize * 0.6;
-
-    // const lines = text.split("\n");
-    // lines.forEach((line, index) => {
-    //   ctx.fillText(
-    //     line,
-    //     textX,
-    //     textY + (index - (lines.length - 1) / 2) * fontSize * 1.2
-    //   );
-    // });
-
-    // ctx.restore();
-  // },
-};
-
-const DounutChart = ({ selectedFilter }: DounutChartProps) => {
-  const [cityStateData, setCityStateData] = useState([]);
+const Charts = () => {
+  const [roleData, setRoleData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    fetchCityState();
-  }, [selectedFilter]);
+    fetchRoleData();
+  }, []);
 
-  const fetchCityState = async () => {
+  const fetchRoleData = async () => {
     setIsLoading(true);
     try {
-      const data = await getCityState(selectedFilter);
-      setCityStateData(data?.data);
+      const data = await getRoleWiseReport();
+      setRoleData(data.data);
     } catch (error) {
       console.error("API Error:", error);
     } finally {
@@ -68,63 +27,116 @@ const DounutChart = ({ selectedFilter }: DounutChartProps) => {
   };
 
   const formatLabel = (text: string) => {
-    return text
-      .replace(/Applicants$/, "")
-      .replace(/([A-Z])/g, " $1")
-      .replace(/^./, (str: string) => str.toUpperCase())
-      .trim();
+    return text.charAt(0).toUpperCase() + text.slice(1);
   };
 
-  const labels = Object.keys(cityStateData).map((key) => formatLabel(key));
-  const dataValues = Object.values(cityStateData);
+  const labels = Object.keys(roleData).map((key) => formatLabel(key));
+  const values = Object.values(roleData) as number[];
 
-  const data = {
-    labels: labels,
-    datasets: [
-      {
-        label: "Applicants",
-        data: dataValues,
-        backgroundColor: labels.map((_, index) => {
-          const hue = (index * 360) / labels.length;
-          return `hsl(${hue}, 65%, 55%)`; // Generates distinct colors
-        }),
+  const chartJsColors = [
+    "#FF6384",
+    "#9966FF",
+    "#36A2EB",
+    "#FFCE56",
+    "#4BC0C0",
+    "#FF9F40",
+    "#00A950",
+  ];
+
+  const chartData = labels.map((label, index) => ({
+    name: label,
+    y: values[index],
+    color: chartJsColors[index % chartJsColors.length],
+  }));
+
+  const doughnutOptions: Highcharts.Options = {
+    chart: {
+      type: "pie",
+      height: 400,
+    },
+    title: {
+      text: "",
+    },
+    tooltip: {
+      pointFormat:
+        "<b>{point.name}</b><br/>Count: <b>{point.y}</b><br/>Percentage: <b>{point.percentage:.1f}%</b>",
+      style: {
+        fontSize: "12px",
+        fontFamily: "Arial, sans-serif",
       },
-    ],
-  };
-
-  const options: ChartOptions<"doughnut"> = {
-    cutout: "65%",
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        position: "bottom",
-        labels: {
-          color: "#333",
-          boxWidth: 10,
+      backgroundColor: "white",
+      borderColor: "#ccc",
+      borderRadius: 8,
+    },
+    plotOptions: {
+      pie: {
+        allowPointSelect: true,
+        cursor: "pointer",
+        innerSize: "30%",
+        dataLabels: {
+          enabled: true,
+          format: "<b>{point.name}</b><br/>{point.y}",
+          style: {
+            fontSize: "12px",
+            fontWeight: "bold",
+            color: "#000",
+          },
+          distance: 20,
+        },
+        showInLegend: true,
+        point: {
+          events: {
+            click: function (event) {
+              const clickedLabel = event.point.name;
+              if (clickedLabel) {
+                navigate(
+                  `/userManagement?role=${encodeURIComponent(
+                    clickedLabel.toLowerCase()
+                  )}`
+                );
+              }
+            },
+          },
         },
       },
+    },
+    legend: {
+      enabled: true,
+      align: "right",
+      verticalAlign: "middle",
+      layout: "vertical",
+      itemStyle: {
+        fontSize: "12px",
+        color: "#000",
+        fontWeight: "normal",
+      },
+      symbolRadius: 7,
+      symbolHeight: 14,
+      symbolWidth: 14,
+    },
+    series: [
+      {
+        type: "pie",
+        name: "Roles",
+        data: chartData,
+      },
+    ],
+    credits: {
+      enabled: false,
     },
   };
 
   return (
-    <div className="flex items-center justify-center w-full h-[500px]">
-      {isLoading ? (
-        <div>
-          <Skeleton height={350} width={350} borderRadius="50%" className="mb-3"/>
-          <Skeleton height={20} width={350} />
-        </div>
-      ) : (
-        <div className="w-full h-[450px] flex items-center justify-center">
-          <Doughnut
-            data={data}
-            options={options}
-            plugins={[centerTextPlugin]}
-          />
-        </div>
-      )}
-    </div>
+    <Fragment>
+      <div className="relative !w-full">
+        {isLoading ? (
+          <Skeleton height={400} />
+        ) : (
+          <HighchartsReact highcharts={Highcharts} options={doughnutOptions} />
+        )}
+      </div>
+    </Fragment>
   );
 };
 
-export default DounutChart;
+export default Charts;

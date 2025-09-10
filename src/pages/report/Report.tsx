@@ -7,7 +7,7 @@ import {
   Laptop,
   PersonCircle,
 } from "react-bootstrap-icons";
-// import DounutChart from "sub-components/report/DounutChart";
+import DounutChart from "sub-components/report/DounutChart";
 import ProgressBars from "sub-components/report/ProgressBar";
 import ProgressChart from "sub-components/report/ProgressChart";
 import { getApplicationOnProcess } from "api/reportApi";
@@ -16,6 +16,7 @@ import AreaChart from "sub-components/report/AreaChart";
 import appConstants from "constants/constant";
 import ColumnChart from "sub-components/report/ColumnChart";
 import { useNavigate } from "react-router-dom";
+import PieChart2 from "sub-components/report/PieChart2";
 
 const { projectTitle, Modules } = appConstants;
 
@@ -216,20 +217,28 @@ const Report = () => {
                     </div>
                   </Row>
                   {role !== "vendor" && role !== "client" && (
-                    <Row className="mt-4">
-                      <Col xs={12} sm={12} md={12} lg={6} xl={6}>
-                        <h4 className="fw-bold">Applicants Added-by</h4>
-                        <div className="mt-3 chart-container">
-                          <AreaChart />
-                        </div>
-                      </Col>
-                      {/* <Col xs={12} sm={12} md={12} lg={6} xl={6}>
-                        <h4 className="fw-bold">Chart Report</h4>
-                        <div className="mt-3 chart-container">
-                          <PieChart2 />
-                        </div>
-                      </Col> */}
-                    </Row>
+                    <>
+                      <Row className="mt-4">
+                        <Col xs={12} sm={12} md={12} lg={6} xl={6}>
+                          <h4 className="fw-bold">Applicants Added-by</h4>
+                          <div className="mt-3 chart-container">
+                            <AreaChart />
+                          </div>
+                        </Col>
+                        <Col xs={12} sm={12} md={12} lg={6} xl={6}>
+                          <h4 className="fw-bold">Applicants by Gender</h4>
+                          <div className="mt-3 chart-container">
+                            <PieChart2 />
+                          </div>
+                        </Col>
+                      </Row>
+                      <Row className="mt-4">
+                        <Col xs={12} sm={12} md={12} lg={6} xl={6}>
+                          <h4 className="fw-bold">Applicants by Role</h4>
+                          <DounutChart />
+                        </Col>
+                      </Row>
+                    </>
                   )}
                 </Card.Body>
               </Card>

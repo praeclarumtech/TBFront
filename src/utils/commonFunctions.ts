@@ -51,7 +51,7 @@ export const setAuthData = (data: any) => {
 
     const decoded: any = jwtDecode(token);
 
-    const expireTime = Date.now() + 24 * 60 * 60 * 1000;
+    const expireTime = Date.now() + 5 * 60 * 60 * 1000;
 
     // Store token data
     setItem(ACCESS_TOKEN, token);
@@ -59,10 +59,6 @@ export const setAuthData = (data: any) => {
     setItem("role", decoded.role);
     setItem("id", decoded.id);
     setItem("accessModules", user?.roleId?.accessModules);
-
-    // Store user data if available
-
-    console.log("setAuthData completed successfully");
   } catch (error: any) {
     console.error("setAuthData failed:", error);
     console.error("Error stack:", error.stack);
@@ -78,6 +74,7 @@ export const logout = () => {
   removeItem("role");
   removeItem("id");
   removeItem("accessModules");
+  toast.error("🔒 Session expired - please log in again");
 };
 
 export const InputPlaceHolder = (fieldName: string) => {
@@ -110,6 +107,7 @@ const getItem = (key: string) => {
   try {
     return JSON.parse(val);
   } catch (e: any) {
+    console.error("getItem failed:", e);
     return val;
   }
 };

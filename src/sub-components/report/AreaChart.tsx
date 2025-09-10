@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { Dropdown } from "react-bootstrap";
@@ -10,7 +10,8 @@ import { useNavigate } from "react-router-dom";
 const AreaChart = () => {
   const [application, setApplication] = useState<Record<string, number>>({});
   const [isLoading, setIsLoading] = useState(true);
-
+  const chartRef = useRef<HighchartsReact.RefObject>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [filterType, setFilterType] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -44,6 +45,30 @@ const AreaChart = () => {
     setStartDate("");
     setEndDate("");
   };
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const observer = new ResizeObserver(() => {
+      if (chartRef.current?.chart) {
+        // force chart to resize to container
+        if (containerRef.current && chartRef.current?.chart) {
+          const containerWidth = containerRef.current.offsetWidth || null;
+          const containerHeight = containerRef.current.offsetHeight || null;
+          chartRef.current.chart.setSize(
+            containerWidth,
+            containerHeight,
+            false
+          );
+        }
+      }
+    });
+
+    observer.observe(containerRef.current);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
 
   useEffect(() => {
     fetchAddedByReport();
@@ -68,7 +93,7 @@ const AreaChart = () => {
       type: "pie",
       height: 350,
       backgroundColor: "transparent",
-      animation: true, // ✅ enable smooth animation
+      animation: true, 
     },
     title: { text: "" },
     tooltip: {
@@ -174,7 +199,22 @@ const AreaChart = () => {
         {isLoading ? (
           <Skeleton height={350} borderRadius={"50%"} width={350} />
         ) : (
-          <HighchartsReact highcharts={Highcharts} options={options} />
+          <div
+            ref={containerRef}
+            style={{
+              width: "100%",
+              maxWidth: "100%",
+              height: "350px",
+              overflow: "hidden",
+            }}
+            className="d-flex justify-content-center align-items-center"
+          >
+            <HighchartsReact
+              highcharts={Highcharts}
+              options={options}
+              ref={chartRef}
+            />
+          </div>
         )}
       </div>
     </>
