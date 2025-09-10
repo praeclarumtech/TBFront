@@ -6,18 +6,31 @@ interface Config {
   api: ApiConfig;
 }
 
+// Helper function to build API URL from environment variables
+const buildApiUrl = (): string => {
+  const baseUrl = import.meta.env.TB_API_ENDPOINT;
+  // const suffix = import.meta.env.TB_API_SUFFIX;
+
+  if (!baseUrl) {
+    throw new Error("TB_API_ENDPOINT environment variable is not set");
+  }
+
+  const cleanBase = baseUrl.replace(/\/$/, "");
+
+  return `${cleanBase}/api`;
+};
+
+const apiUrl = buildApiUrl();
+
 const config: Config = {
   api: {
-    API_URL: "https://tbapi-jtu7.onrender.com/api/",
-    // API_URL: "http://192.168.1.16:3000/api/",
-    // API_URL: "http://192.168.1.7:3000/api/",
+    API_URL: apiUrl,
   },
 };
+
 export const configImage: Config = {
   api: {
-    API_URL: "https://tbapi-jtu7.onrender.com/api/",
-    // API_URL: "http://192.168.1.16:3000/api/",
-    // API_URL: "http://192.168.1.7:3000/api/",
+    API_URL: apiUrl,
   },
 };
 
