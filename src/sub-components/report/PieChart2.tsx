@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
@@ -96,8 +95,13 @@ const PieChart2 = () => {
   if (chartType === "notice")
     selectedData = application.noticePeriodCounts || {};
 
+  // Add this helper function
+  const capitalizeFirstLetter = (str: string) =>
+    str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+
+  // Update formatLabel function
   const formatLabel = (key: string) =>
-    chartType === "notice" ? `${key} days` : key;
+    chartType === "notice" ? `${key} days` : capitalizeFirstLetter(key);
 
   const chartData = Object.entries(selectedData).map(([key, value]) => ({
     name: formatLabel(key),
