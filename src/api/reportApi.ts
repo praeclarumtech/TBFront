@@ -67,9 +67,7 @@ export const getApplicationsByGenderWorkNotice = async (params: {
   return response?.data;
 };
 
-export const getRoleWiseReport = async (params: {
-  role?: string | undefined;
-}) => {
-  const response = await authServices.get(`${ROLE_APPLICANTS}`, { params });
+export const getRoleWiseReport = async (designations: string[] = []) => {
+  const response = await authServices.get(`${ROLE_APPLICANTS}${designations}`);
   return response?.data;
 };
