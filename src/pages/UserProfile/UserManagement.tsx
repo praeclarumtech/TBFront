@@ -27,6 +27,8 @@ import { Close } from "@mui/icons-material";
 import { BaseSelect } from "components/BaseComponents/BaseSelect";
 import React from "react";
 import { SelectedOption } from "interfaces/applicant.interface";
+import { getRole } from "api/roleApi";
+import { capitalizeWords } from "utils/commonFunctions";
 
 const { handleResponse, roleType } = appConstants;
 type Anchor = "top" | "right" | "bottom";
@@ -53,6 +55,7 @@ const UserManagement = () => {
   const isMobile = window.innerWidth <= 767;
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const [roleFilter, setRoleFilter] = useState<SelectedOption | null>(null);
+  const [roles, setRoles] = useState<{ [key: string]: string }>({});
 
   const toggleDrawer =
     (anchor: Anchor, open: boolean) =>
@@ -68,7 +71,6 @@ const UserManagement = () => {
       setState({ ...state, [anchor]: open });
     };
 
-  // const [tableLoader, setTableLoader] = useState(false);
   const handleUpdateUserStatus = async (id: string, value: AnyObject) => {
     setIsLoading(true);
     await updateUserStatus(id, value)
@@ -94,6 +96,29 @@ const UserManagement = () => {
       });
   };
 
+  const fetchRoles = async () => {
+    setTableLoader(true);
+    try {
+      const res = await getRole();
+
+      const rolesArray = res?.data || [];
+
+      const roleMapping: { [key: string]: string } = {};
+      rolesArray.forEach((role: any) => {
+        roleMapping[role._id] = role.name;
+      });
+
+      setRoles(roleMapping);
+    } catch (error) {
+      console.error("Error fetching roles", error);
+    } finally {
+      setTableLoader(false);
+    }
+  };
+  useEffect(() => {
+    fetchRoles();
+  }, []);
+
   const fetchUsers = async () => {
     setTableLoader(true);
 
@@ -117,7 +142,15 @@ const UserManagement = () => {
         params.search = searchValue;
       }
       const response = await getAllUsers(params);
-      setUsers(response?.data?.item || response?.data?.results || []);
+      const usersData = response?.data?.item || response?.data?.results || [];
+
+      const usersWithRole = usersData.map((user: any) => ({
+        ...user,
+        roleName: roles[user.roleId] || "N/A", // fallback if not found
+      }));
+
+      setUsers(usersWithRole);
+
       setTotalRecords(response?.data?.totalRecords || 0);
     } catch (error) {
       console.error("Error fetching total applicants:", error);
@@ -127,8 +160,10 @@ const UserManagement = () => {
   };
 
   useEffect(() => {
-    fetchUsers();
-  }, [pagination.pageIndex, pagination.pageSize, searchAll, roleFilter]);
+    if (Object.keys(roles).length > 0) {
+      fetchUsers(); // load users once roles are available
+    }
+  }, [roles, pagination.pageIndex, pagination.pageSize, roleFilter, searchAll]);
 
   const closeActiveModal = () => {
     setShowActiveModal(false);
@@ -166,8 +201,11 @@ const UserManagement = () => {
       },
       {
         header: "Role",
-        accessorKey: "role",
-
+        accessorKey: "roleName",
+        cell: (cell: any) => {
+          const roleName = cell.getValue();
+          return capitalizeWords(roleName);
+        },
         enableColumnFilter: false,
       },
       {
@@ -385,7 +423,7 @@ const UserManagement = () => {
           show={showViewModal}
           onHide={handleCloseModal}
           _id={selectedId}
-          module ={"user"}
+          module={"user"}
         />
       )}
       <ActiveModal

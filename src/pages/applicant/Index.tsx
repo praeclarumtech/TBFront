@@ -302,10 +302,7 @@ const Applicant = () => {
       if (filterAnyHandOnOffers) {
         params.anyHandOnOffers = filterAnyHandOnOffers.value;
       }
-      // if (filterCity) {
-      //   // params.currentCity = filterCity.label;
-      //   params.currentCity = encodeURIComponent(filterCity.label);
-      // }
+
       if (filterCity.length > 0) {
         params.currentCity = filterCity.map((city) => city.label).join(",");
       }
@@ -1014,6 +1011,10 @@ const Applicant = () => {
       await new Promise((resolve) => setTimeout(resolve, 3500));
 
       const responseBlob = await ExportApplicant(queryParams, payload);
+      if (responseBlob.success === false) {
+        toast.error(responseBlob.message);
+        return;
+      }
 
       const text = await responseBlob.text();
       let parsed;
@@ -1028,14 +1029,16 @@ const Applicant = () => {
         setShowConfirmExportModal(false);
         setModelLoading(false);
         toast.success("File downloaded successfully!");
+
         return;
       }
 
       // If parsed JSON, check for errors
       if (
+        parsed?.success === false ||
         parsed?.statusCode === 404 ||
         parsed?.statuscode === 500 ||
-        parsed?.success === false
+        parsed?.statuscode === 403
       ) {
         toast.error(parsed?.message || "No data available to export");
       } else {
@@ -1045,13 +1048,14 @@ const Applicant = () => {
       setShowExportModal(false);
       setSelectedApplicants([]);
       setExportOption("");
-    } catch (error) {
+    } catch (error: any) {
       console.log("Export error", error);
       setShowExportModal(false);
       setModelLoading(false);
       setSelectedApplicants([]);
       setExportOption("");
-      errorHandle(error);
+      // errorHandle(error);
+      toast.error(error.response.data.message || error.response.statusText);
     } finally {
       setShowConfirmExportModal(false);
       setModelLoading(false);

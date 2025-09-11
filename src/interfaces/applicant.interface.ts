@@ -4,6 +4,8 @@ import * as Yup from "yup";
 export type SelectedOption = { label: string; value: string };
 export type SelectedOptionRole = { label: string; value: string };
 export type SelectedOption1 = { label: string; value: string; id: number };
+export type SelectedOptionRole1 = { label: string; value: string; id: number };
+
 export const EducationApplicantSchema = Yup.object({
   // qualification: Yup.string(),
 

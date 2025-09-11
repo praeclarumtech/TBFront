@@ -4,20 +4,25 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { useMounted } from "hooks/useMounted";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { register } from "api/usersApi";
 import { toast } from "react-toastify";
 import BaseInput from "components/BaseComponents/BaseInput";
 import BaseButton from "components/BaseComponents/BaseButton";
 import { BaseSelect } from "components/BaseComponents/BaseSelect";
-import { SelectedOption } from "interfaces/applicant.interface";
+import {
+  SelectedOptionRole,
+  SelectedOptionRole1,
+} from "interfaces/applicant.interface";
 import appConstants from "constants/constant";
 import {
+  capitalizeWords,
   dynamicFind,
   InputPlaceHolder,
   RequiredField,
 } from "utils/commonFunctions";
 import Logo from "components/BaseComponents/Logo";
+import { getRole } from "api/roleApi";
 // import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 
 const {
@@ -29,7 +34,6 @@ const {
   emailRegex,
   passwordRegex,
   validationMessages,
-  roleType,
 } = appConstants;
 
 const SignUp = () => {
@@ -39,6 +43,27 @@ const SignUp = () => {
   const [loader, setLoader] = useState(false);
   const [passwordShow, setPasswordShow] = useState<boolean>(false);
   const [confirmPassword, setConfirmPassword] = useState<boolean>(false);
+  const [rolesOptions, setrolesOptions] = useState<SelectedOptionRole1[]>([]);
+  const fetchRoles = async () => {
+    setLoader(true);
+    try {
+      const res = await getRole();
+      const options = res?.data.map((item: any) => ({
+        label: capitalizeWords(item.name),
+        value: item.name,
+        id: item._id,
+      }));
+      setrolesOptions(options);
+    } catch (error) {
+      console.error("Error fetching roles", error);
+    } finally {
+      setLoader(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchRoles();
+  }, []);
 
   const validation = useFormik({
     enableReinitialize: true,
@@ -179,9 +204,9 @@ const SignUp = () => {
                       label="Role"
                       name="role"
                       className="select-border"
-                      options={roleType}
+                      options={rolesOptions}
                       placeholder={InputPlaceHolder("Role")}
-                      handleChange={(selectedOption: SelectedOption) => {
+                      handleChange={(selectedOption: SelectedOptionRole) => {
                         validation.setFieldValue(
                           "role",
                           selectedOption?.value || ""
@@ -189,7 +214,7 @@ const SignUp = () => {
                       }}
                       handleBlur={validation.handleBlur}
                       value={
-                        dynamicFind(roleType, validation.values.role) || ""
+                        dynamicFind(rolesOptions, validation.values.role) || ""
                       }
                       touched={validation.touched.role}
                       error={validation.errors.role}
