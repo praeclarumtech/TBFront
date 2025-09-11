@@ -19,6 +19,7 @@ import {
 } from "utils/commonFunctions";
 import { useLocation } from "react-router-dom";
 import Logo from "components/BaseComponents/Logo";
+import { jwtDecode } from "jwt-decode";
 const { projectTitle, Modules, validationMessages, OK, SUCCESS } = appConstants;
 
 const SignIn = () => {
@@ -61,12 +62,15 @@ const SignIn = () => {
         .then((res) => {
           if (res?.statusCode === OK && res?.success === SUCCESS) {
             try {
-              setAuthData(res.data);
+              const decoded: any = jwtDecode(res.data.token);
+              // const role = res?.data?.user?.roleId?.name;
+              console.log(decoded);
+              const role = decoded.role;
+              console.log(role);
+              setAuthData(res?.data?.token);
 
               // Decode for role checking
-              // const decoded: any = jwtDecode(res.data.user);
-              const role = res?.data?.user?.roleId?.name;
-              console.log(role);
+
               if (role === "guest") {
                 navigate(from, { replace: true });
               } else {
