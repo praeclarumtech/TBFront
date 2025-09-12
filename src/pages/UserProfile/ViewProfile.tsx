@@ -16,7 +16,6 @@ const ViewProfile = ({ show, onHide, _id, module }: any) => {
   const [roles, setRoles] = useState<UserRole | null>(null);
 
   const [loading, setLoading] = useState<boolean>(false);
-  console.log("first", _id);
   module === "user"
     ? useEffect(() => {
         const fetchProfile = async () => {

@@ -507,7 +507,7 @@ const Client = () => {
   const handleAdd = () => {
     navigate("/userprofileAdd", {
       state: {
-        from: "Vendor",
+        from: "Client",
       },
     });
   };

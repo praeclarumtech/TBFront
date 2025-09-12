@@ -233,7 +233,7 @@ const Report = () => {
                         </Col>
                       </Row>
                       <Row className="mt-4">
-                        <Col xs={12} sm={12} md={12} lg={6} xl={6}>
+                        <Col xs={12} sm={12} md={12} lg={12} xl={12}>
                           <h4 className="fw-bold">Applicants by Role</h4>
                           <DounutChart />
                         </Col>

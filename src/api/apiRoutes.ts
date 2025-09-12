@@ -112,14 +112,17 @@ export const APPLICATION =
 export const ADDEDBY_REPORT = "/reports/applicants/applicantCountByAddedBy";
 export const VENDOR_JOB_APPLICANTS = "/vendor/job-applicant-report";
 export const SKILL_DASHBOARD = "/skill/dashboard/viewSkills";
-export const ROLE_APPLICANTS = "/reports/applicants/applicantCountByRole";
+export const ROLE_APPLICANTS = "reports/applicants/applicantCountByDesignation?designation=";
 export const APPLICANTS_GENDER_WORKPREF_NOTICE =
   "/reports/applicants/getApplicationsByGenderWorkNotice";
+
+
 
 export const LIST_ROLE = "/role/list";
 export const LIST_ROLE_BY_ID = "/role/view";
 export const ADD_ROLE = "/role/create";
 export const UPDATE_ROLE = "/role/update";
+export const DELETE_ROLE = "/role/delete"
 
 //Find And Replace
 
