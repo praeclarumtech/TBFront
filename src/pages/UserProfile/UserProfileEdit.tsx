@@ -11,7 +11,9 @@ import { toast } from "react-toastify";
 import appEnv from "config/appEnv";
 import BaseInput from "components/BaseComponents/BaseInput";
 import {
+  capitalizeWords,
   dynamicFind,
+  getCurrentUserRole,
   InputPlaceHolder,
   RequiredField,
 } from "utils/commonFunctions";
@@ -23,9 +25,13 @@ import * as Yup from "yup";
 import { useParams } from "react-router";
 import { useLocation } from "react-router-dom";
 import { useFormik } from "formik";
-import { SelectedOption } from "interfaces/applicant.interface";
+import {
+  SelectedOption,
+  SelectedOptionRole1,
+} from "interfaces/applicant.interface";
 import { BaseSelect } from "components/BaseComponents/BaseSelect";
 import { Skeleton } from "antd";
+import { getRole } from "api/roleApi";
 
 const {
   projectTitle,
@@ -37,7 +43,6 @@ const {
   validationMessages,
   companyType,
   hireResourceOptions,
-  roleType,
   activeStatusOptions,
 } = appConstants;
 const UserProfileEdit = () => {
@@ -77,10 +82,33 @@ const UserProfileEdit = () => {
     vendor_linkedin_profile: "",
   });
 
+  const [rolesOptions, setrolesOptions] = useState<SelectedOptionRole1[]>([]);
+  const fetchRoles = async () => {
+    setLoading(true);
+    try {
+      const res = await getRole();
+      const options = res?.data.map((item: any) => ({
+        label: capitalizeWords(item.name),
+        value: item.name,
+        id: item._id,
+      }));
+      setrolesOptions(options);
+    } catch (error) {
+      console.error("Error fetching roles", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchRoles();
+  }, []);
+
   const { _id } = useParams();
   const isEditMode = Boolean(_id);
 
   const location = useLocation();
+  const currentUserRole = getCurrentUserRole();
 
   const [imagePreview, setImagePreview] = useState<string>(
     "/images/avatar/avatar.png"
@@ -372,6 +400,8 @@ const UserProfileEdit = () => {
   useEffect(() => {
     if (location.state?.from === "Vendor") {
       validation.setFieldValue("role", "vendor");
+    } else {
+      validation.setFieldValue("role", "client");
     }
   }, [location.state]);
 
@@ -490,7 +520,7 @@ const UserProfileEdit = () => {
                                 });
                               }}
                               value={formData.role}
-                              disabled
+                              disabled={currentUserRole !== "admin"}
                               passwordToggle={false}
                             />
                           </Col>
@@ -1215,10 +1245,10 @@ const UserProfileEdit = () => {
                               label="Role"
                               name="role"
                               className="select-border"
-                              options={roleType}
+                              options={rolesOptions}
                               placeholder={InputPlaceHolder("Role")}
                               handleChange={(
-                                selectedOption: SelectedOption
+                                selectedOption: SelectedOptionRole1
                               ) => {
                                 validation.setFieldValue(
                                   "role",
@@ -1227,8 +1257,10 @@ const UserProfileEdit = () => {
                               }}
                               handleBlur={validation.handleBlur}
                               value={
-                                dynamicFind(roleType, validation.values.role) ||
-                                ""
+                                dynamicFind(
+                                  rolesOptions,
+                                  validation.values.role
+                                ) || ""
                               }
                               touched={validation.touched.role}
                               error={validation.errors.role}

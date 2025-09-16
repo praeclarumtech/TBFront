@@ -498,5 +498,9 @@ const appConstants = Object.freeze({
     { label: "Guest", value: "guest" },
     { label: "Client", value: "client" },
   ],
+  favoriteOptions : [
+    { label: "Favorite", value: true },
+    { label: "Not Favorite", value: false },
+  ],
 });
 export default appConstants;

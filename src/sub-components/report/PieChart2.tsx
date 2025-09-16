@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
@@ -12,8 +11,15 @@ import { BaseSelect } from "components/BaseComponents/BaseSelect";
 import appConstants from "constants/constant";
 import { SelectedOption } from "interfaces/applicant.interface";
 import { toast } from "react-toastify";
+import { capitalizeWords } from "utils/commonFunctions";
 
-const { gendersType, workPreferenceType, noticePeriodType } = appConstants;
+const {
+  gendersType,
+  workPreferenceType,
+  noticePeriodType,
+  activeStatusOptions,
+  favoriteOptions,
+} = appConstants;
 
 const PieChart2 = () => {
   const [application, setApplication] = useState<any>({});
@@ -24,9 +30,15 @@ const PieChart2 = () => {
     useState<SelectedOption | null>(null);
   const [filterNoticePeriod, setFilterNoticePeriod] =
     useState<SelectedOption | null>(null);
-  const [chartType, setChartType] = useState<"gender" | "work" | "notice">(
-    "gender"
+  const [filterRole, setFilterRole] = useState<SelectedOption | null>(null);
+  const [filterFavorite, setFilterFavorite] = useState<SelectedOption | null>(
+    null
   );
+  const [filterActiveStatus, setFilterActiveStatus] =
+    useState<SelectedOption | null>(null);
+  const [chartType, setChartType] = useState<
+    "gender" | "work" | "notice" | "role" | "status" | "favorite"
+  >("gender");
   const [noData, setNoData] = useState(false);
   const chartRef = useRef<HighchartsReact.RefObject>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -40,11 +52,20 @@ const PieChart2 = () => {
         gender?: string;
         workPreference?: string;
         noticePeriod?: string;
+        createdBy?: string;
+        isActive?: string;
+        isFavorite?: string;
       } = {};
       if (filterGender) params.gender = filterGender.value;
       if (filterWorkPreference)
         params.workPreference = filterWorkPreference.value;
       if (filterNoticePeriod) params.noticePeriod = filterNoticePeriod.value;
+      if (filterNoticePeriod) params.noticePeriod = filterNoticePeriod.value;
+      if (filterActiveStatus) params.isActive = filterActiveStatus.value;
+      if (filterRole) params.createdBy = filterRole.value;
+
+      if (filterFavorite) params.isFavorite = filterFavorite.value;
+
       const response = await getApplicationsByGenderWorkNotice(params);
       if (response?.success === true && response?.data) {
         setApplication(response?.data?.applicants || {});
@@ -86,24 +107,69 @@ const PieChart2 = () => {
 
   useEffect(() => {
     fetchAddedByReport();
-  }, [filterGender, filterWorkPreference, filterNoticePeriod, chartType]);
+  }, [
+    filterGender,
+    filterWorkPreference,
+    filterNoticePeriod,
+    filterFavorite,
+    filterRole,
+    filterActiveStatus,
+  ]);
 
   // pick correct dataset based on chartType
   let selectedData: Record<string, number> = {};
-  if (chartType === "gender") selectedData = application.genderCounts || {};
-  if (chartType === "work")
-    selectedData = application.workPreferenceCounts || {};
-  if (chartType === "notice")
-    selectedData = application.noticePeriodCounts || {};
+  if (chartType === "gender") selectedData = application.gender || {};
+  if (chartType === "work") selectedData = application.workPreference || {};
+  if (chartType === "notice") selectedData = application.noticePeriod || {};
+  if (chartType === "role") selectedData = application.role || {};
+  if (chartType === "status") selectedData = application.active || {};
+  if (chartType === "favorite") selectedData = application.favorite || {};
 
-  const formatLabel = (key: string) =>
-    chartType === "notice" ? `${key} days` : key;
+  const formatLabel = (key: string) => {
+    if (chartType === "notice") {
+      return `${key} days`;
+    }
+    if (chartType === "status") {
+      return key === "true" ? "Active" : "Inactive";
+    }
+    if (chartType === "favorite") {
+      return key === "true" ? "Favorited" : "Not Favorited";
+    }
+    return capitalizeWords(key);
+  };
 
   const chartData = Object.entries(selectedData).map(([key, value]) => ({
     name: formatLabel(key),
     y: value,
   }));
 
+  // const warmColors = [
+  //   "#FF6B35",
+  //   "#F7931E",
+  //   "#FFD23F",
+  //   "#FF8C42",
+  //   "#C73E1D",
+  //   "#A0522D",
+  //   "#FF4500",
+  //   "#FF7F50",
+  //   "#FFA500",
+  //   "#FFB347",
+  // ];
+
+  const sunsetColors = [
+    "#FF6B6B",
+    "#4ECDC4",
+    "#45B7D1",
+    "#96CEB4",
+    "#FFEAA7",
+    "#DDA0DD",
+    "#98D8C8",
+    "#F7DC6F",
+    "#BB8FCE",
+    "#85C1E9",
+  ];
+
+  // Add this to your Highcharts options:
   const options: Highcharts.Options = {
     chart: {
       type: "pie",
@@ -111,6 +177,7 @@ const PieChart2 = () => {
       backgroundColor: "transparent",
       animation: true,
     },
+    colors: sunsetColors, // Choose one of the color arrays above
     title: { text: "" },
     tooltip: { pointFormat: "<b>{point.y}</b>" },
     credits: { enabled: false },
@@ -118,16 +185,23 @@ const PieChart2 = () => {
       pie: {
         allowPointSelect: true,
         cursor: "pointer",
-        dataLabels: { enabled: true, format: "<b>{point.name}</b>: {point.y}" },
+        dataLabels: {
+          enabled: true,
+          format: "<b>{point.name}</b>: {point.y}",
+          style: {
+            color: "#333333", // Dark text for better readability
+            fontWeight: "bold",
+          },
+        },
         showInLegend: true,
         animation: { duration: 1500 },
         events: {
           click: (event) => {
             const clickedLabel = event.point.name;
             navigate(
-              `/applicants?chartType=${chartType}&selected=${encodeURIComponent(
-                clickedLabel
-              )}`
+              `/applicants?piechartType=${
+                chartType === "status" ? "ActiveStatus" : chartType
+              }&selected=${encodeURIComponent(clickedLabel)}`
             );
           },
         },
@@ -135,6 +209,37 @@ const PieChart2 = () => {
     },
     series: [{ type: "pie", name: "Applications", data: chartData }],
   };
+  // const options: Highcharts.Options = {
+  //   chart: {
+  //     type: "pie",
+  //     height: 350,
+  //     backgroundColor: "transparent",
+  //     animation: true,
+  //   },
+  //   title: { text: "" },
+  //   tooltip: { pointFormat: "<b>{point.y}</b>" },
+  //   credits: { enabled: false },
+  //   plotOptions: {
+  //     pie: {
+  //       allowPointSelect: true,
+  //       cursor: "pointer",
+  //       dataLabels: { enabled: true, format: "<b>{point.name}</b>: {point.y}" },
+  //       showInLegend: true,
+  //       animation: { duration: 1500 },
+  //       events: {
+  //         click: (event) => {
+  //           const clickedLabel = event.point.name;
+  //           navigate(
+  //             `/applicants?chartType=${chartType}&selected=${encodeURIComponent(
+  //               clickedLabel
+  //             )}`
+  //           );
+  //         },
+  //       },
+  //     },
+  //   },
+  //   series: [{ type: "pie", name: "Applications", data: chartData }],
+  // };
 
   const handleGenderChange = (selectedOption: SelectedOption) =>
     setFilterGender(selectedOption);
@@ -143,18 +248,31 @@ const PieChart2 = () => {
 
   const handleNoticePeriodChange = (selectedOption: SelectedOption) =>
     setFilterNoticePeriod(selectedOption);
+  // const handleRoleChange = (selectedOption: SelectedOption) =>
+  //   setFilterRole(selectedOption);
+  // const handleStatusChange = (selectedOption: SelectedOption) =>
+  //   setFilterActiveStatus(selectedOption);
+
+  // const handleFavoritesChange = (selectedOption: SelectedOption) =>
+  //   setFilterFavorite(selectedOption);
 
   const handleCancelClose = () => {
     setShowExportModal(false);
     setFilterGender(null);
     setFilterNoticePeriod(null);
     setFilterWorkPreference(null);
+    setFilterRole(null);
+    setFilterActiveStatus(null);
+    setFilterFavorite(null);
   };
 
   const resetFilter = () => {
     setFilterGender(null);
     setFilterNoticePeriod(null);
     setFilterWorkPreference(null);
+    setFilterRole(null);
+    setFilterActiveStatus(null);
+    setFilterFavorite(null);
     setChartType("gender");
   };
 
@@ -166,6 +284,12 @@ const PieChart2 = () => {
       setChartType("work");
     } else if (filterNoticePeriod) {
       setChartType("notice");
+    } else if (filterRole) {
+      setChartType("role");
+    } else if (filterActiveStatus) {
+      setChartType("status");
+    } else if (filterFavorite) {
+      setChartType("favorite");
     } else {
       setChartType("gender");
     }
@@ -219,6 +343,28 @@ const PieChart2 = () => {
               options={noticePeriodType}
               handleChange={handleNoticePeriodChange}
             />
+            <BaseSelect
+              label="Status"
+              name="Status"
+              className="mb-1 select-border"
+              options={activeStatusOptions}
+              placeholder="Status"
+              handleChange={(selectedOption: SelectedOption) =>
+                setFilterActiveStatus(selectedOption)
+              }
+              value={filterActiveStatus}
+            />{" "}
+            <BaseSelect
+              label="Favorite"
+              name="favorite"
+              className="mb-1 select-border"
+              options={favoriteOptions}
+              placeholder="Favorite"
+              handleChange={(selectedOption: SelectedOption) =>
+                setFilterFavorite(selectedOption)
+              }
+              value={filterFavorite}
+            />
             <BaseButton color="primary" onClick={resetFilter}>
               Reset
             </BaseButton>
@@ -227,16 +373,30 @@ const PieChart2 = () => {
         <div>
           <Dropdown onSelect={(val) => val && setChartType(val as any)}>
             <Dropdown.Toggle variant="outline-primary" className="min-h-[40px]">
-              {chartType === "gender"
-                ? "Gender"
-                : chartType === "work"
-                ? "Work Preference"
-                : "Notice Period"}
+              {capitalizeWords(chartType)}
             </Dropdown.Toggle>
             <Dropdown.Menu>
-              <Dropdown.Item eventKey="gender">Gender</Dropdown.Item>
-              <Dropdown.Item eventKey="work">Work Preference</Dropdown.Item>
-              <Dropdown.Item eventKey="notice">Notice Period</Dropdown.Item>
+              <Dropdown.Item eventKey="gender" active={chartType === "gender"}>
+                Gender
+              </Dropdown.Item>
+              <Dropdown.Item eventKey="work" active={chartType === "work"}>
+                Work Preference
+              </Dropdown.Item>
+              <Dropdown.Item eventKey="notice" active={chartType === "notice"}>
+                Notice Period
+              </Dropdown.Item>
+              <Dropdown.Item eventKey="role" active={chartType === "role"}>
+                Role
+              </Dropdown.Item>
+              <Dropdown.Item eventKey="status" active={chartType === "status"}>
+                Applicants Status
+              </Dropdown.Item>
+              <Dropdown.Item
+                eventKey="favorite"
+                active={chartType === "favorite"}
+              >
+                Favorites
+              </Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>
         </div>

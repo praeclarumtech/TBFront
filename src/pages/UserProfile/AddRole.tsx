@@ -1,13 +1,16 @@
 import { Col, Modal, Row } from "antd";
-import { addRole } from "api/roleApi";
+import { addRole, getRole, updateRole } from "api/roleApi";
 import BaseButton from "components/BaseComponents/BaseButton";
 import BaseInput from "components/BaseComponents/BaseInput";
 import { BaseSelect } from "components/BaseComponents/BaseSelect";
 import appConstants from "constants/constant";
-import { SelectedOption } from "interfaces/applicant.interface";
+import {
+  SelectedOption,
+  SelectedOptionRole1,
+} from "interfaces/applicant.interface";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { InputPlaceHolder } from "utils/commonFunctions";
+import { capitalizeWords, InputPlaceHolder } from "utils/commonFunctions";
 
 const { activeStatusOptions } = appConstants;
 function AddRole({ show, onHide, _id }: any) {
@@ -21,6 +24,51 @@ function AddRole({ show, onHide, _id }: any) {
       value: "true",
       label: "Active", // or whatever label you want to display
     });
+  const [rolesOptions, setrolesOptions] = useState<SelectedOptionRole1[]>([]);
+
+  console.log("first", _id);
+
+  const fetchRoles = async () => {
+    setLoader(true);
+    try {
+      const res = await getRole();
+      const options = res?.data.map((item: any) => ({
+        label: capitalizeWords(item.name),
+        value: item.name,
+        id: item._id,
+      }));
+      setrolesOptions(options);
+    } catch (error) {
+      console.error("Error fetching roles", error);
+    } finally {
+      setLoader(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchRoles();
+  }, []);
+
+  // Suppose you have the roleName or value you want to find:
+  useEffect(() => {
+    if (_id) {
+      // Editing existing role: fetch its details
+      const existingRole = rolesOptions.find((item) => item.id === _id);
+      if (existingRole) {
+        setRoleName(existingRole.value);
+        setFilterActiveStatus({
+          value: "true",
+          label: "Active",
+        });
+      }
+    } else {
+      setRoleName("");
+      setFilterActiveStatus({
+        value: "true",
+        label: "Active",
+      });
+    }
+  }, [_id, rolesOptions]);
 
   const validateRoleName = (value: string): string => {
     if (!value.trim()) {
@@ -29,12 +77,11 @@ function AddRole({ show, onHide, _id }: any) {
     if (value.trim().length < 2) {
       return "Role name must be at least 2 characters";
     }
-    if (value.trim().length > 50) {
-      return "Role name must be less than 50 characters";
+    if (value.trim().length > 35) {
+      return "Role name must be less than 35 characters";
     }
     return "";
   };
-  console.log("loader use", loader);
   const handleCancel = () => {
     setRoleName("");
     setRoleNameTouched(false);
@@ -55,6 +102,7 @@ function AddRole({ show, onHide, _id }: any) {
   const handleSubmit = async () => {
     // Validate role name before submission
     const nameError = validateRoleName(roleName);
+
     setRoleNameError(nameError);
     setRoleNameTouched(true);
 
@@ -72,18 +120,25 @@ function AddRole({ show, onHide, _id }: any) {
     setLoader(true);
 
     try {
-      const res = await addRole(
-        roleName,
-        filterActiveStatus.label.toLocaleLowerCase()
-      );
-      if (res) {
+      const res = _id
+        ? await updateRole(_id, {
+            name: roleName,
+            status: filterActiveStatus.value.toLocaleLowerCase(),
+          })
+        : await addRole(roleName, filterActiveStatus.value.toLocaleLowerCase());
+      if (res.success === true) {
         toast.success(
           _id ? "Role updated successfully" : "Role added successfully"
         );
         handleCancel(); // Close modal and reset form
+        window.location.reload();
+      } else {
+        toast.error(res.message);
       }
-    } catch (error) {
-      toast.error("Something went wrong. Please try again.");
+    } catch (error: any) {
+      console.log("error", error);
+      toast.error(error.response.data.error || error.response.statusText);
+      handleCancel();
     } finally {
       setLoader(false);
     }
@@ -108,18 +163,18 @@ function AddRole({ show, onHide, _id }: any) {
   return (
     <Modal
       open={show}
-      onCancel={onHide}
+      onCancel={handleCancel}
       footer={null}
       width={600}
       centered
       title={<span className="text-lg font-bold">{modalTitle}</span>}
     >
-      <Row>
-        <Col xs={9} md={5} lg={9}>
+      <Row gutter={[16, 16]} className="mt-2">
+        <Col xs={24} md={12}>
           <BaseInput
             label="Role Name"
             name="addRoles"
-            className="bg-gray-100"
+            className=" w-full bg-gray-100"
             type="text"
             placeholder={InputPlaceHolder("Role to be Added")}
             handleChange={handleRoleNameChange}
@@ -130,11 +185,11 @@ function AddRole({ show, onHide, _id }: any) {
             passwordToggle={false}
           />
         </Col>
-        <Col xs={9} md={5} lg={9}>
+        <Col xs={24} md={12}>
           <BaseSelect
             label="Status"
             name="Status"
-            className="mb-1 select-border"
+            className="mb-1 select-border w-full bg-gray-100"
             options={activeStatusOptions}
             placeholder="Status"
             handleChange={(selectedOption: SelectedOption) =>
@@ -143,8 +198,22 @@ function AddRole({ show, onHide, _id }: any) {
             value={filterActiveStatus}
           />
         </Col>
-        <BaseButton onClick={handleCancel}>Cancel</BaseButton>
-        <BaseButton onClick={handleSubmit}>{modalTitle}</BaseButton>
+      </Row>
+
+      <Row>
+        <div className="d-flex justify-content-end mt-4 gap-2 w-100">
+          <BaseButton onClick={handleCancel} color="secondary">
+            Cancel
+          </BaseButton>
+          <BaseButton
+            onClick={handleSubmit}
+            disabled={loader}
+            loader={loader}
+            color="primary"
+          >
+            {modalTitle}
+          </BaseButton>
+        </div>
       </Row>
     </Modal>
   );

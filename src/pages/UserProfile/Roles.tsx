@@ -10,54 +10,61 @@ import { useNavigate } from "react-router-dom";
 import BaseButton from "components/BaseComponents/BaseButton";
 import appConstants from "constants/constant";
 
-import React from "react";
-
-import { getRole } from "api/roleApi";
+import { deleteRole, getRole, updateRole } from "api/roleApi";
 import AddRole from "./AddRole";
-import { capitalizeWords } from "utils/commonFunctions";
+import { capitalizeWords, getCurrentUserRole } from "utils/commonFunctions";
 import ViewProfile from "./ViewProfile";
 import { UserRole } from "interfaces/role.interface";
+import { Switch } from "antd";
+import CheckOutlined from "@ant-design/icons/lib/icons/CheckOutlined";
+import { CloseOutlined } from "@ant-design/icons";
+import ActiveModal from "components/BaseComponents/ActiveModal";
+import { toast } from "react-toastify";
+import { AnyObject } from "yup";
+import DeleteModal from "components/BaseComponents/DeleteModal";
 
 const { Modules, projectTitle, handleResponse } = appConstants;
-type Anchor = "top" | "right" | "bottom";
+// type Anchor = "top" | "right" | "bottom";
 const Roles = () => {
   document.title = Modules.Role + " | " + projectTitle;
+  const [selectedRecord, setSelectedRecord] = useState<any | null>(null);
+  const [dataActive, SetDataActive] = useState(true);
+  const [showActiveModal, setShowActiveModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [roles, setRoles] = useState<UserRole | null>(null);
-  // const [isLoading, setIsLoading] = useState(false);
-  // const [showActiveModal, setShowActiveModal] = useState(false);
-  // const [selectedRecord, setSelectedRecord] = useState<string | null>(null);
-  // const [dataActive, SetDataActive] = useState(true);
-  // const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [tableLoader, setTableLoader] = useState(false);
   const navigate = useNavigate();
   const [showViewModal, setShowViewModal] = useState(false);
-  const [selectedId, setSelectedId] = useState("");
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 50,
   });
-  const [searchAll, setSearchAll] = useState<string>("");
-  const [state, setState] = React.useState({
-    right: false,
-  });
-  const isMobile = window.innerWidth <= 767;
+  // const [searchAll, setSearchAll] = useState<string>("");
+  // const [state, setState] = React.useState({
+  //   right: false,
+  // });
+  // const isMobile = window.innerWidth <= 767;
   const [showAddRoleModal, setShowAddRoleModal] = useState(false);
   const [editingRoleId, setEditingRoleId] = useState<string | null>(null);
   const [totalRecords, setTotalRecords] = useState("");
-  const toggleDrawer =
-    (anchor: Anchor, open: boolean) =>
-    (event: React.KeyboardEvent | React.MouseEvent) => {
-      if (
-        event.type === "keydown" &&
-        ((event as React.KeyboardEvent).key === "Tab" ||
-          (event as React.KeyboardEvent).key === "Shift")
-      ) {
-        return;
-      }
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-      setState({ ...state, [anchor]: open });
-    };
+  const currentRole = getCurrentUserRole();
+  // const toggleDrawer =
+  //   (anchor: Anchor, open: boolean) =>
+  //   (event: React.KeyboardEvent | React.MouseEvent) => {
+  //     if (
+  //       event.type === "keydown" &&
+  //       ((event as React.KeyboardEvent).key === "Tab" ||
+  //         (event as React.KeyboardEvent).key === "Shift")
+  //     ) {
+  //       return;
+  //     }
+
+  //     setState({ ...state, [anchor]: open });
+  //   };
 
   const fetchRoles = async () => {
     setTableLoader(true);
@@ -69,6 +76,22 @@ const Roles = () => {
       console.error("Error fetching roles", error);
     } finally {
       setTableLoader(false);
+    }
+  };
+  const handleDeleteRole = async (_id: any) => {
+    setTableLoader(true);
+    try {
+      const res = await deleteRole({ _id });
+      if (res.success === true) {
+        toast.success(res?.message);
+      }
+    } catch (error: any) {
+      console.log("error in delete", error);
+      toast.error(error?.response?.data?.message);
+    } finally {
+      setTableLoader(false);
+      setShowDeleteModal(false);
+      fetchRoles();
     }
   };
 
@@ -85,29 +108,7 @@ const Roles = () => {
       state: { _id: roleId, roleName, accessModules },
     });
   };
-  // const handleUpdateUserStatusModal = (id: any, isActive: any) => {
-  //   setSelectedRecord(id);
-  //   SetDataActive(!isActive);
-  //   setShowActiveModal(true);
-  // };
 
-  // const closeDeleteModal = () => {
-  //   setShowDeleteModal(false);
-  // };
-
-  // const handleDeleteUser = (id: string) => {
-  //   setSelectedRecord(id);
-  //   setShowDeleteModal(true);
-  // };
-  // const handleAssign = (_id: string, roleName: string) => {
-  //   const currRole = localStorage.getItem("role");
-  //   const accessModules = localStorage.getItem("accessModules");
-  //   if (currRole === roleName) {
-  //     navigate("/permission", { state: { _id, accessModules } });
-  //   } else {
-  //     navigate("/permission", { state: _id });
-  //   }
-  // };
   const columns = useMemo(
     () => [
       {
@@ -122,22 +123,21 @@ const Roles = () => {
         cell: ({ cell }: any) => {
           const name = cell.getValue();
           const finalName = capitalizeWords(name);
-          // return <>{finalName}</>;
           return finalName;
         },
 
         enableColumnFilter: false,
       },
       {
-        header: "Assign Functionality",
+        header: "Assign Functionality to Permission",
         enableColumnFilter: false,
         cell: ({ row }: { row: any }) => (
           <span
             onClick={() =>
               handleAssign(
-                row.original._id, // role ID
-                row.original.name, // role name
-                row.original.accessModules // permissions (not displayed)
+                row.original._id,
+                row.original.name,
+                row.original.accessModules
               )
             }
             className="flex items-center gap-2 text-blue-500 hover:text-blue-600 transition-colors text-sm font-medium cursor-pointer "
@@ -147,26 +147,21 @@ const Roles = () => {
           </span>
         ),
       },
-
       {
         header: "Status",
         accessorKey: "status",
         cell: (cell: any) => {
-          // const id = cell.row.original._id;
+          const id = cell.row.original._id;
           const isActive = cell.getValue();
 
           return (
-            <span
-              // onClick={() => handleUpdateUserStatusModal(id, isActive)}
-              className={`px-3 py-1 rounded-full text-sm font-medium cursor-pointer ${
-                isActive === true
-                  ? "bg-green-100 text-green-600" // ✅ Active
-                  : "bg-red-100 text-red-600" // ❌ Inactive
-              }`}
-              
-            >
-              {isActive === true ? "Active" : "Inactive"}
-            </span>
+            <Switch
+              size="small"
+              checked={isActive}
+              onClick={() => handleUpdateUserStatusModal(id, isActive)} // ✅ Handler only runs on user interaction
+              checkedChildren={<CheckOutlined />}
+              unCheckedChildren={<CloseOutlined />}
+            />
           );
         },
         enableColumnFilter: false,
@@ -180,10 +175,8 @@ const Roles = () => {
                 <Tooltip.Trigger asChild>
                   <button
                     className="text-white btn btn-sm btn-soft-secondary bg-secondary"
-                    onClick={() =>
-                      navigate(`/userprofileEdit/${row?.original?._id}`)
-                    }
-                    disabled={!row.original.isActive}
+                    onClick={() => handleUpdate(row?.original?._id)}
+                    disabled={!row.original.status || currentRole !== "admin"}
                   >
                     <i className="ri-pencil-fill" />
                   </button>
@@ -225,8 +218,8 @@ const Roles = () => {
                 <Tooltip.Trigger asChild>
                   <button
                     className="text-white btn btn-sm btn-soft-danger bg-danger"
-                    // onClick={() => handleDeleteUser(row.original._id)}
-                    disabled={!row.original.isActive}
+                    onClick={() => handleDelete(row?.original?._id)}
+                    disabled={!row.original.status || currentRole !== "admin"}
                   >
                     <i className="align-bottom ri-delete-bin-5-fill" />
                   </button>
@@ -250,30 +243,73 @@ const Roles = () => {
     [roles]
   );
 
-  const handleView = (_id: string) => {
+  const handleView = (_id: any) => {
     setSelectedId(_id);
     setShowViewModal(true);
+  };
+  const handleDelete = (_id: any) => {
+    setSelectedId(_id);
+    setShowDeleteModal(true);
   };
   const handleCloseModal = () => {
     setShowViewModal(false);
   };
 
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchAll(event.target.value);
-    setPagination((prev) => ({
-      ...prev,
-      pageIndex: 0,
-    }));
+  // const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   setSearchAll(event.target.value);
+  //   setPagination((prev) => ({
+  //     ...prev,
+  //     pageIndex: 0,
+  //   }));
+  // };
+
+  const handleUpdateUserStatusModal = (id: any, isActive: any) => {
+    setSelectedRecord(id);
+    console.log("first", id);
+    SetDataActive(!isActive);
+    setShowActiveModal(true);
   };
 
+  const handleUpdateUserStatus = async (id: any, value: AnyObject) => {
+    setIsLoading(true);
+    await updateRole(id, value)
+      .then((res) => {
+        if (res?.success === true && res.statusCode === 200) {
+          toast.success(res?.message);
+          setShowActiveModal(false);
+          fetchRoles();
+        } else {
+          toast.error(res?.message);
+        }
+      })
+      .catch((err) => {
+        toast.error(err?.message);
+        setShowActiveModal(false);
+      })
+      .finally(() => {
+        setIsLoading(false);
+        setShowActiveModal(false);
+      });
+  };
   const handleAdd = () => {
     setEditingRoleId(null); // Clear any editing ID for "Add" mode
     setShowAddRoleModal(true); // Show the modal
   };
 
+  const handleUpdate = (_id: any) => {
+    setEditingRoleId(_id);
+    setShowAddRoleModal(true);
+  };
+
   const handleHideModal = () => {
     setShowAddRoleModal(false);
     setEditingRoleId(null); // Clear editing ID when closing
+  };
+  const closeActiveModal = () => {
+    setShowActiveModal(false);
+  };
+  const closeDeleteModal = () => {
+    setShowDeleteModal(false);
   };
 
   return (
@@ -286,14 +322,25 @@ const Roles = () => {
           module={"roles"}
         />
       )}
-      {/* <DeleteModal
+      <ActiveModal
+        show={showActiveModal}
+        loader={isLoading}
+        onYesClick={() =>
+          handleUpdateUserStatus(selectedRecord || "", {
+            status: dataActive,
+          })
+        }
+        onCloseClick={closeActiveModal}
+        flag={!dataActive}
+      />
+
+      <DeleteModal
         show={showDeleteModal}
         onCloseClick={closeDeleteModal}
-        onDeleteClick={() =>
-          handleUpdateUserStatus(selectedRecord || "", { isDeleted: true })
-        }
-        loader={isLoading}
-      /> */}
+        onDeleteClick={() => handleDeleteRole(selectedId)}
+        loader={tableLoader}
+      />
+
       <Container fluid>
         <div className="mt-2">
           <Card>
@@ -304,7 +351,7 @@ const Roles = () => {
                 md={6}
                 className="flex-wrap mt-4 mb-4 d-flex align-items-center "
               >
-                <div className="ml-6">
+                {/* <div className="ml-6">
                   <button
                     // className="primary"
                     onClick={toggleDrawer("right", true)}
@@ -315,11 +362,11 @@ const Roles = () => {
                     {" "}
                     <i className="mx-1 fa fa-filter"></i>Filters
                   </button>
-                </div>
+                </div> */}
               </Col>
               <Col sm={6} lg={6} md={6} className="mt-4 mb-4">
                 <div className="items-end justify-end mr-6 d-flex">
-                  <div className="mr-3">
+                  {/* <div className="mr-3">
                     <input
                       id="search-bar-0"
                       className="h-10 form-control search"
@@ -327,7 +374,7 @@ const Roles = () => {
                       onChange={handleSearchChange}
                       value={searchAll}
                     />
-                  </div>
+                  </div> */}
                   <BaseButton color="primary" onClick={handleAdd}>
                     + Add
                   </BaseButton>

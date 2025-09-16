@@ -57,6 +57,9 @@ export const getApplicationsByGenderWorkNotice = async (params: {
   workPreference?: string;
   search?: string;
   noticePeriod?: string;
+  createdBy?: string;
+  isActive?: string;
+  isFavorite?: string;
 }) => {
   const response = await authServices.get(
     `${APPLICANTS_GENDER_WORKPREF_NOTICE}`,
@@ -67,7 +70,7 @@ export const getApplicationsByGenderWorkNotice = async (params: {
   return response?.data;
 };
 
-export const getRoleWiseReport = async () => {
-  const response = await authServices.get(`${ROLE_APPLICANTS}`);
+export const getRoleWiseReport = async (designations: string[] = []) => {
+  const response = await authServices.get(`${ROLE_APPLICANTS}${designations}`);
   return response?.data;
 };

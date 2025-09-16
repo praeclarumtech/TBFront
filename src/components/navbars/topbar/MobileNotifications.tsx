@@ -14,6 +14,7 @@ export const MobileNotifications = () => {
     role: "",
     profilePicture: " ",
   });
+  const role = localStorage.getItem("role");
   useEffect(() => {
     const fetchProfile = async () => {
       const token = localStorage.getItem("authUser");
@@ -55,7 +56,7 @@ export const MobileNotifications = () => {
               <div className="lh-1 ">
                 <h5 className="mb-1">{user?.userName}</h5>
                 <span className="text-[12px] text-muted text-center">
-                  {user?.role?.toUpperCase()}
+                  {user?.role?.toUpperCase() || role}
                 </span>
               </div>
               <div className="mt-3 mb-2 dropdown-divider"></div>
@@ -68,7 +69,8 @@ export const MobileNotifications = () => {
             >
               <i className="fe fe-user me-2"></i> Edit Profile
             </Dropdown.Item>
-            {user.role === "admin" ? (
+            {/* {user.role === "admin" ? ( */}
+            {role === "admin" ? (
               <>
                 <Dropdown.Item
                   eventKey="4"

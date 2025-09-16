@@ -4,6 +4,8 @@ import * as Yup from "yup";
 export type SelectedOption = { label: string; value: string };
 export type SelectedOptionRole = { label: string; value: string };
 export type SelectedOption1 = { label: string; value: string; id: number };
+export type SelectedOptionRole1 = { label: string; value: string; id: number };
+
 export const EducationApplicantSchema = Yup.object({
   // qualification: Yup.string(),
 
@@ -157,11 +159,19 @@ export const personalApplicantSchema = Yup.object({
       }
     ),
   phoneNumber: Yup.string()
-    .matches(/^[0-9]{10}$/, "Please enter a valid 10-digit phone number.")
+    .matches(
+      /^[1-9][0-9]{9}$/,
+      "Please enter a valid 10-digit phone number (should not start with 0)."
+    )
     .required("Phone number is required."),
+
   whatsappNumber: Yup.string()
-    .matches(/^[0-9]{10}$/, "Please enter a valid 10-digit WhatsApp number.")
+    .matches(
+      /^[1-9][0-9]{9}$/,
+      "Please enter a valid 10-digit WhatsApp number (should not start with 0)."
+    )
     .required("WhatsApp number is required."),
+
   currentCity: Yup.string(),
   currentAddress: Yup.string()
     .min(5, "Please provide a detailed location.")

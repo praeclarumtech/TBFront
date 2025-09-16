@@ -33,37 +33,15 @@ export const isAuthenticated = () => {
   return !!token && Date.now() < parseInt(expiresAt || 0);
 };
 
-export const setAuthData = (data: any) => {
-  try {
-    // Extract the token string from the data object
-    const token = data?.token;
-    const user = data?.user;
-
-    // Validate token
-    if (!token || typeof token !== "string") {
-      console.error("setAuthData: Invalid token in data object", {
-        data,
-        token,
-        tokenType: typeof token,
-      });
-      throw new Error(`Token must be a non-empty string. Got: ${typeof token}`);
-    }
-
-    const decoded: any = jwtDecode(token);
-
-    const expireTime = Date.now() + 5 * 60 * 60 * 1000;
-
-    // Store token data
-    setItem(ACCESS_TOKEN, token);
-    setItem(EXPIRES_AT, expireTime.toString());
-    setItem("role", decoded.role);
-    setItem("id", decoded.id);
-    setItem("accessModules", user?.roleId?.accessModules);
-  } catch (error: any) {
-    console.error("setAuthData failed:", error);
-    console.error("Error stack:", error.stack);
-    throw error; // Re-throw to let the calling code handle it
-  }
+export const setAuthData = (token: any) => {
+  const decoded: any = jwtDecode(token);
+  console.log(decoded);
+  const expireTime = Date.now() + 5 * 60 * 60 * 1000;
+  setItem("authUser", token);
+  setItem(EXPIRES_AT, expireTime.toString());
+  setItem("role", decoded.role);
+  setItem("id", decoded.id);
+  setItem("accessModules", decoded.accessModules);
 };
 
 export const logout = () => {
@@ -74,7 +52,9 @@ export const logout = () => {
   removeItem("role");
   removeItem("id");
   removeItem("accessModules");
-  toast.error("🔒 Session expired - please log in again");
+
+  // toast.error("🔒 Session expired - please log in again");
+
 };
 
 export const InputPlaceHolder = (fieldName: string) => {
@@ -162,6 +142,20 @@ export const getCurrentUser = () => {
     const decoded: any = jwtDecode(token);
     return decoded && typeof decoded === "object" ? decoded : null;
   } catch {
+    return null;
+  }
+};
+
+// utils/auth.ts
+
+export const getCurrentUserRole = (): string | null => {
+  try {
+    const user = localStorage.getItem("role");
+    if (!user) return null;
+
+    return user;
+  } catch (error) {
+    console.error("Error parsing currentUser from localStorage:", error);
     return null;
   }
 };

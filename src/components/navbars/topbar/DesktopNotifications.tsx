@@ -22,6 +22,7 @@ export const DesktopNotifications = () => {
     };
     fetchProfile();
   }, []);
+  const role = localStorage.getItem("role");
 
   return (
     <>
@@ -59,13 +60,14 @@ export const DesktopNotifications = () => {
               <div className="inline-flex items-center space-x-2">
                 <h5 className="mb-0">{user?.userName}</h5>
                 <span className="text-sm text-muted">
-                  {user?.role?.toUpperCase()}
+                  {user?.role?.toUpperCase() || role}
                 </span>
               </div>
 
               <div className="my-0 dropdown-divider"></div>
             </Dropdown.Item>
-            {user.role === "admin" ? (
+            {/* {user.role === "admin" ? ( */}
+            {role === "admin" ? (
               <>
                 <Dropdown.Item
                   eventKey="1"
