@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Row, Col, Card, Container, CardBody } from "react-bootstrap";
-import React, { Fragment, useEffect, useState, useMemo } from "react";
+import React, { Fragment, useEffect, useState, useMemo, useRef } from "react";
 import BaseButton from "components/BaseComponents/BaseButton";
 import { BaseSelect, MultiSelect } from "components/BaseComponents/BaseSelect";
 import TableContainer from "components/BaseComponents/TableContainer";
@@ -17,6 +17,8 @@ import {
   ExportApplicant,
   deleteMultipleApplicant,
   updateApplicant,
+  // saveFilters,
+  // getSavedFilters,
 } from "api/applicantApi";
 
 import ViewModal from "./ViewApplicant";
@@ -76,6 +78,7 @@ const {
   designationType,
   addedByOptions,
   activeStatusOptions,
+  favoriteOptions,
 } = appConstants;
 
 type Anchor = "top" | "right" | "bottom";
@@ -90,6 +93,9 @@ const Applicant = () => {
   const addedByChart = params.get("addedByChart");
   const filterStatusDashboard = params.get("status");
   const progressChart = params.get("progress");
+  const designationChart = params.get("designation");
+  const piechartType = params.get("piechartType");
+  const piechartSelected = params.get("selected");
   const navigate = useNavigate();
   const [loader, setLoader] = useState(false);
   const [applicant, setApplicant] = useState<any[]>([]);
@@ -123,7 +129,7 @@ const Applicant = () => {
   const [filterDesignation, SetFilterDesignation] =
     useState<SelectedOption | null>(null);
   const [filterCity, setFilterCity] = useState<SelectedOption1[]>([]);
-  const [filterState, setFilterState] = useState<SelectedOption | null>(null);
+  const [filterState, setFilterState] = useState<SelectedOption1 | null>(null);
   const [appliedSkills, setAppliedSkills] = useState<SelectedOption1[]>([]);
   const [multipleSkills, setMultipleSkills] = useState<SelectedOption1[]>([]);
   const [startDate, setStartDate] = useState("");
@@ -217,6 +223,181 @@ const Applicant = () => {
 
   const today = new Date().toISOString().split("T")[0];
 
+  // const userId = localStorage.getItem("id");
+  const isInitializingFilters = useRef(true);
+
+  // // load saved filters once
+  // useEffect(() => {
+  //   setTableLoader(true);
+  //   const init = async () => {
+  //     try {
+  //       const saved = await getSavedFilters(userId);
+  //       if (saved?.data) {
+  //         const filters = saved.data;
+  //         console.log("📌 Restored filters:", filters);
+
+  //         // ---------------- City ----------------
+  //         if (filters.currentCity) {
+  //           const selectedOptions: SelectedOption1[] = filters.currentCity
+  //             .split(",")
+  //             .map((city: string) => ({ label: city, value: city }));
+  //           setFilterCity(selectedOptions);
+  //         }
+
+  //         // ---------------- State ----------------
+  //         if (filters.state) {
+  //           setFilterState(filters.state);
+  //         }
+
+  //         // ---------------- Skills (AND) ----------------
+  //         if (filters.appliedSkills) {
+  //           const skillOptions: SelectedOption1[] = filters.appliedSkills
+  //             .split(",")
+  //             .map((s: string) => ({ label: s, value: s }));
+  //           setAppliedSkills(skillOptions);
+  //         }
+
+  //         // ---------------- Skills (OR) ----------------
+  //         if (filters.appliedSkillsOR) {
+  //           const skillOptions: SelectedOption1[] = filters.appliedSkillsOR
+  //             .split(",")
+  //             .map((s: string) => ({ label: s, value: s }));
+  //           setMultipleSkills(skillOptions);
+  //         }
+
+  //         // ---------------- Added By ----------------
+  //         if (filters.addedBy) {
+  //           const addedByOptions: SelectedOption1[] = filters.addedBy
+  //             .split(",")
+  //             .map((a: string) => ({ label: a, value: a }));
+  //           setAddedBy(addedByOptions);
+  //         }
+
+  //         // ---------------- Roles ----------------
+  //         if (filters.appliedRole) {
+  //           const roleOptions: SelectedOption1[] = filters.appliedRole
+  //             .split(",")
+  //             .map((r: string) => ({ label: r, value: r }));
+  //           setFilterAppliedRole(roleOptions);
+  //         }
+
+  //         // ---------------- Status ----------------
+  //         if (filters.status) {
+  //           setFilterStatus({ label: filters.status, value: filters.status });
+  //         }
+
+  //         // ---------------- Interview Stage ----------------
+  //         if (filters.interviewStage) {
+  //           setFilterInterviewStage({
+  //             label: filters.interviewStage,
+  //             value: filters.interviewStage,
+  //           });
+  //         }
+
+  //         // ---------------- Gender ----------------
+  //         if (filters.gender) {
+  //           setFilterGender({ label: filters.gender, value: filters.gender });
+  //         }
+
+  //         // ---------------- Designation ----------------
+  //         if (filters.currentCompanyDesignation) {
+  //           SetFilterDesignation({
+  //             label: filters.currentCompanyDesignation,
+  //             value: filters.currentCompanyDesignation,
+  //           });
+  //         }
+
+  //         // ---------------- Any Hands-on Offers ----------------
+  //         if (filters.anyHandOnOffers) {
+  //           setFilterAnyHandOnOffers({
+  //             label: filters.anyHandOnOffers,
+  //             value: filters.anyHandOnOffers,
+  //           });
+  //         }
+
+  //         // ---------------- Work Preference ----------------
+  //         if (filters.workPreference) {
+  //           setFilterWorkPreference({
+  //             label: filters.workPreference,
+  //             value: filters.workPreference,
+  //           });
+  //         }
+
+  //         // ---------------- Rating ----------------
+  //         if (filters.rating) {
+  //           const [min, max] = filters.rating.split("-");
+  //           setFilterRating([+min, +max]);
+  //         }
+  //         if (filters.workPreference) {
+  //           const [min, max] = filters.rating.split("-");
+  //           setFilterNoticePeriod([+min, +max]);
+  //         }
+  //         // ---------------- Communication Skill ----------------
+  //         if (filters.communicationSkill) {
+  //           const [min, max] = filters.communicationSkill.split("-");
+  //           setFilterEngRating([+min, +max]);
+  //         }
+
+  //         // ---------------- Expected Package ----------------
+  //         if (filters.expectedPkg) {
+  //           const [min, max] = filters.expectedPkg.split("-");
+  //           setFilterExpectedPkg([+min, +max]);
+  //         }
+
+  //         // ---------------- Current Package ----------------
+  //         if (filters.currentPkg) {
+  //           const [min, max] = filters.currentPkg.split("-");
+  //           setFilterCurrentPkg([+min, +max]);
+  //         }
+
+  //         // ---------------- Total Experience ----------------
+  //         if (filters.totalExperience) {
+  //           const [min, max] = filters.totalExperience.split("-");
+  //           setExperienceRange([+min, +max]);
+  //         }
+
+  //         // ---------------- Dates ----------------
+  //         if (filters.startDate) setStartDate(filters.startDate);
+  //         if (filters.endDate) setEndDate(filters.endDate);
+  //         if (filters.updatedStartDate)
+  //           setUpdatedStartDate(filters.updatedStartDate);
+  //         if (filters.updatedEndDate) setUpdatedEndDate(filters.updatedEndDate);
+
+  //         // ---------------- Active Status ----------------
+  //         if (filters.isActive !== undefined) {
+  //           setFilterActiveStatus({
+  //             label: filters.isActive === "true" ? "Active" : "Inactive",
+  //             value: filters.isActive,
+  //           });
+  //         }
+
+  //         // ---------------- Favorite ----------------
+  //         if (filters.isFavorite !== undefined) {
+  //           setFilterFavorite({
+  //             label: filters.isFavorite === "true" ? "Yes" : "No",
+  //             value: filters.isFavorite,
+  //           });
+  //         }
+
+  //         // ---------------- Search ----------------
+  //         if (filters.search) setSearchAll(filters.search);
+  //       }
+
+  //       fetchApplicants();
+  //       // after filters are restored, fetch applicants
+  //     } catch (err) {
+  //       console.error("Error loading saved filters", err);
+  //       fetchApplicants(); // fallback
+  //     } finally {
+  //       setTableLoader(false);
+  //       // ✅ mark initialization as complete
+  //       isInitializingFilters.current = false;
+  //     }
+  //   };
+
+  //   init();
+  // }, []);
+
   const toggleDrawer =
     (anchor: Anchor, open: boolean) =>
     (event: React.KeyboardEvent | React.MouseEvent) => {
@@ -234,7 +415,6 @@ const Applicant = () => {
   const fetchApplicants = async () => {
     setTableLoader(true);
     setApplicant([]);
-    setTableLoader(true);
 
     try {
       const params: {
@@ -275,6 +455,7 @@ const Applicant = () => {
         limit: pagination.pageSize,
       };
 
+      // ------------------ Build params from filters ------------------
       if (experienceRange[0] !== 0 || experienceRange[1] !== 25) {
         params.totalExperience = `${experienceRange[0]}-${experienceRange[1]}`;
       }
@@ -284,33 +465,28 @@ const Applicant = () => {
       if (filterRating[0] !== 0 || filterRating[1] !== 10) {
         params.rating = `${filterRating[0]}-${filterRating[1]}`;
       }
-
       if (filterEngRating[0] !== 0 || filterEngRating[1] !== 10) {
         params.communicationSkill = `${filterEngRating[0]}-${filterEngRating[1]}`;
       }
       if (filterExpectedPkg[0] !== 0 || filterExpectedPkg[1] !== 100) {
         params.expectedPkg = `${filterExpectedPkg[0]}-${filterExpectedPkg[1]}`;
       }
-
       if (filterCurrentPkg[0] !== 0 || filterCurrentPkg[1] !== 100) {
         params.currentPkg = `${filterCurrentPkg[0]}-${filterCurrentPkg[1]}`;
       }
-
       if (filterWorkPreference) {
         params.workPreference = filterWorkPreference.value;
       }
       if (filterAnyHandOnOffers) {
         params.anyHandOnOffers = filterAnyHandOnOffers.value;
       }
-
       if (filterCity.length > 0) {
+        console.log(filterCity);
         params.currentCity = filterCity.map((city) => city.label).join(",");
       }
       if (filterState) {
-        // params.state = filterState.label;
         params.state = encodeURIComponent(filterState.label);
       }
-
       if (appliedSkills.length > 0) {
         params.appliedSkills = appliedSkills
           .map((skill) => skill.label)
@@ -327,33 +503,17 @@ const Applicant = () => {
       if (addedByChart) {
         params.addedBy = addedByChart;
       }
-      if (startDate) {
-        params.startDate = startDate;
-      }
-      if (endDate) {
-        params.endDate = endDate;
-      }
-      if (updatedStartDate) {
-        params.updatedStartDate = updatedStartDate;
-      }
-      if (updatedEndDate) {
-        params.updatedEndDate = updatedEndDate;
-      }
-      if (filterStatus) {
-        params.status = filterStatus.value;
-      }
-      if (applicantStatusChart) {
-        params.status = applicantStatusChart;
-      }
-      if (filterDesignation) {
+      if (startDate) params.startDate = startDate;
+      if (endDate) params.endDate = endDate;
+      if (updatedStartDate) params.updatedStartDate = updatedStartDate;
+      if (updatedEndDate) params.updatedEndDate = updatedEndDate;
+      if (filterStatus) params.status = filterStatus.value;
+      if (applicantStatusChart) params.status = applicantStatusChart;
+      if (filterDesignation)
         params.currentCompanyDesignation = filterDesignation.value;
-      }
-      if (filterInterviewStage) {
+      if (filterInterviewStage)
         params.interviewStage = filterInterviewStage.value;
-      }
-      if (filterGender) {
-        params.gender = filterGender.value;
-      }
+      if (filterGender) params.gender = filterGender.value;
       if (filterActiveStatus && filterActiveStatus.value !== "") {
         params.isActive = filterActiveStatus.value;
       }
@@ -366,11 +526,9 @@ const Applicant = () => {
       if (searchValue) {
         params.search = searchValue;
       }
-
       if (filterFavorite) {
         params.isFavorite = filterFavorite.value;
       }
-
       if (filterFromChart) {
         if (filterTypeChart === "city") {
           params.currentCity = filterFromChart;
@@ -384,7 +542,34 @@ const Applicant = () => {
       if (progressChart) {
         params.interviewStage = progressChart;
       }
+      if (designationChart) {
+        params.currentCompanyDesignation = designationChart;
+      }
+      if (piechartType === "gender") {
+        params.gender = piechartSelected === "Male" ? "male" : "female";
+      }
+      if (piechartType === "work") {
+        params.workPreference = piechartSelected?.toLowerCase() || undefined;
+      }
+      if (piechartType === "ActiveStatus") {
+        params.isActive = piechartSelected === "Active" ? "true" : "false";
+      }
+      if (piechartType === "favorite") {
+        params.isFavorite = piechartSelected === "Favorited" ? "true" : "false";
+      }
+      if (piechartType === "notice") {
+        // Example piechartSelected = "30 days"
+        const selectedValue = piechartSelected
+          ?.toLowerCase()
+          .replace(" days", "")
+          .trim();
 
+        if (selectedValue) {
+          params.noticePeriod = `${selectedValue}-${selectedValue}`;
+        }
+      }
+
+      // ------------------ Save filters (only if not initializing) ------------------
       const isAnyFilterApplied =
         experienceRange[0] !== 0 ||
         experienceRange[1] !== 25 ||
@@ -400,10 +585,11 @@ const Applicant = () => {
         filterCurrentPkg[1] !== 100 ||
         filterWorkPreference ||
         filterAnyHandOnOffers ||
-        filterCity ||
+        filterCity.length > 0 ||
         filterState ||
         appliedSkills.length > 0 ||
         multipleSkills.length > 0 ||
+        addedBy ||
         addedByChart ||
         startDate ||
         endDate ||
@@ -412,18 +598,28 @@ const Applicant = () => {
         filterDesignation ||
         filterInterviewStage ||
         filterGender ||
-        // (filterActiveStatus && filterActiveStatus.value !== "") ||
         filterAppliedRole.length > 0 ||
         filterFavorite ||
         filterFromChart ||
         filterStatusDashboard ||
         (searchAll && searchAll.trim() !== "");
 
-      if (isAnyFilterApplied) {
+      if (
+        isAnyFilterApplied &&
+        !isInitializingFilters.current &&
+        !piechartType
+      ) {
+        // ✅ Only save filters after init is done
         params.isActive = "true";
+
+        // const save = await saveFilters(userId, params);
+        // if (save.success) {
+        //   console.log("filters saved", save);
+        // }
       }
 
       const res = await listOfApplicants(params);
+
       if (res.success === false) {
         toast.error(res.message);
       }
@@ -433,10 +629,7 @@ const Applicant = () => {
       const details = error?.response?.data?.details;
       if (Array.isArray(details)) {
         details.forEach((msg: string) => {
-          toast.error(msg, {
-            closeOnClick: true,
-            autoClose: 5000,
-          });
+          toast.error(msg, { closeOnClick: true, autoClose: 5000 });
         });
       } else {
         console.log(error);
@@ -449,6 +642,12 @@ const Applicant = () => {
       setTableLoader(false);
     }
   };
+
+  useEffect(() => {
+    fetchApplicants().finally(() => {
+      isInitializingFilters.current = false;
+    });
+  }, []);
 
   useEffect(() => {
     const delayedSearch = debounce(() => {
@@ -704,7 +903,7 @@ const Applicant = () => {
     setMultipleSkills(selectedOptions);
   };
 
-  const handleStateChange = (selectedOption: SelectedOption) => {
+  const handleStateChange = (selectedOption: SelectedOption1 | null) => {
     setFilterState(selectedOption);
   };
 
@@ -765,7 +964,7 @@ const Applicant = () => {
     setAddedBy(selectedOption);
   };
 
-  const resetFilters = () => {
+  const resetFilters = async () => {
     setAppliedSkills([]);
     setMultipleSkills([]);
     setStartDate("");
@@ -794,20 +993,15 @@ const Applicant = () => {
     setFilterAppliedRole([]);
     setFilterFavorite(null);
     fetchApplicants();
+    // Create reset params object (same structure as your filter params)
+    // const resetParams = {};
+
+    // // Save the reset state to backend
+    // const save = await saveFilters(userId, resetParams);
+    // if (save.success) {
+    //   console.log("filters reset and saved", save);
+    // }
   };
-
-  // const handleCityChange = (selectedOption: SelectedOption) => {
-  //   setFilterCity(selectedOption);
-
-  //   if (selectedOption) {
-  //     const selectedCityId = selectedOption.value;
-  //     const selectedCity = cities.find((city) => city.value === selectedCityId);
-
-  //     if (selectedCity) {
-  //       // console.log("Selected city name:", selectedCity.label);
-  //     }
-  //   }
-  // };
 
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
@@ -1095,11 +1289,6 @@ const Applicant = () => {
   const closeConfirmExportModal = () => {
     setShowConfirmExportModal(false);
   };
-
-  const favoriteOptions = [
-    { label: "Favorite", value: true },
-    { label: "Not Favorite", value: false },
-  ];
 
   const drawerList = (anchor: Anchor) => (
     <Box

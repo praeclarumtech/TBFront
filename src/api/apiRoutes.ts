@@ -45,7 +45,8 @@ export const IMPORT_APPLICANT_LIST = "applicants/viewResumeAndCsvApplicant";
 export const UPDATE_APPLICANT_MANY = "applicants/updateManyApplicant";
 export const UPDATE_IMPORTED_APPLICANTS_STATUS =
   "applicants/update/importApplicantstatus";
-
+export const FILTER_SAVE = "applicants/userFilter";
+export const GET_SAVED_FILTERS = "applicants/userFilter";
 //Email module
 export const SEND_EMAIL = "email/applicant/sendEmail";
 export const VIEW_ALL_EMAIL = "email/applicant/getAllEmails";
@@ -112,17 +113,17 @@ export const APPLICATION =
 export const ADDEDBY_REPORT = "/reports/applicants/applicantCountByAddedBy";
 export const VENDOR_JOB_APPLICANTS = "/vendor/job-applicant-report";
 export const SKILL_DASHBOARD = "/skill/dashboard/viewSkills";
-export const ROLE_APPLICANTS = "reports/applicants/applicantCountByDesignation?designation=";
+export const ROLE_APPLICANTS =
+  "reports/applicants/applicantCountByDesignation?designation=";
+
 export const APPLICANTS_GENDER_WORKPREF_NOTICE =
   "/reports/applicants/getApplicationsByGenderWorkNotice";
-
-
 
 export const LIST_ROLE = "/role/list";
 export const LIST_ROLE_BY_ID = "/role/view";
 export const ADD_ROLE = "/role/create";
 export const UPDATE_ROLE = "/role/update";
-export const DELETE_ROLE = "/role/delete"
+export const DELETE_ROLE = "/role/delete";
 
 //Find And Replace
 

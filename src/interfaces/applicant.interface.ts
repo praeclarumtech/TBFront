@@ -159,11 +159,19 @@ export const personalApplicantSchema = Yup.object({
       }
     ),
   phoneNumber: Yup.string()
-    .matches(/^[0-9]{10}$/, "Please enter a valid 10-digit phone number.")
+    .matches(
+      /^[1-9][0-9]{9}$/,
+      "Please enter a valid 10-digit phone number (should not start with 0)."
+    )
     .required("Phone number is required."),
+
   whatsappNumber: Yup.string()
-    .matches(/^[0-9]{10}$/, "Please enter a valid 10-digit WhatsApp number.")
+    .matches(
+      /^[1-9][0-9]{9}$/,
+      "Please enter a valid 10-digit WhatsApp number (should not start with 0)."
+    )
     .required("WhatsApp number is required."),
+
   currentCity: Yup.string(),
   currentAddress: Yup.string()
     .min(5, "Please provide a detailed location.")

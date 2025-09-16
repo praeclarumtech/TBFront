@@ -317,7 +317,7 @@ const Sidebar: React.FC<SidebarProps> = ({ toggleMenu }) => {
                     </Menu.Item>
                   </Menu.ItemGroup>
                 );
-              case "master": {
+              case "Master": {
                 const masterRoutes = [
                   { key: "/master/skills", label: "Add Skill" },
                   { key: "/master/degree", label: "Add Qualification" },

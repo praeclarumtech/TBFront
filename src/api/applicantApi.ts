@@ -30,6 +30,8 @@ import {
   CREATE_APPLICANT_QR,
   UPDATE_APPLICANT_QR,
   DOWNLOAD_APPLICANT,
+  FILTER_SAVE,
+  GET_SAVED_FILTERS,
 } from "./apiRoutes";
 import { authServices } from "./apiServices";
 
@@ -428,5 +430,19 @@ export const downloadApplicant = async (data?: object) => {
     responseType: "blob", // This is correct for downloading files
     timeout: 300000,
   });
+  return response?.data;
+};
+
+export const saveFilters = async (userId: string | null, params: object) => {
+  const response = await authServices.post(FILTER_SAVE, {
+    userId: userId,
+    filters: params,
+  });
+
+  return response?.data;
+};
+
+export const getSavedFilters = async (id: string | undefined | null) => {
+  const response = await authServices.get(`${GET_SAVED_FILTERS}/${id}`);
   return response?.data;
 };
