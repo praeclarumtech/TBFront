@@ -17,8 +17,8 @@ import {
   ExportApplicant,
   deleteMultipleApplicant,
   updateApplicant,
-  // saveFilters,
-  // getSavedFilters,
+  saveFilters,
+  getSavedFilters,
 } from "api/applicantApi";
 
 import ViewModal from "./ViewApplicant";
@@ -223,180 +223,183 @@ const Applicant = () => {
 
   const today = new Date().toISOString().split("T")[0];
 
-  // const userId = localStorage.getItem("id");
+  const userId = localStorage.getItem("id");
   const isInitializingFilters = useRef(true);
 
-  // // load saved filters once
-  // useEffect(() => {
-  //   setTableLoader(true);
-  //   const init = async () => {
-  //     try {
-  //       const saved = await getSavedFilters(userId);
-  //       if (saved?.data) {
-  //         const filters = saved.data;
-  //         console.log("📌 Restored filters:", filters);
+  // load saved filters once
+  useEffect(() => {
+    setTableLoader(true);
+    setLoading(true);
+    const init = async () => {
+      try {
+        const saved = await getSavedFilters(userId);
+        if (saved?.data) {
+          const filters = saved.data;
+          console.log("📌 Restored filters:", filters);
 
-  //         // ---------------- City ----------------
-  //         if (filters.currentCity) {
-  //           const selectedOptions: SelectedOption1[] = filters.currentCity
-  //             .split(",")
-  //             .map((city: string) => ({ label: city, value: city }));
-  //           setFilterCity(selectedOptions);
-  //         }
+          // ---------------- City ----------------
+          if (filters.currentCity) {
+            const selectedOptions: SelectedOption1[] = filters.currentCity
+              .split(",")
+              .map((city: string) => ({ label: city, value: city }));
+            setFilterCity(selectedOptions);
+          }
 
-  //         // ---------------- State ----------------
-  //         if (filters.state) {
-  //           setFilterState(filters.state);
-  //         }
+          // ---------------- State ----------------
+          if (filters.state) {
+            setFilterState(filters.state);
+          }
 
-  //         // ---------------- Skills (AND) ----------------
-  //         if (filters.appliedSkills) {
-  //           const skillOptions: SelectedOption1[] = filters.appliedSkills
-  //             .split(",")
-  //             .map((s: string) => ({ label: s, value: s }));
-  //           setAppliedSkills(skillOptions);
-  //         }
+          // ---------------- Skills (AND) ----------------
+          if (filters.appliedSkills) {
+            const skillOptions: SelectedOption1[] = filters.appliedSkills
+              .split(",")
+              .map((s: string) => ({ label: s, value: s }));
+            setAppliedSkills(skillOptions);
+          }
 
-  //         // ---------------- Skills (OR) ----------------
-  //         if (filters.appliedSkillsOR) {
-  //           const skillOptions: SelectedOption1[] = filters.appliedSkillsOR
-  //             .split(",")
-  //             .map((s: string) => ({ label: s, value: s }));
-  //           setMultipleSkills(skillOptions);
-  //         }
+          // ---------------- Skills (OR) ----------------
+          if (filters.appliedSkillsOR) {
+            const skillOptions: SelectedOption1[] = filters.appliedSkillsOR
+              .split(",")
+              .map((s: string) => ({ label: s, value: s }));
+            setMultipleSkills(skillOptions);
+          }
 
-  //         // ---------------- Added By ----------------
-  //         if (filters.addedBy) {
-  //           const addedByOptions: SelectedOption1[] = filters.addedBy
-  //             .split(",")
-  //             .map((a: string) => ({ label: a, value: a }));
-  //           setAddedBy(addedByOptions);
-  //         }
+          // ---------------- Added By ----------------
+          if (filters.addedBy) {
+            const addedByOptions: SelectedOption1[] = filters.addedBy
+              .split(",")
+              .map((a: string) => ({ label: a, value: a }));
+            setAddedBy(addedByOptions);
+          }
 
-  //         // ---------------- Roles ----------------
-  //         if (filters.appliedRole) {
-  //           const roleOptions: SelectedOption1[] = filters.appliedRole
-  //             .split(",")
-  //             .map((r: string) => ({ label: r, value: r }));
-  //           setFilterAppliedRole(roleOptions);
-  //         }
+          // ---------------- Roles ----------------
+          if (filters.appliedRole) {
+            const roleOptions: SelectedOption1[] = filters.appliedRole
+              .split(",")
+              .map((r: string) => ({ label: r, value: r }));
+            setFilterAppliedRole(roleOptions);
+          }
 
-  //         // ---------------- Status ----------------
-  //         if (filters.status) {
-  //           setFilterStatus({ label: filters.status, value: filters.status });
-  //         }
+          // ---------------- Status ----------------
+          if (filters.status) {
+            setFilterStatus({ label: filters.status, value: filters.status });
+          }
 
-  //         // ---------------- Interview Stage ----------------
-  //         if (filters.interviewStage) {
-  //           setFilterInterviewStage({
-  //             label: filters.interviewStage,
-  //             value: filters.interviewStage,
-  //           });
-  //         }
+          // ---------------- Interview Stage ----------------
+          if (filters.interviewStage) {
+            setFilterInterviewStage({
+              label: filters.interviewStage,
+              value: filters.interviewStage,
+            });
+          }
 
-  //         // ---------------- Gender ----------------
-  //         if (filters.gender) {
-  //           setFilterGender({ label: filters.gender, value: filters.gender });
-  //         }
+          // ---------------- Gender ----------------
+          if (filters.gender) {
+            setFilterGender({ label: filters.gender, value: filters.gender });
+          }
 
-  //         // ---------------- Designation ----------------
-  //         if (filters.currentCompanyDesignation) {
-  //           SetFilterDesignation({
-  //             label: filters.currentCompanyDesignation,
-  //             value: filters.currentCompanyDesignation,
-  //           });
-  //         }
+          // ---------------- Designation ----------------
+          if (filters.currentCompanyDesignation) {
+            SetFilterDesignation({
+              label: filters.currentCompanyDesignation,
+              value: filters.currentCompanyDesignation,
+            });
+          }
 
-  //         // ---------------- Any Hands-on Offers ----------------
-  //         if (filters.anyHandOnOffers) {
-  //           setFilterAnyHandOnOffers({
-  //             label: filters.anyHandOnOffers,
-  //             value: filters.anyHandOnOffers,
-  //           });
-  //         }
+          // ---------------- Any Hands-on Offers ----------------
+          if (filters.anyHandOnOffers) {
+            setFilterAnyHandOnOffers({
+              label: filters.anyHandOnOffers,
+              value: filters.anyHandOnOffers,
+            });
+          }
 
-  //         // ---------------- Work Preference ----------------
-  //         if (filters.workPreference) {
-  //           setFilterWorkPreference({
-  //             label: filters.workPreference,
-  //             value: filters.workPreference,
-  //           });
-  //         }
+          // ---------------- Work Preference ----------------
+          if (filters.workPreference) {
+            setFilterWorkPreference({
+              label: filters.workPreference,
+              value: filters.workPreference,
+            });
+          }
 
-  //         // ---------------- Rating ----------------
-  //         if (filters.rating) {
-  //           const [min, max] = filters.rating.split("-");
-  //           setFilterRating([+min, +max]);
-  //         }
-  //         if (filters.workPreference) {
-  //           const [min, max] = filters.rating.split("-");
-  //           setFilterNoticePeriod([+min, +max]);
-  //         }
-  //         // ---------------- Communication Skill ----------------
-  //         if (filters.communicationSkill) {
-  //           const [min, max] = filters.communicationSkill.split("-");
-  //           setFilterEngRating([+min, +max]);
-  //         }
+          // ---------------- Rating ----------------
+          if (filters.rating) {
+            const [min, max] = filters.rating.split("-");
+            setFilterRating([+min, +max]);
+          }
+          if (filters.workPreference) {
+            const [min, max] = filters.rating.split("-");
+            setFilterNoticePeriod([+min, +max]);
+          }
+          // ---------------- Communication Skill ----------------
+          if (filters.communicationSkill) {
+            const [min, max] = filters.communicationSkill.split("-");
+            setFilterEngRating([+min, +max]);
+          }
 
-  //         // ---------------- Expected Package ----------------
-  //         if (filters.expectedPkg) {
-  //           const [min, max] = filters.expectedPkg.split("-");
-  //           setFilterExpectedPkg([+min, +max]);
-  //         }
+          // ---------------- Expected Package ----------------
+          if (filters.expectedPkg) {
+            const [min, max] = filters.expectedPkg.split("-");
+            setFilterExpectedPkg([+min, +max]);
+          }
 
-  //         // ---------------- Current Package ----------------
-  //         if (filters.currentPkg) {
-  //           const [min, max] = filters.currentPkg.split("-");
-  //           setFilterCurrentPkg([+min, +max]);
-  //         }
+          // ---------------- Current Package ----------------
+          if (filters.currentPkg) {
+            const [min, max] = filters.currentPkg.split("-");
+            setFilterCurrentPkg([+min, +max]);
+          }
 
-  //         // ---------------- Total Experience ----------------
-  //         if (filters.totalExperience) {
-  //           const [min, max] = filters.totalExperience.split("-");
-  //           setExperienceRange([+min, +max]);
-  //         }
+          // ---------------- Total Experience ----------------
+          if (filters.totalExperience) {
+            const [min, max] = filters.totalExperience.split("-");
+            setExperienceRange([+min, +max]);
+          }
 
-  //         // ---------------- Dates ----------------
-  //         if (filters.startDate) setStartDate(filters.startDate);
-  //         if (filters.endDate) setEndDate(filters.endDate);
-  //         if (filters.updatedStartDate)
-  //           setUpdatedStartDate(filters.updatedStartDate);
-  //         if (filters.updatedEndDate) setUpdatedEndDate(filters.updatedEndDate);
+          // ---------------- Dates ----------------
+          if (filters.startDate) setStartDate(filters.startDate);
+          if (filters.endDate) setEndDate(filters.endDate);
+          if (filters.updatedStartDate)
+            setUpdatedStartDate(filters.updatedStartDate);
+          if (filters.updatedEndDate) setUpdatedEndDate(filters.updatedEndDate);
 
-  //         // ---------------- Active Status ----------------
-  //         if (filters.isActive !== undefined) {
-  //           setFilterActiveStatus({
-  //             label: filters.isActive === "true" ? "Active" : "Inactive",
-  //             value: filters.isActive,
-  //           });
-  //         }
+          // ---------------- Active Status ----------------
+          if (filters.isActive !== undefined) {
+            setFilterActiveStatus({
+              label: filters.isActive === "true" ? "Active" : "Inactive",
+              value: filters.isActive,
+            });
+          }
 
-  //         // ---------------- Favorite ----------------
-  //         if (filters.isFavorite !== undefined) {
-  //           setFilterFavorite({
-  //             label: filters.isFavorite === "true" ? "Yes" : "No",
-  //             value: filters.isFavorite,
-  //           });
-  //         }
+          // ---------------- Favorite ----------------
+          if (filters.isFavorite !== undefined) {
+            setFilterFavorite({
+              label: filters.isFavorite === "true" ? "Yes" : "No",
+              value: filters.isFavorite,
+            });
+          }
 
-  //         // ---------------- Search ----------------
-  //         if (filters.search) setSearchAll(filters.search);
-  //       }
+          // ---------------- Search ----------------
+          if (filters.search) setSearchAll(filters.search);
+        }
 
-  //       fetchApplicants();
-  //       // after filters are restored, fetch applicants
-  //     } catch (err) {
-  //       console.error("Error loading saved filters", err);
-  //       fetchApplicants(); // fallback
-  //     } finally {
-  //       setTableLoader(false);
-  //       // ✅ mark initialization as complete
-  //       isInitializingFilters.current = false;
-  //     }
-  //   };
+        fetchApplicants();
+        // after filters are restored, fetch applicants
+      } catch (err) {
+        console.error("Error loading saved filters", err);
+        fetchApplicants(); // fallback
+      } finally {
+        setTableLoader(false);
+        setLoading(false);
 
-  //   init();
-  // }, []);
+        // ✅ mark initialization as complete
+        isInitializingFilters.current = false;
+      }
+    };
+
+    init();
+  }, []);
 
   const toggleDrawer =
     (anchor: Anchor, open: boolean) =>
@@ -414,6 +417,7 @@ const Applicant = () => {
 
   const fetchApplicants = async () => {
     setTableLoader(true);
+    setLoading(true);
     setApplicant([]);
 
     try {
@@ -612,10 +616,10 @@ const Applicant = () => {
         // ✅ Only save filters after init is done
         params.isActive = "true";
 
-        // const save = await saveFilters(userId, params);
-        // if (save.success) {
-        //   console.log("filters saved", save);
-        // }
+        const save = await saveFilters(userId, params);
+        if (save.success) {
+          console.log("filters saved", save);
+        }
       }
 
       const res = await listOfApplicants(params);
@@ -640,6 +644,7 @@ const Applicant = () => {
       }
     } finally {
       setTableLoader(false);
+      setLoading(false);
     }
   };
 
@@ -994,13 +999,13 @@ const Applicant = () => {
     setFilterFavorite(null);
     fetchApplicants();
     // Create reset params object (same structure as your filter params)
-    // const resetParams = {};
+    const resetParams = {};
 
-    // // Save the reset state to backend
-    // const save = await saveFilters(userId, resetParams);
-    // if (save.success) {
-    //   console.log("filters reset and saved", save);
-    // }
+    // Save the reset state to backend
+    const save = await saveFilters(userId, resetParams);
+    if (save.success) {
+      console.log("filters reset and saved", save);
+    }
   };
 
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
