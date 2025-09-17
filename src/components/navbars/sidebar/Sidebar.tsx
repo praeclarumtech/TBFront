@@ -1,4 +1,3 @@
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
@@ -317,7 +316,7 @@ const Sidebar: React.FC<SidebarProps> = ({ toggleMenu }) => {
                     </Menu.Item>
                   </Menu.ItemGroup>
                 );
-              case "Master": {
+              case "master": {
                 const masterRoutes = [
                   { key: "/master/skills", label: "Add Skill" },
                   { key: "/master/degree", label: "Add Qualification" },
