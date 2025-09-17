@@ -40,6 +40,7 @@ import {
 import {
   dynamicFind,
   errorHandle,
+  getCurrentUserRole,
   InputPlaceHolder,
 } from "utils/commonFunctions";
 import appConstants from "constants/constant";
@@ -84,7 +85,7 @@ const {
 type Anchor = "top" | "right" | "bottom";
 const Applicant = () => {
   document.title = Modules.Applicant + " | " + projectTitle;
-
+  const currentRole = getCurrentUserRole();
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const filterFromChart = params.get("filter");
@@ -573,7 +574,6 @@ const Applicant = () => {
         }
       }
 
-      // ------------------ Save filters (only if not initializing) ------------------
       const isAnyFilterApplied =
         experienceRange[0] !== 0 ||
         experienceRange[1] !== 25 ||
@@ -1819,7 +1819,13 @@ const Applicant = () => {
                 <Tooltip.Trigger asChild>
                   <button
                     className="btn btn-sm btn-soft-success bg-primary"
-                    onClick={() => handleView(row.original._id, "main")}
+                    onClick={() =>
+                      currentRole === "admin"
+                        ? handleView(row.original._id, "main")
+                        : toast.error(
+                            "Access denied you do not have permission to access this resource."
+                          )
+                    }
                     disabled={!row.original.isActive}
                   >
                     <i className="text-white ri-eye-fill" />
@@ -1842,7 +1848,13 @@ const Applicant = () => {
                 <Tooltip.Trigger asChild>
                   <button
                     className="text-white btn btn-sm btn-soft-secondary bg-secondary"
-                    onClick={() => handleEdit(row.original._id)}
+                    onClick={() =>
+                      currentRole === "admin"
+                        ? handleEdit(row.original._id)
+                        : toast.error(
+                            "Access denied you do not have permission to access this resource."
+                          )
+                    }
                     disabled={!row.original.isActive}
                   >
                     <i className="ri-pencil-fill" />
@@ -1864,7 +1876,13 @@ const Applicant = () => {
                 <Tooltip.Trigger asChild>
                   <button
                     className="text-white btn btn-sm btn-soft-danger bg-danger"
-                    onClick={() => handleDeleteSingle(row.original._id)}
+                    onClick={() =>
+                      currentRole === "admin"
+                        ? handleDeleteSingle(row.original._id)
+                        : toast.error(
+                            "Access denied you do not have permission to access this resource."
+                          )
+                    }
                     disabled={!row.original.isActive}
                   >
                     <i className="align-bottom ri-delete-bin-5-fill" />
@@ -1886,7 +1904,13 @@ const Applicant = () => {
                 <Tooltip.Trigger asChild>
                   <button
                     className="text-white btn btn-sm btn-soft-success bg-success"
-                    onClick={() => handleEmail(row.original._id)}
+                    onClick={() =>
+                      currentRole === "admin"
+                        ? handleEmail(row.original._id)
+                        : toast.error(
+                            "Access denied you do not have permission to access this resource."
+                          )
+                    }
                     disabled={!row.original.isActive}
                   >
                     <i className="align-bottom ri-mail-close-line" />
@@ -2265,7 +2289,13 @@ const Applicant = () => {
                           value={searchAll}
                         />
                         <button
-                          onClick={toggleDrawer("right", true)}
+                          onClick={() =>
+                            currentRole === "admin"
+                              ? toggleDrawer("right", true)
+                              : toast.error(
+                                  "Access denied you do not have permission to access this resource."
+                                )
+                          }
                           className="px-3 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 whitespace-nowrap"
                         >
                           <i className="fa fa-filter mr-1"></i>Filter
@@ -2296,14 +2326,26 @@ const Applicant = () => {
                       <div className="flex gap-2">
                         <BaseButton
                           className="flex-1 px-3 py-2 text-sm bg-green-700 text-white rounded-md hover:bg-green-800"
-                          onClick={() => handleExportModalShow()}
+                          onClick={() =>
+                            currentRole === "admin"
+                              ? handleExportModalShow()
+                              : toast.error(
+                                  "Access denied you do not have permission to access this resource."
+                                )
+                          }
                         >
                           <i className="ri-upload-2-line mr-1" />
                           Export
                         </BaseButton>
                         <BaseButton
                           className="flex-1 px-3 py-2 text-sm bg-green-600 text-white rounded-md hover:bg-green-700"
-                          onClick={handleNavigate}
+                          onClick={() =>
+                            currentRole === "admin"
+                              ? handleNavigate()
+                              : toast.error(
+                                  "Access denied you do not have permission to access this resource."
+                                )
+                          }
                         >
                           <i className="ri-add-line mr-1" />
                           Add
@@ -2323,7 +2365,13 @@ const Applicant = () => {
                       />
 
                       <button
-                        onClick={toggleDrawer("right", true)}
+                        onClick={() =>
+                          currentRole === "admin"
+                            ? toggleDrawer("right", true)
+                            : toast.error(
+                                "Access denied you do not have permission to access this resource."
+                              )
+                        }
                         className="btn btn-primary"
                       >
                         <i className="mx-1 fa fa-filter"></i> Filters
@@ -2350,13 +2398,28 @@ const Applicant = () => {
                       <BaseButton
                         color="primary"
                         className="bg-green-900 btn btn-soft-secondary edit-list"
-                        onClick={() => handleExportModalShow()}
+                        onClick={() =>
+                          currentRole === "admin"
+                            ? handleExportModalShow()
+                            : toast.error(
+                                "Access denied you do not have permission to access this resource."
+                              )
+                        }
                       >
                         <i className="ri-upload-2-line me-1" />
                         Export
                       </BaseButton>
 
-                      <BaseButton color="success" onClick={handleNavigate}>
+                      <BaseButton
+                        color="success"
+                        onClick={() =>
+                          currentRole === "admin"
+                            ? handleNavigate()
+                            : toast.error(
+                                "Access denied you do not have permission to access this resource."
+                              )
+                        }
+                      >
                         <i className="ri-add-line me-1" />
                         Add
                       </BaseButton>

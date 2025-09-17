@@ -4,7 +4,7 @@ import appConstants from "constants/constant";
 import { jwtDecode } from "jwt-decode";
 import { toast } from "react-toastify";
 
-const { handleResponse, NOT_FOUND } = appConstants;
+const { handleResponse } = appConstants;
 
 export const ACCESS_TOKEN = "authUser";
 export const EXPIRES_AT = "expiresAt";
@@ -54,7 +54,6 @@ export const logout = () => {
   removeItem("accessModules");
 
   // toast.error("🔒 Session expired - please log in again");
-
 };
 
 export const InputPlaceHolder = (fieldName: string) => {
@@ -120,7 +119,7 @@ export const dynamicFind = (array: any, validation: any, flag = "all") => {
 };
 
 export const errorHandle = (error: any) => {
-  if (error?.response?.data?.statusCode === NOT_FOUND) {
+  if (error?.response?.data?.message) {
     toast.error(error?.response?.data?.message);
   } else {
     toast.error(handleResponse.somethingWrong);
