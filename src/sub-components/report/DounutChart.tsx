@@ -6,7 +6,7 @@ import CheckboxMultiSelect from "components/BaseComponents/CheckboxMultiSelect";
 import appConstants from "constants/constant";
 import { SelectedOption } from "interfaces/applicant.interface";
 import { getRoleWiseReport } from "api/reportApi";
-
+import { useNavigate } from "react-router-dom";
 const { designationType } = appConstants;
 
 const ColumnChart = () => {
@@ -15,6 +15,7 @@ const ColumnChart = () => {
   );
   const [isLoading, setIsLoading] = useState(false);
   const [labels, setLabels] = useState<string[]>([]);
+  const navigate = useNavigate();
   const [dataValues, setDataValues] = useState<number[]>([]);
 
   // Generate dark colors dynamically for any number of items
@@ -195,8 +196,8 @@ const ColumnChart = () => {
         colorByPoint: true,
         colors: generateColors(dataValues.length),
         cursor: "pointer",
-        pointWidth: 50, // Fixed width for columns
-        maxPointWidth: 50, // Maximum width limit
+        pointWidth: 50,
+        maxPointWidth: 50,
         dataLabels: {
           enabled: true,
           format: "{y}",
@@ -205,7 +206,10 @@ const ColumnChart = () => {
         point: {
           events: {
             click: function () {
-              console.log("Clicked:", this.category);
+              const rawLabel = String(this.category);
+              navigate(
+                `/applicants?designation=${encodeURIComponent(rawLabel)}`
+              );
             },
           },
         },
@@ -219,7 +223,6 @@ const ColumnChart = () => {
       },
     ],
   };
-
   return (
     <div>
       <style>

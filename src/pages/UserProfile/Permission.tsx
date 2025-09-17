@@ -15,12 +15,19 @@ const modules: Module[] = [
   {
     id: "Applicants",
     label: "Applicants",
-    permissions: [],
-  },
-  {
-    id: "import Applicants",
-    label: "import Applicants",
-    permissions: [],
+    permissions: [
+      { id: "View", label: "View" },
+      { id: "Add", label: "Add" },
+      { id: "Edit", label: "Edit" },
+      { id: "Delete", label: "Delete" },
+      { id: "EmailApplicant", label: "Email-Applicant" },
+      { id: "Export", label: "Export" },
+      { id: "Import", label: "Import" },
+      { id: "Status", label: "Status" },
+      { id: "Favourite", label: "Favourite" },
+      { id: "Filters", label: "Filters" },
+      { id: "Columns", label: "Columns" },
+    ],
   },
   {
     id: "Vendor",
@@ -43,7 +50,7 @@ const modules: Module[] = [
     permissions: [],
   },
   {
-    id: "master",
+    id: "Master",
     label: "Master",
     permissions: [
       { id: "Add Skill", label: "Add Skill" },

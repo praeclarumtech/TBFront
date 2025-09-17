@@ -57,6 +57,9 @@ export const getApplicationsByGenderWorkNotice = async (params: {
   workPreference?: string;
   search?: string;
   noticePeriod?: string;
+  createdBy?: string;
+  isActive?: string;
+  isFavorite?: string;
 }) => {
   const response = await authServices.get(
     `${APPLICANTS_GENDER_WORKPREF_NOTICE}`,
