@@ -2289,13 +2289,15 @@ const Applicant = () => {
                           value={searchAll}
                         />
                         <button
-                          onClick={() =>
-                            currentRole === "admin"
-                              ? toggleDrawer("right", true)
-                              : toast.error(
-                                  "Access denied you do not have permission to access this resource."
-                                )
-                          }
+                          onClick={(event) => {
+                            if (currentRole === "admin") {
+                              toggleDrawer("right", true)(event); // pass the click event
+                            } else {
+                              toast.error(
+                                "Access denied! You do not have permission to access this resource."
+                              );
+                            }
+                          }}
                           className="px-3 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 whitespace-nowrap"
                         >
                           <i className="fa fa-filter mr-1"></i>Filter
@@ -2365,13 +2367,15 @@ const Applicant = () => {
                       />
 
                       <button
-                        onClick={() =>
-                          currentRole === "admin"
-                            ? toggleDrawer("right", true)
-                            : toast.error(
-                                "Access denied you do not have permission to access this resource."
-                              )
-                        }
+                        onClick={(event) => {
+                          if (currentRole === "admin") {
+                            toggleDrawer("right", true)(event); // pass the click event
+                          } else {
+                            toast.error(
+                              "Access denied! You do not have permission to access this resource."
+                            );
+                          }
+                        }}
                         className="btn btn-primary"
                       >
                         <i className="mx-1 fa fa-filter"></i> Filters
