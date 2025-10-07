@@ -1,70 +1,17 @@
-import { ArrowLeftOutlined } from "@ant-design/icons";
-import { updateRole } from "api/roleApi";
+import {
+  ArrowLeftOutlined,
+  DownOutlined,
+  RightOutlined,
+} from "@ant-design/icons";
+import { assignRole } from "api/roleApi";
 import BaseButton from "components/BaseComponents/BaseButton";
-import CheckBoxDropdown, {
-  Module,
-} from "components/BaseComponents/CheckBoxDropdown";
 import appConstants from "constants/constant";
-import React, { useState } from "react";
+import { navItems } from "constants/navigationConstants";
+import React, { useCallback, useState } from "react";
 import { Card } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import { capitalizeWords, getCurrentUserRole } from "utils/commonFunctions";
-
-const modules: Module[] = [
-  {
-    id: "Applicants",
-    label: "Applicants",
-    permissions: [
-      // { id: "View", label: "View" },
-      // { id: "Add", label: "Add" },
-      // { id: "Edit", label: "Edit" },
-      // { id: "Delete", label: "Delete" },
-      // { id: "EmailApplicant", label: "Email-Applicant" },
-      // { id: "Export", label: "Export" },
-      // { id: "Import", label: "Import" },
-      // { id: "Status", label: "Status" },
-      // { id: "Favourite", label: "Favourite" },
-      // { id: "Filters", label: "Filters" },
-      // { id: "Columns", label: "Columns" },
-    ],
-  },
-  {
-    id: "Vendor",
-    label: "Vendor",
-    permissions: [],
-  },
-  {
-    id: "Client",
-    label: "Client",
-    permissions: [],
-  },
-  {
-    id: "Email",
-    label: "Email",
-    permissions: [],
-  },
-  {
-    id: "Reports",
-    label: "Reports",
-    permissions: [],
-  },
-  {
-    id: "Master",
-    label: "Master",
-    permissions: [
-      { id: "Add Skill", label: "Add Skill" },
-      { id: "Add City", label: "Add City" },
-      { id: "Add State", label: "Add State" },
-      { id: "Add Country", label: "Add Country" },
-      { id: "Add Qualification", label: "Add Qualification" },
-      { id: "Add Role and Skill", label: "Add Role and Skill" },
-      { id: "Find and Replace", label: "Find and Replace" },
-      { id: "Add Email Template", label: "Add Email Template" },
-      { id: "Add Designation", label: "Add Designation" },
-    ],
-  },
-];
 
 const { projectTitle, Modules } = appConstants;
 const Permission: React.FC = () => {
@@ -74,19 +21,120 @@ const Permission: React.FC = () => {
   const { _id, roleName, accessModules } = location.state || {};
   const navigate = useNavigate();
   const [selected, setSelected] = useState<string[]>(accessModules || []);
+  const [expandedModule, setExpandedModule] = useState<string>("");
   const [loader, setLoader] = useState(false);
+
+  // Check if a permission should be disabled based on role
+  const isPermissionDisabled = useCallback(
+    (permissionKey: string) => {
+      const normalizedRole = roleName?.toLowerCase();
+
+      // Disable vendor list for vendor role
+      if (normalizedRole === "vendor" && permissionKey === "vendor_list") {
+        return true;
+      }
+
+      // Disable client list for client role
+      if (normalizedRole === "client" && permissionKey === "client_list") {
+        return true;
+      }
+
+      return false;
+    },
+    [roleName]
+  );
+
   const resetSelection = () => {
     setSelected([]);
   };
 
   const saveInformation = () => {
-    updateRoles();
+    assignRoles();
   };
 
-  const updateRoles = async () => {
+  const handleCheck = useCallback(
+    (isChecked: boolean, moduleName: string) => {
+      const module = navItems.find((item) => item.accessorKey === moduleName);
+      if (!module?.subItems) return;
+
+      // Only include enabled sub-items
+      const enabledModules = module.subItems
+        .filter((subItem) => !isPermissionDisabled(subItem.accessorKey))
+        .map((subItem) => subItem.accessorKey);
+
+      setSelected((prev) => {
+        if (isChecked) {
+          return Array.from(new Set([...prev, ...enabledModules]));
+        } else {
+          return prev.filter((item) => !enabledModules.includes(item));
+        }
+      });
+    },
+    [isPermissionDisabled]
+  );
+
+  const handleSubMenuCheck = useCallback((moduleName: string) => {
+    setSelected((prev) => {
+      if (prev.includes(moduleName)) {
+        return prev.filter((module) => module !== moduleName);
+      } else {
+        return [...prev, moduleName];
+      }
+    });
+  }, []);
+
+  const handleExpand = useCallback(
+    (moduleName: string) => {
+      if (expandedModule === moduleName) {
+        setExpandedModule("");
+      } else {
+        setExpandedModule(moduleName);
+      }
+    },
+    [expandedModule]
+  );
+
+  const isParentModuleChecked = useCallback(
+    (moduleName: string) => {
+      const module = navItems.find((item) => item.accessorKey === moduleName);
+      if (!module?.subItems) return false;
+
+      // Only check enabled sub-items
+      const enabledSubItems = module.subItems.filter(
+        (subItem) => !isPermissionDisabled(subItem.accessorKey)
+      );
+
+      return (
+        enabledSubItems.length > 0 &&
+        enabledSubItems.every((subItem) =>
+          selected.includes(subItem.accessorKey)
+        )
+      );
+    },
+    [selected, isPermissionDisabled]
+  );
+
+  const getPermissionCount = useCallback(
+    (moduleName: string) => {
+      const module = navItems.find((item) => item.accessorKey === moduleName);
+      if (!module?.subItems) return 0;
+
+      // Only count enabled sub-items
+      const enabledSubItems = module.subItems.filter(
+        (subItem) => !isPermissionDisabled(subItem.accessorKey)
+      );
+
+      return enabledSubItems.filter((subItem) =>
+        selected.includes(subItem.accessorKey)
+      ).length;
+    },
+    [selected, isPermissionDisabled]
+  );
+
+  const assignRoles = async () => {
     try {
       setLoader(true);
-      const response = await updateRole(_id, { accessModules: selected });
+      const response = await assignRole({ _id, accessModules: selected });
       if (response?.success) {
         toast.success("Permission Given Successfully");
         if (currentRole === roleName) {
@@ -117,18 +165,141 @@ const Permission: React.FC = () => {
         </button>
       </div>
       <Card className="mb-4 mx-4 overflow-hidden">
-        <div className="p-4 ">
+        <div className="p-4">
           <h2 className="text-lg font-bold mb-4">
             Assign permission to {capitalizeWords(roleName)}
           </h2>
-          <div className="justify-center d-flex max-h-[350px] overflow-y-auto rounded p-2">
-            <CheckBoxDropdown
-              modules={modules}
-              value={selected}
-              onChange={setSelected}
-            />
+
+          <div className="grid grid-cols-1 gap-4 mt-8">
+            {navItems
+              .filter((item) => item.accessorKey !== "dashboard")
+              .map((moduleName) => (
+                <div key={moduleName.name}>
+                  <div
+                    className={`flex items-center gap-3 p-4 rounded shadow-sm cursor-pointer transition-all duration-200 ${
+                      expandedModule === moduleName.accessorKey
+                        ? "bg-[#ff888e] rounded-b-none"
+                        : "bg-white border-gray-200 hover:bg-gray-50"
+                    }`}
+                    onClick={() => {
+                      if (moduleName.subItems) {
+                        handleExpand(moduleName.accessorKey);
+                      }
+                    }}
+                  >
+                    <div className="w-full flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={
+                          isParentModuleChecked(moduleName.accessorKey) ||
+                          selected.includes(moduleName.accessorKey)
+                        }
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={(e) => {
+                          if (moduleName.subItems) {
+                            handleCheck(
+                              e.target.checked,
+                              moduleName.accessorKey
+                            );
+                          } else {
+                            if (selected.includes(moduleName.accessorKey)) {
+                              setSelected((prev) =>
+                                prev.filter(
+                                  (item) => item !== moduleName.accessorKey
+                                )
+                              );
+                            } else {
+                              setSelected((prev) =>
+                                Array.from(
+                                  new Set([...prev, moduleName.accessorKey])
+                                )
+                              );
+                            }
+                          }
+                        }}
+                        className="w-4 h-4"
+                      />
+                      <span
+                        className={
+                          expandedModule === moduleName.accessorKey
+                            ? "text-white"
+                            : "text-gray-800"
+                        }
+                      >
+                        {moduleName.name}
+                      </span>
+                      <div className="ml-auto flex gap-2">
+                        {getPermissionCount(moduleName.accessorKey) !== 0 &&
+                          getPermissionCount(moduleName.accessorKey) !==
+                            moduleName.subItems?.length && (
+                            <span
+                              className={`text-sm ${
+                                expandedModule === moduleName.accessorKey
+                                  ? "text-white"
+                                  : "text-gray-800"
+                              }`}
+                            >
+                              {getPermissionCount(moduleName.accessorKey)}{" "}
+                              Permissions
+                            </span>
+                          )}
+                        {moduleName.subItems && (
+                          <span>
+                            {expandedModule !== moduleName.accessorKey ? (
+                              <RightOutlined className="text-gray-500" />
+                            ) : (
+                              <DownOutlined className="text-white" />
+                            )}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  {expandedModule === moduleName.accessorKey && (
+                    <div className="grid grid-cols-2 gap-4 p-4 border rounded-b-sm border-t-0 border-gray-200">
+                      {moduleName.subItems?.map((subItem) => {
+                        const isDisabled = isPermissionDisabled(
+                          subItem.accessorKey
+                        );
+                        return (
+                          <div
+                            key={subItem.accessorKey}
+                            className={`rounded-md p-3 border border-gray-200 ${
+                              isDisabled
+                                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                                : selected.includes(subItem.accessorKey)
+                                ? "bg-[#ff888e] text-white cursor-pointer"
+                                : "cursor-pointer hover:bg-gray-50"
+                            }`}
+                            onClick={() => {
+                              if (!isDisabled) {
+                                handleSubMenuCheck(subItem.accessorKey);
+                              }
+                            }}
+                            title={
+                              isDisabled
+                                ? `Not available for ${roleName} role`
+                                : ""
+                            }
+                          >
+                            <div className="flex items-center justify-between">
+                              <span>{subItem.name}</span>
+                              {isDisabled && (
+                                <span className="text-xs text-gray-400 ml-2">
+                                  (Restricted)
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              ))}
           </div>
-          <div className="justify-end gap-2 d-flex">
+
+          <div className="justify-end gap-2 d-flex mt-8">
             <BaseButton color="secondary" onClick={resetSelection}>
               Cancel
             </BaseButton>

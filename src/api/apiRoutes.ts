@@ -124,6 +124,7 @@ export const LIST_ROLE_BY_ID = "/role/view";
 export const ADD_ROLE = "/role/create";
 export const UPDATE_ROLE = "/role/update";
 export const DELETE_ROLE = "/role/delete";
+export const ASSIGN_ROLE = "/role/assign";
 
 //Find And Replace
 
