@@ -19,6 +19,7 @@ const Permission: React.FC = () => {
   const currentRole = getCurrentUserRole();
   const location = useLocation();
   const { _id, roleName, accessModules } = location.state || {};
+  console.log("accessModules", accessModules);
   const navigate = useNavigate();
   const [selected, setSelected] = useState<string[]>(accessModules || []);
   const [expandedModule, setExpandedModule] = useState<string>("");
@@ -29,13 +30,28 @@ const Permission: React.FC = () => {
     (permissionKey: string) => {
       const normalizedRole = roleName?.toLowerCase();
 
-      // Disable vendor list for vendor role
       if (normalizedRole === "vendor" && permissionKey === "vendor_list") {
         return true;
       }
 
-      // Disable client list for client role
       if (normalizedRole === "client" && permissionKey === "client_list") {
+        return true;
+      }
+
+      return false;
+    },
+    [roleName]
+  );
+
+  const isModuleHidden = useCallback(
+    (moduleAccessorKey: string) => {
+      const normalizedRole = roleName?.toLowerCase();
+
+      if (normalizedRole === "vendor" && moduleAccessorKey === "client") {
+        return true;
+      }
+
+      if (normalizedRole === "client" && moduleAccessorKey === "vendors") {
         return true;
       }
 
@@ -57,7 +73,6 @@ const Permission: React.FC = () => {
       const module = navItems.find((item) => item.accessorKey === moduleName);
       if (!module?.subItems) return;
 
-      // Only include enabled sub-items
       const enabledModules = module.subItems
         .filter((subItem) => !isPermissionDisabled(subItem.accessorKey))
         .map((subItem) => subItem.accessorKey);
@@ -99,7 +114,7 @@ const Permission: React.FC = () => {
       const module = navItems.find((item) => item.accessorKey === moduleName);
       if (!module?.subItems) return false;
 
-      // Only check enabled sub-items
+      // Only check enabled sub-items (not disabled and not from hidden modules)
       const enabledSubItems = module.subItems.filter(
         (subItem) => !isPermissionDisabled(subItem.accessorKey)
       );
@@ -119,7 +134,7 @@ const Permission: React.FC = () => {
       const module = navItems.find((item) => item.accessorKey === moduleName);
       if (!module?.subItems) return 0;
 
-      // Only count enabled sub-items
+      // Only count enabled sub-items (not disabled and not from hidden modules)
       const enabledSubItems = module.subItems.filter(
         (subItem) => !isPermissionDisabled(subItem.accessorKey)
       );
@@ -172,13 +187,17 @@ const Permission: React.FC = () => {
 
           <div className="grid grid-cols-1 gap-4 mt-8">
             {navItems
-              .filter((item) => item.accessorKey !== "dashboard")
+              .filter(
+                (item) =>
+                  item.accessorKey !== "dashboard" &&
+                  !isModuleHidden(item.accessorKey)
+              )
               .map((moduleName) => (
                 <div key={moduleName.name}>
                   <div
                     className={`flex items-center gap-3 p-4 rounded shadow-sm cursor-pointer transition-all duration-200 ${
                       expandedModule === moduleName.accessorKey
-                        ? "bg-[#ff888e] rounded-b-none"
+                        ? "bg-[#624bff] rounded-b-none"
                         : "bg-white border-gray-200 hover:bg-gray-50"
                     }`}
                     onClick={() => {
@@ -268,7 +287,7 @@ const Permission: React.FC = () => {
                               isDisabled
                                 ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                                 : selected.includes(subItem.accessorKey)
-                                ? "bg-[#ff888e] text-white cursor-pointer"
+                                ? "bg-[#624bff] text-white cursor-pointer"
                                 : "cursor-pointer hover:bg-gray-50"
                             }`}
                             onClick={() => {
