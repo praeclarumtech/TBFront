@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  Route,
-  createBrowserRouter,
-  createRoutesFromElements,
-  RouterProvider,
-} from "react-router-dom";
+import { Route, BrowserRouter, Routes } from "react-router-dom";
 import routes from "./routes";
 import RootBoundary from "pages/dashboard/pages/RootBoundary";
 import SignIn from "pages/auth/SignIn";
@@ -81,25 +76,14 @@ const RenderRouter: React.FC = () => {
     LOGIN,
   } = routes;
 
-  const router = createBrowserRouter(
-    createRoutesFromElements(
-      <Route path={ROOT.path} errorElement={<RootBoundary />}>
-        {/* <Route index element={<SignIn />} /> */}
+  return (
+    <BrowserRouter>
+      <Routes>
         <Route path={LOGIN.path} element={<SignIn />} />
         <Route path={SIGN_UP.path} element={<SignUp />} />
         <Route path={FORGET_PASSWORD.path} element={<ForgetPassword />} />
         <Route path={VERIFY_EMAIL.path} element={<EmailVerification />} />
         <Route path={UPDATE_PASSWORD.path} element={<UpdatePassword />} />
-        <Route element={<VendorLayout />}>
-          <Route index element={<Vendor />} />
-
-          {/* <Route path={VENDOR.path} element={<Vendor />} /> */}
-          <Route path={APPLY_NOW_JOB.path} element={<ApplyNowJob />} />
-          <Route path={APPLY_JOB_LIST.path} element={<AppliedJobList />} />
-          <Route path={JOB_SEARCH.path} element={<SearchJob />} />
-          <Route path={DETAILED_JOB.path} element={<DetailedJob />} />
-          <Route path={JOB_OPEN.path} element={<OpenJob />} />
-        </Route>
 
         <Route path={JOB_ADD_QR_CODE.path} element={<ApplyNow />} />
         <Route path={JOB_EDIT_QR_CODE.path} element={<ApplyNow />} />
@@ -108,77 +92,78 @@ const RenderRouter: React.FC = () => {
         <Route path={APPLICANT_SUCCESS.path} element={<SuccessPage />} />
         <Route path={EMAIL_SEND.path} element={<SuccessPage />} />
 
-        <Route element={<PrivateRoute component={() => <RootLayout />} />}>
-          <Route
-            path={DASHBOARD.path}
-            element={<PrivateRoute component={() => <Dashboard />} />}
-          />
-          <Route path={APPLICANTS.path} element={<Applicant />} />
-          <Route
-            path={"import-applicants"}
-            element={<ImportApplicantTables />}
-          />
-          <Route path={"job-listing"} element={<JobListing />} />
-          <Route path={"/vendorList"} element={<VendorList />} />
+        <Route element={<VendorLayout />}>
+          <Route index element={<Vendor />} />
+          <Route path={APPLY_NOW_JOB.path} element={<ApplyNowJob />} />
+          <Route path={APPLY_JOB_LIST.path} element={<AppliedJobList />} />
+          <Route path={JOB_SEARCH.path} element={<SearchJob />} />
+          <Route path={DETAILED_JOB.path} element={<DetailedJob />} />
+          <Route path={JOB_OPEN.path} element={<OpenJob />} />
+        </Route>
 
+        <Route element={<PrivateRoute component={() => <RootLayout />} />}>
+          <Route path={DASHBOARD.path} element={<Dashboard />} />
+          <Route path={APPLICANTS.path} element={<Applicant />} />
+          <Route path="import-applicants" element={<ImportApplicantTables />} />
+          <Route path="job-listing" element={<JobListing />} />
+          <Route path="/vendorList" element={<VendorList />} />
+          <Route path="/appliedJobApplicants" element={<ManageAppliedList />} />
+          <Route path="/client" element={<Client />} />
           <Route
-            path={"/appliedJobApplicants"}
-            element={<ManageAppliedList />}
-          />
-          <Route path={"/client"} element={<Client />} />
-          <Route
-            path={"/appliedJobApplicantsClient"}
+            path="/appliedJobApplicantsClient"
             element={<ManageAppliedListClient />}
           />
-          <Route path={"job-listingClient"} element={<JobListing />} />
-
-          <Route path={"userProfile"} element={<Profile />} />
-          <Route path={"userprofileEdit/:_id"} element={<UserProfileEdit />} />
-          <Route path={"userprofileAdd"} element={<UserProfileEdit />} />
-
-          <Route path={"userManagement"} element={<UserManagement />} />
-          <Route path={"roles"} element={<Roles />} />
-          <Route path={"permission"} element={<Permission />} />
+          <Route path="job-listingClient" element={<JobListing />} />
+          <Route path="userProfile" element={<Profile />} />
+          <Route path="userprofileEdit/:_id" element={<UserProfileEdit />} />
+          <Route path="userprofileAdd" element={<UserProfileEdit />} />
+          <Route path="userManagement" element={<UserManagement />} />
+          <Route path="roles" element={<Roles />} />
+          <Route path="permission" element={<Permission />} />
           <Route
             path={CHANGE_PASSWORD.path}
             element={
               <ChangePassword showModal={true} setShowModal={() => {}} />
             }
           />
+
+          {/* Nested Routes */}
           <Route path={APPLICANTS.path}>
-            <Route path={"add-applicant"} element={<StepperForm />} />
-            <Route path={"edit-applicant/:id"} element={<StepperForm />} />
+            <Route path="add-applicant" element={<StepperForm />} />
+            <Route path="edit-applicant/:id" element={<StepperForm />} />
           </Route>
+
           <Route path={EMAIL.path}>
             <Route index element={<EmailTable />} />
             <Route path="compose" element={<EmailForm />} />
           </Route>
+
           <Route path={REPORT.path}>
             <Route index element={<Report />} />
           </Route>
+
           <Route path={MASTER.path}>
             <Route path="passing-year" element={<PassingYear />} />
             <Route path="skills" element={<AddSkill />} />
             <Route path="degree" element={<AddDegree />} />
             <Route path="add-role-skill" element={<UpdateSkill />} />
             <Route path="Find-Fields" element={<FindAndReplace />} />
-
             <Route path="email-template" element={<AddEmailTemplate />} />
             <Route path="designation" element={<AddDesignation />} />
-
             <Route path="country" element={<Country />} />
             <Route path="state" element={<State />} />
             <Route path="city" element={<City />} />
             <Route path="job" element={<JobForm />} />
             <Route path="job3" element={<OpenJob />} />
-            <Route path={"edit-job/:id"} element={<JobForm />} />
+            <Route path="edit-job/:id" element={<JobForm />} />
           </Route>
         </Route>
-      </Route>
-    )
-  );
 
-  return <RouterProvider router={router} />;
+        {/* Root route with error boundary */}
+        <Route path={ROOT.path} element={<RootBoundary />} />
+      </Routes>
+    </BrowserRouter>
+  );
 };
 
 export default RenderRouter;

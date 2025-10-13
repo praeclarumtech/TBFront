@@ -1,12 +1,9 @@
 import appConstants from "constants/constant";
-import { useRouteError } from "react-router-dom";
 import { Col } from "reactstrap";
 
 const { projectTitle } = appConstants;
 const RootBoundary = () => {
   document.title = projectTitle;
-  const error = useRouteError();
-  console.error("error boundary", error);
 
   return (
     <Col className="w-screen h-screen bg-white">
