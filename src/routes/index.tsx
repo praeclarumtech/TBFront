@@ -77,7 +77,7 @@ const RenderRouter: React.FC = () => {
   } = routes;
 
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/talent">
       <Routes>
         <Route path={LOGIN.path} element={<SignIn />} />
         <Route path={SIGN_UP.path} element={<SignUp />} />
