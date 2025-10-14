@@ -79,6 +79,10 @@ const RenderRouter: React.FC = () => {
   return (
     <BrowserRouter basename="/talent">
       <Routes>
+        {/* Default route - redirect to login */}
+        <Route path={ROOT.path} element={<SignIn />} />
+
+        {/* Public Routes */}
         <Route path={LOGIN.path} element={<SignIn />} />
         <Route path={SIGN_UP.path} element={<SignUp />} />
         <Route path={FORGET_PASSWORD.path} element={<ForgetPassword />} />
@@ -159,8 +163,8 @@ const RenderRouter: React.FC = () => {
           </Route>
         </Route>
 
-        {/* Root route with error boundary */}
-        <Route path={ROOT.path} element={<RootBoundary />} />
+        {/* Error boundary route for unmatched paths */}
+        <Route path="*" element={<RootBoundary />} />
       </Routes>
     </BrowserRouter>
   );

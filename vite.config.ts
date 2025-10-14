@@ -6,11 +6,11 @@ import path from "path";
 export default defineConfig({
   plugins: [tsconfigPaths(), react()],
   base: "/talent/",
-  envPrefix: ['TALENT_'],
+  envPrefix: ["TALENT_", "TB_"],
   resolve: {
     alias: {
-      shared: path.resolve(__dirname, 'src/shared'),
-      assets: path.resolve(__dirname, 'src/assets'),
+      shared: path.resolve(__dirname, "src/shared"),
+      assets: path.resolve(__dirname, "src/assets"),
     },
   },
   server: {
