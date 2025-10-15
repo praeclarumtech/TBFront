@@ -32,7 +32,7 @@ const OpenJob = () => {
   }, [_id]);
   const handleNavigate = () => {
     // navigate("/applicants/applyNow");
-    navigate("/applicants/applyNow", { state: { jobId: formData.job_id } });
+    navigate("talent/applicants/applyNow", { state: { jobId: formData.job_id } });
   };
 
   const DetailsCard = ({

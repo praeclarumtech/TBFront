@@ -5,7 +5,7 @@ import { useFormik } from "formik";
 import { Fragment } from "react";
 import BaseButton from "components/BaseComponents/BaseButton";
 import { BaseSelect } from "components/BaseComponents/BaseSelect";
-import { Form, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import BaseInput from "components/BaseComponents/BaseInput";
 import moment from "moment";
 import BaseTextarea from "components/BaseComponents/BaseTextArea";
@@ -312,7 +312,7 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
       <Container fluid>
         <Row>
           <div>
-            <Form
+            <form
               onSubmit={(e) => {
                 e.preventDefault();
                 validation.handleSubmit();
@@ -704,7 +704,7 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
                   Next
                 </BaseButton>
               </div>
-            </Form>
+            </form>
           </div>
         </Row>
       </Container>
