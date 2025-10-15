@@ -4,7 +4,7 @@ import { useFormik } from "formik";
 import { Fragment, useEffect, useState } from "react";
 import BaseButton from "components/BaseComponents/BaseButton";
 import { BaseSelect } from "components/BaseComponents/BaseSelect";
-import { Form } from "react-router-dom";
+// Using native form instead of react-router-dom Form to avoid data router requirement
 import BaseInput from "components/BaseComponents/BaseInput";
 import {
   EducationApplicantSchema,
@@ -108,8 +108,6 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
       // onNext(submissionData);
       // onNext(data);
 
-
-
       setLoading(true);
     },
   });
@@ -120,7 +118,7 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
       <Container fluid>
         <Row>
           <div>
-            <Form
+            <form
               onSubmit={(e) => {
                 e.preventDefault();
                 validation.handleSubmit();
@@ -159,14 +157,16 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                       touched={validation.touched.qualification}
                       error={validation.errors.qualification}
                       isRequired={false}
-                      menuPortalTarget={typeof window !== "undefined" ? document.body : null}
+                      menuPortalTarget={
+                        typeof window !== "undefined" ? document.body : null
+                      }
                       menuPosition="fixed"
                       styles={{
                         menuPortal: (base: any) => ({ ...base, zIndex: 9999 }),
                         menuList: (provided: any) => ({
                           ...provided,
                           maxHeight: 200,
-                          overflowY: 'auto',
+                          overflowY: "auto",
                         }),
                       }}
                     />
@@ -239,14 +239,16 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                       touched={validation.touched.passingYear}
                       error={validation.errors.passingYear}
                       isRequired={false}
-                      menuPortalTarget={typeof window !== "undefined" ? document.body : null}
+                      menuPortalTarget={
+                        typeof window !== "undefined" ? document.body : null
+                      }
                       menuPosition="fixed"
                       styles={{
                         menuPortal: (base: any) => ({ ...base, zIndex: 9999 }),
                         menuList: (provided: any) => ({
                           ...provided,
                           maxHeight: 200,
-                          overflowY: 'auto',
+                          overflowY: "auto",
                         }),
                       }}
                     />
@@ -329,7 +331,7 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                   Next
                 </BaseButton>
               </div>
-            </Form>
+            </form>
           </div>
         </Row>
       </Container>
