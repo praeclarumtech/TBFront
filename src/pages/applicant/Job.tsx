@@ -4,7 +4,7 @@ import { useFormik } from "formik";
 import { Fragment, useEffect, useState } from "react";
 import BaseButton from "components/BaseComponents/BaseButton";
 import { BaseSelect, MultiSelect } from "components/BaseComponents/BaseSelect";
-import { Form } from "react-router-dom";
+// Using native form instead of react-router-dom Form to avoid data router requirement
 import BaseInput from "components/BaseComponents/BaseInput";
 import {
   jobApplicantSchema,
@@ -336,7 +336,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
       <div className="pt-3 page-content"></div>
       <Container fluid>
         <Row className="mb-4">
-          <Form
+          <form
             onSubmit={(e) => {
               e.preventDefault();
               validation.handleSubmit();
@@ -1157,7 +1157,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                 Next
               </BaseButton>
             </div>
-          </Form>
+          </form>
         </Row>
       </Container>
     </Fragment>
