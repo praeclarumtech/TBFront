@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import { Fragment } from "react";
 import { BaseSelect, MultiSelect } from "components/BaseComponents/BaseSelect";
-import { Form, useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import BaseInput from "components/BaseComponents/BaseInput";
 import {
   dynamicFind,
@@ -409,7 +409,7 @@ const QrFrom = () => {
         <Card title="Job Profile">
           <Row>
             <div>
-              <Form
+              <form
                 onSubmit={(e) => {
                   e.preventDefault();
                   validation.handleSubmit();
@@ -1121,7 +1121,7 @@ const QrFrom = () => {
                     </Col>
                   </Row>
                 )}
-              </Form>
+              </form>
             </div>
           </Row>
         </Card>
