@@ -83,11 +83,17 @@ export const IsInvalid = (validation: any, fieldName: string | number) => {
 const getItem = (key: string) => {
   const val = localStorage.getItem(key);
   if (!val) return null;
+
+  // Handle JWT tokens and other non-JSON strings
+  if (key === ACCESS_TOKEN || key === "authUser" || key === "access_token") {
+    return val; // Return JWT token as-is
+  }
+
   try {
     return JSON.parse(val);
   } catch (e: any) {
     console.error("getItem failed:", e);
-    return val;
+    return val; // Return the raw value if JSON parsing fails
   }
 };
 
