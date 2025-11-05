@@ -30,7 +30,7 @@ const removeItem = (key: string) => {
 export const isAuthenticated = () => {
   const token = getItem(ACCESS_TOKEN);
   const expiresAt = getItem(EXPIRES_AT);
-  return !!token && Date.now() < parseInt(expiresAt || 0);
+  return !!token && Date.now() < parseInt(expiresAt || "0");
 };
 
 export const setAuthData = (token: any) => {
@@ -52,6 +52,9 @@ export const logout = () => {
   removeItem("role");
   removeItem("id");
   removeItem("accessModules");
+
+  // Dispatch auth change event to notify UserProvider
+  window.dispatchEvent(new CustomEvent("authChange"));
 
   // toast.error("🔒 Session expired - please log in again");
 };
@@ -84,11 +87,13 @@ const getItem = (key: string) => {
   const val = localStorage.getItem(key);
   if (!val) return null;
 
-  // Handle JWT tokens and other non-JSON strings
-  if (key === ACCESS_TOKEN || key === "authUser" || key === "access_token") {
-    return val; // Return JWT token as-is
+  // For specific keys that should always be treated as strings
+  const stringKeys = [ACCESS_TOKEN, EXPIRES_AT, "role", "id", "accessModules"];
+  if (stringKeys.includes(key)) {
+    return val;
   }
 
+  // For other keys, try to parse as JSON
   try {
     return JSON.parse(val);
   } catch (e: any) {

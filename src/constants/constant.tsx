@@ -24,6 +24,11 @@ const appConstants = Object.freeze({
       });
     },
   },
+  anchorEnums: {
+    top: "top",
+    right: "right",
+    bottom: "bottom",
+  },
   handleResponse: {
     dataNotFound: "Sorry! No Result Found.",
     nullData: "---",
@@ -34,11 +39,11 @@ const appConstants = Object.freeze({
     Next: "Next",
   },
   roleEnums: {
-    Admin: "Admin",
-    Vendor: "Vendor",
-    Manager: "Manager",
-    SuperAdmin: "Super Admin",
-    Employee: "Employee",
+    Admin: "admin",
+    Vendor: "vendor",
+    HR: "hr",
+    Guest: "guest",
+    Client: "client",
   },
   searchPlaceHolder: "Search...",
   validationMessages: {
@@ -498,7 +503,7 @@ const appConstants = Object.freeze({
     { label: "Guest", value: "guest" },
     { label: "Client", value: "client" },
   ],
-  favoriteOptions : [
+  favoriteOptions: [
     { label: "Favorite", value: true },
     { label: "Not Favorite", value: false },
   ],

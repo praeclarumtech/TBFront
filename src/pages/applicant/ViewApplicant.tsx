@@ -13,82 +13,10 @@ import { CloseOutlined } from "@ant-design/icons";
 import { toast } from "react-toastify";
 import BaseFav from "components/BaseComponents/BaseFav";
 import { getApplicantDetailsInVendor } from "api/apiVendor";
+import { ApplicantDetails, ViewModalProps } from "interfaces/applicant.interface";
 
 const { projectTitle, Modules } = appConstants;
 
-interface ViewModalProps {
-  show: boolean;
-  onHide: () => void;
-  applicantId?: string;
-  source: string;
-}
-
-interface ApplicantDetails {
-  name: {
-    firstName: string;
-    middleName?: string;
-    lastName: string;
-  };
-  phone: {
-    phoneNumber: string;
-    whatsappNumber: string;
-  };
-  email: string;
-  gender: string;
-  dateOfBirth: string;
-  maritalStatus: string;
-  comment: string;
-  currentAddress: string;
-  currentCity: string;
-  currentPincode: number;
-  currentLocation: string;
-  state: string;
-  country: string;
-  preferredLocations: string;
-  homeTownCity: string;
-  homePincode: number;
-  qualification: string;
-  degree: string;
-  passingYear: number;
-  specialization: string;
-  appliedSkills: string[];
-  appliedRole: string;
-  totalExperience: number;
-  relevantSkillExperience: number;
-  otherSkills: string;
-  currentCompanyName: string;
-  currentCompanyDesignation: string;
-  currentPkg: string;
-  expectedPkg: number;
-  negotiation: string;
-  noticePeriod: number;
-  interviewStage: string;
-  status: string;
-  resumeUrl: string;
-  portfolioUrl: string;
-  practicalUrl: string;
-  clientCvUrl: string;
-  clientFeedback: string;
-  permanentAddress: string;
-  addedBy: string;
-  linkedinUrl: string;
-  feedback: string;
-  practicalFeedback: string;
-  communicationSkill: number;
-  gitHubUrl: string;
-  rating: number;
-  referral: string;
-  cgpa: number | null;
-  collegeName: string;
-  workPreference: string;
-  lastFollowUpDate: string;
-  anyHandOnOffers: boolean;
-  meta: object;
-  isFavorite: boolean;
-  _id: string;
-  updatedAt?: string;
-  createdAt?: string;
-}
 
 const capitalizeWords = (str?: string) => {
   return (
@@ -554,7 +482,7 @@ const ViewModal: React.FC<ViewModalProps> = ({
                                 columnGap: "8px",
                               }}
                             >
-                              {formData?.appliedSkills.map((skill) => (
+                              {formData?.appliedSkills.map((skill: string) => (
                                 <Tag
                                   color="cyan"
                                   key={skill}

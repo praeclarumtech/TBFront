@@ -69,6 +69,10 @@ const SignIn = () => {
               console.log(role);
               setAuthData(res?.data?.token);
 
+              // Dispatch auth change event to notify UserProvider
+              window.dispatchEvent(new CustomEvent("authChange"));
+
+              // Decode for role checking
 
               if (role === "guest") {
                 navigate(from, { replace: true });
