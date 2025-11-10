@@ -22,6 +22,7 @@ import { Switch } from "antd";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import { useLocation } from "react-router-dom";
 import ActiveModal from "components/BaseComponents/ActiveModal";
+import { getCurrentUserRole } from "utils/commonFunctions";
 
 const { projectTitle, Modules, handleResponse } = appConstants;
 
@@ -32,7 +33,7 @@ const JobListing = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [jobToDelete, setJobToDelete] = useState<any>([]);
   const [modelLoading, setModelLoading] = useState<boolean>(false);
-
+  const currentRole = getCurrentUserRole();
   const [totalRecords, setTotalRecords] = useState(0);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
@@ -50,7 +51,6 @@ const JobListing = () => {
   const [currentLocation, setCurrentLocation] = useState<string>("");
 
   useEffect(() => {
-    // Set the current location when the component mounts
     setCurrentLocation(location.pathname);
     console.log("Location state:", currentLocation);
   }, [location.pathname]);
@@ -75,10 +75,16 @@ const JobListing = () => {
       if (searchAll) {
         params.search = searchAll;
       }
-      if (currentLocation === "/job-listingClient") {
-        params.filterBy = "client";
-      } else if (currentLocation === "/job-listing") {
-        params.filterBy = "vendor";
+
+      if (currentRole === "client") {
+        if (currentLocation === "/job-listingClient") {
+          params.filterBy = "client";
+        }
+      }
+      if (currentRole === "vendor") {
+        if (currentLocation === "/job-listing") {
+          params.filterBy = "vendor";
+        }
       }
       const res = await viewAllJob(params);
       if (res?.success) {
@@ -347,7 +353,7 @@ const JobListing = () => {
     setSelectedStatusId(id);
   };
   const updateStatusData = (isActive: boolean, id: string) => {
-    setModelLoading(true)
+    setModelLoading(true);
     updateJob(id, { isActive: !isActive })
       .then((res: any) => {
         if (res.success) {
@@ -408,8 +414,7 @@ const JobListing = () => {
 
   return (
     <Fragment>
-
-{showStatusModal ? (
+      {showStatusModal ? (
         <ActiveModal
           show={showStatusModal}
           loader={modelLoading}

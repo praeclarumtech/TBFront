@@ -10,6 +10,7 @@ import {
   LIST_ROLE_BY_ID,
   UPDATE_ROLE,
   DELETE_ROLE,
+  ASSIGN_ROLE,
 } from "./apiRoutes";
 
 import { authServices } from "./apiServices";
@@ -108,5 +109,10 @@ export const updateRole = async (id?: string, data?: object ) => {
 
 export const deleteRole = async (data: { _id: any } = { _id: "" }) => {
   const response = await authServices.delete(`${DELETE_ROLE}/${data?._id}`);
+  return response?.data;
+};
+
+export const assignRole = async (data: { _id: any, accessModules: any } = { _id: "", accessModules: [] }) => {
+  const response = await authServices.put(`${ASSIGN_ROLE}/${data?._id}`, data);
   return response?.data;
 };

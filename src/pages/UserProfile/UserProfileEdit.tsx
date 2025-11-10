@@ -163,9 +163,21 @@ const UserProfileEdit = () => {
           "Password and confirm password should be same."
         ),
       role: Yup.string().required(RequiredField("Role")),
+      company_name: Yup.string(),
+      company_email: Yup.string().email(
+        validationMessages.format("Company Email")
+      ),
+      company_phone_number: Yup.string(),
+      company_location: Yup.string(),
+      company_strength: Yup.string(),
+      company_linkedin_profile: Yup.string().url("Please enter a valid URL"),
+      company_website: Yup.string().url("Please enter a valid URL"),
+      whatsapp_number: Yup.string()
+        .matches(/^[1-9][0-9]{9}$/, "Please enter a valid 10-digit phone number")
+        .required("Whatsapp number is required"),
+      vendor_linkedin_profile: Yup.string().url("Please enter a valid URL"),
     }),
     onSubmit: (values, { resetForm }) => {
-      // console.log("insubmit");
       setLoading(true);
       const payload = {
         userName: values.userName,
@@ -1421,7 +1433,7 @@ const UserProfileEdit = () => {
                                   touched={validation.touched.company_name}
                                   error={validation.errors.company_name}
                                   passwordToggle={false}
-                                  isRequired={true}
+                                  isRequired={false}
                                 />
                               </Col>
 
@@ -1446,7 +1458,7 @@ const UserProfileEdit = () => {
                                   touched={validation.touched.company_email}
                                   error={validation.errors.company_email}
                                   passwordToggle={false}
-                                  isRequired={true}
+                                  isRequired={false}
                                 />
                               </Col>
                             </Row>
@@ -1484,7 +1496,7 @@ const UserProfileEdit = () => {
                                   }
                                   error={validation.errors.company_phone_number}
                                   passwordToggle={false}
-                                  isRequired={true}
+                                  isRequired={false}
                                 />
                               </Col>
                               <Col
@@ -1513,7 +1525,7 @@ const UserProfileEdit = () => {
                                   touched={validation.touched.company_location}
                                   error={validation.errors.company_location}
                                   passwordToggle={false}
-                                  isRequired={true}
+                                  isRequired={false}
                                 />
                               </Col>
                             </Row>
@@ -1649,7 +1661,7 @@ const UserProfileEdit = () => {
                                   touched={validation.touched.company_strength}
                                   error={validation.errors.company_strength}
                                   passwordToggle={false}
-                                  isRequired={true}
+                                  isRequired={false}
                                 />
                               </Col>
                               <Col
@@ -1722,7 +1734,7 @@ const UserProfileEdit = () => {
                                     validation.errors.company_linkedin_profile
                                   }
                                   passwordToggle={false}
-                                  isRequired={true}
+                                  isRequired={false}
                                 />
                               </Col>
 
@@ -1752,7 +1764,7 @@ const UserProfileEdit = () => {
                                   touched={validation.touched.company_website}
                                   error={validation.errors.company_website}
                                   passwordToggle={false}
-                                  isRequired={true}
+                                  isRequired={false}
                                 />
                               </Col>
                             </Row>
@@ -1787,7 +1799,7 @@ const UserProfileEdit = () => {
                                     validation.errors.vendor_linkedin_profile
                                   }
                                   passwordToggle={false}
-                                  isRequired={true}
+                                  isRequired={false}
                                 />
                               </Col>
                             </Row>
@@ -1808,7 +1820,7 @@ const UserProfileEdit = () => {
                             color="primary"
                             // disabled={validation.isSubmitting}
                           >
-                            add
+                            Add
                             {/* {validation.isSubmitting ? "Adding..." : "Add"} */}
                           </BaseButton>
                         </div>

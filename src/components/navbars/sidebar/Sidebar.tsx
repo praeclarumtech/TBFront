@@ -5,7 +5,6 @@ import { Layout, Menu } from "antd";
 import {
   HomeOutlined,
   UserOutlined,
-  DownloadOutlined,
   MailOutlined,
   PieChartOutlined,
   PlusOutlined,
@@ -13,6 +12,7 @@ import {
   TeamOutlined,
 } from "@ant-design/icons";
 import Logosvg from "components/BaseComponents/Logosvg";
+import { navigationGroups, masterRoutes } from "constants/navigationConstants";
 
 const { Sider } = Layout;
 
@@ -189,188 +189,196 @@ const Sidebar: React.FC<SidebarProps> = ({ toggleMenu }) => {
             </Link>
           </Menu.Item>
 
-          {/* Loop through allowed modules */}
-          {modules.map((mod) => {
-            switch (mod.toLowerCase()) {
-              case "applicants":
-                return (
+          {/* Check for main modules based on sub-item permissions */}
+          {(() => {
+            // Check if any applicant sub-items have permissions
+            const hasApplicantPermissions =
+              navigationGroups.APPLICANTS.items.some((item) =>
+                modules.includes(item.permission)
+              );
+
+            // Check if any vendor sub-items have permissions
+            const hasVendorPermissions = navigationGroups.VENDORS.items.some(
+              (item) => modules.includes(item.permission)
+            );
+
+            // Check if any client sub-items have permissions
+            const hasClientPermissions = navigationGroups.CLIENT.items.some(
+              (item) => modules.includes(item.permission)
+            );
+
+            // Check if any email/reports have permissions
+            const hasEmailPermissions = navigationGroups.EMAIL.items.some(
+              (item) => modules.includes(item.permission)
+            );
+            const hasReportPermissions = navigationGroups.REPORTS.items.some(
+              (item) => modules.includes(item.permission)
+            );
+
+            // Check if any master sub-items have permissions
+            const hasMasterPermissions = masterRoutes.some((route) =>
+              modules.includes(route.permission)
+            );
+
+            return (
+              <>
+                {/* Applicants Section */}
+                {hasApplicantPermissions && (
                   <Menu.ItemGroup
                     key="applicants-group"
-                    title={<MenuGroupHeading title="APPLICANTS" />}
+                    title={
+                      <MenuGroupHeading
+                        title={navigationGroups.APPLICANTS.title}
+                      />
+                    }
                   >
-                    <Menu.Item
-                      key="/applicants"
-                      icon={<UserOutlined style={{ fontSize: 18 }} />}
-                    >
-                      <Link to="/applicants" onClick={handleCloseMenu}>
-                        Applicants
-                      </Link>
-                    </Menu.Item>
-                    <Menu.Item
-                      key="/import-applicants"
-                      icon={<DownloadOutlined style={{ fontSize: 18 }} />}
-                    >
-                      <Link to="/import-applicants" onClick={handleCloseMenu}>
-                        Import Applicants
-                      </Link>
-                    </Menu.Item>
+                    {navigationGroups.APPLICANTS.items
+                      .filter((item) => modules.includes(item.permission))
+                      .map((item) => (
+                        <Menu.Item
+                          key={item.key}
+                          icon={<UserOutlined style={{ fontSize: 18 }} />}
+                        >
+                          <Link to={item.key} onClick={handleCloseMenu}>
+                            {item.label}
+                          </Link>
+                        </Menu.Item>
+                      ))}
                   </Menu.ItemGroup>
-                );
+                )}
 
-              case "vendor":
-                return (
+                {/* Vendors Section */}
+                {hasVendorPermissions && (
                   <Menu.ItemGroup
                     key="vendors-group"
-                    title={<MenuGroupHeading title="VENDORS" />}
+                    title={
+                      <MenuGroupHeading
+                        title={navigationGroups.VENDORS.title}
+                      />
+                    }
                   >
                     <Menu.SubMenu
                       key="vendor-parent"
                       icon={<InboxOutlined style={{ fontSize: 18 }} />}
                       title="Vendor"
                     >
-                      <Menu.Item key="/vendorList">
-                        <Link to="/vendorList" onClick={handleCloseMenu}>
-                          Vendors
-                        </Link>
-                      </Menu.Item>
-                      <Menu.Item key="/job-listing">
-                        <Link to="/job-listing" onClick={handleCloseMenu}>
-                          Job Listing
-                        </Link>
-                      </Menu.Item>
-                      <Menu.Item key="/appliedJobApplicants">
-                        <Link
-                          to="/appliedJobApplicants"
-                          onClick={handleCloseMenu}
-                        >
-                          Jobs Applicants
-                        </Link>
-                      </Menu.Item>
+                      {navigationGroups.VENDORS.items
+                        .filter((item) => modules.includes(item.permission))
+                        .map((item) => (
+                          <Menu.Item key={item.key}>
+                            <Link to={item.key} onClick={handleCloseMenu}>
+                              {item.label}
+                            </Link>
+                          </Menu.Item>
+                        ))}
                     </Menu.SubMenu>
                   </Menu.ItemGroup>
-                );
+                )}
 
-              case "client":
-                return (
+                {/* Client Section */}
+                {hasClientPermissions && (
                   <Menu.ItemGroup
                     key="client-group"
-                    title={<MenuGroupHeading title="CLIENT" />}
+                    title={
+                      <MenuGroupHeading title={navigationGroups.CLIENT.title} />
+                    }
                   >
                     <Menu.SubMenu
                       key="client-parent"
                       icon={<TeamOutlined style={{ fontSize: 18 }} />}
                       title="Client"
                     >
-                      <Menu.Item key="/client">
-                        <Link to="/client" onClick={handleCloseMenu}>
-                          Clients
-                        </Link>
-                      </Menu.Item>
-                      <Menu.Item key="/job-listingClient">
-                        <Link to="/job-listingClient" onClick={handleCloseMenu}>
-                          Client Job Listing
-                        </Link>
-                      </Menu.Item>
-                      <Menu.Item key="/appliedJobApplicantsClient">
-                        <Link
-                          to="/appliedJobApplicantsClient"
-                          onClick={handleCloseMenu}
-                        >
-                          Jobs Applicants
-                        </Link>
-                      </Menu.Item>
+                      {navigationGroups.CLIENT.items
+                        .filter((item) => modules.includes(item.permission))
+                        .map((item) => (
+                          <Menu.Item key={item.key}>
+                            <Link to={item.key} onClick={handleCloseMenu}>
+                              {item.label}
+                            </Link>
+                          </Menu.Item>
+                        ))}
                     </Menu.SubMenu>
                   </Menu.ItemGroup>
-                );
+                )}
 
-              case "email":
-                return (
+                {/* Email Section */}
+                {hasEmailPermissions && (
                   <Menu.ItemGroup
                     key="email-group"
-                    title={<MenuGroupHeading title="EMAIL" />}
+                    title={
+                      <MenuGroupHeading title={navigationGroups.EMAIL.title} />
+                    }
                   >
-                    <Menu.Item
-                      key="/email"
-                      icon={<MailOutlined style={{ fontSize: 18 }} />}
-                    >
-                      <Link to="/email" onClick={handleCloseMenu}>
-                        Email
-                      </Link>
-                    </Menu.Item>
+                    {navigationGroups.EMAIL.items
+                      .filter((item) => modules.includes(item.permission))
+                      .map((item) => (
+                        <Menu.Item
+                          key={item.key}
+                          icon={<MailOutlined style={{ fontSize: 18 }} />}
+                        >
+                          <Link to={item.key} onClick={handleCloseMenu}>
+                            {item.label}
+                          </Link>
+                        </Menu.Item>
+                      ))}
                   </Menu.ItemGroup>
-                );
+                )}
 
-              case "reports":
-                return (
+                {/* Reports Section */}
+                {hasReportPermissions && (
                   <Menu.ItemGroup
                     key="reports-group"
-                    title={<MenuGroupHeading title="REPORTS" />}
+                    title={
+                      <MenuGroupHeading
+                        title={navigationGroups.REPORTS.title}
+                      />
+                    }
                   >
-                    <Menu.Item
-                      key="/report"
-                      icon={<PieChartOutlined style={{ fontSize: 18 }} />}
-                    >
-                      <Link to="/report" onClick={handleCloseMenu}>
-                        Reports
-                      </Link>
-                    </Menu.Item>
+                    {navigationGroups.REPORTS.items
+                      .filter((item) => modules.includes(item.permission))
+                      .map((item) => (
+                        <Menu.Item
+                          key={item.key}
+                          icon={<PieChartOutlined style={{ fontSize: 18 }} />}
+                        >
+                          <Link to={item.key} onClick={handleCloseMenu}>
+                            {item.label}
+                          </Link>
+                        </Menu.Item>
+                      ))}
                   </Menu.ItemGroup>
-                );
-              case "master": {
-                const masterRoutes = [
-                  { key: "/master/skills", label: "Add Skill" },
-                  { key: "/master/degree", label: "Add Qualification" },
-                  {
-                    key: "/master/add-role-skill",
-                    label: "Add Role and Skill",
-                  },
-                  { key: "/master/Find-Fields", label: "Find and Replace" },
-                  {
-                    key: "/master/email-template",
-                    label: "Add Email Template",
-                  },
-                  { key: "/master/designation", label: "Add Designation" },
-                  { key: "/master/country", label: "Add Country" },
-                  { key: "/master/state", label: "Add State" },
-                  { key: "/master/city", label: "Add City" },
-                ];
+                )}
 
-                // if user has "master", show all
-                // const hasMasterAccess = modules.includes("master");
-
-                // otherwise filter by allowed sub-permissions
-                const allowedMasters = masterRoutes.filter((route) =>
-                  modules.includes(route.label)
-                );
-
-                if (allowedMasters.length === 0) return null;
-
-                return (
+                {/* Masters Section */}
+                {hasMasterPermissions && (
                   <Menu.ItemGroup
                     key="masters-group"
-                    title={<MenuGroupHeading title="MASTERS" />}
+                    title={
+                      <MenuGroupHeading
+                        title={navigationGroups.MASTERS.title}
+                      />
+                    }
                   >
                     <Menu.SubMenu
                       key="masters-parent"
                       icon={<PlusOutlined style={{ fontSize: 18 }} />}
                       title="Masters"
                     >
-                      {allowedMasters.map((route) => (
-                        <Menu.Item key={route.key}>
-                          <Link to={route.key} onClick={handleCloseMenu}>
-                            {route.label}
-                          </Link>
-                        </Menu.Item>
-                      ))}
+                      {masterRoutes
+                        .filter((route) => modules.includes(route.permission))
+                        .map((route) => (
+                          <Menu.Item key={route.key}>
+                            <Link to={route.key} onClick={handleCloseMenu}>
+                              {route.label}
+                            </Link>
+                          </Menu.Item>
+                        ))}
                     </Menu.SubMenu>
                   </Menu.ItemGroup>
-                );
-              }
-
-              default:
-                return null;
-            }
-          })}
+                )}
+              </>
+            );
+          })()}
         </Menu>
       </div>
     </Sider>

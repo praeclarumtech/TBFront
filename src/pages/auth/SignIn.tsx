@@ -69,7 +69,6 @@ const SignIn = () => {
               console.log(role);
               setAuthData(res?.data?.token);
 
-              // Decode for role checking
 
               if (role === "guest") {
                 navigate(from, { replace: true });
