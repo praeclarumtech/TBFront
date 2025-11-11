@@ -16,7 +16,7 @@ import ViewProfile from "../UserProfile/ViewProfile";
 import BaseButton from "components/BaseComponents/BaseButton";
 import appConstants from "constants/constant";
 import { ColumnConfig } from "interfaces/global.interface";
-import { FaGlobe, FaLinkedin } from "react-icons/fa";
+// import { FaGlobe, FaLinkedin } from "react-icons/fa";
 import { FaExclamationTriangle } from "react-icons/fa";
 import { importVendor } from "api/apiVendor";
 import BasePopUpModal from "components/BaseComponents/BasePopUpModal";
@@ -59,46 +59,46 @@ const Client = () => {
       header: "Whats-app no.",
       isVisible: false,
     },
-    {
-      id: "vendorProfileId.company_name",
-      header: "Company Name",
-      isVisible: true,
-    },
-    {
-      id: "vendorProfileId.company_email",
-      header: "Company Email",
-      isVisible: true,
-    },
-    {
-      id: "vendorProfileId.company_phone_number",
-      header: "Company Phone No.",
-      isVisible: true,
-    },
-    {
-      id: "vendorProfileId.company_strength",
-      header: "Company Strength",
-      isVisible: true,
-    },
-    {
-      id: "vendorProfileId.company_type",
-      header: "Company Type",
-      isVisible: true,
-    },
-    {
-      id: "vendorProfileId.company_location",
-      header: "Company Location",
-      isVisible: true,
-    },
-    {
-      id: "vendorProfileId.company_website",
-      header: "Company Website",
-      isVisible: false,
-    },
-    {
-      id: "vendorProfileId.company_linkedin_profile",
-      header: "Company LinkedIn",
-      isVisible: false,
-    },
+    // {
+    //   id: "vendorProfileId.company_name",
+    //   header: "Company Name",
+    //   isVisible: true,
+    // },
+    // {
+    //   id: "vendorProfileId.company_email",
+    //   header: "Company Email",
+    //   isVisible: true,
+    // },
+    // {
+    //   id: "vendorProfileId.company_phone_number",
+    //   header: "Company Phone No.",
+    //   isVisible: true,
+    // },
+    // {
+    //   id: "vendorProfileId.company_strength",
+    //   header: "Company Strength",
+    //   isVisible: true,
+    // },
+    // {
+    //   id: "vendorProfileId.company_type",
+    //   header: "Company Type",
+    //   isVisible: true,
+    // },
+    // {
+    //   id: "vendorProfileId.company_location",
+    //   header: "Company Location",
+    //   isVisible: true,
+    // },
+    // {
+    //   id: "vendorProfileId.company_website",
+    //   header: "Company Website",
+    //   isVisible: false,
+    // },
+    // {
+    //   id: "vendorProfileId.company_linkedin_profile",
+    //   header: "Company LinkedIn",
+    //   isVisible: false,
+    // },
     {
       id: "vendorProfileId.hire_resources",
       header: "Hire Resources",
@@ -172,7 +172,6 @@ const Client = () => {
         error.message ||
         "Unexpected error.";
       toast.error(message);
-      console.error("Error fetching total applicants:", error);
     } finally {
       setTableLoader(false);
     }
@@ -279,87 +278,87 @@ const Client = () => {
           return date ? new Date(date).toLocaleDateString() : "";
         },
       },
-      {
-        header: "Comapany name",
-        accessorKey: "vendorProfileId.company_name",
-        id: "vendorProfileId.company_name",
-        enableColumnFilter: false,
-      },
-      {
-        header: "Comapany email",
-        accessorKey: "vendorProfileId.company_email",
-        id: "vendorProfileId.company_email",
-        enableColumnFilter: false,
-      },
-      {
-        header: "Comapany phone no.",
-        accessorKey: "vendorProfileId.company_phone_number",
-        id: "vendorProfileId.company_phone_number",
-        enableColumnFilter: false,
-      },
-      {
-        header: "Comapany Type",
-        accessorKey: "vendorProfileId.company_type",
-        id: "vendorProfileId.company_type",
-        enableColumnFilter: false,
-      },
-      {
-        header: "Comapany Location",
-        accessorKey: "vendorProfileId.company_location",
-        id: "vendorProfileId.company_location",
-        enableColumnFilter: false,
-      },
+      // {
+      //   header: "Comapany name",
+      //   accessorKey: "vendorProfileId.company_name",
+      //   id: "vendorProfileId.company_name",
+      //   enableColumnFilter: false,
+      // },
+      // {
+      //   header: "Comapany email",
+      //   accessorKey: "vendorProfileId.company_email",
+      //   id: "vendorProfileId.company_email",
+      //   enableColumnFilter: false,
+      // },
+      // {
+      //   header: "Comapany phone no.",
+      //   accessorKey: "vendorProfileId.company_phone_number",
+      //   id: "vendorProfileId.company_phone_number",
+      //   enableColumnFilter: false,
+      // },
+      // {
+      //   header: "Comapany Type",
+      //   accessorKey: "vendorProfileId.company_type",
+      //   id: "vendorProfileId.company_type",
+      //   enableColumnFilter: false,
+      // },
+      // {
+      //   header: "Comapany Location",
+      //   accessorKey: "vendorProfileId.company_location",
+      //   id: "vendorProfileId.company_location",
+      //   enableColumnFilter: false,
+      // },
 
-      {
-        header: "Comapany strength",
-        accessorKey: "vendorProfileId.company_strength",
-        id: "vendorProfileId.company_strength",
-        enableColumnFilter: false,
-      },
-      {
-        header: "Comapany Website",
-        accessorKey: "vendorProfileId.company_website",
-        id: "vendorProfileId.company_website",
-        enableColumnFilter: false,
-        cell: ({ getValue }: { getValue: () => any }) => {
-          const url = getValue();
-          return url ? (
-            <a
-              href={url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 hover:text-blue-800 underline flex items-center gap-1"
-            >
-              <FaGlobe size={16} />
-              Website
-            </a>
-          ) : (
-            ""
-          );
-        },
-      },
-      {
-        header: "Comapany LinkedIn Profile",
-        accessorKey: "vendorProfileId.company_linkedin_profile",
-        id: "vendorProfileId.company_linkedin_profile",
-        enableColumnFilter: false,
-        cell: ({ getValue }: { getValue: () => any }) => {
-          const url = getValue();
-          return url ? (
-            <a
-              href={url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 hover:text-blue-800 underline flex items-center gap-1"
-            >
-              <FaLinkedin size={16} />
-              LinkedIn
-            </a>
-          ) : (
-            ""
-          );
-        },
-      },
+      // {
+      //   header: "Comapany strength",
+      //   accessorKey: "vendorProfileId.company_strength",
+      //   id: "vendorProfileId.company_strength",
+      //   enableColumnFilter: false,
+      // },
+      // {
+      //   header: "Comapany Website",
+      //   accessorKey: "vendorProfileId.company_website",
+      //   id: "vendorProfileId.company_website",
+      //   enableColumnFilter: false,
+      //   cell: ({ getValue }: { getValue: () => any }) => {
+      //     const url = getValue();
+      //     return url ? (
+      //       <a
+      //         href={url}
+      //         target="_blank"
+      //         rel="noopener noreferrer"
+      //         className="text-blue-600 hover:text-blue-800 underline flex items-center gap-1"
+      //       >
+      //         <FaGlobe size={16} />
+      //         Website
+      //       </a>
+      //     ) : (
+      //       ""
+      //     );
+      //   },
+      // },
+      // {
+      //   header: "Comapany LinkedIn Profile",
+      //   accessorKey: "vendorProfileId.company_linkedin_profile",
+      //   id: "vendorProfileId.company_linkedin_profile",
+      //   enableColumnFilter: false,
+      //   cell: ({ getValue }: { getValue: () => any }) => {
+      //     const url = getValue();
+      //     return url ? (
+      //       <a
+      //         href={url}
+      //         target="_blank"
+      //         rel="noopener noreferrer"
+      //         className="text-blue-600 hover:text-blue-800 underline flex items-center gap-1"
+      //       >
+      //         <FaLinkedin size={16} />
+      //         LinkedIn
+      //       </a>
+      //     ) : (
+      //       ""
+      //     );
+      //   },
+      // },
       {
         header: "Hire Resource",
         accessorKey: "vendorProfileId.hire_resources",
@@ -416,7 +415,12 @@ const Client = () => {
                   <button
                     className="text-white btn btn-sm btn-soft-secondary bg-secondary"
                     onClick={() =>
-                      navigate(`/userprofileEdit/${row?.original?._id}`)
+                      navigate(`/userprofileEdit/${row?.original?._id}`, {
+                        state: {
+                          from: "Client",
+                        },
+                      })
+
                     }
                     disabled={!row.original.isActive}
                   >

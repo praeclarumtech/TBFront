@@ -15,7 +15,7 @@ const BasePopUpModal = ({
   disabled = false,
 }: BasePopUpModalProps) => {
   return (
-    <Modal show={isOpen} onHide={onRequestClose} centered className="" >
+    <Modal show={isOpen} onHide={onRequestClose} centered className="">
       <Modal.Header closeButton>
         <Modal.Title className="text-danger d-inline-flex align-items-center">
           <FaExclamationTriangle className="me-2" />
@@ -37,16 +37,6 @@ const BasePopUpModal = ({
 
       <Modal.Footer>
         <Button
-          variant="primary"
-          onClick={() => {
-            confirmAction();
-            onRequestClose();
-          }}
-          disabled={disabled}
-        >
-          {confirmText}
-        </Button>
-        <Button
           variant="secondary"
           onClick={() => {
             cancelAction();
@@ -55,6 +45,16 @@ const BasePopUpModal = ({
           disabled={disabled}
         >
           {cancelText}
+        </Button>
+        <Button
+          variant="primary"
+          onClick={() => {
+            confirmAction();
+            onRequestClose();
+          }}
+          disabled={disabled}
+        >
+          {confirmText}
         </Button>
       </Modal.Footer>
     </Modal>

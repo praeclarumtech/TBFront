@@ -63,6 +63,7 @@ interface ApplicantDetails {
   negotiation: string;
   noticePeriod: number;
   interviewStage: string;
+  interviewMode: string;
   status: string;
   resumeUrl: string;
   portfolioUrl: string;
@@ -777,6 +778,18 @@ const ViewModal: React.FC<ViewModalProps> = ({
                       <Tag color="blue">
                         {capitalizeWords(formData.interviewStage)}
                       </Tag>
+                    }
+                  />
+                  <DetailsRow
+                    label="Interview Mode"
+                    value={
+                      formData.interviewMode ? (
+                        <Tag color="purple">
+                          {capitalizeWords(formData.interviewMode)}
+                        </Tag>
+                      ) : (
+                        "-"
+                      )
                     }
                   />
                   <DetailsRow

@@ -173,7 +173,10 @@ const UserProfileEdit = () => {
       company_linkedin_profile: Yup.string().url("Please enter a valid URL"),
       company_website: Yup.string().url("Please enter a valid URL"),
       whatsapp_number: Yup.string()
-        .matches(/^[1-9][0-9]{9}$/, "Please enter a valid 10-digit phone number")
+        .matches(
+          /^[1-9][0-9]{9}$/,
+          "Please enter a valid 10-digit phone number"
+        )
         .required("Whatsapp number is required"),
       vendor_linkedin_profile: Yup.string().url("Please enter a valid URL"),
     }),
@@ -343,7 +346,14 @@ const UserProfileEdit = () => {
             ? `${appEnv.API_ENDPOINT}/uploads/profile/${response.data.profilePicture}`
             : imagePreview
         );
-        navigate("/userManagement");
+        // Redirect to vendor list if user came from vendor list, otherwise redirect to user management
+        if (location.state?.from === "VendorList") {
+          navigate("/vendorList");
+        } else if (location.state?.from === "Client") {
+          navigate("/client");
+        } else {
+          navigate("/userManagement");
+        }
       }
     } catch (error) {
       // if (error && statusCode === 400) {
