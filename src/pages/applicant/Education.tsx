@@ -18,7 +18,7 @@ import { toast } from "react-toastify";
 
 const { projectTitle, Modules, passingYearType } = appConstants;
 
-const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
+const EducationalDetailsForm = ({ onNext, onBack, initialValues, onGetCurrentValues }: any) => {
   document.title = Modules.CreateApplicantForm + " | " + projectTitle;
   const [loading, setLoading] = useState<boolean>(false);
   const [qualification, setQualification] = useState<Qualification[]>([]);
@@ -111,6 +111,31 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues }: any) => {
       setLoading(true);
     },
   });
+
+  // Expose current form values to parent component
+  useEffect(() => {
+    if (onGetCurrentValues) {
+      const getCurrentValues = () => {
+        if (!validation.values) return null;
+        
+        const selectedDegree = qualification.find(
+          (q) => q.value === validation.values.qualification
+        )?.label;
+
+        return {
+          qualification: selectedDegree || validation.values.qualification || "",
+          specialization: validation.values.specialization || "",
+          passingYear: validation.values.passingYear || "",
+          cgpa: validation.values.cgpa || "",
+          collegeName: validation.values.collegeName || "",
+        };
+      };
+      
+      onGetCurrentValues(getCurrentValues);
+    }
+    // Remove onGetCurrentValues from dependencies to avoid infinite loop
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [validation.values, qualification]);
 
   return (
     <Fragment>

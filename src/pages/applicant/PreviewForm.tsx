@@ -390,6 +390,10 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
                 <span className="  !text-black pt-3">Client Feedback :</span>
                 <span>{" " + capitalizeWords(data?.clientFeedback)}</span>
               </Typography>
+              <Typography>
+                <span className="  !text-black pt-3">Interview Mode :</span>
+                <span>{" " + capitalizeWords(data?.interviewMode)}</span>
+              </Typography>
             </Col>
             <Col xs={12}>
               <Typography className="mt-2">

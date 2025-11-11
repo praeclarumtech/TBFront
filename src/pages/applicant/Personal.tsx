@@ -27,7 +27,12 @@ import { viewAllCountry } from "api/CountryStateCity";
 
 const { projectTitle, Modules, gendersType, maritalStatusType } = appConstants;
 
-const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
+const PersonalDetailsForm = ({
+  onNext,
+  initialValues,
+  module,
+  onGetCurrentValues,
+}: any) => {
   document.title = Modules.CreateApplicantForm + " | " + projectTitle;
   const [cities, setCities] = useState<City[]>([]);
   const [states, setStates] = useState<City[]>([]);
@@ -71,7 +76,6 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
     const getState = async (selectedCountryId?: string) => {
       try {
         setLoading(true);
-        console.log("object", selectedCountryId);
         const params = { country_id: selectedCountryId };
         const stateData = await viewAllState(params);
         if (stateData?.data) {
@@ -191,7 +195,6 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
       }
 
       onNext({
-        ...data,
         name: {
           firstName: data.firstName,
           middleName: data.middleName,
@@ -211,11 +214,45 @@ const PersonalDetailsForm = ({ onNext, initialValues, module }: any) => {
         maritalStatus: data.maritalStatus,
         permanentAddress: data.permanentAddress,
       });
-      onNext(data);
 
       setLoading(false);
     },
   });
+
+  // Expose current form values to parent component
+  useEffect(() => {
+    if (onGetCurrentValues) {
+      const getCurrentValues = () => {
+        if (!validation.values) return null;
+
+        return {
+          name: {
+            firstName: validation.values.firstName || "",
+            middleName: validation.values.middleName || "",
+            lastName: validation.values.lastName || "",
+          },
+          phone: {
+            whatsappNumber: validation.values.whatsappNumber || "",
+            phoneNumber: validation.values.phoneNumber || "",
+          },
+          email: validation.values.email || "",
+          gender: validation.values.gender || "",
+          dateOfBirth: validation.values.dateOfBirth
+            ? moment(validation.values.dateOfBirth).toISOString()
+            : "",
+          state: validation.values.state || "",
+          country: validation.values.country || "",
+          currentCity: validation.values.currentCity || "",
+          currentAddress: validation.values.currentAddress || "",
+          maritalStatus: validation.values.maritalStatus || "",
+          permanentAddress: validation.values.permanentAddress || "",
+        };
+      };
+
+      onGetCurrentValues(getCurrentValues);
+    }
+   
+  }, [validation.values, cities, states, country]);
 
   const checkExistingField = async (field: string, value: string) => {
     if (field === "email") {

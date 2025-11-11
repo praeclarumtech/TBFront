@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { User } from "interfaces/dashboard.interface";
 import ChangePassword from "pages/auth/ChangePassword";
 import { logout } from "utils/commonFunctions";
+import appEnv from "config/appEnv";
 
 export const DesktopNotifications = () => {
   const navigate = useNavigate();
@@ -42,7 +43,11 @@ export const DesktopNotifications = () => {
               <Image
                 alt="avatar"
                 crossOrigin="anonymous"
-                src={"/images/avatar/avatar.png"}
+                src={
+                  user?.profilePicture
+                    ? `${appEnv.API_ENDPOINT}/uploads/profile/${user?.profilePicture}`
+                    : "talent/images/avatar/avatar.png"
+                }
                 className="rounded-circle"
               />
             </div>
