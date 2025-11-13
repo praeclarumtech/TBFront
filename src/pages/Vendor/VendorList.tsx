@@ -823,11 +823,14 @@ const VendorList = () => {
                 <div className="ml-6 text-2xl font-bold">Vendors</div>
               </Col>
               <Col sm={6} lg={6} md={6} className="mt-4">
-                <div className="items-end justify-end mr-6 d-flex gap-3">
-                  <div>
+                <div className="items-end justify-end mr-6 d-flex gap-3 flex-nowrap">
+                  <div
+                    className="flex-shrink-0"
+                    style={{ minWidth: "200px", width: "200px" }}
+                  >
                     <input
                       id="search-bar-0"
-                      className="h-10 form-control search"
+                      className="h-10 form-control search w-100"
                       placeholder="Search..."
                       onChange={handleSearchChange}
                       value={searchAll}
@@ -843,7 +846,7 @@ const VendorList = () => {
                   />
                   <BaseButton
                     color="primary"
-                    className="position-relative"
+                    className="position-relative flex-shrink-0"
                     onClick={() => fileInputRef.current?.click()}
                     disabled={importLoader}
                   >
@@ -883,7 +886,7 @@ const VendorList = () => {
 
                   <BaseButton
                     color="primary"
-                    className="bg-green-900 btn btn-soft-secondary"
+                    className="bg-green-900 btn btn-soft-secondary flex-shrink-0"
                     onClick={handleExport}
                     disabled={users?.length === 0}
                   >
@@ -893,7 +896,7 @@ const VendorList = () => {
 
                   <BaseButton
                     color="primary"
-                    className="position-relative w-100%"
+                    className="position-relative flex-shrink-0"
                     onClick={handleAdd}
                   >
                     + Add
