@@ -11,8 +11,11 @@ import {
   GET_ALL_USERS,
   UPDATE_USER_STATUS,
   USERADD,
+  IMPORT_VENDOR_CSV,
+  EXPORT_VENDOR_CSV,
 } from "./apiRoutes";
 import { authServices } from "./apiServices";
+import qs from "qs";
 
 export const login = async (data: object) => {
   const response = await authServices.post(`${LOGIN}`, data);
@@ -83,4 +86,50 @@ export const getAllUsers = async (
 export const updateUserStatus = async (id?: string, data?: object) => {
   const response = await authServices.put(`${UPDATE_USER_STATUS}/${id}`, data);
   return response?.data;
+};
+
+export const importVendorCsv = async (
+  formData: FormData,
+  config?: { onUploadProgress?: (progressEvent: any) => void; params?: any }
+) => {
+  const url = `${IMPORT_VENDOR_CSV}`;
+
+  const response = await authServices.post(url, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+    params: config?.params,
+    ...config,
+    timeout: 300000,
+  });
+
+  return response.data;
+};
+
+export const exportVendorCsv = async (
+  queryParams: {
+    source?: string;
+    page?: number;
+    pageSize?: number;
+    limit?: number;
+    search?: string;
+    role?: string;
+    startDate?: string;
+    endDate?: string;
+  } = {},
+  payload?: { ids: string[]; fields: string[]; main: boolean }
+) => {
+  const queryString = qs.stringify(queryParams, { arrayFormat: "repeat" });
+
+  const response = await authServices.post(
+    `${EXPORT_VENDOR_CSV}?${queryString}`,
+    payload,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      responseType: "blob",
+      timeout: 300000,
+    }
+  );
+
+  return response.data;
 };
