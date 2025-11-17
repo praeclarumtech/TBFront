@@ -10,10 +10,10 @@ import { errorHandle } from "utils/commonFunctions";
 import { UserOutlined } from "@ant-design/icons";
 import appConstants from "constants/constant";
 import { CloseOutlined } from "@ant-design/icons";
-import { toast } from "react-toastify";
 import BaseFav from "components/BaseComponents/BaseFav";
 import { getApplicantDetailsInVendor } from "api/apiVendor";
 import { ApplicantDetails, ViewModalProps } from "interfaces/applicant.interface";
+import toastify from "utils/toastify";
 
 const { projectTitle, Modules } = appConstants;
 
@@ -122,9 +122,9 @@ const ViewModal: React.FC<ViewModalProps> = ({
       .then((res: any) => {
         if (res.success) {
           if (isFav) {
-            toast.success("Applicant removed from favorite list");
+            toastify("Applicant removed from favorite list", { type: "success" });
           } else {
-            toast.success("Applicant added to favorite list");
+            toastify("Applicant added to favorite list", { type: "success" });
           }
           getDetailsApplicants();
           setShowFavModal(false);
@@ -134,10 +134,10 @@ const ViewModal: React.FC<ViewModalProps> = ({
         const errorMessages = error?.response?.data?.details;
         if (errorMessages && Array.isArray(errorMessages)) {
           errorMessages.forEach((errorMessage) => {
-            toast.error(errorMessage);
+            toastify(errorMessage, { type: "error" });
           });
         } else {
-          toast.error("An error occurred while updating the applicant.");
+          toastify("An error occurred while updating the applicant.", { type: "error" });
         }
       })
       .finally(() => {

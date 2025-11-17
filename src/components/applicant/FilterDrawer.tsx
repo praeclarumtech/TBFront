@@ -5,12 +5,14 @@
 
 import React from "react";
 import { Row, Col } from "react-bootstrap";
-import { Box, Drawer, List, IconButton } from "@mui/material";
+import { Box, Drawer, List, Divider, IconButton } from "@mui/material";
 import { Close } from "@mui/icons-material";
 
 import { BaseSelect, MultiSelect } from "components/BaseComponents/BaseSelect";
 import BaseSlider from "components/BaseComponents/BaseSlider";
 import BaseInput from "components/BaseComponents/BaseInput";
+import BaseButton from "components/BaseComponents/BaseButton";
+import { InputPlaceHolder } from "utils/commonFunctions";
 import {
   SelectedOption,
   SelectedOption1,
@@ -35,6 +37,8 @@ interface FilterDrawerProps {
   isDesktop: boolean;
   appliedSkills: SelectedOption1[];
   multipleSkills: SelectedOption1[];
+  filterCity: SelectedOption1[];
+  filterAppliedRole: SelectedOption[];
   filterState: SelectedOption | null;
   filterGender: SelectedOption | null;
   filterInterviewStage: SelectedOption | null;
@@ -62,6 +66,8 @@ interface FilterDrawerProps {
 
   // Options
   skillsOptions: SelectedOption1[];
+  citiesOptions: SelectedOption1[];
+  appliedRoleOptions: SelectedOption[];
   statesOptions: SelectedOption[];
   interviewStageOptions: SelectedOption[];
   statusOptions: SelectedOption[];
@@ -76,6 +82,8 @@ interface FilterDrawerProps {
   // Handlers
   onAppliedSkillsChange: (selectedOptions: SelectedOption1[]) => void;
   onMultipleSkillsChange: (selectedOptions: SelectedOption1[]) => void;
+  onCityChange: (selectedOptions: SelectedOption1[]) => void;
+  onAppliedRoleFilterChange: (selectedOptions: SelectedOption[]) => void;
   onStateChange: (selectedOption: SelectedOption | null) => void;
   onGenderChange: (selectedOption: SelectedOption | null) => void;
   onInterviewStageChange: (selectedOption: SelectedOption | null) => void;
@@ -96,6 +104,7 @@ interface FilterDrawerProps {
   onEngRatingChange: (value: number[]) => void;
   onExpectedPkgChange: (value: number[]) => void;
   onCurrentPkgChange: (value: number[]) => void;
+  onResetFilters: () => void;
 }
 
 const FilterDrawer: React.FC<FilterDrawerProps> = ({
@@ -104,6 +113,8 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({
   isDesktop,
   appliedSkills,
   multipleSkills,
+  filterCity,
+  filterAppliedRole,
   filterState,
   filterGender,
   filterInterviewStage,
@@ -125,6 +136,8 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({
   filterExpectedPkg,
   filterCurrentPkg,
   skillsOptions,
+  citiesOptions,
+  appliedRoleOptions,
   statesOptions,
   interviewStageOptions,
   statusOptions,
@@ -137,6 +150,8 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({
   favoriteOptions,
   onAppliedSkillsChange,
   onMultipleSkillsChange,
+  onCityChange,
+  onAppliedRoleFilterChange,
   onStateChange,
   onGenderChange,
   onInterviewStageChange,
@@ -157,12 +172,13 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({
   onEngRatingChange,
   onExpectedPkgChange,
   onCurrentPkgChange,
+  onResetFilters,
 }) => {
   const drawerContent = (
     <Box
       sx={{
         padding: "16px",
-        marginTop: anchorEnums.top ? "64px" : 0,
+        marginTop: anchorEnums.top ? "0px" : 0,
         width: isDesktop ? 400 : 250,
       }}
       role="presentation"
@@ -192,6 +208,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({
           value={appliedSkills}
           onChange={onAppliedSkillsChange}
           placeholder="Select skills..."
+          className="mb-1 select-border"
         />
 
         {/* Multiple Skills */}
@@ -202,6 +219,31 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({
           value={multipleSkills}
           onChange={onMultipleSkillsChange}
           placeholder="Select multiple skills..."
+          className="mb-1 select-border"
+        />
+
+        {/* Applied Role */}
+        <MultiSelect
+          label="Applied Role"
+          name="appliedRole"
+          options={appliedRoleOptions}
+          placeholder="Applied Role"
+          value={filterAppliedRole}
+          isMulti={true}
+          onChange={onAppliedRoleFilterChange}
+          className="mb-1"
+        />
+
+        {/* City Filter */}
+        <MultiSelect
+          label="City"
+          name="city"
+          className="mb-1 select-border"
+          options={citiesOptions}
+          placeholder="City"
+          value={filterCity}
+          isMulti={true}
+          onChange={onCityChange}
         />
 
         {/* State Filter */}
@@ -212,6 +254,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({
           value={filterState}
           handleChange={onStateChange}
           placeholder="Select state..."
+          className="mb-1"
         />
 
         {/* Gender Filter */}
@@ -222,6 +265,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({
           value={filterGender}
           handleChange={onGenderChange}
           placeholder="Select gender..."
+          className="mb-1"
         />
 
         {/* Interview Stage Filter */}
@@ -232,6 +276,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({
           value={filterInterviewStage}
           handleChange={onInterviewStageChange}
           placeholder="Select interview stage..."
+          className="mb-1"
         />
 
         {/* Status Filter */}
@@ -242,6 +287,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({
           value={filterStatus}
           handleChange={onStatusChange}
           placeholder="Select status..."
+          className="mb-1"
         />
 
         {/* Work Preference Filter */}
@@ -252,6 +298,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({
           value={filterWorkPreference}
           handleChange={onWorkPreferenceChange}
           placeholder="Select work preference..."
+          className="mb-1"
         />
 
         {/* Any Hand On Offers Filter */}
@@ -262,6 +309,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({
           value={filterAnyHandOnOffers}
           handleChange={onAnyHandOnOffersChange}
           placeholder="Select option..."
+          className="mb-1"
         />
 
         {/* Designation Filter */}
@@ -272,6 +320,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({
           value={filterDesignation}
           handleChange={onDesignationChange}
           placeholder="Select designation..."
+          className="mb-1"
         />
 
         {/* Added By Filter */}
@@ -282,6 +331,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({
           value={addedBy}
           onChange={onAppliedRoleChange}
           placeholder="Select added by..."
+          className="mb-1"
         />
 
         {/* Active Status Filter */}
@@ -292,6 +342,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({
           value={filterActiveStatus}
           handleChange={onActiveStatusChange}
           placeholder="Select active status..."
+          className="mb-1"
         />
 
         {/* Favorite Filter */}
@@ -302,6 +353,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({
           value={filterFavorite}
           handleChange={onFavoriteChange}
           placeholder="Select favorite..."
+          className="mb-1"
         />
 
         {/* Date Range Filters */}
@@ -399,7 +451,91 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({
             handleChange={onCurrentPkgChange}
           />
         </div>
+
+        {/* Date Range Filters */}
+        <Row className="mb-3">
+          <Col xs={6}>
+            <BaseInput
+              label="Created Start Date"
+              name="startDate"
+              className="mb-1 select-border"
+              type="date"
+              placeholder={InputPlaceHolder("Start Date")}
+              handleChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                onStartDateChange(e.target.value)
+              }
+              value={startDate || ""}
+              max={new Date().toISOString().split("T")[0]}
+            />
+          </Col>
+          <Col xs={6}>
+            <BaseInput
+              label="Created End Date"
+              name="endDate"
+              type="date"
+              placeholder={InputPlaceHolder("End Date")}
+              handleChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                onEndDateChange(e.target.value)
+              }
+              value={endDate || ""}
+              max={new Date().toISOString().split("T")[0]}
+            />
+          </Col>
+        </Row>
+        <Row className="mb-3">
+          <Col xs={6}>
+            <BaseInput
+              label="Update Start Date"
+              name="updatedStartDate"
+              className="mb-1 select-border"
+              type="date"
+              placeholder={InputPlaceHolder("Start Date")}
+              handleChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                onUpdatedStartDateChange(e.target.value)
+              }
+              value={updatedStartDate || ""}
+              max={new Date().toISOString().split("T")[0]}
+            />
+          </Col>
+          <Col xs={6}>
+            <BaseInput
+              label="Update End Date"
+              name="updatedEndDate"
+              type="date"
+              placeholder={InputPlaceHolder("End Date")}
+              handleChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                onUpdatedEndDateChange(e.target.value)
+              }
+              value={updatedEndDate || ""}
+              max={new Date().toISOString().split("T")[0]}
+            />
+          </Col>
+        </Row>
       </List>
+
+      <Divider />
+      <div
+        style={{
+          position: "sticky",
+          bottom: 0,
+          background: "#fff",
+          zIndex: 100,
+          paddingTop: "8px",
+          paddingBottom: "8px",
+        }}
+      >
+        <Row>
+          <Col className="text-end">
+            <BaseButton
+              color="primary"
+              onClick={onResetFilters}
+              sx={{ width: "auto" }}
+            >
+              Reset Filters
+            </BaseButton>
+          </Col>
+        </Row>
+      </div>
     </Box>
   );
 

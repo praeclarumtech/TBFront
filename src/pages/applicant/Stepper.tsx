@@ -13,7 +13,6 @@ import { Fragment, useEffect, useState, useCallback, useRef } from "react";
 import PersonalDetailsForm from "./Personal";
 import EducationalDetailsForm from "./Education";
 import JobDetailsForm from "./Job";
-import { toast } from "react-toastify";
 import { useLocation, useNavigate } from "react-router-dom";
 import PreviewForm from "./PreviewForm";
 import {
@@ -27,6 +26,7 @@ import { useParams } from "react-router-dom";
 import appConstants from "constants/constant";
 import { errorHandle } from "utils/commonFunctions";
 import BasePopUpModal from "components/BaseComponents/BasePopUpModal";
+import toastify from "utils/toastify";
 
 const { projectTitle, Modules } = appConstants;
 
@@ -387,7 +387,7 @@ const StepperForm = () => {
           if (updatedRes.success) {
             setFormData(updatedRes.data);
             setInitialFormData(JSON.parse(JSON.stringify(updatedRes.data)));
-            toast.success("Changes saved successfully!");
+            toastify("Changes saved successfully!", { type: "success" });
             return true;
           }
         }
@@ -398,7 +398,7 @@ const StepperForm = () => {
           if (updatedRes.success) {
             setFormData(updatedRes.data);
             setInitialFormData(JSON.parse(JSON.stringify(updatedRes.data)));
-            toast.success("Changes saved successfully!");
+            toastify("Changes saved successfully!", { type: "success" });
             return true;
           }
         }
@@ -408,10 +408,10 @@ const StepperForm = () => {
       const errorMessages = error?.response?.data?.details;
       if (errorMessages && Array.isArray(errorMessages)) {
         errorMessages.forEach((errorMessage: string) => {
-          toast.error(errorMessage);
+          toastify(errorMessage, { type: "error" });
         });
       } else {
-        toast.error("An error occurred while saving changes.");
+        toastify("An error occurred while saving changes.", { type: "error" });
       }
       return false;
     } finally {
@@ -444,7 +444,7 @@ const StepperForm = () => {
       createApplicant(apiData)
         .then((res: any) => {
           if (res.success) {
-            toast.success(res.message);
+            toastify(res.message, { type: "success" });
             setTimeout(() => {
               navigate("/applicants");
             }, 3000);
@@ -454,10 +454,10 @@ const StepperForm = () => {
           const errorMessages = error?.response?.data?.details;
           if (errorMessages && Array.isArray(errorMessages)) {
             errorMessages.forEach((errorMessage) => {
-              toast.error(errorMessage);
+              toastify(errorMessage, { type: "error" });
             });
           } else {
-            toast.error("An error occurred while updating the applicant.");
+            toastify("An error occurred while updating the applicant.", { type: "error" });
           }
         })
 
@@ -469,7 +469,7 @@ const StepperForm = () => {
         updateImportedApplicant(apiData, id)
           .then((res: any) => {
             if (res.success) {
-              toast.success(res.message);
+              toastify(res.message, { type: "success" });
 
               setTimeout(() => {
                 navigate("/import-applicants");
@@ -480,10 +480,10 @@ const StepperForm = () => {
             const errorMessages = error?.response?.data?.details;
             if (errorMessages && Array.isArray(errorMessages)) {
               errorMessages.forEach((errorMessage) => {
-                toast.error(errorMessage);
+                toastify(errorMessage, { type: "error" });
               });
             } else {
-              toast.error("An error occurred while updating the applicant.");
+              toastify("An error occurred while updating the applicant.", { type: "error" });
             }
           })
           .finally(() => {
@@ -493,7 +493,7 @@ const StepperForm = () => {
         updateApplicant(apiData, id)
           .then((res: any) => {
             if (res.success) {
-              toast.success(res.message);
+              toastify(res.message, { type: "success" });
 
               setTimeout(() => {
                 navigate("/applicants");
@@ -504,10 +504,10 @@ const StepperForm = () => {
             const errorMessages = error?.response?.data?.details;
             if (errorMessages && Array.isArray(errorMessages)) {
               errorMessages.forEach((errorMessage) => {
-                toast.error(errorMessage);
+                toastify(errorMessage, { type: "error" });
               });
             } else {
-              toast.error("An error occurred while updating the applicant.");
+              toastify("An error occurred while updating the applicant.", { type: "error" });
             }
           })
           .finally(() => {

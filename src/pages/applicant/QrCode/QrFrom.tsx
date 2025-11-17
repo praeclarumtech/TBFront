@@ -27,12 +27,12 @@ import { ViewAppliedSkills } from "api/skillsApi";
 import { viewAllDesignation } from "api/designation";
 import BaseButton from "components/BaseComponents/BaseButton";
 import { Card } from "antd";
-import { toast } from "react-toastify";
 import { viewRoleSkill } from "api/roleApi";
 import uploadCloud from "assets/fonts/feather-icons/icons/upload-cloud.svg";
 import { useLocation } from "react-router-dom";
 import { viewAllCity } from "api/cityApis";
 import { viewAllState } from "api/stateApi";
+import toastify from "utils/toastify";
 
 const { projectTitle, Modules, workPreferenceType, communicationOptions } =
   appConstants;
@@ -302,11 +302,11 @@ const QrFrom = () => {
         }
         if (!id) {
           await createApplicantQR(formData, true);
-          toast.success("Applicant created successfully");
+          toastify("Applicant created successfully", { type: "success" });
           navigate("/applicants/qr-code-success");
         } else {
           await updateApplicantQR(formData, id, true);
-          toast.success("Applicant updated successfully");
+          toastify("Applicant updated successfully", { type: "success" });
           navigate("/applicants/qr-code-success");
         }
       } catch (error: any) {
@@ -319,11 +319,12 @@ const QrFrom = () => {
         const errorMessages = error?.response?.data?.details;
         if (errorMessages && Array.isArray(errorMessages)) {
           errorMessages.forEach((errorMessage: string) => {
-            toast.error(errorMessage);
+            toastify(errorMessage, { type: "error" });
           });
         } else {
-          toast.error(
-            message || "An error occurred while updating the applicant."
+          toastify(
+            message || "An error occurred while updating the applicant.",
+            { type: "error" }
           );
         }
       } finally {

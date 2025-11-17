@@ -7,8 +7,6 @@ import TableContainer from "components/BaseComponents/TableContainer";
 import { useNavigate } from "react-router-dom";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import * as Tooltip from "@radix-ui/react-tooltip";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import "react-loading-skeleton/dist/skeleton.css";
 import {
   listOfImportApplicants,
@@ -36,7 +34,6 @@ import appConstants from "constants/constant";
 import Skeleton from "react-loading-skeleton";
 import saveAs from "file-saver";
 import BasePopUpModal from "components/BaseComponents/BasePopUpModal";
-import { FaExclamationTriangle } from "react-icons/fa";
 import debounce from "lodash.debounce";
 
 import BaseModal from "components/BaseComponents/BaseModal";
@@ -44,6 +41,7 @@ import CheckboxMultiSelect from "components/BaseComponents/CheckboxMultiSelect";
 import ConfirmModal from "components/BaseComponents/BaseConfirmModal";
 import DrawerData from "./Drawer";
 import { ViewAppliedSkills } from "api/skillsApi";
+import toastify from "utils/toastify";
 
 interface ValueToEdit {
   label: string;
@@ -278,7 +276,7 @@ function ImportApplicant() {
     selectedOptions: any[] | ((prevState: SelectedOption[]) => SelectedOption[])
   ) => {
     if (!selectedApplicants || selectedApplicants.length === 0) {
-      toast.error("Please select applicants before choosing columns.");
+      toastify("Please select applicants before choosing columns.", { type: "error" });
       return;
     }
 
@@ -296,7 +294,7 @@ function ImportApplicant() {
     setLoader(true);
     deleteImportedMultipleApplicant(multipleApplicantDelete)
       .then(() => {
-        toast.success("Applicants Delete Successfully!.");
+        toastify("Applicants Delete Successfully!.", { type: "success" });
         fetchApplicants();
         setSelectedApplicants([]);
       })
@@ -375,8 +373,9 @@ function ImportApplicant() {
       } as unknown as React.ChangeEvent<HTMLInputElement>;
       handleResumeUpload(newEvent);
     } else {
-      toast.error(
-        "Unsupported file type. Please upload a CSV, Excel, Word, or PDF file."
+      toastify(
+        "Unsupported file type. Please upload a CSV, Excel, Word, or PDF file.",
+        { type: "error" }
       );
     }
   };
@@ -395,13 +394,13 @@ function ImportApplicant() {
     );
 
     if (validFiles.length === 0) {
-      toast.error("Please upload valid PDF or DOC/DOCX files.");
+      toastify("Please upload valid PDF or DOC/DOCX files.", { type: "error" });
       return;
     }
 
     const largeFiles = validFiles.filter((file) => file.size > 5 * 1024 * 1024);
     if (largeFiles.length > 0) {
-      toast("One or more large files detected. Import may take a few minutes.");
+      toastify("One or more large files detected. Import may take a few minutes.", { type: "error" });
     }
 
     setImportLoader(true);
@@ -425,11 +424,11 @@ function ImportApplicant() {
 
       if (response?.success) {
         if (response?.data?.summary?.insertedApplicants > 0) {
-          toast.success(response.message);
+          toastify(response.message, { type: "success" });
         }
         await fetchApplicants();
       } else {
-        throw new Error(response?.message || "Upload failed");
+        toastify(response?.message || "Upload failed", { type: "error" });
       }
     } catch (error: any) {
       const message =
@@ -437,7 +436,7 @@ function ImportApplicant() {
         error.response?.data?.error ||
         error.message ||
         "Unexpected error during upload";
-      toast.error(message);
+      toastify(message, { type: "error" });
     } finally {
       setImportLoader(false);
       setIsImporting(false);
@@ -457,15 +456,12 @@ function ImportApplicant() {
 
     const fileExtension = file.name.split(".").pop()?.toLowerCase();
     if (!["csv", "xlsx", "xls", ".xltx"].includes(fileExtension || "")) {
-      toast.error("Please upload a valid CSV or Excel file");
+      toastify("Please upload a valid CSV or Excel file", { type: "error" });
       return;
     }
     if (file.size > 5 * 1024 * 1024) {
       // 5MB
-      toast("Large file detected. Import may take a few minutes.", {
-        icon: <FaExclamationTriangle />,
-        autoClose: 4000,
-      });
+      toastify("Large file detected. Import may take a few minutes.", { type: "error" }); 
     }
 
     setImportLoader(true);
@@ -488,23 +484,23 @@ function ImportApplicant() {
       });
 
       if (response?.success) {
-        toast.success(response?.message || "File imported successfully!");
+        toastify(response?.message || "File imported successfully!", { type: "success" });
       } else if (!response?.success && response.statusCode === 400) {
         // setShowPopupModal(true);
         const messages = response?.message;
         if (messages && Array.isArray(messages)) {
           messages.forEach((messages) => {
-            toast.error(messages);
+            toastify(messages, { type: "error" });
           });
         }
-        toast.error(response.message || "Import failed");
+        toastify(response.message || "Import failed", { type: "error" });
       } else if (!response?.success && response.statusCode === 409) {
         setShowPopupModal(true);
-        toast.error(response.message || "Import failed");
+        toastify(response.message || "Import failed", { type: "error" });
         fetchDuplicateData();
       }
     } catch (error: any) {
-      toast.error(error?.message || "Failed to import file");
+      toastify(error?.message || "Failed to import file", { type: "error" });
     } finally {
       fetchApplicants();
       setImportLoader(false);
@@ -540,8 +536,9 @@ function ImportApplicant() {
       });
 
       if (response?.success) {
-        toast.success(
-          response?.message || "Existing applicants updated successfully!"
+        toastify(
+          response?.message || "Existing applicants updated successfully!",
+          { type: "success" }
         );
         setShowPopupModal(false);
         await fetchApplicants();
@@ -549,7 +546,7 @@ function ImportApplicant() {
         throw new Error(response?.message || "Update failed");
       }
     } catch (error: any) {
-      toast.error(error.message || "Failed to update applicants");
+      toastify(error.message || "Failed to update applicants", { type: "error" });
     } finally {
       setImportLoader(false);
       setIsImporting(false);
@@ -574,7 +571,7 @@ function ImportApplicant() {
     const handleJsonResponse = (parsed: any) => {
       if (parsed?.statusCode === 409 && parsed?.success === false) {
         resetExportState();
-        toast.error(parsed.message);
+        toastify(parsed.message, { type: "error" });
         return true;
       }
 
@@ -583,31 +580,32 @@ function ImportApplicant() {
         parsed?.success === false
       ) {
         resetExportState();
-        toast.error(parsed?.message || "No data available to export");
+        toastify(parsed?.message || "No data available to export", { type: "error" });
         return true;
       }
 
       if (parsed?.success === true && parsed?.statusCode === 410) {
         resetExportState();
-        toast.success(parsed.message);
+        toastify(parsed.message, { type: "success" });
         return true;
       }
 
       if (parsed?.success === true && parsed?.statusCode === 206) {
         resetExportState();
-        toast.success(parsed.message);
+        toastify(parsed.message, { type: "success" });
         return true;
       }
 
-      toast.error("Unexpected JSON response during export.");
+      toastify("Unexpected JSON response during export.", { type: "error" });
       return false;
     };
 
     try {
-      toast.info(
+      toastify(
         selectedFlag
           ? "Verify the records for move..."
-          : "Preparing file for download..."
+          : "Preparing file for download...",
+        { type: "info" }
       );
 
       const selectedColumns = exportableFields.map((field) => field.value);
@@ -628,7 +626,7 @@ function ImportApplicant() {
         const blob = new Blob([text], { type: "text/csv" });
         saveAs(blob, "Export_Applicants_data.csv");
         resetExportState();
-        toast.success("File downloaded successfully!");
+        toastify("File downloaded successfully!", { type: "success" });
         return;
       }
     } catch (error) {
@@ -845,8 +843,9 @@ function ImportApplicant() {
                   cell.row.original._id
                 )
                   .then(() => {
-                    toast.success(
-                      "Applicant Interview Stage updated successfully!"
+                    toastify(
+                      "Applicant Interview Stage updated successfully!",
+                      { type: "success" }
                     );
                   })
                   .catch((error: any) => {
@@ -881,7 +880,7 @@ function ImportApplicant() {
                   cell.row.original._id
                 )
                   .then(() => {
-                    toast.success("Applicant status updated successfully!");
+                    toastify("Applicant status updated successfully!", { type: "success" });
                   })
                   .catch((error: any) => {
                     errorHandle(error);
@@ -909,7 +908,7 @@ function ImportApplicant() {
 
   const handleSubmit = async () => {
     if (selectedApplicants.length === 0) {
-      toast.error("Please select applicants to update.");
+      toastify("Please select applicants to update.", { type: "error" });
       return;
     }
 
@@ -939,7 +938,7 @@ function ImportApplicant() {
 
     try {
       await updateManyApplicants(applicantIds, updateData);
-      toast.success("Applicants updated successfully!");
+      toastify("Applicants updated successfully!", { type: "success" });
       setShowBaseModal(false);
     } catch (error) {
       errorHandle(error);

@@ -64,15 +64,18 @@ const BaseSlider = ({
         </Label>
       )}
 
-      <div className="d-flex justify-content-between mb-2">
+      <div
+        className="d-flex justify-content-between align-items-center mb-2"
+        style={{ gap: "12px" }}
+      >
         <input
           type="number"
           value={currentValue[0]}
           onChange={handleMinChange}
           className="form-control form-control-sm no-spinner"
-          style={{ width: "40px", height: "30px" }}
+          style={{ width: "40px", height: "30px", marginRight: "8px" }}
         />
-        <Box sx={{ width: 300 }} className={className}>
+        <Box sx={{ width: 300, flex: 1 }} className={className}>
           <Slider
             value={currentValue}
             onChange={handleSliderChange}
@@ -105,7 +108,7 @@ const BaseSlider = ({
           value={currentValue[1]}
           onChange={handleMaxChange}
           className="form-control form-control-sm no-spinner"
-          style={{ width: "40px", height: "30px" }}
+          style={{ width: "40px", height: "30px", marginLeft: "8px" }}
         />
       </div>
 

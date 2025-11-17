@@ -13,6 +13,8 @@ export interface FilterState {
   // Multi-select filters
   appliedSkills: SelectedOption1[];
   multipleSkills: SelectedOption1[];
+  filterCity: SelectedOption1[];
+  filterAppliedRole: SelectedOption[];
   addedBy: SelectedOption[];
 
   // Single-select filters
@@ -39,11 +41,16 @@ export interface FilterState {
   filterEngRating: number[];
   filterExpectedPkg: number[];
   filterCurrentPkg: number[];
+
+  // Search
+  searchAll: string;
 }
 
 const initialFilterState: FilterState = {
   appliedSkills: [],
   multipleSkills: [],
+  filterCity: [],
+  filterAppliedRole: [],
   addedBy: [],
   filterState: null,
   filterGender: null,
@@ -52,7 +59,10 @@ const initialFilterState: FilterState = {
   filterWorkPreference: null,
   filterAnyHandOnOffers: null,
   filterDesignation: null,
-  filterActiveStatus: null,
+  filterActiveStatus: {
+    value: "true",
+    label: "Active",
+  },
   filterFavorite: null,
   startDate: "",
   endDate: "",
@@ -64,6 +74,7 @@ const initialFilterState: FilterState = {
   filterEngRating: [0, 10],
   filterExpectedPkg: [0, 100],
   filterCurrentPkg: [0, 100],
+  searchAll: "",
 };
 
 export const useApplicantFilters = () => {
@@ -90,6 +101,21 @@ export const useApplicantFilters = () => {
     },
     []
   );
+
+  const handleCityChange = useCallback((selectedOptions: SelectedOption1[]) => {
+    setFilters((prev) => ({ ...prev, filterCity: selectedOptions }));
+  }, []);
+
+  const handleAppliedRoleFilterChange = useCallback(
+    (selectedOptions: SelectedOption[]) => {
+      setFilters((prev) => ({ ...prev, filterAppliedRole: selectedOptions }));
+    },
+    []
+  );
+
+  const handleSearchChange = useCallback((value: string) => {
+    setFilters((prev) => ({ ...prev, searchAll: value }));
+  }, []);
 
   // Single-select handlers
   const handleStateChange = useCallback(
@@ -215,10 +241,13 @@ export const useApplicantFilters = () => {
 
   return {
     filters,
+    setFilters,
     handlers: {
       handleAppliedSkillsChange,
       handleMultipleSkillsChange,
       handleAppliedRoleChange,
+      handleCityChange,
+      handleAppliedRoleFilterChange,
       handleStateChange,
       handleGenderChange,
       handleInterviewStageChange,
@@ -238,6 +267,7 @@ export const useApplicantFilters = () => {
       handleEngRatingChange,
       handleExpectedPkgChange,
       handleCurrentPkgChange,
+      handleSearchChange,
     },
     resetFilters,
     clearFilter,
