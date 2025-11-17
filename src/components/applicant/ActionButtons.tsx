@@ -1,5 +1,4 @@
 import React from 'react';
-import { Row, Col } from "react-bootstrap";
 import BaseButton from "components/BaseComponents/BaseButton";
 import { toast } from "react-toastify";
 
@@ -20,7 +19,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
   onExportModalShow,
   onNavigate,
 }) => {
-  const handleActionWithPermission = (action: () => void, actionName: string) => {
+  const handleActionWithPermission = (action: () => void) => {
     if (currentRole === "admin") {
       action();
     } else {
@@ -58,14 +57,16 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
         <div className="flex gap-2">
           <BaseButton
             className="flex-1 px-3 py-2 text-sm bg-green-700 text-white rounded-md hover:bg-green-800"
-            onClick={() => handleActionWithPermission(onExportModalShow, "export")}
+            onClick={() =>
+              handleActionWithPermission(onExportModalShow)
+            }
           >
             <i className="ri-upload-2-line mr-1" />
             Export
           </BaseButton>
           <BaseButton
             className="flex-1 px-3 py-2 text-sm bg-green-600 text-white rounded-md hover:bg-green-700"
-            onClick={() => handleActionWithPermission(onNavigate, "add")}
+            onClick={() => handleActionWithPermission(onNavigate)}
           >
             <i className="ri-add-line mr-1" />
             Add
@@ -84,10 +85,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
               <i className="ri-delete-bin-fill" />
             </BaseButton>
 
-            <BaseButton
-              className="btn bg-primary"
-              onClick={onSendEmail}
-            >
+            <BaseButton className="btn bg-primary" onClick={onSendEmail}>
               <i className="ri-mail-close-line" />
             </BaseButton>
           </>
@@ -96,7 +94,9 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
         <BaseButton
           color="primary"
           className="bg-green-900 btn btn-soft-secondary edit-list"
-          onClick={() => handleActionWithPermission(onExportModalShow, "export")}
+          onClick={() =>
+            handleActionWithPermission(onExportModalShow)
+          }
         >
           <i className="ri-upload-2-line me-1" />
           Export
@@ -104,7 +104,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
 
         <BaseButton
           color="success"
-          onClick={() => handleActionWithPermission(onNavigate, "add")}
+          onClick={() => handleActionWithPermission(onNavigate)}
         >
           <i className="ri-add-line me-1" />
           Add
