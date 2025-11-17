@@ -17,7 +17,6 @@ import { ApplicantDetails, ViewModalProps } from "interfaces/applicant.interface
 
 const { projectTitle, Modules } = appConstants;
 
-
 const capitalizeWords = (str?: string) => {
   return (
     str
@@ -705,6 +704,18 @@ const ViewModal: React.FC<ViewModalProps> = ({
                       <Tag color="blue">
                         {capitalizeWords(formData.interviewStage)}
                       </Tag>
+                    }
+                  />
+                  <DetailsRow
+                    label="Interview Mode"
+                    value={
+                      formData.interviewMode ? (
+                        <Tag color="purple">
+                          {capitalizeWords(formData.interviewMode)}
+                        </Tag>
+                      ) : (
+                        "-"
+                      )
                     }
                   />
                   <DetailsRow

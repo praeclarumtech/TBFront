@@ -93,7 +93,6 @@ const getItem = (key: string) => {
     return val;
   }
 
-  // For other keys, try to parse as JSON
   try {
     return JSON.parse(val);
   } catch (e: any) {

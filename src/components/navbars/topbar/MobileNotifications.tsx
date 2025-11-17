@@ -5,6 +5,7 @@ import { User } from "interfaces/dashboard.interface";
 import { getProfile } from "api/usersApi";
 import ChangePassword from "pages/auth/ChangePassword";
 import { logout } from "utils/commonFunctions";
+import appEnv from "config/appEnv";
 
 export const MobileNotifications = () => {
   const navigate = useNavigate();
@@ -42,7 +43,7 @@ export const MobileNotifications = () => {
               <Image
                 alt="avatar"
                 crossOrigin="anonymous"
-                src={"/images/avatar/avatar.png"}
+                src={user?.profilePicture ? `${appEnv.API_ENDPOINT}/uploads/profile/${user?.profilePicture}` : "talent/images/avatar/avatar.png"}
                 className="rounded-circle"
               />
             </div>

@@ -29,9 +29,15 @@ const {
   communicationOptions,
   anyHandOnOffers,
   workPreferenceType,
+  interviewModeOptions,
 } = appConstants;
 
-const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
+const JobDetailsForm = ({
+  onNext,
+  onBack,
+  initialValues,
+  onGetCurrentValues,
+}: any) => {
   document.title = Modules.CreateApplicantForm + " | " + projectTitle;
   document.title = Modules.CreateApplicantForm + " | " + projectTitle;
 
@@ -89,6 +95,7 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
       clientFeedback: initialValues?.clientFeedback || "",
       appliedRole: initialAppliedRoleValue,
       meta: initialValues?.meta || {},
+      interviewMode: initialValues?.interviewMode || "",
     },
     validationSchema: jobApplicantSchema,
     onSubmit: (data: any) => {
@@ -280,6 +287,45 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
   useEffect(() => {
     setTechnologyExperience(initialValues.meta || {});
   }, [initialValues.meta]);
+
+  useEffect(() => {
+    if (onGetCurrentValues) {
+      const getCurrentValues = () => {
+        if (!validation.values) return null;
+
+        const appliedSkillsNames = selectedMulti.map((item: any) => item.label);
+        const appliedRole = dynamicFind(
+          roleOptions,
+          validation.values.appliedRole
+        );
+        const appliedRoleName = appliedRole ? appliedRole.label : "";
+        const currentDesignation = dynamicFind(
+          designationOptions,
+          validation.values.currentCompanyDesignation
+        );
+        const currentCompanyDesignation = currentDesignation
+          ? currentDesignation.label
+          : "";
+
+        return {
+          ...validation.values,
+          appliedSkills: appliedSkillsNames,
+          currentCompanyDesignation: currentCompanyDesignation,
+          appliedRole: appliedRoleName,
+          meta: technologyExperience,
+        };
+      };
+
+      onGetCurrentValues(getCurrentValues);
+    }
+  }, [
+    validation.values,
+    selectedMulti,
+    roleOptions,
+    designationOptions,
+    technologyExperience,
+    onGetCurrentValues,
+  ]);
 
   const handleMultiSkill = (selectedMulti: any) => {
     const ids = selectedMulti?.map((item: any) => item.value) || [];
@@ -847,6 +893,30 @@ const JobDetailsForm = ({ onNext, onBack, initialValues }: any) => {
                     touched={validation.touched.workPreference}
                     error={validation.errors.workPreference}
                     isRequired={false}
+                  />
+                </Col>
+                <Col xs={12} sm={6} md={6} lg={4} className="mb-3">
+                  <BaseSelect
+                    label="Interview Mode"
+                    name="interviewMode"
+                    className="select-border"
+                    options={interviewModeOptions}
+                    placeholder={InputPlaceHolder("Interview Mode")}
+                    handleChange={(selectedOption: SelectedOption) => {
+                      validation.setFieldValue(
+                        "interviewMode",
+                        selectedOption?.value || ""
+                      );
+                    }}
+                    handleBlur={validation.handleBlur}
+                    value={
+                      dynamicFind(
+                        interviewModeOptions,
+                        validation.values.interviewMode
+                      ) || ""
+                    }
+                    touched={validation.touched.interviewMode}
+                    error={validation.errors.interviewMode}
                   />
                 </Col>
                 <Col xs={12} sm={6} md={6} lg={4} className="mb-3">

@@ -11,6 +11,8 @@ export const FORGOT_PASSWORD = "user/forgotPassword";
 export const GET_PROFILE = "user/getProfileByToken";
 export const GET_ALL_USERS = "user/listOfUsers";
 export const UPDATE_USER_STATUS = "user/updateStatus";
+export const IMPORT_VENDOR_CSV = "user/importCsv";
+export const EXPORT_VENDOR_CSV = "user/exportCsv";
 
 //Applicant module
 export const LIST_APPLICANT = "applicants/viewAllApplicant";

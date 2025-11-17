@@ -399,6 +399,10 @@ const appConstants = Object.freeze({
     { label: "Technical", value: "technical" },
     { label: "Client", value: "client" },
   ],
+  interviewModeOptions: [
+    { label: "Online", value: "online" },
+    { label: "Offline", value: "offline" }
+  ],
   experienceOptions: [
     { value: 0, label: "0 Years" },
     { value: 1, label: "1 Year" },

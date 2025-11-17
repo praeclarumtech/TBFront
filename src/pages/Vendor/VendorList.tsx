@@ -1,5 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { getAllUsers, updateUserStatus } from "api/usersApi";
+import {
+  getAllUsers,
+  updateUserStatus,
+  importVendorCsv,
+  exportVendorCsv,
+} from "api/usersApi";
 import ActiveModal from "components/BaseComponents/ActiveModal";
 import DeleteModal from "components/BaseComponents/DeleteModal";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -16,10 +21,11 @@ import ViewProfile from "../UserProfile/ViewProfile";
 import BaseButton from "components/BaseComponents/BaseButton";
 import appConstants from "constants/constant";
 import { ColumnConfig } from "interfaces/global.interface";
-import { FaGlobe, FaLinkedin } from "react-icons/fa";
+// import { FaGlobe, FaLinkedin } from "react-icons/fa";
 import { FaExclamationTriangle } from "react-icons/fa";
-import { importVendor } from "api/apiVendor";
 import BasePopUpModal from "components/BaseComponents/BasePopUpModal";
+import saveAs from "file-saver";
+import { errorHandle } from "utils/commonFunctions";
 
 const { handleResponse } = appConstants;
 
@@ -45,8 +51,7 @@ const VendorList = () => {
   const [importProgress, setImportProgress] = useState(0);
   const [isImporting, setIsImporting] = useState(false);
   const [searchAll, setSearchAll] = useState<string>("");
-
-  const isImportVisible = false;
+  const [uploadedFile, setUploadedFile] = useState<FormData | null>(null);
 
   // const [tableLoader, setTableLoader] = useState(false);
   const [availableColumns, setAvailableColumns] = useState<ColumnConfig[]>([
@@ -57,53 +62,52 @@ const VendorList = () => {
     { id: "role", header: "Role", isVisible: false },
     { id: "email", header: "Email", isVisible: true },
     { id: "designation", header: "Designation", isVisible: true },
-    { id: "phoneNumber", header: "Phone No.", isVisible: true },
     { id: "dateOfBirth", header: "Date of Birth", isVisible: false },
     {
       id: "vendorProfileId.whatsapp_number",
       header: "Whats-app no.",
-      isVisible: false,
-    },
-    {
-      id: "vendorProfileId.company_name",
-      header: "Company Name",
       isVisible: true,
     },
-    {
-      id: "vendorProfileId.company_email",
-      header: "Company Email",
-      isVisible: true,
-    },
-    {
-      id: "vendorProfileId.company_phone_number",
-      header: "Company Phone No.",
-      isVisible: true,
-    },
-    {
-      id: "vendorProfileId.company_strength",
-      header: "Company Strength",
-      isVisible: true,
-    },
-    {
-      id: "vendorProfileId.company_type",
-      header: "Company Type",
-      isVisible: true,
-    },
-    {
-      id: "vendorProfileId.company_location",
-      header: "Company Location",
-      isVisible: true,
-    },
-    {
-      id: "vendorProfileId.company_website",
-      header: "Company Website",
-      isVisible: false,
-    },
-    {
-      id: "vendorProfileId.company_linkedin_profile",
-      header: "Company LinkedIn",
-      isVisible: false,
-    },
+    // {
+    //   id: "vendorProfileId.company_name",
+    //   header: "Company Name",
+    //   isVisible: true,
+    // },
+    // {
+    //   id: "vendorProfileId.company_email",
+    //   header: "Company Email",
+    //   isVisible: true,
+    // },
+    // {
+    //   id: "vendorProfileId.company_phone_number",
+    //   header: "Company Phone No.",
+    //   isVisible: true,
+    // },
+    // {
+    //   id: "vendorProfileId.company_strength",
+    //   header: "Company Strength",
+    //   isVisible: true,
+    // },
+    // {
+    //   id: "vendorProfileId.company_type",
+    //   header: "Company Type",
+    //   isVisible: true,
+    // },
+    // {
+    //   id: "vendorProfileId.company_location",
+    //   header: "Company Location",
+    //   isVisible: true,
+    // },
+    // {
+    //   id: "vendorProfileId.company_website",
+    //   header: "Company Website",
+    //   isVisible: false,
+    // },
+    // {
+    //   id: "vendorProfileId.company_linkedin_profile",
+    //   header: "Company LinkedIn",
+    //   isVisible: false,
+    // },
     {
       id: "vendorProfileId.hire_resources",
       header: "Hire Resources",
@@ -114,7 +118,6 @@ const VendorList = () => {
     { id: "updatedAt", header: "Updated Date", isVisible: false },
   ]);
   const [showPopupModal, setShowPopupModal] = useState(false);
-  const [uploadedFile, setUploadedFile] = useState<FormData | null>(null);
 
   const handleUpdateUserStatus = async (id: string, value: AnyObject) => {
     setIsLoading(true);
@@ -259,12 +262,6 @@ const VendorList = () => {
         enableColumnFilter: false,
       },
       {
-        header: "Phone no.",
-        accessorKey: "phoneNumber",
-        id: "phoneNumber",
-        enableColumnFilter: false,
-      },
-      {
         header: "Whats-app no.",
         accessorKey: "vendorProfileId.whatsapp_number",
         id: "vendorProfileId.whatsapp_number",
@@ -280,87 +277,87 @@ const VendorList = () => {
           return date ? new Date(date).toLocaleDateString() : "";
         },
       },
-      {
-        header: "Comapany name",
-        accessorKey: "vendorProfileId.company_name",
-        id: "vendorProfileId.company_name",
-        enableColumnFilter: false,
-      },
-      {
-        header: "Comapany email",
-        accessorKey: "vendorProfileId.company_email",
-        id: "vendorProfileId.company_email",
-        enableColumnFilter: false,
-      },
-      {
-        header: "Comapany phone no.",
-        accessorKey: "vendorProfileId.company_phone_number",
-        id: "vendorProfileId.company_phone_number",
-        enableColumnFilter: false,
-      },
-      {
-        header: "Comapany Type",
-        accessorKey: "vendorProfileId.company_type",
-        id: "vendorProfileId.company_type",
-        enableColumnFilter: false,
-      },
-      {
-        header: "Comapany Location",
-        accessorKey: "vendorProfileId.company_location",
-        id: "vendorProfileId.company_location",
-        enableColumnFilter: false,
-      },
+      // {
+      //   header: "Comapany name",
+      //   accessorKey: "vendorProfileId.company_name",
+      //   id: "vendorProfileId.company_name",
+      //   enableColumnFilter: false,
+      // },
+      // {
+      //   header: "Comapany email",
+      //   accessorKey: "vendorProfileId.company_email",
+      //   id: "vendorProfileId.company_email",
+      //   enableColumnFilter: false,
+      // },
+      // {
+      //   header: "Comapany phone no.",
+      //   accessorKey: "vendorProfileId.company_phone_number",
+      //   id: "vendorProfileId.company_phone_number",
+      //   enableColumnFilter: false,
+      // },
+      // {
+      //   header: "Comapany Type",
+      //   accessorKey: "vendorProfileId.company_type",
+      //   id: "vendorProfileId.company_type",
+      //   enableColumnFilter: false,
+      // },
+      // {
+      //   header: "Comapany Location",
+      //   accessorKey: "vendorProfileId.company_location",
+      //   id: "vendorProfileId.company_location",
+      //   enableColumnFilter: false,
+      // },
 
-      {
-        header: "Comapany strength",
-        accessorKey: "vendorProfileId.company_strength",
-        id: "vendorProfileId.company_strength",
-        enableColumnFilter: false,
-      },
-      {
-        header: "Comapany Website",
-        accessorKey: "vendorProfileId.company_website",
-        id: "vendorProfileId.company_website",
-        enableColumnFilter: false,
-        cell: ({ getValue }: { getValue: () => any }) => {
-          const url = getValue();
-          return url ? (
-            <a
-              href={url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 hover:text-blue-800 underline flex items-center gap-1"
-            >
-              <FaGlobe size={16} />
-              Website
-            </a>
-          ) : (
-            ""
-          );
-        },
-      },
-      {
-        header: "Comapany LinkedIn Profile",
-        accessorKey: "vendorProfileId.company_linkedin_profile",
-        id: "vendorProfileId.company_linkedin_profile",
-        enableColumnFilter: false,
-        cell: ({ getValue }: { getValue: () => any }) => {
-          const url = getValue();
-          return url ? (
-            <a
-              href={url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 hover:text-blue-800 underline flex items-center gap-1"
-            >
-              <FaLinkedin size={16} />
-              LinkedIn
-            </a>
-          ) : (
-            ""
-          );
-        },
-      },
+      // {
+      //   header: "Comapany strength",
+      //   accessorKey: "vendorProfileId.company_strength",
+      //   id: "vendorProfileId.company_strength",
+      //   enableColumnFilter: false,
+      // },
+      // {
+      //   header: "Comapany Website",
+      //   accessorKey: "vendorProfileId.company_website",
+      //   id: "vendorProfileId.company_website",
+      //   enableColumnFilter: false,
+      //   cell: ({ getValue }: { getValue: () => any }) => {
+      //     const url = getValue();
+      //     return url ? (
+      //       <a
+      //         href={url}
+      //         target="_blank"
+      //         rel="noopener noreferrer"
+      //         className="text-blue-600 hover:text-blue-800 underline flex items-center gap-1"
+      //       >
+      //         <FaGlobe size={16} />
+      //         Website
+      //       </a>
+      //     ) : (
+      //       ""
+      //     );
+      //   },
+      // },
+      // {
+      //   header: "Comapany LinkedIn Profile",
+      //   accessorKey: "vendorProfileId.company_linkedin_profile",
+      //   id: "vendorProfileId.company_linkedin_profile",
+      //   enableColumnFilter: false,
+      //   cell: ({ getValue }: { getValue: () => any }) => {
+      //     const url = getValue();
+      //     return url ? (
+      //       <a
+      //         href={url}
+      //         target="_blank"
+      //         rel="noopener noreferrer"
+      //         className="text-blue-600 hover:text-blue-800 underline flex items-center gap-1"
+      //       >
+      //         <FaLinkedin size={16} />
+      //         LinkedIn
+      //       </a>
+      //     ) : (
+      //       ""
+      //     );
+      //   },
+      // },
       {
         header: "Hire Resource",
         accessorKey: "vendorProfileId.hire_resources",
@@ -399,7 +396,7 @@ const VendorList = () => {
             <Switch
               size="small"
               checked={isActive}
-              onClick={() => handleUpdateUserStatusModal(id, isActive)} // ✅ Handler only runs on user interaction
+              onClick={() => handleUpdateUserStatusModal(id, isActive)}
               checkedChildren={<CheckOutlined />}
               unCheckedChildren={<CloseOutlined />}
             />
@@ -417,7 +414,11 @@ const VendorList = () => {
                   <button
                     className="text-white btn btn-sm btn-soft-secondary bg-secondary"
                     onClick={() =>
-                      navigate(`/userprofileEdit/${row?.original?._id}`)
+                      navigate(`/userprofileEdit/${row?.original?._id}`, {
+                        state: {
+                          from: "VendorList",
+                        },
+                      })
                     }
                     disabled={!row.original.isActive}
                   >
@@ -563,9 +564,10 @@ const VendorList = () => {
     try {
       const formData = new FormData();
       formData.append("csvFile", file);
+      formData.append("role", "vendor");
       setUploadedFile(formData);
       const updateFlag = "false";
-      const response = await importVendor(formData, {
+      const response = await importVendorCsv(formData, {
         params: { updateFlag },
         onUploadProgress: (progressEvent: { loaded: number; total: any }) => {
           const progress = Math.round(
@@ -576,25 +578,65 @@ const VendorList = () => {
       });
 
       if (response?.success) {
-        toast.success(response?.message || "File imported successfully!");
+        // Handle detailed response with inserted, updated, skipped, and errors
+        const inserted = response?.data?.inserted || response?.inserted || [];
+        const updated = response?.data?.updated || response?.updated || [];
+        const skipped = response?.data?.skipped || response?.skipped || [];
+        const updateErrors =
+          response?.data?.updateErrors || response?.updateErrors || [];
+
+        // Show success message with counts
+        const totalSuccess = inserted.length + updated.length;
+        if (totalSuccess > 0) {
+          let successMsg = "";
+          if (inserted.length > 0 && updated.length > 0) {
+            successMsg = `${inserted.length} vendor(s) inserted, ${updated.length} vendor(s) updated successfully!`;
+          } else if (inserted.length > 0) {
+            successMsg = `${inserted.length} vendor(s) inserted successfully!`;
+          } else if (updated.length > 0) {
+            successMsg = `${updated.length} vendor(s) updated successfully!`;
+          }
+          toast.success(
+            successMsg || response?.message || "File imported successfully!"
+          );
+        }
+
+        // Show warnings for skipped records
+        if (skipped.length > 0) {
+          toast.warning(
+            `${skipped.length} record(s) skipped: ${skipped
+              .slice(0, 3)
+              .join(", ")}${skipped.length > 3 ? "..." : ""}`
+          );
+        }
+
+        // // Show errors
+        // if (updateErrors.length > 0) {
+        //   updateErrors.forEach((error: string) => {
+        //     toast.error(error);
+        //   });
+        // }
+
+        // If no success and no errors shown, show general message
+        if (totalSuccess === 0 && updateErrors.length === 0) {
+          toast.info(response?.message || "Import completed with no changes.");
+        }
       } else if (!response?.success && response.statusCode === 400) {
-        // setShowPopupModal(true);
         const messages = response?.message;
         if (messages && Array.isArray(messages)) {
-          messages.forEach((messages) => {
-            toast.error(messages);
+          messages.forEach((message) => {
+            toast.error(message);
           });
+        } else {
+          toast.error(response.message || "Import failed");
         }
-        toast.error(response.message || "Import failed");
       } else if (!response?.success && response.statusCode === 409) {
         setShowPopupModal(true);
         toast.error(response.message || "Import failed");
-        // fetchDuplicateData();
       }
     } catch (error: any) {
       toast.error(error?.message || "Failed to import file");
     } finally {
-      // fetchApplicants();
       fetchUsers();
       setImportLoader(false);
       setIsImporting(false);
@@ -602,7 +644,6 @@ const VendorList = () => {
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
-      // fetchDuplicateData();
     }
   };
 
@@ -616,11 +657,12 @@ const VendorList = () => {
     try {
       const formData = new FormData();
       formData.append("csvFile", uploadedFile.get("csvFile") as Blob);
+      formData.append("role", "vendor");
       const updateFlag = "true";
 
-      const response = await importVendor(formData, {
+      const response = await importVendorCsv(formData, {
         params: { updateFlag },
-        onUploadProgress: (progressEvent) => {
+        onUploadProgress: (progressEvent: { loaded: number; total: any }) => {
           const progress = Math.round(
             (progressEvent.loaded * 100) / (progressEvent.total || 100)
           );
@@ -629,16 +671,59 @@ const VendorList = () => {
       });
 
       if (response?.success) {
-        toast.success(
-          response?.message || "Existing applicants updated successfully!"
-        );
+        // Handle detailed response with inserted, updated, skipped, and errors
+        const inserted = response?.data?.inserted || response?.inserted || [];
+        const updated = response?.data?.updated || response?.updated || [];
+        const skipped = response?.data?.skipped || response?.skipped || [];
+        const updateErrors =
+          response?.data?.updateErrors || response?.updateErrors || [];
+
+        // Show success message with counts
+        const totalSuccess = inserted.length + updated.length;
+        if (totalSuccess > 0) {
+          let successMsg = "";
+          if (inserted.length > 0 && updated.length > 0) {
+            successMsg = `${inserted.length} vendor(s) inserted, ${updated.length} vendor(s) updated successfully!`;
+          } else if (inserted.length > 0) {
+            successMsg = `${inserted.length} vendor(s) inserted successfully!`;
+          } else if (updated.length > 0) {
+            successMsg = `${updated.length} vendor(s) updated successfully!`;
+          }
+          toast.success(
+            successMsg ||
+              response?.message ||
+              "Existing vendors updated successfully!"
+          );
+        }
+
+        // Show warnings for skipped records
+        if (skipped.length > 0) {
+          toast.warning(
+            `${skipped.length} record(s) skipped: ${skipped
+              .slice(0, 3)
+              .join(", ")}${skipped.length > 3 ? "..." : ""}`
+          );
+        }
+
+        // Show errors
+        if (updateErrors.length > 0) {
+          updateErrors.forEach((error: string) => {
+            toast.error(error);
+          });
+        }
+
+        // If no success and no errors shown, show general message
+        if (totalSuccess === 0 && updateErrors.length === 0) {
+          toast.info(response?.message || "Update completed with no changes.");
+        }
+
         setShowPopupModal(false);
         await fetchUsers();
       } else {
         throw new Error(response?.message || "Update failed");
       }
     } catch (error: any) {
-      toast.error(error.message || "Failed to update applicants");
+      toast.error(error.message || "Failed to update vendors");
     } finally {
       setImportLoader(false);
       setIsImporting(false);
@@ -651,6 +736,42 @@ const VendorList = () => {
 
   const handleModalCancel = () => {
     setShowPopupModal(false);
+    setUploadedFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const handleExport = async () => {
+    try {
+      toast.info("Preparing file for download...");
+
+      const payload = {
+        ids: [],
+        fields: [],
+        main: false,
+        role: "vendor",
+      };
+
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const response = await exportVendorCsv(
+        {
+          source: "vendor",
+          limit: 999999, // Set high limit to export all records
+          search: searchAll,
+          role: "vendor",
+        },
+        payload
+      );
+
+      const blob = new Blob([response], { type: "text/csv" });
+      saveAs(blob, "Export_Vendors_data.csv");
+      toast.success("File downloaded successfully!");
+    } catch (error) {
+      errorHandle(error);
+    } finally {
+      fetchUsers();
+    }
   };
   return (
     <>
@@ -675,7 +796,7 @@ const VendorList = () => {
         isOpen={showPopupModal}
         onRequestClose={() => setShowPopupModal(false)}
         title="Duplicate Records Found"
-        message="Do you want to update the existing applicants?"
+        message="Do you want to update the existing vendors?"
         confirmAction={handleModalConfirm}
         cancelAction={handleModalCancel}
         confirmText="Yes, Update"
@@ -702,11 +823,14 @@ const VendorList = () => {
                 <div className="ml-6 text-2xl font-bold">Vendors</div>
               </Col>
               <Col sm={6} lg={6} md={6} className="mt-4">
-                <div className="items-end justify-end mr-6 d-flex gap-3">
-                  <div>
+                <div className="items-end justify-end mr-6 d-flex gap-3 flex-nowrap">
+                  <div
+                    className="flex-shrink-0"
+                    style={{ minWidth: "200px", width: "200px" }}
+                  >
                     <input
                       id="search-bar-0"
-                      className="h-10 form-control search"
+                      className="h-10 form-control search w-100"
                       placeholder="Search..."
                       onChange={handleSearchChange}
                       value={searchAll}
@@ -715,57 +839,64 @@ const VendorList = () => {
                   <input
                     type="file"
                     ref={fileInputRef}
-                    multiple
-                    accept=".csv,.xlsx,.xls,.xls,.doc,.pdf,.xltx,.docx"
+                    accept=".csv,.xlsx,.xls,.xltx"
                     style={{ display: "none" }}
                     onChange={handleFileChange}
                     disabled={isImporting}
                   />
-                  {isImportVisible && (
-                    <BaseButton
-                      color="primary"
-                      className="position-relative"
-                      onClick={() => fileInputRef.current?.click()}
-                      disabled={importLoader}
-                    >
-                      {importLoader ? (
-                        <>
-                          <i className="align-bottom ri-loader-4-line animate-spin me-1" />
-                          {isImporting
-                            ? `Importing... ${importProgress}%`
-                            : "Processing..."}
-                        </>
-                      ) : (
-                        <>
-                          <i className="align-bottom ri-download-2-line me-1" />
-                          Import
-                        </>
-                      )}
-                      {isImporting && (
+                  <BaseButton
+                    color="primary"
+                    className="position-relative flex-shrink-0"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={importLoader}
+                  >
+                    {importLoader ? (
+                      <>
+                        <i className="align-bottom ri-loader-4-line animate-spin me-1" />
+                        {isImporting
+                          ? `Importing... ${importProgress}%`
+                          : "Processing..."}
+                      </>
+                    ) : (
+                      <>
+                        <i className="align-bottom ri-download-2-line me-1" />
+                        Import
+                      </>
+                    )}
+                    {isImporting && (
+                      <div
+                        className="bottom-0 progress position-absolute start-0"
+                        style={{
+                          height: "4px",
+                          width: "100%",
+                          borderRadius: "0 0 4px 4px",
+                        }}
+                      >
                         <div
-                          className="bottom-0 progress position-absolute start-0"
-                          style={{
-                            height: "4px",
-                            width: "100%",
-                            borderRadius: "0 0 4px 4px",
-                          }}
-                        >
-                          <div
-                            className="progress-bar"
-                            role="progressbar"
-                            style={{ width: `${importProgress}%` }}
-                            aria-valuenow={importProgress}
-                            aria-valuemin={0}
-                            aria-valuemax={100}
-                          />
-                        </div>
-                      )}
-                    </BaseButton>
-                  )}
+                          className="progress-bar"
+                          role="progressbar"
+                          style={{ width: `${importProgress}%` }}
+                          aria-valuenow={importProgress}
+                          aria-valuemin={0}
+                          aria-valuemax={100}
+                        />
+                      </div>
+                    )}
+                  </BaseButton>
 
                   <BaseButton
                     color="primary"
-                    className="position-relative w-100%"
+                    className="bg-green-900 btn btn-soft-secondary flex-shrink-0"
+                    onClick={handleExport}
+                    disabled={users?.length === 0}
+                  >
+                    <i className="ri-upload-2-line me-1" />
+                    Export
+                  </BaseButton>
+
+                  <BaseButton
+                    color="primary"
+                    className="position-relative flex-shrink-0"
                     onClick={handleAdd}
                   >
                     + Add
