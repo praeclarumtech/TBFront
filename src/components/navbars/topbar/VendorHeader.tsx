@@ -1,8 +1,4 @@
 import { useState, useEffect } from "react";
-import { Header } from "antd/es/layout/layout";
-import { Menu } from "antd";
-import type { MenuProps } from "antd";
-import SubMenu from "antd/es/menu/SubMenu";
 import { useNavigate, useLocation } from "react-router-dom";
 import { logout } from "utils/commonFunctions";
 import { toast } from "react-toastify";
@@ -15,6 +11,7 @@ const VendorHeader = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userRole, setUserRole] = useState<string | null>(null);
   const [isAuthChecked, setIsAuthChecked] = useState(false); // Track if initial auth check is complete
+  const [isJobsDropdownOpen, setIsJobsDropdownOpen] = useState(false);
 
   // Centralized function to clear all auth data
   const clearAuthData = () => {
@@ -189,14 +186,13 @@ const VendorHeader = () => {
         break;
 
       case "logout":
-        // Clear all auth-related data
         logout();
-        clearAuthData(); // Additional cleanup to ensure everything is cleared
+        clearAuthData();
         navigate("/login");
         break;
 
       case "home":
-        navigate("/");
+        navigate("/", { replace: true });
         break;
 
       default:
@@ -204,69 +200,147 @@ const VendorHeader = () => {
     }
   };
 
-  const handleMenuClick: MenuProps["onClick"] = (e) => {
-    handleNavigate(e.key);
-  };
-
   // Show loading state until auth check is complete (optional)
   if (!isAuthChecked) {
     return (
-      <Header
-        className="fixed top-0 z-50 w-full"
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <div>Loading...</div>
-      </Header>
+      <header className="fixed top-0 left-0 right-0 z-50 bg-gray-900 border-b border-gray-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="text-white">Loading...</div>
+          </div>
+        </div>
+      </header>
     );
   }
 
+  const isActive = (key: string) => selectedKey === key;
+
   return (
-    <Header
-      className="fixed top-0 z-50 w-full"
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
-      <Menu
-        theme="dark"
-        mode="horizontal"
-        selectedKeys={[selectedKey]}
-        onClick={handleMenuClick}
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignContent: "center",
-          flexGrow: 1,
-        }}
-      >
-        {/* Show Dashboard only for admin users when logged in AND token is valid */}
-        {userRole === "admin" && isLoggedIn && (
-          <Menu.Item key="dashboard">
-            Dashboard <i className="fe fe-arrow-up-right me-2"></i>
-          </Menu.Item>
-        )}
+    <header className="fixed top-0 left-0 right-0 z-50 bg-gray-900 border-b border-gray-800 shadow-lg">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-center h-16">
+          {/* Navigation Links - Right */}
+          <nav className="flex items-center justify-center gap-1">
+            {/* Dashboard - Only for admin */}
+            {userRole === "admin" && isLoggedIn && (
+              <button
+                onClick={() => handleNavigate("dashboard")}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  isActive("dashboard")
+                    ? "bg-primary text-white shadow-md"
+                    : "text-gray-300 hover:text-white hover:bg-gray-800"
+                }`}
+              >
+                Dashboard
+              </button>
+            )}
 
-        <Menu.Item key="home">Home</Menu.Item>
+            {/* Home */}
+            <button
+              onClick={() => handleNavigate("home")}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                isActive("home")
+                  ? "bg-primary text-white shadow-md"
+                  : "text-gray-300 hover:text-white hover:bg-gray-800"
+              }`}
+            >
+              Home
+            </button>
 
-        <SubMenu key="jobs-menu" title="Jobs">
-          <Menu.Item key="search-jobs">Search Jobs</Menu.Item>
-          <Menu.Item key="view-applications">View Applications</Menu.Item>
-        </SubMenu>
+            {/* Jobs Dropdown */}
+            <div
+              className="relative"
+              onMouseEnter={() => setIsJobsDropdownOpen(true)}
+              onMouseLeave={() => setIsJobsDropdownOpen(false)}
+            >
+              <button
+                onClick={() => setIsJobsDropdownOpen(!isJobsDropdownOpen)}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 ${
+                  isActive("search-jobs") || isActive("view-applications")
+                    ? "bg-primary text-white shadow-md"
+                    : "text-gray-300 hover:text-white hover:bg-gray-800"
+                }`}
+              >
+                Jobs
+                <svg
+                  className={`w-4 h-4 transition-transform duration-200 ${
+                    isJobsDropdownOpen ? "rotate-180" : ""
+                  }`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </button>
+              {/* Dropdown Menu */}
+              {isJobsDropdownOpen && (
+                <div className="absolute right-0 top-full w-48 z-50">
+                  {/* Invisible bridge to prevent gap issues */}
+                  <div className="h-2"></div>
+                  <div className="bg-gray-800 rounded-lg shadow-xl border border-gray-700">
+                    <div className="py-1">
+                      <button
+                        onClick={() => {
+                          handleNavigate("search-jobs");
+                          setIsJobsDropdownOpen(false);
+                        }}
+                        className={`w-full text-left px-4 py-2 text-sm transition-colors ${
+                          isActive("search-jobs")
+                            ? "bg-primary/20 text-primary"
+                            : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                        }`}
+                      >
+                        Search Jobs
+                      </button>
+                      <button
+                        onClick={() => {
+                          handleNavigate("view-applications");
+                          setIsJobsDropdownOpen(false);
+                        }}
+                        className={`w-full text-left px-4 py-2 text-sm transition-colors ${
+                          isActive("view-applications")
+                            ? "bg-primary/20 text-primary"
+                            : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                        }`}
+                      >
+                        View Applications
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
 
-        {/* Conditional Login/Logout based on authentication status */}
-        {!isLoggedIn ? (
-          <Menu.Item key="login">Login</Menu.Item>
-        ) : (
-          <Menu.Item key="logout">Logout</Menu.Item>
-        )}
-      </Menu>
-    </Header>
+            {/* Login/Logout */}
+            {!isLoggedIn ? (
+              <button
+                onClick={() => handleNavigate("login")}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  isActive("login")
+                    ? "bg-primary text-white shadow-md"
+                    : "text-gray-300 hover:text-white hover:bg-gray-800"
+                }`}
+              >
+                Login
+              </button>
+            ) : (
+              <button
+                onClick={() => handleNavigate("logout")}
+                className="px-4 py-2 rounded-lg text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-800 transition-all duration-200"
+              >
+                Logout
+              </button>
+            )}
+          </nav>
+        </div>
+      </div>
+    </header>
   );
 };
 
