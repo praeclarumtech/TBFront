@@ -358,7 +358,6 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({
 
         {/* Date Range Filters */}
         <div className="mt-3">
-          <h6>Date Range Filters</h6>
 
           <BaseInput
             label="Start Date"
@@ -366,6 +365,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({
             name="startDate"
             value={startDate}
             handleChange={(e) => onStartDateChange(e.target.value)}
+            className="mb-1 select-border"
           />
 
           <BaseInput
@@ -374,6 +374,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({
             name="endDate"
             value={endDate}
             handleChange={(e) => onEndDateChange(e.target.value)}
+            className="mb-1 select-border"
           />
 
           <BaseInput
@@ -382,6 +383,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({
             name="updatedStartDate"
             value={updatedStartDate}
             handleChange={(e) => onUpdatedStartDateChange(e.target.value)}
+            className="mb-1 select-border"
           />
 
           <BaseInput
@@ -390,13 +392,12 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({
             name="updatedEndDate"
             value={updatedEndDate}
             handleChange={(e) => onUpdatedEndDateChange(e.target.value)}
+            className="mb-1 select-border"
           />
         </div>
 
         {/* Range Sliders */}
         <div className="mt-3">
-          <h6>Range Filters</h6>
-
           <BaseSlider
             label="Experience (Years)"
             min={0}
