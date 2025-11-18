@@ -1,6 +1,83 @@
 // import moment from "moment";
 import * as Yup from "yup";
 
+
+
+export interface ViewModalProps {
+  show: boolean;
+  onHide: () => void;
+  applicantId?: string;
+  source: string;
+}
+
+export interface ApplicantDetails {
+  name: {
+    firstName: string;
+    middleName?: string;
+    lastName: string;
+  };
+  phone: {
+    phoneNumber: string;
+    whatsappNumber: string;
+  };
+  email: string;
+  gender: string;
+  dateOfBirth: string;
+  maritalStatus: string;
+  comment: string;
+  currentAddress: string;
+  currentCity: string;
+  currentPincode: number;
+  currentLocation: string;
+  state: string;
+  country: string;
+  preferredLocations: string;
+  homeTownCity: string;
+  homePincode: number;
+  qualification: string;
+  degree: string;
+  passingYear: number;
+  specialization: string;
+  appliedSkills: string[];
+  appliedRole: string;
+  totalExperience: number;
+  relevantSkillExperience: number;
+  otherSkills: string;
+  currentCompanyName: string;
+  currentCompanyDesignation: string;
+  currentPkg: string;
+  expectedPkg: number;
+  negotiation: string;
+  noticePeriod: number;
+  interviewStage: string;
+  status: string;
+  resumeUrl: string;
+  portfolioUrl: string;
+  practicalUrl: string;
+  clientCvUrl: string;
+  clientFeedback: string;
+  permanentAddress: string;
+  addedBy: string;
+  linkedinUrl: string;
+  feedback: string;
+  practicalFeedback: string;
+  communicationSkill: number;
+  gitHubUrl: string;
+  rating: number;
+  referral: string;
+  cgpa: number | null;
+  collegeName: string;
+  workPreference: string;
+  lastFollowUpDate: string;
+  anyHandOnOffers: boolean;
+  meta: object;
+  isFavorite: boolean;
+  _id: string;
+  updatedAt?: string;
+  createdAt?: string;
+  interviewMode: string;
+}
+
 export type SelectedOption = { label: string; value: string };
 export type SelectedOptionRole = { label: string; value: string };
 export type SelectedOption1 = { label: string; value: string; id: number };

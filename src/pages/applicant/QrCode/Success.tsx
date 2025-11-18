@@ -4,7 +4,6 @@ import { useLocation } from "react-router";
 const SuccessPage = () => {
   const location = useLocation();
   const email = location?.state?.email;
-  console.log("Chnage of password mail :-", email);
   return (
     <>
       {email ? (

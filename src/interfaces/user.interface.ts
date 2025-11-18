@@ -24,3 +24,17 @@ export interface CheckboxDropdownProps {
   labelClassName?: string;
   containerClassName?: string;
 }
+export interface UserResponse {
+  _id: string;
+  userName: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+  profilePicture?: string;
+  role: string;
+  designation?: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}

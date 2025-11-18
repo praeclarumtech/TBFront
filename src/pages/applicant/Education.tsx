@@ -4,7 +4,6 @@ import { useFormik } from "formik";
 import { Fragment, useEffect, useState } from "react";
 import BaseButton from "components/BaseComponents/BaseButton";
 import { BaseSelect } from "components/BaseComponents/BaseSelect";
-// Using native form instead of react-router-dom Form to avoid data router requirement
 import BaseInput from "components/BaseComponents/BaseInput";
 import {
   EducationApplicantSchema,
@@ -14,7 +13,7 @@ import {
 import { dynamicFind, InputPlaceHolder } from "utils/commonFunctions";
 import appConstants from "constants/constant";
 import { viewAllDegree } from "api/apiDegree";
-import { toast } from "react-toastify";
+import toastify from "utils/toastify";
 
 const { projectTitle, Modules, passingYearType } = appConstants;
 
@@ -48,16 +47,10 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues, onGetCurrentVal
         const details = error?.response?.data?.details;
         if (Array.isArray(details)) {
           details.forEach((msg: string) => {
-            toast.error(msg, {
-              closeOnClick: true,
-              autoClose: 5000,
-            });
+            toastify(msg, { type: "error" });
           });
         } else {
-          toast.error("Failed to fetch qualifications.. Please try again.", {
-            closeOnClick: true,
-            autoClose: 5000,
-          });
+          toastify("Failed to fetch qualifications.. Please try again.", { type: "error" });
         }
       } finally {
         setLoading(false);
@@ -93,26 +86,16 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues, onGetCurrentVal
       const selectedDegree = qualification.find(
         (q) => q.value === data.qualification
       )?.label;
-      // const submissionData = {
-      //   ...data,
-      //   qualification: selectedDegree || data.qualification,
-      // };
 
       onNext({
         ...data,
         qualification: selectedDegree || data.qualification,
       });
 
-      // onNext(data);
-      // data = submissionData;
-      // onNext(submissionData);
-      // onNext(data);
-
       setLoading(true);
     },
   });
 
-  // Expose current form values to parent component
   useEffect(() => {
     if (onGetCurrentValues) {
       const getCurrentValues = () => {
@@ -133,8 +116,6 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues, onGetCurrentVal
       
       onGetCurrentValues(getCurrentValues);
     }
-    // Remove onGetCurrentValues from dependencies to avoid infinite loop
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [validation.values, qualification]);
 
   return (

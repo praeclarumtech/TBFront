@@ -23,6 +23,7 @@ import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import { useLocation } from "react-router-dom";
 import ActiveModal from "components/BaseComponents/ActiveModal";
 import { getCurrentUserRole } from "utils/commonFunctions";
+import toastify from "utils/toastify";
 
 const { projectTitle, Modules, handleResponse } = appConstants;
 
@@ -52,7 +53,6 @@ const JobListing = () => {
 
   useEffect(() => {
     setCurrentLocation(location.pathname);
-    console.log("Location state:", currentLocation);
   }, [location.pathname]);
 
   const fetchJob = async () => {
@@ -112,7 +112,7 @@ const JobListing = () => {
 
   const confirmDelete = async () => {
     if (!jobToDelete || jobToDelete.length === 0) {
-      toast.error("No job selected for deletion.");
+      toastify("No job selected for deletion.", { type: "error" });
       return;
     }
 
@@ -122,24 +122,23 @@ const JobListing = () => {
       if (jobToDelete.length >= 1) {
         const res = await deleteJob(jobToDelete);
         if (res?.success) {
-          toast.success(res?.message);
+          toastify(res?.message, { type: "success" });
         } else {
-          toast.error(res?.message);
+          toastify(res?.message, { type: "error" });
         }
       }
       // If deleting a single
       else if (jobToDelete._id) {
         const res = await deleteJob([jobToDelete._id]);
         if (res?.success) {
-          toast.success(res?.message);
+          toastify(res?.message, { type: "success" });
         } else {
-          toast.error(res?.message);
+          toastify(res?.message, { type: "error" });
         }
       }
       fetchJob();
     } catch (error) {
-      toast.error("Something went wrong!");
-      console.error(error);
+      toastify("Something went wrong!", { type: "error" });
     } finally {
       setIsLoading(false);
       setShowDeleteModal(false);
@@ -177,10 +176,10 @@ const JobListing = () => {
     navigator.clipboard
       .writeText(url)
       .then(() => {
-        toast.success("Link copied to clipboard!");
+        toastify("Link copied to clipboard!", { type: "success" });
       })
       .catch(() => {
-        toast.error("Failed to copy link.");
+        toastify("Failed to copy link.", { type: "error" });
       });
   };
 
@@ -357,7 +356,7 @@ const JobListing = () => {
     updateJob(id, { isActive: !isActive })
       .then((res: any) => {
         if (res.success) {
-          toast.success(res.message || "Status updated successfully");
+          toastify(res.message || "Status updated successfully", { type: "success" });
           setShowStatusModal(false);
           fetchJob();
         }
@@ -366,10 +365,10 @@ const JobListing = () => {
         const errorMessages = error?.response?.data?.details;
         if (errorMessages && Array.isArray(errorMessages)) {
           errorMessages.forEach((errorMessage) => {
-            toast.error(errorMessage);
+            toastify(errorMessage, { type: "error" });
           });
         } else {
-          toast.error("An error occurred while updating the applicant.");
+          toastify("An error occurred while updating the applicant.", { type: "error" });
         }
       })
       .finally(() => {

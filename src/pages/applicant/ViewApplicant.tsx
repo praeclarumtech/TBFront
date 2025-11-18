@@ -10,86 +10,12 @@ import { errorHandle } from "utils/commonFunctions";
 import { UserOutlined } from "@ant-design/icons";
 import appConstants from "constants/constant";
 import { CloseOutlined } from "@ant-design/icons";
-import { toast } from "react-toastify";
 import BaseFav from "components/BaseComponents/BaseFav";
 import { getApplicantDetailsInVendor } from "api/apiVendor";
+import { ApplicantDetails, ViewModalProps } from "interfaces/applicant.interface";
+import toastify from "utils/toastify";
 
 const { projectTitle, Modules } = appConstants;
-
-interface ViewModalProps {
-  show: boolean;
-  onHide: () => void;
-  applicantId?: string;
-  source: string;
-}
-
-interface ApplicantDetails {
-  name: {
-    firstName: string;
-    middleName?: string;
-    lastName: string;
-  };
-  phone: {
-    phoneNumber: string;
-    whatsappNumber: string;
-  };
-  email: string;
-  gender: string;
-  dateOfBirth: string;
-  maritalStatus: string;
-  comment: string;
-  currentAddress: string;
-  currentCity: string;
-  currentPincode: number;
-  currentLocation: string;
-  state: string;
-  country: string;
-  preferredLocations: string;
-  homeTownCity: string;
-  homePincode: number;
-  qualification: string;
-  degree: string;
-  passingYear: number;
-  specialization: string;
-  appliedSkills: string[];
-  appliedRole: string;
-  totalExperience: number;
-  relevantSkillExperience: number;
-  otherSkills: string;
-  currentCompanyName: string;
-  currentCompanyDesignation: string;
-  currentPkg: string;
-  expectedPkg: number;
-  negotiation: string;
-  noticePeriod: number;
-  interviewStage: string;
-  interviewMode: string;
-  status: string;
-  resumeUrl: string;
-  portfolioUrl: string;
-  practicalUrl: string;
-  clientCvUrl: string;
-  clientFeedback: string;
-  permanentAddress: string;
-  addedBy: string;
-  linkedinUrl: string;
-  feedback: string;
-  practicalFeedback: string;
-  communicationSkill: number;
-  gitHubUrl: string;
-  rating: number;
-  referral: string;
-  cgpa: number | null;
-  collegeName: string;
-  workPreference: string;
-  lastFollowUpDate: string;
-  anyHandOnOffers: boolean;
-  meta: object;
-  isFavorite: boolean;
-  _id: string;
-  updatedAt?: string;
-  createdAt?: string;
-}
 
 const capitalizeWords = (str?: string) => {
   return (
@@ -196,9 +122,9 @@ const ViewModal: React.FC<ViewModalProps> = ({
       .then((res: any) => {
         if (res.success) {
           if (isFav) {
-            toast.success("Applicant removed from favorite list");
+            toastify("Applicant removed from favorite list", { type: "success" });
           } else {
-            toast.success("Applicant added to favorite list");
+            toastify("Applicant added to favorite list", { type: "success" });
           }
           getDetailsApplicants();
           setShowFavModal(false);
@@ -208,10 +134,10 @@ const ViewModal: React.FC<ViewModalProps> = ({
         const errorMessages = error?.response?.data?.details;
         if (errorMessages && Array.isArray(errorMessages)) {
           errorMessages.forEach((errorMessage) => {
-            toast.error(errorMessage);
+            toastify(errorMessage, { type: "error" });
           });
         } else {
-          toast.error("An error occurred while updating the applicant.");
+          toastify("An error occurred while updating the applicant.", { type: "error" });
         }
       })
       .finally(() => {
@@ -555,7 +481,7 @@ const ViewModal: React.FC<ViewModalProps> = ({
                                 columnGap: "8px",
                               }}
                             >
-                              {formData?.appliedSkills.map((skill) => (
+                              {formData?.appliedSkills.map((skill: string) => (
                                 <Tag
                                   color="cyan"
                                   key={skill}

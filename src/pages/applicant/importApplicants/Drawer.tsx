@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { deleteDuplicateApplicants, downloadApplicant } from "api/applicantApi";
 import { useState, useEffect } from "react";
-import { toast } from "react-toastify";
 import { AnyObject } from "yup";
 import { Badge, Drawer, Space, Table, Button } from "antd";
 import DeleteModal from "components/BaseComponents/DeleteModal";
 import { Spinner } from "react-bootstrap";
 import saveAs from "file-saver";
+import toastify from "utils/toastify";
 
 interface DrawerDataProps {
   duplicateRecords: any[];
@@ -52,12 +52,12 @@ const DrawerData = ({
       try {
         const res = await deleteDuplicateApplicants(payload);
         if (res?.statusCode === 200 || res?.success === true) {
-          toast.success(res.message);
+          toastify(res.message, { type: "success" });
           setDeleteLoader(false);
           setShowDeleteModal(false);
           fetchDuplicateData(); // Refresh from parent
         } else {
-          toast.error(res.message);
+          toastify(res.message, { type: "error" });
         }
       } catch (error) {
         console.log("error", error);
@@ -95,12 +95,12 @@ const DrawerData = ({
       } catch {
         const blob = new Blob([text], { type: "text/csv" });
         saveAs(blob, "Duplicate_Applicants_Data.csv");
-        toast.success("File downloaded successfully!");
+        toastify("File downloaded successfully!", { type: "success" });
         return;
       }
     } catch (error) {
       console.error("Download error", error);
-      toast.error("Failed to download file");
+      toastify("Failed to download file", { type: "error" });
     } finally {
       setDownloadLoader(false);
     }
