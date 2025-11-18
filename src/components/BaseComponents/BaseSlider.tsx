@@ -20,21 +20,41 @@ const BaseSlider = ({
 }: BaseSliderProps) => {
   const valuetext = (value: number) => `${value}°C`;
 
-  const currentValue = value || [min, max];
+  const minValue = min || 0;
+  const maxValue = max || 100;
+  const currentValue =
+    Array.isArray(value) && value.length === 2
+      ? [
+          Math.max(minValue, Math.min(maxValue, value[0])),
+          Math.max(minValue, Math.min(maxValue, value[1])),
+        ]
+      : [minValue, maxValue];
 
   const handleMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newMin = Math.min(Number(e.target.value), currentValue[1]);
-    handleChange({ target: { name, value: [newMin, currentValue[1]] } });
+    const inputValue = Number(e.target.value);
+    const newMin = Math.max(
+      minValue,
+      Math.min(inputValue, currentValue[1], maxValue)
+    );
+    const newValue: number[] = [newMin, currentValue[1]];
+    handleChange(newValue);
   };
 
   const handleMaxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // const newMax = Math.max(Number(e.target.value), currentValue[0]);
-    const newMax = Math.max(Number(e.target.value));
-    handleChange({ target: { name, value: [currentValue[0], newMax] } });
+    const inputValue = Number(e.target.value);
+    const newMax = Math.min(
+      maxValue,
+      Math.max(inputValue, currentValue[0], minValue)
+    );
+    const newValue: number[] = [currentValue[0], newMax];
+    handleChange(newValue);
   };
 
   const handleSliderChange = (_event: Event, newValue: number | number[]) => {
-    handleChange({ target: { name, value: newValue } });
+    const valueArray = Array.isArray(newValue)
+      ? newValue
+      : [newValue, newValue];
+    handleChange(valueArray);
   };
 
   return (
@@ -82,8 +102,8 @@ const BaseSlider = ({
             valueLabelDisplay={valueLabelDisplay || "auto"}
             getAriaLabel={() => "Temperature range"}
             getAriaValueText={valuetext}
-            min={min || 0}
-            max={max || 100}
+            min={minValue}
+            max={maxValue}
             step={step || 1}
             disabled={disabled}
             valueLabelFormat={valueLabelFormat}
