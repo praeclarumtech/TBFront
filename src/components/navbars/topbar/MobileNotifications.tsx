@@ -43,7 +43,7 @@ export const MobileNotifications = () => {
               <Image
                 alt="avatar"
                 crossOrigin="anonymous"
-                src={user?.profilePicture ? `${appEnv.API_ENDPOINT}/uploads/profile/${user?.profilePicture}` : "talent/images/avatar/avatar.png"}
+                src={user?.profilePicture ? `${appEnv.API_ENDPOINT}/uploads/profile/${user?.profilePicture}` : "images/avatar/avatar.png"}
                 className="rounded-circle"
               />
             </div>

@@ -110,6 +110,7 @@ const Client = () => {
     { id: "isActive", header: "Status", isVisible: true },
     { id: "createdAt", header: "Created Date", isVisible: false },
     { id: "updatedAt", header: "Updated Date", isVisible: false },
+    { id: "isAdmin", header: "Client Approval", isVisible: true },
   ]);
   const [importLoader, setImportLoader] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -201,6 +202,30 @@ const Client = () => {
   const handleDeleteUser = (id: string) => {
     setSelectedRecord(id);
     setShowDeleteModal(true);
+  };
+
+  const handleUpdateClientAdminStatus = async (
+    id: string,
+    currentIsAdmin: boolean
+  ) => {
+    setIsLoading(true);
+    try {
+      const response = await updateUserStatus(id, { isAdmin: !currentIsAdmin });
+      if (response?.success === true && response.statusCode === 202) {
+        toast.success(
+          currentIsAdmin
+            ? "Client disapproved successfully"
+            : "Client approved successfully"
+        );
+        fetchUsers();
+      } else {
+        toast.error(response?.message || "Failed to update client status");
+      }
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to update client status");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const columns = useMemo(() => {
@@ -401,6 +426,29 @@ const Client = () => {
           );
         },
         enableColumnFilter: false,
+      },
+      {
+        header: "Client Approval",
+        accessorKey: "isAdmin",
+        id: "isAdmin",
+        enableColumnFilter: false,
+        cell: (cell: any) => {
+          const id = cell.row.original._id;
+          const clientIsAdmin = cell.getValue();
+          const addedByRole = cell.row.original?.addedByRole;
+
+          if (addedByRole === "guest") {
+            return (
+              <Switch
+                size="small"
+                checked={clientIsAdmin}
+                onClick={() => handleUpdateClientAdminStatus(id, clientIsAdmin)}
+                checkedChildren={<CheckOutlined />}
+                unCheckedChildren={<CloseOutlined />}
+              />
+            );
+          }
+        },
       },
       {
         header: "Action",

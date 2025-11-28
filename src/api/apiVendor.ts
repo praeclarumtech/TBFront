@@ -52,9 +52,14 @@ export const getJobScore = async (
   return response?.data;
 };
 
-export const addJobApplicant = async (resume: File, job_id?: string) => {
+export const addJobApplicant = async (
+  resume?: File | null,
+  job_id?: string
+) => {
   const formData = new FormData();
-  formData.append("resume", resume);
+  if (resume) {
+    formData.append("resume", resume);
+  }
 
   if (job_id) {
     formData.append("job_id", job_id);
@@ -98,6 +103,7 @@ export const viewAllJobApplicants = async (
     searchSkills?: string;
     isAcrive?: boolean;
     filterBy?: string;
+    jobId?: string;
   } = {}
 ) => {
   const response = await authServices.get(`${VIEW_APPLIED_JOB_APPLICANTS}`, {

@@ -16,6 +16,7 @@ import * as Tooltip from "@radix-ui/react-tooltip";
 
 import { deleteJob, updateJob, viewAllJob } from "api/apiJob";
 import ViewJob from "pages/master/ViewJob";
+import ViewJobApplicantsModal from "pages/Vendor/ViewJobApplicantsModal";
 
 import { ContentCopyOutlined } from "@mui/icons-material";
 import { Switch } from "antd";
@@ -49,6 +50,10 @@ const JobListing = () => {
   const [selectedId, setSelectedId] = useState<string[]>([]);
   const [searchAll, setSearchAll] = useState<string>("");
   const [showViewModal, setShowViewModal] = useState<boolean>(false);
+  const [showApplicantsModal, setShowApplicantsModal] =
+    useState<boolean>(false);
+  const [selectedJobId, setSelectedJobId] = useState<string>("");
+  const [selectedJobTitle, setSelectedJobTitle] = useState<string>("");
   const [currentLocation, setCurrentLocation] = useState<string>("");
 
   useEffect(() => {
@@ -319,6 +324,27 @@ const JobListing = () => {
                   </Tooltip.Content>
                 </Tooltip.Portal>
               </Tooltip.Root>
+              <Tooltip.Root>
+                <Tooltip.Trigger asChild>
+                  <button
+                    className="btn btn-sm btn-soft-success bg-warning"
+                    onClick={() => handleViewApplicants(cell?.row?.original)}
+                    disabled={!cell?.row?.original.isActive}
+                  >
+                    <i className="text-white ri-group-fill" />
+                  </button>
+                </Tooltip.Trigger>
+                <Tooltip.Portal>
+                  <Tooltip.Content
+                    side="bottom"
+                    sideOffset={4}
+                    className="px-2 py-1 text-xs text-white rounded shadow-lg bg-warning"
+                  >
+                    View Applicants
+                    <Tooltip.Arrow style={{ fill: "#f59e0b" }} />
+                  </Tooltip.Content>
+                </Tooltip.Portal>
+              </Tooltip.Root>
             </Tooltip.Provider>
           </div>
         ),
@@ -356,7 +382,9 @@ const JobListing = () => {
     updateJob(id, { isActive: !isActive })
       .then((res: any) => {
         if (res.success) {
-          toastify(res.message || "Status updated successfully", { type: "success" });
+          toastify(res.message || "Status updated successfully", {
+            type: "success",
+          });
           setShowStatusModal(false);
           fetchJob();
         }
@@ -368,7 +396,9 @@ const JobListing = () => {
             toastify(errorMessage, { type: "error" });
           });
         } else {
-          toastify("An error occurred while updating the applicant.", { type: "error" });
+          toastify("An error occurred while updating the applicant.", {
+            type: "error",
+          });
         }
       })
       .finally(() => {
@@ -387,6 +417,18 @@ const JobListing = () => {
 
   const handleEdit = (jobId: string) => {
     navigate(`/master/edit-job/${jobId}?mode=edit`);
+  };
+
+  const handleViewApplicants = (job: any) => {
+    setSelectedJobId(job._id);
+    setSelectedJobTitle(job.job_subject || "");
+    setShowApplicantsModal(true);
+  };
+
+  const handleCloseApplicantsModal = () => {
+    setShowApplicantsModal(false);
+    setSelectedJobId("");
+    setSelectedJobTitle("");
   };
 
   const formTitle =
@@ -429,6 +471,14 @@ const JobListing = () => {
           show={showViewModal}
           onHide={handleCloseModal}
           jobId={selectedId}
+        />
+      )}
+      {showApplicantsModal && selectedJobId && (
+        <ViewJobApplicantsModal
+          show={showApplicantsModal}
+          onHide={handleCloseApplicantsModal}
+          jobId={selectedJobId}
+          jobTitle={selectedJobTitle}
         />
       )}
       <DeleteModal

@@ -5,6 +5,9 @@ import {
   VIEW_ALL_JOB,
   VIEW_JOB_ID,
   VIEW_JOB_PUBLIC,
+  CHECK_EMAIL_FOR_JOB,
+  APPLY_JOB,
+  VIEW_JOB_APPLICANTS,
 } from "./apiRoutes";
 import { authServices } from "./apiServices";
 
@@ -60,5 +63,44 @@ export const viewAllJobPublic = async (params: {
   const response = await authServices.get(`${VIEW_JOB_PUBLIC}`, {
     params,
   });
+  return response?.data;
+};
+
+export const checkEmailForJob = async (jobId: string, email: string) => {
+  const response = await authServices.post(
+    `${CHECK_EMAIL_FOR_JOB}/${jobId}/check-email`,
+    {
+      email,
+    }
+  );
+  return response?.data;
+};
+
+export const applyJob = async (
+  jobId: string,
+  email: string,
+  resume?: File | null
+) => {
+  const response = await authServices.post(`${APPLY_JOB}/${jobId}`, {
+    email,
+    resume,
+  });
+  return response?.data;
+};
+
+export const getJobApplicants = async (
+  jobId: string,
+  params?: {
+    page?: number;
+    pageSize?: number;
+    limit?: number;
+  }
+) => {
+  const response = await authServices.get(
+    `${VIEW_JOB_APPLICANTS}/${jobId}/applicants`,
+    {
+      params,
+    }
+  );
   return response?.data;
 };

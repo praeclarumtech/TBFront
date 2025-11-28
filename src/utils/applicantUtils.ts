@@ -116,18 +116,28 @@ export const buildApplicantParams = (
   if (filters.filterState) {
     params.state = encodeURIComponent(filters.filterState.label);
   }
-
-  // Applied Skills (AND)
-  if (filters.appliedSkills.length > 0) {
-    params.appliedSkills = filters.appliedSkills
-      .map((skill) => skill.label)
+  // Applied Skills (AND) - Ensure it's an array
+  const appliedSkillsArray = Array.isArray(filters.appliedSkills)
+    ? filters.appliedSkills
+    : filters.appliedSkills
+    ? [filters.appliedSkills]
+    : [];
+  if (appliedSkillsArray.length > 0) {
+    params.appliedSkills = appliedSkillsArray
+      .map((skill) => skill?.label || skill?.value || "")
+      .filter(Boolean)
       .join(",");
   }
 
-  // Multiple Skills (OR)
-  if (filters.multipleSkills.length > 0) {
-    params.appliedSkillsOR = filters.multipleSkills
-      .map((skill) => skill.label)
+  const multipleSkillsArray = Array.isArray(filters.multipleSkills)
+    ? filters.multipleSkills
+    : filters.multipleSkills
+    ? [filters.multipleSkills]
+    : [];
+  if (multipleSkillsArray.length > 0) {
+    params.appliedSkillsOR = multipleSkillsArray
+      .map((skill) => skill?.label || skill?.value || "")
+      .filter(Boolean)
       .join(",");
   }
 
@@ -260,8 +270,14 @@ export const isAnyFilterApplied = (
     !!filters.filterAnyHandOnOffers ||
     filters.filterCity.length > 0 ||
     !!filters.filterState ||
-    filters.appliedSkills.length > 0 ||
-    filters.multipleSkills.length > 0 ||
+    (filters.appliedSkills &&
+      (Array.isArray(filters.appliedSkills)
+        ? filters.appliedSkills.length > 0
+        : true)) ||
+    (filters.multipleSkills &&
+      (Array.isArray(filters.multipleSkills)
+        ? filters.multipleSkills.length > 0
+        : true)) ||
     (filters.addedBy && filters.addedBy.length > 0) ||
     !!filters.startDate ||
     !!filters.endDate ||

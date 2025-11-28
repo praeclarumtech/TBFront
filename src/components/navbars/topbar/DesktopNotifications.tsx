@@ -46,7 +46,7 @@ export const DesktopNotifications = () => {
                 src={
                   user?.profilePicture
                     ? `${appEnv.API_ENDPOINT}/uploads/profile/${user?.profilePicture}`
-                    : "talent/images/avatar/avatar.png"
+                    : "images/avatar/avatar.png"
                 }
                 className="rounded-circle"
               />

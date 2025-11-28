@@ -18,6 +18,7 @@ import {
   updateApplicantQR,
   createApplicantQR,
 } from "../../../api/applicantApi";
+import { applyJob, viewJobById } from "../../../api/apiJob";
 import {
   SelectedOption,
   QrApplicants,
@@ -40,6 +41,8 @@ const { projectTitle, Modules, workPreferenceType, communicationOptions } =
 const QrFrom = () => {
   const location = useLocation();
   const jobId = location.state?.jobId;
+  const email = location.state?.email;
+  const fromEmailCheck = location.state?.fromEmailCheck;
   document.title = Modules.CreateApplicantForm + " | " + projectTitle;
   const [loading, setLoading] = useState<boolean>(false);
   const [buttonloading, setButtonLoading] = useState<boolean>(false);
@@ -55,6 +58,8 @@ const QrFrom = () => {
   const [states, setStates] = useState<City[]>([]);
   const [jobID, setJobID] = useState<any>();
   const [addedBy, setAddedBy] = useState<any>();
+  const [jobDetails, setJobDetails] = useState<any>(null);
+  const [loadingJobDetails, setLoadingJobDetails] = useState(false);
   const navigate = useNavigate();
 
   const { id } = useParams();
@@ -223,6 +228,25 @@ const QrFrom = () => {
     setAddedBy("guest");
   }, [id, jobId]);
 
+  // Fetch job details when jobId is available
+  useEffect(() => {
+    const fetchJobDetails = async () => {
+      if (!jobId) return;
+      setLoadingJobDetails(true);
+      try {
+        const response = await viewJobById({ _id: jobId });
+        if (response?.success && response?.data) {
+          setJobDetails(response.data);
+        }
+      } catch (error) {
+        errorHandle(error);
+      } finally {
+        setLoadingJobDetails(false);
+      }
+    };
+    fetchJobDetails();
+  }, [jobId]);
+
   useEffect(() => {
     fetchSkills();
     fetchDesignations();
@@ -303,11 +327,67 @@ const QrFrom = () => {
         if (!id) {
           await createApplicantQR(formData, true);
           toastify("Applicant created successfully", { type: "success" });
-          navigate("/applicants/qr-code-success");
+          if (fromEmailCheck && jobId && email) {
+            try {
+              const applyResponse = await applyJob(jobId, email);
+              if (applyResponse?.success) {
+                toastify(
+                  applyResponse?.message ||
+                    "Application submitted successfully!",
+                  { type: "success" }
+                );
+                navigate("/vendor/email-check-apply", {
+                  state: { jobId, email, fromEmailCheck: true, applied: true },
+                });
+              } else {
+                throw new Error(applyResponse?.message || "Application failed");
+              }
+            } catch (applyError: any) {
+              const errorMessage =
+                applyError?.response?.data?.message ||
+                applyError?.response?.data?.error ||
+                applyError.message ||
+                "Failed to submit application";
+              toastify(errorMessage, { type: "error" });
+              navigate("/vendor/email-check-apply", {
+                state: { jobId, email, fromEmailCheck: true },
+              });
+            }
+          } else {
+            navigate("/applicants/qr-code-success");
+          }
         } else {
           await updateApplicantQR(formData, id, true);
           toastify("Applicant updated successfully", { type: "success" });
-          navigate("/applicants/qr-code-success");
+          if (fromEmailCheck && jobId && email) {
+            try {
+              const applyResponse = await applyJob(jobId, email);
+              if (applyResponse?.success) {
+                toastify(
+                  applyResponse?.message ||
+                    "Application submitted successfully!",
+                  { type: "success" }
+                );
+                navigate("/vendor/email-check-apply", {
+                  state: { jobId, email, fromEmailCheck: true, applied: true },
+                });
+              } else {
+                throw new Error(applyResponse?.message || "Application failed");
+              }
+            } catch (applyError: any) {
+              const errorMessage =
+                applyError?.response?.data?.message ||
+                applyError?.response?.data?.error ||
+                applyError.message ||
+                "Failed to submit application";
+              toastify(errorMessage, { type: "error" });
+              navigate("/vendor/email-check-apply", {
+                state: { jobId, email, fromEmailCheck: true },
+              });
+            }
+          } else {
+            navigate("/applicants/qr-code-success");
+          }
         }
       } catch (error: any) {
         setButtonLoading(false);
@@ -408,6 +488,110 @@ const QrFrom = () => {
       <div className="pt-3 page-content"></div>
       <Container fluid>
         <Card title="Job Profile">
+
+          {/* Job Details Section */}
+          {jobId && (
+            <div className="mb-4">
+              {loadingJobDetails ? (
+                <div className="p-3 text-center">
+                  <Spinner animation="border" size="sm" role="status">
+                    <span className="visually-hidden">
+                      Loading job details...
+                    </span>
+                  </Spinner>
+                </div>
+              ) : (
+                jobDetails && (
+                  <div
+                    className="p-4 rounded"
+                    style={{
+                      backgroundColor: "#f8f9fa",
+                      border: "1px solid #e9ecef",
+                      marginBottom: "20px",
+                    }}
+                  >
+                    <h5
+                      className="mb-3"
+                      style={{
+                        color: "#624bff",
+                        fontWeight: "600",
+                        fontSize: "18px",
+                      }}
+                    >
+                      {jobDetails.job_subject || "N/A"}
+                    </h5>
+
+                    {jobDetails.required_skills &&
+                      jobDetails.required_skills.length > 0 && (
+                        <div className="mb-3">
+                          <strong
+                            className="d-block mb-2"
+                            style={{ fontSize: "14px", color: "#495057" }}
+                          >
+                            Required Skills:
+                          </strong>
+                          <div className="d-flex flex-wrap gap-2">
+                            {jobDetails.required_skills.map(
+                              (skill: string, index: number) => (
+                                <span
+                                  key={index}
+                                  className="badge px-3 py-2"
+                                  style={{
+                                    backgroundColor: "#624bff",
+                                    color: "#ffffff",
+                                    fontSize: "13px",
+                                    fontWeight: "500",
+                                    borderRadius: "6px",
+                                  }}
+                                >
+                                  {skill}
+                                </span>
+                              )
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                    <p className="mb-2">
+                      <strong>Job Type:</strong> {jobDetails.job_type || "N/A"}
+                    </p>
+                    <p className="mb-2">
+                      <strong>Job Location:</strong> {jobDetails.job_location || "N/A"}
+                    </p>
+
+                    {(jobDetails.sub_description || jobDetails.job_details) && (
+                      <div className="mt-3 d-flex flex-column gap-2">
+                        <strong
+                          className="d-block mb-2"
+                          style={{ fontSize: "14px", color: "#495057" }}
+                        >
+                          Job Description:
+                        </strong>
+                        <div
+                          className="ql-editor"
+                          style={{
+                            wordBreak: "break-word",
+                            overflowWrap: "break-word",
+                            whiteSpace: "pre-wrap",
+                            fontSize: "14px",
+                            color: "#495057",
+                            lineHeight: "1.6",
+                          }}
+                          dangerouslySetInnerHTML={{
+                            __html:
+                              jobDetails.sub_description ||
+                              jobDetails.job_details ||
+                              "",
+                          }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                )
+              )}
+            </div>
+          )}
+
           <Row>
             <div>
               <form

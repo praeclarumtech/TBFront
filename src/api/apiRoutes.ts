@@ -182,6 +182,9 @@ export const DELETE_JOB = "/job/delete";
 export const VIEW_JOB_ID = "/job";
 export const UPDATE_JOB = "/job";
 export const VIEW_JOB_PUBLIC = "/job/public/viewJobs";
+export const CHECK_EMAIL_FOR_JOB = "/job/apply";
+export const APPLY_JOB = "/job/apply";
+export const VIEW_JOB_APPLICANTS = "/job";
 
 //Vendor
 
@@ -193,3 +196,11 @@ export const VIEW_APPLICANT_BY_ID_VENDOR = "vendor/viewApplicantionsById";
 export const UPDATE_APPLICANT_STAGE_VENDOR = "/vendor/updateApplicantStatus";
 export const DELETE_APPLICANT_VENDOR = "/vendor/deleteApplicant";
 export const IMPORT_VENDOR = "/vendor/import";
+export const CREATE_VENDOR_QR = "vendor/vendor-add-qr-code";
+export const UPDATE_VENDOR_QR = "vendor/vendor-edit-qr-code";
+export const VIEW_VENDOR = "vendor/viewVendor";
+
+//Client
+export const CREATE_CLIENT_QR = "client/client-add-qr-code";
+export const UPDATE_CLIENT_QR = "client/client-edit-qr-code";
+export const VIEW_CLIENT = "client/viewClient";

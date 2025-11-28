@@ -48,6 +48,12 @@ import Client from "pages/Client/Client";
 import ManageAppliedListClient from "pages/Client/ManageAppliedListClient";
 import Roles from "pages/UserProfile/Roles";
 import Permission from "pages/UserProfile/Permission";
+import VendorQrForm from "pages/Vendor/QrCode/VendorQrForm";
+import ClientQrForm from "pages/Client/QrCode/ClientQrForm";
+import QrCodeRouter from "pages/QrCodeRouter/QrCodeRouter";
+import VendorSuccess from "pages/Vendor/QrCode/VendorSuccess";
+import ClientSuccess from "pages/Client/QrCode/ClientSuccess";
+import EmailCheckApply from "pages/Vendor/EmailCheckApply";
 
 const RenderRouter: React.FC = () => {
   const {
@@ -73,6 +79,7 @@ const RenderRouter: React.FC = () => {
     DETAILED_JOB,
     APPLY_NOW_JOB,
     APPLY_JOB_LIST,
+    EMAIL_CHECK_APPLY,
     LOGIN,
   } = routes;
 
@@ -95,6 +102,28 @@ const RenderRouter: React.FC = () => {
         <Route path={APPLICANT_EDIT_QR_CODE.path} element={<QrFrom />} />
         <Route path={APPLICANT_SUCCESS.path} element={<SuccessPage />} />
         <Route path={EMAIL_SEND.path} element={<SuccessPage />} />
+
+        {/* QR Code Router - checks email and routes to appropriate form */}
+        <Route path="/qr-code" element={<QrCodeRouter />} />
+
+        {/* Vendor QR Code Routes */}
+        <Route path="/vendor/vendor-add-qr-code" element={<VendorQrForm />} />
+        <Route
+          path="/vendor/vendor-edit-qr-code/:id"
+          element={<VendorQrForm />}
+        />
+        <Route path="/vendor/qr-code-success" element={<VendorSuccess />} />
+
+        {/* Client QR Code Routes */}
+        <Route path="/client/client-add-qr-code" element={<ClientQrForm />} />
+        <Route
+          path="/client/client-edit-qr-code/:id"
+          element={<ClientQrForm />}
+        />
+        <Route path="/client/qr-code-success" element={<ClientSuccess />} />
+
+        {/* Email Check and Apply Route - Public */}
+        <Route path={EMAIL_CHECK_APPLY.path} element={<EmailCheckApply />} />
 
         <Route element={<VendorLayout />}>
           <Route index element={<Vendor />} />

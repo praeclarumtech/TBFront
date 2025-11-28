@@ -144,6 +144,8 @@ const appConstants = Object.freeze({
     FindAndReplace: "Find And Replace",
     RoleAndSkill: "Role And Skill",
     CreateApplicantForm: "Applicant Form",
+    CreateVendorForm: "Vendor Form",
+    CreateClientForm: "Client Form",
     PreviewApplicantsDetails: "Preview Applicants Details",
     ComposeEmails: "Compose Email",
     EmailTemplate: "Email Template",
