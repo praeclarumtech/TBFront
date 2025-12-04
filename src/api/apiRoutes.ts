@@ -185,6 +185,9 @@ export const VIEW_JOB_PUBLIC = "/job/public/viewJobs";
 export const CHECK_EMAIL_FOR_JOB = "/job/apply";
 export const APPLY_JOB = "/job/apply";
 export const VIEW_JOB_APPLICANTS = "/job";
+export const JOB_EMAIL_RECIPIENTS = "/job/email/recipients";
+export const JOB_SEND_EMAIL = "/job";
+export const NOTIFY_MATCHING_APPLICANTS = "/job";
 
 //Vendor
 
@@ -204,3 +207,4 @@ export const VIEW_VENDOR = "vendor/viewVendor";
 export const CREATE_CLIENT_QR = "client/client-add-qr-code";
 export const UPDATE_CLIENT_QR = "client/client-edit-qr-code";
 export const VIEW_CLIENT = "client/viewClient";
+

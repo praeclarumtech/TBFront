@@ -5,8 +5,18 @@ import TableContainer from "components/BaseComponents/TableContainer";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import ViewModal from "../applicant/ViewApplicant";
-import { errorHandle, getCurrentUserRole } from "utils/commonFunctions";
+import {
+  errorHandle,
+  getCurrentUserRole,
+  dynamicFind,
+} from "utils/commonFunctions";
 import { getJobApplicants } from "api/apiJob";
+import { BaseSelect } from "components/BaseComponents/BaseSelect";
+import { SelectedOption } from "interfaces/applicant.interface";
+import appConstants from "constants/constant";
+import { updateStageVendor, updateStatusVendor } from "api/apiVendor";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface ViewJobApplicantsModalProps {
   show: boolean;
@@ -37,6 +47,8 @@ const ViewJobApplicantsModal: React.FC<ViewJobApplicantsModalProps> = ({
   const currentRole = getCurrentUserRole();
   const isAdmin = currentRole === "admin";
 
+  const { interviewStageOptions, statusOptions } = appConstants;
+
   const truncateText = {
     maxWidth: "200px",
     overflow: "hidden",
@@ -50,6 +62,14 @@ const ViewJobApplicantsModal: React.FC<ViewJobApplicantsModalProps> = ({
     padding: "5px 10px",
     borderRadius: "4px",
     fontSize: "12px",
+  };
+
+  const customStyles = {
+    control: (base: any) => ({
+      ...base,
+      minHeight: "38px",
+      width: "100%",
+    }),
   };
 
   useEffect(() => {
@@ -193,27 +213,103 @@ const ViewJobApplicantsModal: React.FC<ViewJobApplicantsModalProps> = ({
         enableColumnFilter: false,
       },
       {
-        header: "Status",
+        header: "Applicant Status",
         accessorKey: "status",
-        cell: (info: any) => {
-          const status = info.row.original?.status || "-";
-          const statusColors: any = {
-            active: "success",
-            inactive: "danger",
-            pending: "warning",
-            applied: "info",
-          };
-          return (
-            <span className={`badge bg-${statusColors[status] || "secondary"}`}>
-              {status}
-            </span>
-          );
-        },
+        cell: (cell: any) => (
+          <BaseSelect
+            name="status"
+            styles={customStyles}
+            options={statusOptions}
+            value={dynamicFind(statusOptions, cell.row.original.status)}
+            handleChange={(selectedOption: SelectedOption) => {
+              const updatedApplicant = [...applicant];
+              const applicantIndex = updatedApplicant.findIndex(
+                (item) => item._id === cell.row.original._id
+              );
+              if (applicantIndex > -1) {
+                const originalStatus = updatedApplicant[applicantIndex].status;
+                updatedApplicant[applicantIndex].status = selectedOption.value;
+                setApplicant(updatedApplicant);
+                updateStatusVendor(
+                  { status: selectedOption.value },
+                  cell.row.original._id
+                )
+                  .then(() => {
+                    toast.success("Applicant status updated successfully!");
+                  })
+                  .catch((error: any) => {
+                    errorHandle(error);
+                    // Revert the change on error using functional update
+                    setApplicant((prevApplicant) => {
+                      const revertedApplicant = [...prevApplicant];
+                      const revertIndex = revertedApplicant.findIndex(
+                        (item) => item._id === cell.row.original._id
+                      );
+                      if (revertIndex > -1) {
+                        revertedApplicant[revertIndex].status = originalStatus;
+                      }
+                      return revertedApplicant;
+                    });
+                  });
+              }
+            }}
+            isDisabled={!cell?.row?.original?.isActive}
+          />
+        ),
         enableColumnFilter: false,
       },
       {
         header: "Interview Stage",
         accessorKey: "interviewStage",
+        cell: (cell: any) => (
+          <BaseSelect
+            name="interviewStage"
+            styles={customStyles}
+            options={interviewStageOptions}
+            value={dynamicFind(
+              interviewStageOptions,
+              cell.row.original.interviewStage
+            )}
+            handleChange={(selectedOption: SelectedOption) => {
+              const updatedApplicant = [...applicant];
+              const applicantIndex = updatedApplicant.findIndex(
+                (item) => item._id === cell.row.original._id
+              );
+              if (applicantIndex > -1) {
+                const originalStage =
+                  updatedApplicant[applicantIndex].interviewStage;
+                updatedApplicant[applicantIndex].interviewStage =
+                  selectedOption.value;
+                setApplicant(updatedApplicant);
+                updateStageVendor(
+                  { interviewStage: selectedOption.value },
+                  cell.row.original._id
+                )
+                  .then(() => {
+                    toast.success(
+                      "Applicant Interview Stage updated successfully!"
+                    );
+                  })
+                  .catch((error: any) => {
+                    errorHandle(error);
+                    // Revert the change on error using functional update
+                    setApplicant((prevApplicant) => {
+                      const revertedApplicant = [...prevApplicant];
+                      const revertIndex = revertedApplicant.findIndex(
+                        (item) => item._id === cell.row.original._id
+                      );
+                      if (revertIndex > -1) {
+                        revertedApplicant[revertIndex].interviewStage =
+                          originalStage;
+                      }
+                      return revertedApplicant;
+                    });
+                  });
+              }
+            }}
+            isDisabled={!cell?.row?.original?.isActive}
+          />
+        ),
         enableColumnFilter: false,
       },
       {
@@ -261,7 +357,7 @@ const ViewJobApplicantsModal: React.FC<ViewJobApplicantsModalProps> = ({
     }
 
     return baseColumns;
-  }, [isAdmin]);
+  }, [isAdmin, applicant]);
 
   if (!show) return null;
 

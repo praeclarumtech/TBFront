@@ -14,9 +14,15 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import * as Tooltip from "@radix-ui/react-tooltip";
 
-import { deleteJob, updateJob, viewAllJob } from "api/apiJob";
+import {
+  deleteJob,
+  updateJob,
+  viewAllJob,
+  notifyMatchingApplicants,
+} from "api/apiJob";
 import ViewJob from "pages/master/ViewJob";
 import ViewJobApplicantsModal from "pages/Vendor/ViewJobApplicantsModal";
+import SendEmailModal from "components/Job/SendEmailModal";
 
 import { ContentCopyOutlined } from "@mui/icons-material";
 import { Switch } from "antd";
@@ -55,6 +61,9 @@ const JobListing = () => {
   const [selectedJobId, setSelectedJobId] = useState<string>("");
   const [selectedJobTitle, setSelectedJobTitle] = useState<string>("");
   const [currentLocation, setCurrentLocation] = useState<string>("");
+  const [showSendEmailModal, setShowSendEmailModal] = useState<boolean>(false);
+  const [selectedJobForEmail, setSelectedJobForEmail] = useState<any>(null);
+  const [notifyingJobId, setNotifyingJobId] = useState<string>("");
 
   useEffect(() => {
     setCurrentLocation(location.pathname);
@@ -345,6 +354,58 @@ const JobListing = () => {
                   </Tooltip.Content>
                 </Tooltip.Portal>
               </Tooltip.Root>
+              {(currentRole === "client" || currentRole === "vendor") && (
+                <Tooltip.Root>
+                  <Tooltip.Trigger asChild>
+                    <button
+                      className="btn btn-sm btn-soft-success bg-success"
+                      onClick={() => handleSendEmail(cell?.row?.original)}
+                      disabled={!cell?.row?.original.isActive}
+                    >
+                      <i className="text-white ri-mail-send-fill" />
+                    </button>
+                  </Tooltip.Trigger>
+                  <Tooltip.Portal>
+                    <Tooltip.Content
+                      side="bottom"
+                      sideOffset={4}
+                      className="px-2 py-1 text-xs text-white rounded shadow-lg bg-success"
+                    >
+                      Send Email
+                      <Tooltip.Arrow style={{ fill: "#10b981" }} />
+                    </Tooltip.Content>
+                  </Tooltip.Portal>
+                </Tooltip.Root>
+              )}
+              {currentRole === "vendor" && (
+                <Tooltip.Root>
+                  <Tooltip.Trigger asChild>
+                    <button
+                      className="btn btn-sm btn-soft-success bg-info"
+                      onClick={() =>
+                        handleNotifyMatchingApplicants(cell?.row?.original)
+                      }
+                      disabled={
+                        !cell?.row?.original.isActive ||
+                        (isLoading &&
+                          notifyingJobId === cell?.row?.original._id)
+                      }
+                    >
+                      <i className="text-white ri-notification-3-fill" />
+                    </button>
+                  </Tooltip.Trigger>
+                  <Tooltip.Portal>
+                    <Tooltip.Content
+                      side="bottom"
+                      sideOffset={4}
+                      className="px-2 py-1 text-xs text-white rounded shadow-lg bg-info"
+                    >
+                      Notify Matching Applicants
+                      <Tooltip.Arrow style={{ fill: "#0ea5e9" }} />
+                    </Tooltip.Content>
+                  </Tooltip.Portal>
+                </Tooltip.Root>
+              )}
             </Tooltip.Provider>
           </div>
         ),
@@ -431,6 +492,48 @@ const JobListing = () => {
     setSelectedJobTitle("");
   };
 
+  const handleSendEmail = (job: any) => {
+    setSelectedJobForEmail(job);
+    setShowSendEmailModal(true);
+  };
+
+  const handleCloseSendEmailModal = () => {
+    setShowSendEmailModal(false);
+    setSelectedJobForEmail(null);
+  };
+
+  const handleNotifyMatchingApplicants = async (job: any) => {
+    if (!job?._id) {
+      toastify("Invalid job selected.", { type: "error" });
+      return;
+    }
+
+    setNotifyingJobId(job._id);
+    setIsLoading(true);
+
+    try {
+      const res = await notifyMatchingApplicants(job._id);
+      if (res?.success) {
+        toastify(res?.message || "Matching applicants notified successfully!", {
+          type: "success",
+        });
+      } else {
+        toastify(res?.message || "Failed to notify matching applicants.", {
+          type: "error",
+        });
+      }
+    } catch (error: any) {
+      const errorMessage =
+        error?.response?.data?.message ||
+        "Something went wrong while notifying matching applicants.";
+      toastify(errorMessage, { type: "error" });
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+      setNotifyingJobId("");
+    }
+  };
+
   const formTitle =
     //  editingState ? "Update Jobs" :
     "Add Jobs";
@@ -479,6 +582,14 @@ const JobListing = () => {
           onHide={handleCloseApplicantsModal}
           jobId={selectedJobId}
           jobTitle={selectedJobTitle}
+        />
+      )}
+      {showSendEmailModal && selectedJobForEmail && (
+        <SendEmailModal
+          show={showSendEmailModal}
+          onHide={handleCloseSendEmailModal}
+          jobId={selectedJobForEmail._id}
+          jobTitle={selectedJobForEmail.job_subject}
         />
       )}
       <DeleteModal

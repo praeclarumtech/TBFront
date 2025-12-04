@@ -107,6 +107,27 @@ const EmailCheckApply = () => {
     setWantsToUpdate("no");
     try {
       const response = await checkEmailForJob(jobId, email);
+
+      // Check if user has already applied (409 status code)
+      if (
+        response?.statusCode === 409 &&
+        response?.data?.alreadyApplied === true
+      ) {
+        setApplied(true);
+        setEmailExists(true);
+        setApplicantData({
+          applicantId: response?.data?.applicantId,
+          applicantName: response?.data?.applicantName,
+          alreadyApplied: true,
+          applicationId: response?.data?.applicationId,
+          formUrl: response?.data?.formUrl,
+        });
+        toast.warning(
+          response?.message || "You have already applied for this job."
+        );
+        return;
+      }
+
       if (response?.success) {
         const emailFound = response?.data?.emailExists;
         if (emailFound) {
@@ -133,6 +154,28 @@ const EmailCheckApply = () => {
         );
       }
     } catch (error: any) {
+      // Check if error is 409 - already applied
+      if (
+        error?.response?.status === 409 ||
+        error?.response?.data?.statusCode === 409
+      ) {
+        const errorData = error?.response?.data;
+        if (errorData?.data?.alreadyApplied === true) {
+          setApplied(true);
+          setEmailExists(true);
+          setApplicantData({
+            applicantId: errorData?.data?.applicantId,
+            applicantName: errorData?.data?.applicantName,
+            alreadyApplied: true,
+            applicationId: errorData?.data?.applicationId,
+            formUrl: errorData?.data?.formUrl,
+          });
+          toast.warning(
+            errorData?.message || "You have already applied for this job."
+          );
+          return;
+        }
+      }
       errorHandle(error);
       setEmailExists(false);
     } finally {
@@ -201,22 +244,13 @@ const EmailCheckApply = () => {
                   borderBottom: "1px solid rgba(99, 75, 255, 0.1)",
                 }}
               >
-                <div className="d-flex align-items-center position-relative">
-                  {/* Title - Centered */}
+                <div className="d-flex align-items-center justify-content-center">
                   <h2
-                    className={`mb-0 ${
-                      emailExists === true
-                        ? "position-absolute w-100 text-center"
-                        : "text-center w-100"
-                    }`}
+                    className="mb-0 text-center w-100"
                     style={{
                       color: "#624bff",
                       fontWeight: "700",
                       fontSize: "28px",
-                      left: emailExists === true ? 0 : "auto",
-                      right: emailExists === true ? 0 : "auto",
-                      pointerEvents: "none",
-                      zIndex: 0,
                     }}
                   >
                     Apply for Job
@@ -436,23 +470,25 @@ const EmailCheckApply = () => {
                       </div>
                     </div>
 
-                    {wantsToUpdate === "yes" && applicantData?.applicantId && (
-                      <div className="mb-3">
-                        <BaseButton
-                          onClick={() => {
-                            navigate(
-                              `/applicants/applicant-edit-qr-code/${applicantData.applicantId}`,
-                              {
-                                state: { jobId, email, fromEmailCheck: true },
-                              }
-                            );
-                          }}
-                          className="px-4 py-2 bg-primary"
-                        >
-                          Update Details
-                        </BaseButton>
-                      </div>
-                    )}
+                    {wantsToUpdate === "yes" &&
+                      applicantData?.applicantId &&
+                      !applicantData?.alreadyApplied && (
+                        <div className="mb-3">
+                          <BaseButton
+                            onClick={() => {
+                              navigate(
+                                `/applicants/applicant-edit-qr-code/${applicantData.applicantId}`,
+                                {
+                                  state: { jobId, email, fromEmailCheck: true },
+                                }
+                              );
+                            }}
+                            className="px-4 py-2 bg-primary"
+                          >
+                            Update Details
+                          </BaseButton>
+                        </div>
+                      )}
 
                     {/* {wantsToUpdate === "no" && (
                       <div className="mb-3">

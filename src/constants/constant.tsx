@@ -403,7 +403,7 @@ const appConstants = Object.freeze({
   ],
   interviewModeOptions: [
     { label: "Online", value: "online" },
-    { label: "Offline", value: "offline" }
+    { label: "Offline", value: "offline" },
   ],
   experienceOptions: [
     { value: 0, label: "0 Years" },

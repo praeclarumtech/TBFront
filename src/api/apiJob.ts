@@ -8,6 +8,9 @@ import {
   CHECK_EMAIL_FOR_JOB,
   APPLY_JOB,
   VIEW_JOB_APPLICANTS,
+  JOB_EMAIL_RECIPIENTS,
+  JOB_SEND_EMAIL,
+  NOTIFY_MATCHING_APPLICANTS,
 } from "./apiRoutes";
 import { authServices } from "./apiServices";
 
@@ -101,6 +104,43 @@ export const getJobApplicants = async (
     {
       params,
     }
+  );
+  return response?.data;
+};
+
+export const getJobEmailRecipients = async (
+  type: string,
+  params?: { limit?: number },
+  jobId?: string
+) => {
+  const response = await authServices.get(
+    `${JOB_EMAIL_RECIPIENTS}?type=${type}${jobId ? `&jobId=${jobId}` : ""}`,
+    {
+      params,
+    }
+  );
+  return response?.data;
+};
+
+export const sendJobEmail = async (
+  jobId: string,
+  data: {
+    vendorIds?: string[];
+    applicantIds?: string[];
+    customMessage?: string;
+    emailTemplateId?: string;
+  }
+) => {
+  const response = await authServices.post(
+    `${JOB_SEND_EMAIL}/${jobId}/send-email`,
+    data
+  );
+  return response?.data;
+};
+
+export const notifyMatchingApplicants = async (jobId: string) => {
+  const response = await authServices.post(
+    `${NOTIFY_MATCHING_APPLICANTS}/${jobId}/notify-matching-applicants`
   );
   return response?.data;
 };
