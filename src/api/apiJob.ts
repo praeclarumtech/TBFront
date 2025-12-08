@@ -11,6 +11,7 @@ import {
   JOB_EMAIL_RECIPIENTS,
   JOB_SEND_EMAIL,
   NOTIFY_MATCHING_APPLICANTS,
+  SEND_APPLICANT_STATUS_EMAIL,
 } from "./apiRoutes";
 import { authServices } from "./apiServices";
 
@@ -141,6 +142,21 @@ export const sendJobEmail = async (
 export const notifyMatchingApplicants = async (jobId: string) => {
   const response = await authServices.post(
     `${NOTIFY_MATCHING_APPLICANTS}/${jobId}/notify-matching-applicants`
+  );
+  return response?.data;
+};
+
+export const sendApplicantStatusEmail = async (data: {
+  applicantName: string;
+  applicantEmail: string;
+  templateType: string;
+  applicantStatus?: string;
+  applicantId?: string;
+  jobId?: string;
+}) => {
+  const response = await authServices.post(
+    `${SEND_APPLICANT_STATUS_EMAIL}`,
+    data
   );
   return response?.data;
 };

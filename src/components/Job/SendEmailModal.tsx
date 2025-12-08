@@ -6,7 +6,11 @@ import { BaseSelect } from "components/BaseComponents/BaseSelect";
 import CheckboxMultiSelect from "components/BaseComponents/CheckboxMultiSelect";
 import BaseTextarea from "components/BaseComponents/BaseTextArea";
 import { SelectedOption } from "interfaces/applicant.interface";
-import { getJobEmailRecipients, sendJobEmail } from "api/apiJob";
+import {
+  getJobEmailRecipients,
+  sendJobEmail,
+  sendApplicantStatusEmail,
+} from "api/apiJob";
 import { getEmailTemplateByType, viewEmailTemplate } from "api/emailApi";
 import { toast } from "react-toastify";
 import { errorHandle, getCurrentUserRole } from "utils/commonFunctions";
@@ -16,11 +20,22 @@ import appConstants from "constants/constant";
 
 const { roleEnums } = appConstants;
 
+const DEFAULT_STATUSES = ["applied", ""];
+
+interface SingleApplicantData {
+  id: string;
+  name: string;
+  email: string;
+  status?: string;
+}
+
 interface SendEmailModalProps {
   show: boolean;
   onHide: () => void;
   jobId: string;
   jobTitle?: string;
+  excludeJobTemplates?: boolean;
+  singleApplicant?: SingleApplicantData;
 }
 
 const SendEmailModal: React.FC<SendEmailModalProps> = ({
@@ -28,6 +43,8 @@ const SendEmailModal: React.FC<SendEmailModalProps> = ({
   onHide,
   jobId,
   jobTitle,
+  excludeJobTemplates = false,
+  singleApplicant,
 }) => {
   const currentRole = getCurrentUserRole();
   const [vendorOptions, setVendorOptions] = useState<SelectedOption[]>([]);
@@ -50,26 +67,43 @@ const SendEmailModal: React.FC<SendEmailModalProps> = ({
   const [fetchingVendors, setFetchingVendors] = useState(false);
   const [fetchingApplicants, setFetchingApplicants] = useState(false);
 
+  // Check if applicant status has been changed from default
+  const isStatusUnchanged =
+    singleApplicant &&
+    DEFAULT_STATUSES.includes(singleApplicant.status?.toLowerCase() || "");
+
   useEffect(() => {
     if (show && jobId) {
-      fetchVendors();
-      fetchApplicants();
+      if (!singleApplicant) {
+        fetchVendors();
+        fetchApplicants();
+      }
       fetchEmailTemplates();
     }
-  }, [show, jobId]);
+  }, [show, jobId, singleApplicant]);
 
   useEffect(() => {
     if (show) {
-      // Reset selections when modal opens
       setSelectedVendors([]);
-      setSelectedApplicants([]);
       setSelectedTemplate(null);
       setSelectedTemplateId("");
       setTemplateSubject("");
       setTemplateDescription("");
       setCustomMessage("");
+
+      // Pre-select single applicant if provided
+      if (singleApplicant) {
+        setSelectedApplicants([
+          {
+            label: `${singleApplicant.name} (${singleApplicant.email})`,
+            value: singleApplicant.id,
+          },
+        ]);
+      } else {
+        setSelectedApplicants([]);
+      }
     }
-  }, [show]);
+  }, [show, singleApplicant]);
 
   const fetchVendors = async () => {
     setFetchingVendors(true);
@@ -153,21 +187,57 @@ const SendEmailModal: React.FC<SendEmailModalProps> = ({
             value: template.type,
           }))
           .filter((option: SelectedOption) => {
-            if (currentRole === roleEnums.Client) {
+            const templateType = option.value?.toUpperCase();
+
+            // When excludeJobTemplates is true, exclude JOB_NOTIFICATION and CLIENT_JOB_EMAIL
+            if (excludeJobTemplates) {
               return (
-                option.value?.toUpperCase() !== "JOB_NOTIFICATION" &&
-                option.value?.toLowerCase() !== "job_notification"
+                templateType !== "JOB_NOTIFICATION" &&
+                templateType !== "CLIENT_JOB_EMAIL"
               );
             }
+
+            // Default behavior: filter based on role
+            if (currentRole === roleEnums.Client) {
+              return templateType === "CLIENT_JOB_EMAIL";
+            }
             if (currentRole === roleEnums.Vendor) {
-              return (
-                option.value?.toUpperCase() !== "CLIENT_JOB_EMAIL" &&
-                option.value?.toLowerCase() !== "client_job_email"
-              );
+              return templateType === "JOB_NOTIFICATION";
             }
             return true;
           });
         setEmailTemplates(templateOptions);
+
+        // Only auto-select default template when not excluding job templates
+        if (!excludeJobTemplates) {
+          let defaultTemplate: SelectedOption | null = null;
+          if (currentRole === roleEnums.Client) {
+            defaultTemplate =
+              templateOptions.find(
+                (opt: SelectedOption) =>
+                  opt.value?.toUpperCase() === "CLIENT_JOB_EMAIL"
+              ) || null;
+          } else if (currentRole === roleEnums.Vendor) {
+            defaultTemplate =
+              templateOptions.find(
+                (opt: SelectedOption) =>
+                  opt.value?.toUpperCase() === "JOB_NOTIFICATION"
+              ) || null;
+          }
+
+          if (defaultTemplate) {
+            setSelectedTemplate(defaultTemplate);
+            const templateData = await getEmailTemplateByType(
+              defaultTemplate.value
+            );
+            const template = templates.find(
+              (t: any) => t.type === defaultTemplate?.value
+            );
+            setSelectedTemplateId(template?._id || "");
+            setTemplateSubject(templateData.data?.subject || "");
+            setTemplateDescription(templateData.data?.description || "");
+          }
+        }
       }
     } catch (error) {
       console.error("Error fetching email templates:", error);
@@ -208,59 +278,76 @@ const SendEmailModal: React.FC<SendEmailModalProps> = ({
       return;
     }
 
-    const hasVendorSelection = selectedVendors.length > 0;
-    const hasApplicantSelection = selectedApplicants.length > 0;
-
-    if (!hasVendorSelection && !hasApplicantSelection) {
-      toast.error("Please select at least one vendor or applicant");
-      return;
-    }
-
     setSending(true);
     try {
-      // Extract vendor IDs
-      const vendorIds = selectedVendors.map((option) => option.value);
+      if (singleApplicant) {
+        const requestData = {
+          applicantName: singleApplicant.name,
+          applicantEmail: singleApplicant.email,
+          templateType: selectedTemplate.value,
+          applicantStatus: singleApplicant.status || "",
+          applicantId: singleApplicant.id,
+          jobId: jobId,
+        };
 
-      // Extract applicant IDs
-      const applicantIds = selectedApplicants.map((option) => option.value);
+        const res = await sendApplicantStatusEmail(requestData);
 
-      // Prepare request data
-      const requestData: {
-        vendorIds?: string[];
-        applicantIds?: string[];
-        customMessage?: string;
-        emailTemplateId?: string;
-      } = {};
-
-      if (currentRole === roleEnums.Vendor) {
-        requestData.applicantIds = applicantIds;
-        requestData.customMessage = customMessage || "";
-        requestData.vendorIds = [];
+        if (res?.success) {
+          toast.success(res?.message || "Email sent successfully!");
+          onHide();
+        } else {
+          toast.error(res?.message || "Failed to send email");
+        }
       } else {
-        if (vendorIds.length > 0) {
-          requestData.vendorIds = vendorIds;
+        const hasVendorSelection = selectedVendors.length > 0;
+        const hasApplicantSelection = selectedApplicants.length > 0;
+
+        if (!hasVendorSelection && !hasApplicantSelection) {
+          toast.error("Please select at least one vendor or applicant");
+          return;
         }
 
-        if (applicantIds.length > 0) {
+        const vendorIds = selectedVendors.map((option) => option.value);
+
+        const applicantIds = selectedApplicants.map((option) => option.value);
+
+        const requestData: {
+          vendorIds?: string[];
+          applicantIds?: string[];
+          customMessage?: string;
+          emailTemplateId?: string;
+        } = {};
+
+        if (currentRole === roleEnums.Vendor) {
           requestData.applicantIds = applicantIds;
+          requestData.customMessage = customMessage || "";
+          requestData.vendorIds = [];
+        } else {
+          if (vendorIds.length > 0) {
+            requestData.vendorIds = vendorIds;
+          }
+
+          if (applicantIds.length > 0) {
+            requestData.applicantIds = applicantIds;
+          }
+
+          if (customMessage.trim()) {
+            requestData.customMessage = customMessage.trim();
+          }
         }
 
-        if (customMessage.trim()) {
-          requestData.customMessage = customMessage.trim();
+        if (selectedTemplateId) {
+          requestData.emailTemplateId = selectedTemplateId;
         }
-      }
 
-      if (selectedTemplateId) {
-        requestData.emailTemplateId = selectedTemplateId;
-      }
+        const res = await sendJobEmail(jobId, requestData);
 
-      const res = await sendJobEmail(jobId, requestData);
-
-      if (res?.success) {
-        toast.success(res?.message || "Email sent successfully!");
-        onHide();
-      } else {
-        toast.error(res?.message || "Failed to send email");
+        if (res?.success) {
+          toast.success(res?.message || "Email sent successfully!");
+          onHide();
+        } else {
+          toast.error(res?.message || "Failed to send email");
+        }
       }
     } catch (error: any) {
       toast.error(error?.response?.data?.message || "Failed to send email");
@@ -276,6 +363,18 @@ const SendEmailModal: React.FC<SendEmailModalProps> = ({
         <Modal.Title>Send Email - {jobTitle || "Job"}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
+        {isStatusUnchanged && (
+          <div className="alert alert-warning d-flex align-items-center mb-3">
+            <i className="ri-error-warning-line fs-4 me-2"></i>
+            <div>
+              <strong>Cannot send email!</strong>
+              <br />
+              Please update the applicant status before sending a status update
+              email.
+            </div>
+          </div>
+        )}
+
         <Row className="mb-3">
           <Col>
             <BaseSelect
@@ -285,49 +384,70 @@ const SendEmailModal: React.FC<SendEmailModalProps> = ({
               value={selectedTemplate}
               handleChange={(selected: any) => handleTemplateChange(selected)}
               placeholder="Select email template"
+              isDisabled={isStatusUnchanged}
             />
           </Col>
         </Row>
 
-        {currentRole === roleEnums.Client && (
+        {singleApplicant ? (
           <Row className="mb-3">
             <Col>
-              {fetchingVendors ? (
-                <Skeleton count={5} />
-              ) : (
-                <CheckboxMultiSelect
-                  name="vendors"
-                  label="Select Vendors"
-                  options={vendorOptions}
-                  value={selectedVendors}
-                  onChange={handleVendorChange}
-                  placeholder="Select vendors..."
-                  showSelectAll={true}
-                  zIndex={9999}
-                />
-              )}
+              <label className="form-label">Recipient</label>
+              <div className="p-3 bg-light rounded border">
+                <div className="d-flex align-items-center gap-2">
+                  <i className="ri-user-line text-primary"></i>
+                  <div>
+                    <strong>{singleApplicant.name}</strong>
+                    <br />
+                    <span className="text-muted">{singleApplicant.email}</span>
+                  </div>
+                </div>
+              </div>
             </Col>
           </Row>
-        )}
-
-        <Row className="mb-3">
-          <Col>
-            {fetchingApplicants ? (
-              <Skeleton count={5} />
-            ) : (
-              <CheckboxMultiSelect
-                name="applicants"
-                label="Select Applicants"
-                options={applicantOptions}
-                value={selectedApplicants}
-                onChange={handleApplicantChange}
-                placeholder="Select applicants..."
-                showSelectAll={true}
-                zIndex={9999}
-              />
+        ) : (
+          <>
+            {currentRole === roleEnums.Client && (
+              <Row className="mb-3">
+                <Col>
+                  {fetchingVendors ? (
+                    <Skeleton count={5} />
+                  ) : (
+                    <CheckboxMultiSelect
+                      name="vendors"
+                      label="Select Vendors"
+                      options={vendorOptions}
+                      value={selectedVendors}
+                      onChange={handleVendorChange}
+                      placeholder="Select vendors..."
+                      showSelectAll={true}
+                      zIndex={9999}
+                    />
+                  )}
+                </Col>
+              </Row>
             )}
-          </Col>
-        </Row>
+
+            <Row className="mb-3">
+              <Col>
+                {fetchingApplicants ? (
+                  <Skeleton count={5} />
+                ) : (
+                  <CheckboxMultiSelect
+                    name="applicants"
+                    label="Select Applicants"
+                    options={applicantOptions}
+                    value={selectedApplicants}
+                    onChange={handleApplicantChange}
+                    placeholder="Select applicants..."
+                    showSelectAll={true}
+                    zIndex={9999}
+                  />
+                )}
+              </Col>
+            </Row>
+          </>
+        )}
 
         {selectedTemplate && (
           <Row className="mb-3">
@@ -368,7 +488,12 @@ const SendEmailModal: React.FC<SendEmailModalProps> = ({
         >
           Cancel
         </BaseButton>
-        <BaseButton color="primary" onClick={handleSendEmail} loader={sending}>
+        <BaseButton
+          color="primary"
+          onClick={handleSendEmail}
+          loader={sending}
+          disabled={isStatusUnchanged}
+        >
           Send Email
         </BaseButton>
       </Modal.Footer>

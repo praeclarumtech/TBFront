@@ -29,7 +29,7 @@ import { Switch } from "antd";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import { useLocation } from "react-router-dom";
 import ActiveModal from "components/BaseComponents/ActiveModal";
-import { getCurrentUserRole } from "utils/commonFunctions";
+import { capitalizeWords, getCurrentUserRole } from "utils/commonFunctions";
 import toastify from "utils/toastify";
 
 const { projectTitle, Modules, handleResponse } = appConstants;
@@ -231,6 +231,11 @@ const JobListing = () => {
         header: "Job Type",
         accessorKey: "job_type",
         enableColumnFilter: false,
+        cell: (cell: any) => {
+          return cell.row.original.job_type
+            ? capitalizeWords(cell.row.original.job_type)
+            : "-";
+        },
       },
 
       {
@@ -238,7 +243,18 @@ const JobListing = () => {
         accessorKey: "contract_duration",
         enableColumnFilter: false,
       },
-
+      ...((currentRole === "vendor" || currentRole === "admin")
+        ? [
+            {
+              header: "Client Name",
+              accessorKey: "clientName",
+              enableColumnFilter: false,
+              cell: (cell: any) => {
+                return cell.row.original.clientName || "-";
+              },
+            },
+          ]
+        : []),
       {
         header: "Action",
         cell: (cell: { row: { original: any } }) => (
@@ -265,52 +281,53 @@ const JobListing = () => {
                   </Tooltip.Content>
                 </Tooltip.Portal>
               </Tooltip.Root>
-              {/* View Button with Tooltip */}
-              <Tooltip.Root>
-                <Tooltip.Trigger asChild>
-                  <button
-                    className="btn btn-sm btn-soft-success bg-secondary"
-                    onClick={() => handleEdit(cell?.row?.original?._id)}
-                    disabled={!cell?.row?.original.isActive}
-                  >
-                    <i className="text-white align-bottom ri-pencil-fill" />
-                  </button>
-                </Tooltip.Trigger>
-                <Tooltip.Portal>
-                  <Tooltip.Content
-                    side="bottom"
-                    sideOffset={4}
-                    className="px-2 py-1 text-xs text-white rounded shadow-lg bg-secondary"
-                  >
-                    Edit
-                    <Tooltip.Arrow style={{ fill: "#637381" }} />
-                  </Tooltip.Content>
-                </Tooltip.Portal>
-              </Tooltip.Root>
+              {!cell?.row?.original?.isClientJob && (
+                <Tooltip.Root>
+                  <Tooltip.Trigger asChild>
+                    <button
+                      className="btn btn-sm btn-soft-success bg-secondary"
+                      onClick={() => handleEdit(cell?.row?.original?._id)}
+                      disabled={!cell?.row?.original.isActive}
+                    >
+                      <i className="text-white align-bottom ri-pencil-fill" />
+                    </button>
+                  </Tooltip.Trigger>
+                  <Tooltip.Portal>
+                    <Tooltip.Content
+                      side="bottom"
+                      sideOffset={4}
+                      className="px-2 py-1 text-xs text-white rounded shadow-lg bg-secondary"
+                    >
+                      Edit
+                      <Tooltip.Arrow style={{ fill: "#637381" }} />
+                    </Tooltip.Content>
+                  </Tooltip.Portal>
+                </Tooltip.Root>
+              )}
 
-              {/* Edit Button with Tooltip */}
-
-              <Tooltip.Root>
-                <Tooltip.Trigger asChild>
-                  <button
-                    className="text-white btn btn-sm btn-soft-danger bg-danger"
-                    onClick={() => handleDelete(cell?.row?.original)}
-                    disabled={!cell?.row?.original.isActive}
-                  >
-                    <i className="align-bottom ri-delete-bin-5-fill" />
-                  </button>
-                </Tooltip.Trigger>
-                <Tooltip.Portal>
-                  <Tooltip.Content
-                    side="bottom"
-                    sideOffset={4}
-                    className="px-2 py-1 text-xs text-white rounded shadow-lg bg-danger"
-                  >
-                    Delete
-                    <Tooltip.Arrow style={{ fill: "#dc3545" }} />
-                  </Tooltip.Content>
-                </Tooltip.Portal>
-              </Tooltip.Root>
+              {!cell?.row?.original?.isClientJob && (
+                <Tooltip.Root>
+                  <Tooltip.Trigger asChild>
+                    <button
+                      className="text-white btn btn-sm btn-soft-danger bg-danger"
+                      onClick={() => handleDelete(cell?.row?.original)}
+                      disabled={!cell?.row?.original.isActive}
+                    >
+                      <i className="align-bottom ri-delete-bin-5-fill" />
+                    </button>
+                  </Tooltip.Trigger>
+                  <Tooltip.Portal>
+                    <Tooltip.Content
+                      side="bottom"
+                      sideOffset={4}
+                      className="px-2 py-1 text-xs text-white rounded shadow-lg bg-danger"
+                    >
+                      Delete
+                      <Tooltip.Arrow style={{ fill: "#dc3545" }} />
+                    </Tooltip.Content>
+                  </Tooltip.Portal>
+                </Tooltip.Root>
+              )}
               <Tooltip.Root>
                 <Tooltip.Trigger asChild>
                   <button
@@ -354,7 +371,7 @@ const JobListing = () => {
                   </Tooltip.Content>
                 </Tooltip.Portal>
               </Tooltip.Root>
-              {(currentRole === "client" || currentRole === "vendor") && (
+              {(currentRole === "client" || currentRole === "vendor" || currentRole === "admin") && (
                 <Tooltip.Root>
                   <Tooltip.Trigger asChild>
                     <button
@@ -377,7 +394,7 @@ const JobListing = () => {
                   </Tooltip.Portal>
                 </Tooltip.Root>
               )}
-              {currentRole === "vendor" && (
+              {currentRole === "vendor" || currentRole === "admin" && (
                 <Tooltip.Root>
                   <Tooltip.Trigger asChild>
                     <button

@@ -15,7 +15,11 @@ import ViewModal from "../applicant/ViewApplicant";
 import DeleteModal from "components/BaseComponents/DeleteModal";
 
 import { SelectedOption } from "interfaces/applicant.interface";
-import { dynamicFind, errorHandle } from "utils/commonFunctions";
+import {
+  capitalizeWords,
+  dynamicFind,
+  errorHandle,
+} from "utils/commonFunctions";
 import appConstants from "constants/constant";
 import Skeleton from "react-loading-skeleton";
 import saveAs from "file-saver";
@@ -323,24 +327,7 @@ const ManageAppliedListClient = () => {
           const lastName = nameObj.lastName || "";
           const fullName = `${firstName} ${middleName} ${lastName}`.trim();
 
-          return (
-            <>
-              <div
-                style={truncateText}
-                className="text-[#624bff] underline cursor-pointer truncated-text hover:text-[#3f3481]"
-                title={fullName}
-                onClick={() => handleView(info.row.original._id, "vendor")}
-              >
-                {fullName}
-              </div>
-              <ReactTooltip
-                place="top"
-                variant="info"
-                content={fullName}
-                style={toolipComponents}
-              />
-            </>
-          );
+          return <>{fullName}</>;
         },
         filterFn: "fuzzy",
         enableColumnFilter: false,
@@ -354,7 +341,7 @@ const ManageAppliedListClient = () => {
             style={truncateText}
             title={cell.row.original.appliedSkills?.join(", ")}
           >
-            {cell.row.original.appliedSkills?.join(", ")}
+            {cell.row.original.appliedSkills?.join(", ") || "-"}
           </div>
         ),
         enableColumnFilter: false,
@@ -368,6 +355,11 @@ const ManageAppliedListClient = () => {
         header: "Total Exp",
         accessorKey: "totalExperience",
         enableColumnFilter: false,
+        cell: (cell: any) => {
+          return cell.row.original.totalExperience
+            ? `${cell.row.original.totalExperience} years`
+            : "-";
+        },
       },
       {
         header: "Job ID",
@@ -387,221 +379,175 @@ const ManageAppliedListClient = () => {
         },
         enableColumnFilter: false,
       },
-
-      {
-        header: "Action",
-        cell: ({ row }: any) => (
-          <div className="flex gap-2">
-            <Tooltip.Provider delayDuration={50}>
-              {/* View Button with Tooltip */}
-              <Tooltip.Root>
-                <Tooltip.Trigger asChild>
-                  <button
-                    className="btn btn-sm btn-soft-success bg-primary"
-                    onClick={() => handleView(row.original._id, "vendor")}
-                    disabled={!row.original.isActive}
-                  >
-                    <i className="text-white ri-eye-fill" />
-                  </button>
-                </Tooltip.Trigger>
-                <Tooltip.Portal>
-                  <Tooltip.Content
-                    side="bottom"
-                    sideOffset={4}
-                    className="px-2 py-1 text-sm text-white rounded shadow-lg bg-primary"
-                  >
-                    View
-                    <Tooltip.Arrow style={{ fill: "#624bff" }} />
-                  </Tooltip.Content>
-                </Tooltip.Portal>
-              </Tooltip.Root>
-
-              {/* Edit Button with Tooltip */}
-              {/* <Tooltip.Root>
-                <Tooltip.Trigger asChild>
-                  <button
-                    className="text-white btn btn-sm btn-soft-secondary bg-secondary"
-                    onClick={() => handleEdit(row.original._id)}
-                    disabled={!row.original.isActive}
-                  >
-                    <i className="ri-pencil-fill" />
-                  </button>
-                </Tooltip.Trigger>
-                <Tooltip.Portal>
-                  <Tooltip.Content
-                    side="bottom"
-                    sideOffset={4}
-                    className="px-2 py-1 text-sm text-white rounded shadow-lg bg-secondary"
-                  >
-                    Edit
-                    <Tooltip.Arrow style={{ fill: "#637381" }} />
-                  </Tooltip.Content>
-                </Tooltip.Portal>
-              </Tooltip.Root> */}
-
-              <Tooltip.Root>
-                <Tooltip.Trigger asChild>
-                  <button
-                    className="text-white btn btn-sm btn-soft-danger bg-danger"
-                    onClick={() => handleDeleteSingle(row.original._id)}
-                    disabled={!row.original.isActive}
-                  >
-                    <i className="align-bottom ri-delete-bin-5-fill" />
-                  </button>
-                </Tooltip.Trigger>
-                <Tooltip.Portal>
-                  <Tooltip.Content
-                    side="bottom"
-                    sideOffset={4}
-                    className="px-2 py-1 text-sm text-white rounded shadow-lg bg-danger"
-                  >
-                    Delete
-                    <Tooltip.Arrow style={{ fill: "#dc3545" }} />
-                  </Tooltip.Content>
-                </Tooltip.Portal>
-              </Tooltip.Root>
-
-              {/* <Tooltip.Root>
-                <Tooltip.Trigger asChild>
-                  <button
-                    className="text-white btn btn-sm btn-soft-success bg-success"
-                    onClick={() => handleEmail(row.original._id)}
-                    disabled={!row.original.isActive}
-                  >
-                    <i className="align-bottom ri-mail-close-line" />
-                  </button>
-                </Tooltip.Trigger>
-                <Tooltip.Portal>
-                  <Tooltip.Content
-                    side="bottom"
-                    sideOffset={4}
-                    className="px-2 py-1 text-sm text-white rounded shadow-lg bg-success"
-                  >
-                    Mail
-                    <Tooltip.Arrow style={{ fill: "#198754" }} />
-                  </Tooltip.Content>
-                </Tooltip.Portal>
-              </Tooltip.Root> */}
-
-              {/* <Tooltip.Root>
-                <Tooltip.Trigger asChild>
-                  {row?.original?.isFavorite ? (
-                    <i
-                      className="align-bottom ri-heart-fill text-danger"
-                      style={{ fontSize: "20px", cursor: "pointer" }}
-                      onClick={() =>
-                        handleConfirmFav(
-                          row?.original?.isFavorite,
-                          row?.original?._id
-                        )
-                      }
-                    />
-                  ) : (
-                    <i
-                      className="align-bottom ri-heart-line"
-                      style={{ fontSize: "20px", cursor: "pointer" }}
-                      onClick={() =>
-                        handleConfirmFav(
-                          row?.original?.isFavorite,
-                          row?.original?._id
-                        )
-                      }
-                    />
-                  )}
-                </Tooltip.Trigger>
-                <Tooltip.Portal>
-                  <Tooltip.Content
-                    side="bottom"
-                    sideOffset={4}
-                    className="px-2 py-1 text-sm text-white bg-gray-700 rounded shadow-lg"
-                  >
-                    {row?.original?.isFavorite
-                      ? "Remove from Favorites"
-                      : "Add to Favorites"}
-                    <Tooltip.Arrow style={{ fill: "#454f5b" }} />
-                  </Tooltip.Content>
-                </Tooltip.Portal>
-              </Tooltip.Root> */}
-            </Tooltip.Provider>
-          </div>
-        ),
-      },
-      {
-        header: "Interview Stage",
-        accessorKey: "interviewStage",
-        cell: (cell: any) => (
-          <BaseSelect
-            name="interviewStage"
-            // className="custom-select"
-            styles={customStyles}
-            options={interviewStageOptions}
-            value={dynamicFind(
-              interviewStageOptions,
-              cell.row.original.interviewStage
-            )}
-            handleChange={(selectedOption: SelectedOption) => {
-              const updatedApplicant = [...applicant];
-              const applicantIndex = updatedApplicant.findIndex(
-                (item) => item._id === cell.row.original._id
-              );
-              if (applicantIndex > -1) {
-                updatedApplicant[applicantIndex].interviewStage =
-                  selectedOption.value;
-                setApplicant(updatedApplicant);
-                updateStageVendor(
-                  { interviewStage: selectedOption.value },
-                  cell.row.original._id
-                )
-                  .then(() => {
-                    toast.success(
-                      "Applicant Interview Stage updated successfully!"
-                    );
-                  })
-                  .catch((error: any) => {
-                    errorHandle(error);
-                  });
-              }
-            }}
-            isDisabled={!cell?.row?.original?.isActive}
-          />
-        ),
-        enableColumnFilter: false,
-      },
       {
         header: "Applicant Status",
         accessorKey: "status",
-
-        cell: (cell: any) => (
-          <BaseSelect
-            name="status"
-            styles={customStyles}
-            options={statusOptions}
-            value={dynamicFind(statusOptions, cell.row.original.status)}
-            handleChange={(selectedOption: SelectedOption) => {
-              const updatedApplicant = [...applicant];
-              const applicantIndex = updatedApplicant.findIndex(
-                (item) => item._id === cell.row.original._id
-              );
-              if (applicantIndex > -1) {
-                updatedApplicant[applicantIndex].status = selectedOption.value;
-                setApplicant(updatedApplicant);
-                updateStatusVendor(
-                  { status: selectedOption.value },
-                  cell.row.original._id
-                )
-                  .then(() => {
-                    toast.success("Applicant status updated successfully!");
-                  })
-                  .catch((error: any) => {
-                    errorHandle(error);
-                  });
-              }
-            }}
-            isDisabled={!cell?.row?.original?.isActive}
-          />
-        ),
+        cell: (cell: any) => {
+          const status = cell.row.original.status;
+          const statusColors: any = {
+            active: "success",
+            inactive: "danger",
+            pending: "warning",
+            applied: "info",
+          };
+          return cell.row.original.status ? (
+            <span className={`badge bg-${statusColors[status] || "secondary"}`}>
+              {capitalizeWords(status)}
+            </span>
+          ) : (
+            "-"
+          );
+        },
         enableColumnFilter: false,
       },
+      {
+        header: "Vendor",
+        accessorKey: "vendor_id",
+        cell: (cell: any) => {
+          const vendor = cell.row.original.vendor_id;
+          return vendor?.firstName + " " + vendor?.lastName || "-";
+        },
+        enableColumnFilter: false,
+      },
+
+      // {
+      //   header: "Action",
+      //   cell: ({ row }: any) => (
+      //     <div className="flex gap-2">
+      //       <Tooltip.Provider delayDuration={50}>
+      //         {/* View Button with Tooltip */}
+      //         <Tooltip.Root>
+      //           <Tooltip.Trigger asChild>
+      //             <button
+      //               className="btn btn-sm btn-soft-success bg-primary"
+      //               onClick={() => handleView(row.original._id, "vendor")}
+      //               disabled={!row.original.isActive}
+      //             >
+      //               <i className="text-white ri-eye-fill" />
+      //             </button>
+      //           </Tooltip.Trigger>
+      //           <Tooltip.Portal>
+      //             <Tooltip.Content
+      //               side="bottom"
+      //               sideOffset={4}
+      //               className="px-2 py-1 text-sm text-white rounded shadow-lg bg-primary"
+      //             >
+      //               View
+      //               <Tooltip.Arrow style={{ fill: "#624bff" }} />
+      //             </Tooltip.Content>
+      //           </Tooltip.Portal>
+      //         </Tooltip.Root>
+
+      //         {/* Edit Button with Tooltip */}
+      //         {/* <Tooltip.Root>
+      //           <Tooltip.Trigger asChild>
+      //             <button
+      //               className="text-white btn btn-sm btn-soft-secondary bg-secondary"
+      //               onClick={() => handleEdit(row.original._id)}
+      //               disabled={!row.original.isActive}
+      //             >
+      //               <i className="ri-pencil-fill" />
+      //             </button>
+      //           </Tooltip.Trigger>
+      //           <Tooltip.Portal>
+      //             <Tooltip.Content
+      //               side="bottom"
+      //               sideOffset={4}
+      //               className="px-2 py-1 text-sm text-white rounded shadow-lg bg-secondary"
+      //             >
+      //               Edit
+      //               <Tooltip.Arrow style={{ fill: "#637381" }} />
+      //             </Tooltip.Content>
+      //           </Tooltip.Portal>
+      //         </Tooltip.Root> */}
+
+      //         <Tooltip.Root>
+      //           <Tooltip.Trigger asChild>
+      //             <button
+      //               className="text-white btn btn-sm btn-soft-danger bg-danger"
+      //               onClick={() => handleDeleteSingle(row.original._id)}
+      //               disabled={!row.original.isActive}
+      //             >
+      //               <i className="align-bottom ri-delete-bin-5-fill" />
+      //             </button>
+      //           </Tooltip.Trigger>
+      //           <Tooltip.Portal>
+      //             <Tooltip.Content
+      //               side="bottom"
+      //               sideOffset={4}
+      //               className="px-2 py-1 text-sm text-white rounded shadow-lg bg-danger"
+      //             >
+      //               Delete
+      //               <Tooltip.Arrow style={{ fill: "#dc3545" }} />
+      //             </Tooltip.Content>
+      //           </Tooltip.Portal>
+      //         </Tooltip.Root>
+
+      //         {/* <Tooltip.Root>
+      //           <Tooltip.Trigger asChild>
+      //             <button
+      //               className="text-white btn btn-sm btn-soft-success bg-success"
+      //               onClick={() => handleEmail(row.original._id)}
+      //               disabled={!row.original.isActive}
+      //             >
+      //               <i className="align-bottom ri-mail-close-line" />
+      //             </button>
+      //           </Tooltip.Trigger>
+      //           <Tooltip.Portal>
+      //             <Tooltip.Content
+      //               side="bottom"
+      //               sideOffset={4}
+      //               className="px-2 py-1 text-sm text-white rounded shadow-lg bg-success"
+      //             >
+      //               Mail
+      //               <Tooltip.Arrow style={{ fill: "#198754" }} />
+      //             </Tooltip.Content>
+      //           </Tooltip.Portal>
+      //         </Tooltip.Root> */}
+
+      //         {/* <Tooltip.Root>
+      //           <Tooltip.Trigger asChild>
+      //             {row?.original?.isFavorite ? (
+      //               <i
+      //                 className="align-bottom ri-heart-fill text-danger"
+      //                 style={{ fontSize: "20px", cursor: "pointer" }}
+      //                 onClick={() =>
+      //                   handleConfirmFav(
+      //                     row?.original?.isFavorite,
+      //                     row?.original?._id
+      //                   )
+      //                 }
+      //               />
+      //             ) : (
+      //               <i
+      //                 className="align-bottom ri-heart-line"
+      //                 style={{ fontSize: "20px", cursor: "pointer" }}
+      //                 onClick={() =>
+      //                   handleConfirmFav(
+      //                     row?.original?.isFavorite,
+      //                     row?.original?._id
+      //                   )
+      //                 }
+      //               />
+      //             )}
+      //           </Tooltip.Trigger>
+      //           <Tooltip.Portal>
+      //             <Tooltip.Content
+      //               side="bottom"
+      //               sideOffset={4}
+      //               className="px-2 py-1 text-sm text-white bg-gray-700 rounded shadow-lg"
+      //             >
+      //               {row?.original?.isFavorite
+      //                 ? "Remove from Favorites"
+      //                 : "Add to Favorites"}
+      //               <Tooltip.Arrow style={{ fill: "#454f5b" }} />
+      //             </Tooltip.Content>
+      //           </Tooltip.Portal>
+      //         </Tooltip.Root> */}
+      //       </Tooltip.Provider>
+      //     </div>
+      //   ),
+      // },
       //   {
       //     header: "Status",
       //     accessorKey: "isActive",
