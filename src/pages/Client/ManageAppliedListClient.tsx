@@ -1,23 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Row, Col, Card, Container } from "react-bootstrap";
 import { Fragment, useEffect, useState, useMemo } from "react";
-import { BaseSelect } from "components/BaseComponents/BaseSelect";
+// import { BaseSelect } from "components/BaseComponents/BaseSelect";
 import TableContainer from "components/BaseComponents/TableContainer";
-import { Tooltip as ReactTooltip } from "react-tooltip";
-import * as Tooltip from "@radix-ui/react-tooltip";
+// import { Tooltip as ReactTooltip } from "react-tooltip";
+// import * as Tooltip from "@radix-ui/react-tooltip";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "react-loading-skeleton/dist/skeleton.css";
 import { ExportApplicant } from "api/applicantApi";
 
-import ViewModal from "../applicant/ViewApplicant";
+// import ViewModal from "../applicant/ViewApplicant";
 
 import DeleteModal from "components/BaseComponents/DeleteModal";
 
 import { SelectedOption } from "interfaces/applicant.interface";
 import {
   capitalizeWords,
-  dynamicFind,
+  // dynamicFind,
   errorHandle,
 } from "utils/commonFunctions";
 import appConstants from "constants/constant";
@@ -33,8 +33,8 @@ import ConfirmModal from "components/BaseComponents/BaseConfirmModal";
 import { useLocation } from "react-router-dom";
 import {
   deleteApplicantVendor,
-  updateStageVendor,
-  updateStatusVendor,
+  // updateStageVendor,
+  // updateStatusVendor,
   viewAllJobApplicants,
 } from "api/apiVendor";
 
@@ -42,8 +42,8 @@ const {
   exportableFieldOption,
   projectTitle,
   Modules,
-  interviewStageOptions,
-  statusOptions,
+  // interviewStageOptions,
+  // statusOptions,
 } = appConstants;
 
 const ManageAppliedListClient = () => {
@@ -59,10 +59,10 @@ const ManageAppliedListClient = () => {
 
   const [loader, setLoader] = useState(false);
   const [applicant, setApplicant] = useState<any[]>([]);
-  const [selectedApplicantId, setSelectedApplicantId] = useState<string | null>(
-    null
-  );
-  const [showViewModal, setShowViewModal] = useState(false);
+  // const [selectedApplicantId, setSelectedApplicantId] = useState<string | null>(
+  //   null
+  // );
+  // const [showViewModal, setShowViewModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [totalRecords, setTotalRecords] = useState(0);
   const [pagination, setPagination] = useState({
@@ -72,14 +72,14 @@ const ManageAppliedListClient = () => {
   const [tableLoader, setTableLoader] = useState(false);
   const [selectedApplicants, setSelectedApplicants] = useState<string[]>([]);
 
-  const [sourcePage, setSourcePage] = useState("vendor");
+  // const [sourcePage, setSourcePage] = useState("vendor");
 
   const [loading, setLoading] = useState<boolean>(false);
   const [modelLoading, setModelLoading] = useState<boolean>(false);
 
-  const [multipleApplicantDelete, setMultipleApplicantsDelete] = useState<
-    string[]
-  >([]);
+  // const [multipleApplicantDelete, setMultipleApplicantsDelete] = useState<
+  //   string[]
+  // >([]);
   const [showExportModal, setShowExportModal] = useState(false);
   const [showConfirmExportModal, setShowConfirmExportModal] = useState(false);
   const [exportOption, setExportOption] = useState("");
@@ -177,10 +177,10 @@ const ManageAppliedListClient = () => {
     filterStatusDashboard,
   ]);
 
-  const handleDeleteSingle = (applicantId: string) => {
-    setMultipleApplicantsDelete([applicantId]);
-    setShowDeleteModal(true);
-  };
+  // const handleDeleteSingle = (applicantId: string) => {
+  //   setMultipleApplicantsDelete([applicantId]);
+  //   setShowDeleteModal(true);
+  // };
 
   const closeDeleteModal = () => {
     setShowDeleteModal(false);
@@ -210,15 +210,15 @@ const ManageAppliedListClient = () => {
       });
   };
 
-  const handleView = (id: string, source: string) => {
-    setSelectedApplicantId(id);
-    setSourcePage(source);
-    setShowViewModal(true);
-  };
+  // const handleView = (id: string, source: string) => {
+  //   setSelectedApplicantId(id);
+  //   setSourcePage(source);
+  //   setShowViewModal(true);
+  // };
 
-  const handleCloseModal = () => {
-    setShowViewModal(false);
-  };
+  // const handleCloseModal = () => {
+  //   setShowViewModal(false);
+  // };
 
   const handleExportExcel = async (source: string) => {
     try {
@@ -686,21 +686,21 @@ const ManageAppliedListClient = () => {
         <></>
       )} */}
 
-      {showViewModal && selectedApplicantId && (
+      {/* {showViewModal && selectedApplicantId && (
         <ViewModal
           show={showViewModal}
           onHide={handleCloseModal}
           applicantId={selectedApplicantId}
           source={sourcePage}
         />
-      )}
+      )} */}
 
       <DeleteModal
         show={showDeleteModal}
         onCloseClick={closeDeleteModal}
         onDeleteClick={() =>
-          multipleApplicantDelete.length >= 1
-            ? deleteMultipleApplicantDetails(multipleApplicantDelete)
+          selectedApplicants.length >= 1
+            ? deleteMultipleApplicantDetails(selectedApplicants)
             : null
         }
         loader={loader}
@@ -764,55 +764,55 @@ const truncateText = {
   fontSize: "14px",
 };
 
-const toolipComponents = {
-  backgroundColor: "blue !important",
-  color: "white !important",
-  "border-radius": "5px !important",
-  padding: "8px 12px !important",
-  "font-size": "14px !important",
-  border: "1px solid white !important",
-};
+// const toolipComponents = {
+//   backgroundColor: "blue !important",
+//   color: "white !important",
+//   "border-radius": "5px !important",
+//   padding: "8px 12px !important",
+//   "font-size": "14px !important",
+//   border: "1px solid white !important",
+// };
 
-const customStyles = {
-  control: (provided: any) => ({
-    ...provided,
-    fontSize: "12px",
-    backgroundColor: "#f0f0f0",
-    borderRadius: "8px",
-    borderColor: "transparent",
-    // padding: "0.25rem 0.6rem",
-    minHeight: "20px",
-    outline: "none",
-    boxShadow: "none",
-  }),
+// const customStyles = {
+//   control: (provided: any) => ({
+//     ...provided,
+//     fontSize: "12px",
+//     backgroundColor: "#f0f0f0",
+//     borderRadius: "8px",
+//     borderColor: "transparent",
+//     // padding: "0.25rem 0.6rem",
+//     minHeight: "20px",
+//     outline: "none",
+//     boxShadow: "none",
+//   }),
 
-  option: (provided: any, state: any) => ({
-    ...provided,
-    fontSize: "12px",
-    backgroundColor: state.isSelected ? "#007bff" : "transparent",
-    color: state.isSelected ? "#fff" : "#000",
-  }),
+//   option: (provided: any, state: any) => ({
+//     ...provided,
+//     fontSize: "12px",
+//     backgroundColor: state.isSelected ? "#007bff" : "transparent",
+//     color: state.isSelected ? "#fff" : "#000",
+//   }),
 
-  singleValue: (provided: any) => ({
-    ...provided,
-    color: "#333",
-  }),
+//   singleValue: (provided: any) => ({
+//     ...provided,
+//     color: "#333",
+//   }),
 
-  dropdownIndicator: (provided: any) => ({
-    ...provided,
-    color: "#secondary",
-  }),
+//   dropdownIndicator: (provided: any) => ({
+//     ...provided,
+//     color: "#secondary",
+//   }),
 
-  clearIndicator: (provided: any) => ({
-    ...provided,
-    display: "none",
-    color: "#dc3545",
-  }),
+//   clearIndicator: (provided: any) => ({
+//     ...provided,
+//     display: "none",
+//     color: "#dc3545",
+//   }),
 
-  menu: (provided: any) => ({
-    ...provided,
-    borderRadius: "8px",
-  }),
-};
+//   menu: (provided: any) => ({
+//     ...provided,
+//     borderRadius: "8px",
+//   }),
+// };
 
 export default ManageAppliedListClient;
