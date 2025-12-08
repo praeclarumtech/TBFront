@@ -1,8 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { getSavedFilters, saveFilters } from "api/applicantApi";
-import {
-  SelectedOption1,
-} from "interfaces/applicant.interface";
+import { SelectedOption1 } from "interfaces/applicant.interface";
 import { FilterState } from "utils/applicantUtils";
 
 export const useSavedFilters = (
@@ -11,7 +9,6 @@ export const useSavedFilters = (
 ) => {
   const [isInitializing, setIsInitializing] = useState(true);
   const isInitializingRef = useRef(true);
-
   useEffect(() => {
     if (!userId) {
       setIsInitializing(false);
@@ -41,21 +38,51 @@ export const useSavedFilters = (
               value: filters.state,
             };
           }
-
           // Skills (AND)
-          if (filters.appliedSkills) {
-            const skillOptions: SelectedOption1[] = filters.appliedSkills
-              .split(",")
-              .map((s: string) => ({ label: s, value: s }));
-            restoredFilters.appliedSkills = skillOptions;
+          if (
+            filters.appliedSkills !== undefined &&
+            filters.appliedSkills !== null
+          ) {
+            if (
+              typeof filters.appliedSkills === "string" &&
+              filters.appliedSkills.trim() !== ""
+            ) {
+              const skillOptions: SelectedOption1[] = filters.appliedSkills
+                .split(",")
+                .filter((s: string) => s.trim() !== "")
+                .map((s: string) => ({ label: s.trim(), value: s.trim() }));
+              restoredFilters.appliedSkills = skillOptions;
+            } else {
+              restoredFilters.appliedSkills = [];
+            }
+          } else {
+            restoredFilters.appliedSkills = [];
           }
 
           // Skills (OR)
-          if (filters.appliedSkillsOR) {
-            const skillOptions: SelectedOption1[] = filters.appliedSkillsOR
-              .split(",")
-              .map((s: string) => ({ label: s, value: s }));
+          if (
+            filters.appliedSkillsOR !== undefined &&
+            filters.appliedSkillsOR !== null
+          ) {
+            let skillOptions: SelectedOption1[] = [];
+            if (typeof filters.appliedSkillsOR === "string") {
+              if (filters.appliedSkillsOR.trim() !== "") {
+                skillOptions = filters.appliedSkillsOR
+                  .split(",")
+                  .filter((s: string) => s.trim() !== "")
+                  .map((s: string) => ({ label: s.trim(), value: s.trim() }));
+              }
+            } else if (Array.isArray(filters.appliedSkillsOR)) {
+              skillOptions = filters.appliedSkillsOR
+                .map((s: any) => ({
+                  label: typeof s === "string" ? s : s?.label || s?.value || "",
+                  value: typeof s === "string" ? s : s?.value || s?.label || "",
+                }))
+                .filter((s: any) => s.label && s.value);
+            }
             restoredFilters.multipleSkills = skillOptions;
+          } else {
+            restoredFilters.multipleSkills = [];
           }
 
           // Added By
@@ -190,7 +217,21 @@ export const useSavedFilters = (
           // Search
           if (filters.search) restoredFilters.searchAll = filters.search;
 
+          // Ensure appliedSkills and multipleSkills are always arrays
+          if (!restoredFilters.appliedSkills) {
+            restoredFilters.appliedSkills = [];
+          }
+          if (!restoredFilters.multipleSkills) {
+            restoredFilters.multipleSkills = [];
+          }
+
           onFiltersRestored(restoredFilters);
+        } else {
+          // If no saved data, ensure skills are still set to empty arrays
+          onFiltersRestored({
+            appliedSkills: [],
+            multipleSkills: [],
+          });
         }
       } catch (err) {
         console.error("Error loading saved filters", err);
@@ -212,6 +253,18 @@ export const useSavedFilters = (
     }
 
     try {
+      // Ensure appliedSkills and multipleSkills are arrays
+      const appliedSkillsArray = Array.isArray(filters.appliedSkills)
+        ? filters.appliedSkills
+        : filters.appliedSkills
+        ? [filters.appliedSkills]
+        : [];
+      const multipleSkillsArray = Array.isArray(filters.multipleSkills)
+        ? filters.multipleSkills
+        : filters.multipleSkills
+        ? [filters.multipleSkills]
+        : [];
+
       const params: any = {
         ...filters,
         currentCity:
@@ -219,12 +272,18 @@ export const useSavedFilters = (
             ? filters.filterCity.map((c) => c.label).join(",")
             : "",
         appliedSkills:
-          filters.appliedSkills.length > 0
-            ? filters.appliedSkills.map((s) => s.label).join(",")
+          appliedSkillsArray.length > 0
+            ? appliedSkillsArray
+                .map((s) => s?.label || s?.value || "")
+                .filter(Boolean)
+                .join(",")
             : "",
         appliedSkillsOR:
-          filters.multipleSkills.length > 0
-            ? filters.multipleSkills.map((s) => s.label).join(",")
+          multipleSkillsArray.length > 0
+            ? multipleSkillsArray
+                .map((s) => s?.label || s?.value || "")
+                .filter(Boolean)
+                .join(",")
             : "",
         appliedRole:
           filters.filterAppliedRole.length > 0

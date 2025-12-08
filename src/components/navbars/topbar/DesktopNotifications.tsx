@@ -25,6 +25,24 @@ export const DesktopNotifications = () => {
   }, []);
   const role = localStorage.getItem("role");
 
+  const getProfilePictureUrl = () => {
+    if (!user?.profilePicture) {
+      return "images/avatar/avatar.png";
+    }
+
+    const isProduction =
+      appEnv.API_ENDPOINT?.includes("app.praeclarumtech") ||
+      appEnv.API_ENDPOINT?.includes("app.praeclarumtech.com");
+
+    if (isProduction && appEnv.PRODUCTION_PROFILE_URL) {
+      return `${appEnv.PRODUCTION_PROFILE_URL}/uploads/${user?.profilePicture}`;
+    }
+
+    return `${appEnv.API_ENDPOINT}/uploads/profile/${user?.profilePicture}`;
+  };
+
+  const profilePictureUrl = getProfilePictureUrl();
+
   return (
     <>
       <ListGroup
@@ -43,11 +61,7 @@ export const DesktopNotifications = () => {
               <Image
                 alt="avatar"
                 crossOrigin="anonymous"
-                src={
-                  user?.profilePicture
-                    ? `${appEnv.API_ENDPOINT}/uploads/profile/${user?.profilePicture}`
-                    : "talent/images/avatar/avatar.png"
-                }
+                src={profilePictureUrl}
                 className="rounded-circle"
               />
             </div>

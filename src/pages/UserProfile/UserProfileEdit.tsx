@@ -212,7 +212,13 @@ const UserProfileEdit = () => {
             toast.success(res?.message);
             resetForm();
             // resetData();
-            navigate("/userManagement");
+            if (location.state?.from == "Vendor") {
+              navigate("/vendorList");
+            } else if (location.state?.from == "Client") {
+              navigate("/client")
+            } else {
+              navigate("/userManagement");
+            }
           } else {
             const msg = Array.isArray(res.message)
               ? res.message.join(", \n")
@@ -346,7 +352,7 @@ const UserProfileEdit = () => {
             ? `${appEnv.API_ENDPOINT}/uploads/profile/${response.data.profilePicture}`
             : imagePreview
         );
-        // Redirect to vendor list if user came from vendor list, otherwise redirect to user management
+
         if (location.state?.from === "VendorList") {
           navigate("/vendorList");
         } else if (location.state?.from === "Client") {

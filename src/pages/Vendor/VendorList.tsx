@@ -41,6 +41,7 @@ const VendorList = () => {
   const navigate = useNavigate();
   const [showViewModal, setShowViewModal] = useState(false);
   const [selectedId, setSelectedId] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 50,
@@ -54,69 +55,75 @@ const VendorList = () => {
   const [uploadedFile, setUploadedFile] = useState<FormData | null>(null);
 
   // const [tableLoader, setTableLoader] = useState(false);
-  const [availableColumns, setAvailableColumns] = useState<ColumnConfig[]>([
-    { id: "serialNumber", header: "Sr. No.", isVisible: true },
-    { id: "name", header: "Name", isVisible: true },
-    // { id: "lastName", header: "Last Name", isVisible: true },
-    { id: "userName", header: "Username", isVisible: false },
-    { id: "role", header: "Role", isVisible: false },
-    { id: "email", header: "Email", isVisible: true },
-    { id: "designation", header: "Designation", isVisible: true },
-    { id: "dateOfBirth", header: "Date of Birth", isVisible: false },
-    {
-      id: "vendorProfileId.whatsapp_number",
-      header: "Whats-app no.",
-      isVisible: true,
-    },
-    // {
-    //   id: "vendorProfileId.company_name",
-    //   header: "Company Name",
-    //   isVisible: true,
-    // },
-    // {
-    //   id: "vendorProfileId.company_email",
-    //   header: "Company Email",
-    //   isVisible: true,
-    // },
-    // {
-    //   id: "vendorProfileId.company_phone_number",
-    //   header: "Company Phone No.",
-    //   isVisible: true,
-    // },
-    // {
-    //   id: "vendorProfileId.company_strength",
-    //   header: "Company Strength",
-    //   isVisible: true,
-    // },
-    // {
-    //   id: "vendorProfileId.company_type",
-    //   header: "Company Type",
-    //   isVisible: true,
-    // },
-    // {
-    //   id: "vendorProfileId.company_location",
-    //   header: "Company Location",
-    //   isVisible: true,
-    // },
-    // {
-    //   id: "vendorProfileId.company_website",
-    //   header: "Company Website",
-    //   isVisible: false,
-    // },
-    // {
-    //   id: "vendorProfileId.company_linkedin_profile",
-    //   header: "Company LinkedIn",
-    //   isVisible: false,
-    // },
-    {
-      id: "vendorProfileId.hire_resources",
-      header: "Hire Resources",
-      isVisible: false,
-    },
-    { id: "isActive", header: "Status", isVisible: true },
-    { id: "createdAt", header: "Created Date", isVisible: false },
-    { id: "updatedAt", header: "Updated Date", isVisible: false },
-  ]);
+  const baseAvailableColumns: ColumnConfig[] = useMemo(
+    () => [
+      { id: "serialNumber", header: "Sr. No.", isVisible: true },
+      { id: "name", header: "Name", isVisible: true },
+      // { id: "lastName", header: "Last Name", isVisible: true },
+      { id: "userName", header: "Username", isVisible: false },
+      { id: "role", header: "Role", isVisible: false },
+      { id: "email", header: "Email", isVisible: true },
+      { id: "designation", header: "Designation", isVisible: true },
+      { id: "dateOfBirth", header: "Date of Birth", isVisible: false },
+      {
+        id: "vendorProfileId.whatsapp_number",
+        header: "Whats-app no.",
+        isVisible: true,
+      },
+      // {
+      //   id: "vendorProfileId.company_name",
+      //   header: "Company Name",
+      //   isVisible: true,
+      // },
+      // {
+      //   id: "vendorProfileId.company_email",
+      //   header: "Company Email",
+      //   isVisible: true,
+      // },
+      // {
+      //   id: "vendorProfileId.company_phone_number",
+      //   header: "Company Phone No.",
+      //   isVisible: true,
+      // },
+      // {
+      //   id: "vendorProfileId.company_strength",
+      //   header: "Company Strength",
+      //   isVisible: true,
+      // },
+      // {
+      //   id: "vendorProfileId.company_type",
+      //   header: "Company Type",
+      //   isVisible: true,
+      // },
+      // {
+      //   id: "vendorProfileId.company_location",
+      //   header: "Company Location",
+      //   isVisible: true,
+      // },
+      // {
+      //   id: "vendorProfileId.company_website",
+      //   header: "Company Website",
+      //   isVisible: false,
+      // },
+      // {
+      //   id: "vendorProfileId.company_linkedin_profile",
+      //   header: "Company LinkedIn",
+      //   isVisible: false,
+      // },
+      {
+        id: "vendorProfileId.hire_resources",
+        header: "Hire Resources",
+        isVisible: false,
+      },
+      { id: "isActive", header: "Status", isVisible: true },
+      { id: "createdAt", header: "Created Date", isVisible: false },
+      { id: "updatedAt", header: "Updated Date", isVisible: false },
+      { id: "isAdmin", header: "Vendor Approval", isVisible: true },
+    ],
+    [isAdmin]
+  );
+  const [availableColumns, setAvailableColumns] =
+    useState<ColumnConfig[]>(baseAvailableColumns);
   const [showPopupModal, setShowPopupModal] = useState(false);
 
   const handleUpdateUserStatus = async (id: string, value: AnyObject) => {
@@ -167,8 +174,27 @@ const VendorList = () => {
       params.role = "vendor";
 
       const response = await getAllUsers(params);
-      setUsers(response?.data?.item || response?.data?.results || []);
+      const usersData = response?.data?.item || response?.data?.results || [];
+      setUsers(usersData);
       setTotalRecords(response?.data?.totalRecords || 0);
+
+      // Check for isAdmin in all possible locations
+      const checkIsAdmin = () => {
+        // Check in response object
+        if (response?.isAdmin === true) return true;
+        // Check in response.data
+        if (response?.data?.isAdmin === true) return true;
+        // Check in users array - if any user has isAdmin: true
+        if (Array.isArray(usersData) && usersData.length > 0) {
+          return usersData.some((user: any) => user?.isAdmin === true);
+        }
+        // Check in response.data.item or response.data.results if they have isAdmin
+        if (response?.data?.item?.isAdmin === true) return true;
+        if (response?.data?.results?.isAdmin === true) return true;
+        return false;
+      };
+
+      setIsAdmin(checkIsAdmin());
     } catch (error: any) {
       const message =
         error?.response?.data?.message ||
@@ -185,6 +211,10 @@ const VendorList = () => {
   useEffect(() => {
     fetchUsers();
   }, [pagination.pageIndex, pagination.pageSize, searchAll]);
+
+  useEffect(() => {
+    setAvailableColumns(baseAvailableColumns);
+  }, [baseAvailableColumns]);
 
   const closeActiveModal = () => {
     setShowActiveModal(false);
@@ -203,6 +233,30 @@ const VendorList = () => {
   const handleDeleteUser = (id: string) => {
     setSelectedRecord(id);
     setShowDeleteModal(true);
+  };
+
+  const handleUpdateVendorAdminStatus = async (
+    id: string,
+    currentIsAdmin: boolean,
+  ) => {
+    setIsLoading(true);
+    try {
+      const response = await updateUserStatus(id, { isAdmin: !currentIsAdmin });
+      if (response?.success === true && response.statusCode === 202) {
+        toast.success(
+          currentIsAdmin
+            ? "Vendor disapproved successfully"
+            : "Vendor approved successfully"
+        );
+        fetchUsers();
+      } else {
+        toast.error(response?.message || "Failed to update vendor status");
+      }
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to update vendor status");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const columns = useMemo(() => {
@@ -405,6 +459,29 @@ const VendorList = () => {
         enableColumnFilter: false,
       },
       {
+        header: "Vendor Approval",
+        accessorKey: "isAdmin",
+        id: "isAdmin",
+        enableColumnFilter: false,
+        cell: (cell: any) => {
+          const id = cell.row.original._id;
+          const vendorIsAdmin = cell.getValue();
+          const addedByRole = cell.row.original?.addedByRole;
+
+          if (addedByRole === "guest") {
+            return (
+              <Switch
+                size="small"
+                checked={vendorIsAdmin}
+                onClick={() => handleUpdateVendorAdminStatus(id, vendorIsAdmin)}
+                checkedChildren={<CheckOutlined />}
+                unCheckedChildren={<CloseOutlined />}
+              />
+            );
+          }
+        },
+      },
+      {
         header: "Action",
         cell: ({ row }: any) => (
           <div className="flex gap-2">
@@ -487,7 +564,7 @@ const VendorList = () => {
       const columnConfig = availableColumns.find((c) => c.id === column.id);
       return columnConfig?.isVisible !== false;
     });
-  }, [users, availableColumns]);
+  }, [users, availableColumns, isAdmin]);
 
   const handleColumnsChange = (visibleColumns: string[]) => {
     setAvailableColumns((prev) =>

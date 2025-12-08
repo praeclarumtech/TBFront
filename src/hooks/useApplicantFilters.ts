@@ -82,15 +82,27 @@ export const useApplicantFilters = () => {
 
   // Multi-select handlers
   const handleAppliedSkillsChange = useCallback(
-    (selectedOptions: SelectedOption1[]) => {
-      setFilters((prev) => ({ ...prev, appliedSkills: selectedOptions }));
+    (selectedOptions: SelectedOption1[] | SelectedOption1 | null) => {
+      // Ensure it's always an array
+      const optionsArray = Array.isArray(selectedOptions)
+        ? selectedOptions
+        : selectedOptions
+        ? [selectedOptions]
+        : [];
+      setFilters((prev) => ({ ...prev, appliedSkills: optionsArray }));
     },
     []
   );
 
   const handleMultipleSkillsChange = useCallback(
-    (selectedOptions: SelectedOption1[]) => {
-      setFilters((prev) => ({ ...prev, multipleSkills: selectedOptions }));
+    (selectedOptions: SelectedOption1[] | SelectedOption1 | null) => {
+      // Ensure it's always an array
+      const optionsArray = Array.isArray(selectedOptions)
+        ? selectedOptions
+        : selectedOptions
+        ? [selectedOptions]
+        : [];
+      setFilters((prev) => ({ ...prev, multipleSkills: optionsArray }));
     },
     []
   );

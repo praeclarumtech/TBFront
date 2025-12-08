@@ -125,16 +125,26 @@ const Applicant = () => {
     COLUMN_CONFIGURATIONS
   );
 
-  const { isInitializing, isInitializingRef, saveFiltersToBackend }: { isInitializing: boolean, isInitializingRef: React.MutableRefObject<boolean>, saveFiltersToBackend: (filters: FilterState, isInitializing?: boolean) => void } =
-    useSavedFilters(
-      userId,
-      useCallback(
-        (restoredFilters: Partial<FilterState>) => {
-          setFilters((prev) => ({ ...prev, ...restoredFilters }));
-        },
-        [setFilters]
-      )
-    );
+  const {
+    isInitializing,
+    isInitializingRef,
+    saveFiltersToBackend,
+  }: {
+    isInitializing: boolean;
+    isInitializingRef: React.MutableRefObject<boolean>;
+    saveFiltersToBackend: (
+      filters: FilterState,
+      isInitializing?: boolean
+    ) => void;
+  } = useSavedFilters(
+    userId,
+    useCallback(
+      (restoredFilters: Partial<FilterState>) => {
+        setFilters((prev) => ({ ...prev, ...restoredFilters }));
+      },
+      [setFilters]
+    )
+  );
 
   const {
     data: applicantData,
@@ -215,12 +225,28 @@ const Applicant = () => {
   }, [isInitializing]);
 
   useEffect(() => {
-    if (
-      isAnyFilterApplied(filters, chartParams) &&
+    // Check if skills are selected (even if other filters aren't applied)
+    // Handle both array and single object cases
+    const appliedSkillsArray = Array.isArray(filters.appliedSkills)
+      ? filters.appliedSkills
+      : filters.appliedSkills
+      ? [filters.appliedSkills]
+      : [];
+    const multipleSkillsArray = Array.isArray(filters.multipleSkills)
+      ? filters.multipleSkills
+      : filters.multipleSkills
+      ? [filters.multipleSkills]
+      : [];
+    const hasSkills =
+      appliedSkillsArray.length > 0 || multipleSkillsArray.length > 0;
+
+    const shouldSave =
+      (isAnyFilterApplied(filters, chartParams) || hasSkills) &&
       !isInitializingRef.current &&
       !chartParams.piechartType &&
-      filtersRestoredRef.current
-    ) {
+      filtersRestoredRef.current;
+
+    if (shouldSave) {
       const apiParams = buildApplicantParams(filters, pagination, chartParams);
       apiParams.isActive = "true";
       saveFiltersToBackend(filters, isInitializing);
@@ -264,6 +290,92 @@ const Applicant = () => {
     resetFiltersHook();
     refetchApplicants();
   };
+
+  // Reset filters while preserving filterActiveStatus
+  const resetFiltersWithoutActiveStatus = async () => {
+    const currentActiveStatus = filters.filterActiveStatus;
+    // Reset all filters to initial state while preserving filterActiveStatus
+    setFilters({
+      appliedSkills: [],
+      multipleSkills: [],
+      filterCity: [],
+      filterAppliedRole: [],
+      addedBy: [],
+      filterState: null,
+      filterGender: null,
+      filterInterviewStage: null,
+      filterStatus: null,
+      filterWorkPreference: null,
+      filterAnyHandOnOffers: null,
+      filterDesignation: null,
+      filterActiveStatus: currentActiveStatus, // Preserve current active status
+      filterFavorite: null,
+      startDate: "",
+      endDate: "",
+      updatedStartDate: "",
+      updatedEndDate: "",
+      experienceRange: [0, 25],
+      filterNoticePeriod: [0, 90],
+      filterRating: [0, 10],
+      filterEngRating: [0, 10],
+      filterExpectedPkg: [0, 100],
+      filterCurrentPkg: [0, 100],
+      searchAll: "",
+    });
+    refetchApplicants();
+  };
+
+  // Check if any filter (excluding filterActiveStatus) is applied
+  const hasFiltersExcludingActiveStatus = useMemo(() => {
+    const appliedSkillsArray = Array.isArray(filters.appliedSkills)
+      ? filters.appliedSkills
+      : filters.appliedSkills
+      ? [filters.appliedSkills]
+      : [];
+    const multipleSkillsArray = Array.isArray(filters.multipleSkills)
+      ? filters.multipleSkills
+      : filters.multipleSkills
+      ? [filters.multipleSkills]
+      : [];
+    const hasSkills =
+      appliedSkillsArray.length > 0 || multipleSkillsArray.length > 0;
+
+    return (
+      filters.experienceRange[0] !== 0 ||
+      filters.experienceRange[1] !== 25 ||
+      filters.filterNoticePeriod[0] !== 0 ||
+      filters.filterNoticePeriod[1] !== 90 ||
+      filters.filterRating[0] !== 0 ||
+      filters.filterRating[1] !== 10 ||
+      filters.filterEngRating[0] !== 0 ||
+      filters.filterEngRating[1] !== 10 ||
+      filters.filterExpectedPkg[0] !== 0 ||
+      filters.filterExpectedPkg[1] !== 100 ||
+      filters.filterCurrentPkg[0] !== 0 ||
+      filters.filterCurrentPkg[1] !== 100 ||
+      !!filters.filterWorkPreference ||
+      !!filters.filterAnyHandOnOffers ||
+      filters.filterCity.length > 0 ||
+      !!filters.filterState ||
+      hasSkills ||
+      (filters.addedBy && filters.addedBy.length > 0) ||
+      !!filters.startDate ||
+      !!filters.endDate ||
+      !!filters.updatedStartDate ||
+      !!filters.updatedEndDate ||
+      !!filters.filterStatus ||
+      !!filters.filterDesignation ||
+      !!filters.filterInterviewStage ||
+      !!filters.filterGender ||
+      filters.filterAppliedRole.length > 0 ||
+      !!filters.filterFavorite ||
+      (filters.searchAll && filters.searchAll.trim() !== "") ||
+      (chartParams &&
+        Object.entries(chartParams).some(
+          ([key, val]) => val && key !== "piechartType"
+        ))
+    );
+  }, [filters, chartParams]);
 
   const closeDeleteModal = () => {
     setShowDeleteModal(false);
@@ -628,6 +740,15 @@ const Applicant = () => {
                         >
                           <i className="fa fa-filter mr-1"></i>Filter
                         </button>
+                        {hasFiltersExcludingActiveStatus && (
+                          <button
+                            onClick={resetFiltersWithoutActiveStatus}
+                            className="px-3 py-2 text-sm bg-orange-600 text-white rounded-md hover:bg-orange-700 whitespace-nowrap"
+                            title="Reset filters (keep Active Status)"
+                          >
+                            <i className="ri-refresh-line mr-1"></i>Reset
+                          </button>
+                        )}
                       </div>
 
                       {selectedApplicants.length > 0 && (
@@ -703,6 +824,15 @@ const Applicant = () => {
                       >
                         <i className="mx-1 fa fa-filter"></i> Filters
                       </button>
+
+                      {hasFiltersExcludingActiveStatus && (
+                        <BaseButton
+                          className="btn btn-warning"
+                          onClick={resetFiltersWithoutActiveStatus}
+                        >
+                          <i className="ri-refresh-line me-1"></i> Reset Filters
+                        </BaseButton>
+                      )}
 
                       {selectedApplicants.length > 0 && (
                         <>

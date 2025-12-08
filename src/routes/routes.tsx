@@ -39,6 +39,7 @@ import AppliedJobList from "pages/Vendor/AppliedJobList";
 import SignIn from "pages/auth/SignIn";
 import VendorList from "pages/Vendor/VendorList";
 import ManageAppliedList from "pages/Vendor/ManageAppliedList";
+import EmailCheckApply from "pages/Vendor/EmailCheckApply";
 
 const routes = {
   ROOT: {
@@ -208,6 +209,11 @@ const routes = {
     title: "apply job list",
     path: "/Vendor/appliedJobList",
     element: AppliedJobList,
+  },
+  EMAIL_CHECK_APPLY: {
+    title: "Email Check and Apply",
+    path: "/vendor/email-check-apply",
+    element: EmailCheckApply,
   },
   EMAIL: {
     title: "Email",

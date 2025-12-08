@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Row, Col, Card, Container } from "react-bootstrap";
 import { Fragment, useEffect, useState, useMemo } from "react";
-import { BaseSelect } from "components/BaseComponents/BaseSelect";
+// import { BaseSelect } from "components/BaseComponents/BaseSelect";
 import TableContainer from "components/BaseComponents/TableContainer";
 import { Tooltip as ReactTooltip } from "react-tooltip";
-import * as Tooltip from "@radix-ui/react-tooltip";
+// import * as Tooltip from "@radix-ui/react-tooltip";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -15,7 +15,10 @@ import ViewModal from "../applicant/ViewApplicant";
 import DeleteModal from "components/BaseComponents/DeleteModal";
 
 import { SelectedOption } from "interfaces/applicant.interface";
-import { dynamicFind, errorHandle } from "utils/commonFunctions";
+import {
+  // dynamicFind,
+  errorHandle
+} from "utils/commonFunctions";
 import appConstants from "constants/constant";
 import Skeleton from "react-loading-skeleton";
 import saveAs from "file-saver";
@@ -29,8 +32,8 @@ import ConfirmModal from "components/BaseComponents/BaseConfirmModal";
 import { useLocation } from "react-router-dom";
 import {
   deleteApplicantVendor,
-  updateStageVendor,
-  updateStatusVendor,
+  // updateStageVendor,
+  // updateStatusVendor,
   viewAllJobApplicants,
 } from "api/apiVendor";
 
@@ -38,8 +41,8 @@ const {
   exportableFieldOption,
   projectTitle,
   Modules,
-  interviewStageOptions,
-  statusOptions,
+  // interviewStageOptions,
+  // statusOptions,
 } = appConstants;
 
 const ManageAppliedList = () => {
@@ -73,9 +76,9 @@ const ManageAppliedList = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [modelLoading, setModelLoading] = useState<boolean>(false);
 
-  const [multipleApplicantDelete, setMultipleApplicantsDelete] = useState<
-    string[]
-  >([]);
+  // const [multipleApplicantDelete, setMultipleApplicantsDelete] = useState<
+  //   string[]
+  // >([]);
   const [showExportModal, setShowExportModal] = useState(false);
   const [showConfirmExportModal, setShowConfirmExportModal] = useState(false);
   const [exportOption, setExportOption] = useState("");
@@ -174,10 +177,10 @@ const ManageAppliedList = () => {
     filterStatusDashboard,
   ]);
 
-  const handleDeleteSingle = (applicantId: string) => {
-    setMultipleApplicantsDelete([applicantId]);
-    setShowDeleteModal(true);
-  };
+  // const handleDeleteSingle = (applicantId: string) => {
+  //   setMultipleApplicantsDelete([applicantId]);
+  //   setShowDeleteModal(true);
+  // };
 
   const closeDeleteModal = () => {
     setShowDeleteModal(false);
@@ -270,7 +273,6 @@ const ManageAppliedList = () => {
       setSelectedApplicants([]);
       setExportOption("");
     } catch (error) {
-      console.log("Export error", error);
       setShowExportModal(false);
       setModelLoading(false);
       setSelectedApplicants([]);
@@ -388,136 +390,6 @@ const ManageAppliedList = () => {
         },
         enableColumnFilter: false,
       },
-
-      {
-        header: "Action",
-        cell: ({ row }: any) => (
-          <div className="flex gap-2">
-            <Tooltip.Provider delayDuration={50}>
-              {/* View Button with Tooltip */}
-              <Tooltip.Root>
-                <Tooltip.Trigger asChild>
-                  <button
-                    className="btn btn-sm btn-soft-success bg-primary"
-                    onClick={() => handleView(row.original._id, "vendor")}
-                    disabled={!row.original.isActive}
-                  >
-                    <i className="text-white ri-eye-fill" />
-                  </button>
-                </Tooltip.Trigger>
-                <Tooltip.Portal>
-                  <Tooltip.Content
-                    side="bottom"
-                    sideOffset={4}
-                    className="px-2 py-1 text-sm text-white rounded shadow-lg bg-primary"
-                  >
-                    View
-                    <Tooltip.Arrow style={{ fill: "#624bff" }} />
-                  </Tooltip.Content>
-                </Tooltip.Portal>
-              </Tooltip.Root>
-
-              <Tooltip.Root>
-                <Tooltip.Trigger asChild>
-                  <button
-                    className="text-white btn btn-sm btn-soft-danger bg-danger"
-                    onClick={() => handleDeleteSingle(row.original._id)}
-                    disabled={!row.original.isActive}
-                  >
-                    <i className="align-bottom ri-delete-bin-5-fill" />
-                  </button>
-                </Tooltip.Trigger>
-                <Tooltip.Portal>
-                  <Tooltip.Content
-                    side="bottom"
-                    sideOffset={4}
-                    className="px-2 py-1 text-sm text-white rounded shadow-lg bg-danger"
-                  >
-                    Delete
-                    <Tooltip.Arrow style={{ fill: "#dc3545" }} />
-                  </Tooltip.Content>
-                </Tooltip.Portal>
-              </Tooltip.Root>
-            </Tooltip.Provider>
-          </div>
-        ),
-      },
-      {
-        header: "Interview Stage",
-        accessorKey: "interviewStage",
-        cell: (cell: any) => (
-          <BaseSelect
-            name="interviewStage"
-            // className="custom-select"
-            styles={customStyles}
-            options={interviewStageOptions}
-            value={dynamicFind(
-              interviewStageOptions,
-              cell.row.original.interviewStage
-            )}
-            handleChange={(selectedOption: SelectedOption) => {
-              const updatedApplicant = [...applicant];
-              const applicantIndex = updatedApplicant.findIndex(
-                (item) => item._id === cell.row.original._id
-              );
-              if (applicantIndex > -1) {
-                updatedApplicant[applicantIndex].interviewStage =
-                  selectedOption.value;
-                setApplicant(updatedApplicant);
-                updateStageVendor(
-                  { interviewStage: selectedOption.value },
-                  cell.row.original._id
-                )
-                  .then(() => {
-                    toast.success(
-                      "Applicant Interview Stage updated successfully!"
-                    );
-                  })
-                  .catch((error: any) => {
-                    errorHandle(error);
-                  });
-              }
-            }}
-            isDisabled={!cell?.row?.original?.isActive}
-          />
-        ),
-        enableColumnFilter: false,
-      },
-      {
-        header: "Applicant Status",
-        accessorKey: "status",
-
-        cell: (cell: any) => (
-          <BaseSelect
-            name="status"
-            styles={customStyles}
-            options={statusOptions}
-            value={dynamicFind(statusOptions, cell.row.original.status)}
-            handleChange={(selectedOption: SelectedOption) => {
-              const updatedApplicant = [...applicant];
-              const applicantIndex = updatedApplicant.findIndex(
-                (item) => item._id === cell.row.original._id
-              );
-              if (applicantIndex > -1) {
-                updatedApplicant[applicantIndex].status = selectedOption.value;
-                setApplicant(updatedApplicant);
-                updateStatusVendor(
-                  { status: selectedOption.value },
-                  cell.row.original._id
-                )
-                  .then(() => {
-                    toast.success("Applicant status updated successfully!");
-                  })
-                  .catch((error: any) => {
-                    errorHandle(error);
-                  });
-              }
-            }}
-            isDisabled={!cell?.row?.original?.isActive}
-          />
-        ),
-        enableColumnFilter: false,
-      },
     ],
     [applicant, selectedApplicants]
   );
@@ -632,8 +504,8 @@ const ManageAppliedList = () => {
         show={showDeleteModal}
         onCloseClick={closeDeleteModal}
         onDeleteClick={() =>
-          multipleApplicantDelete.length >= 1
-            ? deleteMultipleApplicantDetails(multipleApplicantDelete)
+          selectedApplicants.length >= 1
+            ? deleteMultipleApplicantDetails(selectedApplicants)
             : null
         }
         loader={loader}
@@ -699,46 +571,46 @@ const toolipComponents = {
   border: "1px solid white !important",
 };
 
-const customStyles = {
-  control: (provided: any) => ({
-    ...provided,
-    fontSize: "12px",
-    backgroundColor: "#f0f0f0",
-    borderRadius: "8px",
-    borderColor: "transparent",
-    // padding: "0.25rem 0.6rem",
-    minHeight: "20px",
-    outline: "none",
-    boxShadow: "none",
-  }),
+// const customStyles = {
+//   control: (provided: any) => ({
+//     ...provided,
+//     fontSize: "12px",
+//     backgroundColor: "#f0f0f0",
+//     borderRadius: "8px",
+//     borderColor: "transparent",
+//     // padding: "0.25rem 0.6rem",
+//     minHeight: "20px",
+//     outline: "none",
+//     boxShadow: "none",
+//   }),
 
-  option: (provided: any, state: any) => ({
-    ...provided,
-    fontSize: "12px",
-    backgroundColor: state.isSelected ? "#007bff" : "transparent",
-    color: state.isSelected ? "#fff" : "#000",
-  }),
+//   option: (provided: any, state: any) => ({
+//     ...provided,
+//     fontSize: "12px",
+//     backgroundColor: state.isSelected ? "#007bff" : "transparent",
+//     color: state.isSelected ? "#fff" : "#000",
+//   }),
 
-  singleValue: (provided: any) => ({
-    ...provided,
-    color: "#333",
-  }),
+//   singleValue: (provided: any) => ({
+//     ...provided,
+//     color: "#333",
+//   }),
 
-  dropdownIndicator: (provided: any) => ({
-    ...provided,
-    color: "#secondary",
-  }),
+//   dropdownIndicator: (provided: any) => ({
+//     ...provided,
+//     color: "#secondary",
+//   }),
 
-  clearIndicator: (provided: any) => ({
-    ...provided,
-    display: "none",
-    color: "#dc3545",
-  }),
+//   clearIndicator: (provided: any) => ({
+//     ...provided,
+//     display: "none",
+//     color: "#dc3545",
+//   }),
 
-  menu: (provided: any) => ({
-    ...provided,
-    borderRadius: "8px",
-  }),
-};
+//   menu: (provided: any) => ({
+//     ...provided,
+//     borderRadius: "8px",
+//   }),
+// };
 
 export default ManageAppliedList;

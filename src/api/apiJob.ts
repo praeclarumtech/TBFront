@@ -5,6 +5,13 @@ import {
   VIEW_ALL_JOB,
   VIEW_JOB_ID,
   VIEW_JOB_PUBLIC,
+  CHECK_EMAIL_FOR_JOB,
+  APPLY_JOB,
+  VIEW_JOB_APPLICANTS,
+  JOB_EMAIL_RECIPIENTS,
+  JOB_SEND_EMAIL,
+  NOTIFY_MATCHING_APPLICANTS,
+  SEND_APPLICANT_STATUS_EMAIL,
 } from "./apiRoutes";
 import { authServices } from "./apiServices";
 
@@ -60,5 +67,96 @@ export const viewAllJobPublic = async (params: {
   const response = await authServices.get(`${VIEW_JOB_PUBLIC}`, {
     params,
   });
+  return response?.data;
+};
+
+export const checkEmailForJob = async (jobId: string, email: string) => {
+  const response = await authServices.post(
+    `${CHECK_EMAIL_FOR_JOB}/${jobId}/check-email`,
+    {
+      email,
+    }
+  );
+  return response?.data;
+};
+
+export const applyJob = async (
+  jobId: string,
+  email: string,
+  resume?: File | null
+) => {
+  const response = await authServices.post(`${APPLY_JOB}/${jobId}`, {
+    email,
+    resume,
+  });
+  return response?.data;
+};
+
+export const getJobApplicants = async (
+  jobId: string,
+  params?: {
+    page?: number;
+    pageSize?: number;
+    limit?: number;
+  }
+) => {
+  const response = await authServices.get(
+    `${VIEW_JOB_APPLICANTS}/${jobId}/applicants`,
+    {
+      params,
+    }
+  );
+  return response?.data;
+};
+
+export const getJobEmailRecipients = async (
+  type: string,
+  params?: { limit?: number },
+  jobId?: string
+) => {
+  const response = await authServices.get(
+    `${JOB_EMAIL_RECIPIENTS}?type=${type}${jobId ? `&jobId=${jobId}` : ""}`,
+    {
+      params,
+    }
+  );
+  return response?.data;
+};
+
+export const sendJobEmail = async (
+  jobId: string,
+  data: {
+    vendorIds?: string[];
+    applicantIds?: string[];
+    customMessage?: string;
+    emailTemplateId?: string;
+  }
+) => {
+  const response = await authServices.post(
+    `${JOB_SEND_EMAIL}/${jobId}/send-email`,
+    data
+  );
+  return response?.data;
+};
+
+export const notifyMatchingApplicants = async (jobId: string) => {
+  const response = await authServices.post(
+    `${NOTIFY_MATCHING_APPLICANTS}/${jobId}/notify-matching-applicants`
+  );
+  return response?.data;
+};
+
+export const sendApplicantStatusEmail = async (data: {
+  applicantName: string;
+  applicantEmail: string;
+  templateType: string;
+  applicantStatus?: string;
+  applicantId?: string;
+  jobId?: string;
+}) => {
+  const response = await authServices.post(
+    `${SEND_APPLICANT_STATUS_EMAIL}`,
+    data
+  );
   return response?.data;
 };
