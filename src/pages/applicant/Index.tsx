@@ -87,6 +87,7 @@ const Applicant = () => {
     handlers,
     setFilters,
     resetFilters: resetFiltersHook,
+    restoredFromSession,
   } = useApplicantFilters();
   const { skillOptions, appliedRoleOptions, cities, states } =
     useApplicantOptions();
@@ -143,7 +144,8 @@ const Applicant = () => {
         setFilters((prev) => ({ ...prev, ...restoredFilters }));
       },
       [setFilters]
-    )
+    ),
+    restoredFromSession // Skip backend restore when filters restored from sessionStorage (navigation)
   );
 
   const {

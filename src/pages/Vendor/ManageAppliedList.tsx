@@ -17,7 +17,7 @@ import DeleteModal from "components/BaseComponents/DeleteModal";
 import { SelectedOption } from "interfaces/applicant.interface";
 import {
   // dynamicFind,
-  errorHandle
+  errorHandle,
 } from "utils/commonFunctions";
 import appConstants from "constants/constant";
 import Skeleton from "react-loading-skeleton";
@@ -357,7 +357,7 @@ const ManageAppliedList = () => {
             style={truncateText}
             title={cell.row.original.appliedSkills?.join(", ")}
           >
-            {cell.row.original.appliedSkills?.join(", ")}
+            {cell.row.original.appliedSkills?.join(", ") || "-"}
           </div>
         ),
         enableColumnFilter: false,
@@ -371,16 +371,13 @@ const ManageAppliedList = () => {
         header: "Total Exp",
         accessorKey: "totalExperience",
         enableColumnFilter: false,
-      },
-      {
-        header: "Job ID",
-        accessorKey: "job_id.job_id",
         cell: (cell: any) => {
-          const job = cell.row.original.job_id;
-          return job?.job_id || "-";
+          return cell.row.original.totalExperience
+            ? `${cell.row.original.totalExperience}`
+            : "-";
         },
-        enableColumnFilter: false,
       },
+
       {
         header: "Job Title",
         accessorKey: "job_id.job_subject",

@@ -405,7 +405,7 @@ const ManageAppliedListClient = () => {
         accessorKey: "vendor_id",
         cell: (cell: any) => {
           const vendor = cell.row.original.vendor_id;
-          return vendor?.firstName + " " + vendor?.lastName || "-";
+          return vendor ? `${vendor.firstName} ${vendor.lastName}` : "-";
         },
         enableColumnFilter: false,
       },

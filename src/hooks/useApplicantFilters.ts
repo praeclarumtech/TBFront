@@ -1,9 +1,10 @@
 /**
  * Custom Hook for Managing Applicant Filters
  * Centralizes all filter state and handlers
+ * Uses sessionStorage for persistence across navigation (resets on page refresh)
  */
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import {
   SelectedOption,
   SelectedOption1,
@@ -77,8 +78,96 @@ const initialFilterState: FilterState = {
   searchAll: "",
 };
 
+const FILTER_STORAGE_KEY = "applicant_filters";
+const SESSION_ACTIVE_KEY = "applicant_session_active";
+const REFRESH_HANDLED_KEY = "applicant_refresh_handled";
+
+// Check if this is a page refresh - only run ONCE on initial module load
+const checkAndHandlePageRefresh = (): boolean => {
+  // If we've already handled the refresh check this session, don't check again
+  if (sessionStorage.getItem(REFRESH_HANDLED_KEY) === "true") {
+    return false; // Not a fresh refresh, we already handled it
+  }
+
+  let isRefresh = false;
+
+  // Check using Performance Navigation Timing API
+  const navEntries = performance.getEntriesByType(
+    "navigation"
+  ) as PerformanceNavigationTiming[];
+  if (navEntries.length > 0) {
+    isRefresh = navEntries[0].type === "reload";
+  } else if (performance.navigation) {
+    // Fallback for older browsers
+    isRefresh = performance.navigation.type === 1; // TYPE_RELOAD
+  }
+
+  // If it's a refresh, clear stored filters
+  if (isRefresh) {
+    sessionStorage.removeItem(FILTER_STORAGE_KEY);
+    sessionStorage.removeItem(SESSION_ACTIVE_KEY);
+  }
+
+  // Mark that we've handled the refresh check
+  sessionStorage.setItem(REFRESH_HANDLED_KEY, "true");
+
+  return isRefresh;
+};
+
+// Run the refresh check once when module loads
+const wasPageRefreshed = checkAndHandlePageRefresh();
+
+// Check if filters should be restored from sessionStorage
+const shouldUseSessionStorage = (): boolean => {
+  // If page was just refreshed, don't use stored filters
+  if (wasPageRefreshed) {
+    return false;
+  }
+  // If session is active (user has already visited the page), use sessionStorage
+  return sessionStorage.getItem(SESSION_ACTIVE_KEY) === "true";
+};
+
+// Get initial filters from sessionStorage
+const getFiltersFromStorage = (): FilterState | null => {
+  try {
+    const stored = sessionStorage.getItem(FILTER_STORAGE_KEY);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      return { ...initialFilterState, ...parsed };
+    }
+  } catch (error) {
+    console.error("Error reading filters from sessionStorage:", error);
+  }
+  return null;
+};
+
+// Get initial filters - from sessionStorage if navigating, or default if refreshing
+const getInitialFilters = (): FilterState => {
+  if (shouldUseSessionStorage()) {
+    const storedFilters = getFiltersFromStorage();
+    if (storedFilters) {
+      return storedFilters;
+    }
+  }
+  return initialFilterState;
+};
+
 export const useApplicantFilters = () => {
-  const [filters, setFilters] = useState<FilterState>(initialFilterState);
+  const [filters, setFilters] = useState<FilterState>(getInitialFilters);
+  // Track if filters were restored from sessionStorage (during navigation, not refresh)
+  const [restoredFromSession] = useState<boolean>(
+    shouldUseSessionStorage() && getFiltersFromStorage() !== null
+  );
+
+  // Save filters to sessionStorage whenever they change
+  useEffect(() => {
+    try {
+      sessionStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify(filters));
+      sessionStorage.setItem(SESSION_ACTIVE_KEY, "true");
+    } catch (error) {
+      console.error("Error saving filters to sessionStorage:", error);
+    }
+  }, [filters]);
 
   // Multi-select handlers
   const handleAppliedSkillsChange = useCallback(
@@ -254,6 +343,7 @@ export const useApplicantFilters = () => {
   return {
     filters,
     setFilters,
+    restoredFromSession, // Flag to indicate filters were restored from sessionStorage (navigation)
     handlers: {
       handleAppliedSkillsChange,
       handleMultipleSkillsChange,

@@ -18,7 +18,7 @@ import {
   updateApplicantQR,
   createApplicantQR,
 } from "../../../api/applicantApi";
-import { applyJob, viewJobById } from "../../../api/apiJob";
+import { viewJobById } from "../../../api/apiJob";
 import {
   SelectedOption,
   QrApplicants,
@@ -261,7 +261,8 @@ const QrFrom = () => {
       firstName: initialValues?.name?.firstName || "",
       lastName: initialValues?.name?.lastName || "",
       phoneNumber: initialValues?.phone?.phoneNumber || "",
-      email: initialValues?.email || "",
+      // Use email from location.state (when coming from EmailCheckApply) or from formData (when editing)
+      email: initialValues?.email || email || "",
       currentPkg: initialValues?.currentPkg || "0",
       expectedPkg: initialValues?.expectedPkg || "0",
       noticePeriod: initialValues?.noticePeriod || "0",
@@ -325,68 +326,51 @@ const QrFrom = () => {
           formData.append("attachments", resumeFile);
         }
         if (!id) {
-          await createApplicantQR(formData, true);
-          toastify("Applicant created successfully", { type: "success" });
-          if (fromEmailCheck && jobId && email) {
-            try {
-              const applyResponse = await applyJob(jobId, email);
-              if (applyResponse?.success) {
-                toastify(
-                  applyResponse?.message ||
-                    "Application submitted successfully!",
-                  { type: "success" }
-                );
-                navigate("/vendor/email-check-apply", {
-                  state: { jobId, email, fromEmailCheck: true, applied: true },
-                });
-              } else {
-                throw new Error(applyResponse?.message || "Application failed");
-              }
-            } catch (applyError: any) {
-              const errorMessage =
-                applyError?.response?.data?.message ||
-                applyError?.response?.data?.error ||
-                applyError.message ||
-                "Failed to submit application";
-              toastify(errorMessage, { type: "error" });
+          const createResponse = await createApplicantQR(formData, true);
+          console.log("createResponse", createResponse);
+          if (createResponse?.success || createResponse?.statusCode === 201) {
+            toastify("Applicant created successfully", { type: "success" });
+            if (fromEmailCheck && jobId && email) {
               navigate("/vendor/email-check-apply", {
-                state: { jobId, email, fromEmailCheck: true },
+                state: {
+                  jobId,
+                  email,
+                  fromEmailCheck: true,
+                  isNewApplicant: true,
+                },
               });
+            } else {
+              navigate("/applicants/qr-code-success");
             }
           } else {
-            navigate("/applicants/qr-code-success");
+            throw new Error(
+              createResponse?.message || "Failed to create applicant"
+            );
           }
         } else {
-          await updateApplicantQR(formData, id, true);
-          toastify("Applicant updated successfully", { type: "success" });
-          if (fromEmailCheck && jobId && email) {
-            try {
-              const applyResponse = await applyJob(jobId, email);
-              if (applyResponse?.success) {
-                toastify(
-                  applyResponse?.message ||
-                    "Application submitted successfully!",
-                  { type: "success" }
-                );
-                navigate("/vendor/email-check-apply", {
-                  state: { jobId, email, fromEmailCheck: true, applied: true },
-                });
-              } else {
-                throw new Error(applyResponse?.message || "Application failed");
-              }
-            } catch (applyError: any) {
-              const errorMessage =
-                applyError?.response?.data?.message ||
-                applyError?.response?.data?.error ||
-                applyError.message ||
-                "Failed to submit application";
-              toastify(errorMessage, { type: "error" });
+          const updateResponse = await updateApplicantQR(formData, id, true);
+          if (
+            updateResponse?.success ||
+            updateResponse?.statusCode === 200 ||
+            updateResponse?.statusCode === 201
+          ) {
+            toastify("Applicant updated successfully", { type: "success" });
+            if (fromEmailCheck && jobId && email) {
               navigate("/vendor/email-check-apply", {
-                state: { jobId, email, fromEmailCheck: true },
+                state: {
+                  jobId,
+                  email,
+                  fromEmailCheck: true,
+                  isNewApplicant: false,
+                },
               });
+            } else {
+              navigate("/applicants/qr-code-success");
             }
           } else {
-            navigate("/applicants/qr-code-success");
+            throw new Error(
+              updateResponse?.message || "Failed to update applicant"
+            );
           }
         }
       } catch (error: any) {
@@ -488,7 +472,6 @@ const QrFrom = () => {
       <div className="pt-3 page-content"></div>
       <Container fluid>
         <Card title="Job Profile">
-
           {/* Job Details Section */}
           {jobId && (
             <div className="mb-4">
@@ -556,7 +539,8 @@ const QrFrom = () => {
                       <strong>Job Type:</strong> {jobDetails.job_type || "N/A"}
                     </p>
                     <p className="mb-2">
-                      <strong>Job Location:</strong> {jobDetails.job_location || "N/A"}
+                      <strong>Job Location:</strong>{" "}
+                      {jobDetails.job_location || "N/A"}
                     </p>
 
                     {(jobDetails.sub_description || jobDetails.job_details) && (

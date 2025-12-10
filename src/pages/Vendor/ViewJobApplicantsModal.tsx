@@ -226,6 +226,11 @@ const ViewJobApplicantsModal: React.FC<ViewJobApplicantsModalProps> = ({
         header: "Total Exp",
         accessorKey: "totalExperience",
         enableColumnFilter: false,
+        cell: (cell: any) => {
+          return cell.row.original.totalExperience
+            ? `${cell.row.original.totalExperience} years`
+            : "-";
+        },
       },
       {
         header: "Applicant Status",
