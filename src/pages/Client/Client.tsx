@@ -25,7 +25,7 @@ import { ColumnConfig } from "interfaces/global.interface";
 import { FaExclamationTriangle } from "react-icons/fa";
 import BasePopUpModal from "components/BaseComponents/BasePopUpModal";
 import saveAs from "file-saver";
-import { errorHandle } from "utils/commonFunctions";
+import { capitalizeWords, errorHandle } from "utils/commonFunctions";
 
 const { handleResponse } = appConstants;
 
@@ -279,16 +279,22 @@ const Client = () => {
         enableColumnFilter: false,
       },
       {
-        header: "Designation",
-        accessorKey: "designation",
-        id: "designation",
+        header: "Company Type",
+        accessorKey: "vendorProfileId.company_type",
+        id: "vendorProfileId.company_type",
         enableColumnFilter: false,
+        cell: (cell: any) => {
+          return cell.row.original?.vendorProfileId?.company_type ? capitalizeWords(cell.row.original?.vendorProfileId?.company_type) : "-";
+        },
       },
       {
         header: "Whats-app no.",
         accessorKey: "vendorProfileId.whatsapp_number",
         id: "vendorProfileId.whatsapp_number",
         enableColumnFilter: false,
+        cell: (cell: any) => {
+          return cell.row.original.vendorProfileId.whatsapp_number || "-";
+        },
       },
       {
         header: "Date of brith",

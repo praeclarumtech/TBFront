@@ -28,6 +28,7 @@ const EmailCheckApply = () => {
   const [wantsToUpdate, setWantsToUpdate] = useState<"yes" | "no">("no");
   const [jobDetails, setJobDetails] = useState<any>(null);
   const [loadingJobDetails, setLoadingJobDetails] = useState(false);
+  const [isNewApplicant, setIsNewApplicant] = useState(false);
 
   // Fetch job details
   useEffect(() => {
@@ -53,10 +54,30 @@ const EmailCheckApply = () => {
     const stateEmail = location.state?.email;
     const stateJobId = location.state?.jobId;
     const isApplied = location.state?.applied;
+    const stateIsNewApplicant = location.state?.isNewApplicant;
+
+    // Set isNewApplicant flag from state
+    if (stateIsNewApplicant !== undefined) {
+      setIsNewApplicant(stateIsNewApplicant);
+    }
 
     if (isApplied) {
       setEmail(stateEmail || "");
       setApplied(true);
+      return;
+    }
+
+    // If coming from QrFrom after creating/updating applicant, skip API check
+    // and directly show the apply buttons
+    if (
+      fromEmailCheck &&
+      stateEmail &&
+      stateJobId &&
+      stateIsNewApplicant !== undefined
+    ) {
+      setEmail(stateEmail);
+      setEmailExists(true);
+      setWantsToUpdate("no");
       return;
     }
 
@@ -355,7 +376,7 @@ const EmailCheckApply = () => {
                   )
                 )}
 
-                {!emailExists && emailExists !== false && (
+                {!emailExists && emailExists !== false && !applied && (
                   <div>
                     <div className="mb-3">
                       <BaseInput
@@ -418,98 +439,110 @@ const EmailCheckApply = () => {
                 {emailExists === true && !applied && (
                   <div>
                     <div className="alert alert-success mb-3">
-                      <p className="mb-0">
-                        Email <strong>{email}</strong> found in our database.
-                      </p>
-                      {applicantData?.applicantName && (
-                        <p className="mb-0 mt-2">
-                          Applicant: {applicantData.applicantName}
-                        </p>
+                      {isNewApplicant ? (
+                        <>
+                          <p className="mb-0">
+                            Applicant profile created successfully!
+                          </p>
+                          <p className="mb-0 mt-2">
+                            Email: <strong>{email}</strong>
+                          </p>
+                        </>
+                      ) : (
+                        <>
+                          <p className="mb-0">
+                            Email <strong>{email}</strong> found in our
+                            database.
+                          </p>
+                          {applicantData?.applicantName && (
+                            <p className="mb-0 mt-2">
+                              Applicant: {applicantData.applicantName}
+                            </p>
+                          )}
+                        </>
                       )}
                     </div>
 
-                    <div className="mb-3">
-                      <p className="mb-3">
-                        Would you like to update your details before applying?
-                      </p>
-                      <div className="d-flex gap-4">
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="radio"
-                            name="updateDetails"
-                            id="updateYes"
-                            value="yes"
-                            checked={wantsToUpdate === "yes"}
-                            onChange={(e) => handleRadioChange(e.target.value)}
-                          />
-                          <label
-                            className="form-check-label"
-                            htmlFor="updateYes"
-                          >
-                            Yes
-                          </label>
-                        </div>
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="radio"
-                            name="updateDetails"
-                            id="updateNo"
-                            value="no"
-                            checked={wantsToUpdate === "no"}
-                            onChange={(e) => handleRadioChange(e.target.value)}
-                          />
-                          <label
-                            className="form-check-label"
-                            htmlFor="updateNo"
-                          >
-                            No
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-
-                    {wantsToUpdate === "yes" &&
-                      applicantData?.applicantId &&
-                      !applicantData?.alreadyApplied && (
+                    {/* Show radio buttons only if NOT a new applicant (i.e., after update) */}
+                    {!isNewApplicant && (
+                      <>
                         <div className="mb-3">
-                          <BaseButton
-                            onClick={() => {
-                              navigate(
-                                `/applicants/applicant-edit-qr-code/${applicantData.applicantId}`,
-                                {
-                                  state: { jobId, email, fromEmailCheck: true },
+                          <p className="mb-3">
+                            Would you like to update your details before
+                            applying?
+                          </p>
+                          <div className="d-flex gap-4">
+                            <div className="form-check">
+                              <input
+                                className="form-check-input"
+                                type="radio"
+                                name="updateDetails"
+                                id="updateYes"
+                                value="yes"
+                                checked={wantsToUpdate === "yes"}
+                                onChange={(e) =>
+                                  handleRadioChange(e.target.value)
                                 }
-                              );
-                            }}
-                            className="px-4 py-2 bg-primary"
-                          >
-                            Update Details
-                          </BaseButton>
+                              />
+                              <label
+                                className="form-check-label"
+                                htmlFor="updateYes"
+                              >
+                                Yes
+                              </label>
+                            </div>
+                            <div className="form-check">
+                              <input
+                                className="form-check-input"
+                                type="radio"
+                                name="updateDetails"
+                                id="updateNo"
+                                value="no"
+                                checked={wantsToUpdate === "no"}
+                                onChange={(e) =>
+                                  handleRadioChange(e.target.value)
+                                }
+                              />
+                              <label
+                                className="form-check-label"
+                                htmlFor="updateNo"
+                              >
+                                No
+                              </label>
+                            </div>
+                          </div>
                         </div>
-                      )}
 
-                    {/* {wantsToUpdate === "no" && (
-                      <div className="mb-3">
-                        <label className="form-label">
-                          Upload Your Resume (PDF or DOCX)
-                        </label>
-                        <Dragger {...uploadProps}>
-                          <p className="ant-upload-drag-icon">
-                            <InboxOutlined />
-                          </p>
-                          <p className="ant-upload-text">
-                            Click or drag file to this area to upload
-                          </p>
-                          <p className="ant-upload-hint">
-                            PDF, DOC, DOCX only. Max 5MB.
-                          </p>
-                        </Dragger>
-                      </div>
-                    )} */}
+                        {wantsToUpdate === "yes" &&
+                          applicantData?.applicantId &&
+                          !applicantData?.alreadyApplied && (
+                            <div className="mb-3">
+                              <BaseButton
+                                onClick={() => {
+                                  navigate(
+                                    `/applicants/applicant-edit-qr-code/${applicantData.applicantId}`,
+                                    {
+                                      state: {
+                                        jobId,
+                                        email,
+                                        fromEmailCheck: true,
+                                      },
+                                    }
+                                  );
+                                }}
+                                className="px-4 py-2 bg-primary"
+                              >
+                                Update Details
+                              </BaseButton>
+                            </div>
+                          )}
+                      </>
+                    )}
 
-                    {wantsToUpdate === "no" && (
+                    {/* Show Apply and Cancel buttons when:
+                        - isNewApplicant is true (after creating new applicant)
+                        - OR wantsToUpdate is "no" (after update, user chose not to update again) */}
+                    {(isNewApplicant || wantsToUpdate === "no") && (
                       <div className="d-flex gap-2 justify-content-center mt-3">
                         <BaseButton
                           onClick={handleApply}
@@ -524,6 +557,7 @@ const EmailCheckApply = () => {
                             setEmail("");
                             setApplicantData(null);
                             setWantsToUpdate("no");
+                            setIsNewApplicant(false);
                           }}
                           variant="outline-secondary"
                           className="px-4 py-2"
@@ -544,12 +578,6 @@ const EmailCheckApply = () => {
                         and get back to you soon.
                       </p>
                     </div>
-                    <BaseButton
-                      onClick={() => navigate("/")}
-                      className="px-4 py-2 bg-primary"
-                    >
-                      View Applied Jobs
-                    </BaseButton>
                   </div>
                 )}
               </Card.Body>

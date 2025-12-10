@@ -136,8 +136,11 @@ const EmailTable = () => {
 
     {
       header: "Name",
-      accessorKey: "applicantDetails.name.firstName",
+      accessorKey: "applicantDetails.name",
       enableColumnFilter: false,
+      cell: (cell: any) => {
+        return cell.row.original.applicantDetails.name || "-";
+      },
     },
     {
       header: "Applied Skills",
@@ -156,7 +159,7 @@ const EmailTable = () => {
             style={truncateText}
             title={formattedSkills}
           >
-            {formattedSkills}
+            {formattedSkills || "-"}
           </div>
         );
       },

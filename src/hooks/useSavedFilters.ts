@@ -5,12 +5,20 @@ import { FilterState } from "utils/applicantUtils";
 
 export const useSavedFilters = (
   userId: string | null,
-  onFiltersRestored: (filters: Partial<FilterState>) => void
+  onFiltersRestored: (filters: Partial<FilterState>) => void,
+  skipBackendRestore: boolean = false // Skip backend restore when filters restored from sessionStorage
 ) => {
   const [isInitializing, setIsInitializing] = useState(true);
   const isInitializingRef = useRef(true);
   useEffect(() => {
     if (!userId) {
+      setIsInitializing(false);
+      isInitializingRef.current = false;
+      return;
+    }
+
+    // Skip backend restore if filters are already restored from sessionStorage (navigation)
+    if (skipBackendRestore) {
       setIsInitializing(false);
       isInitializingRef.current = false;
       return;

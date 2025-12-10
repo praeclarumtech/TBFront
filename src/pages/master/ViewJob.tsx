@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
-import { errorHandle } from "utils/commonFunctions";
+import { capitalizeWords, errorHandle } from "utils/commonFunctions";
 
 import { EyeFilled } from "@ant-design/icons";
 import { Modal, Badge, Card, Row, Col, Tag, Skeleton, Result } from "antd";
@@ -188,7 +188,7 @@ const ViewJob = ({ show, onHide, jobId }: any) => {
                       value={
                         formData?.job_type ? (
                           // <div className="flex flex-wrap py-1">
-                          <Tag color="magenta">{formData?.job_type}</Tag>
+                          <Tag color="magenta">{capitalizeWords(formData?.job_type)}</Tag>
                         ) : (
                           // </div>
                           <Badge

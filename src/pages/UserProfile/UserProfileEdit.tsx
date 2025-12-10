@@ -111,7 +111,7 @@ const UserProfileEdit = () => {
   const currentUserRole = getCurrentUserRole();
 
   const [imagePreview, setImagePreview] = useState<string>(
-    "/images/avatar/avatar.png"
+    "talent/images/avatar/avatar.png"
   );
   const navigate = useNavigate();
   const validation = useFormik({
@@ -296,7 +296,7 @@ const UserProfileEdit = () => {
       setImagePreview(
         profileData.profilePicture
           ? `${appEnv.API_ENDPOINT}/uploads/profile/${profileData.profilePicture}`
-          : "/images/avatar/avatar.png"
+          : "talent/images/avatar/avatar.png"
       );
     }
   }, [profileData]);

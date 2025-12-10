@@ -308,7 +308,7 @@ const ViewProfile = ({ show, onHide, _id, module }: any) => {
                   value={
                     formData?.vendorProfileId?.company_type ? (
                       <Tag color="gold">
-                        {formData?.vendorProfileId?.company_type}
+                        {capitalizeWords(formData?.vendorProfileId?.company_type)}
                       </Tag>
                     ) : (
                       <Badge

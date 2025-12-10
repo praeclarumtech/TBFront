@@ -186,7 +186,7 @@ const JobListing = () => {
   };
 
   const handleCopyLink = (id: string) => {
-    const url = `${window.location.origin}/master/job3/${id}`;
+    const url = `${window.location.origin}/talent/master/job3/${id}`;
     navigator.clipboard
       .writeText(url)
       .then(() => {
@@ -242,15 +242,26 @@ const JobListing = () => {
         header: "Duration",
         accessorKey: "contract_duration",
         enableColumnFilter: false,
+        cell: (cell: any) => {
+          return (
+            <div className="text-center">
+              {cell.row.original.contract_duration || "-"}
+            </div>
+          );
+        },
       },
-      ...((currentRole === "vendor" || currentRole === "admin")
+      ...(currentRole === "vendor" || currentRole === "admin"
         ? [
             {
               header: "Client Name",
               accessorKey: "clientName",
               enableColumnFilter: false,
               cell: (cell: any) => {
-                return cell.row.original.clientName || "-";
+                return (
+                  <div className="text-center">
+                    {cell.row.original.clientName || "-"}
+                  </div>
+                );
               },
             },
           ]
@@ -371,7 +382,9 @@ const JobListing = () => {
                   </Tooltip.Content>
                 </Tooltip.Portal>
               </Tooltip.Root>
-              {(currentRole === "client" || currentRole === "vendor" || currentRole === "admin") && (
+              {(currentRole === "client" ||
+                currentRole === "vendor" ||
+                currentRole === "admin") && (
                 <Tooltip.Root>
                   <Tooltip.Trigger asChild>
                     <button
@@ -394,35 +407,36 @@ const JobListing = () => {
                   </Tooltip.Portal>
                 </Tooltip.Root>
               )}
-              {currentRole === "vendor" || currentRole === "admin" && (
-                <Tooltip.Root>
-                  <Tooltip.Trigger asChild>
-                    <button
-                      className="btn btn-sm btn-soft-success bg-info"
-                      onClick={() =>
-                        handleNotifyMatchingApplicants(cell?.row?.original)
-                      }
-                      disabled={
-                        !cell?.row?.original.isActive ||
-                        (isLoading &&
-                          notifyingJobId === cell?.row?.original._id)
-                      }
-                    >
-                      <i className="text-white ri-notification-3-fill" />
-                    </button>
-                  </Tooltip.Trigger>
-                  <Tooltip.Portal>
-                    <Tooltip.Content
-                      side="bottom"
-                      sideOffset={4}
-                      className="px-2 py-1 text-xs text-white rounded shadow-lg bg-info"
-                    >
-                      Notify Matching Applicants
-                      <Tooltip.Arrow style={{ fill: "#0ea5e9" }} />
-                    </Tooltip.Content>
-                  </Tooltip.Portal>
-                </Tooltip.Root>
-              )}
+              {currentRole === "vendor" ||
+                (currentRole === "admin" && (
+                  <Tooltip.Root>
+                    <Tooltip.Trigger asChild>
+                      <button
+                        className="btn btn-sm btn-soft-success bg-info"
+                        onClick={() =>
+                          handleNotifyMatchingApplicants(cell?.row?.original)
+                        }
+                        disabled={
+                          !cell?.row?.original.isActive ||
+                          (isLoading &&
+                            notifyingJobId === cell?.row?.original._id)
+                        }
+                      >
+                        <i className="text-white ri-notification-3-fill" />
+                      </button>
+                    </Tooltip.Trigger>
+                    <Tooltip.Portal>
+                      <Tooltip.Content
+                        side="bottom"
+                        sideOffset={4}
+                        className="px-2 py-1 text-xs text-white rounded shadow-lg bg-info"
+                      >
+                        Notify Matching Applicants
+                        <Tooltip.Arrow style={{ fill: "#0ea5e9" }} />
+                      </Tooltip.Content>
+                    </Tooltip.Portal>
+                  </Tooltip.Root>
+                ))}
             </Tooltip.Provider>
           </div>
         ),

@@ -17,10 +17,28 @@ import BaseButton from "components/BaseComponents/BaseButton";
 import { useNavigate } from "react-router";
 import { SelectedOption } from "interfaces/applicant.interface";
 import { BaseSelect } from "components/BaseComponents/BaseSelect";
-// import { statusCode } from '../../interfaces/global.interface';
 
 const { projectTitle, Modules, companyType, hireResourceOptions } =
   appConstants;
+
+const getProfileImageUrl = (
+  profilePicture: string | null | undefined
+): string => {
+  if (!profilePicture) {
+    return "images/avatar/avatar.png";
+  }
+
+  const isProduction =
+    appEnv.API_ENDPOINT?.includes("app.praeclarumtech") ||
+    appEnv.API_ENDPOINT?.includes("app.praeclarumtech.com");
+
+  if (isProduction && appEnv.PRODUCTION_PROFILE_URL) {
+    return `${appEnv.PRODUCTION_PROFILE_URL}/uploads/${profilePicture}`;
+  }
+
+  return `${appEnv.API_ENDPOINT}/uploads/profile/${profilePicture}`;
+};
+
 const Profile = () => {
   document.title = Modules.Profile + " | " + projectTitle;
   const hasMounted = useMounted();
@@ -30,7 +48,7 @@ const Profile = () => {
   const [touched, setTouched] = useState(false);
   const [loadingImage, setLoadingImage] = useState<boolean>(false);
   const [formData, setFormData] = useState<ProfileFormData>({
-    profilePicture: "/images/avatar/avatar.png",
+    profilePicture: "images/avatar/avatar.png",
     userName: "",
     firstName: "",
     lastName: "",
@@ -52,7 +70,7 @@ const Profile = () => {
   });
 
   const [imagePreview, setImagePreview] = useState<string>(
-    "/images/avatar/avatar.png"
+    "images/avatar/avatar.png"
   );
   const navigate = useNavigate();
 
@@ -80,7 +98,7 @@ const Profile = () => {
     if (profileData) {
       setFormData({
         profilePicture:
-          profileData.profilePicture || "/images/avatar/avatar.png",
+          profileData.profilePicture,
         userName: profileData.userName || "",
         firstName: profileData.firstName || "",
         lastName: profileData.lastName || "",
@@ -103,11 +121,7 @@ const Profile = () => {
         company_website: profileData.vendorProfileId?.company_website || "",
       });
 
-      setImagePreview(
-        profileData.profilePicture
-          ? `${appEnv.API_ENDPOINT}/uploads/profile/${profileData.profilePicture}`
-          : "/images/avatar/avatar.png"
-      );
+      setImagePreview(getProfileImageUrl(profileData.profilePicture));
     }
   }, [profileData]);
 
@@ -222,7 +236,7 @@ const Profile = () => {
 
         setImagePreview(
           response?.data?.profilePicture
-            ? `${appEnv.API_ENDPOINT}/uploads/profile/${response.data.profilePicture}`
+            ? getProfileImageUrl(response.data.profilePicture)
             : imagePreview
         );
 
@@ -289,6 +303,9 @@ const Profile = () => {
   const handleBlur = () => {
     setTouched(true);
   };
+
+  console.log("imagePreview", imagePreview);
+  console.log("formData", formData);
   return (
     <Container fluid className="p-6">
       <Row className="my-1">
