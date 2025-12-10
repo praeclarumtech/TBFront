@@ -83,11 +83,11 @@ export const checkEmailForJob = async (jobId: string, email: string) => {
 export const applyJob = async (
   jobId: string,
   email: string,
-  resume?: File | null
+  sharedBy?: string | null
 ) => {
   const response = await authServices.post(`${APPLY_JOB}/${jobId}`, {
     email,
-    resume,
+    sharedBy,
   });
   return response?.data;
 };

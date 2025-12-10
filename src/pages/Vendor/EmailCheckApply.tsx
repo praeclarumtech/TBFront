@@ -18,6 +18,7 @@ const EmailCheckApply = () => {
   const navigate = useNavigate();
   const jobId =
     location.state?.jobId || new URLSearchParams(location.search).get("jobId");
+  const sharedBy = location.state?.sharedBy || new URLSearchParams(location.search).get("sharedBy");
 
   const [email, setEmail] = useState("");
   const [checkingEmail, setCheckingEmail] = useState(false);
@@ -217,7 +218,7 @@ const EmailCheckApply = () => {
 
     setUploading(true);
     try {
-      const response = await applyJob(jobId, email);
+      const response = await applyJob(jobId, email, sharedBy);
       if (response?.success) {
         setApplied(true);
         toast.success(
