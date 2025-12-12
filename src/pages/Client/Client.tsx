@@ -222,7 +222,7 @@ const Client = () => {
         toast.error(response?.message || "Failed to update client status");
       }
     } catch (error: any) {
-      toast.error(error?.message || "Failed to update client status");
+      toast.error(error?.response?.data?.message || "Failed to update client status");
     } finally {
       setIsLoading(false);
     }

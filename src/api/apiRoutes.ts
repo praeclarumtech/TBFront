@@ -204,9 +204,9 @@ export const UPDATE_VENDOR_QR = "vendor/vendor-edit-qr-code";
 export const VIEW_VENDOR = "vendor/viewVendor";
 
 //Client
-export const CREATE_CLIENT_QR = "client/client-add-qr-code";
-export const UPDATE_CLIENT_QR = "client/client-edit-qr-code";
-export const VIEW_CLIENT = "client/viewClient";
+export const CREATE_CLIENT_QR = "vendor/client-add-qr-code";
+export const UPDATE_CLIENT_QR = "vendor/client-edit-qr-code";
+export const VIEW_CLIENT = "vendor/viewClient";
 
 //Job Applicant
 export const SEND_APPLICANT_STATUS_EMAIL = "/job/applicant/send-status-email";
