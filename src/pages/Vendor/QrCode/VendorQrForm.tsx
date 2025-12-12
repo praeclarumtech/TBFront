@@ -29,22 +29,11 @@ const { projectTitle, Modules, companyType, hireResourceOptions, SUCCESS } =
   appConstants;
 
 const vendorQrSchema = Yup.object().shape({
-  firstName: Yup.string()
-    .required("First name is required.")
-    .max(15, "First name cannot exceed 15 characters.")
-    .min(2, "First name must be at least 2 characters.")
-    .matches(/^[A-Za-z\s]+$/, "First name can only contain letters.")
-    .trim(),
-  lastName: Yup.string()
-    .required("Last name is required.")
-    .max(15, "Last name cannot exceed 15 characters.")
-    .min(2, "Last name must be at least 2 characters.")
-    .matches(/^[A-Za-z\s]+$/, "Last name can only contain letters.")
-    .trim(),
+  // Required fields
   email: Yup.string()
     .email("Please enter a valid email address.")
     .required("Email is required."),
-  phoneNumber: Yup.string()
+  phone: Yup.string()
     .matches(
       /^[1-9][0-9]{9}$/,
       "Please enter a valid 10-digit phone number (should not start with 0)."
@@ -53,44 +42,40 @@ const vendorQrSchema = Yup.object().shape({
   isIndependentConsultant: Yup.string()
     .oneOf(["yes", "no"], "Please select an option.")
     .required("Please select if you are an independent consultant."),
-  company_name: Yup.string().when("isIndependentConsultant", {
-    is: "no",
-    then: (schema) => schema.required("Company name is required."),
-    otherwise: (schema) => schema.notRequired(),
-  }),
-  company_email: Yup.string().when("isIndependentConsultant", {
-    is: "no",
-    then: (schema) =>
-      schema
-        .email("Please enter a valid company email address.")
-        .required("Company email is required."),
-    otherwise: (schema) => schema.notRequired(),
-  }),
-  company_phone_number: Yup.string().when("isIndependentConsultant", {
-    is: "no",
-    then: (schema) =>
-      schema
-        .matches(
-          /^[1-9][0-9]{9}$/,
-          "Please enter a valid 10-digit phone number (should not start with 0)."
-        )
-        .required("Company phone number is required."),
-    otherwise: (schema) => schema.notRequired(),
-  }),
-  company_location: Yup.string().when("isIndependentConsultant", {
-    is: "no",
-    then: (schema) => schema.required("Company location is required."),
-    otherwise: (schema) => schema.notRequired(),
-  }),
-  whatsapp_number: Yup.string()
-    .matches(
-      /^[1-9][0-9]{9}$/,
-      "Please enter a valid 10-digit phone number (should not start with 0)."
-    )
-    .required("Whatsapp number is required."),
-  company_website: Yup.string().url("Please enter a valid URL."),
+  // Optional user fields
+  firstName: Yup.string()
+    .max(15, "First name cannot exceed 15 characters.")
+    .min(2, "First name must be at least 2 characters.")
+    .matches(/^[A-Za-z\s]+$/, "First name can only contain letters.")
+    .trim(),
+  lastName: Yup.string()
+    .max(15, "Last name cannot exceed 15 characters.")
+    .min(2, "Last name must be at least 2 characters.")
+    .matches(/^[A-Za-z\s]+$/, "Last name can only contain letters.")
+    .trim(),
+  state: Yup.string(),
+  city: Yup.string(),
+  // Optional company fields
+  whatsapp_number: Yup.string().matches(
+    /^[1-9][0-9]{9}$/,
+    "Please enter a valid 10-digit phone number (should not start with 0)."
+  ),
+  company_name: Yup.string(),
+  company_email: Yup.string().email(
+    "Please enter a valid company email address."
+  ),
+  company_phone_number: Yup.string().matches(
+    /^[1-9][0-9]{9}$/,
+    "Please enter a valid 10-digit phone number (should not start with 0)."
+  ),
+  company_location: Yup.string(),
+  company_type: Yup.string(),
+  hire_resources: Yup.string(),
+  company_strength: Yup.string(),
   company_linkedin_profile: Yup.string().url("Please enter a valid URL."),
-  vendor_linkedin_profile: Yup.string().url("Please enter a valid URL."),
+  company_website: Yup.string().url("Please enter a valid URL."),
+  company_state: Yup.string(),
+  company_city: Yup.string(),
 });
 
 const VendorQrForm = () => {
@@ -101,6 +86,9 @@ const VendorQrForm = () => {
   const [cities, setCities] = useState<City[]>([]);
   const [states, setStates] = useState<City[]>([]);
   const [selectedStateId, setSelectedStateId] = useState<string>("");
+  const [companyCities, setCompanyCities] = useState<City[]>([]);
+  const [selectedCompanyStateId, setSelectedCompanyStateId] =
+    useState<string>("");
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -186,6 +174,42 @@ const VendorQrForm = () => {
   }, [selectedStateId]);
 
   useEffect(() => {
+    const getCompanyCities = async (stateId?: string) => {
+      try {
+        setCompanyCities([]);
+        if (validation) {
+          validation.setFieldValue("company_city", "");
+        }
+
+        if (!stateId) {
+          return;
+        }
+
+        const params = { state_id: stateId };
+        const cityData = await viewAllCity(params);
+
+        if (cityData?.data?.item && Array.isArray(cityData.data.item)) {
+          const cityOptions = cityData.data.item.map(
+            (city: { city_name: string; _id: string; state_id: string }) => ({
+              label: city.city_name,
+              value: city._id,
+              state_id: city.state_id,
+            })
+          );
+          setCompanyCities(cityOptions);
+        } else {
+          setCompanyCities([]);
+        }
+      } catch (error) {
+        errorHandle(error);
+        setCompanyCities([]);
+      }
+    };
+
+    getCompanyCities(selectedCompanyStateId);
+  }, [selectedCompanyStateId]);
+
+  useEffect(() => {
     getVendor(id);
   }, [id]);
 
@@ -198,6 +222,14 @@ const VendorQrForm = () => {
         setSelectedStateId(stateOption.value);
       }
     }
+    if (formData?.company_state) {
+      const companyStateOption = states.find(
+        (state) => state.label === formData.company_state
+      );
+      if (companyStateOption) {
+        setSelectedCompanyStateId(companyStateOption.value);
+      }
+    }
   }, [formData, states]);
 
   const initialValues: any = formData;
@@ -205,49 +237,79 @@ const VendorQrForm = () => {
   const validation: any = useFormik({
     enableReinitialize: true,
     initialValues: {
+      // Required fields
+      email: initialValues?.email || "",
+      phone: initialValues?.phone || "",
+      isIndependentConsultant: initialValues?.isIndependentConsultant || "",
+      // Optional user fields
       firstName: initialValues?.firstName || "",
       lastName: initialValues?.lastName || "",
-      phoneNumber: initialValues?.phone?.phoneNumber || "",
-      email: initialValues?.email || "",
+      state: initialValues?.state || "",
+      city: initialValues?.city || "",
+      // Optional company fields
+      whatsapp_number: initialValues?.whatsapp_number || "",
       company_name: initialValues?.company_name || "",
       company_email: initialValues?.company_email || "",
       company_phone_number: initialValues?.company_phone_number || "",
       company_location: initialValues?.company_location || "",
-      hire_resources: initialValues?.hire_resources || "",
       company_type: initialValues?.company_type || "",
+      hire_resources: initialValues?.hire_resources || "",
       company_strength: initialValues?.company_strength || "",
       company_linkedin_profile: initialValues?.company_linkedin_profile || "",
       company_website: initialValues?.company_website || "",
-      whatsapp_number: initialValues?.whatsapp_number || "",
-      vendor_linkedin_profile: initialValues?.vendor_linkedin_profile || "",
-      state: initialValues?.state || "",
-      city: initialValues?.city || "",
+      company_state: initialValues?.company_state || "",
+      company_city: initialValues?.company_city || "",
     },
     validationSchema: vendorQrSchema,
 
     onSubmit: async (value: any) => {
       setButtonLoading(true);
       try {
+        // Required fields
         const formData: any = {
-          firstName: value.firstName,
-          lastName: value.lastName,
-          phone: value.phoneNumber,
-          whatsapp_number: value.whatsapp_number,
           email: value.email,
+          phone: value.phone,
+          role: "vendor",
         };
+
+        // Optional user fields
+        if (value.firstName) {
+          formData.firstName = value.firstName;
+        }
+        if (value.lastName) {
+          formData.lastName = value.lastName;
+        }
+        if (value.state) {
+          formData.state = value.state;
+        }
+        if (value.city) {
+          formData.city = value.city;
+        }
+
+        // Optional company fields
+        if (value.whatsapp_number) {
+          formData.whatsapp_number = value.whatsapp_number;
+        }
 
         // Only include company fields if not an independent consultant
         if (value.isIndependentConsultant === "no") {
-          formData.company_name = value.company_name;
-          formData.company_email = value.company_email;
-          formData.company_phone_number = value.company_phone_number;
-          formData.company_location = value.company_location;
-
-          if (value.hire_resources) {
-            formData.hire_resources = value.hire_resources;
+          if (value.company_name) {
+            formData.company_name = value.company_name;
+          }
+          if (value.company_email) {
+            formData.company_email = value.company_email;
+          }
+          if (value.company_phone_number) {
+            formData.company_phone_number = value.company_phone_number;
+          }
+          if (value.company_location) {
+            formData.company_location = value.company_location;
           }
           if (value.company_type) {
             formData.company_type = value.company_type;
+          }
+          if (value.hire_resources) {
+            formData.hire_resources = value.hire_resources;
           }
           if (value.company_strength) {
             formData.company_strength = value.company_strength;
@@ -258,16 +320,12 @@ const VendorQrForm = () => {
           if (value.company_website) {
             formData.company_website = value.company_website;
           }
-          if (value.state) {
-            formData.state = value.state;
+          if (value.company_state) {
+            formData.company_state = value.company_state;
           }
-          if (value.city) {
-            formData.city = value.city;
+          if (value.company_city) {
+            formData.company_city = value.company_city;
           }
-        }
-
-        if (value.vendor_linkedin_profile) {
-          formData.vendor_linkedin_profile = value.vendor_linkedin_profile;
         }
 
         let response;
@@ -325,6 +383,26 @@ const VendorQrForm = () => {
     validation.setFieldValue("state", selectedLabel);
 
     setSelectedStateId(selectedValue);
+  };
+
+  const handleCompanyStateChange = (selectedOption: SelectedOption | null) => {
+    if (!selectedOption) {
+      validation.setFieldValue("company_state", "");
+      validation.setFieldValue("company_city", "");
+      setSelectedCompanyStateId("");
+      return;
+    }
+
+    const selectedLabel = selectedOption?.label || "";
+    const selectedValue = selectedOption?.value || "";
+
+    // Reset company city first
+    validation.setFieldValue("company_city", "");
+
+    // Set company state value
+    validation.setFieldValue("company_state", selectedLabel);
+
+    setSelectedCompanyStateId(selectedValue);
   };
 
   return (
@@ -415,22 +493,19 @@ const VendorQrForm = () => {
                     <Col xs={12} sm={6} md={6} lg={3}>
                       <BaseInput
                         label="Phone Number"
-                        name="phoneNumber"
+                        name="phone"
                         type="text"
                         className="select-border"
                         placeholder={InputPlaceHolder("Phone Number")}
                         handleChange={(e) => {
                           const rawValue = e.target.value.replace(/\D/g, "");
                           const sanitizedValue = rawValue.slice(0, 10);
-                          validation.setFieldValue(
-                            "phoneNumber",
-                            sanitizedValue
-                          );
+                          validation.setFieldValue("phone", sanitizedValue);
                         }}
                         handleBlur={validation.handleBlur}
-                        value={validation.values.phoneNumber}
-                        touched={validation.touched.phoneNumber}
-                        error={validation.errors.phoneNumber}
+                        value={validation.values.phone}
+                        touched={validation.touched.phone}
+                        error={validation.errors.phone}
                         passwordToggle={false}
                         isRequired={true}
                       />
@@ -438,7 +513,7 @@ const VendorQrForm = () => {
 
                     <Col xs={12} sm={6} md={6} lg={3}>
                       <BaseInput
-                        label="WhatsApp Number"
+                        label="WhatsApp Number (Optional)"
                         name="whatsapp_number"
                         type="text"
                         className="select-border"
@@ -456,22 +531,61 @@ const VendorQrForm = () => {
                         touched={validation.touched.whatsapp_number}
                         error={validation.errors.whatsapp_number}
                         passwordToggle={false}
-                        isRequired={true}
                       />
                     </Col>
 
-                    <Col xs={12} sm={6} md={6} lg={3}>
-                      <BaseInput
-                        label="Vendor LinkedIn Profile (Optional)"
-                        name="vendor_linkedin_profile"
-                        type="url"
-                        placeholder={InputPlaceHolder("Vendor LinkedIn")}
-                        handleChange={validation.handleChange}
+                    <Col xs={12} md={6} lg={3}>
+                      <BaseSelect
+                        label="State"
+                        name="state"
+                        className="select-border"
+                        options={states}
+                        placeholder={InputPlaceHolder("State")}
+                        handleChange={handleStateChange}
                         handleBlur={validation.handleBlur}
-                        value={validation.values.vendor_linkedin_profile}
-                        touched={validation.touched.vendor_linkedin_profile}
-                        error={validation.errors.vendor_linkedin_profile}
-                        passwordToggle={false}
+                        value={
+                          dynamicFind(
+                            states,
+                            validation.values.state,
+                            "location"
+                          ) || ""
+                        }
+                        touched={validation.touched.state}
+                        error={validation.errors.state}
+                        isRequired={false}
+                      />
+                    </Col>
+
+                    <Col xs={12} md={6} lg={3}>
+                      <BaseSelect
+                        key={`city-${selectedStateId}-${cities.length}`}
+                        label="City"
+                        name="city"
+                        className="select-border"
+                        options={cities}
+                        placeholder={
+                          selectedStateId
+                            ? InputPlaceHolder("City")
+                            : "Please select a state first"
+                        }
+                        handleChange={(selectedOption: SelectedOption) => {
+                          validation.setFieldValue(
+                            "city",
+                            selectedOption?.label || ""
+                          );
+                        }}
+                        handleBlur={validation.handleBlur}
+                        value={
+                          dynamicFind(
+                            cities,
+                            validation.values.city,
+                            "location"
+                          ) || ""
+                        }
+                        touched={validation.touched.city}
+                        error={validation.errors.city}
+                        isRequired={false}
+                        isDisabled={!selectedStateId}
                       />
                     </Col>
 
@@ -527,9 +641,9 @@ const VendorQrForm = () => {
                                     "company_linkedin_profile",
                                     ""
                                   );
-                                  validation.setFieldValue("state", "");
-                                  validation.setFieldValue("city", "");
-                                  setSelectedStateId("");
+                                  validation.setFieldValue("company_state", "");
+                                  validation.setFieldValue("company_city", "");
+                                  setSelectedCompanyStateId("");
                                 }
                               }}
                               onBlur={validation.handleBlur}
@@ -773,56 +887,56 @@ const VendorQrForm = () => {
 
                         <Col xs={12} md={6} lg={3}>
                           <BaseSelect
-                            label="State"
-                            name="state"
+                            label="Company State"
+                            name="company_state"
                             className="select-border"
                             options={states}
-                            placeholder={InputPlaceHolder("State")}
-                            handleChange={handleStateChange}
+                            placeholder={InputPlaceHolder("Company State")}
+                            handleChange={handleCompanyStateChange}
                             handleBlur={validation.handleBlur}
                             value={
                               dynamicFind(
                                 states,
-                                validation.values.state,
+                                validation.values.company_state,
                                 "location"
                               ) || ""
                             }
-                            touched={validation.touched.state}
-                            error={validation.errors.state}
+                            touched={validation.touched.company_state}
+                            error={validation.errors.company_state}
                             isRequired={false}
                           />
                         </Col>
 
                         <Col xs={12} md={6} lg={3}>
                           <BaseSelect
-                            key={`city-${selectedStateId}-${cities.length}`}
-                            label="City"
-                            name="city"
+                            key={`company-city-${selectedCompanyStateId}-${companyCities.length}`}
+                            label="Company City"
+                            name="company_city"
                             className="select-border"
-                            options={cities}
+                            options={companyCities}
                             placeholder={
-                              selectedStateId
-                                ? InputPlaceHolder("City")
+                              selectedCompanyStateId
+                                ? InputPlaceHolder("Company City")
                                 : "Please select a state first"
                             }
                             handleChange={(selectedOption: SelectedOption) => {
                               validation.setFieldValue(
-                                "city",
+                                "company_city",
                                 selectedOption?.label || ""
                               );
                             }}
                             handleBlur={validation.handleBlur}
                             value={
                               dynamicFind(
-                                cities,
-                                validation.values.city,
+                                companyCities,
+                                validation.values.company_city,
                                 "location"
                               ) || ""
                             }
-                            touched={validation.touched.city}
-                            error={validation.errors.city}
+                            touched={validation.touched.company_city}
+                            error={validation.errors.company_city}
                             isRequired={false}
-                            isDisabled={!selectedStateId}
+                            isDisabled={!selectedCompanyStateId}
                           />
                         </Col>
 

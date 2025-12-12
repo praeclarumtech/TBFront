@@ -252,8 +252,8 @@ const VendorList = () => {
       } else {
         toast.error(response?.message || "Failed to update vendor status");
       }
-    } catch (error: any) {
-      toast.error(error?.message || "Failed to update vendor status");
+      } catch (error: any) {
+      toast.error(error?.response?.data?.message || "Failed to update vendor status");
     } finally {
       setIsLoading(false);
     }
