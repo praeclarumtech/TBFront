@@ -15,12 +15,14 @@ export const PermissionKey = {
   CLIENT_LIST: "client_list",
   CLIENT_JOB_LISTING: "client_job_listing",
   CLIENT_JOB_APPLICANTS: "client_job_applicants",
+  CLIENT_APPLICATIONS_BY_ROLE: "client_applications_by_role",
 
   // Vendors
   VENDORS: "vendors",
   VENDOR_LIST: "vendor_list",
   VENDOR_JOB_LISTING: "vendor_job_listing",
   VENDOR_JOB_APPLICANTS: "vendor_job_applicants",
+  VENDOR_APPLICATIONS_BY_ROLE: "vendor_applications_by_role",
 
   // Analysis
   EMAIL: "email",
@@ -67,6 +69,10 @@ export const navItems = [
         accessorKey: PermissionKey.VENDOR_JOB_APPLICANTS,
         name: "Jobs Applicants",
       },
+      {
+        accessorKey: PermissionKey.VENDOR_APPLICATIONS_BY_ROLE,
+        name: "Vendor Applications",
+      }
     ],
   },
   {
@@ -82,6 +88,10 @@ export const navItems = [
         accessorKey: PermissionKey.CLIENT_JOB_APPLICANTS,
         name: "Jobs Applicants",
       },
+      {
+        accessorKey: PermissionKey.CLIENT_APPLICATIONS_BY_ROLE,
+        name: "Client Applications",
+      }
     ],
   },
   {
@@ -205,6 +215,11 @@ export const navigationGroups = {
         label: "Jobs Applicants",
         permission: PermissionKey.VENDOR_JOB_APPLICANTS,
       },
+      {
+        key: "/vendor/applications",
+        label: "Vendor Applications",
+        permission: PermissionKey.VENDOR_APPLICATIONS_BY_ROLE,
+      },
     ],
   },
   CLIENT: {
@@ -224,6 +239,11 @@ export const navigationGroups = {
         key: "/appliedJobApplicantsClient",
         label: "Jobs Applicants",
         permission: PermissionKey.CLIENT_JOB_APPLICANTS,
+      },
+      {
+        key: "/client/applications",
+        label: "Client Applications",
+        permission: PermissionKey.CLIENT_APPLICATIONS_BY_ROLE,
       },
     ],
   },

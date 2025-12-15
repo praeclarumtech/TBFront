@@ -195,6 +195,7 @@ export const VIEW_APPLIED_JOB_USER = "/vendor/myApplications";
 export const JOB_SCORE = "/job/jobScore";
 export const ADD_JOB_APPLICATION = "job/addJobApplication";
 export const VIEW_APPLIED_JOB_APPLICANTS = "/vendor/viewApplications";
+export const VIEW_MATCHING_APPLICANTS = "/vendor/matching-applicants";
 export const VIEW_APPLICANT_BY_ID_VENDOR = "vendor/viewApplicantionsById";
 export const UPDATE_APPLICANT_STAGE_VENDOR = "/vendor/updateApplicantStatus";
 export const DELETE_APPLICANT_VENDOR = "/vendor/deleteApplicant";
@@ -210,3 +211,6 @@ export const VIEW_CLIENT = "vendor/viewClient";
 
 //Job Applicant
 export const SEND_APPLICANT_STATUS_EMAIL = "/job/applicant/send-status-email";
+
+//Applications by Role
+export const GET_APPLICATIONS_BY_ROLE = "/job/applications/by-role";

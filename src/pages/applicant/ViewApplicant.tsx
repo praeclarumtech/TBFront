@@ -12,7 +12,10 @@ import appConstants from "constants/constant";
 import { CloseOutlined } from "@ant-design/icons";
 import BaseFav from "components/BaseComponents/BaseFav";
 import { getApplicantDetailsInVendor } from "api/apiVendor";
-import { ApplicantDetails, ViewModalProps } from "interfaces/applicant.interface";
+import {
+  ApplicantDetails,
+  ViewModalProps,
+} from "interfaces/applicant.interface";
 import toastify from "utils/toastify";
 
 const { projectTitle, Modules } = appConstants;
@@ -122,7 +125,9 @@ const ViewModal: React.FC<ViewModalProps> = ({
       .then((res: any) => {
         if (res.success) {
           if (isFav) {
-            toastify("Applicant removed from favorite list", { type: "success" });
+            toastify("Applicant removed from favorite list", {
+              type: "success",
+            });
           } else {
             toastify("Applicant added to favorite list", { type: "success" });
           }
@@ -137,7 +142,9 @@ const ViewModal: React.FC<ViewModalProps> = ({
             toastify(errorMessage, { type: "error" });
           });
         } else {
-          toastify("An error occurred while updating the applicant.", { type: "error" });
+          toastify("An error occurred while updating the applicant.", {
+            type: "error",
+          });
         }
       })
       .finally(() => {
@@ -232,8 +239,8 @@ const ViewModal: React.FC<ViewModalProps> = ({
                   <DetailsRow
                     label="Phone Number"
                     value={
-                      formData.phone.phoneNumber ? (
-                        <Tag color="blue">{formData.phone.phoneNumber}</Tag>
+                      formData?.phone?.phoneNumber ? (
+                        <Tag color="blue">{formData?.phone?.phoneNumber}</Tag>
                       ) : (
                         "-"
                       )
@@ -242,25 +249,27 @@ const ViewModal: React.FC<ViewModalProps> = ({
                   <DetailsRow
                     label="WhatsApp Number"
                     value={
-                      formData.phone.whatsappNumber ? (
-                        <Tag color="green">{formData.phone.whatsappNumber}</Tag>
+                      formData?.phone?.whatsappNumber ? (
+                        <Tag color="green">{formData?.phone?.whatsappNumber}</Tag>
                       ) : (
                         "-"
                       )
                     }
                   />
+
                   <DetailsRow
                     label="Email"
                     value={
-                      formData.email ? (
-                        <a href={`mailto:${formData.email}`}>
-                          {formData.email}
+                      formData?.email ? (
+                        <a href={`mailto:${formData?.email}`}>
+                          {formData?.email}
                         </a>
                       ) : (
                         "-"
                       )
                     }
                   />
+
                   <DetailsRow
                     label="Gender"
                     value={

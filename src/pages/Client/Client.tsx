@@ -26,6 +26,7 @@ import { FaExclamationTriangle } from "react-icons/fa";
 import BasePopUpModal from "components/BaseComponents/BasePopUpModal";
 import saveAs from "file-saver";
 import { capitalizeWords, errorHandle } from "utils/commonFunctions";
+import SendQrCodeInviteModal from "components/QrCode/SendQrCodeInviteModal";
 
 const { handleResponse } = appConstants;
 
@@ -118,6 +119,7 @@ const Client = () => {
   const [isImporting, setIsImporting] = useState(false);
   const [showPopupModal, setShowPopupModal] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<FormData | null>(null);
+  const [showQrInviteModal, setShowQrInviteModal] = useState(false);
 
   const handleUpdateUserStatus = async (id: string, value: AnyObject) => {
     setIsLoading(true);
@@ -222,7 +224,9 @@ const Client = () => {
         toast.error(response?.message || "Failed to update client status");
       }
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Failed to update client status");
+      toast.error(
+        error?.response?.data?.message || "Failed to update client status"
+      );
     } finally {
       setIsLoading(false);
     }
@@ -284,7 +288,9 @@ const Client = () => {
         id: "vendorProfileId.company_type",
         enableColumnFilter: false,
         cell: (cell: any) => {
-          return cell.row.original?.vendorProfileId?.company_type ? capitalizeWords(cell.row.original?.vendorProfileId?.company_type) : "-";
+          return cell.row.original?.vendorProfileId?.company_type
+            ? capitalizeWords(cell.row.original?.vendorProfileId?.company_type)
+            : "-";
         },
       },
       {
@@ -857,20 +863,26 @@ const Client = () => {
         }
         loader={isLoading}
       />
+      <SendQrCodeInviteModal
+        show={showQrInviteModal}
+        onHide={() => setShowQrInviteModal(false)}
+        inviteType="client"
+      />
       <Container fluid>
         <div className="mt-2 mb-2">
           <Card>
             <Row className="fw-bold text-dark d-flex ">
               <Col
-                sm={6}
-                lg={6}
-                md={6}
+                xs={12}
+                sm={12}
+                md={4}
+                lg={3}
                 className="flex-wrap mt-4 d-flex align-items-center "
               >
                 <div className="ml-6 text-2xl font-bold">Clients</div>
               </Col>
-              <Col sm={6} lg={6} md={6} className="mt-4">
-                <div className="items-end justify-end mr-6 d-flex gap-3 flex-nowrap">
+              <Col xs={12} sm={12} md={8} lg={9} className="mt-4">
+                <div className="items-end justify-end mr-6 d-flex gap-2 flex-wrap">
                   <div
                     className="flex-shrink-0"
                     style={{ minWidth: "200px", width: "200px" }}
@@ -947,6 +959,15 @@ const Client = () => {
                     onClick={handleAdd}
                   >
                     + Add
+                  </BaseButton>
+
+                  <BaseButton
+                    color="primary"
+                    className="flex-shrink-0"
+                    onClick={() => setShowQrInviteModal(true)}
+                  >
+                    <i className="ri-qr-code-line me-1" />
+                    Send QR Invite
                   </BaseButton>
                 </div>
               </Col>
