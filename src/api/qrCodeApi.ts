@@ -12,3 +12,20 @@ export const checkEmailType = async (email: string) => {
   }
 };
 
+export interface SendQrCodeInvitePayload {
+  recipients: string[];
+  templateType: string;
+  message: string;
+  recipientType: "vendor" | "client";
+}
+
+export const sendQrCodeInvite = async (data: SendQrCodeInvitePayload) => {
+  try {
+    const response = await authServices.post("/qr-code/send-invite", data);
+    return response?.data;
+  } catch (error) {
+    console.error("Error sending QR code invite:", error);
+    throw error;
+  }
+};
+

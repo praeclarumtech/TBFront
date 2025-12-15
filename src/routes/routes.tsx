@@ -40,6 +40,8 @@ import SignIn from "pages/auth/SignIn";
 import VendorList from "pages/Vendor/VendorList";
 import ManageAppliedList from "pages/Vendor/ManageAppliedList";
 import EmailCheckApply from "pages/Vendor/EmailCheckApply";
+import VendorApplications from "pages/Vendor/VendorApplications";
+import ClientApplications from "pages/Client/ClientApplications";
 
 const routes = {
   ROOT: {
@@ -214,6 +216,16 @@ const routes = {
     title: "Email Check and Apply",
     path: "/vendor/email-check-apply",
     element: EmailCheckApply,
+  },
+  VENDOR_APPLICATIONS: {
+    title: "Vendor Applications",
+    path: "/vendor/applications",
+    element: VendorApplications,
+  },
+  CLIENT_APPLICATIONS: {
+    title: "Client Applications",
+    path: "/client/applications",
+    element: ClientApplications,
   },
   EMAIL: {
     title: "Email",

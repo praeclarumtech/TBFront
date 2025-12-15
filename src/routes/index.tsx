@@ -54,6 +54,8 @@ import QrCodeRouter from "pages/QrCodeRouter/QrCodeRouter";
 import VendorSuccess from "pages/Vendor/QrCode/VendorSuccess";
 import ClientSuccess from "pages/Client/QrCode/ClientSuccess";
 import EmailCheckApply from "pages/Vendor/EmailCheckApply";
+import ClientApplications from "pages/Client/ClientApplications";
+import VendorApplications from "pages/Vendor/VendorApplications";
 
 const RenderRouter: React.FC = () => {
   const {
@@ -142,6 +144,8 @@ const RenderRouter: React.FC = () => {
           <Route path="/vendorList" element={<VendorList />} />
           <Route path="/appliedJobApplicants" element={<ManageAppliedList />} />
           <Route path="/client" element={<Client />} />
+          <Route path="/client/applications" element={<ClientApplications />} />
+          <Route path="/vendor/applications" element={<VendorApplications />} />
           <Route
             path="/appliedJobApplicantsClient"
             element={<ManageAppliedListClient />}

@@ -7,6 +7,7 @@ import {
   VIEW_APPLICANT_BY_ID_VENDOR,
   VIEW_APPLIED_JOB_APPLICANTS,
   VIEW_APPLIED_JOB_USER,
+  VIEW_MATCHING_APPLICANTS,
 } from "./apiRoutes";
 import { authServices } from "./apiServices";
 
@@ -168,4 +169,20 @@ export const importVendor = async (
   });
 
   return response.data;
+};
+
+export const getMatchingApplicants = async (
+  jobId: string,
+  params?: {
+    page?: number;
+    limit?: number;
+  }
+) => {
+  const response = await authServices.get(
+    `${VIEW_MATCHING_APPLICANTS}/${jobId}`,
+    {
+      params,
+    }
+  );
+  return response?.data;
 };

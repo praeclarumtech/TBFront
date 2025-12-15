@@ -23,6 +23,7 @@ import {
 import ViewJob from "pages/master/ViewJob";
 import ViewJobApplicantsModal from "pages/Vendor/ViewJobApplicantsModal";
 import SendEmailModal from "components/Job/SendEmailModal";
+import MatchingApplicantsModal from "components/Job/MatchingApplicantsModal";
 
 import { ContentCopyOutlined } from "@mui/icons-material";
 import { Switch } from "antd";
@@ -64,6 +65,11 @@ const JobListing = () => {
   const [showSendEmailModal, setShowSendEmailModal] = useState<boolean>(false);
   const [selectedJobForEmail, setSelectedJobForEmail] = useState<any>(null);
   const [notifyingJobId, setNotifyingJobId] = useState<string>("");
+  const [showMatchingModal, setShowMatchingModal] = useState<boolean>(false);
+  const [selectedJobForMatching, setSelectedJobForMatching] = useState<{
+    id: string;
+    title: string;
+  } | null>(null);
 
   useEffect(() => {
     setCurrentLocation(location.pathname);
@@ -250,7 +256,7 @@ const JobListing = () => {
           );
         },
       },
-      ...(currentRole === "vendor" || currentRole === "admin"
+      ...(currentRole === "vendor"
         ? [
             {
               header: "Client Name",
@@ -407,8 +413,41 @@ const JobListing = () => {
                   </Tooltip.Portal>
                 </Tooltip.Root>
               )}
-              {currentRole === "vendor" ||
-                (currentRole === "admin" && (
+              {(currentRole === "vendor" ||
+                currentRole === "admin" ||
+                currentRole === "client") && (
+                <Tooltip.Root>
+                  <Tooltip.Trigger asChild>
+                    <button
+                      className="btn btn-sm"
+                      style={{ backgroundColor: "#8b5cf6" }}
+                      onClick={() => {
+                        setSelectedJobForMatching({
+                          id: cell?.row?.original._id,
+                          title: cell?.row?.original.job_subject,
+                        });
+                        setShowMatchingModal(true);
+                      }}
+                      disabled={!cell?.row?.original.isActive}
+                    >
+                      <i className="text-white ri-user-search-fill" />
+                    </button>
+                  </Tooltip.Trigger>
+                  <Tooltip.Portal>
+                    <Tooltip.Content
+                      side="bottom"
+                      sideOffset={4}
+                      className="px-2 py-1 text-xs text-white rounded shadow-lg"
+                      style={{ backgroundColor: "#8b5cf6" }}
+                    >
+                      Find Matching Candidates
+                      <Tooltip.Arrow style={{ fill: "#8b5cf6" }} />
+                    </Tooltip.Content>
+                  </Tooltip.Portal>
+                </Tooltip.Root>
+              )}
+              {(currentRole === "vendor" ||
+                currentRole === "admin") && (
                   <Tooltip.Root>
                     <Tooltip.Trigger asChild>
                       <button
@@ -436,7 +475,7 @@ const JobListing = () => {
                       </Tooltip.Content>
                     </Tooltip.Portal>
                   </Tooltip.Root>
-                ))}
+                )}
             </Tooltip.Provider>
           </div>
         ),
@@ -621,6 +660,17 @@ const JobListing = () => {
           onHide={handleCloseSendEmailModal}
           jobId={selectedJobForEmail._id}
           jobTitle={selectedJobForEmail.job_subject}
+        />
+      )}
+      {showMatchingModal && selectedJobForMatching && (
+        <MatchingApplicantsModal
+          show={showMatchingModal}
+          onHide={() => {
+            setShowMatchingModal(false);
+            setSelectedJobForMatching(null);
+          }}
+          jobId={selectedJobForMatching.id}
+          jobTitle={selectedJobForMatching.title}
         />
       )}
       <DeleteModal
