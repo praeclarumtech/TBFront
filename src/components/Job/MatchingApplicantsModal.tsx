@@ -121,7 +121,7 @@ const MatchingApplicantsModal: React.FC<MatchingApplicantsModalProps> = ({
       };
 
       const res = await getMatchingApplicants(jobId, params);
-      
+
       if (res?.success || res?.data) {
         setApplicants(
           res?.data?.applicants || res?.data?.results || res?.data || []
@@ -404,9 +404,26 @@ const MatchingApplicantsModal: React.FC<MatchingApplicantsModalProps> = ({
       fixed: "right",
       render: (_, record) => {
         const isActive = record?.isActive !== false;
-        const status = record?.status || "";
-        const isApplied = status?.toLowerCase() === "applied";
+        const hasApplied = record?.jobApplicationStatus?.hasApplied === true;
+        const status = record?.jobApplicationStatus?.status || "";
+        const interviewStage = record?.jobApplicationStatus?.interviewStage || "";
         const isInviting = invitingApplicantId === record._id;
+
+        // Get status badge style
+        const getAppliedStatusStyle = (s: string) => {
+          const statusLower = s.toLowerCase();
+          if (statusLower === "applied")
+            return "bg-blue-100 text-blue-700 border-blue-200";
+          if (statusLower === "shortlisted" || statusLower === "selected")
+            return "bg-green-100 text-green-700 border-green-200";
+          if (statusLower === "rejected")
+            return "bg-red-100 text-red-700 border-red-200";
+          if (statusLower === "on hold" || statusLower === "pending")
+            return "bg-yellow-100 text-yellow-700 border-yellow-200";
+          if (statusLower === "interviewed")
+            return "bg-purple-100 text-purple-700 border-purple-200";
+          return "bg-gray-100 text-gray-700 border-gray-200";
+        };
 
         return (
           <div className="flex flex-col gap-2">
@@ -422,8 +439,24 @@ const MatchingApplicantsModal: React.FC<MatchingApplicantsModalProps> = ({
               </button>
             )}
 
-            {/* Invite to Job - hidden if status is "applied" */}
-            {!isApplied && (
+            {/* Show Applied Status when hasApplied is true */}
+            {hasApplied ? (
+              <div className="flex flex-col gap-1">
+                <span
+                  className={`inline-flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium border capitalize ${getAppliedStatusStyle(
+                    status
+                  )}`}
+                >
+                  <i className="ri-check-line"></i>
+                  {status || "Applied"}
+                </span>
+                {interviewStage && (
+                  <span className="text-xs text-purple-600 bg-purple-50 px-2 py-1 rounded text-center capitalize">
+                    {interviewStage}
+                  </span>
+                )}
+              </div>
+            ) : (
               <button
                 onClick={() => handleInviteToJob(record)}
                 disabled={!isActive || isInviting}
