@@ -17,6 +17,13 @@ import { errorHandle, getCurrentUserRole } from "utils/commonFunctions";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import appConstants from "constants/constant";
+import { useSettings, TemplateContext } from "contexts/SettingsProvider";
+import {
+  getVendorTemplates,
+  getClientTemplates,
+  getJobTemplates,
+  getCustomTemplates,
+} from "api/settingsApi";
 
 const { roleEnums } = appConstants;
 
@@ -47,6 +54,7 @@ const SendEmailModal: React.FC<SendEmailModalProps> = ({
   singleApplicant,
 }) => {
   const currentRole = getCurrentUserRole();
+  const { filterTemplatesByContext } = useSettings();
   const [vendorOptions, setVendorOptions] = useState<SelectedOption[]>([]);
   const [applicantOptions, setApplicantOptions] = useState<SelectedOption[]>(
     []
@@ -66,6 +74,13 @@ const SendEmailModal: React.FC<SendEmailModalProps> = ({
   const [sending, setSending] = useState(false);
   const [fetchingVendors, setFetchingVendors] = useState(false);
   const [fetchingApplicants, setFetchingApplicants] = useState(false);
+
+  // Determine the template context based on role
+  const getTemplateContext = (): TemplateContext => {
+    if (currentRole === roleEnums.Vendor) return "vendor";
+    if (currentRole === roleEnums.Client) return "client";
+    return "job";
+  };
 
   // Check if applicant status has been changed from default
   const isStatusUnchanged =
@@ -177,66 +192,94 @@ const SendEmailModal: React.FC<SendEmailModalProps> = ({
 
   const fetchEmailTemplates = async () => {
     try {
+      // Fetch all templates for data reference
       const res = await viewEmailTemplate({ limit: 1000 });
-      if (res?.success) {
-        const templates = res.data?.templates || [];
-        setEmailTemplatesData(templates);
-        const templateOptions = templates
-          .map((template: any) => ({
-            label: template.name || template.type,
-            value: template.type,
-          }))
-          .filter((option: SelectedOption) => {
-            const templateType = option.value?.toUpperCase();
+      const templates = res?.success ? res.data?.templates || [] : [];
+      setEmailTemplatesData(templates);
 
-            // When excludeJobTemplates is true, exclude JOB_NOTIFICATION and CLIENT_JOB_EMAIL
-            if (excludeJobTemplates) {
-              return (
-                templateType !== "JOB_NOTIFICATION" &&
-                templateType !== "CLIENT_JOB_EMAIL"
-              );
-            }
+      // Determine context and fetch templates from appropriate API
+      const context = getTemplateContext();
+      let templateOptions: SelectedOption[] = [];
 
-            // Default behavior: filter based on role
-            if (currentRole === roleEnums.Client) {
-              return templateType === "CLIENT_JOB_EMAIL";
-            }
-            if (currentRole === roleEnums.Vendor) {
-              return templateType === "JOB_NOTIFICATION";
-            }
-            return true;
-          });
-        setEmailTemplates(templateOptions);
+      // Try to fetch from settings API based on context
+      let settingsResponse = null;
+      if (excludeJobTemplates) {
+        // For custom emails (excluding job templates)
+        settingsResponse = await getCustomTemplates();
+      } else if (currentRole === roleEnums.Vendor) {
+        settingsResponse = await getVendorTemplates();
+      } else if (currentRole === roleEnums.Client) {
+        settingsResponse = await getClientTemplates();
+      } else {
+        settingsResponse = await getJobTemplates();
+      }
 
-        // Only auto-select default template when not excluding job templates
-        if (!excludeJobTemplates) {
-          let defaultTemplate: SelectedOption | null = null;
+      console.log(settingsResponse);
+
+      if (settingsResponse?.success && settingsResponse?.data) {
+        // Use templates from settings API
+        templateOptions = settingsResponse.data;
+      } else {
+        // Fallback: filter locally
+        templateOptions = templates.map((template: any) => ({
+          label: template.name || template.type,
+          value: template.type,
+        }));
+
+        // Apply role-based filtering
+        templateOptions = templateOptions.filter((option: SelectedOption) => {
+          const templateType = option.value?.toUpperCase();
+
+          if (excludeJobTemplates) {
+            return (
+              templateType !== "JOB_NOTIFICATION" &&
+              templateType !== "CLIENT_JOB_EMAIL"
+            );
+          }
+
           if (currentRole === roleEnums.Client) {
-            defaultTemplate =
-              templateOptions.find(
-                (opt: SelectedOption) =>
-                  opt.value?.toUpperCase() === "CLIENT_JOB_EMAIL"
-              ) || null;
-          } else if (currentRole === roleEnums.Vendor) {
-            defaultTemplate =
-              templateOptions.find(
-                (opt: SelectedOption) =>
-                  opt.value?.toUpperCase() === "JOB_NOTIFICATION"
-              ) || null;
+            return templateType === "CLIENT_JOB_EMAIL";
           }
+          if (currentRole === roleEnums.Vendor) {
+            return templateType === "JOB_NOTIFICATION";
+          }
+          return true;
+        });
 
-          if (defaultTemplate) {
-            setSelectedTemplate(defaultTemplate);
-            const templateData = await getEmailTemplateByType(
-              defaultTemplate.value
-            );
-            const template = templates.find(
-              (t: any) => t.type === defaultTemplate?.value
-            );
-            setSelectedTemplateId(template?._id || "");
-            setTemplateSubject(templateData.data?.subject || "");
-            setTemplateDescription(templateData.data?.description || "");
-          }
+        // Apply settings-based filtering
+        templateOptions = filterTemplatesByContext(templateOptions, context);
+      }
+
+      setEmailTemplates(templateOptions);
+
+      // Only auto-select default template when not excluding job templates
+      if (!excludeJobTemplates) {
+        let defaultTemplate: SelectedOption | null = null;
+        if (currentRole === roleEnums.Client) {
+          defaultTemplate =
+            templateOptions.find(
+              (opt: SelectedOption) =>
+                opt.value?.toUpperCase() === "CLIENT_JOB_EMAIL"
+            ) || null;
+        } else if (currentRole === roleEnums.Vendor) {
+          defaultTemplate =
+            templateOptions.find(
+              (opt: SelectedOption) =>
+                opt.value?.toUpperCase() === "JOB_NOTIFICATION"
+            ) || null;
+        }
+
+        if (defaultTemplate) {
+          setSelectedTemplate(defaultTemplate);
+          const templateData = await getEmailTemplateByType(
+            defaultTemplate.value
+          );
+          const template = templates.find(
+            (t: any) => t.type === defaultTemplate?.value
+          );
+          setSelectedTemplateId(template?._id || "");
+          setTemplateSubject(templateData.data?.subject || "");
+          setTemplateDescription(templateData.data?.description || "");
         }
       }
     } catch (error) {

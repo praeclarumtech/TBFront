@@ -56,6 +56,7 @@ import ClientSuccess from "pages/Client/QrCode/ClientSuccess";
 import EmailCheckApply from "pages/Vendor/EmailCheckApply";
 import ClientApplications from "pages/Client/ClientApplications";
 import VendorApplications from "pages/Vendor/VendorApplications";
+import Settings from "pages/settings/Settings";
 
 const RenderRouter: React.FC = () => {
   const {
@@ -83,6 +84,7 @@ const RenderRouter: React.FC = () => {
     APPLY_JOB_LIST,
     EMAIL_CHECK_APPLY,
     LOGIN,
+    SETTINGS,
   } = routes;
 
   return (
@@ -157,6 +159,7 @@ const RenderRouter: React.FC = () => {
           <Route path="userManagement" element={<UserManagement />} />
           <Route path="roles" element={<Roles />} />
           <Route path="permission" element={<Permission />} />
+          <Route path={SETTINGS.path} element={<Settings />} />
           <Route
             path={CHANGE_PASSWORD.path}
             element={

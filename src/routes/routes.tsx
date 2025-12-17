@@ -19,6 +19,7 @@ import UpdateSkill from "pages/master/RoleAndSkill";
 import FindAndReplace from "pages/master/FindAndReplace";
 import AddEmailTemplate from "pages/master/EmailTemplate";
 import AddDesignation from "pages/master/Designation";
+import Settings from "pages/settings/Settings";
 
 import Country from "pages/master/CityStateCountry";
 import State from "pages/master/State";
@@ -329,6 +330,11 @@ const routes = {
     title: "Layout Vertical",
     path: "/layout_vertical",
     element: LayoutVertical,
+  },
+  SETTINGS: {
+    title: "Settings",
+    path: "/settings",
+    element: Settings,
   },
 };
 

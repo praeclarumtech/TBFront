@@ -10,6 +10,7 @@ import {
   PlusOutlined,
   InboxOutlined,
   TeamOutlined,
+  SettingOutlined,
 } from "@ant-design/icons";
 import Logosvg from "components/BaseComponents/Logosvg";
 import { navigationGroups, masterRoutes } from "constants/navigationConstants";
@@ -220,6 +221,11 @@ const Sidebar: React.FC<SidebarProps> = ({ toggleMenu }) => {
               modules.includes(route.permission)
             );
 
+            // Check if settings has permissions
+            const hasSettingsPermissions = navigationGroups.SETTINGS.items.some(
+              (item) => modules.includes(item.permission)
+            );
+
             return (
               <>
                 {/* Applicants Section */}
@@ -374,6 +380,31 @@ const Sidebar: React.FC<SidebarProps> = ({ toggleMenu }) => {
                           </Menu.Item>
                         ))}
                     </Menu.SubMenu>
+                  </Menu.ItemGroup>
+                )}
+
+                {/* Settings Section */}
+                {hasSettingsPermissions && (
+                  <Menu.ItemGroup
+                    key="settings-group"
+                    title={
+                      <MenuGroupHeading
+                        title={navigationGroups.SETTINGS.title}
+                      />
+                    }
+                  >
+                    {navigationGroups.SETTINGS.items
+                      .filter((item) => modules.includes(item.permission))
+                      .map((item) => (
+                        <Menu.Item
+                          key={item.key}
+                          icon={<SettingOutlined style={{ fontSize: 18 }} />}
+                        >
+                          <Link to={item.key} onClick={handleCloseMenu}>
+                            {item.label}
+                          </Link>
+                        </Menu.Item>
+                      ))}
                   </Menu.ItemGroup>
                 )}
               </>

@@ -39,6 +39,9 @@ export const PermissionKey = {
   MASTER_COUNTRY: "master_country",
   MASTER_STATE: "master_state",
   MASTER_CITY: "master_city",
+
+  // Settings
+  SETTINGS: "settings",
 };
 
 // Navigation menu structure for permission assignment
@@ -128,6 +131,13 @@ export const navItems = [
       { accessorKey: PermissionKey.MASTER_COUNTRY, name: "Add Country" },
       { accessorKey: PermissionKey.MASTER_STATE, name: "Add State" },
       { accessorKey: PermissionKey.MASTER_CITY, name: "Add City" },
+    ],
+  },
+  {
+    accessorKey: "settings",
+    name: "Settings",
+    subItems: [
+      { accessorKey: PermissionKey.SETTINGS, name: "Application Settings" },
     ],
   },
 ];
@@ -260,5 +270,15 @@ export const navigationGroups = {
   MASTERS: {
     title: "MASTERS",
     items: masterRoutes,
+  },
+  SETTINGS: {
+    title: "SETTINGS",
+    items: [
+      {
+        key: "/settings",
+        label: "Application Settings",
+        permission: PermissionKey.SETTINGS,
+      },
+    ],
   },
 };

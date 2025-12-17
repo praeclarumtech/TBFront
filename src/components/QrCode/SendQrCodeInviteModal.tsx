@@ -12,6 +12,8 @@ import { viewEmailTemplate, getEmailTemplateByType } from "api/emailApi";
 import { toast } from "react-toastify";
 import { QRCodeSVG } from "qrcode.react";
 import { SelectedOption } from "interfaces/applicant.interface";
+import { useSettings } from "contexts/SettingsProvider";
+import { getQrCodeTemplates } from "api/settingsApi";
 
 interface SendQrCodeInviteModalProps {
   show: boolean;
@@ -27,6 +29,7 @@ const SendQrCodeInviteModal = ({
   const [isLoading, setIsLoading] = useState(false);
   const [showQrPreview, setShowQrPreview] = useState(false);
   const [templateTypes, setTemplateTypes] = useState<SelectedOption[]>([]);
+  const { filterTemplatesByContext } = useSettings();
 
   // Default template based on invite type
   const defaultTemplate =
@@ -45,16 +48,27 @@ const SendQrCodeInviteModal = ({
   useEffect(() => {
     const fetchTemplatesAndLoadDefault = async () => {
       try {
-        // Fetch all templates
-        const response = await viewEmailTemplate({ limit: 1000 });
-        const types = response.data.templates.map(
-          (template: any) => template.type
-        );
-        const mappedTypes = types.map((type: string) => ({
-          label: type,
-          value: type,
-        }));
-        setTemplateTypes(mappedTypes);
+        // Try to fetch templates from settings API first
+        const settingsResponse = await getQrCodeTemplates();
+        let filteredTemplates: SelectedOption[] = [];
+
+        if (settingsResponse?.success && settingsResponse?.data) {
+          // Use templates from API
+          filteredTemplates = settingsResponse.data;
+        } else {
+          // Fallback: Fetch all templates and filter locally
+          const response = await viewEmailTemplate({ limit: 1000 });
+          const types = response.data.templates.map(
+            (template: any) => template.type
+          );
+          const mappedTypes = types.map((type: string) => ({
+            label: type,
+            value: type,
+          }));
+          filteredTemplates = filterTemplatesByContext(mappedTypes, "qrcode");
+        }
+
+        setTemplateTypes(filteredTemplates);
 
         // Set default template and load its content
         validation.setFieldValue("email_template", defaultTemplate);
@@ -77,7 +91,7 @@ const SendQrCodeInviteModal = ({
     if (show) {
       fetchTemplatesAndLoadDefault();
     }
-  }, [show, inviteType]);
+  }, [show, inviteType, filterTemplatesByContext]);
 
   console.log(inviteType);
 
@@ -206,8 +220,8 @@ const SendQrCodeInviteModal = ({
   };
 
   const previewEmail =
-      validation.values.recipients
-        .split(",")
+    validation.values.recipients
+      .split(",")
       .map((e: string) => e.trim())
       .filter((e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e))[0] || "";
 
@@ -220,8 +234,8 @@ const SendQrCodeInviteModal = ({
       backdrop="static"
       keyboard={false}
     >
-      <Modal.Header closeButton className="bg-primary text-white">
-        <Modal.Title>
+      <Modal.Header closeButton className="bg-primary !text-white">
+        <Modal.Title className="!text-white">
           <i className="ri-qr-code-line me-2" />
           Send QR Code Invitation -{" "}
           {inviteType === "vendor" ? "Vendor" : "Client"}
