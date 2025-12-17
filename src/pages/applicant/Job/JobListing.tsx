@@ -26,7 +26,7 @@ import SendEmailModal from "components/Job/SendEmailModal";
 import MatchingApplicantsModal from "components/Job/MatchingApplicantsModal";
 
 import { ContentCopyOutlined } from "@mui/icons-material";
-import { Switch } from "antd";
+import { Switch, Modal as AntModal } from "antd";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import { useLocation } from "react-router-dom";
 import ActiveModal from "components/BaseComponents/ActiveModal";
@@ -70,6 +70,9 @@ const JobListing = () => {
     id: string;
     title: string;
   } | null>(null);
+  const [showNotifyConfirmModal, setShowNotifyConfirmModal] =
+    useState<boolean>(false);
+  const [jobToNotify, setJobToNotify] = useState<any>(null);
 
   useEffect(() => {
     setCurrentLocation(location.pathname);
@@ -446,36 +449,36 @@ const JobListing = () => {
                   </Tooltip.Portal>
                 </Tooltip.Root>
               )}
-              {(currentRole === "vendor" ||
-                currentRole === "admin") && (
-                  <Tooltip.Root>
-                    <Tooltip.Trigger asChild>
-                      <button
-                        className="btn btn-sm btn-soft-success bg-info"
-                        onClick={() =>
-                          handleNotifyMatchingApplicants(cell?.row?.original)
-                        }
-                        disabled={
-                          !cell?.row?.original.isActive ||
-                          (isLoading &&
-                            notifyingJobId === cell?.row?.original._id)
-                        }
-                      >
-                        <i className="text-white ri-notification-3-fill" />
-                      </button>
-                    </Tooltip.Trigger>
-                    <Tooltip.Portal>
-                      <Tooltip.Content
-                        side="bottom"
-                        sideOffset={4}
-                        className="px-2 py-1 text-xs text-white rounded shadow-lg bg-info"
-                      >
-                        Notify Matching Applicants
-                        <Tooltip.Arrow style={{ fill: "#0ea5e9" }} />
-                      </Tooltip.Content>
-                    </Tooltip.Portal>
-                  </Tooltip.Root>
-                )}
+              {(currentRole === "vendor" || currentRole === "admin") && (
+                <Tooltip.Root>
+                  <Tooltip.Trigger asChild>
+                    <button
+                      className="btn btn-sm btn-soft-success bg-info"
+                      onClick={() => {
+                        setJobToNotify(cell?.row?.original);
+                        setShowNotifyConfirmModal(true);
+                      }}
+                      disabled={
+                        !cell?.row?.original.isActive ||
+                        (isLoading &&
+                          notifyingJobId === cell?.row?.original._id)
+                      }
+                    >
+                      <i className="text-white ri-notification-3-fill" />
+                    </button>
+                  </Tooltip.Trigger>
+                  <Tooltip.Portal>
+                    <Tooltip.Content
+                      side="bottom"
+                      sideOffset={4}
+                      className="px-2 py-1 text-xs text-white rounded shadow-lg bg-info"
+                    >
+                      Notify Matching Applicants
+                      <Tooltip.Arrow style={{ fill: "#0ea5e9" }} />
+                    </Tooltip.Content>
+                  </Tooltip.Portal>
+                </Tooltip.Root>
+              )}
             </Tooltip.Provider>
           </div>
         ),
@@ -673,6 +676,58 @@ const JobListing = () => {
           jobTitle={selectedJobForMatching.title}
         />
       )}
+      {/* Notify Matching Applicants Confirmation Modal */}
+      <AntModal
+        open={showNotifyConfirmModal}
+        onCancel={() => {
+          setShowNotifyConfirmModal(false);
+          setJobToNotify(null);
+        }}
+        footer={null}
+        centered
+        width={420}
+      >
+        <div className="text-center py-4">
+          <i
+            className="ri-notification-3-line text-info"
+            style={{ fontSize: "48px" }}
+          ></i>
+          <h5 className="text-dark mt-4 mb-2">Notify Matching Applicants</h5>
+          <p className="text-muted mb-4">
+            Are you sure you want to notify all matching applicants for{" "}
+            <strong>"{jobToNotify?.job_subject}"</strong>?
+          </p>
+          <div className="d-flex justify-content-center gap-2">
+            <button
+              className="btn btn-info px-4 text-white"
+              onClick={() => {
+                handleNotifyMatchingApplicants(jobToNotify);
+                setShowNotifyConfirmModal(false);
+                setJobToNotify(null);
+              }}
+              disabled={isLoading && notifyingJobId === jobToNotify?._id}
+            >
+              {isLoading && notifyingJobId === jobToNotify?._id ? (
+                <>
+                  <i className="ri-loader-4-line animate-spin me-1"></i>
+                  Sending...
+                </>
+              ) : (
+                "Yes, Notify"
+              )}
+            </button>
+            <button
+              className="btn btn-light px-4"
+              onClick={() => {
+                setShowNotifyConfirmModal(false);
+                setJobToNotify(null);
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </AntModal>
       <DeleteModal
         show={showDeleteModal}
         onCloseClick={closeDeleteModal}
