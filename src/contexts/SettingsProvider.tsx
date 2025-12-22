@@ -11,7 +11,6 @@ import {
   updateEmailTemplateVisibility,
   getTemplatesByContext,
 } from "api/settingsApi";
-import { viewEmailTemplate } from "api/emailApi";
 import toastify from "utils/toastify";
 import MESSAGES from "constants/messageConstants";
 
@@ -41,18 +40,6 @@ export interface AppSettings {
 
 // Template context types for filtering
 export type TemplateContext = "vendor" | "client" | "job" | "qrcode" | "custom";
-
-// API email template response interface
-interface EmailTemplateResponse {
-  _id: string;
-  templateType: string;
-  templateName: string;
-  vendor?: boolean;
-  client?: boolean;
-  job?: boolean;
-  qrCode?: boolean;
-  custom?: boolean;
-}
 
 // Default settings
 export const defaultSettings: AppSettings = {
@@ -107,6 +94,7 @@ type SettingsContextType = {
   fetchTemplatesForContext: (
     context: TemplateContext
   ) => Promise<{ label: string; value: string }[]>;
+  fetchAllEmailTemplates: () => Promise<{ label: string; value: string }[]>;
   formatDate: (date: Date | string) => string;
   getVisibleTemplates: (context: TemplateContext) => string[];
   isTemplateVisibleInContext: (
@@ -153,72 +141,40 @@ function SettingsProvider({ children }: { children: React.ReactNode }) {
   });
   const [isLoading, setIsLoading] = useState(false);
 
-  // Map API template response to TemplateVisibility
-  const mapTemplateToVisibility = useCallback(
-    (
-      template: EmailTemplateResponse,
-      savedVisibility?: TemplateVisibility
-    ): TemplateVisibility => {
-      // Use saved visibility settings if available, otherwise use API values or defaults
-      return {
-        templateType: template.templateType,
-        templateName: template.templateName,
-        vendor: savedVisibility?.vendor ?? template.vendor ?? true,
-        client: savedVisibility?.client ?? template.client ?? true,
-        job: savedVisibility?.job ?? template.job ?? true,
-        qrCode: savedVisibility?.qrCode ?? template.qrCode ?? false,
-        custom: savedVisibility?.custom ?? template.custom ?? true,
-      };
-    },
-    []
-  );
-
-  // Fetch email templates and settings from API on mount
+  // Fetch settings from API on mount
   const fetchSettings = useCallback(async () => {
+    // Check if user is authenticated before making API calls
+    const authToken = localStorage.getItem("authUser");
+    if (!authToken) {
+      // User not logged in, use local settings only
+      return;
+    }
+
     setIsLoading(true);
     try {
-      // Fetch both settings and email templates in parallel
-      const [settingsResponse, templatesResponse] = await Promise.all([
-        getSettings(),
-        viewEmailTemplate({}),
-      ]);
+      const settingsResponse = await getSettings().catch(() => ({
+        success: false,
+        data: null,
+      }));
 
-      // Get saved visibility from settings API or localStorage
-      const savedVisibility =
-        settingsResponse?.data?.emailTemplateVisibility ||
-        settings.emailTemplateVisibility;
-console.log("savedVisibility", savedVisibility, templatesResponse.data);
-      // Map email templates to visibility structure
-      let emailTemplateVisibility: TemplateVisibility[] = [];
-      if (templatesResponse?.data && Array.isArray(templatesResponse.data)) {
-        emailTemplateVisibility = templatesResponse.data.map(
-          (template: EmailTemplateResponse) => {
-            const saved = savedVisibility?.find(
-              (sv: TemplateVisibility) =>
-                sv.templateType === template.templateType
-            );
-            return mapTemplateToVisibility(template, saved);
-          }
+      if (settingsResponse?.data) {
+        const mergedSettings: AppSettings = {
+          ...defaultSettings,
+          ...settingsResponse.data,
+        };
+
+        setSettings(mergedSettings);
+        localStorage.setItem(
+          SETTINGS_STORAGE_KEY,
+          JSON.stringify(mergedSettings)
         );
       }
-
-      const mergedSettings: AppSettings = {
-        ...defaultSettings,
-        ...settingsResponse?.data,
-        emailTemplateVisibility,
-      };
-
-      setSettings(mergedSettings);
-      localStorage.setItem(
-        SETTINGS_STORAGE_KEY,
-        JSON.stringify(mergedSettings)
-      );
     } catch (error) {
       console.log("Using local settings", error);
     } finally {
       setIsLoading(false);
     }
-  }, [mapTemplateToVisibility, settings.emailTemplateVisibility]);
+  }, []);
 
   useEffect(() => {
     fetchSettings();
@@ -277,39 +233,11 @@ console.log("savedVisibility", savedVisibility, templatesResponse.data);
     []
   );
 
-  // Reset to default settings (refetch from API)
-  const resetSettings = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const templatesResponse = await viewEmailTemplate({});
-      if (templatesResponse?.data && Array.isArray(templatesResponse.data)) {
-        const emailTemplateVisibility = templatesResponse.data.map(
-          (template: EmailTemplateResponse): TemplateVisibility => ({
-            templateType: template.templateType,
-            templateName: template.templateName,
-            vendor: template.vendor ?? true,
-            client: template.client ?? true,
-            job: template.job ?? true,
-            qrCode: template.qrCode ?? false,
-            custom: template.custom ?? true,
-          })
-        );
-        const resetSettingsData: AppSettings = {
-          ...defaultSettings,
-          emailTemplateVisibility,
-        };
-        setSettings(resetSettingsData);
-        localStorage.setItem(
-          SETTINGS_STORAGE_KEY,
-          JSON.stringify(resetSettingsData)
-        );
-      }
-      toastify("Settings reset to defaults", { type: "success" });
-    } catch (error) {
-      toastify(MESSAGES.ERROR.SOMETHING_WRONG.toString(), { type: "error" });
-    } finally {
-      setIsLoading(false);
-    }
+  // Reset to default settings
+  const resetSettings = useCallback(() => {
+    setSettings(defaultSettings);
+    localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(defaultSettings));
+    toastify("Settings reset to defaults", { type: "success" });
   }, []);
 
   // Save date & time settings to API
@@ -395,6 +323,34 @@ console.log("savedVisibility", savedVisibility, templatesResponse.data);
     },
     []
   );
+
+  // Format template type to readable label (e.g., "APPLICATION_RECEIVED" -> "Application Received")
+  const formatTemplateLabel = (type: string): string => {
+    return type
+      .toLowerCase()
+      .replace(/_/g, " ")
+      .replace(/\b\w/g, (char) => char.toUpperCase());
+  };
+
+  // Fetch all email templates for custom context from API
+  const fetchAllEmailTemplates = useCallback(async (): Promise<
+    { label: string; value: string }[]
+  > => {
+    try {
+      const response = await getTemplatesByContext("custom");
+      if (response?.success && response?.data) {
+        // Format labels to be more readable
+        return response.data.map((template) => ({
+          label: formatTemplateLabel(template.value),
+          value: template.value,
+        }));
+      }
+      return [];
+    } catch (error) {
+      console.error("Error fetching email templates:", error);
+      return [];
+    }
+  }, []);
 
   // Format date according to current settings
   const formatDate = useCallback(
@@ -524,6 +480,7 @@ console.log("savedVisibility", savedVisibility, templatesResponse.data);
     saveTemplateVisibilitySettings,
     saveSettings,
     fetchTemplatesForContext,
+    fetchAllEmailTemplates,
     formatDate,
     getVisibleTemplates,
     isTemplateVisibleInContext,

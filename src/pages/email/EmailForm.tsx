@@ -2,11 +2,8 @@
 import { useEffect, useState, useRef } from "react";
 import { useMounted } from "hooks/useMounted";
 import { useLocation, useNavigate } from "react-router-dom";
-import {
-  getEmailTemplateByType,
-  sendEmail,
-  viewEmailTemplate,
-} from "api/emailApi";
+import { getEmailTemplateByType, sendEmail } from "api/emailApi";
+import { useSettings } from "contexts/SettingsProvider";
 import { toast } from "react-toastify";
 // import "react-toastify/dist/ReactToastify.css";
 import { useFormik } from "formik";
@@ -43,6 +40,7 @@ const EmailForm = () => {
   const hasMounted = useMounted();
   const navigate = useNavigate();
   const location = useLocation();
+  const { fetchAllEmailTemplates } = useSettings();
   const initialEmailBcc = location.state?.email_bcc || "";
 
   const fromPage = location.state?.fromPage || "/email";
@@ -55,28 +53,19 @@ const EmailForm = () => {
   const bccTooltipRef = useRef<HTMLDivElement>(null);
   const [toInputFocused, setToInputFocused] = useState(false);
   const [bccInputFocused, setBccInputFocused] = useState(false);
-  const getTemplateType = async () => {
-    const response = await viewEmailTemplate({ limit: 1000 });
-    const types = response.data.templates.map((template: any) => template.type);
-    return types;
-  };
 
   useEffect(() => {
     const fetchTypes = async () => {
       try {
-        const types = await getTemplateType();
-        const mappedTypes = types.map((type: string) => ({
-          label: type,
-          value: type,
-        }));
-        setTemplateTypes(mappedTypes);
+        const templates = await fetchAllEmailTemplates();
+        setTemplateTypes(templates);
       } catch (error) {
         console.error("Error fetching template types:", error);
       }
     };
 
     fetchTypes();
-  }, []);
+  }, [fetchAllEmailTemplates]);
 
   const handleTemplateChange = async (selectedOption: SelectedOption) => {
     const selectedType = selectedOption?.value;

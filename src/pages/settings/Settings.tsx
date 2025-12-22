@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment, useState, useEffect } from "react";
 import {
   Row,
   Col,
@@ -33,9 +33,17 @@ const Settings = () => {
     saveDateTimeSettings,
     saveTemplateVisibilitySettings,
     formatDate,
+    refetchTemplates,
   } = useSettings();
 
   const [activeTab, setActiveTab] = useState("datetime");
+
+  // Fetch templates when switching to templates tab
+  useEffect(() => {
+    if (activeTab === "templates") {
+      refetchTemplates();
+    }
+  }, [activeTab, refetchTemplates]);
 
   // Handle save based on active tab
   const handleSave = async () => {

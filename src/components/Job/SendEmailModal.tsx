@@ -195,6 +195,7 @@ const SendEmailModal: React.FC<SendEmailModalProps> = ({
       // Fetch all templates for data reference
       const res = await viewEmailTemplate({ limit: 1000 });
       const templates = res?.success ? res.data?.templates || [] : [];
+      console.log("templates",templates);
       setEmailTemplatesData(templates);
 
       // Determine context and fetch templates from appropriate API
@@ -214,11 +215,14 @@ const SendEmailModal: React.FC<SendEmailModalProps> = ({
         settingsResponse = await getJobTemplates();
       }
 
-      console.log(settingsResponse);
+      console.log("settingsResponse",settingsResponse);
 
       if (settingsResponse?.success && settingsResponse?.data) {
         // Use templates from settings API
-        templateOptions = settingsResponse.data;
+        templateOptions = settingsResponse.data?.map((template: any) => ({
+          value: template.type,
+          label: template.subject,
+        }));
       } else {
         // Fallback: filter locally
         templateOptions = templates.map((template: any) => ({
