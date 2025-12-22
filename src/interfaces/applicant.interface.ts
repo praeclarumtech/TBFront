@@ -329,7 +329,7 @@ export const QrApplicants = Yup.object({
 
   phoneNumber: Yup.string()
     .required("Phone number is required.")
-    .matches(/^[0-9]{10}$/, "Please enter a valid 10-digit phone number."),
+    .matches(/^[1-9][0-9]{9}$/, "Please enter a valid 10-digit phone number (should not start with 0)."),
 
   // preferredLocations: Yup.string()
   //   .required("Preferred location is required.")

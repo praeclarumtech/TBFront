@@ -167,7 +167,10 @@ const UserProfileEdit = () => {
       company_email: Yup.string().email(
         validationMessages.format("Company Email")
       ),
-      company_phone_number: Yup.string(),
+      company_phone_number: Yup.string().matches(
+        /^[1-9][0-9]{9}$/,
+        "Please enter a valid 10-digit phone number (should not start with 0)."
+      ),
       company_location: Yup.string(),
       company_strength: Yup.string(),
       company_linkedin_profile: Yup.string().url("Please enter a valid URL"),
@@ -175,7 +178,7 @@ const UserProfileEdit = () => {
       whatsapp_number: Yup.string()
         .matches(
           /^[1-9][0-9]{9}$/,
-          "Please enter a valid 10-digit phone number"
+          "Please enter a valid 10-digit phone number (should not start with 0)."
         )
         .required("Whatsapp number is required"),
       vendor_linkedin_profile: Yup.string().url("Please enter a valid URL"),
@@ -215,7 +218,7 @@ const UserProfileEdit = () => {
             if (location.state?.from == "Vendor") {
               navigate("/vendorList");
             } else if (location.state?.from == "Client") {
-              navigate("/client")
+              navigate("/client");
             } else {
               navigate("/userManagement");
             }
