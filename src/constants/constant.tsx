@@ -377,6 +377,7 @@ const appConstants = Object.freeze({
     { value: "remote", label: "Remote" },
     { value: "onsite", label: "Onsite" },
     { value: "hybrid", label: "Hybrid" },
+    { value: "freelancer", label: "Freelancer" },
   ],
   noticePeriodType: [
     { value: "30", label: "30" },

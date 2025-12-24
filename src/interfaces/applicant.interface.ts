@@ -137,7 +137,7 @@ export const jobApplicantSchema = Yup.object({
   workPreference: Yup.string()
     // .required("Work preference is required.")
     .oneOf(
-      ["remote", "onsite", "hybrid"],
+      ["remote", "onsite", "hybrid","freelancer"],
       "Please select a valid work preference."
     ),
   practicalUrl: Yup.string().url("Please enter a valid URL."),
