@@ -116,9 +116,11 @@ const TableContainer = ({
   customPadding,
   availableColumns,
   onColumnsChange,
+  hideColumnsDropdown = false,
 }: TableContainerProps & {
   availableColumns?: { id: string; header: string; isVisible?: boolean }[];
   onColumnsChange?: (visibleColumns: string[]) => void;
+  hideColumnsDropdown?: boolean;
 }) => {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
@@ -243,7 +245,7 @@ const TableContainer = ({
                   </div>
                 )}
 
-                {availableColumns && (
+                {availableColumns && !hideColumnsDropdown && (
                   <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown}>
                     <DropdownToggle caret className="px-3" color="primary">
                       Columns

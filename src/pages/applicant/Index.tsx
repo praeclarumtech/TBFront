@@ -43,6 +43,7 @@ import {
 import FilterDrawer from "components/applicant/FilterDrawer";
 import { COLUMN_CONFIGURATIONS } from "constants/applicantConstants";
 import useApplicant from "./hooks/useApplicant";
+import ColumnsDropdown from "components/BaseComponents/ColumnsDropdown";
 
 const {
   exportableFieldOption,
@@ -264,7 +265,6 @@ const Applicant = () => {
 
   const handleConfirm = async () => {
     if (!selectedRecord) {
-      console.warn("No record selected");
       return;
     }
     setModelLoading(true);
@@ -273,7 +273,6 @@ const Applicant = () => {
       setShowActiveModal(false);
       refetchApplicants();
     } catch (error) {
-      console.error("Failed to toggle status:", error);
     } finally {
       setModelLoading(false);
       setShowActiveModal(false);
@@ -492,7 +491,6 @@ const Applicant = () => {
       setSelectedApplicants([]);
       setExportOption("");
     } catch (error: any) {
-      console.log("Export error", error);
       setShowExportModal(false);
       setModelLoading(false);
       setSelectedApplicants([]);
@@ -516,11 +514,6 @@ const Applicant = () => {
     setExportableFields(selectedOptions);
 
     if (Array.isArray(selectedOptions)) {
-      console.log(
-        "Selected values:",
-        selectedOptions.map((opt: { value: any }) => opt.value)
-      );
-
       setExportableFields(selectedOptions);
       setExportOption("");
     }
@@ -799,6 +792,10 @@ const Applicant = () => {
                           <i className="ri-add-line mr-1" />
                           Add
                         </BaseButton>
+                        <ColumnsDropdown
+                          availableColumns={availableColumns}
+                          onColumnsChange={handleColumnsChange}
+                        />
                       </div>
                     </div>
 
@@ -882,6 +879,11 @@ const Applicant = () => {
                         <i className="ri-add-line me-1" />
                         Add
                       </BaseButton>
+
+                      <ColumnsDropdown
+                        availableColumns={availableColumns}
+                        onColumnsChange={handleColumnsChange}
+                      />
                     </div>
 
                     <FilterDrawer
@@ -995,6 +997,7 @@ const Applicant = () => {
                         data={applicant}
                         availableColumns={availableColumns}
                         onColumnsChange={handleColumnsChange}
+                        hideColumnsDropdown={true}
                         customPageSize={50}
                         theadClass="table-light text-muted"
                         thClass="!pt-2 !pb-2"

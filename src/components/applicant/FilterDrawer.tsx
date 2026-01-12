@@ -417,7 +417,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({
           />
 
           <BaseSlider
-            label="Rating (1-10)"
+            label="JavaScript Rating (1-10)"
             min={0}
             max={10}
             step={1}

@@ -94,7 +94,7 @@ const UserProfileEdit = () => {
       }));
       setrolesOptions(options);
     } catch (error) {
-      console.error("Error fetching roles", error);
+      toast.error(error instanceof Error ? error.message : "An error occurred");
     } finally {
       setLoading(false);
     }

@@ -99,12 +99,12 @@ const JobListing = () => {
         params.search = searchAll;
       }
 
-      if (currentRole === "client") {
+      if (currentRole === "admin") {
         if (currentLocation === "/job-listingClient") {
           params.filterBy = "client";
         }
       }
-      if (currentRole === "vendor") {
+      if (currentRole === "admin") {
         if (currentLocation === "/job-listing") {
           params.filterBy = "vendor";
         }
@@ -118,7 +118,6 @@ const JobListing = () => {
       }
     } catch (error) {
       toast.error("Something went wrong! ");
-      console.error(error);
     } finally {
       setIsLoading(false);
     }
@@ -600,7 +599,6 @@ const JobListing = () => {
         error?.response?.data?.message ||
         "Something went wrong while notifying matching applicants.";
       toastify(errorMessage, { type: "error" });
-      console.error(error);
     } finally {
       setIsLoading(false);
       setNotifyingJobId("");
@@ -608,8 +606,9 @@ const JobListing = () => {
   };
 
   const formTitle =
-    //  editingState ? "Update Jobs" :
-    "Add Jobs";
+    currentLocation === "/job-listingClient"
+      ? "Client Job Listing"
+      : "Vendor Job Listing";
   const submitButtonText = "Add";
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {

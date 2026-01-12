@@ -83,7 +83,6 @@ const ApplyNow = () => {
         setSelectedMulti(selectedSkills);
       }
     } catch (error) {
-      console.log("error skills", error);
       errorHandle(error);
     } finally {
       setLoading(false);
@@ -152,7 +151,6 @@ const ApplyNow = () => {
           }
         })
         .catch((error) => {
-          console.log("error getApplicant", error);
 
           errorHandle(error);
         })
@@ -293,23 +291,51 @@ const ApplyNow = () => {
           formData.append("attachments", resumeFile);
         }
         if (!id) {
-          await createApplicantQR(formData, true);
-          toastify("Applicant created successfully", { type: "success" });
-          navigate("/applicants/qr-code-success");
+          const createResponse = await createApplicantQR(formData, true);
+          if (createResponse?.success || createResponse?.statusCode === 201) {
+            toastify("Applicant created successfully", { type: "success" });
+            navigate("/applicants/qr-code-success");
+          } else {
+            // Handle API error response (e.g., 409 conflict)
+            const errorMsg =
+              createResponse?.message || "Failed to create applicant";
+            toastify(errorMsg, { type: "error" });
+            setButtonLoading(false);
+            return;
+          }
         } else {
-          await updateApplicantQR(formData, id, true);
-          toastify("Applicant updated successfully", { type: "success" });
-          navigate("/applicants/qr-code-success");
+          const updateResponse = await updateApplicantQR(formData, id, true);
+          if (
+            updateResponse?.success ||
+            updateResponse?.statusCode === 200 ||
+            updateResponse?.statusCode === 201
+          ) {
+            toastify("Applicant updated successfully", { type: "success" });
+            navigate("/applicants/qr-code-success");
+          } else {
+            // Handle API error response (e.g., 409 conflict)
+            const errorMsg =
+              updateResponse?.message || "Failed to update applicant";
+            toastify(errorMsg, { type: "error" });
+            setButtonLoading(false);
+            return;
+          }
         }
       } catch (error: any) {
         setButtonLoading(false);
+        // Handle axios/network errors
+        const message =
+          error?.response?.data?.message ||
+          error?.response?.data?.error ||
+          error?.message ||
+          "Unexpected error.";
         const errorMessages = error?.response?.data?.details;
         if (errorMessages && Array.isArray(errorMessages)) {
           errorMessages.forEach((errorMessage: string) => {
             toastify(errorMessage, { type: "error" });
           });
         } else {
-          toastify("An error occurred while updating the applicant.", { type: "error" });
+          toastify(message, { type: "error" });
         }
       } finally {
         setButtonLoading(false);

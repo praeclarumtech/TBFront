@@ -82,8 +82,7 @@ const Profile = () => {
       try {
         const response = await getProfile({ token });
         setProfileData(response?.data);
-      } catch (error) {
-        // console.log(error);
+        } catch (error) {
         toast.error(
           error instanceof Error ? error.message : "An error occurred"
         );
@@ -97,8 +96,7 @@ const Profile = () => {
   useEffect(() => {
     if (profileData) {
       setFormData({
-        profilePicture:
-          profileData.profilePicture,
+        profilePicture: profileData.profilePicture,
         userName: profileData.userName || "",
         firstName: profileData.firstName || "",
         lastName: profileData.lastName || "",
@@ -106,7 +104,7 @@ const Profile = () => {
         phoneNumber: profileData.phoneNumber || "",
         dateOfBirth: profileData.dateOfBirth || "",
         designation: profileData.designation || "",
-        role: profileData.role || "",
+        role: profileData.roleId?.name || "",
         whatsapp_number: profileData.whatsapp_number || "",
         company_name: profileData.vendorProfileId?.company_name || "",
         company_email: profileData.vendorProfileId?.company_email || "",
@@ -251,25 +249,35 @@ const Profile = () => {
 
   const handleProfilePicChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e?.target?.files?.[0];
-    // const fileExtension = file?.name?.split(".").pop()?.toLowerCase();
+    if (!file) return;
 
-    // if (![".png", ".jpg", ".jpeg"].includes(fileExtension || "")) {
-    //   toast.error("Invalid file type. Only JPG, JPEG, and PNG are allowed.");
-    //   return;
-    // }
-    if (file) {
-      setFormData((prevState) => ({
-        ...prevState,
-        profilePicture: file,
-      }));
-      setLoadingImage(true);
-      const fileReader = new FileReader();
-      fileReader.onloadend = () => {
-        setImagePreview(fileReader.result as string);
-        setLoadingImage(false);
-      };
-      fileReader.readAsDataURL(file);
+    // Validate file type
+    const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error("Invalid file type. Only JPG, JPEG, and PNG are allowed.");
+      e.target.value = ""; // Reset input
+      return;
     }
+
+    // Validate file size (5MB max)
+    const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSizeInBytes) {
+      toast.error("File too large. Maximum size is 5MB.");
+      e.target.value = ""; // Reset input
+      return;
+    }
+
+    setFormData((prevState) => ({
+      ...prevState,
+      profilePicture: file,
+    }));
+    setLoadingImage(true);
+    const fileReader = new FileReader();
+    fileReader.onloadend = () => {
+      setImagePreview(fileReader.result as string);
+      setLoadingImage(false);
+    };
+    fileReader.readAsDataURL(file);
   };
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -303,9 +311,6 @@ const Profile = () => {
   const handleBlur = () => {
     setTouched(true);
   };
-
-  console.log("imagePreview", imagePreview);
-  console.log("formData", formData);
   return (
     <Container fluid className="p-6">
       <Row className="my-1">

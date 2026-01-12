@@ -4,6 +4,7 @@ import {
   updateUserStatus,
   importVendorCsv,
   exportVendorCsv,
+  downloadSampleCsv,
 } from "api/usersApi";
 import ActiveModal from "components/BaseComponents/ActiveModal";
 import DeleteModal from "components/BaseComponents/DeleteModal";
@@ -27,6 +28,7 @@ import BasePopUpModal from "components/BaseComponents/BasePopUpModal";
 import saveAs from "file-saver";
 import { capitalizeWords, errorHandle } from "utils/commonFunctions";
 import SendQrCodeInviteModal from "components/QrCode/SendQrCodeInviteModal";
+import ColumnsDropdown from "components/BaseComponents/ColumnsDropdown";
 
 const { handleResponse } = appConstants;
 
@@ -687,7 +689,22 @@ const Client = () => {
         toast.error(response.message || "Import failed");
       }
     } catch (error: any) {
-      toast.error(error?.message || "Failed to import file");
+      const responseData = error?.response?.data;
+
+      // Handle 409 conflict with existing emails
+      if (error?.response?.status === 409 && responseData?.existingEmails) {
+        const emails = responseData.existingEmails;
+        toast.error(`Duplicate emails found: ${emails.join(", ")}`);
+        setShowPopupModal(true);
+        setUploadedFile(uploadedFile);
+      } else {
+        const message =
+          responseData?.message ||
+          responseData?.error ||
+          error?.message ||
+          "Failed to import file";
+        toast.error(message);
+      }
     } finally {
       fetchUsers();
       setImportLoader(false);
@@ -775,7 +792,20 @@ const Client = () => {
         throw new Error(response?.message || "Update failed");
       }
     } catch (error: any) {
-      toast.error(error.message || "Failed to update clients");
+      const responseData = error?.response?.data;
+
+      // Handle 409 conflict with existing emails
+      if (error?.response?.status === 409 && responseData?.existingEmails) {
+        const emails = responseData.existingEmails;
+        toast.error(`Duplicate emails found: ${emails.join(", ")}`);
+      } else {
+        const message =
+          responseData?.message ||
+          responseData?.error ||
+          error?.message ||
+          "Failed to update clients";
+        toast.error(message);
+      }
     } finally {
       setImportLoader(false);
       setIsImporting(false);
@@ -823,6 +853,18 @@ const Client = () => {
       errorHandle(error);
     } finally {
       fetchUsers();
+    }
+  };
+
+  const handleDownloadSampleCsv = async () => {
+    try {
+      toast.info("Downloading sample CSV...");
+      const response = await downloadSampleCsv("client");
+      const blob = new Blob([response], { type: "text/csv" });
+      saveAs(blob, "Sample_Client_Import.csv");
+      toast.success("Sample CSV downloaded successfully!");
+    } catch (error) {
+      errorHandle(error);
     }
   };
 
@@ -904,6 +946,15 @@ const Client = () => {
                     disabled={isImporting}
                   />
                   <BaseButton
+                    color="secondary"
+                    className="flex-shrink-0"
+                    onClick={handleDownloadSampleCsv}
+                  >
+                    <i className="align-bottom ri-file-download-line me-1" />
+                    Sample CSV
+                  </BaseButton>
+
+                  <BaseButton
                     color="primary"
                     className="position-relative flex-shrink-0"
                     onClick={() => fileInputRef.current?.click()}
@@ -958,7 +1009,7 @@ const Client = () => {
                     className="position-relative flex-shrink-0"
                     onClick={handleAdd}
                   >
-                    + Add
+                    + Add Client
                   </BaseButton>
 
                   <BaseButton
@@ -969,6 +1020,12 @@ const Client = () => {
                     <i className="ri-qr-code-line me-1" />
                     Send QR Invite
                   </BaseButton>
+
+                  <ColumnsDropdown
+                    availableColumns={availableColumns}
+                    onColumnsChange={handleColumnsChange}
+                    className="flex-shrink-0"
+                  />
                 </div>
               </Col>
             </Row>
@@ -987,6 +1044,7 @@ const Client = () => {
                       customPageSize={50}
                       availableColumns={availableColumns}
                       onColumnsChange={handleColumnsChange}
+                      hideColumnsDropdown={true}
                       theadClass="table-light text-muted"
                       SearchPlaceholder="Search..."
                       tableClass="!text-nowrap !mb-0 !responsive !table-responsive-sm !table-hover !table-outline-none !mb-0"

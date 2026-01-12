@@ -110,7 +110,7 @@ const UserManagement = () => {
 
       setRoles(roleMapping);
     } catch (error) {
-      console.error("Error fetching roles", error);
+      toast.error(error instanceof Error ? error.message : "An error occurred");
     } finally {
       setTableLoader(false);
     }
@@ -153,7 +153,7 @@ const UserManagement = () => {
 
       setTotalRecords(response?.data?.totalRecords || 0);
     } catch (error) {
-      console.error("Error fetching total applicants:", error);
+      toast.error(error instanceof Error ? error.message : "An error occurred");
     } finally {
       setTableLoader(false);
     }
@@ -244,17 +244,17 @@ const UserManagement = () => {
           <div className="flex gap-2">
             <Tooltip.Provider delayDuration={50}>
               <Tooltip.Root>
-                <Tooltip.Trigger asChild>
-                  <button
-                    className="text-white btn btn-sm btn-soft-secondary bg-secondary"
-                    onClick={() =>
-                      navigate(`/userprofileEdit/${row?.original?._id}`)
-                    }
-                    disabled={!row.original.isActive}
-                  >
-                    <i className="ri-pencil-fill" />
-                  </button>
-                </Tooltip.Trigger>
+                    <Tooltip.Trigger asChild>
+                      <button
+                        className="text-white btn btn-sm btn-soft-secondary bg-secondary"
+                        onClick={() =>
+                          navigate(`/userManagement/edit/${row?.original?._id}`)
+                        }
+                        disabled={!row.original.isActive}
+                      >
+                        <i className="ri-pencil-fill" />
+                      </button>
+                    </Tooltip.Trigger>
                 <Tooltip.Portal>
                   <Tooltip.Content
                     side="bottom"
@@ -325,7 +325,7 @@ const UserManagement = () => {
   };
 
   const handleAdd = () => {
-    navigate("/userprofileAdd");
+    navigate("/userManagement/add");
   };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {

@@ -130,7 +130,7 @@ function ImportApplicant() {
         }
       })
       .catch((error) => {
-        console.log("error", error);
+        errorHandle(error);
       })
       .finally(() => {});
   };
@@ -276,7 +276,9 @@ function ImportApplicant() {
     selectedOptions: any[] | ((prevState: SelectedOption[]) => SelectedOption[])
   ) => {
     if (!selectedApplicants || selectedApplicants.length === 0) {
-      toastify("Please select applicants before choosing columns.", { type: "error" });
+      toastify("Please select applicants before choosing columns.", {
+        type: "error",
+      });
       return;
     }
 
@@ -400,7 +402,10 @@ function ImportApplicant() {
 
     const largeFiles = validFiles.filter((file) => file.size > 5 * 1024 * 1024);
     if (largeFiles.length > 0) {
-      toastify("One or more large files detected. Import may take a few minutes.", { type: "error" });
+      toastify(
+        "One or more large files detected. Import may take a few minutes.",
+        { type: "error" }
+      );
     }
 
     setImportLoader(true);
@@ -461,7 +466,9 @@ function ImportApplicant() {
     }
     if (file.size > 5 * 1024 * 1024) {
       // 5MB
-      toastify("Large file detected. Import may take a few minutes.", { type: "error" }); 
+      toastify("Large file detected. Import may take a few minutes.", {
+        type: "error",
+      });
     }
 
     setImportLoader(true);
@@ -484,7 +491,9 @@ function ImportApplicant() {
       });
 
       if (response?.success) {
-        toastify(response?.message || "File imported successfully!", { type: "success" });
+        toastify(response?.message || "File imported successfully!", {
+          type: "success",
+        });
       } else if (!response?.success && response.statusCode === 400) {
         // setShowPopupModal(true);
         const messages = response?.message;
@@ -500,7 +509,12 @@ function ImportApplicant() {
         fetchDuplicateData();
       }
     } catch (error: any) {
-      toastify(error?.message || "Failed to import file", { type: "error" });
+      const message =
+        error?.response?.data?.message ||
+        error?.response?.data?.error ||
+        error?.message ||
+        "Failed to import file";
+      toastify(message, { type: "error" });
     } finally {
       fetchApplicants();
       setImportLoader(false);
@@ -546,7 +560,12 @@ function ImportApplicant() {
         throw new Error(response?.message || "Update failed");
       }
     } catch (error: any) {
-      toastify(error.message || "Failed to update applicants", { type: "error" });
+      const message =
+        error?.response?.data?.message ||
+        error?.response?.data?.error ||
+        error?.message ||
+        "Failed to update applicants";
+      toastify(message, { type: "error" });
     } finally {
       setImportLoader(false);
       setIsImporting(false);
@@ -580,7 +599,9 @@ function ImportApplicant() {
         parsed?.success === false
       ) {
         resetExportState();
-        toastify(parsed?.message || "No data available to export", { type: "error" });
+        toastify(parsed?.message || "No data available to export", {
+          type: "error",
+        });
         return true;
       }
 
@@ -593,6 +614,15 @@ function ImportApplicant() {
       if (parsed?.success === true && parsed?.statusCode === 206) {
         resetExportState();
         toastify(parsed.message, { type: "success" });
+        return true;
+      }
+
+      // Handle 200 success response (e.g., "1 records moved successfully")
+      if (parsed?.success === true && parsed?.statusCode === 200) {
+        resetExportState();
+        toastify(parsed.message || "Operation completed successfully", {
+          type: "success",
+        });
         return true;
       }
 
@@ -629,9 +659,30 @@ function ImportApplicant() {
         toastify("File downloaded successfully!", { type: "success" });
         return;
       }
-    } catch (error) {
+    } catch (error: any) {
       resetExportState();
-      errorHandle(error);
+
+      // Handle blob response errors (when responseType is 'blob')
+      if (error?.response?.data instanceof Blob) {
+        try {
+          const text = await error.response.data.text();
+          const parsed = JSON.parse(text);
+          toastify(parsed?.message || "Failed to export applicants", {
+            type: "error",
+          });
+        } catch {
+          toastify(error?.message || "Failed to export applicants", {
+            type: "error",
+          });
+        }
+      } else {
+        const message =
+          error?.response?.data?.message ||
+          error?.response?.data?.error ||
+          error?.message ||
+          "Failed to export applicants";
+        toastify(message, { type: "error" });
+      }
     } finally {
       fetchApplicants();
     }
@@ -880,7 +931,9 @@ function ImportApplicant() {
                   cell.row.original._id
                 )
                   .then(() => {
-                    toastify("Applicant status updated successfully!", { type: "success" });
+                    toastify("Applicant status updated successfully!", {
+                      type: "success",
+                    });
                   })
                   .catch((error: any) => {
                     errorHandle(error);

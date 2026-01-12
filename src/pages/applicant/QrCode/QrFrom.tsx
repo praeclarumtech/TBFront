@@ -91,7 +91,6 @@ const QrFrom = () => {
         setSelectedMulti(selectedSkills);
       }
     } catch (error) {
-      console.log("error skills", error);
       errorHandle(error);
     } finally {
       setLoading(false);
@@ -160,7 +159,6 @@ const QrFrom = () => {
           }
         })
         .catch((error) => {
-          console.log("error getApplicant", error);
 
           errorHandle(error);
         })
@@ -327,7 +325,6 @@ const QrFrom = () => {
         }
         if (!id) {
           const createResponse = await createApplicantQR(formData, true);
-          console.log("createResponse", createResponse);
           if (createResponse?.success || createResponse?.statusCode === 201) {
             toastify("Applicant created successfully", { type: "success" });
             if (fromEmailCheck && jobId && email) {
@@ -343,9 +340,12 @@ const QrFrom = () => {
               navigate("/applicants/qr-code-success");
             }
           } else {
-            throw new Error(
-              createResponse?.message || "Failed to create applicant"
-            );
+            // Handle API error response (e.g., 409 conflict)
+            const errorMsg =
+              createResponse?.message || "Failed to create applicant";
+            toastify(errorMsg, { type: "error" });
+            setButtonLoading(false);
+            return;
           }
         } else {
           const updateResponse = await updateApplicantQR(formData, id, true);
@@ -368,17 +368,21 @@ const QrFrom = () => {
               navigate("/applicants/qr-code-success");
             }
           } else {
-            throw new Error(
-              updateResponse?.message || "Failed to update applicant"
-            );
+            // Handle API error response (e.g., 409 conflict)
+            const errorMsg =
+              updateResponse?.message || "Failed to update applicant";
+            toastify(errorMsg, { type: "error" });
+            setButtonLoading(false);
+            return;
           }
         }
       } catch (error: any) {
         setButtonLoading(false);
+        // Handle axios/network errors
         const message =
           error?.response?.data?.message ||
           error?.response?.data?.error ||
-          error.message ||
+          error?.message ||
           "Unexpected error.";
         const errorMessages = error?.response?.data?.details;
         if (errorMessages && Array.isArray(errorMessages)) {
@@ -386,10 +390,7 @@ const QrFrom = () => {
             toastify(errorMessage, { type: "error" });
           });
         } else {
-          toastify(
-            message || "An error occurred while updating the applicant.",
-            { type: "error" }
-          );
+          toastify(message, { type: "error" });
         }
       } finally {
         setButtonLoading(false);

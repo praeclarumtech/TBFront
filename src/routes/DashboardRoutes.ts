@@ -44,7 +44,7 @@ export const DashboardMenu: DashboardMenuItem[] = [
       },
       {
         id: uuid(),
-        title: "Job Listing",
+        title: "Vendor Job Listing",
         link: "/job-listing",
       },
       {

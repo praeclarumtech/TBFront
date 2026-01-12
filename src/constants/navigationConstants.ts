@@ -64,7 +64,7 @@ export const navItems = [
     name: "Vendors",
     subItems: [
       { accessorKey: PermissionKey.VENDOR_LIST, name: "Vendors" },
-      { accessorKey: PermissionKey.VENDOR_JOB_LISTING, name: "Job Listing" },
+      { accessorKey: PermissionKey.VENDOR_JOB_LISTING, name: "Vendor Job Listing" },
       {
         accessorKey: PermissionKey.VENDOR_JOB_APPLICANTS,
         name: "Jobs Applicants",
@@ -207,7 +207,7 @@ export const navigationGroups = {
       },
       {
         key: "/job-listing",
-        label: "Job Listing",
+        label: "Vendor Job Listing",
         permission: PermissionKey.VENDOR_JOB_LISTING,
       },
       {

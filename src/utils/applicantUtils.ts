@@ -114,7 +114,7 @@ export const buildApplicantParams = (
 
   // State
   if (filters.filterState) {
-    params.state = encodeURIComponent(filters.filterState.label);
+    params.state = filters.filterState.value;
   }
   // Applied Skills (AND) - Ensure it's an array
   const appliedSkillsArray = Array.isArray(filters.appliedSkills)

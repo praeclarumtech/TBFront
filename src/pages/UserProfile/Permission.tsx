@@ -19,7 +19,6 @@ const Permission: React.FC = () => {
   const currentRole = getCurrentUserRole();
   const location = useLocation();
   const { _id, roleName, accessModules } = location.state || {};
-  console.log("accessModules", accessModules);
   const navigate = useNavigate();
   const [selected, setSelected] = useState<string[]>(accessModules || []);
   const [expandedModule, setExpandedModule] = useState<string>("");
@@ -65,6 +64,12 @@ const Permission: React.FC = () => {
   };
 
   const saveInformation = () => {
+    // Filter out 'dashboard' to check if any actual permissions are selected
+    const selectedPermissions = selected.filter((item) => item !== "dashboard");
+    if (selectedPermissions.length === 0) {
+      toast.error("Please select at least one permission");
+      return;
+    }
     assignRoles();
   };
 
@@ -157,12 +162,8 @@ const Permission: React.FC = () => {
         }
         resetSelection();
         navigate(-1);
-        setTimeout(() => {
-          window.location.reload();
-        }, 50);
       }
     } catch (error: any) {
-      console.log("error", error);
       toast.error(error.response.data.error || error.response.statusText);
     } finally {
       setLoader(false);
@@ -319,7 +320,7 @@ const Permission: React.FC = () => {
           </div>
 
           <div className="justify-end gap-2 d-flex mt-8">
-            <BaseButton color="secondary" onClick={resetSelection}>
+            <BaseButton color="secondary" onClick={() => navigate(-1)}>
               Cancel
             </BaseButton>
             <BaseButton

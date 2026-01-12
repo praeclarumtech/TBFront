@@ -38,13 +38,15 @@ const clientQrSchema = Yup.object({
       "Please enter a valid 10-digit phone number (should not start with 0)."
     )
     .required("Phone number is required."),
-  // Optional user fields
+  // Required user fields
   firstName: Yup.string()
+    .required("First name is required.")
     .max(15, "First name cannot exceed 15 characters.")
     .min(2, "First name must be at least 2 characters.")
     .matches(/^[A-Za-z\s]+$/, "First name can only contain letters.")
     .trim(),
   lastName: Yup.string()
+    .required("Last name is required.")
     .max(15, "Last name cannot exceed 15 characters.")
     .min(2, "Last name must be at least 2 characters.")
     .matches(/^[A-Za-z\s]+$/, "Last name can only contain letters.")
@@ -97,7 +99,6 @@ const ClientQrForm = () => {
           }
         })
         .catch((error) => {
-          console.log("error getClient", error);
           errorHandle(error);
         })
         .finally(() => {
@@ -321,13 +322,13 @@ const ClientQrForm = () => {
         let response;
         if (!id) {
           response = await createClientQR(formData);
-          
-         if (response?.success === SUCCESS && response?.statusCode === 201) {
-           toastify(response?.message, { type: "success" });
-           navigate("/client/qr-code-success");
-         } else {
-           toastify(response?.message, { type: "error" });
-         }
+
+          if (response?.success === SUCCESS && response?.statusCode === 201) {
+            toastify(response?.message, { type: "success" });
+            navigate("/client/qr-code-success");
+          } else {
+            toastify(response?.message, { type: "error" });
+          }
         } else {
           response = await updateClientQR(formData, id);
           if (response?.status === SUCCESS && response?.statusCode === 201) {

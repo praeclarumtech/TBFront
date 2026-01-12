@@ -14,7 +14,10 @@ const VendorHeader = () => {
   const [isJobsDropdownOpen, setIsJobsDropdownOpen] = useState(false);
 
   // Centralized function to clear all auth data
-  const clearAuthData = () => {
+  // showToast parameter controls whether to show the session expired toast
+  // - true: when session actually expired (user was logged in but token expired)
+  // - false: when user was never logged in (no token exists)
+  const clearAuthData = (showToast: boolean = false) => {
     const keysToRemove = [
       "authUser",
       "role",
@@ -23,9 +26,15 @@ const VendorHeader = () => {
       "accessModules",
     ];
     keysToRemove.forEach((key) => localStorage.removeItem(key));
-    toast.error("🔒 Session expired - please log in again");
 
-    // toast.error("Session Expired!");
+    // Only show toast when session actually expired, not when user was never logged in
+    // Use toastId to prevent duplicate toasts
+    if (showToast) {
+      toast.error("🔒 Session expired - please log in again", {
+        toastId: "session-expired",
+      });
+    }
+
     setIsLoggedIn(false);
     setUserRole(null);
   };
@@ -38,18 +47,22 @@ const VendorHeader = () => {
       const role = roleFromStorage ? roleFromStorage.trim() : null;
       const tokenExpiry = localStorage.getItem("expiresAt");
 
-      // Check if token exists and is not empty
-      if (!token || token === "undefined" || token.trim() === "") {
-        console.log("❌ No valid token found, clearing auth data");
-        clearAuthData();
+      // Check if token is expired FIRST - this is critical
+      // Show toast - session actually expired (only if token and expiry exist)
+      if (
+        token &&
+        tokenExpiry &&
+        new Date().getTime() > parseInt(tokenExpiry)
+      ) {
+        clearAuthData(true);
         setIsAuthChecked(true);
         return false;
       }
 
-      // Check if token is expired FIRST - this is critical
-      if (tokenExpiry && new Date().getTime() > parseInt(tokenExpiry)) {
-        console.log("⏰ Token expired, clearing auth data");
-        clearAuthData();
+      // Check if token exists and is not empty
+      // Don't show toast - user was never logged in
+      if (!token || token === "undefined" || token.trim() === "") {
+        clearAuthData(false);
         setIsAuthChecked(true);
         return false;
       }
@@ -59,8 +72,7 @@ const VendorHeader = () => {
       setIsAuthChecked(true);
       return true;
     } catch (error) {
-      console.error("❌ Error checking auth status:", error);
-      clearAuthData();
+      clearAuthData(false);
       setIsAuthChecked(true);
       return false;
     }
@@ -116,8 +128,7 @@ const VendorHeader = () => {
     const intervalId = setInterval(() => {
       const tokenExpiry = localStorage.getItem("expiresAt");
       if (tokenExpiry && new Date().getTime() > parseInt(tokenExpiry)) {
-        console.log("⏰ Token expired during session, logging out");
-        clearAuthData();
+        clearAuthData(true); // Show toast - session actually expired during use
         // Redirect to login if on protected route
         if (
           location.pathname.includes("/dashboard") ||
@@ -159,12 +170,10 @@ const VendorHeader = () => {
           !isCurrentlyAuthenticated ||
           (tokenExpiry && new Date().getTime() > parseInt(tokenExpiry))
         ) {
-          toast.error("🔒 Session expired - please log in again");
           logout();
-          clearAuthData();
+          clearAuthData(true); // Show toast - session expired when accessing dashboard
           navigate("/login", { state: { from: "/dashboard" } });
         } else {
-          console.log("✅ Dashboard access granted");
           navigate("/dashboard");
         }
         break;
@@ -187,7 +196,7 @@ const VendorHeader = () => {
 
       case "logout":
         logout();
-        clearAuthData();
+        clearAuthData(false); // Don't show toast - user intentionally logged out
         navigate("/login");
         break;
 

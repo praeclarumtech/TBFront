@@ -42,13 +42,15 @@ const vendorQrSchema = Yup.object().shape({
   isIndependentConsultant: Yup.string()
     .oneOf(["yes", "no"], "Please select an option.")
     .required("Please select if you are an independent consultant."),
-  // Optional user fields
+  // Required user fields
   firstName: Yup.string()
+    .required("First name is required.")
     .max(15, "First name cannot exceed 15 characters.")
     .min(2, "First name must be at least 2 characters.")
     .matches(/^[A-Za-z\s]+$/, "First name can only contain letters.")
     .trim(),
   lastName: Yup.string()
+    .required("Last name is required.")
     .max(15, "Last name cannot exceed 15 characters.")
     .min(2, "Last name must be at least 2 characters.")
     .matches(/^[A-Za-z\s]+$/, "Last name can only contain letters.")
