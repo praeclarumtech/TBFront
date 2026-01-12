@@ -13,6 +13,7 @@ import {
   USERADD,
   IMPORT_VENDOR_CSV,
   EXPORT_VENDOR_CSV,
+  SAMPLE_CSV,
 } from "./apiRoutes";
 import { authServices } from "./apiServices";
 import qs from "qs";
@@ -130,6 +131,17 @@ export const exportVendorCsv = async (
       timeout: 300000,
     }
   );
+
+  return response.data;
+};
+
+// Download sample CSV for vendor or client
+export const downloadSampleCsv = async (type: "vendor" | "client") => {
+  const response = await authServices.get(`${SAMPLE_CSV}`, {
+    params: { type },
+    responseType: "blob",
+    timeout: 60000,
+  });
 
   return response.data;
 };

@@ -73,7 +73,7 @@ const Roles = () => {
       setRoles(res?.data);
       setTotalRecords(res?.data?.length || 0);
     } catch (error) {
-      console.error("Error fetching roles", error);
+      toast.error(error instanceof Error ? error.message : "An error occurred");
     } finally {
       setTableLoader(false);
     }
@@ -86,7 +86,6 @@ const Roles = () => {
         toast.success(res?.message);
       }
     } catch (error: any) {
-      console.log("error in delete", error);
       toast.error(error?.response?.data?.message);
     } finally {
       setTableLoader(false);
@@ -265,7 +264,6 @@ const Roles = () => {
 
   const handleUpdateUserStatusModal = (id: any, isActive: any) => {
     setSelectedRecord(id);
-    console.log("first", id);
     SetDataActive(!isActive);
     setShowActiveModal(true);
   };
@@ -382,6 +380,7 @@ const Roles = () => {
                     show={showAddRoleModal}
                     onHide={handleHideModal}
                     _id={editingRoleId}
+                    onSuccess={fetchRoles}
                   />
                 </div>
               </Col>

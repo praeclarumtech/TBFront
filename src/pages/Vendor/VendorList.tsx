@@ -4,6 +4,7 @@ import {
   updateUserStatus,
   importVendorCsv,
   exportVendorCsv,
+  downloadSampleCsv,
 } from "api/usersApi";
 import ActiveModal from "components/BaseComponents/ActiveModal";
 import DeleteModal from "components/BaseComponents/DeleteModal";
@@ -27,6 +28,7 @@ import BasePopUpModal from "components/BaseComponents/BasePopUpModal";
 import saveAs from "file-saver";
 import { capitalizeWords, errorHandle } from "utils/commonFunctions";
 import SendQrCodeInviteModal from "components/QrCode/SendQrCodeInviteModal";
+import ColumnsDropdown from "components/BaseComponents/ColumnsDropdown";
 
 const { handleResponse } = appConstants;
 
@@ -862,6 +864,18 @@ const VendorList = () => {
       fetchUsers();
     }
   };
+
+  const handleDownloadSampleCsv = async () => {
+    try {
+      toast.info("Downloading sample CSV...");
+      const response = await downloadSampleCsv("vendor");
+      const blob = new Blob([response], { type: "text/csv" });
+      saveAs(blob, "Sample_Vendor_Import.csv");
+      toast.success("Sample CSV downloaded successfully!");
+    } catch (error) {
+      errorHandle(error);
+    }
+  };
   return (
     <>
       {showViewModal && selectedId && (
@@ -940,6 +954,15 @@ const VendorList = () => {
                     disabled={isImporting}
                   />
                   <BaseButton
+                    color="secondary"
+                    className="flex-shrink-0"
+                    onClick={handleDownloadSampleCsv}
+                  >
+                    <i className="align-bottom ri-file-download-line me-1" />
+                    Sample CSV
+                  </BaseButton>
+
+                  <BaseButton
                     color="primary"
                     className="position-relative flex-shrink-0"
                     onClick={() => fileInputRef.current?.click()}
@@ -994,7 +1017,7 @@ const VendorList = () => {
                     className="position-relative flex-shrink-0"
                     onClick={handleAdd}
                   >
-                    + Add
+                    + Add Vendor
                   </BaseButton>
 
                   <BaseButton
@@ -1005,6 +1028,12 @@ const VendorList = () => {
                     <i className="ri-qr-code-line me-1" />
                     Send QR Invite
                   </BaseButton>
+
+                  <ColumnsDropdown
+                    availableColumns={availableColumns}
+                    onColumnsChange={handleColumnsChange}
+                    className="flex-shrink-0"
+                  />
                 </div>
               </Col>
             </Row>
@@ -1021,6 +1050,7 @@ const VendorList = () => {
                       columns={columns}
                       availableColumns={availableColumns}
                       onColumnsChange={handleColumnsChange}
+                      hideColumnsDropdown={true}
                       data={users}
                       customPageSize={50}
                       theadClass="table-light text-muted"

@@ -40,6 +40,7 @@ import DetailedJob from "pages/Vendor/DetailedJob";
 import ApplyNowJob from "pages/Vendor/ApplyNowJob";
 import UserManagement from "pages/UserProfile/UserManagement";
 import UserProfileEdit from "pages/UserProfile/UserProfileEdit";
+import AddEditUser from "pages/UserProfile/AddEditUser";
 import AppliedJobList from "pages/Vendor/AppliedJobList";
 import VendorLayout from "layouts/VendorLayout";
 import VendorList from "pages/Vendor/VendorList";
@@ -155,6 +156,8 @@ const RenderRouter: React.FC = () => {
           <Route path="userprofileEdit/:_id" element={<UserProfileEdit />} />
           <Route path="userprofileAdd" element={<UserProfileEdit />} />
           <Route path="userManagement" element={<UserManagement />} />
+          <Route path="userManagement/add" element={<AddEditUser />} />
+          <Route path="userManagement/edit/:_id" element={<AddEditUser />} />
           <Route path="roles" element={<Roles />} />
           <Route path="permission" element={<Permission />} />
           <Route

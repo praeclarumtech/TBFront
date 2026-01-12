@@ -183,10 +183,10 @@ function useApplicant({
   } = useMutation({
     mutationFn: ({ id, isActive }: { id: string; isActive: boolean }) =>
       isActive ? activeApplicant(id) : inActiveApplicant(id),
-    onSuccess: (response: any) => {
+    onSuccess: (_response: any, variables: { id: string; isActive: boolean }) => {
       toastify(
         `Applicant ${
-          response?.data?.isActive ? "activated" : "deactivated"
+          variables.isActive ? "activated" : "deactivated"
         } successfully!`
       , { type: "success" });
       queryClient.invalidateQueries({ queryKey: ["applicants"] });

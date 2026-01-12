@@ -13,7 +13,7 @@ import { toast } from "react-toastify";
 import { capitalizeWords, InputPlaceHolder } from "utils/commonFunctions";
 
 const { activeStatusOptions } = appConstants;
-function AddRole({ show, onHide, _id }: any) {
+function AddRole({ show, onHide, _id, onSuccess }: any) {
   const modalTitle = _id ? "Update Role" : "Add Role";
   const [loader, setLoader] = useState(false);
   const [roleName, setRoleName] = useState<string>("");
@@ -26,8 +26,6 @@ function AddRole({ show, onHide, _id }: any) {
     });
   const [rolesOptions, setrolesOptions] = useState<SelectedOptionRole1[]>([]);
 
-  console.log("first", _id);
-
   const fetchRoles = async () => {
     setLoader(true);
     try {
@@ -39,7 +37,7 @@ function AddRole({ show, onHide, _id }: any) {
       }));
       setrolesOptions(options);
     } catch (error) {
-      console.error("Error fetching roles", error);
+      toast.error(error instanceof Error ? error.message : "An error occurred");
     } finally {
       setLoader(false);
     }
@@ -131,12 +129,11 @@ function AddRole({ show, onHide, _id }: any) {
           _id ? "Role updated successfully" : "Role added successfully"
         );
         handleCancel(); // Close modal and reset form
-        window.location.reload();
+        onSuccess?.(); // Refresh the roles list without reloading the page
       } else {
         toast.error(res.message);
       }
-    } catch (error: any) {
-      console.log("error", error);
+      } catch (error: any) {
       toast.error(error.response.data.error || error.response.statusText);
       handleCancel();
     } finally {
