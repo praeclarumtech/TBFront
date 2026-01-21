@@ -162,9 +162,10 @@ function AddRole({ show, onHide, _id, onSuccess }: any) {
       open={show}
       onCancel={handleCancel}
       footer={null}
-      width={600}
+      width="95vw"
+      style={{ maxWidth: 600 }}
       centered
-      title={<span className="text-lg font-bold">{modalTitle}</span>}
+      title={<span className="text-base sm:text-lg font-bold">{modalTitle}</span>}
     >
       <Row gutter={[16, 16]} className="mt-2">
         <Col xs={24} md={12}>

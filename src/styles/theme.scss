@@ -64,3 +64,175 @@
 .custom-card .ant-card-body {
   @apply p-3;
 }
+
+// Quill Editor Content Styles for View Mode
+.ql-editor {
+  h1 {
+    font-size: 2em;
+    font-weight: 700;
+    margin-bottom: 0.5em;
+    margin-top: 0.5em;
+    color: #1a1a1a;
+  }
+  h2 {
+    font-size: 1.5em;
+    font-weight: 600;
+    margin-bottom: 0.5em;
+    margin-top: 0.5em;
+    color: #1a1a1a;
+  }
+  h3 {
+    font-size: 1.25em;
+    font-weight: 600;
+    margin-bottom: 0.5em;
+    margin-top: 0.5em;
+    color: #1a1a1a;
+  }
+  h4 {
+    font-size: 1.1em;
+    font-weight: 600;
+    margin-bottom: 0.5em;
+    margin-top: 0.5em;
+    color: #1a1a1a;
+  }
+  h5, h6 {
+    font-size: 1em;
+    font-weight: 600;
+    margin-bottom: 0.5em;
+    margin-top: 0.5em;
+    color: #1a1a1a;
+  }
+  p {
+    margin-bottom: 0.5em;
+  }
+  ul, ol {
+    padding-left: 1.5em;
+    margin-bottom: 0.5em;
+  }
+  ul {
+    list-style-type: disc;
+  }
+  ol {
+    list-style-type: decimal;
+  }
+  li {
+    margin-bottom: 0.25em;
+  }
+  strong, b {
+    font-weight: 700;
+  }
+  em, i {
+    font-style: italic;
+  }
+  u {
+    text-decoration: underline;
+  }
+  blockquote {
+    border-left: 4px solid #ccc;
+    padding-left: 1em;
+    margin-left: 0;
+    color: #666;
+    font-style: italic;
+  }
+  pre, code {
+    background-color: #f4f4f4;
+    padding: 0.25em 0.5em;
+    border-radius: 4px;
+    font-family: monospace;
+  }
+  a {
+    color: #624bff;
+    text-decoration: underline;
+  }
+}
+
+// Global Responsive Styles
+@media (max-width: 768px) {
+  // Make tables scrollable on mobile
+  .table-responsive {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  // Reduce card padding on mobile
+  .card-body {
+    padding: 0.75rem !important;
+  }
+
+  // Reduce container padding on mobile
+  .container-fluid {
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+  }
+
+  // Make buttons stack on mobile
+  .btn-group-mobile {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.5rem;
+  }
+
+  // Responsive font sizes
+  h1, .h1 {
+    font-size: 1.5rem;
+  }
+  h2, .h2 {
+    font-size: 1.35rem;
+  }
+  h3, .h3 {
+    font-size: 1.2rem;
+  }
+  h4, .h4 {
+    font-size: 1.1rem;
+  }
+
+  // Modal adjustments
+  .ant-modal {
+    margin: 8px !important;
+    top: 20px !important;
+  }
+
+  .ant-modal-body {
+    padding: 12px !important;
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+
+  // Table cell adjustments
+  .ant-table-cell {
+    padding: 8px 6px !important;
+    font-size: 13px;
+  }
+
+  // Form adjustments
+  .form-control {
+    font-size: 16px; // Prevents zoom on iOS
+  }
+
+  // Select adjustments
+  .ant-select {
+    font-size: 16px;
+  }
+}
+
+// Tablet adjustments
+@media (max-width: 992px) and (min-width: 769px) {
+  .card-body {
+    padding: 1rem !important;
+  }
+}
+
+// Ensure touch-friendly button sizes on mobile
+@media (max-width: 768px) {
+  .btn, button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  // Make dropdowns full width on mobile
+  .ant-select {
+    width: 100% !important;
+  }
+}

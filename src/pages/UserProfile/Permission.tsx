@@ -156,7 +156,7 @@ const Permission: React.FC = () => {
       setLoader(true);
       const response = await assignRole({ _id, accessModules: selected });
       if (response?.success) {
-        toast.success("Permission Given Successfully");
+        toast.success("Permission given successfully");
         if (currentRole === roleName) {
           localStorage.setItem("accessModules", JSON.stringify(selected));
         }

@@ -164,7 +164,8 @@ const ViewModal: React.FC<ViewModalProps> = ({
         open={show}
         onCancel={onHide}
         footer={null}
-        width={800}
+        width="95vw"
+        style={{ maxWidth: 800 }}
         centered
         closeIcon={null} // We handle close icon ourselves
         title={

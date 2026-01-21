@@ -7,6 +7,7 @@ import { errorHandle } from "utils/commonFunctions";
 import BaseButton from "components/BaseComponents/BaseButton";
 import { useNavigate } from "react-router-dom";
 import { capitalizeWords } from "utils/commonFunctions";
+import "react-quill/dist/quill.snow.css";
 
 
 const OpenJob = () => {
@@ -231,11 +232,11 @@ const OpenJob = () => {
                   value={
                     <div style={{ maxWidth: "100%", overflowX: "auto" }}>
                       <div
-                        className="ql-editor"
+                        className="ql-editor prose prose-sm max-w-none"
                         style={{
-                          wordBreak: "break-all",
+                          padding: 0,
                           overflowWrap: "break-word",
-                          whiteSpace: "pre-wrap",
+                          wordWrap: "break-word",
                         }}
                         dangerouslySetInnerHTML={{
                           __html: formData.job_details || "",

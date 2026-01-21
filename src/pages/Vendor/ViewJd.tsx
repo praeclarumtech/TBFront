@@ -6,6 +6,7 @@ import { EyeFilled } from "@ant-design/icons";
 import { Modal, Badge, Card, Row, Col, Tag, Skeleton, Result } from "antd";
 
 import { viewJobById } from "api/apiJob";
+import "react-quill/dist/quill.snow.css";
 // import BaseButton from "components/BaseComponents/BaseButton";
 
 interface JobDetails {
@@ -98,9 +99,10 @@ const ViewJd = ({ show, onHide, _id }: any) => {
       open={show}
       onCancel={onHide}
       footer={null}
-      width={800}
+      width="95vw"
+      style={{ maxWidth: 800 }}
       centered
-      title={<span className="text-lg font-bold">Detailed Info</span>}
+      title={<span className="text-base sm:text-lg font-bold">Detailed Info</span>}
     >
       {loading ? (
         <Skeleton active />
@@ -127,20 +129,25 @@ const ViewJd = ({ show, onHide, _id }: any) => {
                   }
                 />
                 <Row gutter={[16, 16]}>
-                  <Col span={16}>
+                  <Col span={24}>
                     <DetailsRow
                       label="Job Details"
                       value={
                         formData?.job_details ? (
-                          // <div className="flex flex-wrap py-1">
-                          <div
-                            className="ql-editor"
-                            dangerouslySetInnerHTML={{
-                              __html: formData.job_details,
-                            }}
-                          />
+                          <div style={{ maxWidth: "100%", overflowX: "auto" }}>
+                            <div
+                              className="ql-editor prose prose-sm max-w-none"
+                              style={{
+                                padding: 0,
+                                overflowWrap: "break-word",
+                                wordWrap: "break-word",
+                              }}
+                              dangerouslySetInnerHTML={{
+                                __html: formData.job_details,
+                              }}
+                            />
+                          </div>
                         ) : (
-                          // </div>
                           <Badge
                             count={"N/A"}
                             style={{ backgroundColor: "#faad14" }}

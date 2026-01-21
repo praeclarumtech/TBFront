@@ -26,7 +26,6 @@ import { getRole } from "api/roleApi";
 
 const {
   projectTitle,
-  Modules,
   CREATED,
   SUCCESS,
   emailRegex,

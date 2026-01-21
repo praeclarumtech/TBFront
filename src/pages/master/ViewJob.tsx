@@ -6,6 +6,7 @@ import { EyeFilled } from "@ant-design/icons";
 import { Modal, Badge, Card, Row, Col, Tag, Skeleton, Result } from "antd";
 
 import { viewJobById } from "api/apiJob";
+import "react-quill/dist/quill.snow.css";
 // import BaseButton from "components/BaseComponents/BaseButton";
 
 interface JobDetails {
@@ -98,9 +99,10 @@ const ViewJob = ({ show, onHide, jobId }: any) => {
       open={show}
       onCancel={onHide}
       footer={null}
-      width={900}
+      width="95vw"
+      style={{ maxWidth: 900 }}
       centered
-      title={<span className="text-lg font-bold">Detailed Info</span>}
+      title={<span className="text-base sm:text-lg font-bold">Detailed Info</span>}
     >
       {loading ? (
         <Skeleton active />
@@ -353,11 +355,11 @@ const ViewJob = ({ show, onHide, jobId }: any) => {
                       label="Job Description"
                       value={
                         <div
-                          className="ql-editor"
+                          className="ql-editor prose prose-sm max-w-none"
                           style={{
-                            wordBreak: "break-all",
+                            padding: 0,
                             overflowWrap: "break-word",
-                            whiteSpace: "pre-wrap",
+                            wordWrap: "break-word",
                           }}
                           dangerouslySetInnerHTML={{
                             __html: formData.sub_description || "",
@@ -374,11 +376,11 @@ const ViewJob = ({ show, onHide, jobId }: any) => {
                       value={
                         <div style={{ maxWidth: "100%", overflowX: "auto" }}>
                           <div
-                            className="ql-editor"
+                            className="ql-editor prose prose-sm max-w-none"
                             style={{
-                              wordBreak: "break-all",
+                              padding: 0,
                               overflowWrap: "break-word",
-                              whiteSpace: "pre-wrap",
+                              wordWrap: "break-word",
                             }}
                             dangerouslySetInnerHTML={{
                               __html: formData.job_details || "",

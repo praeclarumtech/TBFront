@@ -913,13 +913,13 @@ const Client = () => {
       <Container fluid>
         <div className="mt-2 mb-2">
           <Card>
-            <Row className="fw-bold text-dark d-flex ">
+            <Row className="fw-bold text-dark d-flex">
               <Col
                 xs={12}
                 sm={12}
                 md={4}
                 lg={3}
-                className="flex-wrap mt-4 d-flex align-items-center "
+                className="flex-wrap mt-4 d-flex align-items-center"
               >
                 <div className="ml-6 text-2xl font-bold">Clients</div>
               </Col>

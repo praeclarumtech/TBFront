@@ -134,7 +134,8 @@ const DrawerData = ({
         <Drawer
           title="Duplicate Records"
           placement="right"
-          width={700}
+          width="100%"
+          style={{ maxWidth: 700 }}
           onClose={onClose}
           open={open}
           extra={

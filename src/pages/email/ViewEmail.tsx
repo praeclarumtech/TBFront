@@ -103,9 +103,10 @@ const ViewModal = ({ show, onHide, applicantId }: any) => {
       open={show}
       onCancel={onHide}
       footer={null}
-      width={800}
+      width="95vw"
+      style={{ maxWidth: 800 }}
       centered
-      title={<span className="text-lg font-bold">Email Details</span>}
+      title={<span className="text-base sm:text-lg font-bold">Email Details</span>}
     >
       {loading ? (
         // <Spin size="large" className="flex items-center justify-center" />

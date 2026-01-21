@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState, useMemo } from "react";
-import { Modal, Skeleton } from "antd";
+import { Modal, Skeleton, Tabs } from "antd";
 import TableContainer from "components/BaseComponents/TableContainer";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import * as Tooltip from "@radix-ui/react-tooltip";
@@ -11,7 +11,7 @@ import {
   getCurrentUserRole,
   dynamicFind,
 } from "utils/commonFunctions";
-import { getJobApplicants } from "api/apiJob";
+import { getJobApplicants, getJobInvitedApplicants } from "api/apiJob";
 import { BaseSelect } from "components/BaseComponents/BaseSelect";
 import { SelectedOption } from "interfaces/applicant.interface";
 import appConstants from "constants/constant";
@@ -36,6 +36,7 @@ const ViewJobApplicantsModal: React.FC<ViewJobApplicantsModalProps> = ({
   const [tableLoader, setTableLoader] = useState(false);
   const [loading, setLoading] = useState(false);
   const [totalRecords, setTotalRecords] = useState(0);
+  const [activeTab, setActiveTab] = useState<"applied" | "invited">("applied");
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 50,
@@ -91,7 +92,17 @@ const ViewJobApplicantsModal: React.FC<ViewJobApplicantsModalProps> = ({
     if (show && jobId) {
       fetchApplicants();
     }
-  }, [show, jobId, pagination]);
+    if (!show) {
+      // Reset to applied tab when modal closes
+      setActiveTab("applied");
+      setPagination({ pageIndex: 0, pageSize: 50, limit: 50 });
+    }
+  }, [show, jobId, pagination, activeTab]);
+
+  const handleTabChange = (key: string) => {
+    setActiveTab(key as "applied" | "invited");
+    setPagination({ pageIndex: 0, pageSize: 50, limit: 50 });
+  };
 
   const fetchApplicants = async () => {
     if (!jobId) return;
@@ -107,7 +118,9 @@ const ViewJobApplicantsModal: React.FC<ViewJobApplicantsModalProps> = ({
         limit: pagination.limit,
       };
 
-      const res = await getJobApplicants(jobId, params);
+      const res = activeTab === "invited" 
+        ? await getJobInvitedApplicants(jobId, params)
+        : await getJobApplicants(jobId, params);
 
       if (res?.success && res?.data) {
         // Set job details from response
@@ -118,11 +131,23 @@ const ViewJobApplicantsModal: React.FC<ViewJobApplicantsModalProps> = ({
           setJobTitleState(jobTitle);
         }
 
-        // Set applicants array
-        setApplicant(res.data.applications || []);
-
-        // Set pagination info
-        setTotalRecords(res.data.pagination?.totalCount || 0);
+        // Set applicants array - handle different response formats
+        if (activeTab === "invited") {
+          // Normalize invited applicants data to match applied applicants structure
+          const normalizedApplicants = (res.data.applicants || []).map((app: any) => ({
+            ...app,
+            status: app.applicationStatus?.status || null,
+            interviewStage: app.applicationStatus?.interviewStage || null,
+            score: app.applicationStatus?.score ?? null,
+            appliedRole: app.currentCompanyDesignation || "",
+            isActive: app.hasApplied, // Only allow editing if they've applied
+          }));
+          setApplicant(normalizedApplicants);
+          setTotalRecords(res.data.totalRecords || 0);
+        } else {
+          setApplicant(res.data.applications || []);
+          setTotalRecords(res.data.pagination?.totalCount || 0);
+        }
       }
     } catch (error: any) {
       errorHandle(error);
@@ -456,8 +481,39 @@ const ViewJobApplicantsModal: React.FC<ViewJobApplicantsModalProps> = ({
       },
     });
 
+    // Add "Has Applied" column for invited tab
+    if (activeTab === "invited") {
+      // Insert after Skills column (index 2 or 3 depending on admin)
+      const hasAppliedColumn = {
+        header: "Applied",
+        accessorKey: "hasApplied",
+        cell: (info: any) => {
+          const hasApplied = info.row.original?.hasApplied;
+          return (
+            <span
+              className={`px-2 py-1 text-xs font-medium rounded-full ${
+                hasApplied
+                  ? "bg-green-100 text-green-800"
+                  : "bg-yellow-100 text-yellow-800"
+              }`}
+            >
+              {hasApplied ? "Yes" : "No"}
+            </span>
+          );
+        },
+        enableColumnFilter: false,
+      };
+      // Insert before "Applicant Status" column
+      const statusIndex = baseColumns.findIndex(
+        (col) => col.header === "Applicant Status"
+      );
+      if (statusIndex > -1) {
+        baseColumns.splice(statusIndex, 0, hasAppliedColumn);
+      }
+    }
+
     return baseColumns;
-  }, [isAdmin, isClient, applicant]);
+  }, [isAdmin, isClient, applicant, activeTab]);
 
   if (!show) return null;
 
@@ -488,10 +544,11 @@ const ViewJobApplicantsModal: React.FC<ViewJobApplicantsModalProps> = ({
         open={show}
         onCancel={onHide}
         footer={null}
-        width={1200}
+        width="95vw"
+        style={{ maxWidth: 1200 }}
         centered
         title={
-          <span className="text-lg font-bold">
+          <span className="text-base sm:text-lg font-bold">
             {jobTitleState
               ? `Applicants for ${jobTitleState}`
               : "Job Applicants"}
@@ -537,6 +594,22 @@ const ViewJobApplicantsModal: React.FC<ViewJobApplicantsModalProps> = ({
           </div>
         )}
 
+        <Tabs
+          activeKey={activeTab}
+          onChange={handleTabChange}
+          className="mb-4"
+          items={[
+            {
+              key: "applied",
+              label: "Applied Applicants",
+            },
+            {
+              key: "invited",
+              label: "Invited Applicants",
+            },
+          ]}
+        />
+
         {tableLoader || loading ? (
           <div className="py-4 text-center">
             <Skeleton className="mb-5 min-h-10" />
@@ -545,7 +618,7 @@ const ViewJobApplicantsModal: React.FC<ViewJobApplicantsModalProps> = ({
         ) : applicant.length > 0 ? (
           <div className="pt-4">
             <TableContainer
-              isHeaderTitle="Applicants"
+              isHeaderTitle={activeTab === "invited" ? "Invited Applicants" : "Applicants"}
               columns={columns}
               data={applicant}
               customPageSize={50}
@@ -564,7 +637,7 @@ const ViewJobApplicantsModal: React.FC<ViewJobApplicantsModalProps> = ({
           <div className="pt-4 text-center">
             <i className="ri-search-line d-block fs-1 text-success"></i>
             <p className="mt-2">
-              No applicants found for this job. Total Records: {totalRecords}
+              No {activeTab === "invited" ? "invited" : ""} applicants found for this job. Total Records: {totalRecords}
             </p>
           </div>
         )}

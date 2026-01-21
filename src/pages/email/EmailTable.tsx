@@ -290,7 +290,6 @@ const EmailTable = () => {
       const data = await getEmailCount(params);
       setEmailCount(data?.data?.count || 0);
     } catch (error) {
-      console.log("error========================", error);
       setEmailCount(0);
     }
   };
@@ -334,7 +333,7 @@ const EmailTable = () => {
     setDeleteLoader(true);
     try {
       await deleteEmail(emailToDelete); // Pass the array of selected emails
-      toast.success("Emails Delete Successfully!.");
+      toast.success("Emails deleted successfully!");
       fetchEmails(); // Refresh email list
       setShowDeleteModal(false);
       setEmailToDelete([]);
@@ -350,7 +349,7 @@ const EmailTable = () => {
     setDeleteLoader(true);
     try {
       await deleteMultipleEmail(multipleEmailDelete); // Pass the array of selected emails
-      toast.success("Email Delete Successfully!.");
+      toast.success("Email deleted successfully!");
       fetchEmails(); // Refresh email list
       setShowDeleteModal(false);
       setSelectedApplicants([]); // Clear selection
@@ -412,7 +411,8 @@ const EmailTable = () => {
   const drawerList = (anchor: Anchor) => (
     <Box
       sx={{
-        width: anchor === "top" || anchor === "bottom" ? "auto" : 400,
+        width: anchor === "top" || anchor === "bottom" ? "auto" : { xs: "100vw", sm: 400 },
+        maxWidth: "100vw",
         padding: "16px",
         marginTop: anchor === "top" ? "64px" : 0,
       }}
@@ -496,24 +496,24 @@ const EmailTable = () => {
         />
       )}
 
-      <div className="mt-3 mb-4">
+      <div className="mt-3 mb-4 px-2 sm:px-0">
         <div className="mb-3 card">
           <div className="card-body">
-            <div className="container">
-              <div className="row gy-2 gx-2 align-items-center justify-content-between">
+            <div className="container-fluid px-2 sm:px-3">
+              <div className="row gy-2 gx-2 align-items-center justify-content-between flex-wrap">
                 {/* Email Count */}
-                <div className="col-auto d-flex align-items-center">
-                  <span className="inline-block px-5 py-2 mr-4 text-base font-medium tracking-wide text-white align-middle rounded-lg shadow-sm bg-primary cursor-not-allowed">
+                <div className="col-12 col-sm-auto d-flex align-items-center mb-2 mb-sm-0">
+                  <span className="inline-block px-3 sm:px-5 py-2 text-sm sm:text-base font-medium tracking-wide text-white align-middle rounded-lg shadow-sm bg-primary cursor-not-allowed">
                     Sent Emails: {emailCount}
                   </span>
                 </div>
                 {/* Filters Button */}
-                <div className="col-3 col-xs-auto">
+                <div className="col-auto">
                   <button
                     onClick={toggleDrawer("right", true)}
-                    className="btn btn-primary w-100 w-md-auto"
+                    className="btn btn-primary"
                   >
-                    <i className="mx-1 fa fa-filter"></i> Filters
+                    <i className="mx-1 fa fa-filter"></i> <span className="hidden sm:inline">Filters</span>
                   </button>
                   <Drawer
                     className="!mt-16"
@@ -526,11 +526,11 @@ const EmailTable = () => {
                 </div>
 
                 {/* Search Input & Buttons */}
-                <div className="flex-wrap gap-2 col-8 col-md d-flex align-items-center justify-content-end">
+                <div className="flex-wrap gap-2 col-12 col-md d-flex align-items-center justify-content-end mt-2 mt-md-0">
                   {/* Search Bar */}
                   <input
                     id="search-bar-0"
-                    className="form-control h-10 px-2 border rounded w-[150px] min-w-[150px] max-w-[250px]"
+                    className="form-control h-10 px-2 border rounded w-full sm:w-[150px] sm:min-w-[150px] sm:max-w-[250px]"
                     placeholder="Search..."
                     onChange={handleSearchChange}
                     value={searchAll}
