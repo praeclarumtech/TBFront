@@ -10,6 +10,7 @@ import {
   dynamicFind,
   errorHandle,
   InputPlaceHolder,
+  getCurrentUserRole,
 } from "utils/commonFunctions";
 import appConstants from "constants/constant";
 import { TimePicker } from "antd";
@@ -22,9 +23,7 @@ import { toast } from "react-toastify";
 import { FormFeedback, Label } from "reactstrap";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import { useNavigate } from "react-router-dom";
-import { useParams } from "react-router-dom";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams, useLocation } from "react-router-dom";
 import { ViewAppliedSkills } from "api/skillsApi";
 import { viewAllCity } from "api/cityApis";
 
@@ -60,6 +59,9 @@ const JobForm = () => {
   const [searchParams] = useSearchParams();
   const isEditMode = searchParams.get("mode") === "edit";
   const navigate = useNavigate();
+  const location = useLocation();
+  const currentRole = getCurrentUserRole();
+  const jobModule = (location.state as { jobModule?: string })?.jobModule;
 
   const formTitle = isEditMode ? "Update" : "Create";
   const submitButtonText = isEditMode ? "Update" : "Add";
@@ -124,9 +126,16 @@ const JobForm = () => {
     validation.handleSubmit();
   };
 
+  const getRedirectPath = () => {
+    if (currentRole === "admin" && jobModule === "client") {
+      return "/job-listingClient";
+    }
+    return "/job-listing";
+  };
+
   const handleCancle = () => {
     validation.resetForm();
-    navigate("/job-listing");
+    navigate(getRedirectPath());
   };
 
   const validation: any = useFormik({
@@ -190,7 +199,7 @@ const JobForm = () => {
 
     onSubmit: async (values) => {
       setLoading(true);
-      const payload = {
+      const payload: Record<string, any> = {
         job_subject: values.job_subject,
         job_details: values.job_details,
         job_type: values.job_type,
@@ -208,13 +217,19 @@ const JobForm = () => {
         sub_description: values.sub_description,
         salary_frequency: values.salary_frequency,
       };
+
+      // Add jobModule for admin role when creating/editing vendor or client jobs
+      if (currentRole === "admin" && jobModule) {
+        payload.jobModule = jobModule;
+      }
+
       const apiCall = _id ? updateJob(_id, payload) : createJob(payload);
       apiCall
         .then((res: any) => {
           if (res?.success) {
-            toast.success(res?.message || `Data Added successfully`);
+            toast.success(res?.message || `Job added successfully`);
             validation.resetForm();
-            navigate("/job-listing");
+            navigate(getRedirectPath());
           } else {
             const errorMsg =
               res?.details?.length > 0
@@ -661,7 +676,7 @@ const JobForm = () => {
                             )
                           }
                           modules={quillModules}
-                          className="bg-white [&_.ql-editor]:min-h-[200px] [&_.ql-editor]:max-h-[300px]"
+                          className="bg-white [&_.ql-editor]:min-h-[200px] [&_.ql-editor]:max-h-[300px] [&_.ql-editor]:overflow-y-auto"
                           style={{ minHeight: "250px" }}
                         />
                         {validation.touched.job_details &&

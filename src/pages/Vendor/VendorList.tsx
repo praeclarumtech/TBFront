@@ -927,7 +927,7 @@ const VendorList = () => {
                 sm={12}
                 md={4}
                 lg={3}
-                className="flex-wrap mt-4 d-flex align-items-center "
+                className="flex-wrap mt-4 d-flex align-items-center"
               >
                 <div className="ml-6 text-2xl font-bold">Vendors</div>
               </Col>

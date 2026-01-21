@@ -549,7 +549,10 @@ const JobListing = () => {
   };
 
   const handleEdit = (jobId: string) => {
-    navigate(`/master/edit-job/${jobId}?mode=edit`);
+    const jobModule = currentLocation === "/job-listingClient" ? "client" : "vendor";
+    navigate(`/master/edit-job/${jobId}?mode=edit`, {
+      state: { jobModule },
+    });
   };
 
   const handleViewApplicants = (job: any) => {
@@ -623,8 +626,9 @@ const JobListing = () => {
   const navigate = useNavigate();
 
   const handleRedirect = () => {
+    const jobModule = currentLocation === "/job-listingClient" ? "client" : "vendor";
     navigate("/master/job", {
-      state: { source: "jobListing" },
+      state: { source: "jobListing", jobModule },
     });
   };
 
@@ -750,7 +754,7 @@ const JobListing = () => {
                         {formTitle}
                       </div>
                       {/* Right Section (Search + Buttons) */}
-                      <div className="flex-wrap mr-2 d-flex justify-content-end ">
+                      <div className="flex-wrap mr-2 d-flex justify-content-end gap-2">
                         {/* Search Bar */}
                         <div className="col-sm-auto col-12">
                           <input

@@ -360,7 +360,8 @@ const ClientApplications = () => {
         placement="right"
         onClose={() => setDrawerVisible(false)}
         open={drawerVisible}
-        width={360}
+        width="100%"
+        style={{ maxWidth: 360 }}
         footer={
           <div className="flex justify-end gap-2">
             <Button onClick={handleResetFilters} icon={<ReloadOutlined />}>

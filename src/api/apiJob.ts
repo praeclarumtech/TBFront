@@ -8,6 +8,7 @@ import {
   CHECK_EMAIL_FOR_JOB,
   APPLY_JOB,
   VIEW_JOB_APPLICANTS,
+  VIEW_JOB_INVITED_APPLICANTS,
   JOB_EMAIL_RECIPIENTS,
   JOB_SEND_EMAIL,
   NOTIFY_MATCHING_APPLICANTS,
@@ -102,6 +103,23 @@ export const getJobApplicants = async (
 ) => {
   const response = await authServices.get(
     `${VIEW_JOB_APPLICANTS}/${jobId}/applicants`,
+    {
+      params,
+    }
+  );
+  return response?.data;
+};
+
+export const getJobInvitedApplicants = async (
+  jobId: string,
+  params?: {
+    page?: number;
+    pageSize?: number;
+    limit?: number;
+  }
+) => {
+  const response = await authServices.get(
+    `${VIEW_JOB_INVITED_APPLICANTS}/${jobId}/invited-applicants`,
     {
       params,
     }

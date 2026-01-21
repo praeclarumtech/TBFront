@@ -101,9 +101,10 @@ const ViewRoleSkill = ({ show, onHide, applicantId }: any) => {
       open={show}
       onCancel={onHide}
       footer={null}
-      width={600}
+      width="95vw"
+      style={{ maxWidth: 600 }}
       centered
-      title={<span className="text-lg font-bold">Detailed Info</span>}
+      title={<span className="text-base sm:text-lg font-bold">Detailed Info</span>}
     >
       {loading ? (
         <Skeleton count={5} />

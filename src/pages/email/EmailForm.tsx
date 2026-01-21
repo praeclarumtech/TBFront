@@ -509,10 +509,10 @@ const EmailForm = () => {
 
   return (
     <>
-      <div className="my-6 mx-9">
+      <div className="my-4 mx-4 sm:my-6 sm:mx-6 lg:mx-9">
         <div className="w-100">
           <div className="bg-white rounded-lg shadow">
-            <div className="relative p-8">
+            <div className="relative p-4 sm:p-6 lg:p-8">
               <button
                 className="absolute flex items-center text-gray-600 left-5 top-5 hover:text-gray-800"
                 // onClick={() =>
@@ -550,7 +550,7 @@ const EmailForm = () => {
               <div>
                 {hasMounted && (
                   <form onSubmit={validation.handleSubmit} noValidate>
-                    <div className="grid grid-cols-2 gap-6 mb-3">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-3">
                       <div>
                         <BaseSelect
                           label="Select Email Template"
@@ -572,7 +572,7 @@ const EmailForm = () => {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-6 mb-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6">
                       <div>{renderToInputWithMore()}</div>
                       <div>{renderBccInputWithMore()}</div>
                     </div>
@@ -602,7 +602,7 @@ const EmailForm = () => {
                         Description
                       </Label>
                       <ReactQuill
-                        className="bg-white [&_.ql-editor]:min-h-[200px] [&_.ql-editor]:max-h-[300px]"
+                        className="bg-white [&_.ql-editor]:min-h-[200px] [&_.ql-editor]:max-h-[300px] [&_.ql-editor]:overflow-y-auto"
                         theme="snow"
                         value={validation.values.description}
                         onChange={(content) =>

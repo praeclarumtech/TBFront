@@ -721,20 +721,20 @@ const Applicant = () => {
                           onChange={handleSearchChange}
                           value={filters.searchAll}
                         />
-                        <button
-                          onClick={() => {
-                            if (currentRole === "admin") {
-                              setDrawerOpen(true);
-                            } else {
-                              toast.error(
-                                "Access denied! You do not have permission to access this resource."
-                              );
-                            }
-                          }}
-                          className="px-3 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 whitespace-nowrap"
+                          <BaseButton
+                          className="flex-1 px-3 py-2 text-sm bg-green-600 text-white rounded-md hover:bg-green-700"
+                          onClick={() =>
+                            currentRole === "admin"
+                              ? handleNavigate()
+                              : toast.error(
+                                  "Access denied you do not have permission to access this resource."
+                                )
+                          }
                         >
-                          <i className="fa fa-filter mr-1"></i>Filter
-                        </button>
+                          <i className="ri-add-line mr-1" />
+                          Add
+                        </BaseButton>
+                        
                         {hasFiltersExcludingActiveStatus && (
                           <button
                             onClick={resetFiltersWithoutActiveStatus}
@@ -766,6 +766,20 @@ const Applicant = () => {
                       )}
 
                       <div className="flex gap-2">
+                        <button
+                          onClick={() => {
+                            if (currentRole === "admin") {
+                              setDrawerOpen(true);
+                            } else {
+                              toast.error(
+                                "Access denied! You do not have permission to access this resource."
+                              );
+                            }
+                          }}
+                          className="px-3 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 whitespace-nowrap"
+                        >
+                          <i className="fa fa-filter mr-1"></i>Filter
+                        </button>
                         <BaseButton
                           className="flex-1 px-3 py-2 text-sm bg-green-700 text-white rounded-md hover:bg-green-800"
                           onClick={() =>
@@ -779,19 +793,7 @@ const Applicant = () => {
                           <i className="ri-upload-2-line mr-1" />
                           Export
                         </BaseButton>
-                        <BaseButton
-                          className="flex-1 px-3 py-2 text-sm bg-green-600 text-white rounded-md hover:bg-green-700"
-                          onClick={() =>
-                            currentRole === "admin"
-                              ? handleNavigate()
-                              : toast.error(
-                                  "Access denied you do not have permission to access this resource."
-                                )
-                          }
-                        >
-                          <i className="ri-add-line mr-1" />
-                          Add
-                        </BaseButton>
+                      
                         <ColumnsDropdown
                           availableColumns={availableColumns}
                           onColumnsChange={handleColumnsChange}
@@ -808,7 +810,19 @@ const Applicant = () => {
                         onChange={handleSearchChange}
                         value={filters.searchAll}
                       />
-
+   <BaseButton
+                        color="success"
+                        onClick={() =>
+                          currentRole === "admin"
+                            ? handleNavigate()
+                            : toast.error(
+                                "Access denied you do not have permission to access this resource."
+                              )
+                        }
+                      >
+                        <i className="ri-add-line me-1" />
+                        Add
+                      </BaseButton>
                       <button
                         onClick={() => {
                           if (currentRole === "admin") {
@@ -866,19 +880,7 @@ const Applicant = () => {
                         Export
                       </BaseButton>
 
-                      <BaseButton
-                        color="success"
-                        onClick={() =>
-                          currentRole === "admin"
-                            ? handleNavigate()
-                            : toast.error(
-                                "Access denied you do not have permission to access this resource."
-                              )
-                        }
-                      >
-                        <i className="ri-add-line me-1" />
-                        Add
-                      </BaseButton>
+                   
 
                       <ColumnsDropdown
                         availableColumns={availableColumns}

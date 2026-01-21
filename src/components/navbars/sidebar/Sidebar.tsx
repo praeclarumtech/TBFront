@@ -122,6 +122,33 @@ const Sidebar: React.FC<SidebarProps> = ({ toggleMenu }) => {
     }
   }, []);
 
+  // Keep submenu open based on current route
+  useEffect(() => {
+    const path = location.pathname;
+    const vendorPaths = ["/vendorList", "/job-listing", "/appliedJobApplicants", "/vendor/applications"];
+    const clientPaths = ["/client", "/job-listingClient", "/appliedJobApplicantsClient", "/client/applications"];
+    const masterPaths = ["/master/skills", "/master/role-skills", "/master/designation", "/master/qualification", "/master/passing-year", "/master/city", "/master/state", "/master/email-template"];
+
+    const newOpenKeys: string[] = [];
+    
+    if (vendorPaths.some(p => path.startsWith(p))) {
+      newOpenKeys.push("vendor-parent");
+    }
+    if (clientPaths.some(p => path.startsWith(p))) {
+      newOpenKeys.push("client-parent");
+    }
+    if (masterPaths.some(p => path.startsWith(p))) {
+      newOpenKeys.push("masters-parent");
+    }
+
+    if (newOpenKeys.length > 0) {
+      setOpenKeys(prev => {
+        const combined = [...new Set([...prev, ...newOpenKeys])];
+        return combined;
+      });
+    }
+  }, [location.pathname]);
+
   const handleCloseMenu = () => {
     const currentWidth = window.innerWidth;
     const isMobileNow = currentWidth < 768; // or your mobile breakpoint

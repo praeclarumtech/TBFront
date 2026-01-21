@@ -186,6 +186,7 @@ export const VIEW_JOB_PUBLIC = "/job/public/viewJobs";
 export const CHECK_EMAIL_FOR_JOB = "/job/apply";
 export const APPLY_JOB = "/job/apply";
 export const VIEW_JOB_APPLICANTS = "/job";
+export const VIEW_JOB_INVITED_APPLICANTS = "/job";
 export const JOB_EMAIL_RECIPIENTS = "/job/email/recipients";
 export const JOB_SEND_EMAIL = "/job";
 export const NOTIFY_MATCHING_APPLICANTS = "/job";

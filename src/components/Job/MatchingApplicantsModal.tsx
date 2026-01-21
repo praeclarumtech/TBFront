@@ -498,15 +498,16 @@ const MatchingApplicantsModal: React.FC<MatchingApplicantsModalProps> = ({
         open={show}
         onCancel={onHide}
         footer={null}
-        width={1200}
+        width="95vw"
+        style={{ maxWidth: 1200 }}
         centered
         title={
-          <div className="flex items-center gap-3">
-            <i className="ri-user-search-line text-purple-600 text-xl"></i>
-            <span className="text-lg font-bold">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <i className="ri-user-search-line text-purple-600 text-lg sm:text-xl"></i>
+            <span className="text-base sm:text-lg font-bold">
               Matching Candidates
               {jobTitle && (
-                <span className="text-gray-500 font-normal">
+                <span className="text-gray-500 font-normal hidden sm:inline">
                   {" "}
                   for {jobTitle}
                 </span>

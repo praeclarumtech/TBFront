@@ -557,7 +557,7 @@ const AddEmailTemplate = () => {
                             validation.setFieldTouched("description", true)
                           }
                           modules={quillModules}
-                          className="bg-white [&_.ql-editor]:min-h-[200px] [&_.ql-editor]:max-h-[300px]"
+                          className="bg-white [&_.ql-editor]:min-h-[200px] [&_.ql-editor]:max-h-[300px] [&_.ql-editor]:overflow-y-auto"
                           style={{ minHeight: "250px" }}
                         />
                       </Col>
