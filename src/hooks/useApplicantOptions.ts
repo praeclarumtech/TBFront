@@ -3,7 +3,11 @@ import { toast } from "react-toastify";
 import { ViewAppliedSkills } from "api/skillsApi";
 import { viewRoleSkill } from "api/roleApi";
 import { city as fetchCities, state as fetchState } from "api/applicantApi";
-import { SelectedOption, SelectedOption1, City } from "interfaces/applicant.interface";
+import {
+  SelectedOption,
+  SelectedOption1,
+  City,
+} from "interfaces/applicant.interface";
 
 export interface ApplicantOptions {
   skillOptions: SelectedOption1[];
@@ -14,7 +18,9 @@ export interface ApplicantOptions {
 
 export const useApplicantOptions = () => {
   const [skillOptions, setSkillOptions] = useState<SelectedOption1[]>([]);
-  const [appliedRoleOptions, setAppliedRoleOptions] = useState<SelectedOption[]>([]);
+  const [appliedRoleOptions, setAppliedRoleOptions] = useState<
+    SelectedOption[]
+  >([]);
   const [cities, setCities] = useState<City[]>([]);
   const [states, setStates] = useState<City[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -33,7 +39,7 @@ export const useApplicantOptions = () => {
         skillData.map((item: any) => ({
           label: item.skills,
           value: item._id,
-        }))
+        })),
       );
     } catch (error: any) {
       const details = error?.response?.data?.details;
@@ -45,7 +51,7 @@ export const useApplicantOptions = () => {
           });
         });
       } else {
-        toast.error("Failed to fetch skills.. Please try again.", {
+        toast.error("Failed to fetch skills. Please try again.", {
           closeOnClick: true,
           autoClose: 5000,
         });
@@ -67,7 +73,7 @@ export const useApplicantOptions = () => {
         appliedRoleData.map((item: any) => ({
           label: item.appliedRole,
           value: item.appliedRole,
-        }))
+        })),
       );
     } catch (error: any) {
       const details = error?.response?.data?.details;
@@ -79,7 +85,7 @@ export const useApplicantOptions = () => {
           });
         });
       } else {
-        toast.error("Failed to fetch roles... Please try again.", {
+        toast.error("Failed to fetch roles. Please try again.", {
           closeOnClick: true,
           autoClose: 5000,
         });
@@ -98,8 +104,8 @@ export const useApplicantOptions = () => {
             (city: { city_name: string; _id: string }) => ({
               label: city.city_name,
               value: city._id,
-            })
-          )
+            }),
+          ),
         );
       }
     } catch (error: any) {
@@ -112,7 +118,7 @@ export const useApplicantOptions = () => {
           });
         });
       } else {
-        toast.error("Failed to fetch cities.. Please try again.", {
+        toast.error("Failed to fetch cities. Please try again.", {
           closeOnClick: true,
           autoClose: 5000,
         });
@@ -135,8 +141,8 @@ export const useApplicantOptions = () => {
               label: state.state_name,
               value: state._id,
               country_id: state.country_id,
-            })
-          )
+            }),
+          ),
         );
       }
     } catch (error: any) {
@@ -149,7 +155,7 @@ export const useApplicantOptions = () => {
           });
         });
       } else {
-        toast.error("Failed to fetch State.. Please try again.", {
+        toast.error("Failed to fetch states. Please try again.", {
           closeOnClick: true,
           autoClose: 5000,
         });
@@ -180,4 +186,3 @@ export const useApplicantOptions = () => {
     },
   };
 };
-

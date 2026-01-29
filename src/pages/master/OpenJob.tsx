@@ -8,6 +8,7 @@ import BaseButton from "components/BaseComponents/BaseButton";
 import { useNavigate } from "react-router-dom";
 import { capitalizeWords } from "utils/commonFunctions";
 import "react-quill/dist/quill.snow.css";
+import { UserOutlined, TeamOutlined } from "@ant-design/icons";
 
 
 const OpenJob = () => {
@@ -22,6 +23,7 @@ const OpenJob = () => {
   const isLoggedIn = !!token && token !== "undefined" && token.trim() !== "";
 
   const isFromEmail = searchParams.get("source") === "email";
+
   useEffect(() => {
     const fetchJob = async () => {
       console.log(_id);
@@ -41,9 +43,23 @@ const OpenJob = () => {
 
     fetchJob();
   }, [_id]);
-  const handleNavigate = () => {
+
+  const handleApplyAsCandidate = () => {
     // Allow applying with or without login
     navigate("/applicants/applyNow", { state: { jobId: formData._id } });
+  };
+
+  const handleApplyAsVendor = () => {
+    // Navigate to vendor QR form with job info
+    navigate("/vendor/vendor-add-qr-code", { 
+      state: { 
+        jobId: formData._id,
+        jobInfo: {
+          job_id: formData.job_id,
+          job_subject: formData.job_subject
+        }
+      } 
+    });
   };
 
   const DetailsCard = ({
@@ -131,7 +147,6 @@ const OpenJob = () => {
             <Col span={24}>
               <DetailsRow
                 label="Job Subject"
-                // value={<Tag color="magenta">{formData.job_subject}</Tag>}
                 value={
                   <div style={{ maxWidth: "100%", wordBreak: "break-word" }}>
                     <Tag
@@ -162,7 +177,6 @@ const OpenJob = () => {
                 }
               />
             </Col>
-            {/* Show salary only if user is logged in */}
             {isLoggedIn ? (
               <>
                 <Col span={12}>
@@ -248,7 +262,6 @@ const OpenJob = () => {
               </Col>
             </Row>
           </Row>
-          {/* HR Contact Info for non-logged-in users OR when opened from email */}
           {(!isLoggedIn || isFromEmail) && (
             <div
               className="p-3 mt-4 rounded d-flex align-items-center justify-content-center"
@@ -277,9 +290,22 @@ const OpenJob = () => {
 
           <div className="flex justify-center gap-3 mt-4">
             {!isFromEmail && (
-              <BaseButton color="primary" onClick={handleNavigate}>
-                Apply Now
-              </BaseButton>
+              <>
+                <BaseButton 
+                  color="success" 
+                  onClick={handleApplyAsCandidate}
+                  className="d-flex align-items-center gap-2"
+                >
+                  <UserOutlined /> Apply as Candidate
+                </BaseButton>
+                <BaseButton 
+                  color="primary" 
+                  onClick={handleApplyAsVendor}
+                  className="d-flex align-items-center gap-2"
+                >
+                  <TeamOutlined /> Apply as Vendor
+                </BaseButton>
+              </>
             )}
           </div>
         </DetailsCard>

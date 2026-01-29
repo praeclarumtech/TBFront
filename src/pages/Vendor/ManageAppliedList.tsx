@@ -3,6 +3,7 @@ import { Row, Col, Card, Container } from "react-bootstrap";
 import { Fragment, useEffect, useState, useMemo } from "react";
 // import { BaseSelect } from "components/BaseComponents/BaseSelect";
 import TableContainer from "components/BaseComponents/TableContainer";
+import EmptyState from "components/BaseComponents/EmptyState";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 // import * as Tooltip from "@radix-ui/react-tooltip";
 import { toast } from "react-toastify";
@@ -59,7 +60,7 @@ const ManageAppliedList = () => {
   const [loader, setLoader] = useState(false);
   const [applicant, setApplicant] = useState<any[]>([]);
   const [selectedApplicantId, setSelectedApplicantId] = useState<string | null>(
-    null
+    null,
   );
   const [showViewModal, setShowViewModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -83,7 +84,7 @@ const ManageAppliedList = () => {
   const [showConfirmExportModal, setShowConfirmExportModal] = useState(false);
   const [exportOption, setExportOption] = useState("");
   const [exportableFields, setExportableFields] = useState<SelectedOption[]>(
-    []
+    [],
   );
 
   const fetchApplicants = async () => {
@@ -150,7 +151,7 @@ const ManageAppliedList = () => {
       if (error) {
         toast.error(error?.response?.data?.message);
       } else {
-        toast.error("Failed to fetch applicants.. Please try again.", {
+        toast.error("Failed to fetch applicants. Please try again.", {
           closeOnClick: true,
           autoClose: 5000,
         });
@@ -192,7 +193,7 @@ const ManageAppliedList = () => {
   //   };
 
   const deleteMultipleApplicantDetails = (
-    multipleApplicantDelete: string[] | undefined | null
+    multipleApplicantDelete: string[] | undefined | null,
   ) => {
     setLoader(true);
     deleteApplicantVendor(multipleApplicantDelete)
@@ -254,7 +255,7 @@ const ManageAppliedList = () => {
         setSelectedApplicants([]);
         setShowConfirmExportModal(false);
         setModelLoading(false);
-        toast.success("File downloaded successfully!");
+        toast.success("File downloaded successfully.");
         return;
       }
 
@@ -264,7 +265,7 @@ const ManageAppliedList = () => {
         parsed?.statuscode === 500 ||
         parsed?.success === false
       ) {
-        toast.error(parsed?.message || "No data available to export");
+        toast.error(parsed?.message || "No data available to export.");
       } else {
         toast.error("Unexpected JSON response during export.");
       }
@@ -286,7 +287,9 @@ const ManageAppliedList = () => {
   };
 
   const handleColumnSelected = (
-    selectedOptions: any[] | ((prevState: SelectedOption[]) => SelectedOption[])
+    selectedOptions:
+      | any[]
+      | ((prevState: SelectedOption[]) => SelectedOption[]),
   ) => {
     if (!selectedApplicants || selectedApplicants.length === 0) {
       toast.error("Please select applicants before choosing columns.");
@@ -298,7 +301,7 @@ const ManageAppliedList = () => {
     if (Array.isArray(selectedOptions)) {
       console.log(
         "Selected values:",
-        selectedOptions.map((opt: { value: any }) => opt.value)
+        selectedOptions.map((opt: { value: any }) => opt.value),
       );
 
       setExportableFields(selectedOptions);
@@ -388,7 +391,7 @@ const ManageAppliedList = () => {
         enableColumnFilter: false,
       },
     ],
-    [applicant, selectedApplicants]
+    [applicant, selectedApplicants],
   );
 
   const ModalTitle = () => (
@@ -537,10 +540,7 @@ const ManageAppliedList = () => {
                     />
                   </div>
                 ) : (
-                  <div className="pt-4 text-center">
-                    <i className="ri-search-line d-block fs-1 text-success"></i>
-                    {"Total Record: " + totalRecords}
-                  </div>
+                  <EmptyState />
                 )}
               </div>
             </Card>

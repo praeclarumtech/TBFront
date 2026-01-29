@@ -209,6 +209,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({
           onChange={onAppliedSkillsChange}
           placeholder="Select skills..."
           className="mb-1 select-border"
+          isMulti={true}
         />
 
         {/* Multiple Skills */}
@@ -220,6 +221,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({
           onChange={onMultipleSkillsChange}
           placeholder="Select multiple skills..."
           className="mb-1 select-border"
+          isMulti={true}
         />
 
         {/* Applied Role */}

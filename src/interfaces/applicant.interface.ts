@@ -1,8 +1,6 @@
 // import moment from "moment";
 import * as Yup from "yup";
 
-
-
 export interface ViewModalProps {
   show: boolean;
   onHide: () => void;
@@ -99,7 +97,7 @@ export const EducationApplicantSchema = Yup.object({
     .typeError("Please enter a valid number for CGPA."),
   collegeName: Yup.string().matches(
     /^[A-Za-z\s]+$/,
-    "College name can only contain letters."
+    "College name can only contain letters.",
   ),
 });
 
@@ -111,7 +109,7 @@ export const jobApplicantSchema = Yup.object({
   maritalStatus: Yup.string(),
   // maritalStatus: Yup.string().required("Marital status is required."),
   currentCompanyDesignation: Yup.string().required(
-    "Current company designation is required."
+    "Current company designation is required.",
   ),
   appliedRole: Yup.string().required("Applied role is required."),
   anyHandOnOffers: Yup.boolean(),
@@ -120,11 +118,11 @@ export const jobApplicantSchema = Yup.object({
     .matches(/^[A-Za-z0-9\s&.-]+$/, "Please enter a valid company name."),
   currentPkg: Yup.string().matches(
     /^\d+(\.\d{1,2})?$/,
-    "Please enter a valid current package."
+    "Please enter a valid current package.",
   ),
   expectedPkg: Yup.string().matches(
     /^\d+(\.\d{1,2})?$/,
-    "Please enter a valid expected package."
+    "Please enter a valid expected package.",
   ),
   negotiation: Yup.string(),
   // .matches(
@@ -137,8 +135,8 @@ export const jobApplicantSchema = Yup.object({
   workPreference: Yup.string()
     // .required("Work preference is required.")
     .oneOf(
-      ["remote", "onsite", "hybrid","freelancer"],
-      "Please select a valid work preference."
+      ["remote", "onsite", "hybrid", "freelancer"],
+      "Please select a valid work preference.",
     ),
   practicalUrl: Yup.string().url("Please enter a valid URL."),
   practicalFeedback: Yup.string()
@@ -148,17 +146,16 @@ export const jobApplicantSchema = Yup.object({
   clientCvUrl: Yup.string().url("Please enter a valid URL."),
   clientFeedback: Yup.string().max(
     150,
-    " Please keep your clientFeedback under 150 characters."
+    " Please keep your clientFeedback under 150 characters.",
   ),
   communicationSkill: Yup.number()
     // .required("Communication skill rating is required.")
     .min(1, "Rating must be between 1 and 10.")
     .max(10, "Rating must be between 1 and 10."),
-  comment: Yup.string()
-    .min(
-      10,
-      "Please provide a detailed comment about how you found us (minimum 10 characters)."
-    ),
+  comment: Yup.string().min(
+    10,
+    "Please provide a detailed comment about how you found us (minimum 10 characters).",
+  ),
   appliedSkills: Yup.array().of(Yup.string()),
   // .required("Skills are required.")
   // .min(1, "Please select at least one skill."),
@@ -168,7 +165,7 @@ export const jobApplicantSchema = Yup.object({
   relevantSkillExperience: Yup.string()
     .matches(
       /^\d+(\.\d{1,2})?$/,
-      "Enter a valid number for relevant experience."
+      "Enter a valid number for relevant experience.",
     )
     // .required("Relevant experience is required.")
     .test(
@@ -179,7 +176,7 @@ export const jobApplicantSchema = Yup.object({
         const total = parseFloat(totalExperience);
         const relevant = parseFloat(value ?? "0");
         return isNaN(total) || isNaN(relevant) || relevant <= total;
-      }
+      },
     ),
   referral: Yup.string(),
   portfolioUrl: Yup.string().url("Please enter a valid portfolio URL."),
@@ -198,7 +195,7 @@ export const personalApplicantSchema = Yup.object({
     .typeError("Please enter a valid date.")
     .min(
       new Date(1960, 0, 1),
-      "Year must be between 1960 and the current year."
+      "Year must be between 1960 and the current year.",
     )
     .max(new Date(), "Date of birth cannot be in the future."),
   firstName: Yup.string()
@@ -230,28 +227,28 @@ export const personalApplicantSchema = Yup.object({
         const emails = value.split(",").map((e) => e.trim());
 
         return emails.every(
-          (email) => emailRegex.test(email) && email.length <= 100
+          (email) => emailRegex.test(email) && email.length <= 100,
         );
-      }
+      },
     ),
   phoneNumber: Yup.string()
     .matches(
       /^[1-9][0-9]{9}$/,
-      "Please enter a valid 10-digit phone number (should not start with 0)."
+      "Please enter a valid 10-digit phone number. It should not start with 0.",
     )
     .required("Phone number is required."),
 
   whatsappNumber: Yup.string()
     .matches(
       /^[1-9][0-9]{9}$/,
-      "Please enter a valid 10-digit WhatsApp number (should not start with 0)."
+      "Please enter a valid 10-digit WhatsApp number. It should not start with 0.",
     )
     .required("WhatsApp number is required."),
 
   currentCity: Yup.string(),
   currentAddress: Yup.string()
     .min(5, "Please provide a detailed location.")
-    .max(150, " Please keep your currentAddress under 150 characters."),
+    .max(150, "Please keep your current address under 150 characters."),
   permanentAddress: Yup.string()
     .min(5, "Please provide a detailed location.")
     .max(150, " Please keep your permanentAddress under 150 characters."),
@@ -293,7 +290,7 @@ export type Role = [
   "Python Developer",
   "PHP Developer",
   "Other",
-  "Na"
+  "Na",
 ];
 
 export const QrApplicants = Yup.object({
@@ -322,14 +319,17 @@ export const QrApplicants = Yup.object({
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const emails = value.split(",").map((e) => e.trim());
         return emails.every(
-          (email) => emailRegex.test(email) && email.length <= 100
+          (email) => emailRegex.test(email) && email.length <= 100,
         );
-      }
+      },
     ),
 
   phoneNumber: Yup.string()
     .required("Phone number is required.")
-    .matches(/^[1-9][0-9]{9}$/, "Please enter a valid 10-digit phone number (should not start with 0)."),
+    .matches(
+      /^[1-9][0-9]{9}$/,
+      "Please enter a valid 10-digit phone number. It should not start with 0.",
+    ),
 
   // preferredLocations: Yup.string()
   //   .required("Preferred location is required.")
@@ -340,7 +340,7 @@ export const QrApplicants = Yup.object({
   // maritalStatus: Yup.string().required("Marital status is required."),
 
   currentCompanyDesignation: Yup.string().required(
-    "Current Company Designation is required."
+    "Current Company Designation is required.",
   ),
 
   anyHandOnOffers: Yup.boolean(),
@@ -377,7 +377,7 @@ export const QrApplicants = Yup.object({
       (value) => {
         const num = parseFloat(value || "0");
         return num > 0;
-      }
+      },
     ),
 
   // workPreference: Yup.string()
@@ -410,7 +410,7 @@ export const QrApplicants = Yup.object({
     .required("Relevant experience is required.")
     .matches(
       /^\d+(\.\d{1,2})?$/,
-      "Enter a valid number for relevant experience."
+      "Enter a valid number for relevant experience.",
     )
     .test(
       "relevant-less-than-total",
@@ -420,7 +420,7 @@ export const QrApplicants = Yup.object({
         const total = parseFloat(totalExperience);
         const relevant = parseFloat(value ?? "0");
         return isNaN(total) || isNaN(relevant) || relevant <= total;
-      }
+      },
     ),
   // currentPkg: Yup.string().required("Total experience is required"),
   communicationSkill: Yup.number()

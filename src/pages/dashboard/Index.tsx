@@ -30,28 +30,28 @@ const Dashboard = () => {
   const [holdApplicants, setHoldApplicants] = useState<number | null>(null);
 
   const [inProcessApplicants, setInProcessApplicants] = useState<number | null>(
-    null
+    null,
   );
   const [isLoading, setIsLoading] = useState<boolean>(true); // ✅ Tracks loading
   const [error, setError] = useState<string | null>(null);
   const [rejectedApplicants, setRejectedApplicants] = useState<number | null>(
-    null
+    null,
   );
   const [selectedApplicants, setSelectedApplicants] = useState<number | null>(
-    null
+    null,
   );
 
   const [selectedTechnology, setSelectedTechnology] = useState<string | null>(
-    null
+    null,
   );
   const [appliedApplicants, setAppliedApplicants] = useState<number | null>(
-    null
+    null,
   );
   const [shortListedApplicants, setShortListedApplicants] = useState<
     number | null
   >(null);
   const [onboardedApplicants, setOnboardedApplicants] = useState<number | null>(
-    null
+    null,
   );
   const [leavedApplicants, setLeavedApplicants] = useState<number | null>(null);
 
@@ -229,7 +229,10 @@ const Dashboard = () => {
                 onClick={
                   getRole === "admin"
                     ? () => handleCardClick(stat.title)
-                    : () => toast.error("You don't have permission")
+                    : () =>
+                        toast.error(
+                          "You don't have permission to perform this action.",
+                        )
                 }
               >
                 <StatRightTopIcon

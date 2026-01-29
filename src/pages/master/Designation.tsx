@@ -4,6 +4,7 @@ import { Fragment, useMemo, useState, useEffect } from "react";
 
 import BaseButton from "components/BaseComponents/BaseButton";
 import TableContainer from "components/BaseComponents/TableContainer";
+import EmptyState from "components/BaseComponents/EmptyState";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import * as Yup from "yup";
@@ -68,10 +69,10 @@ const AddDesignation = () => {
         setDesignations(res.data.data || []);
         setTotalRecords(res.data?.pagination?.totalRecords || 0);
       } else {
-        toast.error(res?.message || "Failed to fetch designations");
+        toast.error(res?.message || "Failed to fetch designations.");
       }
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Something went wrong!");
+      toast.error(error?.response?.data?.message || "Something went wrong.");
       console.error(error);
     } finally {
       setIsLoading(false);
@@ -105,7 +106,7 @@ const AddDesignation = () => {
     try {
       await deleteDesignation(designationToDelete._id);
 
-      toast.success("Selected designations deleted successfully");
+      toast.success("Selected designations deleted successfully.");
       fetchDesignations();
     } catch (error) {
       toast.error("Failed to delete one or more designations.");
@@ -118,13 +119,13 @@ const AddDesignation = () => {
   };
 
   const confirmMultiDelete = async (
-    multipleDesignationDelete: string[] | undefined | null
+    multipleDesignationDelete: string[] | undefined | null,
   ) => {
     setLoader(true);
     try {
       await deleteMultipleDesignation(multipleDesignationDelete);
 
-      toast.success("Selected designations deleted successfully");
+      toast.success("Selected designations deleted successfully.");
       fetchDesignations();
     } catch (error) {
       toast.error("Failed to delete one or more designations.");
@@ -139,7 +140,7 @@ const AddDesignation = () => {
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
       setSelectedDesignation(
-        designations.map((designation) => designation._id)
+        designations.map((designation) => designation._id),
       ); // Select all
     } else {
       setSelectedDesignation([]); // Unselect all
@@ -151,7 +152,7 @@ const AddDesignation = () => {
       (prev) =>
         prev.includes(designationId)
           ? prev.filter((id) => id !== designationId) // Unselect if already selected
-          : [...prev, designationId] // Add to selected list
+          : [...prev, designationId], // Add to selected list
     );
   };
 
@@ -261,7 +262,7 @@ const AddDesignation = () => {
         },
       },
     ],
-    [designations, selectedDesignation]
+    [designations, selectedDesignation],
   );
 
   const validation: any = useFormik({
@@ -271,8 +272,8 @@ const AddDesignation = () => {
     },
     validationSchema: Yup.object({
       designationName: Yup.string()
-        .min(1, "Designation Name must be at least 1.")
-        .max(50, "Designation name must be between 1 to 50 characters.")
+        .min(1, "Designation name must be at least 1 character.")
+        .max(50, "Designation name must be between 1 and 50 characters.")
         .required("Designation name is required."),
     }),
 
@@ -294,7 +295,7 @@ const AddDesignation = () => {
               res?.message ||
                 `Designation ${
                   editingDesignation ? "updated" : "added"
-                } successfully`
+                } successfully`,
             );
 
             setEditingDesignation(null);
@@ -304,12 +305,12 @@ const AddDesignation = () => {
           } else {
             toast.error(
               res?.message ||
-                `Failed to ${editingDesignation ? "update" : "add"} Designation`
+                `Failed to ${editingDesignation ? "update" : "add"} Designation`,
             );
           }
         })
         .catch((error: any) => {
-          toast.error("Something went wrong!");
+          toast.error("Something went wrong.");
           console.error(error);
         })
         .finally(() => {
@@ -443,7 +444,7 @@ const AddDesignation = () => {
                           className="bg-gray-100"
                           type="text"
                           placeholder={InputPlaceHolder(
-                            "Designation to be Added"
+                            "Designation to be Added",
                           )}
                           handleChange={validation.handleChange}
                           handleBlur={validation.handleBlur}
@@ -483,10 +484,7 @@ const AddDesignation = () => {
                               rowHeight="10px !important"
                             />
                           ) : (
-                            <div className="py-4 text-center">
-                              <i className="ri-search-line d-block fs-1 text-success"></i>
-                              {handleResponse?.dataNotFound}
-                            </div>
+                            <EmptyState />
                           )}
                         </div>
                       )}

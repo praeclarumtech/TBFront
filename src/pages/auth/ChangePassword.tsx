@@ -57,38 +57,38 @@ const ChangePassword = ({ showModal, setShowModal }: ChangePasswordProps) => {
     },
     validationSchema: Yup.object({
       oldPassword: Yup.string().required(
-        validationMessages.required("Old Password")
+        validationMessages.required("Old Password"),
       ),
       newPassword: Yup.string()
         .required(validationMessages.required("New Password"))
         .min(8, validationMessages.passwordLength("New Password", 8))
         .matches(
           passwordRegex,
-          validationMessages.passwordComplexity("New Password")
+          validationMessages.passwordComplexity("New Password"),
         ),
       confirmPassword: Yup.string()
         .required(validationMessages.required("Confirm Password"))
         .oneOf(
           [Yup.ref("newPassword")],
-          "Password and confirm password should be same."
+          "Password and confirm password should be same.",
         ),
     }),
     onSubmit: (values) => {
       setLoader(true);
       if (!user || typeof user !== "object" || !("id" in user)) {
-        toast.error("Invalid user data");
+        toast.error("Invalid user data.");
         setLoader(false);
         return;
       }
 
       if (!user || typeof user !== "object" || !("id" in user)) {
-        toast.error("Invalid user data");
+        toast.error("Invalid user data.");
         setLoader(false);
         return;
       }
 
       if (typeof user.id !== "string") {
-        toast.error("Invalid user ID format");
+        toast.error("Invalid user ID format.");
         setLoader(false);
         return;
       }

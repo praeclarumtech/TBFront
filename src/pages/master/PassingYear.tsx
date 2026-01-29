@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import BaseButton from "components/BaseComponents/BaseButton";
 import BaseInput from "components/BaseComponents/BaseInput";
 import TableContainer from "components/BaseComponents/TableContainer";
+import EmptyState from "components/BaseComponents/EmptyState";
 import { Loader } from "react-feather";
 import {
   viewAllPassingYear,
@@ -29,7 +30,7 @@ const PassingYear = () => {
       const response = await viewAllPassingYear();
       setPassingYears(response?.data?.item || []);
     } catch (error) {
-      toast.error("Error fetching passing years");
+      toast.error("Error fetching passing years.");
     } finally {
       setLoader(false);
     }
@@ -43,10 +44,10 @@ const PassingYear = () => {
     initialValues: { addYear: "" },
     validationSchema: Yup.object({
       addYear: Yup.number()
-        .typeError("Year must be a number")
-        .integer("Year must be a whole number")
-        .min(1900, "Year must be after 1900")
-        .max(new Date().getFullYear(), "Year cannot be in the future")
+        .typeError("Year must be a number.")
+        .integer("Year must be a whole number.")
+        .min(1900, "Year must be after 1900.")
+        .max(new Date().getFullYear(), "Year cannot be in the future.")
         .required("Year is required."),
     }),
 
@@ -58,10 +59,10 @@ const PassingYear = () => {
             _id: editingYear._id,
             year: Number(values.addYear),
           });
-          toast.success("Passing year updated successfully");
+          toast.success("Passing year updated successfully.");
         } else {
           await addPassingYear({ year: Number(values.addYear) });
-          toast.success("Passing year added successfully");
+          toast.success("Passing year added successfully.");
         }
         fetchPassingYears();
         resetForm();
@@ -79,10 +80,10 @@ const PassingYear = () => {
     setLoader(true);
     try {
       await deletePassingYear({ _id: deleteId });
-      toast.success("Passing year deleted successfully");
+      toast.success("Passing year deleted successfully.");
       fetchPassingYears();
     } catch (error) {
-      toast.error("Error deleting passing year");
+      toast.error("Error deleting passing year.");
     } finally {
       setLoader(false);
       setDeleteModal(false);
@@ -122,7 +123,7 @@ const PassingYear = () => {
         ),
       },
     ],
-    []
+    [],
   );
 
   return (
@@ -197,10 +198,7 @@ const PassingYear = () => {
                               SearchPlaceholder="Search..."
                             />
                           ) : (
-                            <div className="py-4 text-center">
-                              <i className="ri-search-line d-block fs-1 text-success" />
-                              No passing years found.
-                            </div>
+                            <EmptyState message="No passing years found." />
                           )}
                         </div>
                       )}

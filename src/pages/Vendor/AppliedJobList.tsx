@@ -4,6 +4,7 @@ import { Fragment, useMemo, useState, useEffect } from "react";
 import { toast } from "react-toastify";
 // import BaseButton from "components/BaseComponents/BaseButton";
 import TableContainer from "components/BaseComponents/TableContainer";
+import EmptyState from "components/BaseComponents/EmptyState";
 // import { Tooltip as ReactTooltip } from "react-tooltip";
 
 import DeleteModal from "components/BaseComponents/DeleteModal";
@@ -48,10 +49,10 @@ const AppliedJobList = () => {
         setJob(allApplications);
         setTotalRecords(allApplications.length);
       } else {
-        toast.error(res?.message || "Failed to fetch Jobs");
+        toast.error(res?.message || "Failed to fetch jobs.");
       }
     } catch (error) {
-      toast.error("Something went wrong! ");
+      toast.error("Something went wrong.");
       console.error(error);
     } finally {
       setIsLoading(false);
@@ -90,7 +91,7 @@ const AppliedJobList = () => {
       }
       fetchJob();
     } catch (error) {
-      toast.error("Something went wrong!");
+      toast.error("Something went wrong.");
       console.error(error);
     } finally {
       setLoader(false);
@@ -152,7 +153,7 @@ const AppliedJobList = () => {
         enableColumnFilter: false,
       },
     ],
-    [selectedJob, job]
+    [selectedJob, job],
   );
 
   const [loader, setLoader] = useState(false);
@@ -232,10 +233,7 @@ const AppliedJobList = () => {
                               rowHeight="10px !important"
                             />
                           ) : (
-                            <div className="py-4 text-center">
-                              <i className="ri-search-line d-block fs-1 text-success"></i>
-                              {handleResponse?.dataNotFound}
-                            </div>
+                            <EmptyState />
                           )}
                         </>
                       )}

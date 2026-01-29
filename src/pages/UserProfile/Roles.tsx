@@ -5,6 +5,7 @@ import { Card, Col, Container, Row } from "react-bootstrap";
 
 import Skeleton from "react-loading-skeleton";
 import TableContainer from "components/BaseComponents/TableContainer";
+import EmptyState from "components/BaseComponents/EmptyState";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import { useNavigate } from "react-router-dom";
 import BaseButton from "components/BaseComponents/BaseButton";
@@ -414,10 +415,7 @@ const Roles = () => {
                     />
                   </Card.Body>
                 ) : (
-                  <div className="py-4 text-center">
-                    <i className="ri-search-line d-block fs-1 text-success"></i>
-                    {handleResponse?.dataNotFound}
-                  </div>
+                  <EmptyState />
                 )}
               </div>
             )}

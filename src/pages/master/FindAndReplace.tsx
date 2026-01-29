@@ -43,9 +43,9 @@ const FindAndReplace = () => {
       ReplaceValue: "",
     },
     validationSchema: Yup.object({
-      field: Yup.string().required("Please select field."),
+      field: Yup.string().required("Please select a field."),
       findValue: Yup.string().required("Please enter value to find."),
-      ReplaceValue: Yup.string().required("Please enter replace value."),
+      ReplaceValue: Yup.string().required("Please enter replacement value."),
     }),
     onSubmit: (values) => {
       const payload = {
@@ -62,10 +62,10 @@ const FindAndReplace = () => {
             setEditingSkill(null);
             validation.resetForm();
           } else {
-            toast.error(res?.message || "Something went wrong");
+            toast.error(res?.message || "Something went wrong.");
           }
         })
-        .catch(() => toast.error("API Error"));
+        .catch(() => toast.error("API error."));
       // .finally(() => setLoader(false));
     },
   });
@@ -88,11 +88,13 @@ const FindAndReplace = () => {
             setEditingSkill(null);
             validation.resetForm();
           } else {
-            toast.error(res?.message || "Something went wrong");
+            toast.error(res?.message || "Something went wrong.");
           }
         })
         .catch((error: any) =>
-          toast.error(error?.response?.data?.message || "Something went wrong!")
+          toast.error(
+            error?.response?.data?.message || "Something went wrong.",
+          ),
         );
     } else {
       // Validation errors exist
@@ -134,12 +136,12 @@ const FindAndReplace = () => {
               toast.success(res?.message);
               setEditingSkill(null);
             } else {
-              toast.error(res?.message || "Something went wrong");
+              toast.error(res?.message || "Something went wrong.");
             }
           }
         })
 
-        .catch(() => toast.error("API Error"));
+        .catch(() => toast.error("API error."));
     }
   };
 
@@ -157,10 +159,10 @@ const FindAndReplace = () => {
           skillData.map((item: any) => ({
             label: item.skills,
             value: item.skills,
-          }))
+          })),
         );
       } catch (error: any) {
-        toast.error(error?.response?.data?.message || "Something went wrong!");
+        toast.error(error?.response?.data?.message || "Something went wrong.");
       }
     };
 
@@ -177,10 +179,10 @@ const FindAndReplace = () => {
           roleData.map((item: any) => ({
             label: item.appliedRole,
             value: item.appliedRole,
-          }))
+          })),
         );
       } catch (error: any) {
-        toast.error(error?.response?.data?.message || "Something went wrong!");
+        toast.error(error?.response?.data?.message || "Something went wrong.");
       }
     };
 
@@ -197,10 +199,10 @@ const FindAndReplace = () => {
           qualificationData.map((item: any) => ({
             label: item.degree,
             value: item.degree,
-          }))
+          })),
         );
       } catch (error: any) {
-        toast.error(error?.response?.data?.message || "Something went wrong!");
+        toast.error(error?.response?.data?.message || "Something went wrong.");
       }
     };
 
@@ -241,7 +243,7 @@ const FindAndReplace = () => {
                             placeholder="Select Fields"
                             value={
                               findAndReplaceOptions.find(
-                                (opt) => opt.value === validation.values.field
+                                (opt) => opt.value === validation.values.field,
                               ) || null
                             }
                             handleChange={handleField}
@@ -282,7 +284,7 @@ const FindAndReplace = () => {
                             placeholder={InputPlaceHolder(
                               `Field to ${
                                 findAndReplaceOption?.label || "Find"
-                              } `
+                              } `,
                             )}
                             handleChange={validation.handleChange}
                             handleBlur={validation.handleBlur}
@@ -324,7 +326,8 @@ const FindAndReplace = () => {
                               value={
                                 skillOptions.find(
                                   (opt) =>
-                                    opt.value === validation.values.ReplaceValue
+                                    opt.value ===
+                                    validation.values.ReplaceValue,
                                 ) || null
                               }
                               handleChange={handleAppliedField}
@@ -368,7 +371,8 @@ const FindAndReplace = () => {
                               value={
                                 roleOptions.find(
                                   (opt) =>
-                                    opt.value === validation.values.ReplaceValue
+                                    opt.value ===
+                                    validation.values.ReplaceValue,
                                 ) || null
                               }
                               handleChange={handleAppliedField}
@@ -412,7 +416,8 @@ const FindAndReplace = () => {
                               value={
                                 qualificationOptions.find(
                                   (opt) =>
-                                    opt.value === validation.values.ReplaceValue
+                                    opt.value ===
+                                    validation.values.ReplaceValue,
                                 ) || null
                               }
                               handleChange={handleAppliedField}

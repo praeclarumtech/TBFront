@@ -651,7 +651,7 @@ const Profile = () => {
                               className="mb-3 md:mb-4 lg:mb-4 xl:mb-4 "
                             >
                               <BaseInput
-                                label="Comapny Name"
+                                label="Company Name"
                                 name="company_name"
                                 type="text"
                                 placeholder={InputPlaceHolder("Company Name")}
@@ -676,10 +676,10 @@ const Profile = () => {
                             >
                               <BaseInput
                                 className=""
-                                label="Comapny Email"
+                                label="Company Email"
                                 name="company_email"
                                 type="email"
-                                placeholder={InputPlaceHolder("Comapny Email")}
+                                placeholder={InputPlaceHolder("Company Email")}
                                 handleChange={(e) => {
                                   const value = e.target.value;
                                   setFormData({
@@ -701,7 +701,7 @@ const Profile = () => {
                               className="mb-3 md:mb-4 lg:mb-4 xl:mb-4"
                             >
                               <BaseInput
-                                label="Comapny Phone Number"
+                                label="Company Phone Number"
                                 name="company_phone_number"
                                 type="text"
                                 placeholder={InputPlaceHolder("Phone Number")}
@@ -730,11 +730,11 @@ const Profile = () => {
                               className="mb-3 md:mb-4 lg:mb-4 xl:mb-4"
                             >
                               <BaseInput
-                                label="Comapny Location"
+                                label="Company Location"
                                 name="company_location"
                                 type="text"
                                 placeholder={InputPlaceHolder(
-                                  "Comapny Location"
+                                  "Company Location"
                                 )}
                                 handleChange={(e) => {
                                   const rawValue = e.target.value;
@@ -808,7 +808,7 @@ const Profile = () => {
                               className="mb-3 md:mb-4 lg:mb-4 xl:mb-4 sm:mb-4"
                             >
                               <BaseSelect
-                                label="Comapny Type"
+                                label="Company Type"
                                 name="company_type"
                                 className="select-border"
                                 options={companyType}
@@ -858,11 +858,11 @@ const Profile = () => {
                               className="mb-3 md:mb-4 lg:mb-4 xl:mb-4"
                             >
                               <BaseInput
-                                label="Comapny Strangth"
+                                label="Company Strength"
                                 name="company_strength"
                                 type="text"
                                 placeholder={InputPlaceHolder(
-                                  "Comapny Strangth"
+                                  "Company Strength"
                                 )}
                                 handleChange={(e) => {
                                   const rawValue = e.target.value.replace(

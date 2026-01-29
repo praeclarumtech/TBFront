@@ -4,6 +4,7 @@ import { Fragment, useMemo, useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import BaseButton from "components/BaseComponents/BaseButton";
 import TableContainer from "components/BaseComponents/TableContainer";
+import EmptyState from "components/BaseComponents/EmptyState";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import * as Yup from "yup";
 import { useFormik } from "formik";
@@ -89,10 +90,10 @@ const AddEmailTemplate = () => {
         setEmailTemplates(res.data?.templates || []);
         setTotalRecords(res.data?.pagination?.totalRecords || 0);
       } else {
-        toast.error(res?.message || "Failed to fetch email templates");
+        toast.error(res?.message || "Failed to fetch email templates.");
       }
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Something went wrong!");
+      toast.error(error?.response?.data?.message || "Something went wrong.");
       // toast.error("Something went wrong!");
       console.error(error);
     } finally {
@@ -133,7 +134,7 @@ const AddEmailTemplate = () => {
       // If deleting multiple skills
       if (Array.isArray(emailTemplateToDelete)) {
         const deleteRequests = emailTemplateToDelete.map((id) =>
-          deleteEmailTemplate(id)
+          deleteEmailTemplate(id),
         );
 
         // Wait for all delete requests to finish
@@ -141,9 +142,9 @@ const AddEmailTemplate = () => {
 
         const allSuccess = results.every((res) => res?.success);
         if (allSuccess) {
-          toast.success("Skills deleted successfully");
+          toast.success("Email templates deleted successfully");
         } else {
-          toast.error("Some skills could not be deleted.");
+          toast.error("Some email templates could not be deleted.");
         }
       }
       // If deleting a single skill
@@ -152,13 +153,13 @@ const AddEmailTemplate = () => {
         if (res?.success) {
           toast.success("Email template deleted successfully");
         } else {
-          toast.error("Failed to delete email template");
+          toast.error("Failed to delete email template.");
         }
       }
 
       fetchEmailTemplates(); // Refresh data
     } catch (error) {
-      toast.error("Something went wrong!");
+      toast.error("Something went wrong.");
       console.error(error);
     } finally {
       setLoader(false);
@@ -171,7 +172,7 @@ const AddEmailTemplate = () => {
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
       setSelectedEmailTemplates(
-        emailTemplates.map((emailTemplate) => emailTemplate._id)
+        emailTemplates.map((emailTemplate) => emailTemplate._id),
       ); // Select all
     } else {
       setSelectedEmailTemplates([]); // Unselect all
@@ -183,7 +184,7 @@ const AddEmailTemplate = () => {
       (prev: string[]) =>
         prev.includes(emailTemplateId)
           ? prev.filter((id) => id !== emailTemplateId) // Unselect if already selected
-          : [...prev, emailTemplateId] // Add to selected list
+          : [...prev, emailTemplateId], // Add to selected list
     );
   };
 
@@ -248,7 +249,7 @@ const AddEmailTemplate = () => {
           const id = original._id;
 
           const indexInOriginal = emailTemplates.findIndex(
-            (item) => item._id === id
+            (item) => item._id === id,
           );
 
           const shouldShowDelete = indexInOriginal < emailTemplates.length - 10;
@@ -308,7 +309,7 @@ const AddEmailTemplate = () => {
         },
       },
     ],
-    [selectedEmailTemplates, emailTemplates]
+    [selectedEmailTemplates, emailTemplates],
   );
 
   const validation = useFormik({
@@ -382,7 +383,7 @@ const AddEmailTemplate = () => {
               res?.message ||
                 `Email Template ${
                   editingEmailTemplate ? "updated" : "added"
-                } successfully`
+                } successfully`,
             );
             setEditingEmailTemplate(null); // Reset editing state
             validation.resetForm(); // Clear form data after submission
@@ -393,12 +394,12 @@ const AddEmailTemplate = () => {
               res?.message ||
                 `Failed to ${
                   editingEmailTemplate ? "update" : "add"
-                } email template`
+                } email template`,
             );
           }
         })
         .catch(() => {
-          toast.error("Something went wrong!");
+          toast.error("Something went wrong.");
         })
         .finally(() => {
           setLoader(false);
@@ -589,10 +590,7 @@ const AddEmailTemplate = () => {
                               rowHeight="10px !important"
                             />
                           ) : (
-                            <div className="py-4 text-center">
-                              <i className="ri-search-line d-block fs-1 text-success"></i>
-                              {handleResponse?.dataNotFound}
-                            </div>
+                            <EmptyState />
                           )}
                         </div>
                       )}

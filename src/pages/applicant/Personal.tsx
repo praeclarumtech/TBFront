@@ -58,8 +58,8 @@ const PersonalDetailsForm = ({
               (country: { country_name: string; _id: string }) => ({
                 label: country.country_name,
                 value: country._id,
-              })
-            )
+              }),
+            ),
           );
         }
       } catch (error) {
@@ -89,8 +89,8 @@ const PersonalDetailsForm = ({
                 label: state.state_name,
                 value: state._id,
                 country_id: state.country_id,
-              })
-            )
+              }),
+            ),
           );
         }
       } catch (error) {
@@ -116,8 +116,8 @@ const PersonalDetailsForm = ({
                 label: city.city_name,
                 value: city._id,
                 state_id: city.state_id,
-              })
-            )
+              }),
+            ),
           );
         }
       } catch (error) {
@@ -173,7 +173,7 @@ const PersonalDetailsForm = ({
       }
 
       const selectedCity = cities.find(
-        (city) => city.value === data.currentCity
+        (city) => city.value === data.currentCity,
       );
 
       if (selectedCity) {
@@ -187,7 +187,7 @@ const PersonalDetailsForm = ({
       }
 
       const selectedCountry = country.find(
-        (country) => country.value === data.country
+        (country) => country.value === data.country,
       );
 
       if (selectedCountry) {
@@ -251,7 +251,6 @@ const PersonalDetailsForm = ({
 
       onGetCurrentValues(getCurrentValues);
     }
-   
   }, [validation.values, cities, states, country]);
 
   const checkExistingField = async (field: string, value: string) => {
@@ -283,12 +282,12 @@ const PersonalDetailsForm = ({
       if (response?.data?.exists) {
         if (field === "email") {
           setEmailError(
-            response?.message || "This email is already registered."
+            response?.message || "This email is already registered.",
           );
         } else if (field === "phoneNumber") {
           setPhoneNumberError("This phone number is already registered.");
         } else if (field === "whatsappNumber") {
-          setWhatsappError("This whatsApp number is already registered.");
+          setWhatsappError("This WhatsApp number is already registered.");
         }
       } else {
         if (field === "email") {
@@ -375,7 +374,7 @@ const PersonalDetailsForm = ({
                       handleChange={(e) => {
                         const value = e.target.value.replace(
                           /[^A-Za-z\s]/g,
-                          ""
+                          "",
                         );
                         validation.setFieldValue("firstName", value);
                       }}
@@ -398,7 +397,7 @@ const PersonalDetailsForm = ({
                       handleChange={(e) => {
                         const value = e.target.value.replace(
                           /[^A-Za-z\s]/g,
-                          ""
+                          "",
                         );
                         validation.setFieldValue("middleName", value);
                       }}
@@ -419,7 +418,7 @@ const PersonalDetailsForm = ({
                       handleChange={(e) => {
                         const value = e.target.value.replace(
                           /[^A-Za-z\s]/g,
-                          ""
+                          "",
                         );
                         validation.setFieldValue("lastName", value);
                       }}
@@ -440,7 +439,7 @@ const PersonalDetailsForm = ({
                       className="select-border"
                       placeholder={InputPlaceHolder("Email")}
                       handleChange={async (
-                        e: React.ChangeEvent<HTMLInputElement>
+                        e: React.ChangeEvent<HTMLInputElement>,
                       ) => {
                         const emailValue = e.target.value;
                         validation.setFieldValue("email", emailValue);
@@ -448,7 +447,7 @@ const PersonalDetailsForm = ({
                         setEmailError("");
                         const emailError = await checkExistingField(
                           "email",
-                          emailValue
+                          emailValue,
                         );
                         validation.setFieldError("email", emailError);
                       }}
@@ -469,14 +468,14 @@ const PersonalDetailsForm = ({
                       className="select-border"
                       placeholder={InputPlaceHolder("Phone Number")}
                       handleChange={async (
-                        e: React.ChangeEvent<HTMLInputElement>
+                        e: React.ChangeEvent<HTMLInputElement>,
                       ) => {
                         const rawValue = e.target.value.replace(/\D/g, "");
                         const sanitizedValue = rawValue.slice(0, 10);
                         validation.setFieldValue("phoneNumber", sanitizedValue);
                         const phoneError = await checkExistingField(
                           "phoneNumber",
-                          sanitizedValue
+                          sanitizedValue,
                         );
                         validation.setFieldError("phoneNumber", phoneError);
                       }}
@@ -497,17 +496,17 @@ const PersonalDetailsForm = ({
                       className="select-border"
                       placeholder={InputPlaceHolder("Whatsapp Number")}
                       handleChange={async (
-                        e: React.ChangeEvent<HTMLInputElement>
+                        e: React.ChangeEvent<HTMLInputElement>,
                       ) => {
                         const rawValue = e.target.value.replace(/\D/g, "");
                         const sanitizedValue = rawValue.slice(0, 10);
                         validation.setFieldValue(
                           "whatsappNumber",
-                          sanitizedValue
+                          sanitizedValue,
                         );
                         const phoneError = await checkExistingField(
                           "whatsappNumber",
-                          sanitizedValue
+                          sanitizedValue,
                         );
                         validation.setFieldError("whatsappNumber", phoneError);
                       }}
@@ -548,7 +547,7 @@ const PersonalDetailsForm = ({
                       handleChange={(selectedOption: SelectedOption) => {
                         validation.setFieldValue(
                           "gender",
-                          selectedOption?.value || ""
+                          selectedOption?.value || "",
                         );
                       }}
                       handleBlur={validation.handleBlur}
@@ -570,14 +569,14 @@ const PersonalDetailsForm = ({
                       handleChange={(selectedOption: SelectedOption) => {
                         validation.setFieldValue(
                           "maritalStatus",
-                          selectedOption?.value || ""
+                          selectedOption?.value || "",
                         );
                       }}
                       handleBlur={validation.handleBlur}
                       value={
                         dynamicFind(
                           maritalStatusType,
-                          validation.values.maritalStatus
+                          validation.values.maritalStatus,
                         ) || ""
                       }
                       touched={validation.touched.maritalStatus}
@@ -597,7 +596,7 @@ const PersonalDetailsForm = ({
                         dynamicFind(
                           country,
                           validation.values.country,
-                          "location"
+                          "location",
                         ) || ""
                       }
                       touched={validation.touched.country}
@@ -619,7 +618,7 @@ const PersonalDetailsForm = ({
                         dynamicFind(
                           states,
                           validation.values.state,
-                          "location"
+                          "location",
                         ) || ""
                       }
                       touched={validation.touched.state}
@@ -638,7 +637,7 @@ const PersonalDetailsForm = ({
                       handleChange={(selectedOption: SelectedOption) => {
                         validation.setFieldValue(
                           "currentCity",
-                          selectedOption?.label || ""
+                          selectedOption?.label || "",
                         );
                       }}
                       handleBlur={validation.handleBlur}
@@ -646,7 +645,7 @@ const PersonalDetailsForm = ({
                         dynamicFind(
                           cities,
                           validation.values.currentCity,
-                          "location"
+                          "location",
                         ) || ""
                       }
                       touched={validation.touched.currentCity}
@@ -688,7 +687,7 @@ const PersonalDetailsForm = ({
                           if (isChecked) {
                             validation.setFieldValue(
                               "permanentAddress",
-                              validation.values.currentAddress
+                              validation.values.currentAddress,
                             );
                           } else {
                             validation.setFieldValue("permanentAddress", "");
@@ -709,7 +708,7 @@ const PersonalDetailsForm = ({
                       name="permanentAddress"
                       className="select-border"
                       placeholder={InputPlaceHolder(
-                        "Permanent Address (Optional)"
+                        "Permanent Address (Optional)",
                       )}
                       handleChange={validation.handleChange}
                       handleBlur={validation.handleBlur}

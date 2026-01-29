@@ -83,7 +83,7 @@ export const ERROR_MESSAGES = {
   // Authentication Errors
   INVALID_CREDENTIALS: "Invalid email or password!",
   ACCOUNT_LOCKED: "Your account has been locked. Please contact administrator.",
-  SESSION_EXPIRED: "Your session has expired. Please login again.",
+  SESSION_EXPIRED: "Your session has expired. Please log in again.",
   UNAUTHORIZED_ACCESS: "You are not authorized to access this resource.",
   TOKEN_EXPIRED: "Your token has expired. Please login again.",
   INVALID_TOKEN: "Invalid or expired token.",
@@ -93,7 +93,7 @@ export const ERROR_MESSAGES = {
   INVALID_EMAIL: "Please enter a valid email address.",
   INVALID_PHONE: "Please enter a valid phone number.",
   INVALID_FORMAT: (fieldName: string) =>
-    `${fieldName} should be in correct format.`,
+    `${fieldName} should be in the correct format.`,
   PASSWORD_TOO_SHORT: (minLength: number) =>
     `Password must be at least ${minLength} characters.`,
   PASSWORD_MISMATCH: "Password and confirm password do not match.",
@@ -216,7 +216,7 @@ export const VALIDATION_MESSAGES = {
 
   // Format Validation
   INVALID_FORMAT: (fieldName: string) =>
-    `${fieldName} should be in correct format.`,
+    `${fieldName} should be in the correct format.`,
 
   // Length Validation
   MIN_LENGTH: (fieldName: string, minLength: number) =>
@@ -228,7 +228,7 @@ export const VALIDATION_MESSAGES = {
   PASSWORD_LENGTH: (fieldName: string, minLength: number) =>
     `${fieldName} must be at least ${minLength} characters.`,
   PASSWORD_COMPLEXITY: (fieldName: string) =>
-    `${fieldName} must contain uppercase, lowercase, number and special character.`,
+    `${fieldName} must contain uppercase, lowercase, number and special character(s).`,
   PASSWORDS_MATCH: (fieldName: string) => `${fieldName} must match.`,
 
   // Contact Validation

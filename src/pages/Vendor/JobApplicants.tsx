@@ -2,6 +2,7 @@
 import { Row, Col, Card, Container } from "react-bootstrap";
 import { Fragment, useEffect, useState, useMemo } from "react";
 import TableContainer from "components/BaseComponents/TableContainer";
+import EmptyState from "components/BaseComponents/EmptyState";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import { useParams, useNavigate } from "react-router-dom";
@@ -287,13 +288,7 @@ const JobApplicants = () => {
                     />
                   </div>
                 ) : (
-                  <div className="pt-4 text-center">
-                    <i className="ri-search-line d-block fs-1 text-success"></i>
-                    <p className="mt-2">
-                      No applicants found for this job. Total Records:{" "}
-                      {totalRecords}
-                    </p>
-                  </div>
+                  <EmptyState />
                 )}
               </div>
             </Card>
