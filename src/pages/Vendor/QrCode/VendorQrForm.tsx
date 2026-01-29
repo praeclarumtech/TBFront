@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import { Fragment } from "react";
 import { BaseSelect } from "components/BaseComponents/BaseSelect";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import BaseInput from "components/BaseComponents/BaseInput";
 import {
   dynamicFind,
@@ -16,7 +16,8 @@ import * as Yup from "yup";
 import { viewAllState } from "api/stateApi";
 import { viewAllCity } from "api/cityApis";
 import BaseButton from "components/BaseComponents/BaseButton";
-import { Card } from "antd";
+import { Card, Alert } from "antd";
+import { MailOutlined } from "@ant-design/icons";
 import { SelectedOption, City } from "interfaces/applicant.interface";
 import toastify from "utils/toastify";
 import {
@@ -24,6 +25,7 @@ import {
   updateVendorQR,
   getVendorDetails,
 } from "api/vendorApi";
+import appEnv from "config/appEnv";
 
 const { projectTitle, Modules, companyType, hireResourceOptions, SUCCESS } =
   appConstants;
@@ -36,7 +38,7 @@ const vendorQrSchema = Yup.object().shape({
   phone: Yup.string()
     .matches(
       /^[1-9][0-9]{9}$/,
-      "Please enter a valid 10-digit phone number (should not start with 0)."
+      "Please enter a valid 10-digit phone number. It should not start with 0.",
     )
     .required("Phone number is required."),
   isIndependentConsultant: Yup.string()
@@ -60,15 +62,15 @@ const vendorQrSchema = Yup.object().shape({
   // Optional company fields
   whatsapp_number: Yup.string().matches(
     /^[1-9][0-9]{9}$/,
-    "Please enter a valid 10-digit phone number (should not start with 0)."
+    "Please enter a valid 10-digit phone number. It should not start with 0.",
   ),
   company_name: Yup.string(),
   company_email: Yup.string().email(
-    "Please enter a valid company email address."
+    "Please enter a valid company email address.",
   ),
   company_phone_number: Yup.string().matches(
     /^[1-9][0-9]{9}$/,
-    "Please enter a valid 10-digit phone number (should not start with 0)."
+    "Please enter a valid 10-digit phone number. It should not start with 0.",
   ),
   company_location: Yup.string(),
   company_type: Yup.string(),
@@ -92,7 +94,13 @@ const VendorQrForm = () => {
   const [selectedCompanyStateId, setSelectedCompanyStateId] =
     useState<string>("");
   const navigate = useNavigate();
+  const location = useLocation();
   const { id } = useParams();
+
+  // Get job info from navigation state (if coming from job details page)
+  const jobInfo = (
+    location.state as { jobInfo?: { job_id: string; job_subject: string } }
+  )?.jobInfo;
 
   const getVendor = (id: string | undefined | null) => {
     if (id !== undefined) {
@@ -127,8 +135,8 @@ const VendorQrForm = () => {
                 label: state.state_name,
                 value: state._id,
                 country_id: state.country_id,
-              })
-            )
+              }),
+            ),
           );
         }
       } catch (error) {
@@ -160,7 +168,7 @@ const VendorQrForm = () => {
               label: city.city_name,
               value: city._id,
               state_id: city.state_id,
-            })
+            }),
           );
           setCities(cityOptions);
         } else {
@@ -196,7 +204,7 @@ const VendorQrForm = () => {
               label: city.city_name,
               value: city._id,
               state_id: city.state_id,
-            })
+            }),
           );
           setCompanyCities(cityOptions);
         } else {
@@ -218,7 +226,7 @@ const VendorQrForm = () => {
   useEffect(() => {
     if (formData?.state) {
       const stateOption = states.find(
-        (state) => state.label === formData.state
+        (state) => state.label === formData.state,
       );
       if (stateOption) {
         setSelectedStateId(stateOption.value);
@@ -226,7 +234,7 @@ const VendorQrForm = () => {
     }
     if (formData?.company_state) {
       const companyStateOption = states.find(
-        (state) => state.label === formData.company_state
+        (state) => state.label === formData.company_state,
       );
       if (companyStateOption) {
         setSelectedCompanyStateId(companyStateOption.value);
@@ -339,7 +347,7 @@ const VendorQrForm = () => {
 
         if (response?.success === SUCCESS && response?.statusCode === 201) {
           toastify(response?.message, { type: "success" });
-          navigate("/vendor/qr-code-success");
+          navigate("/vendor/qr-code-success", { state: { jobInfo } });
         } else {
           toastify(response?.message, { type: "error" });
           setButtonLoading(false);
@@ -440,7 +448,7 @@ const VendorQrForm = () => {
                         handleChange={(e) => {
                           const value = e.target.value.replace(
                             /[^A-Za-z\s]/g,
-                            ""
+                            "",
                           );
                           validation.setFieldValue("firstName", value);
                         }}
@@ -462,7 +470,7 @@ const VendorQrForm = () => {
                         handleChange={(e) => {
                           const value = e.target.value.replace(
                             /[^A-Za-z\s]/g,
-                            ""
+                            "",
                           );
                           validation.setFieldValue("lastName", value);
                         }}
@@ -525,7 +533,7 @@ const VendorQrForm = () => {
                           const sanitizedValue = rawValue.slice(0, 10);
                           validation.setFieldValue(
                             "whatsapp_number",
-                            sanitizedValue
+                            sanitizedValue,
                           );
                         }}
                         handleBlur={validation.handleBlur}
@@ -549,7 +557,7 @@ const VendorQrForm = () => {
                           dynamicFind(
                             states,
                             validation.values.state,
-                            "location"
+                            "location",
                           ) || ""
                         }
                         touched={validation.touched.state}
@@ -573,7 +581,7 @@ const VendorQrForm = () => {
                         handleChange={(selectedOption: SelectedOption) => {
                           validation.setFieldValue(
                             "city",
-                            selectedOption?.label || ""
+                            selectedOption?.label || "",
                           );
                         }}
                         handleBlur={validation.handleBlur}
@@ -581,7 +589,7 @@ const VendorQrForm = () => {
                           dynamicFind(
                             cities,
                             validation.values.city,
-                            "location"
+                            "location",
                           ) || ""
                         }
                         touched={validation.touched.city}
@@ -612,7 +620,7 @@ const VendorQrForm = () => {
                               onChange={(e) => {
                                 validation.setFieldValue(
                                   "isIndependentConsultant",
-                                  e.target.value
+                                  e.target.value,
                                 );
                                 // Clear company fields when selecting yes
                                 if (e.target.value === "yes") {
@@ -620,28 +628,28 @@ const VendorQrForm = () => {
                                   validation.setFieldValue("company_email", "");
                                   validation.setFieldValue(
                                     "company_phone_number",
-                                    ""
+                                    "",
                                   );
                                   validation.setFieldValue(
                                     "company_location",
-                                    ""
+                                    "",
                                   );
                                   validation.setFieldValue(
                                     "hire_resources",
-                                    ""
+                                    "",
                                   );
                                   validation.setFieldValue("company_type", "");
                                   validation.setFieldValue(
                                     "company_strength",
-                                    ""
+                                    "",
                                   );
                                   validation.setFieldValue(
                                     "company_website",
-                                    ""
+                                    "",
                                   );
                                   validation.setFieldValue(
                                     "company_linkedin_profile",
-                                    ""
+                                    "",
                                   );
                                   validation.setFieldValue("company_state", "");
                                   validation.setFieldValue("company_city", "");
@@ -671,7 +679,7 @@ const VendorQrForm = () => {
                               onChange={(e) => {
                                 validation.setFieldValue(
                                   "isIndependentConsultant",
-                                  e.target.value
+                                  e.target.value,
                                 );
                               }}
                               onBlur={validation.handleBlur}
@@ -743,17 +751,17 @@ const VendorQrForm = () => {
                             type="text"
                             className="select-border"
                             placeholder={InputPlaceHolder(
-                              "Company Phone Number"
+                              "Company Phone Number",
                             )}
                             handleChange={(e) => {
                               const rawValue = e.target.value.replace(
                                 /\D/g,
-                                ""
+                                "",
                               );
                               const sanitizedValue = rawValue.slice(0, 10);
                               validation.setFieldValue(
                                 "company_phone_number",
-                                sanitizedValue
+                                sanitizedValue,
                               );
                             }}
                             handleBlur={validation.handleBlur}
@@ -796,14 +804,14 @@ const VendorQrForm = () => {
                             handleChange={(selectedOption: SelectedOption) => {
                               validation.setFieldValue(
                                 "company_type",
-                                selectedOption?.value || ""
+                                selectedOption?.value || "",
                               );
                             }}
                             handleBlur={validation.handleBlur}
                             value={
                               dynamicFind(
                                 companyType,
-                                validation.values.company_type
+                                validation.values.company_type,
                               ) || ""
                             }
                             touched={validation.touched.company_type}
@@ -854,14 +862,14 @@ const VendorQrForm = () => {
                             handleChange={(selectedOption: SelectedOption) => {
                               validation.setFieldValue(
                                 "hire_resources",
-                                selectedOption?.value || ""
+                                selectedOption?.value || "",
                               );
                             }}
                             handleBlur={validation.handleBlur}
                             value={
                               dynamicFind(
                                 hireResourceOptions,
-                                validation.values.hire_resources
+                                validation.values.hire_resources,
                               ) || ""
                             }
                             touched={validation.touched.hire_resources}
@@ -900,7 +908,7 @@ const VendorQrForm = () => {
                               dynamicFind(
                                 states,
                                 validation.values.company_state,
-                                "location"
+                                "location",
                               ) || ""
                             }
                             touched={validation.touched.company_state}
@@ -924,7 +932,7 @@ const VendorQrForm = () => {
                             handleChange={(selectedOption: SelectedOption) => {
                               validation.setFieldValue(
                                 "company_city",
-                                selectedOption?.label || ""
+                                selectedOption?.label || "",
                               );
                             }}
                             handleBlur={validation.handleBlur}
@@ -932,7 +940,7 @@ const VendorQrForm = () => {
                               dynamicFind(
                                 companyCities,
                                 validation.values.company_city,
-                                "location"
+                                "location",
                               ) || ""
                             }
                             touched={validation.touched.company_city}
@@ -997,6 +1005,56 @@ const VendorQrForm = () => {
                   </Row>
                 )}
               </form>
+
+              {/* Email Submission Instructions */}
+              {jobInfo && (
+                <div className="p-3 mt-4">
+                  <Alert
+                    message={
+                      <span style={{ fontWeight: 600 }}>
+                        <MailOutlined style={{ marginRight: "8px" }} />
+                        How to Share Candidate CV
+                      </span>
+                    }
+                    description={
+                      <div style={{ marginTop: "8px" }}>
+                        <p style={{ marginBottom: "12px" }}>
+                          You can share candidate CV by email to{" "}
+                          <a
+                            href={`mailto:${appEnv.CAREER_EMAIL}`}
+                            style={{ fontWeight: "bold", color: "#1890ff" }}
+                          >
+                            {appEnv.CAREER_EMAIL}
+                          </a>
+                        </p>
+                        <p style={{ marginBottom: "8px" }}>
+                          <strong>Email Subject Format:</strong>
+                        </p>
+                        <div
+                          style={{
+                            backgroundColor: "#f0f0f0",
+                            padding: "12px",
+                            borderRadius: "6px",
+                            fontFamily: "monospace",
+                            marginBottom: "12px",
+                            border: "1px solid #d9d9d9",
+                          }}
+                        >
+                          {jobInfo.job_id || "Job ID"} -{" "}
+                          {jobInfo.job_subject || "Job Subject"} - Candidate
+                          Name - Exp
+                        </div>
+                        <p style={{ fontSize: "13px", color: "#666" }}>
+                          Example: PT0077 - React Developer junior - John Doe -
+                          3 Years
+                        </p>
+                      </div>
+                    }
+                    type="info"
+                    showIcon={false}
+                  />
+                </div>
+              )}
             </div>
           </Row>
         </Card>

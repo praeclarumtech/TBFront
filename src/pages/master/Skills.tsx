@@ -6,6 +6,7 @@ import { Fragment, useMemo, useState, useEffect, useRef } from "react";
 import { toast } from "react-toastify";
 import BaseButton from "components/BaseComponents/BaseButton";
 import TableContainer from "components/BaseComponents/TableContainer";
+import EmptyState from "components/BaseComponents/EmptyState";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import * as Tooltip from "@radix-ui/react-tooltip";
 
@@ -77,10 +78,10 @@ const AddSkill = () => {
         setSkills(res.data.data || []);
         setTotalRecords(res.data?.pagination?.totalRecords || 0);
       } else {
-        toast.error(res?.message || "Failed to fetch skills");
+        toast.error(res?.message || "Failed to fetch skills.");
       }
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Something went wrong!");
+      toast.error(error?.response?.data?.message || "Something went wrong.");
       console.error(error);
     } finally {
       setIsLoading(false);
@@ -116,7 +117,7 @@ const AddSkill = () => {
       // If deleting multiple skills
       if (Array.isArray(skillToDelete)) {
         const deleteRequests = skillToDelete.map((id) =>
-          deleteSkill({ _id: id })
+          deleteSkill({ _id: id }),
         );
 
         // Wait for all delete requests to finish
@@ -124,7 +125,7 @@ const AddSkill = () => {
 
         const allSuccess = results.every((res) => res?.success);
         if (allSuccess) {
-          toast.success("Skills deleted successfully");
+          toast.success("Skills deleted successfully.");
         } else {
           toast.error("Some skills could not be deleted.");
         }
@@ -135,13 +136,13 @@ const AddSkill = () => {
         if (res?.success) {
           toast.success("Skill deleted successfully");
         } else {
-          toast.error("Failed to delete skill");
+          toast.error("Failed to delete skill.");
         }
       }
 
       fetchSkills(); // Refresh data
     } catch (error) {
-      toast.error("Something went wrong!");
+      toast.error("Something went wrong.");
       console.error(error);
     } finally {
       setLoader(false);
@@ -164,7 +165,7 @@ const AddSkill = () => {
       (prev) =>
         prev.includes(skillId)
           ? prev.filter((id) => id !== skillId) // Unselect if already selected
-          : [...prev, skillId] // Add to selected list
+          : [...prev, skillId], // Add to selected list
     );
   };
 
@@ -256,7 +257,7 @@ const AddSkill = () => {
         ),
       },
     ],
-    [selectedSkills, skills, pagination]
+    [selectedSkills, skills, pagination],
   );
 
   const [loader, setLoader] = useState(false);
@@ -268,8 +269,8 @@ const AddSkill = () => {
     },
     validationSchema: Yup.object({
       addSkills: Yup.string()
-        .min(1, "Skill Name must be at least 1.")
-        .max(50, "Skill name must be between 1 to 50 characters.")
+        .min(1, "Skill name must be at least 1 character.")
+        .max(50, "Skill name must be between 1 and 50 characters.")
         .required("Skill name is required."),
     }),
     onSubmit: (values) => {
@@ -288,7 +289,7 @@ const AddSkill = () => {
           if (res?.success) {
             toast.success(
               res?.message ||
-                `Skill ${editingSkill ? "updated" : "added"} successfully`
+                `Skill ${editingSkill ? "updated" : "added"} successfully`,
             );
             setEditingSkill(null); // Reset editing state
             validation.resetForm(); // Clear form data after submission
@@ -297,12 +298,12 @@ const AddSkill = () => {
           } else {
             toast.error(
               res?.message ||
-                `Failed to ${editingSkill ? "update" : "add"} skill`
+                `Failed to ${editingSkill ? "update" : "add"} skill`,
             );
           }
         })
         .catch(() => {
-          toast.error("Something went wrong!");
+          toast.error("Something went wrong.");
         })
         .finally(() => {
           setLoader(false);
@@ -330,13 +331,13 @@ const AddSkill = () => {
   };
 
   const handleFileImport = async (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const file = event.target.files?.[0];
     if (!file) return;
     const fileExtension = file.name.split(".").pop()?.toLowerCase();
     if (!["csv", "xlsx", "xls"].includes(fileExtension || "")) {
-      toast.error("Please upload a valid CSV or Excel file");
+      toast.error("Please upload a valid CSV or Excel file.");
       return;
     }
 
@@ -351,14 +352,14 @@ const AddSkill = () => {
       const response = await importSkills(formData, {
         onUploadProgress: (progressEvent) => {
           const progress = Math.round(
-            (progressEvent.loaded * 100) / (progressEvent.total || 100)
+            (progressEvent.loaded * 100) / (progressEvent.total || 100),
           );
           setImportProgress(progress);
         },
       });
 
       if (response?.success) {
-        toast.success(response?.message || "File imported successfully!");
+        toast.success(response?.message || "File imported successfully.");
         await fetchSkills();
       } else {
         throw new Error(response?.message || "Import failed");
@@ -368,7 +369,7 @@ const AddSkill = () => {
         // Handle structured API errors
         const errorMessage =
           error.response.data.message || error.response.data.error;
-        toast.error(errorMessage || "Failed to import file");
+        toast.error(errorMessage || "Failed to import file.");
       } else if (error.message) {
         // Handle other errors with messages
         toast.error(error.message);
@@ -401,7 +402,7 @@ const AddSkill = () => {
   };
 
   const filteredSkills = skills.filter((skill) =>
-    skill.skills.toLowerCase().includes(searchAll.toLowerCase())
+    skill.skills.toLowerCase().includes(searchAll.toLowerCase()),
   );
 
   const handleSkills = (applicantId: string[]) => {
@@ -580,7 +581,7 @@ const AddSkill = () => {
                             // Keep the rest as the user typed
                             const restWords = words.slice(1);
                             const finalValue = [firstWord, ...restWords].join(
-                              " "
+                              " ",
                             );
 
                             validation.setFieldValue("addSkills", finalValue);
@@ -624,10 +625,7 @@ const AddSkill = () => {
                               rowHeight="10px !important"
                             />
                           ) : (
-                            <div className="py-4 text-center">
-                              <i className="ri-search-line d-block fs-1 text-success"></i>
-                              {handleResponse?.dataNotFound}
-                            </div>
+                            <EmptyState />
                           )}
                         </div>
                       )}

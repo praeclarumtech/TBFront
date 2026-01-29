@@ -51,25 +51,27 @@ const appConstants = Object.freeze({
       `${
         fieldName.charAt(0).toUpperCase() + fieldName.slice(1).toLowerCase()
       } is required.`,
-    format: (fieldName: string) => ` ${fieldName} should be in correct format.`,
+    format: (fieldName: string) =>
+      `${fieldName} should be in the correct format.`,
     passwordLength: (fieldName: string, minLength: number) =>
       `${fieldName} must be at least ${minLength} characters.`,
     contactLength: (fieldName: string, minLength: number) =>
-      `${fieldName} should be ${minLength} digit.`,
+      `${fieldName} should be ${minLength} digits.`,
     passwordComplexity: (fieldName: string) =>
-      `${fieldName} must be an uppercase lowercase number and special characters.`,
+      `${fieldName} must contain uppercase, lowercase, number and special character.`,
     passwordsMatch: (fieldName: string) => `${fieldName} must match.`,
     phoneNumber: (fieldName: string) =>
       `Invalid ${fieldName.toLowerCase()} format.`,
     notSameAsField: (fieldName: string, comparedField: string) =>
       `${fieldName} must be different from ${comparedField}.`,
     maxLength: (fieldName: string, maxLength: number | string) =>
-      `${fieldName} must be at ${maxLength} characters.`,
+      `${fieldName} must not exceed ${maxLength} characters.`,
     minLength: (fieldName: string, minLength: number | string) =>
-      `${fieldName} must be at ${minLength} numbers.`,
-    positiveNumber: (fieldName: string) => `${fieldName} must be positive`,
+      `${fieldName} must be at least ${minLength} characters.`,
+    positiveNumber: (fieldName: string) =>
+      `${fieldName} must be a positive number.`,
     greaterThan: (fieldName: string, parent: string) =>
-      `${fieldName} must be greater than ${parent}`,
+      `${fieldName} must be greater than ${parent}.`,
   },
   projectTitle: "Talent Box",
   passwordRegex:
@@ -132,7 +134,7 @@ const appConstants = Object.freeze({
     Applicant: "Applicant",
     ImportApplicant: "Import Applicants",
     Forgot: "Forgot",
-    SKill: "Skill",
+    Skill: "Skill",
     Profile: "Profile",
     Dashboard: "Dashboard",
     Email: "Email",
@@ -484,6 +486,8 @@ const appConstants = Object.freeze({
     { label: "Part-time", value: "part-time" },
     { label: "Contract", value: "contract" },
     { label: "Freelance", value: "freelance" },
+    { label: "Remote", value: "remote" },
+    { label: "Onsite", value: "onsite" },
   ],
 
   timeZoneOptions: [
@@ -513,6 +517,10 @@ const appConstants = Object.freeze({
   favoriteOptions: [
     { label: "Favorite", value: true },
     { label: "Not Favorite", value: false },
+  ],
+  jobPaymentTypeOptions: [
+    { label: "CTC", value: "CTC" },
+    { label: "CTH", value: "CTH" },
   ],
 });
 export default appConstants;

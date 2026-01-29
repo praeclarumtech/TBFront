@@ -28,10 +28,8 @@ import {
 import { rankItem } from "@tanstack/match-sorter-utils";
 
 import Loader from "./Loader";
-import appConstants from "constants/constant";
+import EmptyState from "./EmptyState";
 import { ColumnConfig, TableContainerProps } from "interfaces/global.interface";
-
-const { handleResponse } = appConstants;
 
 // Column Filter
 const Filter = ({
@@ -213,8 +211,8 @@ const TableContainer = ({
 
   return (
     <Fragment>
-      <Row className="mb-3">
-        <CardBody className="pt-0 pb-0">
+      <Row>
+        <CardBody className="!pt-0 !pb-0">
           <form>
             <Row className="align-items-center">
               {isHeaderTitle && (
@@ -286,9 +284,9 @@ const TableContainer = ({
       </Row>
 
       <div
-        className={`h-[400px] overflow-auto ${divClass}`}
+        className={`h-[458px] overflow-auto ${divClass}`}
         style={{
-          maxHeight: "400px",
+          maxHeight: "500px",
           overflowX: "auto",
           overflowY: "auto",
         }}
@@ -376,8 +374,9 @@ const TableContainer = ({
                 <td
                   colSpan={getHeaderGroups()[0]?.headers?.length}
                   className="text-center"
+                  style={{ padding: "0" }}
                 >
-                  {handleResponse?.dataNotFound}
+                  <EmptyState />
                 </td>
               </tr>
             )}

@@ -35,7 +35,7 @@ const clientQrSchema = Yup.object({
   phone: Yup.string()
     .matches(
       /^[1-9][0-9]{9}$/,
-      "Please enter a valid 10-digit phone number (should not start with 0)."
+      "Please enter a valid 10-digit phone number. It should not start with 0.",
     )
     .required("Phone number is required."),
   // Required user fields
@@ -56,15 +56,15 @@ const clientQrSchema = Yup.object({
   // Optional company fields
   whatsapp_number: Yup.string().matches(
     /^[1-9][0-9]{9}$/,
-    "Please enter a valid 10-digit phone number (should not start with 0)."
+    "Please enter a valid 10-digit phone number. It should not start with 0.",
   ),
   company_name: Yup.string(),
   company_email: Yup.string().email(
-    "Please enter a valid company email address."
+    "Please enter a valid company email address.",
   ),
   company_phone_number: Yup.string().matches(
     /^[1-9][0-9]{9}$/,
-    "Please enter a valid 10-digit phone number (should not start with 0)."
+    "Please enter a valid 10-digit phone number. It should not start with 0.",
   ),
   company_location: Yup.string(),
   company_type: Yup.string(),
@@ -122,8 +122,8 @@ const ClientQrForm = () => {
                 label: state.state_name,
                 value: state._id,
                 country_id: state.country_id,
-              })
-            )
+              }),
+            ),
           );
         }
       } catch (error) {
@@ -154,7 +154,7 @@ const ClientQrForm = () => {
               label: city.city_name,
               value: city._id,
               state_id: city.state_id,
-            })
+            }),
           );
           setCities(cityOptions);
         } else {
@@ -189,7 +189,7 @@ const ClientQrForm = () => {
               label: city.city_name,
               value: city._id,
               state_id: city.state_id,
-            })
+            }),
           );
           setCompanyCities(cityOptions);
         } else {
@@ -212,7 +212,7 @@ const ClientQrForm = () => {
     if (formData?.state) {
       // Find the state ID from the state name
       const stateOption = states.find(
-        (state) => state.label === formData.state
+        (state) => state.label === formData.state,
       );
       if (stateOption) {
         setSelectedStateId(stateOption.value);
@@ -220,7 +220,7 @@ const ClientQrForm = () => {
     }
     if (formData?.company_state) {
       const companyStateOption = states.find(
-        (state) => state.label === formData.company_state
+        (state) => state.label === formData.company_state,
       );
       if (companyStateOption) {
         setSelectedCompanyStateId(companyStateOption.value);
@@ -440,7 +440,7 @@ const ClientQrForm = () => {
                         handleChange={(e) => {
                           const value = e.target.value.replace(
                             /[^A-Za-z\s]/g,
-                            ""
+                            "",
                           );
                           validation.setFieldValue("firstName", value);
                         }}
@@ -462,7 +462,7 @@ const ClientQrForm = () => {
                         handleChange={(e) => {
                           const value = e.target.value.replace(
                             /[^A-Za-z\s]/g,
-                            ""
+                            "",
                           );
                           validation.setFieldValue("lastName", value);
                         }}
@@ -525,7 +525,7 @@ const ClientQrForm = () => {
                           const sanitizedValue = rawValue.slice(0, 10);
                           validation.setFieldValue(
                             "whatsapp_number",
-                            sanitizedValue
+                            sanitizedValue,
                           );
                         }}
                         handleBlur={validation.handleBlur}
@@ -565,7 +565,7 @@ const ClientQrForm = () => {
                           dynamicFind(
                             states,
                             validation.values.state,
-                            "location"
+                            "location",
                           ) || ""
                         }
                         touched={validation.touched.state}
@@ -589,7 +589,7 @@ const ClientQrForm = () => {
                         handleChange={(selectedOption: SelectedOption) => {
                           validation.setFieldValue(
                             "city",
-                            selectedOption?.label || ""
+                            selectedOption?.label || "",
                           );
                         }}
                         handleBlur={validation.handleBlur}
@@ -597,7 +597,7 @@ const ClientQrForm = () => {
                           dynamicFind(
                             cities,
                             validation.values.city,
-                            "location"
+                            "location",
                           ) || ""
                         }
                         touched={validation.touched.city}
@@ -662,7 +662,7 @@ const ClientQrForm = () => {
                           const sanitizedValue = rawValue.slice(0, 10);
                           validation.setFieldValue(
                             "company_phone_number",
-                            sanitizedValue
+                            sanitizedValue,
                           );
                         }}
                         handleBlur={validation.handleBlur}
@@ -701,14 +701,14 @@ const ClientQrForm = () => {
                         handleChange={(selectedOption: SelectedOption) => {
                           validation.setFieldValue(
                             "company_type",
-                            selectedOption?.value || ""
+                            selectedOption?.value || "",
                           );
                         }}
                         handleBlur={validation.handleBlur}
                         value={
                           dynamicFind(
                             companyType,
-                            validation.values.company_type
+                            validation.values.company_type,
                           ) || ""
                         }
                         touched={validation.touched.company_type}
@@ -757,14 +757,14 @@ const ClientQrForm = () => {
                         handleChange={(selectedOption: SelectedOption) => {
                           validation.setFieldValue(
                             "hire_resources",
-                            selectedOption?.value || ""
+                            selectedOption?.value || "",
                           );
                         }}
                         handleBlur={validation.handleBlur}
                         value={
                           dynamicFind(
                             hireResourceOptions,
-                            validation.values.hire_resources
+                            validation.values.hire_resources,
                           ) || ""
                         }
                         touched={validation.touched.hire_resources}
@@ -801,7 +801,7 @@ const ClientQrForm = () => {
                           dynamicFind(
                             states,
                             validation.values.company_state,
-                            "location"
+                            "location",
                           ) || ""
                         }
                         touched={validation.touched.company_state}
@@ -825,7 +825,7 @@ const ClientQrForm = () => {
                         handleChange={(selectedOption: SelectedOption) => {
                           validation.setFieldValue(
                             "company_city",
-                            selectedOption?.label || ""
+                            selectedOption?.label || "",
                           );
                         }}
                         handleBlur={validation.handleBlur}
@@ -833,7 +833,7 @@ const ClientQrForm = () => {
                           dynamicFind(
                             companyCities,
                             validation.values.company_city,
-                            "location"
+                            "location",
                           ) || ""
                         }
                         touched={validation.touched.company_city}

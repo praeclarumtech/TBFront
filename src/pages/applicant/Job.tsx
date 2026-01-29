@@ -433,7 +433,7 @@ const JobDetailsForm = ({
                     name="totalExperience"
                     type="text"
                     placeholder={InputPlaceHolder(
-                      "Total Experience (Optional)"
+                      "Total Experience"
                     )}
                     handleChange={(e) => {
                       let value = e.target.value;

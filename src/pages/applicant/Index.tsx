@@ -8,8 +8,8 @@ import React, {
   useCallback,
   useRef,
 } from "react";
-import BaseButton from "components/BaseComponents/BaseButton";
 import TableContainer from "components/BaseComponents/TableContainer";
+import EmptyState from "components/BaseComponents/EmptyState";
 import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -44,6 +44,7 @@ import FilterDrawer from "components/applicant/FilterDrawer";
 import { COLUMN_CONFIGURATIONS } from "constants/applicantConstants";
 import useApplicant from "./hooks/useApplicant";
 import ColumnsDropdown from "components/BaseComponents/ColumnsDropdown";
+import * as Tooltip from "@radix-ui/react-tooltip";
 
 const {
   exportableFieldOption,
@@ -101,7 +102,7 @@ const Applicant = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedApplicantId, setSelectedApplicantId] = useState<string | null>(
-    null
+    null,
   );
   const [showViewModal, setShowViewModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -117,14 +118,14 @@ const Applicant = () => {
   >([]);
   const [exportOption, setExportOption] = useState("");
   const [exportableFields, setExportableFields] = useState<SelectedOption[]>(
-    []
+    [],
   );
   const [selectedRecord, setSelectedRecord] = useState<string | null>(null);
   const [dataActive, SetDataActive] = useState(true);
   const [isFav, setIsFav] = useState(false);
 
   const [availableColumns, setAvailableColumns] = useState<ColumnConfig[]>(
-    COLUMN_CONFIGURATIONS
+    COLUMN_CONFIGURATIONS,
   );
 
   const {
@@ -136,7 +137,7 @@ const Applicant = () => {
     isInitializingRef: React.MutableRefObject<boolean>;
     saveFiltersToBackend: (
       filters: FilterState,
-      isInitializing?: boolean
+      isInitializing?: boolean,
     ) => void;
   } = useSavedFilters(
     userId,
@@ -144,9 +145,9 @@ const Applicant = () => {
       (restoredFilters: Partial<FilterState>) => {
         setFilters((prev) => ({ ...prev, ...restoredFilters }));
       },
-      [setFilters]
+      [setFilters],
     ),
-    restoredFromSession // Skip backend restore when filters restored from sessionStorage (navigation)
+    restoredFromSession, // Skip backend restore when filters restored from sessionStorage (navigation)
   );
 
   const {
@@ -173,7 +174,7 @@ const Applicant = () => {
       (applicantId: string) => {
         navigate(`/applicants/edit-applicant/${applicantId}`);
       },
-      [navigate]
+      [navigate],
     ),
     onDelete: useCallback((applicantId: string) => {
       setMultipleApplicantsDelete([applicantId]);
@@ -198,7 +199,7 @@ const Applicant = () => {
           });
         }
       },
-      [navigate, location.pathname]
+      [navigate, location.pathname],
     ),
     onToggleSwitch: useCallback((id: any, isActive: any) => {
       setSelectedRecord(id);
@@ -233,13 +234,13 @@ const Applicant = () => {
     const appliedSkillsArray = Array.isArray(filters.appliedSkills)
       ? filters.appliedSkills
       : filters.appliedSkills
-      ? [filters.appliedSkills]
-      : [];
+        ? [filters.appliedSkills]
+        : [];
     const multipleSkillsArray = Array.isArray(filters.multipleSkills)
       ? filters.multipleSkills
       : filters.multipleSkills
-      ? [filters.multipleSkills]
-      : [];
+        ? [filters.multipleSkills]
+        : [];
     const hasSkills =
       appliedSkillsArray.length > 0 || multipleSkillsArray.length > 0;
 
@@ -331,13 +332,13 @@ const Applicant = () => {
     const appliedSkillsArray = Array.isArray(filters.appliedSkills)
       ? filters.appliedSkills
       : filters.appliedSkills
-      ? [filters.appliedSkills]
-      : [];
+        ? [filters.appliedSkills]
+        : [];
     const multipleSkillsArray = Array.isArray(filters.multipleSkills)
       ? filters.multipleSkills
       : filters.multipleSkills
-      ? [filters.multipleSkills]
-      : [];
+        ? [filters.multipleSkills]
+        : [];
     const hasSkills =
       appliedSkillsArray.length > 0 || multipleSkillsArray.length > 0;
 
@@ -373,7 +374,7 @@ const Applicant = () => {
       (filters.searchAll && filters.searchAll.trim() !== "") ||
       (chartParams &&
         Object.entries(chartParams).some(
-          ([key, val]) => val && key !== "piechartType"
+          ([key, val]) => val && key !== "piechartType",
         ))
     );
   }, [filters, chartParams]);
@@ -395,7 +396,7 @@ const Applicant = () => {
   };
 
   const deleteMultipleApplicantDetails = async (
-    multipleApplicantDelete: string[] | undefined | null
+    multipleApplicantDelete: string[] | undefined | null,
   ) => {
     if (!multipleApplicantDelete || multipleApplicantDelete.length === 0)
       return;
@@ -447,7 +448,7 @@ const Applicant = () => {
       const queryParams = buildApplicantParams(
         filters,
         pagination,
-        chartParams
+        chartParams,
       );
       queryParams.source = source;
 
@@ -471,7 +472,7 @@ const Applicant = () => {
         setSelectedApplicants([]);
         setShowConfirmExportModal(false);
         setModelLoading(false);
-        toast.success("File downloaded successfully!");
+        toast.success("File downloaded successfully.");
 
         return;
       }
@@ -482,7 +483,7 @@ const Applicant = () => {
         parsed?.statuscode === 500 ||
         parsed?.statuscode === 403
       ) {
-        toast.error(parsed?.message || "No data available to export");
+        toast.error(parsed?.message || "No data available to export.");
       } else {
         toast.error("Unexpected JSON response during export.");
       }
@@ -504,7 +505,9 @@ const Applicant = () => {
   };
 
   const handleColumnSelected = (
-    selectedOptions: any[] | ((prevState: SelectedOption[]) => SelectedOption[])
+    selectedOptions:
+      | any[]
+      | ((prevState: SelectedOption[]) => SelectedOption[]),
   ) => {
     if (!selectedApplicants || selectedApplicants.length === 0) {
       toast.error("Please select applicants before choosing columns.");
@@ -536,7 +539,7 @@ const Applicant = () => {
       prev.map((col) => ({
         ...col,
         isVisible: visibleColumns.includes(col.id),
-      }))
+      })),
     );
   };
 
@@ -565,7 +568,7 @@ const Applicant = () => {
     if (!id) return;
     try {
       await updateApplicantHook({ id, data: { isFavorite: !isFav } });
-      toast.success("Applicant added to favorite list");
+      toast.success("Applicant added to favorite list.");
       setShowFavModal(false);
       refetchApplicants();
     } catch (error: any) {
@@ -721,83 +724,190 @@ const Applicant = () => {
                           onChange={handleSearchChange}
                           value={filters.searchAll}
                         />
-                          <BaseButton
-                          className="flex-1 px-3 py-2 text-sm bg-green-600 text-white rounded-md hover:bg-green-700"
-                          onClick={() =>
-                            currentRole === "admin"
-                              ? handleNavigate()
-                              : toast.error(
-                                  "Access denied you do not have permission to access this resource."
-                                )
-                          }
-                        >
-                          <i className="ri-add-line mr-1" />
-                          Add
-                        </BaseButton>
-                        
-                        {hasFiltersExcludingActiveStatus && (
-                          <button
-                            onClick={resetFiltersWithoutActiveStatus}
-                            className="px-3 py-2 text-sm bg-orange-600 text-white rounded-md hover:bg-orange-700 whitespace-nowrap"
-                            title="Reset filters (keep Active Status)"
-                          >
-                            <i className="ri-refresh-line mr-1"></i>Reset
-                          </button>
-                        )}
+                        <Tooltip.Provider delayDuration={100}>
+                          <Tooltip.Root>
+                            <Tooltip.Trigger asChild>
+                              <button
+                                className="px-3 py-2 text-sm bg-green-600 text-white rounded-md hover:bg-green-700"
+                                onClick={() =>
+                                  currentRole === "admin"
+                                    ? handleNavigate()
+                                    : toast.error(
+                                        "Access denied you do not have permission to access this resource.",
+                                      )
+                                }
+                              >
+                                <i className="ri-add-line" />
+                              </button>
+                            </Tooltip.Trigger>
+                            <Tooltip.Portal>
+                              <Tooltip.Content
+                                side="bottom"
+                                sideOffset={4}
+                                className="px-2 py-1 text-xs text-white rounded shadow-lg bg-success"
+                              >
+                                Add Applicant
+                                <Tooltip.Arrow style={{ fill: "#198754" }} />
+                              </Tooltip.Content>
+                            </Tooltip.Portal>
+                          </Tooltip.Root>
+
+                          {hasFiltersExcludingActiveStatus && (
+                            <Tooltip.Root>
+                              <Tooltip.Trigger asChild>
+                                <button
+                                  className="px-3 py-2 text-sm bg-orange-600 text-white rounded-md hover:bg-orange-700 whitespace-nowrap"
+                                  onClick={resetFiltersWithoutActiveStatus}
+                                >
+                                  <i className="ri-refresh-line"></i>
+                                </button>
+                              </Tooltip.Trigger>
+                              <Tooltip.Portal>
+                                <Tooltip.Content
+                                  side="bottom"
+                                  sideOffset={4}
+                                  className="px-2 py-1 text-xs text-white rounded shadow-lg bg-warning"
+                                >
+                                  Reset Filters
+                                  <Tooltip.Arrow style={{ fill: "#ffc107" }} />
+                                </Tooltip.Content>
+                              </Tooltip.Portal>
+                            </Tooltip.Root>
+                          )}
+                        </Tooltip.Provider>
                       </div>
 
                       {selectedApplicants.length > 0 && (
                         <div className="flex gap-2 mb-2">
-                          <BaseButton
-                            className="flex-1 px-3 py-2 text-sm bg-red-600 text-white rounded-md hover:bg-red-700"
-                            onClick={handleDeleteAll}
-                          >
-                            <i className="ri-delete-bin-fill mr-1" />
-                            Delete
-                          </BaseButton>
-                          <BaseButton
-                            className="flex-1 px-3 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                            onClick={handleSendEmail}
-                          >
-                            <i className="ri-mail-close-line mr-1" />
-                            Email
-                          </BaseButton>
+                          <Tooltip.Provider delayDuration={100}>
+                            <Tooltip.Root>
+                              <Tooltip.Trigger asChild>
+                                <button
+                                  className="flex-1 px-3 py-2 text-sm bg-red-600 text-white rounded-md hover:bg-red-700"
+                                  onClick={handleDeleteAll}
+                                >
+                                  <i className="ri-delete-bin-fill" />
+                                </button>
+                              </Tooltip.Trigger>
+                              <Tooltip.Portal>
+                                <Tooltip.Content
+                                  side="bottom"
+                                  sideOffset={4}
+                                  className="px-2 py-1 text-xs text-white rounded shadow-lg bg-danger"
+                                  style={{ zIndex: 9999 }}
+                                >
+                                  Delete Selected
+                                  <Tooltip.Arrow style={{ fill: "#dc3545" }} />
+                                </Tooltip.Content>
+                              </Tooltip.Portal>
+                            </Tooltip.Root>
+
+                            <Tooltip.Root>
+                              <Tooltip.Trigger asChild>
+                                <button
+                                  className="flex-1 px-3 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                                  onClick={handleSendEmail}
+                                >
+                                  <i className="ri-mail-close-line" />
+                                </button>
+                              </Tooltip.Trigger>
+                              <Tooltip.Portal>
+                                <Tooltip.Content
+                                  side="bottom"
+                                  sideOffset={4}
+                                  className="px-2 py-1 text-xs text-white rounded shadow-lg bg-primary"
+                                  style={{ zIndex: 9999 }}
+                                >
+                                  Email Selected
+                                  <Tooltip.Arrow style={{ fill: "#624bff" }} />
+                                </Tooltip.Content>
+                              </Tooltip.Portal>
+                            </Tooltip.Root>
+                          </Tooltip.Provider>
                         </div>
                       )}
 
                       <div className="flex gap-2">
-                        <button
-                          onClick={() => {
-                            if (currentRole === "admin") {
-                              setDrawerOpen(true);
-                            } else {
-                              toast.error(
-                                "Access denied! You do not have permission to access this resource."
-                              );
-                            }
-                          }}
-                          className="px-3 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 whitespace-nowrap"
-                        >
-                          <i className="fa fa-filter mr-1"></i>Filter
-                        </button>
-                        <BaseButton
-                          className="flex-1 px-3 py-2 text-sm bg-green-700 text-white rounded-md hover:bg-green-800"
-                          onClick={() =>
-                            currentRole === "admin"
-                              ? handleExportModalShow()
-                              : toast.error(
-                                  "Access denied you do not have permission to access this resource."
-                                )
-                          }
-                        >
-                          <i className="ri-upload-2-line mr-1" />
-                          Export
-                        </BaseButton>
-                      
-                        <ColumnsDropdown
-                          availableColumns={availableColumns}
-                          onColumnsChange={handleColumnsChange}
-                        />
+                        <Tooltip.Provider delayDuration={100}>
+                          <Tooltip.Root>
+                            <Tooltip.Trigger asChild>
+                              <button
+                                className="px-3 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 whitespace-nowrap"
+                                onClick={() => {
+                                  if (currentRole === "admin") {
+                                    setDrawerOpen(true);
+                                  } else {
+                                    toast.error(
+                                      "Access denied! You do not have permission to access this resource.",
+                                    );
+                                  }
+                                }}
+                              >
+                                <i className="fa fa-filter"></i>
+                              </button>
+                            </Tooltip.Trigger>
+                            <Tooltip.Portal>
+                              <Tooltip.Content
+                                side="bottom"
+                                sideOffset={4}
+                                className="px-2 py-1 text-xs text-white rounded shadow-lg bg-primary"
+                              >
+                                Filter Applicants
+                                <Tooltip.Arrow style={{ fill: "#624bff" }} />
+                              </Tooltip.Content>
+                            </Tooltip.Portal>
+                          </Tooltip.Root>
+
+                          <Tooltip.Root>
+                            <Tooltip.Trigger asChild>
+                              <button
+                                className="px-3 py-2 text-sm bg-green-700 text-white rounded-md hover:bg-green-800"
+                                onClick={() =>
+                                  currentRole === "admin"
+                                    ? handleExportModalShow()
+                                    : toast.error(
+                                        "Access denied you do not have permission to access this resource.",
+                                      )
+                                }
+                              >
+                                <i className="ri-upload-2-line" />
+                              </button>
+                            </Tooltip.Trigger>
+                            <Tooltip.Portal>
+                              <Tooltip.Content
+                                side="bottom"
+                                sideOffset={4}
+                                className="px-2 py-1 text-xs text-white rounded shadow-lg bg-success"
+                              >
+                                Export Data
+                                <Tooltip.Arrow style={{ fill: "#198754" }} />
+                              </Tooltip.Content>
+                            </Tooltip.Portal>
+                          </Tooltip.Root>
+                        </Tooltip.Provider>
+
+                        <Tooltip.Provider delayDuration={100}>
+                          <Tooltip.Root>
+                            <Tooltip.Trigger asChild>
+                              <div>
+                                <ColumnsDropdown
+                                  availableColumns={availableColumns}
+                                  onColumnsChange={handleColumnsChange}
+                                />
+                              </div>
+                            </Tooltip.Trigger>
+                            <Tooltip.Portal>
+                              <Tooltip.Content
+                                side="bottom"
+                                sideOffset={4}
+                                className="px-2 py-1 text-xs text-white rounded shadow-lg bg-primary"
+                              >
+                                Manage Columns
+                                <Tooltip.Arrow style={{ fill: "#624bff" }} />
+                              </Tooltip.Content>
+                            </Tooltip.Portal>
+                          </Tooltip.Root>
+                        </Tooltip.Provider>
                       </div>
                     </div>
 
@@ -810,82 +920,189 @@ const Applicant = () => {
                         onChange={handleSearchChange}
                         value={filters.searchAll}
                       />
-   <BaseButton
-                        color="success"
-                        onClick={() =>
-                          currentRole === "admin"
-                            ? handleNavigate()
-                            : toast.error(
-                                "Access denied you do not have permission to access this resource."
-                              )
-                        }
-                      >
-                        <i className="ri-add-line me-1" />
-                        Add
-                      </BaseButton>
-                      <button
-                        onClick={() => {
-                          if (currentRole === "admin") {
-                            setDrawerOpen(true);
-                          } else {
-                            toast.error(
-                              "Access denied! You do not have permission to access this resource."
-                            );
-                          }
-                        }}
-                        className="btn btn-primary"
-                      >
-                        <i className="mx-1 fa fa-filter"></i> Filters
-                      </button>
+                      <Tooltip.Provider delayDuration={100}>
+                        <Tooltip.Root>
+                          <Tooltip.Trigger asChild>
+                            <button
+                              className="btn btn-success"
+                              onClick={() =>
+                                currentRole === "admin"
+                                  ? handleNavigate()
+                                  : toast.error(
+                                      "Access denied you do not have permission to access this resource.",
+                                    )
+                              }
+                            >
+                              <i className="ri-add-line" />
+                            </button>
+                          </Tooltip.Trigger>
+                          <Tooltip.Portal>
+                            <Tooltip.Content
+                              side="bottom"
+                              sideOffset={4}
+                              className="px-2 py-1 text-xs text-white rounded shadow-lg bg-success"
+                              style={{ zIndex: 9999 }}
+                            >
+                              Add Applicant
+                              <Tooltip.Arrow style={{ fill: "#198754" }} />
+                            </Tooltip.Content>
+                          </Tooltip.Portal>
+                        </Tooltip.Root>
 
-                      {hasFiltersExcludingActiveStatus && (
-                        <BaseButton
-                          className="btn btn-warning"
-                          onClick={resetFiltersWithoutActiveStatus}
-                        >
-                          <i className="ri-refresh-line me-1"></i> Reset Filters
-                        </BaseButton>
-                      )}
+                        <Tooltip.Root>
+                          <Tooltip.Trigger asChild>
+                            <button
+                              className="btn btn-primary"
+                              onClick={() => {
+                                if (currentRole === "admin") {
+                                  setDrawerOpen(true);
+                                } else {
+                                  toast.error(
+                                    "Access denied! You do not have permission to access this resource.",
+                                  );
+                                }
+                              }}
+                            >
+                              <i className="fa fa-filter"></i>
+                            </button>
+                          </Tooltip.Trigger>
+                          <Tooltip.Portal>
+                            <Tooltip.Content
+                              side="bottom"
+                              sideOffset={4}
+                              className="px-2 py-1 text-xs text-white rounded shadow-lg bg-primary"
+                              style={{ zIndex: 9999 }}
+                            >
+                              Filter Applicants
+                              <Tooltip.Arrow style={{ fill: "#624bff" }} />
+                            </Tooltip.Content>
+                          </Tooltip.Portal>
+                        </Tooltip.Root>
 
-                      {selectedApplicants.length > 0 && (
-                        <>
-                          <BaseButton
-                            className="border-0 btn bg-danger"
-                            onClick={handleDeleteAll}
-                          >
-                            <i className="ri-delete-bin-fill" />
-                          </BaseButton>
+                        {hasFiltersExcludingActiveStatus && (
+                          <Tooltip.Root>
+                            <Tooltip.Trigger asChild>
+                              <button
+                                className="btn btn-warning"
+                                onClick={resetFiltersWithoutActiveStatus}
+                              >
+                                <i className="ri-refresh-line"></i>
+                              </button>
+                            </Tooltip.Trigger>
+                            <Tooltip.Portal>
+                              <Tooltip.Content
+                                side="bottom"
+                                sideOffset={4}
+                                className="px-2 py-1 text-xs text-white rounded shadow-lg bg-warning"
+                                style={{ zIndex: 9999 }}
+                              >
+                                Reset Filters
+                                <Tooltip.Arrow style={{ fill: "#ffc107" }} />
+                              </Tooltip.Content>
+                            </Tooltip.Portal>
+                          </Tooltip.Root>
+                        )}
 
-                          <BaseButton
-                            className="btn bg-primary"
-                            onClick={handleSendEmail}
-                          >
-                            <i className="ri-mail-close-line" />
-                          </BaseButton>
-                        </>
-                      )}
+                        {selectedApplicants.length > 0 && (
+                          <>
+                            <Tooltip.Root>
+                              <Tooltip.Trigger asChild>
+                                <button
+                                  className="btn btn-danger"
+                                  onClick={handleDeleteAll}
+                                >
+                                  <i className="ri-delete-bin-fill" />
+                                </button>
+                              </Tooltip.Trigger>
+                              <Tooltip.Portal>
+                                <Tooltip.Content
+                                  side="bottom"
+                                  sideOffset={4}
+                                  className="px-2 py-1 text-xs text-white rounded shadow-lg bg-danger"
+                                  style={{ zIndex: 9999 }}
+                                >
+                                  Delete Selected
+                                  <Tooltip.Arrow style={{ fill: "#dc3545" }} />
+                                </Tooltip.Content>
+                              </Tooltip.Portal>
+                            </Tooltip.Root>
 
-                      <BaseButton
-                        color="primary"
-                        className="bg-green-900 btn btn-soft-secondary edit-list"
-                        onClick={() =>
-                          currentRole === "admin"
-                            ? handleExportModalShow()
-                            : toast.error(
-                                "Access denied you do not have permission to access this resource."
-                              )
-                        }
-                      >
-                        <i className="ri-upload-2-line me-1" />
-                        Export
-                      </BaseButton>
+                            <Tooltip.Root>
+                              <Tooltip.Trigger asChild>
+                                <button
+                                  className="btn btn-primary"
+                                  onClick={handleSendEmail}
+                                >
+                                  <i className="ri-mail-close-line" />
+                                </button>
+                              </Tooltip.Trigger>
+                              <Tooltip.Portal>
+                                <Tooltip.Content
+                                  side="bottom"
+                                  sideOffset={4}
+                                  className="px-2 py-1 text-xs text-white rounded shadow-lg bg-primary"
+                                  style={{ zIndex: 9999 }}
+                                >
+                                  Email Selected
+                                  <Tooltip.Arrow style={{ fill: "#624bff" }} />
+                                </Tooltip.Content>
+                              </Tooltip.Portal>
+                            </Tooltip.Root>
+                          </>
+                        )}
 
-                   
+                        <Tooltip.Root>
+                          <Tooltip.Trigger asChild>
+                            <button
+                              className="btn btn-success"
+                              onClick={() =>
+                                currentRole === "admin"
+                                  ? handleExportModalShow()
+                                  : toast.error(
+                                      "Access denied you do not have permission to access this resource.",
+                                    )
+                              }
+                            >
+                              <i className="ri-upload-2-line" />
+                            </button>
+                          </Tooltip.Trigger>
+                          <Tooltip.Portal>
+                            <Tooltip.Content
+                              side="bottom"
+                              sideOffset={4}
+                              className="px-2 py-1 text-xs text-white rounded shadow-lg bg-success"
+                              style={{ zIndex: 9999 }}
+                            >
+                              Export Data
+                              <Tooltip.Arrow style={{ fill: "#198754" }} />
+                            </Tooltip.Content>
+                          </Tooltip.Portal>
+                        </Tooltip.Root>
+                      </Tooltip.Provider>
 
-                      <ColumnsDropdown
-                        availableColumns={availableColumns}
-                        onColumnsChange={handleColumnsChange}
-                      />
+                      <Tooltip.Provider delayDuration={100}>
+                        <Tooltip.Root>
+                          <Tooltip.Trigger asChild>
+                            <div>
+                              <ColumnsDropdown
+                                availableColumns={availableColumns}
+                                onColumnsChange={handleColumnsChange}
+                              />
+                            </div>
+                          </Tooltip.Trigger>
+                          <Tooltip.Portal>
+                            <Tooltip.Content
+                              side="bottom"
+                              sideOffset={4}
+                              className="px-2 py-1 text-xs text-white rounded shadow-lg bg-primary"
+                              style={{ zIndex: 9999 }}
+                            >
+                              Manage Columns
+                              <Tooltip.Arrow style={{ fill: "#624bff" }} />
+                            </Tooltip.Content>
+                          </Tooltip.Portal>
+                        </Tooltip.Root>
+                      </Tooltip.Provider>
                     </div>
 
                     <FilterDrawer
@@ -935,7 +1152,7 @@ const Applicant = () => {
                         (opt: any) => ({
                           label: opt.label,
                           value: String(opt.value),
-                        })
+                        }),
                       )}
                       designationOptions={designationType}
                       addedByOptions={addedByOptions}
@@ -1014,10 +1231,7 @@ const Applicant = () => {
                       />
                     </div>
                   ) : (
-                    <div className="pt-4 text-center">
-                      <i className="ri-search-line d-block fs-1 text-success"></i>
-                      {"Total Record: " + totalRecords}
-                    </div>
+                    <EmptyState />
                   )}
                 </div>
               </CardBody>

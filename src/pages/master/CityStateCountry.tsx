@@ -5,6 +5,7 @@ import { Fragment, useMemo, useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import BaseButton from "components/BaseComponents/BaseButton";
 import TableContainer from "components/BaseComponents/TableContainer";
+import EmptyState from "components/BaseComponents/EmptyState";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import * as Tooltip from "@radix-ui/react-tooltip";
 
@@ -73,10 +74,10 @@ const Country = () => {
         setcountry(res?.data?.item || []);
         setTotalRecords(res.data?.totalRecords || 0);
       } else {
-        toast.error(res?.message || "Failed to fetch countries");
+        toast.error(res?.message || "Failed to fetch countries.");
       }
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Something went wrong!");
+      toast.error(error?.response?.data?.message || "Something went wrong.");
     } finally {
       setIsLoading(false);
     }
@@ -103,7 +104,7 @@ const Country = () => {
       // If deleting multiple countries
       if (Array.isArray(countryToDelete)) {
         const deleteRequests = countryToDelete.map((id) =>
-          deleteCountry({ _id: id })
+          deleteCountry({ _id: id }),
         );
 
         // Wait for all delete requests to finish
@@ -113,7 +114,7 @@ const Country = () => {
         if (allSuccess) {
           toast.success("Country deleted successfully");
         } else {
-          toast.error("Some country could not be deleted.");
+          toast.error("Some countries could not be deleted.");
         }
       }
       // If deleting a single country
@@ -122,12 +123,12 @@ const Country = () => {
         if (res?.success) {
           toast.success(res?.message);
         } else {
-          toast.error("Failed to delete country");
+          toast.error("Failed to delete country.");
         }
       }
       fetchCountry();
     } catch (error) {
-      toast.error("Something went wrong!");
+      toast.error("Something went wrong.");
       console.error(error);
     } finally {
       setLoader(false);
@@ -150,7 +151,7 @@ const Country = () => {
       (prev) =>
         prev.includes(countryId)
           ? prev.filter((id) => id !== countryId) // Unselect if already selected
-          : [...prev, countryId] // Add to selected list
+          : [...prev, countryId], // Add to selected list
     );
   };
 
@@ -247,7 +248,7 @@ const Country = () => {
         ),
       },
     ],
-    [selectedcountry, country]
+    [selectedcountry, country],
   );
 
   const [loader, setLoader] = useState(false);
@@ -269,8 +270,8 @@ const Country = () => {
     },
     validationSchema: Yup.object({
       country_name: Yup.string()
-        .min(1, "Country Name must be at least 1.")
-        .max(50, "Country name must be between 1 to 50 characters.")
+        .min(1, "Country name must be at least 1 character.")
+        .max(50, "Country name must be between 1 and 50 characters.")
         .required("Country is required."),
     }),
     onSubmit: (values) => {
@@ -294,10 +295,12 @@ const Country = () => {
             fetchCountry();
             setShowBaseModal(false);
           } else {
-            toast.error(res?.message || "Something went wrong");
+            toast.error(res?.message || "Something went wrong.");
           }
         })
-        .catch((error) => toast.error(error?.message || "Something went wrong"))
+        .catch((error) =>
+          toast.error(error?.message || "Something went wrong."),
+        )
         .finally(() => setLoader(false));
     },
   });
@@ -476,10 +479,7 @@ const Country = () => {
                               rowHeight="10px !important"
                             />
                           ) : (
-                            <div className="py-4 text-center">
-                              <i className="ri-search-line d-block fs-1 text-success"></i>
-                              {handleResponse?.dataNotFound}
-                            </div>
+                            <EmptyState />
                           )}
                         </>
                       )}

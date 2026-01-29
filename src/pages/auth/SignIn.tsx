@@ -46,7 +46,7 @@ const SignIn = () => {
             const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
             const isUsername = /^[a-zA-Z0-9_.-]+$/.test(value);
             return isEmail || isUsername;
-          }
+          },
         ),
 
       password: Yup.string().required(validationMessages.required("Password")),
@@ -72,7 +72,6 @@ const SignIn = () => {
               // Dispatch auth change event to notify UserProvider
               window.dispatchEvent(new CustomEvent("authChange"));
 
-
               if (role === "guest") {
                 navigate(from, { replace: true });
               } else {
@@ -85,7 +84,7 @@ const SignIn = () => {
             }
           } else {
             console.log("Login failed - invalid response:", res);
-            toast.error(res?.message || "Login failed");
+            toast.error(res?.message || "Login failed.");
           }
         })
         .catch((error) => {

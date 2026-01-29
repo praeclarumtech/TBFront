@@ -4,6 +4,7 @@ import { Row, Col, Card, Container } from "react-bootstrap";
 import { Drawer, Select, Button, Badge } from "antd";
 import { FilterOutlined, ReloadOutlined } from "@ant-design/icons";
 import TableContainer from "components/BaseComponents/TableContainer";
+import EmptyState from "components/BaseComponents/EmptyState";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -102,7 +103,7 @@ const ClientApplications = () => {
             label:
               `${client.firstName || ""} ${client.lastName || ""}`.trim() ||
               client.email,
-          }))
+          })),
         );
 
         // Fetch vendors
@@ -118,7 +119,7 @@ const ClientApplications = () => {
             label:
               `${vendor.firstName || ""} ${vendor.lastName || ""}`.trim() ||
               vendor.email,
-          }))
+          })),
         );
       } else {
         // For Vendor/Client - use getJobEmailRecipients API for vendors only
@@ -137,7 +138,7 @@ const ClientApplications = () => {
                   vendor.name ||
                   `${vendor.firstName || ""} ${vendor.lastName || ""}`.trim() ||
                   vendor.email,
-              }))
+              })),
             );
           } catch (error) {
             console.error("Failed to fetch vendors:", error);
@@ -156,7 +157,7 @@ const ClientApplications = () => {
         (Array.isArray(jobs) ? jobs : []).map((job: any) => ({
           value: job._id,
           label: `${job.job_id || ""} - ${job.job_subject || ""}`.trim(),
-        }))
+        })),
       );
     } catch (error: any) {
       console.error("Failed to fetch dropdown options:", error);
@@ -185,11 +186,11 @@ const ClientApplications = () => {
       setTotalRecords(
         response?.data?.pagination?.totalCount ||
           response?.data?.pagination?.total ||
-          0
+          0,
       );
     } catch (error: any) {
       toast.error(
-        error?.response?.data?.message || "Failed to fetch applications"
+        error?.response?.data?.message || "Failed to fetch applications.",
       );
     } finally {
       setTableLoader(false);
@@ -350,7 +351,7 @@ const ClientApplications = () => {
         enableColumnFilter: false,
       },
     ],
-    [pagination.pageIndex, pagination.pageSize]
+    [pagination.pageIndex, pagination.pageSize],
   );
 
   return (
@@ -360,8 +361,9 @@ const ClientApplications = () => {
         placement="right"
         onClose={() => setDrawerVisible(false)}
         open={drawerVisible}
-        width="100%"
-        style={{ maxWidth: 360 }}
+        width={360}
+        zIndex={1000}
+        maskClosable={true}
         footer={
           <div className="flex justify-end gap-2">
             <Button onClick={handleResetFilters} icon={<ReloadOutlined />}>
@@ -473,7 +475,7 @@ const ClientApplications = () => {
                 md={6}
                 className="flex-wrap mt-4 d-flex align-items-center"
               >
-                <div className="ml-6 text-2xl font-bold">
+                <div className="ml-6 text-lg font-bold">
                   Client Applications
                 </div>
               </Col>
@@ -543,10 +545,11 @@ const ClientApplications = () => {
                     />
                   </Card.Body>
                 ) : (
-                  <div className="py-4 text-center">
-                    <i className="ri-search-line d-block fs-1 text-success"></i>
-                    {handleResponse?.dataNotFound || "No applications found"}
-                  </div>
+                  <EmptyState
+                    message={
+                      handleResponse?.dataNotFound || "No applications found"
+                    }
+                  />
                 )}
               </div>
             )}

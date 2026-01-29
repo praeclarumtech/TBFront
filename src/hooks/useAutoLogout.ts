@@ -3,6 +3,7 @@ import { useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { EXPIRES_AT, logout } from "../utils/commonFunctions";
 import routes from "../routes/routes";
+import { toast } from "react-toastify";
 
 interface AutoLogoutProps {
   warningThreshold?: number; // ms before expiry to show warning
@@ -31,28 +32,40 @@ const AutoLogout = ({
     }
   }, []);
 
-  const handleLogout = useCallback(() => {
-    try {
-      // Call optional callback before logout
-      onLogout?.();
+  const handleLogout = useCallback(
+    (showToast: boolean = true) => {
+      try {
+        // Show toast notification if session expired
+        if (showToast) {
+          toast.error("🔒 Session expired. Please log in again.", {
+            toastId: "session-expired",
+            closeOnClick: true,
+            autoClose: 5000,
+          });
+        }
 
-      logout();
+        // Call optional callback before logout
+        onLogout?.();
 
-      // Clear session data
-      localStorage.clear();
-      sessionStorage.clear();
+        logout();
 
-      // Clear timers
-      clearTimers();
+        // Clear session data
+        localStorage.clear();
+        sessionStorage.clear();
 
-      // Redirect to login
-      navigate(routes.ROOT.path, { replace: true });
-    } catch (error) {
-      console.error("Error during auto-logout:", error);
-      // Still proceed with navigation even if logout fails
-      navigate(routes.ROOT.path, { replace: true });
-    }
-  }, [navigate, onLogout, clearTimers]);
+        // Clear timers
+        clearTimers();
+
+        // Redirect to login
+        navigate(routes.ROOT.path, { replace: true });
+      } catch (error) {
+        console.error("Error during auto-logout:", error);
+        // Still proceed with navigation even if logout fails
+        navigate(routes.ROOT.path, { replace: true });
+      }
+    },
+    [navigate, onLogout, clearTimers],
+  );
 
   const handleWarning = useCallback(() => {
     if (!warningShownRef.current) {
@@ -68,9 +81,9 @@ const AutoLogout = ({
     clearTimers();
     warningShownRef.current = false;
 
-    // If no expiration time, logout immediately
+    // If no expiration time, logout immediately (don't show toast - edge case)
     if (!expiresAt) {
-      handleLogout();
+      handleLogout(false);
       return;
     }
 
@@ -79,16 +92,16 @@ const AutoLogout = ({
     // Validate the timestamp
     if (isNaN(expirationTime)) {
       console.warn("Invalid expiration timestamp found");
-      handleLogout();
+      handleLogout(false);
       return;
     }
 
     const currentTime = Date.now();
     const timeout = expirationTime - currentTime;
 
-    // If already expired, logout immediately
+    // If already expired, logout immediately (show toast - session expired)
     if (timeout <= 0) {
-      handleLogout();
+      handleLogout(true);
       return;
     }
 
@@ -116,7 +129,7 @@ const AutoLogout = ({
       if (e.key === EXPIRES_AT) {
         if (!e.newValue) {
           // Session cleared in another tab
-          handleLogout();
+          handleLogout(false);
         } else {
           // Session updated in another tab
           checkSession();

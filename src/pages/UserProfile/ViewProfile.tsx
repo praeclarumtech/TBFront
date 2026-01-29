@@ -368,7 +368,7 @@ const ViewProfile = ({ show, onHide, _id, module }: any) => {
                         className="hover:underline"
                       >
                         {/* {formData?.vendorProfileId?.company_linkedin_profile} */}
-                        {"Comapany linked-in"}
+                        {"Company LinkedIn"}
                       </a>
                     ) : (
                       <Badge
@@ -389,7 +389,7 @@ const ViewProfile = ({ show, onHide, _id, module }: any) => {
                         className="hover:underline"
                       >
                         {/* {formData?.vendorProfileId?.company_linkedin_profile} */}
-                        {"Comapany linked-in"}
+                        {"Company LinkedIn"}
                       </a>
                     ) : (
                       <Badge

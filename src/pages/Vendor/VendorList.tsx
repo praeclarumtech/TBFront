@@ -9,13 +9,14 @@ import {
 import ActiveModal from "components/BaseComponents/ActiveModal";
 import DeleteModal from "components/BaseComponents/DeleteModal";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Card, Col, Container, Row } from "react-bootstrap";
+import { Card, Container } from "react-bootstrap";
 import { toast } from "react-toastify";
 import { AnyObject } from "yup";
 import { Switch } from "antd";
 import Skeleton from "react-loading-skeleton";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import TableContainer from "components/BaseComponents/TableContainer";
+import EmptyState from "components/BaseComponents/EmptyState";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import { useNavigate } from "react-router-dom";
 import ViewProfile from "../UserProfile/ViewProfile";
@@ -124,7 +125,7 @@ const VendorList = () => {
       { id: "updatedAt", header: "Updated Date", isVisible: false },
       { id: "isAdmin", header: "Vendor Approval", isVisible: true },
     ],
-    [isAdmin]
+    [isAdmin],
   );
   const [availableColumns, setAvailableColumns] =
     useState<ColumnConfig[]>(baseAvailableColumns);
@@ -241,7 +242,7 @@ const VendorList = () => {
 
   const handleUpdateVendorAdminStatus = async (
     id: string,
-    currentIsAdmin: boolean
+    currentIsAdmin: boolean,
   ) => {
     setIsLoading(true);
     try {
@@ -250,15 +251,15 @@ const VendorList = () => {
         toast.success(
           currentIsAdmin
             ? "Vendor disapproved successfully"
-            : "Vendor approved successfully"
+            : "Vendor approved successfully",
         );
         fetchUsers();
       } else {
-        toast.error(response?.message || "Failed to update vendor status");
+        toast.error(response?.message || "Failed to update vendor status.");
       }
     } catch (error: any) {
       toast.error(
-        error?.response?.data?.message || "Failed to update vendor status"
+        error?.response?.data?.message || "Failed to update vendor status",
       );
     } finally {
       setIsLoading(false);
@@ -346,44 +347,44 @@ const VendorList = () => {
         },
       },
       // {
-      //   header: "Comapany name",
+      //   header: "Company name",
       //   accessorKey: "vendorProfileId.company_name",
       //   id: "vendorProfileId.company_name",
       //   enableColumnFilter: false,
       // },
       // {
-      //   header: "Comapany email",
+      //   header: "Company email",
       //   accessorKey: "vendorProfileId.company_email",
       //   id: "vendorProfileId.company_email",
       //   enableColumnFilter: false,
       // },
       // {
-      //   header: "Comapany phone no.",
+      //   header: "Company phone no.",
       //   accessorKey: "vendorProfileId.company_phone_number",
       //   id: "vendorProfileId.company_phone_number",
       //   enableColumnFilter: false,
       // },
       // {
-      //   header: "Comapany Type",
+      //   header: "Company Type",
       //   accessorKey: "vendorProfileId.company_type",
       //   id: "vendorProfileId.company_type",
       //   enableColumnFilter: false,
       // },
       // {
-      //   header: "Comapany Location",
+      //   header: "Company Location",
       //   accessorKey: "vendorProfileId.company_location",
       //   id: "vendorProfileId.company_location",
       //   enableColumnFilter: false,
       // },
 
       // {
-      //   header: "Comapany strength",
+      //   header: "Company strength",
       //   accessorKey: "vendorProfileId.company_strength",
       //   id: "vendorProfileId.company_strength",
       //   enableColumnFilter: false,
       // },
       // {
-      //   header: "Comapany Website",
+      //   header: "Company Website",
       //   accessorKey: "vendorProfileId.company_website",
       //   id: "vendorProfileId.company_website",
       //   enableColumnFilter: false,
@@ -405,7 +406,7 @@ const VendorList = () => {
       //   },
       // },
       // {
-      //   header: "Comapany LinkedIn Profile",
+      //   header: "Company LinkedIn Profile",
       //   accessorKey: "vendorProfileId.company_linkedin_profile",
       //   id: "vendorProfileId.company_linkedin_profile",
       //   enableColumnFilter: false,
@@ -504,13 +505,19 @@ const VendorList = () => {
                 <Tooltip.Trigger asChild>
                   <button
                     className="text-white btn btn-sm btn-soft-secondary bg-secondary"
-                    onClick={() =>
-                      navigate(`/userprofileEdit/${row?.original?._id}`, {
-                        state: {
-                          from: "VendorList",
-                        },
-                      })
-                    }
+                    onClick={() => {
+                      const vendorId = row?.original?._id;
+                      if (vendorId) {
+                        navigate(
+                          `/userManagement/edit/${vendorId}?type=vendor`,
+                          {
+                            state: {
+                              from: "VendorList",
+                            },
+                          },
+                        );
+                      }
+                    }}
                     disabled={!row.original.isActive}
                   >
                     <i className="ri-pencil-fill" />
@@ -585,7 +592,7 @@ const VendorList = () => {
       prev.map((col) => ({
         ...col,
         isVisible: visibleColumns.includes(col.id),
-      }))
+      })),
     );
   };
   const handleView = (_id: string) => {
@@ -624,20 +631,20 @@ const VendorList = () => {
       handleFileImport(e);
     } else {
       toast.error(
-        "Unsupported file type. Please upload a CSV, Excel, Word, or PDF file."
+        "Unsupported file type. Please upload a CSV, Excel, Word, or PDF file.",
       );
     }
   };
 
   const handleFileImport = async (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
     const fileExtension = file.name.split(".").pop()?.toLowerCase();
     if (!["csv", "xlsx", "xls", ".xltx"].includes(fileExtension || "")) {
-      toast.error("Please upload a valid CSV or Excel file");
+      toast.error("Please upload a valid CSV or Excel file.");
       return;
     }
     if (file.size > 5 * 1024 * 1024) {
@@ -662,7 +669,7 @@ const VendorList = () => {
         params: { updateFlag },
         onUploadProgress: (progressEvent: { loaded: number; total: any }) => {
           const progress = Math.round(
-            (progressEvent.loaded * 100) / (progressEvent.total || 100)
+            (progressEvent.loaded * 100) / (progressEvent.total || 100),
           );
           setImportProgress(progress);
         },
@@ -688,7 +695,7 @@ const VendorList = () => {
             successMsg = `${updated.length} vendor(s) updated successfully!`;
           }
           toast.success(
-            successMsg || response?.message || "File imported successfully!"
+            successMsg || response?.message || "File imported successfully!",
           );
         }
 
@@ -697,7 +704,7 @@ const VendorList = () => {
           toast.warning(
             `${skipped.length} record(s) skipped: ${skipped
               .slice(0, 3)
-              .join(", ")}${skipped.length > 3 ? "..." : ""}`
+              .join(", ")}${skipped.length > 3 ? "..." : ""}`,
           );
         }
 
@@ -719,11 +726,11 @@ const VendorList = () => {
             toast.error(message);
           });
         } else {
-          toast.error(response.message || "Import failed");
+          toast.error(response.message || "Import failed.");
         }
       } else if (!response?.success && response.statusCode === 409) {
         setShowPopupModal(true);
-        toast.error(response.message || "Import failed");
+        toast.error(response.message || "Import failed.");
       }
     } catch (error: any) {
       toast.error(error?.message || "Failed to import file");
@@ -755,7 +762,7 @@ const VendorList = () => {
         params: { updateFlag },
         onUploadProgress: (progressEvent: { loaded: number; total: any }) => {
           const progress = Math.round(
-            (progressEvent.loaded * 100) / (progressEvent.total || 100)
+            (progressEvent.loaded * 100) / (progressEvent.total || 100),
           );
           setImportProgress(progress);
         },
@@ -783,7 +790,7 @@ const VendorList = () => {
           toast.success(
             successMsg ||
               response?.message ||
-              "Existing vendors updated successfully!"
+              "Existing vendors updated successfully!",
           );
         }
 
@@ -792,7 +799,7 @@ const VendorList = () => {
           toast.warning(
             `${skipped.length} record(s) skipped: ${skipped
               .slice(0, 3)
-              .join(", ")}${skipped.length > 3 ? "..." : ""}`
+              .join(", ")}${skipped.length > 3 ? "..." : ""}`,
           );
         }
 
@@ -814,7 +821,7 @@ const VendorList = () => {
         throw new Error(response?.message || "Update failed");
       }
     } catch (error: any) {
-      toast.error(error.message || "Failed to update vendors");
+      toast.error(error.message || "Failed to update vendors.");
     } finally {
       setImportLoader(false);
       setIsImporting(false);
@@ -852,12 +859,12 @@ const VendorList = () => {
           search: searchAll,
           role: "vendor",
         },
-        payload
+        payload,
       );
 
       const blob = new Blob([response], { type: "text/csv" });
       saveAs(blob, "Export_Vendors_data.csv");
-      toast.success("File downloaded successfully!");
+      toast.success("File downloaded successfully.");
     } catch (error) {
       errorHandle(error);
     } finally {
@@ -871,7 +878,7 @@ const VendorList = () => {
       const response = await downloadSampleCsv("vendor");
       const blob = new Blob([response], { type: "text/csv" });
       saveAs(blob, "Sample_Vendor_Import.csv");
-      toast.success("Sample CSV downloaded successfully!");
+      toast.success("Sample CSV downloaded successfully.");
     } catch (error) {
       errorHandle(error);
     }
@@ -921,130 +928,125 @@ const VendorList = () => {
       <Container fluid>
         <div className="mt-2 mb-2">
           <Card>
-            <Row className="fw-bold text-dark d-flex">
-              <Col
-                xs={12}
-                sm={12}
-                md={4}
-                lg={3}
-                className="flex-wrap mt-4 d-flex align-items-center"
-              >
-                <div className="ml-6 text-2xl font-bold">Vendors</div>
-              </Col>
-              <Col xs={12} sm={12} md={8} lg={9} className="mt-4">
-                <div className="items-end justify-end mr-6 d-flex gap-2 flex-wrap">
-                  <div
-                    className="flex-shrink-0"
-                    style={{ minWidth: "200px", width: "200px" }}
-                  >
+            {/* Header Section */}
+            <div className="px-3 pt-4 pb-3">
+              <div className="d-flex flex-column flex-lg-row justify-content-between align-items-start align-items-lg-center gap-3">
+                {/* Title */}
+                <h4 className="fw-bold text-dark mb-0">Vendors</h4>
+
+                {/* Actions Row */}
+                <div className="d-flex flex-wrap align-items-center gap-2">
+                  {/* Search */}
+                  <div style={{ minWidth: "180px" }}>
                     <input
                       id="search-bar-0"
-                      className="h-10 form-control search w-100"
+                      className="form-control search"
                       placeholder="Search..."
                       onChange={handleSearchChange}
                       value={searchAll}
+                      style={{ height: "38px" }}
                     />
                   </div>
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    accept=".csv,.xlsx,.xls,.xltx"
-                    style={{ display: "none" }}
-                    onChange={handleFileChange}
-                    disabled={isImporting}
-                  />
-                  <BaseButton
-                    color="secondary"
-                    className="flex-shrink-0"
-                    onClick={handleDownloadSampleCsv}
-                  >
-                    <i className="align-bottom ri-file-download-line me-1" />
-                    Sample CSV
-                  </BaseButton>
 
-                  <BaseButton
-                    color="primary"
-                    className="position-relative flex-shrink-0"
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={importLoader}
-                  >
-                    {importLoader ? (
-                      <>
-                        <i className="align-bottom ri-loader-4-line animate-spin me-1" />
-                        {isImporting
-                          ? `Importing... ${importProgress}%`
-                          : "Processing..."}
-                      </>
-                    ) : (
-                      <>
-                        <i className="align-bottom ri-download-2-line me-1" />
-                        Import
-                      </>
-                    )}
-                    {isImporting && (
-                      <div
-                        className="bottom-0 progress position-absolute start-0"
-                        style={{
-                          height: "4px",
-                          width: "100%",
-                          borderRadius: "0 0 4px 4px",
-                        }}
-                      >
+                  {/* Divider - hidden on mobile */}
+                  <div
+                    className="d-none d-md-block border-start mx-1"
+                    style={{ height: "24px" }}
+                  ></div>
+
+                  {/* Action Buttons Group */}
+                  <div className="d-flex flex-wrap gap-2">
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      accept=".csv,.xlsx,.xls,.xltx"
+                      style={{ display: "none" }}
+                      onChange={handleFileChange}
+                      disabled={isImporting}
+                    />
+
+                    <BaseButton color="primary" onClick={handleAdd}>
+                      <i className="ri-add-line me-1" />
+                      Add Vendor
+                    </BaseButton>
+
+                    <BaseButton
+                      color="secondary"
+                      onClick={handleDownloadSampleCsv}
+                    >
+                      <i className="ri-file-download-line me-1" />
+                      Sample CSV
+                    </BaseButton>
+
+                    <BaseButton
+                      color="primary"
+                      className="position-relative"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={importLoader}
+                    >
+                      {importLoader ? (
+                        <>
+                          <i className="ri-loader-4-line animate-spin me-1" />
+                          {isImporting
+                            ? `Importing... ${importProgress}%`
+                            : "Processing..."}
+                        </>
+                      ) : (
+                        <>
+                          <i className="ri-download-2-line me-1" />
+                          Import
+                        </>
+                      )}
+                      {isImporting && (
                         <div
-                          className="progress-bar"
-                          role="progressbar"
-                          style={{ width: `${importProgress}%` }}
-                          aria-valuenow={importProgress}
-                          aria-valuemin={0}
-                          aria-valuemax={100}
-                        />
-                      </div>
-                    )}
-                  </BaseButton>
+                          className="bottom-0 progress position-absolute start-0"
+                          style={{
+                            height: "3px",
+                            width: "100%",
+                            borderRadius: "0 0 4px 4px",
+                          }}
+                        >
+                          <div
+                            className="progress-bar"
+                            style={{ width: `${importProgress}%` }}
+                          />
+                        </div>
+                      )}
+                    </BaseButton>
 
-                  <BaseButton
-                    color="primary"
-                    className="bg-green-900 btn btn-soft-secondary flex-shrink-0"
-                    onClick={handleExport}
-                    disabled={users?.length === 0}
-                  >
-                    <i className="ri-upload-2-line me-1" />
-                    Export
-                  </BaseButton>
+                    <BaseButton
+                      color="success"
+                      onClick={handleExport}
+                      disabled={users?.length === 0}
+                    >
+                      <i className="ri-upload-2-line me-1" />
+                      Export
+                    </BaseButton>
 
-                  <BaseButton
-                    color="primary"
-                    className="position-relative flex-shrink-0"
-                    onClick={handleAdd}
-                  >
-                    + Add Vendor
-                  </BaseButton>
+                    <BaseButton
+                      color="info"
+                      onClick={() => setShowQrInviteModal(true)}
+                    >
+                      <i className="ri-qr-code-line me-1" />
+                      Send QR Invite
+                    </BaseButton>
 
-                  <BaseButton
-                    color="primary"
-                    className="flex-shrink-0"
-                    onClick={() => setShowQrInviteModal(true)}
-                  >
-                    <i className="ri-qr-code-line me-1" />
-                    Send QR Invite
-                  </BaseButton>
-
-                  <ColumnsDropdown
-                    availableColumns={availableColumns}
-                    onColumnsChange={handleColumnsChange}
-                    className="flex-shrink-0"
-                  />
+                    <ColumnsDropdown
+                      availableColumns={availableColumns}
+                      onColumnsChange={handleColumnsChange}
+                    />
+                  </div>
                 </div>
-              </Col>
-            </Row>
+              </div>
+            </div>
             {tableLoader ? (
               <div className="m-3">
                 <Skeleton count={10} />
               </div>
             ) : (
-              <div className="pt-2 bg-white ">
+              <div className=" bg-white ">
                 {users?.length > 0 ? (
-                  <Card.Body>
+                  <Card.Body className="!pt-0">
                     <TableContainer
                       // isHeaderTitle="Users"
                       columns={columns}
@@ -1065,10 +1067,7 @@ const VendorList = () => {
                     />
                   </Card.Body>
                 ) : (
-                  <div className="py-4 text-center">
-                    <i className="ri-search-line d-block fs-1 text-success"></i>
-                    {handleResponse?.dataNotFound}
-                  </div>
+                  <EmptyState />
                 )}
               </div>
             )}

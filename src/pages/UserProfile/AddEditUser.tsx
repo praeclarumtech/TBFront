@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Col, Row, Card } from "react-bootstrap";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { Container } from "react-bootstrap";
 import appConstants from "constants/constant";
 import { userAdd, updateProfile, viewProfile } from "../../api/usersApi";
@@ -13,7 +13,12 @@ import {
   RequiredField,
 } from "utils/commonFunctions";
 import BaseButton from "components/BaseComponents/BaseButton";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
+import {
+  useNavigate,
+  useParams,
+  useLocation,
+  useSearchParams,
+} from "react-router-dom";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import {
@@ -40,15 +45,36 @@ const AddEditUser = () => {
   const { _id } = useParams();
   const isEditMode = Boolean(_id);
   const location = useLocation();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-
-  document.title =
-    (isEditMode ? "Edit User" : "Add User") + " | " + projectTitle;
 
   const [loading, setLoading] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] =
     useState<boolean>(false);
   const [rolesOptions, setrolesOptions] = useState<SelectedOptionRole1[]>([]);
+  const [userRole, setUserRole] = useState<string>("");
+
+  // Determine source from URL params or location state
+  const getSourceType = () => {
+    // Check URL parameter first (e.g., ?type=client or ?type=vendor)
+    const urlType = searchParams.get("type")?.toLowerCase();
+    if (urlType === "client" || urlType === "vendor") {
+      return urlType;
+    }
+    // Fall back to location state
+    const stateFrom = location.state?.from;
+    if (stateFrom === "Client") return "client";
+    if (stateFrom === "Vendor" || stateFrom === "VendorList") return "vendor";
+    return null;
+  };
+
+  const sourceType = getSourceType();
+  const addTitle =
+    sourceType === "client"
+      ? "Add Client"
+      : sourceType === "vendor"
+        ? "Add Vendor"
+        : "Add User";
 
   const fetchRoles = async () => {
     try {
@@ -71,29 +97,52 @@ const AddEditUser = () => {
   // Create validation schema based on edit mode
   const getValidationSchema = () => {
     const baseSchema = {
-      userName: Yup.string().required(RequiredField("Username")),
+      userName: Yup.string()
+        .required(RequiredField("Username"))
+        .matches(
+          /^[A-Za-z0-9]+$/,
+          "Username must only contain letters and numbers",
+        ),
       email: Yup.string()
         .required(validationMessages.required("Email"))
         .email(validationMessages.format("Email"))
         .matches(emailRegex, validationMessages.format("Email")),
-      firstName: Yup.string().required(
-        validationMessages.required("First-name")
-      ),
-      lastName: Yup.string().required(validationMessages.required("Last-name")),
+      firstName: Yup.string()
+        .required(validationMessages.required("First-name"))
+        .max(15, "First name cannot exceed 15 characters.")
+        .min(2, "First name must be at least 2 characters.")
+        .matches(/^[A-Za-z\s]+$/, "First name can only contain letters.")
+        .trim(),
+      lastName: Yup.string()
+        .required(validationMessages.required("Last-name"))
+        .max(15, "Last name cannot exceed 15 characters.")
+        .min(2, "Last name must be at least 2 characters.")
+        .matches(/^[A-Za-z\s]+$/, "Last name can only contain letters.")
+        .trim(),
       role: Yup.string().required(RequiredField("Role")),
       company_name: Yup.string(),
       company_email: Yup.string().email(
-        validationMessages.format("Company Email")
+        validationMessages.format("Company Email"),
       ),
       company_phone_number: Yup.string().matches(
         /^[1-9][0-9]{9}$/,
-        "Please enter a valid 10-digit phone number (should not start with 0)."
+        "Please enter a valid 10-digit phone number. It should not start with 0.",
       ),
       company_location: Yup.string(),
       company_strength: Yup.string(),
-      company_linkedin_profile: Yup.string().url("Please enter a valid URL"),
-      company_website: Yup.string().url("Please enter a valid URL"),
-      vendor_linkedin_profile: Yup.string().url("Please enter a valid URL"),
+      hire_resources: Yup.string().when("role", {
+        is: (role: string) => role === "vendor" || role === "client",
+        then: (schema) => schema.required(RequiredField("Hire Resources")),
+        otherwise: (schema) => schema,
+      }),
+      company_type: Yup.string().when("role", {
+        is: (role: string) => role === "vendor" || role === "client",
+        then: (schema) => schema.required(RequiredField("Company Type")),
+        otherwise: (schema) => schema,
+      }),
+      company_linkedin_profile: Yup.string().url("Please enter a valid URL."),
+      company_website: Yup.string().url("Please enter a valid URL."),
+      vendor_linkedin_profile: Yup.string().url("Please enter a valid URL."),
     };
 
     if (isEditMode) {
@@ -104,15 +153,15 @@ const AddEditUser = () => {
           .min(8, validationMessages.passwordLength("Password", 8))
           .matches(
             passwordRegex,
-            validationMessages.passwordComplexity("Password")
+            validationMessages.passwordComplexity("Password"),
           ),
         confirmPassword: Yup.string().oneOf(
           [Yup.ref("password")],
-          "Password and confirm password should be same."
+          "Password and confirm password should be same.",
         ),
         whatsapp_number: Yup.string().matches(
           /^[1-9][0-9]{9}$/,
-          "Please enter a valid 10-digit phone number (should not start with 0)."
+          "Please enter a valid 10-digit phone number. It should not start with 0.",
         ),
       });
     } else {
@@ -124,20 +173,25 @@ const AddEditUser = () => {
           .min(8, validationMessages.passwordLength("Password", 8))
           .matches(
             passwordRegex,
-            validationMessages.passwordComplexity("Password")
+            validationMessages.passwordComplexity("Password"),
           ),
         confirmPassword: Yup.string()
           .required(validationMessages.required("Confirm Password"))
           .oneOf(
             [Yup.ref("password")],
-            "Password and confirm password should be same."
+            "Password and confirm password should be same.",
           ),
-        whatsapp_number: Yup.string()
-          .matches(
-            /^[1-9][0-9]{9}$/,
-            "Please enter a valid 10-digit phone number (should not start with 0)."
-          )
-          .required("Whatsapp number is required"),
+        whatsapp_number: Yup.string().when("role", {
+          is: (role: string) => role === "vendor" || role === "client",
+          then: (schema) =>
+            schema
+              .matches(
+                /^[1-9][0-9]{9}$/,
+                "Please enter a valid 10-digit phone number. It should not start with 0.",
+              )
+              .required("WhatsApp number is required."),
+          otherwise: (schema) => schema,
+        }),
       });
     }
   };
@@ -166,7 +220,26 @@ const AddEditUser = () => {
       vendor_linkedin_profile: "",
     },
     validationSchema: getValidationSchema(),
-    onSubmit: async (values, { resetForm }) => {
+    onSubmit: async (values, { resetForm, setTouched }) => {
+      // Mark all fields as touched to show validation errors
+      setTouched({
+        userName: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        role: true,
+        password: !isEditMode,
+        confirmPassword: !isEditMode,
+        hire_resources:
+          validation.values.role === "vendor" ||
+          validation.values.role === "client",
+        company_type:
+          validation.values.role === "vendor" ||
+          validation.values.role === "client",
+        whatsapp_number:
+          validation.values.role === "vendor" ||
+          validation.values.role === "client",
+      });
       setLoading(true);
 
       const basePayload = {
@@ -208,7 +281,7 @@ const AddEditUser = () => {
 
           const response = await updateProfile(_id, formDataToSend);
           if (response) {
-            toast.success(response?.message || "User updated successfully!");
+            toast.success(response?.message || "User updated successfully.");
             navigateBack();
           }
         } else {
@@ -235,7 +308,7 @@ const AddEditUser = () => {
         if (error?.response?.data?.message) {
           toast.error(error.response.data.message);
         } else {
-          toast.error(error?.message || "An error occurred");
+          toast.error(error?.message || "An error occurred.");
         }
       } finally {
         setLoading(false);
@@ -254,10 +327,13 @@ const AddEditUser = () => {
 
           if (userData) {
             // Extract role from roleId object or direct role field
-            const userRole =
+            const extractedRole =
               typeof userData.roleId === "object"
                 ? userData.roleId?.name
                 : userData.role || "";
+
+            // Store the role for title determination
+            setUserRole(extractedRole);
 
             validation.setValues({
               userName: userData.userName || "",
@@ -266,7 +342,7 @@ const AddEditUser = () => {
               lastName: userData.lastName || "",
               password: "",
               confirmPassword: "",
-              role: userRole,
+              role: extractedRole,
               isActive:
                 typeof userData.isActive === "boolean"
                   ? String(userData.isActive)
@@ -284,15 +360,14 @@ const AddEditUser = () => {
               company_linkedin_profile:
                 userData.vendorProfileId?.company_linkedin_profile || "",
               company_website: userData.vendorProfileId?.company_website || "",
-              whatsapp_number:
-                userData.vendorProfileId?.whatsapp_number || "",
+              whatsapp_number: userData.vendorProfileId?.whatsapp_number || "",
               vendor_linkedin_profile:
                 userData.vendorProfileId?.vendor_linkedin_profile || "",
             });
           }
         } catch (error) {
           toast.error(
-            error instanceof Error ? error.message : "Failed to load user data"
+            error instanceof Error ? error.message : "Failed to load user data",
           );
         } finally {
           setLoading(false);
@@ -313,8 +388,47 @@ const AddEditUser = () => {
     }
   }, [location.state, isEditMode]);
 
+  // If coming from User Management, always show "Edit User"
+  // Otherwise, show role-specific titles
+  const getEditTitle = useMemo(() => {
+    const isFromUserManagement =
+      !sourceType &&
+      location.state?.from !== "Vendor" &&
+      location.state?.from !== "VendorList" &&
+      location.state?.from !== "Client";
+
+    if (isFromUserManagement) {
+      return "Edit User";
+    }
+
+    if (sourceType === "client") return "Edit Client";
+    if (sourceType === "vendor") return "Edit Vendor";
+
+    const role =
+      userRole?.toLowerCase() || validation.values.role?.toLowerCase();
+    if (role === "client" && location.state?.from === "Client")
+      return "Edit Client";
+    if (
+      role === "vendor" &&
+      (location.state?.from === "Vendor" ||
+        location.state?.from === "VendorList")
+    )
+      return "Edit Vendor";
+
+    return "Edit User";
+  }, [sourceType, userRole, validation.values.role, location.state?.from]);
+
+  // Update document title when role changes
+  useEffect(() => {
+    document.title =
+      (isEditMode ? getEditTitle : addTitle) + " | " + projectTitle;
+  }, [isEditMode, getEditTitle, addTitle]);
+
   const navigateBack = () => {
-    if (location.state?.from === "Vendor" || location.state?.from === "VendorList") {
+    if (
+      location.state?.from === "Vendor" ||
+      location.state?.from === "VendorList"
+    ) {
       navigate("/vendorList");
     } else if (location.state?.from === "Client") {
       navigate("/client");
@@ -342,7 +456,7 @@ const AddEditUser = () => {
                 <Card.Body>
                   <div className="w-full max-w-4xl px-4 py-4 mx-auto">
                     <h5 className="justify-start mb-4 text-2xl font-semibold text-start">
-                      {isEditMode ? "Edit User" : "Add User"}
+                      {isEditMode ? getEditTitle : addTitle}
                     </h5>
 
                     <form onSubmit={validation.handleSubmit} className="h-full">
@@ -404,7 +518,13 @@ const AddEditUser = () => {
                             className=""
                             type="text"
                             placeholder={InputPlaceHolder("First Name")}
-                            handleChange={validation.handleChange}
+                            handleChange={(e) => {
+                              const value = e.target.value.replace(
+                                /[^A-Za-z\s]/g,
+                                "",
+                              );
+                              validation.setFieldValue("firstName", value);
+                            }}
                             handleBlur={validation.handleBlur}
                             value={validation.values.firstName}
                             touched={validation.touched.firstName}
@@ -426,7 +546,13 @@ const AddEditUser = () => {
                             name="lastName"
                             type="text"
                             placeholder={InputPlaceHolder("Last Name")}
-                            handleChange={validation.handleChange}
+                            handleChange={(e) => {
+                              const value = e.target.value.replace(
+                                /[^A-Za-z\s]/g,
+                                "",
+                              );
+                              validation.setFieldValue("lastName", value);
+                            }}
                             handleBlur={validation.handleBlur}
                             value={validation.values.lastName}
                             touched={validation.touched.lastName}
@@ -451,18 +577,19 @@ const AddEditUser = () => {
                             options={rolesOptions}
                             placeholder={InputPlaceHolder("Role")}
                             handleChange={(
-                              selectedOption: SelectedOptionRole1
+                              selectedOption: SelectedOptionRole1,
                             ) => {
                               validation.setFieldValue(
                                 "role",
-                                selectedOption?.value || ""
+                                selectedOption?.value || "",
                               );
+                              validation.setFieldTouched("role", true);
                             }}
                             handleBlur={validation.handleBlur}
                             value={
                               dynamicFind(
                                 rolesOptions,
-                                validation.values.role
+                                validation.values.role,
                               ) || ""
                             }
                             touched={validation.touched.role}
@@ -503,14 +630,14 @@ const AddEditUser = () => {
                             handleChange={(selectedOption: SelectedOption) => {
                               validation.setFieldValue(
                                 "isActive",
-                                selectedOption?.value || ""
+                                selectedOption?.value || "",
                               );
                             }}
                             handleBlur={validation.handleBlur}
                             value={
                               dynamicFind(
                                 activeStatusOptions,
-                                validation.values.isActive
+                                validation.values.isActive,
                               ) || ""
                             }
                             touched={validation.touched.isActive}
@@ -607,11 +734,11 @@ const AddEditUser = () => {
                                 handleChange={(e) => {
                                   const value = e.target.value.replace(
                                     /[^A-Za-z0-9\s]/g,
-                                    ""
+                                    "",
                                   );
                                   validation.setFieldValue(
                                     "company_name",
-                                    value
+                                    value,
                                   );
                                 }}
                                 handleBlur={validation.handleBlur}
@@ -661,12 +788,12 @@ const AddEditUser = () => {
                                 handleChange={(e) => {
                                   const rawValue = e.target.value.replace(
                                     /\D/g,
-                                    ""
+                                    "",
                                   );
                                   const sanitizedValue = rawValue.slice(0, 10);
                                   validation.setFieldValue(
                                     "company_phone_number",
-                                    sanitizedValue
+                                    sanitizedValue,
                                   );
                                 }}
                                 handleBlur={validation.handleBlur}
@@ -691,13 +818,13 @@ const AddEditUser = () => {
                                 name="company_location"
                                 type="text"
                                 placeholder={InputPlaceHolder(
-                                  "Company Location"
+                                  "Company Location",
                                 )}
                                 handleChange={(e) => {
                                   const rawValue = e.target.value;
                                   validation.setFieldValue(
                                     "company_location",
-                                    rawValue
+                                    rawValue,
                                   );
                                 }}
                                 handleBlur={validation.handleBlur}
@@ -724,20 +851,26 @@ const AddEditUser = () => {
                                 options={hireResourceOptions}
                                 placeholder={InputPlaceHolder("Type")}
                                 handleChange={(
-                                  selectedOption: SelectedOption
+                                  selectedOption: SelectedOption,
                                 ) => {
                                   validation.setFieldValue(
                                     "hire_resources",
-                                    selectedOption?.value || ""
+                                    selectedOption?.value || "",
+                                  );
+                                  validation.setFieldTouched(
+                                    "hire_resources",
+                                    true,
                                   );
                                 }}
                                 handleBlur={validation.handleBlur}
                                 value={
                                   dynamicFind(
                                     hireResourceOptions,
-                                    validation.values.hire_resources
+                                    validation.values.hire_resources,
                                   ) || ""
                                 }
+                                touched={validation.touched.hire_resources}
+                                error={validation.errors.hire_resources}
                                 isRequired={true}
                                 menuPortalTarget={
                                   typeof window !== "undefined"
@@ -772,20 +905,26 @@ const AddEditUser = () => {
                                 options={companyType}
                                 placeholder={InputPlaceHolder("Type")}
                                 handleChange={(
-                                  selectedOption: SelectedOption
+                                  selectedOption: SelectedOption,
                                 ) => {
                                   validation.setFieldValue(
                                     "company_type",
-                                    selectedOption?.value || ""
+                                    selectedOption?.value || "",
+                                  );
+                                  validation.setFieldTouched(
+                                    "company_type",
+                                    true,
                                   );
                                 }}
                                 handleBlur={validation.handleBlur}
                                 value={
                                   dynamicFind(
                                     companyType,
-                                    validation.values.company_type
+                                    validation.values.company_type,
                                   ) || ""
                                 }
+                                touched={validation.touched.company_type}
+                                error={validation.errors.company_type}
                                 isRequired={true}
                                 menuPortalTarget={
                                   typeof window !== "undefined"
@@ -820,17 +959,17 @@ const AddEditUser = () => {
                                 name="company_strength"
                                 type="text"
                                 placeholder={InputPlaceHolder(
-                                  "Company Strength"
+                                  "Company Strength",
                                 )}
                                 handleChange={(e) => {
                                   const rawValue = e.target.value.replace(
                                     /\D/g,
-                                    ""
+                                    "",
                                   );
                                   const sanitizedValue = rawValue.slice(0, 10);
                                   validation.setFieldValue(
                                     "company_strength",
-                                    sanitizedValue
+                                    sanitizedValue,
                                   );
                                 }}
                                 handleBlur={validation.handleBlur}
@@ -853,17 +992,17 @@ const AddEditUser = () => {
                                 name="whatsapp_number"
                                 type="text"
                                 placeholder={InputPlaceHolder(
-                                  "Whatsapp Number"
+                                  "Whatsapp Number",
                                 )}
                                 handleChange={(e) => {
                                   const rawValue = e.target.value.replace(
                                     /\D/g,
-                                    ""
+                                    "",
                                   );
                                   const sanitizedValue = rawValue.slice(0, 10);
                                   validation.setFieldValue(
                                     "whatsapp_number",
-                                    sanitizedValue
+                                    sanitizedValue,
                                   );
                                 }}
                                 handleBlur={validation.handleBlur}
@@ -888,13 +1027,13 @@ const AddEditUser = () => {
                                 name="company_linkedin_profile"
                                 type="url"
                                 placeholder={InputPlaceHolder(
-                                  "Company LinkedIn URL"
+                                  "Company LinkedIn URL",
                                 )}
                                 handleChange={(e) => {
                                   const rawValue = e.target.value;
                                   validation.setFieldValue(
                                     "company_linkedin_profile",
-                                    rawValue
+                                    rawValue,
                                   );
                                 }}
                                 handleBlur={validation.handleBlur}
@@ -923,13 +1062,13 @@ const AddEditUser = () => {
                                 name="company_website"
                                 type="url"
                                 placeholder={InputPlaceHolder(
-                                  "Company Website"
+                                  "Company Website",
                                 )}
                                 handleChange={(e) => {
                                   const rawValue = e.target.value;
                                   validation.setFieldValue(
                                     "company_website",
-                                    rawValue
+                                    rawValue,
                                   );
                                 }}
                                 handleBlur={validation.handleBlur}
@@ -958,7 +1097,7 @@ const AddEditUser = () => {
                                   const rawValue = e.target.value;
                                   validation.setFieldValue(
                                     "vendor_linkedin_profile",
-                                    rawValue
+                                    rawValue,
                                   );
                                 }}
                                 handleBlur={validation.handleBlur}
@@ -1004,4 +1143,3 @@ const AddEditUser = () => {
 };
 
 export default AddEditUser;
-

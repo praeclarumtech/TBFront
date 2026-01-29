@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense, lazy } from "react";
 import { Route, BrowserRouter, Routes } from "react-router-dom";
 import routes from "./routes";
 import RootBoundary from "pages/dashboard/pages/RootBoundary";
@@ -33,8 +33,9 @@ import SuccessPage from "pages/applicant/QrCode/Success";
 import JobForm from "pages/master/JobForm";
 import JobListing from "pages/applicant/Job/JobListing";
 import OpenJob from "pages/master/OpenJob";
-import ApplyNow from "pages/applicant/Job/ApplyNow";
 import Vendor from "pages/Vendor/Vendor";
+
+const ApplyNow = lazy(() => import("pages/applicant/Job/ApplyNow"));
 import SearchJob from "pages/Vendor/SearchJob";
 import DetailedJob from "pages/Vendor/DetailedJob";
 import ApplyNowJob from "pages/Vendor/ApplyNowJob";
@@ -99,8 +100,38 @@ const RenderRouter: React.FC = () => {
         <Route path={VERIFY_EMAIL.path} element={<EmailVerification />} />
         <Route path={UPDATE_PASSWORD.path} element={<UpdatePassword />} />
 
-        <Route path={JOB_ADD_QR_CODE.path} element={<ApplyNow />} />
-        <Route path={JOB_EDIT_QR_CODE.path} element={<ApplyNow />} />
+        <Route
+          path={JOB_ADD_QR_CODE.path}
+          element={
+            <Suspense
+              fallback={
+                <div className="d-flex justify-content-center align-items-center min-vh-100">
+                  <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                </div>
+              }
+            >
+              <ApplyNow />
+            </Suspense>
+          }
+        />
+        <Route
+          path={JOB_EDIT_QR_CODE.path}
+          element={
+            <Suspense
+              fallback={
+                <div className="d-flex justify-content-center align-items-center min-vh-100">
+                  <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                </div>
+              }
+            >
+              <ApplyNow />
+            </Suspense>
+          }
+        />
         <Route path={APPLICANT_ADD_QR_CODE.path} element={<QrFrom />} />
         <Route path={APPLICANT_EDIT_QR_CODE.path} element={<QrFrom />} />
         <Route path={APPLICANT_SUCCESS.path} element={<SuccessPage />} />

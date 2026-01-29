@@ -88,7 +88,7 @@ const EmailForm = () => {
 
         validation.setFieldValue(
           "description",
-          templateData.data.description || ""
+          templateData.data.description || "",
         );
         validation.setFieldValue("subject", templateData.data.subject || "");
       } catch (error) {
@@ -134,20 +134,20 @@ const EmailForm = () => {
     validationSchema: Yup.object({
       email_to: Yup.string()
         .required("Recipient email is required.")
-        .test("valid-emails", "Invalid email address", (value) => {
+        .test("valid-emails", "Invalid email address.", (value) => {
           const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
           const emails = value?.split(",").map((email) => email.trim());
           return emails?.every((email) => emailRegex.test(email));
         }),
       email_bcc: Yup.string().test(
         "valid-emails",
-        "Invalid email address",
+        "Invalid email address.",
         (value) => {
           if (!value) return true;
           const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
           const emails = value.split(",").map((email) => email.trim());
           return emails.every((email) => emailRegex.test(email));
-        }
+        },
       ),
       subject: Yup.string().required("Subject is required."),
       description: Yup.string().required("Description is required."),
@@ -172,7 +172,7 @@ const EmailForm = () => {
         attachments.forEach((att) => {
           cleanedHtml = cleanedHtml.replace(
             /<img[^>]+src="data:image\/[^;]+;base64[^"]+"[^>]*>/,
-            `<img src="cid:${att.cid}" alt="Image" />`
+            `<img src="cid:${att.cid}" alt="Image" />`,
           );
         });
         const emailToArray = values.email_to
@@ -207,7 +207,7 @@ const EmailForm = () => {
           params: { flag: values.sendQrCode.toString() },
         });
 
-        toast.success("Email sent successfully!");
+        toast.success("Email sent successfully.");
         validation.resetForm();
         setTimeout(() => {
           switch (fromPage) {
@@ -225,7 +225,11 @@ const EmailForm = () => {
           }
         }, 3000);
       } catch (error: any) {
-        const details = error?.response?.data?.details;
+        const responseData = error?.response?.data;
+        const details = responseData?.details;
+        const message = responseData?.message;
+
+        // Check if details is an array
         if (Array.isArray(details)) {
           details.forEach((msg: string) => {
             toast.error(msg, {
@@ -233,7 +237,32 @@ const EmailForm = () => {
               autoClose: 5000,
             });
           });
-        } else {
+        }
+        // Check if message is an array
+        else if (Array.isArray(message)) {
+          message.forEach((msg: string) => {
+            toast.error(msg, {
+              closeOnClick: true,
+              autoClose: 5000,
+            });
+          });
+        }
+        // Check if message is a string
+        else if (message) {
+          toast.error(message, {
+            closeOnClick: true,
+            autoClose: 5000,
+          });
+        }
+        // Fallback to details if it's a string
+        else if (details) {
+          toast.error(details, {
+            closeOnClick: true,
+            autoClose: 5000,
+          });
+        }
+        // Default error message
+        else {
           toast.error("Failed to send email. Please try again.", {
             closeOnClick: true,
             autoClose: 5000,
@@ -563,7 +592,7 @@ const EmailForm = () => {
                           value={
                             dynamicFind(
                               templateTypes,
-                              validation.values.email_template
+                              validation.values.email_template,
                             ) || ""
                           }
                           touched={validation.touched.email_template}

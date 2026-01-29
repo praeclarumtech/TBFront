@@ -3,7 +3,11 @@ import { Row, Col, Container, Spinner } from "react-bootstrap";
 import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import { Fragment } from "react";
-import { BaseSelect, MultiSelect } from "components/BaseComponents/BaseSelect";
+import {
+  BaseSelect,
+  PaginateSelect,
+  PaginateMultiSelect,
+} from "components/BaseComponents/BaseSelect";
 import { useParams, useNavigate } from "react-router-dom";
 import BaseInput from "components/BaseComponents/BaseInput";
 import {
@@ -43,10 +47,20 @@ const ApplyNow = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [buttonloading, setButtonLoading] = useState<boolean>(false);
   const [selectedMulti, setSelectedMulti] = useState<any>([]);
+  const PAGE_SIZE = 20;
   const [skillOptions, setSkillOptions] = useState<any[]>([]);
+  const [skillPage, setSkillPage] = useState(1);
+  const [hasMoreSkills, setHasMoreSkills] = useState(true);
+  const [loadingMoreSkills, setLoadingMoreSkills] = useState(false);
   const [designationOptions, setDesignationOptions] = useState<any[]>([]);
+  const [designationPage, setDesignationPage] = useState(1);
+  const [hasMoreDesignations, setHasMoreDesignations] = useState(true);
+  const [loadingMoreDesignations, setLoadingMoreDesignations] = useState(false);
   const [formData, setFormData] = useState<any>();
   const [roleOptions, setRoleOptions] = useState<any[]>([]);
+  const [rolePage, setRolePage] = useState(1);
+  const [hasMoreRoles, setHasMoreRoles] = useState(true);
+  const [loadingMoreRoles, setLoadingMoreRoles] = useState(false);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [jobID, setJobID] = useState<any>();
   const [addedBy, setAddedBy] = useState<any>();
@@ -56,89 +70,164 @@ const ApplyNow = () => {
 
   const { id } = useParams();
 
-  const fetchSkills = async () => {
+  const fetchSkills = async (page: number = 1, append: boolean = false) => {
     try {
-      setLoading(true);
-      const page = 1;
-      const pageSize = 50;
-      const limit = 1000;
-      const response = await ViewAppliedSkills({ page, pageSize, limit });
-
-      const options = response?.data?.data.map((item: any) => ({
+      if (append) setLoadingMoreSkills(true);
+      const response = await ViewAppliedSkills({
+        page,
+        pageSize: PAGE_SIZE,
+        limit: PAGE_SIZE,
+      });
+      const data = response?.data?.data || [];
+      const options = data.map((item: any) => ({
         label: item.skills,
         value: item.skills,
       }));
-      setSkillOptions(options);
-
-      if (initialValues?.appliedSkills && initialValues?.appliedSkills.length) {
-        const selectedSkills = options
-          .filter((option: { skills: any }) =>
-            initialValues.appliedSkills.includes(option.skills)
-          )
-          .map((item: { skills: any; _id: any }) => ({
-            label: item.skills,
-            value: item.skills,
-          }));
-
+      if (append) {
+        setSkillOptions((prev) => {
+          const existingLabels = new Set(prev.map((o: any) => o.value));
+          const newOptions = options.filter(
+            (o: any) => !existingLabels.has(o.value),
+          );
+          return [...prev, ...newOptions];
+        });
+        setHasMoreSkills(options.length >= PAGE_SIZE);
+        setSkillPage((p) => p + 1);
+      } else {
+        setSkillOptions(options);
+        setHasMoreSkills(options.length >= PAGE_SIZE);
+        setSkillPage(2);
+      }
+      if (!append && initialValues?.appliedSkills?.length) {
+        const selectedSkills = options.filter((opt: any) =>
+          initialValues.appliedSkills.includes(opt.value),
+        );
         setSelectedMulti(selectedSkills);
       }
     } catch (error) {
       errorHandle(error);
     } finally {
-      setLoading(false);
+      if (append) setLoadingMoreSkills(false);
     }
   };
 
-  const fetchDesignations = async () => {
+  const loadMoreSkills = () => {
+    if (!loadingMoreSkills && hasMoreSkills) {
+      fetchSkills(skillPage, true);
+    }
+  };
+
+  const fetchDesignations = async (
+    page: number = 1,
+    append: boolean = false,
+  ) => {
     try {
-      const response = await viewAllDesignation({ limit: 1000 });
-      const designationData = response?.data.data || [];
+      if (append) setLoadingMoreDesignations(true);
+      const response = await viewAllDesignation({
+        page,
+        pageSize: PAGE_SIZE,
+        limit: PAGE_SIZE,
+      });
+      const designationData = response?.data?.data || [];
       const options = designationData.map((item: any) => ({
         label: item.designation,
         value: item.designation,
       }));
-      setDesignationOptions(options);
-
-      // Set initial designation if it exists
-      if (initialValues?.currentCompanyDesignation) {
+      if (append) {
+        setDesignationOptions((prev) => {
+          const existingLabels = new Set(prev.map((o: any) => o.value));
+          const newOptions = options.filter(
+            (o: any) => !existingLabels.has(o.value),
+          );
+          return [...prev, ...newOptions];
+        });
+        setHasMoreDesignations(options.length >= PAGE_SIZE);
+        setDesignationPage((p) => p + 1);
+      } else {
+        setDesignationOptions(options);
+        setHasMoreDesignations(options.length >= PAGE_SIZE);
+        setDesignationPage(2);
+      }
+      if (
+        !append &&
+        initialValues?.currentCompanyDesignation &&
+        validation?.setFieldValue
+      ) {
         const selectedDesignation = options.find(
-          (opt: any) => opt.label === initialValues.currentCompanyDesignation
+          (opt: any) => opt.label === initialValues.currentCompanyDesignation,
         );
         if (selectedDesignation) {
           validation.setFieldValue(
             "currentCompanyDesignation",
-            selectedDesignation.label
+            selectedDesignation.label,
           );
         }
       }
     } catch (error) {
       errorHandle(error);
+    } finally {
+      if (append) setLoadingMoreDesignations(false);
     }
   };
 
-  const fetchRoles = async () => {
+  const loadMoreDesignations = () => {
+    if (!loadingMoreDesignations && hasMoreDesignations) {
+      fetchDesignations(designationPage, true);
+    }
+  };
+
+  const fetchRoles = async (page: number = 1, append: boolean = false) => {
     try {
-      const response = await viewRoleSkill({ limit: 1000 });
+      if (append) setLoadingMoreRoles(true);
+      const response = await viewRoleSkill({
+        page,
+        pageSize: PAGE_SIZE,
+        limit: PAGE_SIZE,
+      });
       const roleData = response?.data?.data || [];
       const options = roleData.map((item: any) => ({
         label: item.appliedRole,
         value: item.appliedRole,
       }));
-      setRoleOptions(options);
-
-      // Set initial role if it exists
-      if (initialValues?.appliedRole) {
+      if (append) {
+        setRoleOptions((prev) => {
+          const existingLabels = new Set(prev.map((o: any) => o.value));
+          const newOptions = options.filter(
+            (o: any) => !existingLabels.has(o.value),
+          );
+          return [...prev, ...newOptions];
+        });
+        setHasMoreRoles(options.length >= PAGE_SIZE);
+        setRolePage((p) => p + 1);
+      } else {
+        setRoleOptions(options);
+        setHasMoreRoles(options.length >= PAGE_SIZE);
+        setRolePage(2);
+      }
+      if (
+        !append &&
+        initialValues?.appliedRole &&
+        validation?.setFieldValue &&
+        options.length
+      ) {
         const selectedRole = options.find(
-          (opt: any) => opt.label === initialValues.appliedRole
+          (opt: any) => opt.label === initialValues.appliedRole,
         );
         if (selectedRole) {
           validation.setFieldValue("appliedRole", selectedRole.value);
-          // Also trigger role change to load skills
           handleRoleChange(selectedRole);
         }
       }
     } catch (error) {
       errorHandle(error);
+    } finally {
+      if (append) setLoadingMoreRoles(false);
+    }
+  };
+
+  const loadMoreRoles = () => {
+    if (!loadingMoreRoles && hasMoreRoles) {
+      fetchRoles(rolePage, true);
     }
   };
 
@@ -151,7 +240,6 @@ const ApplyNow = () => {
           }
         })
         .catch((error) => {
-
           errorHandle(error);
         })
         .finally(() => {
@@ -176,8 +264,8 @@ const ApplyNow = () => {
                 label: state.state_name,
                 value: state._id,
                 country_id: state.country_id,
-              })
-            )
+              }),
+            ),
           );
         }
       } catch (error) {
@@ -200,8 +288,8 @@ const ApplyNow = () => {
                 label: city.city_name,
                 value: city._id,
                 state_id: city.state_id,
-              })
-            )
+              }),
+            ),
           );
         }
       } catch (error) {
@@ -272,14 +360,14 @@ const ApplyNow = () => {
         formData.append("workPreference", value.workPreference);
         formData.append(
           "currentCompanyDesignation",
-          value.currentCompanyDesignation
+          value.currentCompanyDesignation,
         );
         formData.append("linkedinUrl", value.linkedinUrl);
         formData.append("communicationSkill", value.communicationSkill);
         formData.append("totalExperience", value.totalExperience);
         formData.append(
           "relevantSkillExperience",
-          value.relevantSkillExperience
+          value.relevantSkillExperience,
         );
         formData.append("state", value.state);
         formData.append("currentCity", value.currentCity);
@@ -446,7 +534,7 @@ const ApplyNow = () => {
                         handleChange={(e) => {
                           const value = e.target.value.replace(
                             /[^A-Za-z\s]/g,
-                            ""
+                            "",
                           );
                           validation.setFieldValue("firstName", value);
                         }}
@@ -468,7 +556,7 @@ const ApplyNow = () => {
                         handleChange={(e) => {
                           const value = e.target.value.replace(
                             /[^A-Za-z\s]/g,
-                            ""
+                            "",
                           );
                           validation.setFieldValue("lastName", value);
                         }}
@@ -489,7 +577,7 @@ const ApplyNow = () => {
                         className="select-border"
                         placeholder={InputPlaceHolder("Email")}
                         handleChange={async (
-                          e: React.ChangeEvent<HTMLInputElement>
+                          e: React.ChangeEvent<HTMLInputElement>,
                         ) => {
                           const emailValue = e.target.value;
                           validation.setFieldValue("email", emailValue);
@@ -514,13 +602,13 @@ const ApplyNow = () => {
                         className="select-border"
                         placeholder={InputPlaceHolder("Phone Number")}
                         handleChange={async (
-                          e: React.ChangeEvent<HTMLInputElement>
+                          e: React.ChangeEvent<HTMLInputElement>,
                         ) => {
                           const rawValue = e.target.value.replace(/\D/g, "");
                           const sanitizedValue = rawValue.slice(0, 10);
                           validation.setFieldValue(
                             "phoneNumber",
-                            sanitizedValue
+                            sanitizedValue,
                           );
                         }}
                         handleBlur={validation.handleBlur}
@@ -535,7 +623,7 @@ const ApplyNow = () => {
                     {/* Job Details */}
 
                     <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
-                      <MultiSelect
+                      <PaginateMultiSelect
                         label="Applied Skills"
                         name="appliedSkills"
                         className="select-border"
@@ -547,6 +635,9 @@ const ApplyNow = () => {
                         error={validation.errors.appliedSkills}
                         handleBlur={validation.handleBlur}
                         isRequired={false}
+                        loadMore={loadMoreSkills}
+                        hasMore={hasMoreSkills}
+                        isLoadingMore={loadingMoreSkills}
                       />
                     </Col>
                     <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
@@ -565,7 +656,7 @@ const ApplyNow = () => {
                       />
                     </Col>
                     <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
-                      <BaseSelect
+                      <PaginateSelect
                         label="Applied Role"
                         name="appliedRole"
                         className="select-border"
@@ -576,16 +667,19 @@ const ApplyNow = () => {
                         value={
                           dynamicFind(
                             roleOptions,
-                            validation.values.appliedRole
+                            validation.values.appliedRole,
                           ) || ""
                         }
                         touched={validation.touched.appliedRole}
                         error={validation.errors.appliedRole}
                         isRequired={true}
+                        loadMore={loadMoreRoles}
+                        hasMore={hasMoreRoles}
+                        isLoadingMore={loadingMoreRoles}
                       />
                     </Col>
                     <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
-                      <BaseSelect
+                      <PaginateSelect
                         label="Current Company Designation"
                         name="currentCompanyDesignation"
                         className="select-border"
@@ -594,19 +688,22 @@ const ApplyNow = () => {
                         handleChange={(selectedOption: SelectedOption) => {
                           validation.setFieldValue(
                             "currentCompanyDesignation",
-                            selectedOption?.label || ""
+                            selectedOption?.label || "",
                           );
                         }}
                         handleBlur={validation.currentCompanyDesignation}
                         value={
                           dynamicFind(
                             designationOptions,
-                            validation.values.currentCompanyDesignation
+                            validation.values.currentCompanyDesignation,
                           ) || ""
                         }
                         touched={validation.touched.currentCompanyDesignation}
                         error={validation.errors.currentCompanyDesignation}
                         isRequired={true}
+                        loadMore={loadMoreDesignations}
+                        hasMore={hasMoreDesignations}
+                        isLoadingMore={loadingMoreDesignations}
                       />
                     </Col>
 
@@ -615,9 +712,7 @@ const ApplyNow = () => {
                         label="Total Experience(Year)"
                         name="totalExperience"
                         type="text"
-                        placeholder={InputPlaceHolder(
-                          "Total Experience (Optional)"
-                        )}
+                        placeholder={InputPlaceHolder("Total Experience")}
                         handleChange={(e) => {
                           let value = e.target.value;
                           value = value.replace(/[^0-9.]/g, "");
@@ -653,7 +748,7 @@ const ApplyNow = () => {
                             if (numValue >= 0 && numValue <= 30) {
                               validation.setFieldValue(
                                 "totalExperience",
-                                numValue.toFixed(1)
+                                numValue.toFixed(1),
                               );
                             } else {
                               validation.setFieldValue("totalExperience", "");
@@ -676,7 +771,7 @@ const ApplyNow = () => {
                         name="relevantSkillExperience"
                         type="text"
                         placeholder={InputPlaceHolder(
-                          "Relevant skill experience"
+                          "Relevant skill experience",
                         )}
                         handleChange={(e) => {
                           let value = e.target.value;
@@ -700,17 +795,17 @@ const ApplyNow = () => {
                           ) {
                             validation.setFieldValue(
                               "relevantSkillExperience",
-                              value
+                              value,
                             );
                           } else if (value === "" || value === ".") {
                             validation.setFieldValue(
                               "relevantSkillExperience",
-                              value
+                              value,
                             );
                           } else if (!value) {
                             validation.setFieldValue(
                               "relevantSkillExperience",
-                              ""
+                              "",
                             );
                           }
                         }}
@@ -722,18 +817,18 @@ const ApplyNow = () => {
                             if (numValue >= 0 && numValue <= 30) {
                               validation.setFieldValue(
                                 "relevantSkillExperience",
-                                numValue.toFixed(1)
+                                numValue.toFixed(1),
                               );
                             } else {
                               validation.setFieldValue(
                                 "relevantSkillExperience",
-                                ""
+                                "",
                               );
                             }
                           } else {
                             validation.setFieldValue(
                               "relevantSkillExperience",
-                              ""
+                              "",
                             );
                           }
                           validation.handleBlur(e);
@@ -755,14 +850,14 @@ const ApplyNow = () => {
                         handleChange={(selectedOption: SelectedOption) => {
                           validation.setFieldValue(
                             "communicationSkill",
-                            selectedOption?.value || ""
+                            selectedOption?.value || "",
                           );
                         }}
                         handleBlur={validation.handleBlur}
                         value={
                           dynamicFind(
                             communicationOptions,
-                            String(validation.values.communicationSkill)
+                            String(validation.values.communicationSkill),
                           ) || ""
                         }
                         touched={validation.touched.communicationSkill}
@@ -811,7 +906,7 @@ const ApplyNow = () => {
                             if (numValue >= 0 && numValue <= 1000) {
                               validation.setFieldValue(
                                 "currentPkg",
-                                numValue.toFixed(2)
+                                numValue.toFixed(2),
                               );
                             } else {
                               validation.setFieldValue("currentPkg", "");
@@ -870,7 +965,7 @@ const ApplyNow = () => {
                             if (numValue >= 0 && numValue <= 1000) {
                               validation.setFieldValue(
                                 "expectedPkg",
-                                numValue.toFixed(2)
+                                numValue.toFixed(2),
                               );
                             } else {
                               validation.setFieldValue("expectedPkg", "");
@@ -928,7 +1023,7 @@ const ApplyNow = () => {
                             if (numValue >= 0 && numValue <= 100000) {
                               validation.setFieldValue(
                                 "noticePeriod",
-                                numValue.toFixed(2)
+                                numValue.toFixed(2),
                               );
                             } else {
                               validation.setFieldValue("noticePeriod", "");
@@ -955,14 +1050,14 @@ const ApplyNow = () => {
                         handleChange={(selectedOption: SelectedOption) => {
                           validation.setFieldValue(
                             "workPreference",
-                            selectedOption?.value || ""
+                            selectedOption?.value || "",
                           );
                         }}
                         handleBlur={validation.handleBlur}
                         value={
                           dynamicFind(
                             workPreferenceType,
-                            validation.values.workPreference
+                            validation.values.workPreference,
                           ) || ""
                         }
                         touched={validation.touched.workPreference}
@@ -976,7 +1071,7 @@ const ApplyNow = () => {
                         name="linkedinUrl"
                         type="url"
                         placeholder={InputPlaceHolder(
-                          "Linkedin URL (Optional)"
+                          "Linkedin URL (Optional)",
                         )}
                         handleChange={validation.handleChange}
                         handleBlur={validation.handleBlur}
@@ -999,7 +1094,7 @@ const ApplyNow = () => {
                           dynamicFind(
                             states,
                             validation.values.state,
-                            "location"
+                            "location",
                           ) || ""
                         }
                         touched={validation.touched.state}
@@ -1018,7 +1113,7 @@ const ApplyNow = () => {
                         handleChange={(selectedOption: SelectedOption) => {
                           validation.setFieldValue(
                             "currentCity",
-                            selectedOption?.label || ""
+                            selectedOption?.label || "",
                           );
                         }}
                         handleBlur={validation.handleBlur}
@@ -1026,7 +1121,7 @@ const ApplyNow = () => {
                           dynamicFind(
                             cities,
                             validation.values.currentCity,
-                            "location"
+                            "location",
                           ) || ""
                         }
                         touched={validation.touched.currentCity}
@@ -1090,7 +1185,7 @@ const ApplyNow = () => {
                                   setResumeFile(null);
                                   // Also clear the file input value
                                   const input = document.getElementById(
-                                    "resume-upload"
+                                    "resume-upload",
                                   ) as HTMLInputElement;
                                   if (input) input.value = "";
                                 }}

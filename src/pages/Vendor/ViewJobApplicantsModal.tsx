@@ -2,6 +2,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { Modal, Skeleton, Tabs } from "antd";
 import TableContainer from "components/BaseComponents/TableContainer";
+import EmptyState from "components/BaseComponents/EmptyState";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import ViewModal from "../applicant/ViewApplicant";
@@ -283,7 +284,7 @@ const ViewJobApplicantsModal: React.FC<ViewJobApplicantsModalProps> = ({
                     cell.row.original._id
                   )
                     .then(() => {
-                      toast.success("Applicant status updated successfully!");
+                      toast.success("Applicant status updated successfully.");
                     })
                     .catch((error: any) => {
                       errorHandle(error);
@@ -634,12 +635,7 @@ const ViewJobApplicantsModal: React.FC<ViewJobApplicantsModalProps> = ({
             />
           </div>
         ) : (
-          <div className="pt-4 text-center">
-            <i className="ri-search-line d-block fs-1 text-success"></i>
-            <p className="mt-2">
-              No {activeTab === "invited" ? "invited" : ""} applicants found for this job. Total Records: {totalRecords}
-            </p>
-          </div>
+          <EmptyState />
         )}
       </Modal>
     </>

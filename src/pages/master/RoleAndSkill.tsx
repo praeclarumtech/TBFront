@@ -5,6 +5,7 @@ import { Fragment, useMemo, useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import BaseButton from "components/BaseComponents/BaseButton";
 import TableContainer from "components/BaseComponents/TableContainer";
+import EmptyState from "components/BaseComponents/EmptyState";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import * as Tooltip from "@radix-ui/react-tooltip";
 
@@ -72,10 +73,10 @@ const UpdateSkill = () => {
           label: item.skills,
           value: item.skills, // match what you'll use in selected
           id: item._id, // if needed
-        }))
+        })),
       );
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Something went wrong!");
+      toast.error(error?.response?.data?.message || "Something went wrong.");
     } finally {
       setIsLoading(false);
     }
@@ -114,7 +115,7 @@ const UpdateSkill = () => {
             acc[item.id || item._id] = item.label;
             return acc;
           },
-          {}
+          {},
         );
 
         const enrichedRoleSkills = roleSkills.map((item: any) => {
@@ -132,7 +133,7 @@ const UpdateSkill = () => {
           }
 
           const skillNames = skillIds.map(
-            (id: string) => skillMap[id] || "Unknown Skill"
+            (id: string) => skillMap[id] || "Unknown Skill",
           );
 
           return {
@@ -144,10 +145,10 @@ const UpdateSkill = () => {
         setRoleSkills(enrichedRoleSkills);
         setTotalRecords(res.data?.pagination?.totalRecords || 0);
       } else {
-        toast.error(res?.message || "Failed to fetch skills");
+        toast.error(res?.message || "Failed to fetch skills.");
       }
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Something went wrong!");
+      toast.error(error?.response?.data?.message || "Something went wrong.");
       console.error(error);
     } finally {
       setIsLoading(false);
@@ -162,7 +163,7 @@ const UpdateSkill = () => {
 
   const handleEdit = (id: any) => {
     const selectedSkillOptions = skillOptions.filter((opt) =>
-      id.skill.includes(opt.label)
+      id.skill.includes(opt.label),
     );
     setEditingSkill(id);
 
@@ -192,7 +193,7 @@ const UpdateSkill = () => {
       // If deleting multiple skills
       if (Array.isArray(roleAndSkillToDelete)) {
         const deleteRequests = roleAndSkillToDelete.map((id) =>
-          deleteRoleSkill({ _id: id })
+          deleteRoleSkill({ _id: id }),
         );
 
         // Wait for all delete requests to finish
@@ -200,7 +201,7 @@ const UpdateSkill = () => {
 
         const allSuccess = results.every((res) => res?.success);
         if (allSuccess) {
-          toast.success("Skills deleted successfully");
+          toast.success("Skills deleted successfully.");
         } else {
           toast.error("Some skills could not be deleted.");
         }
@@ -209,14 +210,14 @@ const UpdateSkill = () => {
       else if (roleAndSkillToDelete._id) {
         const res = await deleteRoleSkill({ _id: roleAndSkillToDelete._id });
         if (res?.success) {
-          toast.success("Skill deleted successfully");
+          toast.success("Skill deleted successfully.");
         } else {
-          toast.error("Failed to delete skill");
+          toast.error("Failed to delete skill.");
         }
       }
       fetchRoleSkills();
     } catch (error) {
-      toast.error("Something went wrong!");
+      toast.error("Something went wrong.");
       console.error(error);
     } finally {
       setLoader(false);
@@ -239,7 +240,7 @@ const UpdateSkill = () => {
       (prev) =>
         prev.includes(skillId)
           ? prev.filter((id) => id !== skillId) // Unselect if already selected
-          : [...prev, skillId] // Add to selected list
+          : [...prev, skillId], // Add to selected list
     );
   };
 
@@ -362,7 +363,7 @@ const UpdateSkill = () => {
         ),
       },
     ],
-    [selectedSkills, roleSkill]
+    [selectedSkills, roleSkill],
   );
 
   const [loader, setLoader] = useState(false);
@@ -388,16 +389,16 @@ const UpdateSkill = () => {
     },
     validationSchema: Yup.object({
       addRole: Yup.string()
-        .min(1, "Skill Name must be at least 1.")
-        .max(50, "Skill name must be between 1 to 50 characters.")
+        .min(1, "Skill name must be at least 1 character.")
+        .max(50, "Skill name must be between 1 and 50 characters.")
         .required("Role is required."),
       addSkill: Yup.array()
-        .min(1, "Select at least one skill")
+        .min(1, "Please select at least one skill.")
         .of(
           Yup.object().shape({
             label: Yup.string().required(),
             value: Yup.string().required(),
-          })
+          }),
         )
         .required("Skill is required."),
     }),
@@ -408,7 +409,7 @@ const UpdateSkill = () => {
         _id: values._id,
         appliedRole: values.addRole,
         skillIds: values.addSkill.map((item: SelectedOption1) =>
-          String(item.id)
+          String(item.id),
         ),
       };
 
@@ -416,17 +417,17 @@ const UpdateSkill = () => {
         arr.map(String).sort().join(",");
 
       const currentSkillIds = values.addSkill.map(
-        (item: SelectedOption1) => item.id
+        (item: SelectedOption1) => item.id,
       );
 
       const existingData = roleSkill.find(
         (item) =>
           item.appliedRole.toLowerCase() === values.addRole.toLowerCase() &&
-          normalize(item.skillIds || []) === normalize(currentSkillIds)
+          normalize(item.skillIds || []) === normalize(currentSkillIds),
       );
 
       if (existingData && !editingSkill) {
-        toast.error("This Role-Skill already exists!");
+        toast.error("This role-skill combination already exists.");
         setLoader(false);
         return;
       }
@@ -439,17 +440,19 @@ const UpdateSkill = () => {
           if (res?.success) {
             toast.success(
               // `Role-Skill ${editingSkill ? "updated" : "added"} successfully`
-              res?.message
+              res?.message,
             );
             setEditingSkill(null);
             validation.resetForm();
             fetchRoleSkills();
             setShowBaseModal(false);
           } else {
-            toast.error(res?.message || "Something went wrong");
+            toast.error(res?.message || "Something went wrong.");
           }
         })
-        .catch((error) => toast.error(error?.message || "Something went wrong"))
+        .catch((error) =>
+          toast.error(error?.message || "Something went wrong."),
+        )
         .finally(() => setLoader(false));
     },
   });
@@ -494,7 +497,7 @@ const UpdateSkill = () => {
     const skills = Array.isArray(skill.skill) ? skill.skill : [];
 
     const matchesSkill = skills.some((s: any) =>
-      s.toLowerCase().includes(searchTerm)
+      s.toLowerCase().includes(searchTerm),
     );
 
     return appliedRole.includes(searchTerm) || matchesSkill;
@@ -664,10 +667,7 @@ const UpdateSkill = () => {
                               rowHeight="10px !important"
                             />
                           ) : (
-                            <div className="py-4 text-center">
-                              <i className="ri-search-line d-block fs-1 text-success"></i>
-                              {handleResponse?.dataNotFound}
-                            </div>
+                            <EmptyState />
                           )}
                         </>
                       )}

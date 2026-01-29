@@ -5,6 +5,7 @@ import { Fragment, useMemo, useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import BaseButton from "components/BaseComponents/BaseButton";
 import TableContainer from "components/BaseComponents/TableContainer";
+import EmptyState from "components/BaseComponents/EmptyState";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import * as Tooltip from "@radix-ui/react-tooltip";
 
@@ -67,10 +68,10 @@ const City = () => {
           label: item.state_name,
           value: item.state_name, // match what you'll use in selected
           id: item._id, // if needed
-        }))
+        })),
       );
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Something went wrong!");
+      toast.error(error?.response?.data?.message || "Something went wrong.");
     } finally {
       setIsLoading(false);
     }
@@ -101,10 +102,10 @@ const City = () => {
         setCity(res?.data?.item || []);
         setTotalRecords(res.data?.totalRecords || 0);
       } else {
-        toast.error(res?.message || "Failed to fetch Cities");
+        toast.error(res?.message || "Failed to fetch cities.");
       }
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Something went wrong!");
+      toast.error(error?.response?.data?.message || "Something went wrong.");
     } finally {
       setIsLoading(false);
     }
@@ -132,7 +133,7 @@ const City = () => {
       // If deleting multiple skills
       if (Array.isArray(cityToDelete)) {
         const deleteRequests = cityToDelete.map((id) =>
-          deleteCity({ _id: id })
+          deleteCity({ _id: id }),
         );
 
         // Wait for all delete requests to finish
@@ -140,9 +141,9 @@ const City = () => {
 
         const allSuccess = results.every((res) => res?.success);
         if (allSuccess) {
-          toast.success("Country deleted successfully");
+          toast.success("City deleted successfully");
         } else {
-          toast.error("Some state could not be deleted.");
+          toast.error("Some cities could not be deleted.");
         }
       }
       // If deleting a single skill
@@ -151,12 +152,12 @@ const City = () => {
         if (res?.success) {
           toast.success(res?.message);
         } else {
-          toast.error("Failed to delete city");
+          toast.error("Failed to delete city.");
         }
       }
       fetchCity();
     } catch (error) {
-      toast.error("Something went wrong!");
+      toast.error("Something went wrong.");
       console.error(error);
     } finally {
       setLoader(false);
@@ -179,7 +180,7 @@ const City = () => {
       (prev) =>
         prev.includes(cityId)
           ? prev.filter((id) => id !== cityId) // Unselect if already selected
-          : [...prev, cityId] // Add to selected list
+          : [...prev, cityId], // Add to selected list
     );
   };
 
@@ -274,7 +275,7 @@ const City = () => {
         ),
       },
     ],
-    [selectedcountry, city]
+    [selectedcountry, city],
   );
 
   const [loader, setLoader] = useState(false);
@@ -297,8 +298,8 @@ const City = () => {
     },
     validationSchema: Yup.object({
       city_name: Yup.string()
-        .min(1, "City Name must be at least 1.")
-        .max(50, "City name must be between 1 to 50 characters.")
+        .min(1, "City name must be at least 1 character.")
+        .max(50, "City name must be between 1 and 50 characters.")
         .required("City is required."),
       state_id: Yup.string().required("State is required."),
     }),
@@ -318,17 +319,19 @@ const City = () => {
           if (res?.success) {
             toast.success(
               // `Role-Skill ${editingSkill ? "updated" : "added"} successfully`
-              res?.message
+              res?.message,
             );
             setEditingCity(null);
             validation.resetForm();
             fetchCity();
             setShowBaseModal(false);
           } else {
-            toast.error(res?.message || "Something went wrong");
+            toast.error(res?.message || "Something went wrong.");
           }
         })
-        .catch((error) => toast.error(error?.message || "Something went wrong"))
+        .catch((error) =>
+          toast.error(error?.message || "Something went wrong."),
+        )
         .finally(() => setLoader(false));
     },
   });
@@ -336,7 +339,7 @@ const City = () => {
   const handleEdit = (id: any) => {
     setEditingCity(id);
     const selectedState = stateOptions.find(
-      (state) => state.id === id.state_id
+      (state) => state.id === id.state_id,
     );
     validation.setValues({
       _id: id._id || "",
@@ -474,12 +477,12 @@ const City = () => {
                           placeholder="Select State"
                           value={stateOptions.find(
                             (option) =>
-                              option.value === validation.values.state_id
+                              option.value === validation.values.state_id,
                           )}
                           handleChange={(selectedOption: { id: any }) => {
                             validation.setFieldValue(
                               "state_id",
-                              selectedOption?.id
+                              selectedOption?.id,
                             );
                           }}
                           handleBlur={validation.handleBlur}
@@ -537,10 +540,7 @@ const City = () => {
                               rowHeight="10px !important"
                             />
                           ) : (
-                            <div className="py-4 text-center">
-                              <i className="ri-search-line d-block fs-1 text-success"></i>
-                              {handleResponse?.dataNotFound}
-                            </div>
+                            <EmptyState />
                           )}
                         </>
                       )}

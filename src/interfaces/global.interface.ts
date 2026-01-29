@@ -20,12 +20,7 @@ export interface Pagination {
 }
 
 export interface Metadata
-  extends timeStamp,
-    timeZone,
-    requestId,
-    path,
-    version,
-    repoVersion {
+  extends timeStamp, timeZone, requestId, path, version, repoVersion {
   languages: Array<string>;
   pagination?: Pagination;
   totalUnSeen?: number;
@@ -166,6 +161,18 @@ export interface BaseSelectProps {
   isRequired?: boolean;
   menuPortalTarget?: HTMLElement | null;
   menuPosition?: "absolute" | "fixed";
+}
+
+export interface PaginateSelectProps extends BaseSelectProps {
+  loadMore?: () => void;
+  hasMore?: boolean;
+  isLoadingMore?: boolean;
+}
+
+export interface PaginateMultiSelectProps extends MultiSelectProps {
+  loadMore?: () => void;
+  hasMore?: boolean;
+  isLoadingMore?: boolean;
 }
 
 export interface BaseTextareaProps {

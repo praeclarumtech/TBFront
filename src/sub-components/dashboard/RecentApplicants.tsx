@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useMemo, useState } from "react";
 import TableContainer from "components/BaseComponents/TableContainer";
+import EmptyState from "components/BaseComponents/EmptyState";
 import { Col, Row, Card } from "react-bootstrap";
 import {
   ExportSkilledApplicant,
@@ -189,10 +190,7 @@ const RecentApplicants = ({
                     customPadding="0.3rem 1.5rem"
                   />
                 ) : (
-                  <div className="py-4 text-center">
-                    <i className="ri-search-line d-block fs-1 text-success"></i>
-                    {handleResponse?.dataNotFound}
-                  </div>
+                  <EmptyState />
                 )}
               </>
             )}

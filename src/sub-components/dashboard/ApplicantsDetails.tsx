@@ -36,7 +36,7 @@ const ApplicantsDetails = ({
         skillData.map((item: any) => ({
           label: item.skills,
           value: item._id,
-        }))
+        })),
       );
     } catch (error: any) {
       const details = error?.response?.data?.details;
@@ -48,7 +48,7 @@ const ApplicantsDetails = ({
           });
         });
       } else {
-        toast.error("Failed to fetch skills.. Please try again.", {
+        toast.error("Failed to fetch skills. Please try again.", {
           closeOnClick: true,
           autoClose: 5000,
         });
@@ -93,14 +93,16 @@ const ApplicantsDetails = ({
   }, [appliedSkills, ids]);
 
   const handleChnage = (
-    selectedOptions: any[] | ((prevState: SelectedOption[]) => SelectedOption[])
+    selectedOptions:
+      | any[]
+      | ((prevState: SelectedOption[]) => SelectedOption[]),
   ) => {
     setAppliedSkills(selectedOptions);
 
     if (Array.isArray(selectedOptions)) {
       console.log(
         "Selected values:",
-        selectedOptions.map((opt: { value: any }) => opt.value)
+        selectedOptions.map((opt: { value: any }) => opt.value),
       );
 
       setAppliedSkills(selectedOptions);

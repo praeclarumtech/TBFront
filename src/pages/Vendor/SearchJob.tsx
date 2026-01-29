@@ -44,7 +44,7 @@ const SearchJob = () => {
   const [filterSalarayFreq, setFilterSalaryFreq] =
     useState<SelectedOption | null>(null);
   const [workPreference, setWorkPreference] = useState<SelectedOption | null>(
-    null
+    null,
   );
   const [filterJobLocation, setFilterJobLocation] =
     useState<SelectedOption | null>(null);
@@ -62,7 +62,7 @@ const SearchJob = () => {
         skillData.map((item: any) => ({
           label: item.skills,
           value: item._id,
-        }))
+        })),
       );
     } catch (error: any) {
       // Only show error toast if it's not a silent error
@@ -71,7 +71,7 @@ const SearchJob = () => {
         // Show only the first error to avoid multiple toasts
         toast.error(details[0]);
       } else if (error?.response?.status !== 404) {
-        toast.error("Failed to fetch skills.. Please try again.");
+        toast.error("Failed to fetch skills. Please try again.");
       }
     }
   };
@@ -89,8 +89,8 @@ const SearchJob = () => {
                 label: city.city_name,
                 value: city._id,
                 state_id: city.state_id,
-              })
-            )
+              }),
+            ),
           );
         }
       } catch (error: any) {
@@ -382,7 +382,7 @@ const SearchJob = () => {
           ) : (
             (() => {
               const activeJobs = formData?.filter(
-                (item: any) => item?.isActive === true
+                (item: any) => item?.isActive === true,
               );
               return activeJobs?.length > 0 ? (
                 <div className="space-y-4">
@@ -462,10 +462,10 @@ const SearchJob = () => {
                                       item.min_salary
                                     } - ${item.max_salary}`
                                   : item.min_salary
-                                  ? `${item.salary_currency || ""} ${
-                                      item.min_salary
-                                    }+`
-                                  : "Not specified"}
+                                    ? `${item.salary_currency || ""} ${
+                                        item.min_salary
+                                      }+`
+                                    : "Not specified"}
                               </p>
                             </div>
                           </div>
@@ -579,10 +579,10 @@ const SearchJob = () => {
                               <p className="text-sm font-semibold text-gray-800 mb-[0.3rem]">
                                 {item.application_deadline &&
                                 !isNaN(
-                                  new Date(item.application_deadline).getTime()
+                                  new Date(item.application_deadline).getTime(),
                                 )
                                   ? new Date(
-                                      item.application_deadline
+                                      item.application_deadline,
                                     ).toLocaleDateString("en-US", {
                                       year: "numeric",
                                       month: "short",

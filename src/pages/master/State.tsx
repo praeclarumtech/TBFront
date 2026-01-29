@@ -5,6 +5,7 @@ import { Fragment, useMemo, useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import BaseButton from "components/BaseComponents/BaseButton";
 import TableContainer from "components/BaseComponents/TableContainer";
+import EmptyState from "components/BaseComponents/EmptyState";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import * as Tooltip from "@radix-ui/react-tooltip";
 
@@ -71,10 +72,10 @@ const State = () => {
           label: item.country_name,
           value: item.country_name, // match what you'll use in selected
           id: item._id, // if needed
-        }))
+        })),
       );
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Something went wrong!");
+      toast.error(error?.response?.data?.message || "Something went wrong.");
     } finally {
       setIsLoading(false);
     }
@@ -105,10 +106,10 @@ const State = () => {
         setState(res?.data?.item || []);
         setTotalRecords(res.data?.totalRecords || 0);
       } else {
-        toast.error(res?.message || "Failed to fetch State");
+        toast.error(res?.message || "Failed to fetch states.");
       }
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Something went wrong!");
+      toast.error(error?.response?.data?.message || "Something went wrong.");
     } finally {
       setIsLoading(false);
     }
@@ -136,7 +137,7 @@ const State = () => {
       // If deleting multiple
       if (Array.isArray(stateToDelete)) {
         const deleteRequests = stateToDelete.map((id) =>
-          deleteState({ _id: id })
+          deleteState({ _id: id }),
         );
 
         // Wait for all delete requests to finish
@@ -146,7 +147,7 @@ const State = () => {
         if (allSuccess) {
           toast.success("State deleted successfully");
         } else {
-          toast.error("Some state could not be deleted.");
+          toast.error("Some states could not be deleted.");
         }
       }
       // If deleting a single
@@ -155,12 +156,12 @@ const State = () => {
         if (res?.success) {
           toast.success(res?.message);
         } else {
-          toast.error("Failed to delete State");
+          toast.error("Failed to delete state.");
         }
       }
       fetchState();
     } catch (error) {
-      toast.error("Something went wrong!");
+      toast.error("Something went wrong.");
       console.error(error);
     } finally {
       setLoader(false);
@@ -183,7 +184,7 @@ const State = () => {
       (prev) =>
         prev.includes(stateId)
           ? prev.filter((id) => id !== stateId) // Unselect if already selected
-          : [...prev, stateId] // Add to selected list
+          : [...prev, stateId], // Add to selected list
     );
   };
 
@@ -278,7 +279,7 @@ const State = () => {
         ),
       },
     ],
-    [selectedState, state]
+    [selectedState, state],
   );
 
   const [loader, setLoader] = useState(false);
@@ -301,8 +302,8 @@ const State = () => {
     },
     validationSchema: Yup.object({
       state_name: Yup.string()
-        .min(1, "State Name must be at least 1.")
-        .max(50, "State name must be between 1 to 50 characters.")
+        .min(1, "State name must be at least 1 character.")
+        .max(50, "State name must be between 1 and 50 characters.")
         .required("State is required."),
       country_id: Yup.string().required("Country is required."),
     }),
@@ -328,10 +329,12 @@ const State = () => {
             fetchState();
             setShowBaseModal(false);
           } else {
-            toast.error(res?.message || "Something went wrong");
+            toast.error(res?.message || "Something went wrong.");
           }
         })
-        .catch((error) => toast.error(error?.message || "Something went wrong"))
+        .catch((error) =>
+          toast.error(error?.message || "Something went wrong."),
+        )
         .finally(() => setLoader(false));
     },
   });
@@ -339,7 +342,7 @@ const State = () => {
   const handleEdit = (id: any) => {
     setEditingState(id);
     const selectCountry = countryOptions.find(
-      (country) => country.id === id.country_id
+      (country) => country.id === id.country_id,
     );
     validation.setValues({
       _id: id._id || "",
@@ -478,12 +481,12 @@ const State = () => {
                           placeholder="Country"
                           value={countryOptions.find(
                             (option) =>
-                              option.id === validation.values.country_id
+                              option.id === validation.values.country_id,
                           )}
                           handleChange={(selectedOption) => {
                             validation.setFieldValue(
                               "country_id",
-                              selectedOption?.id
+                              selectedOption?.id,
                             );
                           }}
                           handleBlur={validation.handleBlur}
@@ -541,10 +544,7 @@ const State = () => {
                               rowHeight="10px !important"
                             />
                           ) : (
-                            <div className="py-4 text-center">
-                              <i className="ri-search-line d-block fs-1 text-success"></i>
-                              {handleResponse?.dataNotFound}
-                            </div>
+                            <EmptyState />
                           )}
                         </>
                       )}

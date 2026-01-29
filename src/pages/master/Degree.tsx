@@ -4,6 +4,7 @@ import { Fragment, useMemo, useState, useEffect } from "react";
 
 import BaseButton from "components/BaseComponents/BaseButton";
 import TableContainer from "components/BaseComponents/TableContainer";
+import EmptyState from "components/BaseComponents/EmptyState";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import * as Tooltip from "@radix-ui/react-tooltip";
 
@@ -56,10 +57,10 @@ const AddDegree = () => {
         setDegrees(res.data.data || []);
         setTotalRecords(res.data?.pagination?.totalRecords || 0);
       } else {
-        toast.error(res?.message || "Failed to fetch qualification!");
+        toast.error(res?.message || "Failed to fetch qualification.");
       }
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Something went wrong!");
+      toast.error(error?.response?.data?.message || "Something went wrong.");
       console.error(error);
     } finally {
       setIsLoading(false);
@@ -84,10 +85,10 @@ const AddDegree = () => {
   };
 
   const confirmManyDelete = async (
-    degreeToDelete: string[] | undefined | null
+    degreeToDelete: string[] | undefined | null,
   ) => {
     if (!degreeToDelete || degreeToDelete.length === 0) {
-      toast.error("No Qualification selected for deletion.");
+      toast.error("No qualification selected for deletion.");
       return;
     }
 
@@ -96,10 +97,10 @@ const AddDegree = () => {
     try {
       await deleteMultipleDegree(degreeToDelete);
 
-      toast.success("Selected qualification deleted successfully");
+      toast.success("Selected qualification deleted successfully.");
       fetchDegrees();
     } catch (error) {
-      toast.error("Failed to delete one or more qualification.");
+      toast.error("Failed to delete one or more qualifications.");
       console.error(error);
     } finally {
       setLoader(false);
@@ -121,7 +122,7 @@ const AddDegree = () => {
       (prev) =>
         prev.includes(degreeId)
           ? prev.filter((id) => id !== degreeId) // Unselect if already selected
-          : [...prev, degreeId] // Add to selected list
+          : [...prev, degreeId], // Add to selected list
     );
   };
 
@@ -218,7 +219,7 @@ const AddDegree = () => {
         ),
       },
     ],
-    [degrees, selectedDegree]
+    [degrees, selectedDegree],
   );
 
   const validation: any = useFormik({
@@ -228,8 +229,8 @@ const AddDegree = () => {
     },
     validationSchema: Yup.object({
       degreeName: Yup.string()
-        .min(1, "Qualification Name must be at least 1.")
-        .max(50, "Qualification name must be between 1 to 50 characters.")
+        .min(1, "Qualification name must be at least 1 character.")
+        .max(50, "Qualification name must be between 1 and 50 characters.")
         .required("Qualification name is required."),
     }),
 
@@ -251,7 +252,7 @@ const AddDegree = () => {
               res?.message ||
                 `Qualification  ${
                   editingDegree ? "updated" : "added"
-                } successfully`
+                } successfully`,
             );
 
             setEditingDegree(null);
@@ -261,7 +262,7 @@ const AddDegree = () => {
           } else {
             toast.error(
               res?.message ||
-                `Failed to ${editingDegree ? "update" : "add"} Qualification`
+                `Failed to ${editingDegree ? "update" : "add"} Qualification`,
             );
           }
         })
@@ -304,7 +305,7 @@ const AddDegree = () => {
   };
 
   const filteredDegree = degrees.filter((fDegree) =>
-    fDegree.degree.toLowerCase().includes(searchAll.toLowerCase())
+    fDegree.degree.toLowerCase().includes(searchAll.toLowerCase()),
   );
 
   const closeDeleteModal = () => {
@@ -404,7 +405,7 @@ const AddDegree = () => {
                           className="bg-gray-100"
                           type="text"
                           placeholder={InputPlaceHolder(
-                            "Qualification to be Added"
+                            "Qualification to be Added",
                           )}
                           handleChange={validation.handleChange}
                           handleBlur={validation.handleBlur}
@@ -444,10 +445,7 @@ const AddDegree = () => {
                               rowHeight="10px !important"
                             />
                           ) : (
-                            <div className="py-4 text-center">
-                              <i className="ri-search-line d-block fs-1 text-success"></i>
-                              {handleResponse?.dataNotFound}
-                            </div>
+                            <EmptyState />
                           )}
                         </div>
                       )}

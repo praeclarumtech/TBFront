@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import BaseButton from "components/BaseComponents/BaseButton";
 import TableContainer from "components/BaseComponents/TableContainer";
+import EmptyState from "components/BaseComponents/EmptyState";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 
 import DeleteModal from "components/BaseComponents/DeleteModal";
@@ -114,10 +115,10 @@ const JobListing = () => {
         setJob(res?.data?.item || []);
         setTotalRecords(res.data?.totalRecords || 0);
       } else {
-        toast.error(res?.message || "Failed to fetch Jobs");
+        toast.error(res?.message || "Failed to fetch jobs.");
       }
     } catch (error) {
-      toast.error("Something went wrong! ");
+      toast.error("Something went wrong.");
     } finally {
       setIsLoading(false);
     }
@@ -182,7 +183,7 @@ const JobListing = () => {
       (prev) =>
         prev.includes(jobId)
           ? prev.filter((id) => id !== jobId) // Unselect if already selected
-          : [...prev, jobId] // Add to selected list
+          : [...prev, jobId], // Add to selected list
     );
   };
 
@@ -502,7 +503,7 @@ const JobListing = () => {
         enableColumnFilter: false,
       },
     ],
-    [selectedJob, job]
+    [selectedJob, job],
   );
 
   const handleConfirmStatus = (isActive: boolean, id: string) => {
@@ -549,7 +550,8 @@ const JobListing = () => {
   };
 
   const handleEdit = (jobId: string) => {
-    const jobModule = currentLocation === "/job-listingClient" ? "client" : "vendor";
+    const jobModule =
+      currentLocation === "/job-listingClient" ? "client" : "vendor";
     navigate(`/master/edit-job/${jobId}?mode=edit`, {
       state: { jobModule },
     });
@@ -626,7 +628,8 @@ const JobListing = () => {
   const navigate = useNavigate();
 
   const handleRedirect = () => {
-    const jobModule = currentLocation === "/job-listingClient" ? "client" : "vendor";
+    const jobModule =
+      currentLocation === "/job-listingClient" ? "client" : "vendor";
     navigate("/master/job", {
       state: { source: "jobListing", jobModule },
     });
@@ -821,10 +824,7 @@ const JobListing = () => {
                               rowHeight="10px !important"
                             />
                           ) : (
-                            <div className="py-4 text-center">
-                              <i className="ri-search-line d-block fs-1 text-success"></i>
-                              {handleResponse?.dataNotFound}
-                            </div>
+                            <EmptyState />
                           )}
                         </>
                       )}

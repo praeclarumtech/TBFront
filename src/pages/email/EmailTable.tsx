@@ -52,7 +52,7 @@ const EmailTable = () => {
   const [endDate, setEndDate] = useState("");
   const [totalRecords, setTotalRecords] = useState(0);
   const [selectedApplicantId, setSelectedApplicantId] = useState<string | null>(
-    null
+    null,
   );
 
   const [showModal, setShowModal] = useState(false);
@@ -93,7 +93,7 @@ const EmailTable = () => {
     setSelectedApplicants((prev) =>
       prev.includes(applicantId)
         ? prev.filter((id) => id !== applicantId)
-        : [...prev, applicantId]
+        : [...prev, applicantId],
     );
   };
 
@@ -320,7 +320,7 @@ const EmailTable = () => {
   };
   const handleDateChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    isStartDate: boolean
+    isStartDate: boolean,
   ) => {
     if (isStartDate) {
       setStartDate(e.target.value);
@@ -333,13 +333,13 @@ const EmailTable = () => {
     setDeleteLoader(true);
     try {
       await deleteEmail(emailToDelete); // Pass the array of selected emails
-      toast.success("Emails deleted successfully!");
+      toast.success("Emails deleted successfully.");
       fetchEmails(); // Refresh email list
       setShowDeleteModal(false);
       setEmailToDelete([]);
     } catch (error) {
       errorHandle(error);
-      toast.error("Something went wrong!");
+      toast.error("Something went wrong.");
     } finally {
       setDeleteLoader(false);
     }
@@ -349,13 +349,13 @@ const EmailTable = () => {
     setDeleteLoader(true);
     try {
       await deleteMultipleEmail(multipleEmailDelete); // Pass the array of selected emails
-      toast.success("Email deleted successfully!");
+      toast.success("Email deleted successfully.");
       fetchEmails(); // Refresh email list
       setShowDeleteModal(false);
       setSelectedApplicants([]); // Clear selection
     } catch (error) {
       errorHandle(error);
-      toast.error("Something went wrong!");
+      toast.error("Something went wrong.");
     } finally {
       setDeleteLoader(false);
     }
@@ -386,7 +386,7 @@ const EmailTable = () => {
         .includes(searchTerm) ||
       (Array.isArray(email.applicantDetails?.appliedSkills) &&
         email.applicantDetails.appliedSkills.some((skill: string) =>
-          skill.toLowerCase().includes(searchTerm)
+          skill.toLowerCase().includes(searchTerm),
         )) ||
       moment(email.createdAt).format("YYYY-MM-DD").includes(searchTerm)
     );
@@ -411,7 +411,10 @@ const EmailTable = () => {
   const drawerList = (anchor: Anchor) => (
     <Box
       sx={{
-        width: anchor === "top" || anchor === "bottom" ? "auto" : { xs: "100vw", sm: 400 },
+        width:
+          anchor === "top" || anchor === "bottom"
+            ? "auto"
+            : { xs: "100vw", sm: 400 },
         maxWidth: "100vw",
         padding: "16px",
         marginTop: anchor === "top" ? "64px" : 0,
@@ -513,7 +516,8 @@ const EmailTable = () => {
                     onClick={toggleDrawer("right", true)}
                     className="btn btn-primary"
                   >
-                    <i className="mx-1 fa fa-filter"></i> <span className="hidden sm:inline">Filters</span>
+                    <i className="mx-1 fa fa-filter"></i>{" "}
+                    <span className="hidden sm:inline">Filters</span>
                   </button>
                   <Drawer
                     className="!mt-16"

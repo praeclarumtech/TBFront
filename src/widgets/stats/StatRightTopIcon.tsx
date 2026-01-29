@@ -2,6 +2,7 @@ import React from "react";
 import { Card } from "react-bootstrap";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import EmptyState from "components/BaseComponents/EmptyState";
 
 import appConstants from "constants/constant";
 
@@ -50,10 +51,7 @@ export const StatRightTopIcon: React.FC<StatRightProps> = ({
           {isLoading ? (
             <Skeleton height={40} width={100} />
           ) : error ? (
-            <div className="py-4 text-center">
-              <i className="ri-search-line d-block fs-1 text-success"></i>
-              {handleResponse?.dataNotFound}
-            </div>
+            <EmptyState />
           ) : (
             <h1 className="fw-bold"> {data}</h1>
           )}
