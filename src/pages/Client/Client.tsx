@@ -21,7 +21,6 @@ import * as Tooltip from "@radix-ui/react-tooltip";
 import { useNavigate } from "react-router-dom";
 import ViewProfile from "../UserProfile/ViewProfile";
 import BaseButton from "components/BaseComponents/BaseButton";
-import appConstants from "constants/constant";
 import { ColumnConfig } from "interfaces/global.interface";
 // import { FaGlobe, FaLinkedin } from "react-icons/fa";
 import { FaExclamationTriangle } from "react-icons/fa";
@@ -31,7 +30,6 @@ import { capitalizeWords, errorHandle } from "utils/commonFunctions";
 import SendQrCodeInviteModal from "components/QrCode/SendQrCodeInviteModal";
 import ColumnsDropdown from "components/BaseComponents/ColumnsDropdown";
 
-const { handleResponse } = appConstants;
 
 const Client = () => {
   const [users, setUsers] = useState([]);

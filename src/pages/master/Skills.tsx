@@ -29,11 +29,11 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { useNavigate } from "react-router-dom";
 
-const { projectTitle, Modules, handleResponse } = appConstants;
+const { projectTitle, Modules } = appConstants;
 
 const AddSkill = () => {
   const navigate = useNavigate();
-  document.title = Modules.SKill + " | " + projectTitle;
+  document.title = Modules.Skill + " | " + projectTitle;
   const [skills, setSkills] = useState<any[]>([]);
   const [editingSkill, setEditingSkill] = useState<any>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);

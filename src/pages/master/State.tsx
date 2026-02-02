@@ -29,7 +29,7 @@ import {
 import { SelectedOption1 } from "interfaces/applicant.interface";
 import { BaseSelect } from "components/BaseComponents/BaseSelect";
 
-const { projectTitle, Modules, handleResponse } = appConstants;
+const { projectTitle, Modules } = appConstants;
 
 const State = () => {
   document.title = Modules.State + " | " + projectTitle;

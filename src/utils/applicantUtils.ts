@@ -141,9 +141,17 @@ export const buildApplicantParams = (
       .join(",");
   }
 
-  // Added By
-  if (filters.addedBy && filters.addedBy.length > 0) {
-    params.addedBy = filters.addedBy.map((role: any) => role.value).join(",");
+  // Added By - normalize to array (MultiSelect may pass single option or null)
+  const addedByArray = Array.isArray(filters.addedBy)
+    ? filters.addedBy
+    : filters.addedBy
+    ? [filters.addedBy]
+    : [];
+  if (addedByArray.length > 0) {
+    params.addedBy = addedByArray
+      .map((item: any) => item?.value || item?.label || "")
+      .filter(Boolean)
+      .join(",");
   }
 
   // Dates

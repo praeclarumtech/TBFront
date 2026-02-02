@@ -61,6 +61,7 @@ export const listOfApplicants = async (params: {
   workPreference?: string;
   search?: string;
   appliedRole?: string;
+  addedBy?: string;
   applicantName?: string;
   searchSkills?: string;
   isAcrive?: boolean;

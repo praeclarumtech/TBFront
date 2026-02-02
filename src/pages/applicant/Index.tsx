@@ -1169,6 +1169,7 @@ const Applicant = () => {
                       onAppliedRoleFilterChange={
                         handlers.handleAppliedRoleFilterChange
                       }
+                      onAddedByChange={handlers.handleAddedByChange}
                       onStateChange={handlers.handleStateChange}
                       onGenderChange={handlers.handleGenderChange}
                       onInterviewStageChange={

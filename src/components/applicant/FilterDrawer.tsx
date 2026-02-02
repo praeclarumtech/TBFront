@@ -84,6 +84,7 @@ interface FilterDrawerProps {
   onMultipleSkillsChange: (selectedOptions: SelectedOption1[]) => void;
   onCityChange: (selectedOptions: SelectedOption1[]) => void;
   onAppliedRoleFilterChange: (selectedOptions: SelectedOption[]) => void;
+  onAddedByChange: (selectedOptions: SelectedOption[]) => void;
   onStateChange: (selectedOption: SelectedOption | null) => void;
   onGenderChange: (selectedOption: SelectedOption | null) => void;
   onInterviewStageChange: (selectedOption: SelectedOption | null) => void;
@@ -152,6 +153,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({
   onMultipleSkillsChange,
   onCityChange,
   onAppliedRoleFilterChange,
+  onAddedByChange,
   onStateChange,
   onGenderChange,
   onInterviewStageChange,
@@ -159,7 +161,6 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({
   onWorkPreferenceChange,
   onAnyHandOnOffersChange,
   onDesignationChange,
-  onAppliedRoleChange,
   onActiveStatusChange,
   onFavoriteChange,
   onStartDateChange,
@@ -331,7 +332,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({
           name="addedBy"
           options={addedByOptions}
           value={addedBy}
-          onChange={onAppliedRoleChange}
+          onChange={onAddedByChange}
           placeholder="Select added by..."
           className="mb-1"
         />

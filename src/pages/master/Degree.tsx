@@ -24,7 +24,7 @@ import appConstants from "constants/constant";
 import { InputPlaceHolder } from "utils/commonFunctions";
 import Skeleton from "react-loading-skeleton";
 
-const { projectTitle, Modules, handleResponse } = appConstants;
+const { projectTitle, Modules } = appConstants;
 
 const AddDegree = () => {
   document.title = Modules.Degree + " | " + projectTitle;

@@ -24,7 +24,7 @@ import {
   viewAllDesignation,
 } from "api/designation";
 
-const { projectTitle, Modules, handleResponse } = appConstants;
+const { projectTitle, Modules } = appConstants;
 
 const AddDesignation = () => {
   document.title = Modules.Designation + " | " + projectTitle;
