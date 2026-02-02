@@ -24,7 +24,7 @@ import {
 import "react-quill/dist/quill.snow.css";
 import ReactQuill from "react-quill";
 import sanitizeHtml from "sanitize-html";
-const { projectTitle, Modules, handleResponse } = appConstants;
+const { projectTitle, Modules } = appConstants;
 
 import "react-quill/dist/quill.snow.css";
 

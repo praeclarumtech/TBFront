@@ -20,7 +20,7 @@ import { viewAppliedJob } from "api/apiVendor";
 import { useNavigate } from "react-router";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 
-const { projectTitle, Modules, handleResponse } = appConstants;
+const { projectTitle, Modules } = appConstants;
 
 const AppliedJobList = () => {
   document.title = Modules.Jobs + " | " + projectTitle;

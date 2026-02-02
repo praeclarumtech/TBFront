@@ -8,14 +8,12 @@ import {
   getRecentApplications,
   getRecentApplicationsVendor,
 } from "api/dashboardApi";
-import appConstants from "constants/constant";
 import { errorHandle, getSerialNumber } from "utils/commonFunctions";
 import Skeleton from "react-loading-skeleton";
 import { toast } from "react-toastify";
 import saveAs from "file-saver";
 import BaseButton from "components/BaseComponents/BaseButton";
 
-const { handleResponse } = appConstants;
 
 const RecentApplicants = ({
   selectedTechnology,

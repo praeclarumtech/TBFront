@@ -24,7 +24,7 @@ import { toast } from "react-toastify";
 import { AnyObject } from "yup";
 import DeleteModal from "components/BaseComponents/DeleteModal";
 
-const { Modules, projectTitle, handleResponse } = appConstants;
+const { Modules, projectTitle } = appConstants;
 // type Anchor = "top" | "right" | "bottom";
 const Roles = () => {
   document.title = Modules.Role + " | " + projectTitle;

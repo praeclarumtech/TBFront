@@ -198,7 +198,19 @@ export const useApplicantFilters = () => {
 
   const handleAppliedRoleChange = useCallback(
     (selectedOptions: SelectedOption[]) => {
-      setFilters((prev) => ({ ...prev, addedBy: selectedOptions }));
+      setFilters((prev) => ({ ...prev, filterAppliedRole: selectedOptions }));
+    },
+    []
+  );
+
+  const handleAddedByChange = useCallback(
+    (selectedOptions: SelectedOption[] | SelectedOption | null) => {
+      const optionsArray = Array.isArray(selectedOptions)
+        ? selectedOptions
+        : selectedOptions
+        ? [selectedOptions]
+        : [];
+      setFilters((prev) => ({ ...prev, addedBy: optionsArray }));
     },
     []
   );
@@ -348,6 +360,7 @@ export const useApplicantFilters = () => {
       handleAppliedSkillsChange,
       handleMultipleSkillsChange,
       handleAppliedRoleChange,
+      handleAddedByChange,
       handleCityChange,
       handleAppliedRoleFilterChange,
       handleStateChange,

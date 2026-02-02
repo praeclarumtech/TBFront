@@ -295,10 +295,8 @@ const PaginateSelect = ({
         styles={customStyles}
         menuPortalTarget={menuPortalTarget}
         menuPosition={menuPosition}
-        loadMore={loadMore}
-        hasMore={hasMore}
-        isLoadingMore={isLoadingMore}
         components={{ MenuList: PaginateMenuList }}
+        {...({ loadMore, hasMore, isLoadingMore } as any)}
       />
       {touched && error && (
         <FormFeedback className="d-block">{error}</FormFeedback>
@@ -398,10 +396,8 @@ const PaginateMultiSelect = ({
         isClearable
         isDisabled={isDisabled}
         placeholder={placeholder}
-        loadMore={loadMore}
-        hasMore={hasMore}
-        isLoadingMore={isLoadingMore}
         components={{ MenuList: PaginateMenuList }}
+        {...({ loadMore, hasMore, isLoadingMore } as any)}
       />
       {touched && error && (
         <FormFeedback className="d-block">{error}</FormFeedback>

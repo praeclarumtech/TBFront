@@ -31,7 +31,7 @@ import { SelectedOption } from "interfaces/applicant.interface";
 import { getRole } from "api/roleApi";
 import { capitalizeWords } from "utils/commonFunctions";
 
-const { handleResponse, roleType } = appConstants;
+const { roleType } = appConstants;
 type Anchor = "top" | "right" | "bottom";
 const UserManagement = () => {
   const [users, setUsers] = useState([]);

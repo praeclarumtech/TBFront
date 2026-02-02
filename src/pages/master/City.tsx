@@ -24,7 +24,7 @@ import { SelectedOption1 } from "interfaces/applicant.interface";
 import { BaseSelect } from "components/BaseComponents/BaseSelect";
 import { createCity, deleteCity, updateCity, viewAllCity } from "api/cityApis";
 
-const { projectTitle, Modules, handleResponse } = appConstants;
+const { projectTitle, Modules } = appConstants;
 
 const City = () => {
   document.title = Modules.City + " | " + projectTitle;

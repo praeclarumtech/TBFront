@@ -62,10 +62,18 @@ const ApplyNow = () => {
   const [hasMoreRoles, setHasMoreRoles] = useState(true);
   const [loadingMoreRoles, setLoadingMoreRoles] = useState(false);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
+  const [resumeError, setResumeError] = useState<string>("");
   const [jobID, setJobID] = useState<any>();
   const [addedBy, setAddedBy] = useState<any>();
   const [cities, setCities] = useState<City[]>([]);
   const [states, setStates] = useState<City[]>([]);
+  const [statePage, setStatePage] = useState(1);
+  const [hasMoreStates, setHasMoreStates] = useState(true);
+  const [loadingMoreStates, setLoadingMoreStates] = useState(false);
+  const [cityPage, setCityPage] = useState(1);
+  const [hasMoreCities, setHasMoreCities] = useState(true);
+  const [loadingMoreCities, setLoadingMoreCities] = useState(false);
+  const [selectedStateId, setSelectedStateId] = useState<string | undefined>();
   const navigate = useNavigate();
 
   const { id } = useParams();
@@ -231,6 +239,100 @@ const ApplyNow = () => {
     }
   };
 
+  const fetchStates = async (page: number = 1, append: boolean = false) => {
+    try {
+      if (append) setLoadingMoreStates(true);
+      const stateData = await viewAllState({
+        page,
+        pageSize: PAGE_SIZE,
+        limit: PAGE_SIZE,
+      });
+      const stateItems = stateData?.data?.item ?? stateData?.item ?? [];
+      const options = stateItems.map(
+        (state: { state_name: string; _id: string; country_id: string }) => ({
+          label: state.state_name,
+          value: state._id,
+          country_id: state.country_id,
+        }),
+      );
+      if (append) {
+        setStates((prev) => {
+          const existingIds = new Set(prev.map((o: any) => o.value));
+          const newOptions = options.filter(
+            (o: any) => !existingIds.has(o.value),
+          );
+          return [...prev, ...newOptions];
+        });
+        setHasMoreStates(options.length >= PAGE_SIZE);
+        setStatePage((p) => p + 1);
+      } else {
+        setStates(options);
+        setHasMoreStates(options.length >= PAGE_SIZE);
+        setStatePage(2);
+      }
+    } catch (error) {
+      errorHandle(error);
+    } finally {
+      if (append) setLoadingMoreStates(false);
+    }
+  };
+
+  const loadMoreStates = () => {
+    if (!loadingMoreStates && hasMoreStates) {
+      fetchStates(statePage, true);
+    }
+  };
+
+  const fetchCities = async (
+    page: number = 1,
+    append: boolean = false,
+    stateId?: string,
+  ) => {
+    try {
+      if (append) setLoadingMoreCities(true);
+      const params: any = {
+        page,
+        pageSize: PAGE_SIZE,
+        limit: PAGE_SIZE,
+      };
+      if (stateId) params.state_id = stateId;
+      const cityData = await viewAllCity(params);
+      const cityItems = cityData?.data?.item ?? cityData?.item ?? [];
+      const options = cityItems.map(
+        (city: { city_name: string; _id: string; state_id: string }) => ({
+          label: city.city_name,
+          value: city._id,
+          state_id: city.state_id,
+        }),
+      );
+      if (append) {
+        setCities((prev) => {
+          const existingIds = new Set(prev.map((o: any) => o.value));
+          const newOptions = options.filter(
+            (o: any) => !existingIds.has(o.value),
+          );
+          return [...prev, ...newOptions];
+        });
+        setHasMoreCities(options.length >= PAGE_SIZE);
+        setCityPage((p) => p + 1);
+      } else {
+        setCities(options);
+        setHasMoreCities(options.length >= PAGE_SIZE);
+        setCityPage(2);
+      }
+    } catch (error) {
+      errorHandle(error);
+    } finally {
+      if (append) setLoadingMoreCities(false);
+    }
+  };
+
+  const loadMoreCities = () => {
+    if (!loadingMoreCities && hasMoreCities && selectedStateId) {
+      fetchCities(cityPage, true, selectedStateId);
+    }
+  };
+
   const getApplicant = (id: string | undefined | null) => {
     if (id !== undefined) {
       getApplicantDetails(id)
@@ -249,56 +351,20 @@ const ApplyNow = () => {
   };
 
   useEffect(() => {
-    const getState = async () => {
-      try {
-        // const params = { country_id: selectedCountryId };
-        const stateData = await viewAllState();
-        if (stateData?.data) {
-          setStates(
-            stateData.data.item.map(
-              (state: {
-                state_name: string;
-                _id: string;
-                country_id: string;
-              }) => ({
-                label: state.state_name,
-                value: state._id,
-                country_id: state.country_id,
-              }),
-            ),
-          );
-        }
-      } catch (error) {
-        errorHandle(error);
-      }
-    };
-
-    getState();
+    fetchStates(1, false);
   }, []);
 
+  // When formData has initial state and states are loaded, fetch cities for that state
   useEffect(() => {
-    const getCities = async (selectedStateId?: string) => {
-      try {
-        const params = { state_id: selectedStateId };
-        const cityData = await viewAllCity(params);
-        if (cityData?.data) {
-          setCities(
-            cityData.data.item.map(
-              (city: { city_name: string; _id: string; state_id: string }) => ({
-                label: city.city_name,
-                value: city._id,
-                state_id: city.state_id,
-              }),
-            ),
-          );
-        }
-      } catch (error) {
-        errorHandle(error);
+    const initialState = formData?.state;
+    if (initialState && states.length > 0) {
+      const stateOpt = states.find((s: any) => s.label === initialState);
+      if (stateOpt && !selectedStateId) {
+        setSelectedStateId(stateOpt.value);
+        fetchCities(1, false, stateOpt.value);
       }
-    };
-
-    getCities();
-  }, []);
+    }
+  }, [formData?.state, states]);
 
   useEffect(() => {
     getApplicant(id);
@@ -341,6 +407,13 @@ const ApplyNow = () => {
     validationSchema: QrApplicants,
 
     onSubmit: async (value: any) => {
+      setResumeError("");
+      // Resume is required for new applications (create flow)
+      if (!id && !resumeFile) {
+        setResumeError("Resume is required.");
+        toastify("Please upload your resume to apply.", { type: "error" });
+        return;
+      }
       setButtonLoading(true);
 
       try {
@@ -375,6 +448,7 @@ const ApplyNow = () => {
         formData.append("job_id", value.job_id);
         formData.append("addedBy", value.addedBy);
 
+        // Resume file is sent as "attachments" to backend (applicants/applicant-add-qr-code or applicant-edit-qr-code); storage is on the server.
         if (resumeFile) {
           formData.append("attachments", resumeFile);
         }
@@ -498,7 +572,18 @@ const ApplyNow = () => {
 
   const handleStateChange = (selectedOption: SelectedOption) => {
     const selectedValue = selectedOption?.label || "";
+    const stateId = selectedOption?.value;
     validation.setFieldValue("state", selectedValue);
+    validation.setFieldValue("currentCity", "");
+    setCities([]);
+    setCityPage(1);
+    setHasMoreCities(true);
+    if (stateId) {
+      setSelectedStateId(stateId);
+      fetchCities(1, false, stateId);
+    } else {
+      setSelectedStateId(undefined);
+    }
   };
 
   return (
@@ -1082,7 +1167,7 @@ const ApplyNow = () => {
                       />
                     </Col>
                     <Col xs={12} md={6} lg={3}>
-                      <BaseSelect
+                      <PaginateSelect
                         label="State"
                         name="state"
                         className="select-border"
@@ -1095,16 +1180,25 @@ const ApplyNow = () => {
                             states,
                             validation.values.state,
                             "location",
-                          ) || ""
+                          ) ||
+                          (validation.values.state
+                            ? {
+                                label: validation.values.state,
+                                value: validation.values.state,
+                              }
+                            : "")
                         }
                         touched={validation.touched.state}
                         error={validation.errors.state}
                         isRequired={true}
+                        loadMore={loadMoreStates}
+                        hasMore={hasMoreStates}
+                        isLoadingMore={loadingMoreStates}
                       />
                     </Col>
 
                     <Col xs={12} md={6} lg={3}>
-                      <BaseSelect
+                      <PaginateSelect
                         label="City"
                         name="currentCity"
                         className="select-border"
@@ -1122,11 +1216,20 @@ const ApplyNow = () => {
                             cities,
                             validation.values.currentCity,
                             "location",
-                          ) || ""
+                          ) ||
+                          (validation.values.currentCity
+                            ? {
+                                label: validation.values.currentCity,
+                                value: validation.values.currentCity,
+                              }
+                            : "")
                         }
                         touched={validation.touched.currentCity}
                         error={validation.errors.currentCity}
                         isRequired={true}
+                        loadMore={loadMoreCities}
+                        hasMore={hasMoreCities}
+                        isLoadingMore={loadingMoreCities}
                       />
                     </Col>
                     <Col
@@ -1141,7 +1244,7 @@ const ApplyNow = () => {
                           className="font-semibold text-gray-700 form-label"
                           htmlFor="resume-upload"
                         >
-                          Resume Upload
+                          Resume Upload <span className="text-danger">*</span>
                         </label>
                         <div className="d-flex align-items-center position-relative">
                           <input
@@ -1152,6 +1255,7 @@ const ApplyNow = () => {
                             onChange={(e) => {
                               if (e.target.files && e.target.files[0]) {
                                 setResumeFile(e.target.files[0]);
+                                setResumeError("");
                               }
                             }}
                           />
@@ -1183,7 +1287,7 @@ const ApplyNow = () => {
                                 style={{ fontSize: 18 }}
                                 onClick={() => {
                                   setResumeFile(null);
-                                  // Also clear the file input value
+                                  setResumeError("");
                                   const input = document.getElementById(
                                     "resume-upload",
                                   ) as HTMLInputElement;
@@ -1196,9 +1300,12 @@ const ApplyNow = () => {
                             </>
                           )}
                         </div>
-                        <small className="text-muted">
+                        <small className="text-muted d-block">
                           PDF, DOC, DOCX only. Max 5MB.
                         </small>
+                        {resumeError && (
+                          <small className="text-danger">{resumeError}</small>
+                        )}
                       </div>
                     </Col>
                     <Col xs={12} sm={4} md={4} lg={4}>

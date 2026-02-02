@@ -26,7 +26,7 @@ import {
   viewAllCountry,
 } from "api/CountryStateCity";
 
-const { projectTitle, Modules, handleResponse } = appConstants;
+const { projectTitle, Modules } = appConstants;
 
 const Country = () => {
   document.title = Modules.Country + " | " + projectTitle;

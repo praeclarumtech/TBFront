@@ -4,8 +4,6 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import EmptyState from "components/BaseComponents/EmptyState";
 
-import appConstants from "constants/constant";
-
 interface StatRightProps {
   title: string;
   icon: React.ReactNode;
@@ -15,7 +13,6 @@ interface StatRightProps {
   isLoading: boolean; // Renamed to isLoading for clarity
 }
 
-const { handleResponse } = appConstants;
 
 export const StatRightTopIcon: React.FC<StatRightProps> = ({
   title,

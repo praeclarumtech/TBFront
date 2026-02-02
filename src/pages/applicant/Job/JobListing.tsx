@@ -34,7 +34,7 @@ import ActiveModal from "components/BaseComponents/ActiveModal";
 import { capitalizeWords, getCurrentUserRole } from "utils/commonFunctions";
 import toastify from "utils/toastify";
 
-const { projectTitle, Modules, handleResponse } = appConstants;
+const { projectTitle, Modules } = appConstants;
 
 const JobListing = () => {
   document.title = Modules.Jobs + " | " + projectTitle;
