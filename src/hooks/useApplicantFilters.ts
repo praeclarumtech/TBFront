@@ -23,7 +23,6 @@ export interface FilterState {
   filterGender: SelectedOption | null;
   filterInterviewStage: SelectedOption | null;
   filterStatus: SelectedOption | null;
-  filterWorkPreference: SelectedOption | null;
   filterAnyHandOnOffers: SelectedOption | null;
   filterDesignation: SelectedOption | null;
   filterActiveStatus: SelectedOption | null;
@@ -57,7 +56,6 @@ const initialFilterState: FilterState = {
   filterGender: null,
   filterInterviewStage: null,
   filterStatus: null,
-  filterWorkPreference: null,
   filterAnyHandOnOffers: null,
   filterDesignation: null,
   filterActiveStatus: {
@@ -259,13 +257,6 @@ export const useApplicantFilters = () => {
     []
   );
 
-  const handleWorkPreferenceChange = useCallback(
-    (selectedOption: SelectedOption | null) => {
-      setFilters((prev) => ({ ...prev, filterWorkPreference: selectedOption }));
-    },
-    []
-  );
-
   const handleAnyHandOnOffersChange = useCallback(
     (selectedOption: SelectedOption | null) => {
       setFilters((prev) => ({
@@ -367,7 +358,6 @@ export const useApplicantFilters = () => {
       handleGenderChange,
       handleInterviewStageChange,
       handleStatusChange,
-      handleWorkPreferenceChange,
       handleAnyHandOnOffersChange,
       handleDesignationChange,
       handleActiveStatusChange,

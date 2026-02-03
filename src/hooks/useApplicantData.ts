@@ -104,9 +104,6 @@ export const useApplicantData = () => {
       ) {
         params.currentPkg = `${filters.filterCurrentPkg[0]}-${filters.filterCurrentPkg[1]}`;
       }
-      if (filters.filterWorkPreference) {
-        params.workPreference = filters.filterWorkPreference.value;
-      }
       if (filters.filterAnyHandOnOffers) {
         params.anyHandOnOffers = filters.filterAnyHandOnOffers.value;
       }
@@ -355,9 +352,6 @@ export const useApplicantData = () => {
         filters.filterCurrentPkg[1] !== 100
       ) {
         queryParams.currentPkg = `${filters.filterCurrentPkg[0]}-${filters.filterCurrentPkg[1]}`;
-      }
-      if (filters.filterWorkPreference) {
-        queryParams.workPreference = filters.filterWorkPreference.value;
       }
       if (filters.filterAnyHandOnOffers) {
         queryParams.anyHandOnOffers = filters.filterAnyHandOnOffers.value;

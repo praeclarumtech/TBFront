@@ -28,7 +28,6 @@ const {
   Modules,
   communicationOptions,
   anyHandOnOffers,
-  workPreferenceType,
   interviewModeOptions,
 } = appConstants;
 
@@ -71,7 +70,7 @@ const JobDetailsForm = ({
       expectedPkg: initialValues?.expectedPkg || "0",
       negotiation: initialValues?.negotiation || "0",
       noticePeriod: initialValues?.noticePeriod || "0",
-      workPreference: initialValues?.workPreference || "",
+      // workPreference: initialValues?.workPreference || "",
       practicalUrl: initialValues?.practicalUrl || "",
       practicalFeedback: initialValues?.practicalFeedback || "",
       comment: initialValues?.comment || "",
@@ -867,31 +866,6 @@ const JobDetailsForm = ({
                     touched={validation.touched.noticePeriod}
                     error={validation.errors.noticePeriod}
                     passwordToggle={false}
-                    isRequired={false}
-                  />
-                </Col>
-                <Col xs={12} sm={6} md={6} lg={4} className="mb-3">
-                  <BaseSelect
-                    label="Work Preference"
-                    name="workPreference"
-                    className="select-border"
-                    options={workPreferenceType}
-                    placeholder={InputPlaceHolder("Work Preference")}
-                    handleChange={(selectedOption: SelectedOption) => {
-                      validation.setFieldValue(
-                        "workPreference",
-                        selectedOption?.value || ""
-                      );
-                    }}
-                    handleBlur={validation.handleBlur}
-                    value={
-                      dynamicFind(
-                        workPreferenceType,
-                        validation.values.workPreference
-                      ) || ""
-                    }
-                    touched={validation.touched.workPreference}
-                    error={validation.errors.workPreference}
                     isRequired={false}
                   />
                 </Col>

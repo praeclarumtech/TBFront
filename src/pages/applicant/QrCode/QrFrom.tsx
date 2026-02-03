@@ -35,8 +35,7 @@ import { viewAllCity } from "api/cityApis";
 import { viewAllState } from "api/stateApi";
 import toastify from "utils/toastify";
 
-const { projectTitle, Modules, workPreferenceType, communicationOptions } =
-  appConstants;
+const { projectTitle, Modules, communicationOptions } = appConstants;
 
 const QrFrom = () => {
   const location = useLocation();
@@ -264,7 +263,7 @@ const QrFrom = () => {
       currentPkg: initialValues?.currentPkg || "0",
       expectedPkg: initialValues?.expectedPkg || "0",
       noticePeriod: initialValues?.noticePeriod || "0",
-      workPreference: initialValues?.workPreference || "",
+      // workPreference: initialValues?.workPreference || "",
       appliedSkills: initialValues?.appliedSkills || [],
       otherSkills: initialValues?.otherSkills || "",
       linkedinUrl: initialValues?.linkedinUrl || "",
@@ -303,7 +302,7 @@ const QrFrom = () => {
         formData.append("currentPkg", value.currentPkg);
         formData.append("expectedPkg", value.expectedPkg);
         formData.append("noticePeriod", value.noticePeriod);
-        formData.append("workPreference", value.workPreference);
+        // formData.append("workPreference", value.workPreference);
         formData.append(
           "currentCompanyDesignation",
           value.currentCompanyDesignation
@@ -1111,31 +1110,6 @@ const QrFrom = () => {
                       />
                     </Col>
                     <Col xs={12} sm={6} md={6} lg={3}>
-                      <BaseSelect
-                        label="Work Preference"
-                        name="workPreference"
-                        className="select-border"
-                        options={workPreferenceType}
-                        placeholder={InputPlaceHolder("Work Preference")}
-                        handleChange={(selectedOption: SelectedOption) => {
-                          validation.setFieldValue(
-                            "workPreference",
-                            selectedOption?.value || ""
-                          );
-                        }}
-                        handleBlur={validation.handleBlur}
-                        value={
-                          dynamicFind(
-                            workPreferenceType,
-                            validation.values.workPreference
-                          ) || ""
-                        }
-                        touched={validation.touched.workPreference}
-                        error={validation.errors.workPreference}
-                        isRequired={false}
-                      />
-                    </Col>
-                    <Col xs={12} sm={6} md={6} lg={3}>
                       <BaseInput
                         label="Linkedin URL (Optional)"
                         name="linkedinUrl"
@@ -1271,17 +1245,23 @@ const QrFrom = () => {
                         </small>
                       </div>
                     </Col>
-                    <Col xs={12} sm={4} md={4} lg={4}>
-                      <div className="gap-3 mt-4 d-flex flex-column flex-md-row justify-content-end align-items-center">
+                    <Col
+                      xs={12}
+                      sm={4}
+                      md={4}
+                      lg={4}
+                      className="mb-2 d-flex items-end"
+                    >
+                      <div className="gap-3 w-100 d-flex flex-column flex-md-row justify-content-end align-items-center">
                         <BaseButton
                           color="primary"
                           type="submit"
-                          className="max-w-full mt-5 d-flex align-items-center justify-content-center"
+                          className="d-flex align-items-center justify-content-center"
                         >
                           {buttonloading ? (
                             <>
                               <Spinner size="sm" className="me-2" />
-                              {!id ? "Submitng..." : "Updating..."}
+                              {!id ? "Submitting..." : "Updating..."}
                             </>
                           ) : (
                             <>{!id ? "Submit" : "Update"}</>

@@ -37,8 +37,7 @@ import { viewAllCity } from "api/cityApis";
 import { viewAllState } from "api/stateApi";
 import toastify from "utils/toastify";
 
-const { projectTitle, Modules, workPreferenceType, communicationOptions } =
-  appConstants;
+const { projectTitle, Modules, communicationOptions } = appConstants;
 
 const ApplyNow = () => {
   const location = useLocation();
@@ -1126,31 +1125,6 @@ const ApplyNow = () => {
                       />
                     </Col>
                     <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
-                      <BaseSelect
-                        label="Work Preference"
-                        name="workPreference"
-                        className="select-border"
-                        options={workPreferenceType}
-                        placeholder={InputPlaceHolder("Work Preference")}
-                        handleChange={(selectedOption: SelectedOption) => {
-                          validation.setFieldValue(
-                            "workPreference",
-                            selectedOption?.value || "",
-                          );
-                        }}
-                        handleBlur={validation.handleBlur}
-                        value={
-                          dynamicFind(
-                            workPreferenceType,
-                            validation.values.workPreference,
-                          ) || ""
-                        }
-                        touched={validation.touched.workPreference}
-                        error={validation.errors.workPreference}
-                        isRequired={false}
-                      />
-                    </Col>
-                    <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
                       <BaseInput
                         label="Linkedin URL (Optional)"
                         name="linkedinUrl"
@@ -1237,7 +1211,7 @@ const ApplyNow = () => {
                       sm={8}
                       md={8}
                       lg={8}
-                      className="mb-2 d-flex align-items-end"
+                      className="d-flex align-items-end"
                     >
                       <div className="w-100">
                         <label
@@ -1308,12 +1282,12 @@ const ApplyNow = () => {
                         )}
                       </div>
                     </Col>
-                    <Col xs={12} sm={4} md={4} lg={4}>
-                      <div className="gap-3 mt-4 d-flex flex-column flex-md-row justify-content-end align-items-center">
+                    <Col xs={12} sm={4} md={12} lg={12}>
+                      <div className="gap-3 d-flex flex-column flex-md-row justify-content-end align-items-center">
                         <BaseButton
                           color="primary"
                           type="submit"
-                          className="max-w-full mt-5 d-flex align-items-center justify-content-center"
+                          className="max-w-full d-flex align-items-center justify-content-center"
                         >
                           {buttonloading ? (
                             <>

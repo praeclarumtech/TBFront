@@ -15,7 +15,6 @@ import { capitalizeWords } from "utils/commonFunctions";
 
 const {
   gendersType,
-  workPreferenceType,
   noticePeriodType,
   activeStatusOptions,
   favoriteOptions,
@@ -119,7 +118,7 @@ const PieChart2 = () => {
   // pick correct dataset based on chartType
   let selectedData: Record<string, number> = {};
   if (chartType === "gender") selectedData = application.gender || {};
-  if (chartType === "work") selectedData = application.workPreference || {};
+  // if (chartType === "work") selectedData = application.workPreference || {};
   if (chartType === "notice") selectedData = application.noticePeriod || {};
   if (chartType === "role") selectedData = application.role || {};
   if (chartType === "status") selectedData = application.active || {};
@@ -243,8 +242,8 @@ const PieChart2 = () => {
 
   const handleGenderChange = (selectedOption: SelectedOption) =>
     setFilterGender(selectedOption);
-  const handleWorkPreferenceChange = (selectedOption: SelectedOption) =>
-    setFilterWorkPreference(selectedOption);
+  // const handleWorkPreferenceChange = (selectedOption: SelectedOption) =>
+  //   setFilterWorkPreference(selectedOption);
 
   const handleNoticePeriodChange = (selectedOption: SelectedOption) =>
     setFilterNoticePeriod(selectedOption);
@@ -326,15 +325,6 @@ const PieChart2 = () => {
               value={filterGender}
             />
             <BaseSelect
-              label="Work Preference"
-              name="workPreference"
-              className="mb-1 select-border"
-              options={workPreferenceType}
-              placeholder="Work Preference"
-              handleChange={handleWorkPreferenceChange}
-              value={filterWorkPreference}
-            />
-            <BaseSelect
               label="Notice Period (in Days)"
               name="noticePeriod"
               placeholder="Notice Period (in Days)"
@@ -378,9 +368,6 @@ const PieChart2 = () => {
             <Dropdown.Menu>
               <Dropdown.Item eventKey="gender" active={chartType === "gender"}>
                 Gender
-              </Dropdown.Item>
-              <Dropdown.Item eventKey="work" active={chartType === "work"}>
-                Work Preference
               </Dropdown.Item>
               <Dropdown.Item eventKey="notice" active={chartType === "notice"}>
                 Notice Period

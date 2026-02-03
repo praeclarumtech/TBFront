@@ -104,7 +104,7 @@ const VendorApplications = () => {
             label:
               `${client.firstName || ""} ${client.lastName || ""}`.trim() ||
               client.email,
-          })),
+          }))
         );
 
         // Fetch vendors
@@ -120,7 +120,7 @@ const VendorApplications = () => {
             label:
               `${vendor.firstName || ""} ${vendor.lastName || ""}`.trim() ||
               vendor.email,
-          })),
+          }))
         );
       } else {
         // For Vendor/Client - use getJobEmailRecipients API
@@ -139,7 +139,7 @@ const VendorApplications = () => {
                   client.name ||
                   `${client.firstName || ""} ${client.lastName || ""}`.trim() ||
                   client.email,
-              })),
+              }))
             );
           } catch (error) {
             console.error("Failed to fetch clients:", error);
@@ -164,7 +164,7 @@ const VendorApplications = () => {
                   vendor.name ||
                   `${vendor.firstName || ""} ${vendor.lastName || ""}`.trim() ||
                   vendor.email,
-              })),
+              }))
             );
           } catch (error) {
             console.error("Failed to fetch vendors:", error);
@@ -183,7 +183,7 @@ const VendorApplications = () => {
         (Array.isArray(jobs) ? jobs : []).map((job: any) => ({
           value: job._id,
           label: `${job.job_id || ""} - ${job.job_subject || ""}`.trim(),
-        })),
+        }))
       );
     } catch (error: any) {
       console.error("Failed to fetch dropdown options:", error);
@@ -212,11 +212,11 @@ const VendorApplications = () => {
       setTotalRecords(
         response?.data?.pagination?.totalCount ||
           response?.data?.pagination?.total ||
-          0,
+          0
       );
     } catch (error: any) {
       toast.error(
-        error?.response?.data?.message || "Failed to fetch applications.",
+        error?.response?.data?.message || "Failed to fetch applications."
       );
     } finally {
       setTableLoader(false);
@@ -377,7 +377,7 @@ const VendorApplications = () => {
         enableColumnFilter: false,
       },
     ],
-    [pagination.pageIndex, pagination.pageSize],
+    [pagination.pageIndex, pagination.pageSize]
   );
 
   return (

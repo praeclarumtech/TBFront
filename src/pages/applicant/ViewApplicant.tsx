@@ -538,14 +538,6 @@ const ViewModal: React.FC<ViewModalProps> = ({
 
                 <Col span={12}>
                   <DetailsRow
-                    label="Work Preference"
-                    value={
-                      <Tag color="magenta">
-                        {capitalizeWords(formData.workPreference) || "-"}
-                      </Tag>
-                    }
-                  />
-                  <DetailsRow
                     label="Preferred Locations"
                     value={
                       formData.preferredLocations ? (

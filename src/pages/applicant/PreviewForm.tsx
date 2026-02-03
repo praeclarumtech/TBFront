@@ -293,10 +293,6 @@ const PreviewForm = ({ data, onEdit, onSubmit, loading }: any) => {
                 <span>{" " + data?.negotiation + " Rs."}</span>
               </Typography>
               <Typography>
-                <span className="  !text-black pt-3">Work Preference :</span>
-                <span>{" " + capitalizeWords(data?.workPreference)}</span>
-              </Typography>
-              <Typography>
                 <span className="  !text-black pt-3">Applied Role:</span>
                 <span>{" " + capitalizeWords(data?.appliedRole)}</span>
               </Typography>

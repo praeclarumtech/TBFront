@@ -54,7 +54,6 @@ const {
   statusOptions,
   gendersType,
   anyHandOnOffers,
-  workPreferenceType,
   designationType,
   addedByOptions,
   activeStatusOptions,
@@ -307,7 +306,6 @@ const Applicant = () => {
       filterGender: null,
       filterInterviewStage: null,
       filterStatus: null,
-      filterWorkPreference: null,
       filterAnyHandOnOffers: null,
       filterDesignation: null,
       filterActiveStatus: currentActiveStatus, // Preserve current active status
@@ -355,7 +353,6 @@ const Applicant = () => {
       filters.filterExpectedPkg[1] !== 100 ||
       filters.filterCurrentPkg[0] !== 0 ||
       filters.filterCurrentPkg[1] !== 100 ||
-      !!filters.filterWorkPreference ||
       !!filters.filterAnyHandOnOffers ||
       filters.filterCity.length > 0 ||
       !!filters.filterState ||
@@ -1117,7 +1114,6 @@ const Applicant = () => {
                       filterGender={filters.filterGender}
                       filterInterviewStage={filters.filterInterviewStage}
                       filterStatus={filters.filterStatus}
-                      filterWorkPreference={filters.filterWorkPreference}
                       filterAnyHandOnOffers={filters.filterAnyHandOnOffers}
                       filterDesignation={filters.filterDesignation}
                       addedBy={filters.addedBy}
@@ -1147,7 +1143,6 @@ const Applicant = () => {
                       interviewStageOptions={interviewStageOptions}
                       statusOptions={statusOptions}
                       gendersOptions={gendersType}
-                      workPreferenceOptions={workPreferenceType}
                       anyHandOnOffersOptions={anyHandOnOffers.map(
                         (opt: any) => ({
                           label: opt.label,
@@ -1176,9 +1171,6 @@ const Applicant = () => {
                         handlers.handleInterviewStageChange
                       }
                       onStatusChange={handlers.handleStatusChange}
-                      onWorkPreferenceChange={
-                        handlers.handleWorkPreferenceChange
-                      }
                       onAnyHandOnOffersChange={
                         handlers.handleAnyHandOnOffersChange
                       }

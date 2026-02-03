@@ -64,7 +64,7 @@ function ImportApplicant() {
   const [loader, setLoader] = useState(false);
   const [applicant, setApplicant] = useState<any[]>([]);
   const [selectedApplicantId, setSelectedApplicantId] = useState<string | null>(
-    null,
+    null
   );
   const [multipleApplicantDelete, setMultipleApplicantsDelete] = useState<
     string[]
@@ -75,7 +75,7 @@ function ImportApplicant() {
   const [searchAll, setSearchAll] = useState<string>("");
   const [uploadedFile, setUploadedFile] = useState<FormData | null>(null);
   const [exportableFields, setExportableFields] = useState<SelectedOption[]>(
-    [],
+    []
   );
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -99,13 +99,13 @@ function ImportApplicant() {
   const [multiEditInterViewStage, setMultiEditInterViewStage] =
     useState<SelectedOption | null>(null);
   const [multiEditStatus, setMultiEditStatus] = useState<SelectedOption | null>(
-    null,
+    null
   );
   const [multiEditRole, setMultiEditRole] = useState<SelectedOption | null>(
-    null,
+    null
   );
   const [multiEditSkills, setMultiEditSkills] = useState<SelectedOption | null>(
-    null,
+    null
   );
   const [multiEditDate, setMultiEditDate] = useState<string | null>(null);
   const [modelLoading, setModelLoading] = useState<boolean>(false);
@@ -230,7 +230,7 @@ function ImportApplicant() {
   };
   const handleDateChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    isStartDate: boolean,
+    isStartDate: boolean
   ) => {
     if (isStartDate) {
       setStartDate(e.target.value);
@@ -252,7 +252,7 @@ function ImportApplicant() {
     setSelectedApplicants((prev) =>
       prev.includes(applicantId)
         ? prev.filter((id) => id !== applicantId)
-        : [...prev, applicantId],
+        : [...prev, applicantId]
     );
   };
 
@@ -274,9 +274,7 @@ function ImportApplicant() {
   };
 
   const handleColumnSelected = (
-    selectedOptions:
-      | any[]
-      | ((prevState: SelectedOption[]) => SelectedOption[]),
+    selectedOptions: any[] | ((prevState: SelectedOption[]) => SelectedOption[])
   ) => {
     if (!selectedApplicants || selectedApplicants.length === 0) {
       toastify("Please select applicants before choosing columns.", {
@@ -294,7 +292,7 @@ function ImportApplicant() {
   };
 
   const deleteMultipleApplicantDetails = (
-    multipleApplicantDelete: string[] | undefined | null,
+    multipleApplicantDelete: string[] | undefined | null
   ) => {
     setLoader(true);
     deleteImportedMultipleApplicant(multipleApplicantDelete)
@@ -328,7 +326,7 @@ function ImportApplicant() {
 
   const handleEmail = (applicantId: string) => {
     const selectedApplicant = applicant.find(
-      (applicant) => applicant._id === applicantId,
+      (applicant) => applicant._id === applicantId
     );
     if (selectedApplicant) {
       navigate("/email/compose", {
@@ -369,8 +367,8 @@ function ImportApplicant() {
     } else if (
       [...files].every((file) =>
         resumeExtensions.includes(
-          file.name.split(".").pop()?.toLowerCase() || "",
-        ),
+          file.name.split(".").pop()?.toLowerCase() || ""
+        )
       )
     ) {
       const newEvent = {
@@ -380,13 +378,13 @@ function ImportApplicant() {
     } else {
       toastify(
         "Unsupported file type. Please upload a CSV, Excel, Word, or PDF file.",
-        { type: "error" },
+        { type: "error" }
       );
     }
   };
 
   const handleResumeUpload = async (
-    event: React.ChangeEvent<HTMLInputElement>,
+    event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const files = event.target.files;
     if (!files || files.length === 0) return;
@@ -394,8 +392,8 @@ function ImportApplicant() {
     const allowedExtensions = ["doc", "pdf", "docx"];
     const validFiles = Array.from(files).filter((file) =>
       allowedExtensions.includes(
-        file.name.split(".").pop()?.toLowerCase() || "",
-      ),
+        file.name.split(".").pop()?.toLowerCase() || ""
+      )
     );
 
     if (validFiles.length === 0) {
@@ -407,7 +405,7 @@ function ImportApplicant() {
     if (largeFiles.length > 0) {
       toastify(
         "One or more large files detected. Import may take a few minutes.",
-        { type: "error" },
+        { type: "error" }
       );
     }
 
@@ -424,7 +422,7 @@ function ImportApplicant() {
       const response = await resumeUpload(formData, {
         onUploadProgress: (progressEvent) => {
           const progress = Math.round(
-            (progressEvent.loaded * 100) / (progressEvent.total || 100),
+            (progressEvent.loaded * 100) / (progressEvent.total || 100)
           );
           setImportProgress(progress);
         },
@@ -457,7 +455,7 @@ function ImportApplicant() {
   };
 
   const handleFileImport = async (
-    event: React.ChangeEvent<HTMLInputElement>,
+    event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -487,7 +485,7 @@ function ImportApplicant() {
         params: { updateFlag },
         onUploadProgress: (progressEvent) => {
           const progress = Math.round(
-            (progressEvent.loaded * 100) / (progressEvent.total || 100),
+            (progressEvent.loaded * 100) / (progressEvent.total || 100)
           );
           setImportProgress(progress);
         },
@@ -546,7 +544,7 @@ function ImportApplicant() {
         params: { updateFlag },
         onUploadProgress: (progressEvent) => {
           const progress = Math.round(
-            (progressEvent.loaded * 100) / (progressEvent.total || 100),
+            (progressEvent.loaded * 100) / (progressEvent.total || 100)
           );
           setImportProgress(progress);
         },
@@ -555,7 +553,7 @@ function ImportApplicant() {
       if (response?.success) {
         toastify(
           response?.message || "Existing applicants updated successfully!",
-          { type: "success" },
+          { type: "success" }
         );
         setShowPopupModal(false);
         await fetchApplicants();
@@ -638,7 +636,7 @@ function ImportApplicant() {
         selectedFlag
           ? "Verify the records for move..."
           : "Preparing file for download...",
-        { type: "info" },
+        { type: "info" }
       );
 
       const selectedColumns = exportableFields.map((field) => field.value);
@@ -881,12 +879,12 @@ function ImportApplicant() {
             options={interviewStageOptions}
             value={dynamicFind(
               interviewStageOptions,
-              cell.row.original.interviewStage,
+              cell.row.original.interviewStage
             )}
             handleChange={(selectedOption: SelectedOption) => {
               const updatedApplicant = [...applicant];
               const applicantIndex = updatedApplicant.findIndex(
-                (item) => item._id === cell.row.original._id,
+                (item) => item._id === cell.row.original._id
               );
               if (applicantIndex > -1) {
                 updatedApplicant[applicantIndex].interviewStage =
@@ -894,12 +892,12 @@ function ImportApplicant() {
                 setApplicant(updatedApplicant);
                 updateImportedApplicantsStage(
                   { interviewStage: selectedOption.value },
-                  cell.row.original._id,
+                  cell.row.original._id
                 )
                   .then(() => {
                     toastify(
                       "Applicant Interview Stage updated successfully!",
-                      { type: "success" },
+                      { type: "success" }
                     );
                   })
                   .catch((error: any) => {
@@ -924,14 +922,14 @@ function ImportApplicant() {
             handleChange={(selectedOption: SelectedOption) => {
               const updatedApplicant = [...applicant];
               const applicantIndex = updatedApplicant.findIndex(
-                (item) => item._id === cell.row.original._id,
+                (item) => item._id === cell.row.original._id
               );
               if (applicantIndex > -1) {
                 updatedApplicant[applicantIndex].status = selectedOption.value;
                 setApplicant(updatedApplicant);
                 updateImportedApplicantsStatus(
                   { status: selectedOption.value },
-                  cell.row.original._id,
+                  cell.row.original._id
                 )
                   .then(() => {
                     toastify("Applicant status updated successfully!", {
@@ -948,7 +946,7 @@ function ImportApplicant() {
         enableColumnFilter: false,
       },
     ],
-    [applicant, selectedApplicants],
+    [applicant, selectedApplicants]
   );
 
   const handleCloseClick = () => {
@@ -969,7 +967,7 @@ function ImportApplicant() {
     }
 
     const applicantIds = selectedApplicants.filter(
-      (id) => typeof id === "string" && id.trim() !== "",
+      (id) => typeof id === "string" && id.trim() !== ""
     );
 
     const updateData: any = {};
@@ -1057,7 +1055,7 @@ function ImportApplicant() {
           skillData.map((item: any) => ({
             label: item.skills,
             value: item._id,
-          })),
+          }))
         );
       } catch (error) {
         errorHandle(error);
@@ -1386,7 +1384,7 @@ function ImportApplicant() {
               )}
               {/* Last FollowUp Date Selection */}
               {valueToEdit.some(
-                (item) => item.value === "Last FollowUp Update",
+                (item) => item.value === "Last FollowUp Update"
               ) && (
                 <BaseInput
                   label="Last FollowUp Date"

@@ -85,7 +85,7 @@ const ManageAppliedListClient = () => {
   const [showConfirmExportModal, setShowConfirmExportModal] = useState(false);
   const [exportOption, setExportOption] = useState("");
   const [exportableFields, setExportableFields] = useState<SelectedOption[]>(
-    [],
+    []
   );
 
   const fetchApplicants = async () => {
@@ -193,7 +193,7 @@ const ManageAppliedListClient = () => {
   //   };
 
   const deleteMultipleApplicantDetails = (
-    multipleApplicantDelete: string[] | undefined | null,
+    multipleApplicantDelete: string[] | undefined | null
   ) => {
     setLoader(true);
     deleteApplicantVendor(multipleApplicantDelete)
@@ -288,9 +288,7 @@ const ManageAppliedListClient = () => {
   };
 
   const handleColumnSelected = (
-    selectedOptions:
-      | any[]
-      | ((prevState: SelectedOption[]) => SelectedOption[]),
+    selectedOptions: any[] | ((prevState: SelectedOption[]) => SelectedOption[])
   ) => {
     if (!selectedApplicants || selectedApplicants.length === 0) {
       toast.error("Please select applicants before choosing columns.");
@@ -302,7 +300,7 @@ const ManageAppliedListClient = () => {
     if (Array.isArray(selectedOptions)) {
       console.log(
         "Selected values:",
-        selectedOptions.map((opt: { value: any }) => opt.value),
+        selectedOptions.map((opt: { value: any }) => opt.value)
       );
 
       setExportableFields(selectedOptions);
@@ -571,7 +569,7 @@ const ManageAppliedListClient = () => {
       //     enableColumnFilter: false,
       //   },
     ],
-    [applicant, selectedApplicants],
+    [applicant, selectedApplicants]
   );
 
   //   const handleToggleSwitch = (id: any, isActive: any) => {
@@ -717,40 +715,47 @@ const ManageAppliedListClient = () => {
       /> */}
 
       <Container fluid>
-        <Row className="my-3">
-          <Col lg={12}>
-            <Card>
-              <div className="pt-0 card-body">
-                {tableLoader || loading ? (
-                  <div className="py-4 text-center">
-                    <Skeleton count={1} className="mb-5 min-h-10" />
-                    <Skeleton count={5} />
-                  </div>
-                ) : applicant.length > 0 ? (
-                  <div className="pt-4 card-body">
-                    <TableContainer
-                      isHeaderTitle="Applicants"
-                      columns={columns}
-                      data={applicant}
-                      customPageSize={50}
-                      theadClass="table-light text-muted"
-                      SearchPlaceholder="Search..."
-                      tableClass="!text-nowrap !mb-0 !responsive !table-responsive-sm !table-hover !table-outline-none !mb-0"
-                      totalRecords={totalRecords}
-                      pagination={pagination}
-                      setPagination={setPagination}
-                      loader={tableLoader}
-                      customPadding="0.3rem 1.5rem"
-                      rowHeight="10px !important"
-                    />
-                  </div>
-                ) : (
-                  <EmptyState />
-                )}
-              </div>
-            </Card>
-          </Col>
-        </Row>
+        <div className="mt-2 mb-2">
+          <Card>
+            <Row className="fw-bold text-dark d-flex">
+              <Col
+                sm={6}
+                lg={6}
+                md={6}
+                className="flex-wrap mt-4 d-flex align-items-center"
+              >
+                <div className="ml-6 text-lg font-bold">Applicants</div>
+              </Col>
+            </Row>
+            <div className="pt-0 card-body">
+              {tableLoader || loading ? (
+                <div className="py-4 text-center">
+                  <Skeleton count={1} className="mb-5 min-h-10" />
+                  <Skeleton count={5} />
+                </div>
+              ) : applicant.length > 0 ? (
+                <div className="pt-4 card-body">
+                  <TableContainer
+                    columns={columns}
+                    data={applicant}
+                    customPageSize={50}
+                    theadClass="table-light text-muted"
+                    SearchPlaceholder="Search..."
+                    tableClass="!text-nowrap !mb-0 !responsive !table-responsive-sm !table-hover !table-outline-none !mb-0"
+                    totalRecords={totalRecords}
+                    pagination={pagination}
+                    setPagination={setPagination}
+                    loader={tableLoader}
+                    customPadding="0.3rem 1.5rem"
+                    rowHeight="10px !important"
+                  />
+                </div>
+              ) : (
+                <EmptyState />
+              )}
+            </div>
+          </Card>
+        </div>
       </Container>
     </Fragment>
   );

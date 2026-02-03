@@ -249,7 +249,6 @@ const appConstants = Object.freeze({
     { label: "Expected Package", value: "expectedPkg" },
     { label: "Notice Period", value: "noticePeriod" },
     { label: "Negotiation", value: "negotiation" },
-    { label: "Work Preference", value: "workPreference" },
     { label: "Comment", value: "comment" },
     { label: "Feedback", value: "feedback" },
     { label: "Status", value: "status" },
