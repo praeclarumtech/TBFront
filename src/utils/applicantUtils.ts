@@ -14,7 +14,6 @@ export interface FilterState {
   filterGender: SelectedOption | null;
   filterInterviewStage: SelectedOption | null;
   filterStatus: SelectedOption | null;
-  filterWorkPreference: SelectedOption | null;
   filterAnyHandOnOffers: SelectedOption | null;
   filterDesignation: SelectedOption | null;
   filterActiveStatus: SelectedOption | null;
@@ -95,11 +94,6 @@ export const buildApplicantParams = (
     filters.filterCurrentPkg[1] !== 100
   ) {
     params.currentPkg = `${filters.filterCurrentPkg[0]}-${filters.filterCurrentPkg[1]}`;
-  }
-
-  // Work Preference
-  if (filters.filterWorkPreference) {
-    params.workPreference = filters.filterWorkPreference.value;
   }
 
   // Any Hand On Offers
@@ -228,10 +222,6 @@ export const buildApplicantParams = (
       params.gender =
         chartParams.piechartSelected === "Male" ? "male" : "female";
     }
-    if (chartParams.piechartType === "work") {
-      params.workPreference =
-        chartParams.piechartSelected?.toLowerCase() || undefined;
-    }
     if (chartParams.piechartType === "ActiveStatus") {
       params.isActive =
         chartParams.piechartSelected === "Active" ? "true" : "false";
@@ -274,7 +264,6 @@ export const isAnyFilterApplied = (
     filters.filterExpectedPkg[1] !== 100 ||
     filters.filterCurrentPkg[0] !== 0 ||
     filters.filterCurrentPkg[1] !== 100 ||
-    !!filters.filterWorkPreference ||
     !!filters.filterAnyHandOnOffers ||
     filters.filterCity.length > 0 ||
     !!filters.filterState ||

@@ -119,9 +119,10 @@ const ViewJobApplicantsModal: React.FC<ViewJobApplicantsModalProps> = ({
         limit: pagination.limit,
       };
 
-      const res = activeTab === "invited" 
-        ? await getJobInvitedApplicants(jobId, params)
-        : await getJobApplicants(jobId, params);
+      const res =
+        activeTab === "invited"
+          ? await getJobInvitedApplicants(jobId, params)
+          : await getJobApplicants(jobId, params);
 
       if (res?.success && res?.data) {
         // Set job details from response
@@ -135,14 +136,16 @@ const ViewJobApplicantsModal: React.FC<ViewJobApplicantsModalProps> = ({
         // Set applicants array - handle different response formats
         if (activeTab === "invited") {
           // Normalize invited applicants data to match applied applicants structure
-          const normalizedApplicants = (res.data.applicants || []).map((app: any) => ({
-            ...app,
-            status: app.applicationStatus?.status || null,
-            interviewStage: app.applicationStatus?.interviewStage || null,
-            score: app.applicationStatus?.score ?? null,
-            appliedRole: app.currentCompanyDesignation || "",
-            isActive: app.hasApplied, // Only allow editing if they've applied
-          }));
+          const normalizedApplicants = (res.data.applicants || []).map(
+            (app: any) => ({
+              ...app,
+              status: app.applicationStatus?.status || null,
+              interviewStage: app.applicationStatus?.interviewStage || null,
+              score: app.applicationStatus?.score ?? null,
+              appliedRole: app.currentCompanyDesignation || "",
+              isActive: app.hasApplied, // Only allow editing if they've applied
+            })
+          );
           setApplicant(normalizedApplicants);
           setTotalRecords(res.data.totalRecords || 0);
         } else {
@@ -619,7 +622,9 @@ const ViewJobApplicantsModal: React.FC<ViewJobApplicantsModalProps> = ({
         ) : applicant.length > 0 ? (
           <div className="pt-4">
             <TableContainer
-              isHeaderTitle={activeTab === "invited" ? "Invited Applicants" : "Applicants"}
+              isHeaderTitle={
+                activeTab === "invited" ? "Invited Applicants" : "Applicants"
+              }
               columns={columns}
               data={applicant}
               customPageSize={50}

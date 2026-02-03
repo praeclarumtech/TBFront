@@ -149,14 +149,6 @@ export const useSavedFilters = (
             };
           }
 
-          // Work Preference
-          if (filters.workPreference) {
-            restoredFilters.filterWorkPreference = {
-              label: filters.workPreference,
-              value: filters.workPreference,
-            };
-          }
-
           // Rating
           if (filters.rating) {
             const [min, max] = filters.rating.split("-");
@@ -303,7 +295,6 @@ export const useSavedFilters = (
         gender: filters.filterGender?.value || "",
         currentCompanyDesignation: filters.filterDesignation?.value || "",
         anyHandOnOffers: filters.filterAnyHandOnOffers?.value || "",
-        workPreference: filters.filterWorkPreference?.value || "",
         rating: `${filters.filterRating[0]}-${filters.filterRating[1]}`,
         noticePeriod: `${filters.filterNoticePeriod[0]}-${filters.filterNoticePeriod[1]}`,
         communicationSkill: `${filters.filterEngRating[0]}-${filters.filterEngRating[1]}`,

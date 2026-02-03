@@ -44,15 +44,22 @@ const SignUp = () => {
   const [passwordShow, setPasswordShow] = useState<boolean>(false);
   const [confirmPassword, setConfirmPassword] = useState<boolean>(false);
   const [rolesOptions, setrolesOptions] = useState<SelectedOptionRole1[]>([]);
+  const HIDDEN_SIGNUP_ROLES = ["admin", "client", "hr"];
+
   const fetchRoles = async () => {
     setLoader(true);
     try {
       const res = await getRole();
-      const options = res?.data.map((item: any) => ({
-        label: capitalizeWords(item.name),
-        value: item.name,
-        id: item._id,
-      }));
+      const options = (res?.data || [])
+        .filter(
+          (item: any) =>
+            !HIDDEN_SIGNUP_ROLES.includes((item.name || "").toLowerCase())
+        )
+        .map((item: any) => ({
+          label: capitalizeWords(item.name),
+          value: item.name,
+          id: item._id,
+        }));
       setrolesOptions(options);
     } catch (error) {
       console.error("Error fetching roles", error);

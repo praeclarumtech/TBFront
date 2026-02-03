@@ -415,12 +415,6 @@ function useApplicant({
         enableColumnFilter: false,
       },
       {
-        header: "Work Preference",
-        accessorKey: "workPreference",
-        id: "workPreference",
-        enableColumnFilter: false,
-      },
-      {
         header: "Current Pkg",
         accessorKey: "currentPkg",
         id: "currentPkg",

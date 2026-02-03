@@ -301,29 +301,22 @@ const MatchingApplicantsModal: React.FC<MatchingApplicantsModalProps> = ({
       },
     },
     {
-      title: "LOCATION & WORK",
+      title: "LOCATION",
       key: "location",
       width: 150,
       render: (_, record) => {
         const city = record?.currentCity || "-";
         const state = record?.state || "";
-        const workPreference = record?.workPreference || "Office";
 
         return (
-          <div>
-            <div className="flex items-center gap-1 text-sm text-gray-700">
-              <i className="ri-map-pin-line text-gray-400"></i>
-              <span
-                className="truncate max-w-[120px]"
-                title={`${city}${state ? `, ${state}` : ""}`}
-              >
-                {city}
-              </span>
-            </div>
-            <div className="flex items-center gap-1 text-sm text-gray-700 mt-1">
-              <i className="ri-computer-line text-gray-400"></i>
-              <span className="capitalize">{workPreference || "Office"}</span>
-            </div>
+          <div className="flex items-center gap-1 text-sm text-gray-700">
+            <i className="ri-map-pin-line text-gray-400"></i>
+            <span
+              className="truncate max-w-[120px]"
+              title={`${city}${state ? `, ${state}` : ""}`}
+            >
+              {city}
+            </span>
           </div>
         );
       },

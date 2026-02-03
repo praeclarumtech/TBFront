@@ -43,7 +43,6 @@ interface FilterDrawerProps {
   filterGender: SelectedOption | null;
   filterInterviewStage: SelectedOption | null;
   filterStatus: SelectedOption | null;
-  filterWorkPreference: SelectedOption | null;
   filterAnyHandOnOffers: SelectedOption | null;
   filterDesignation: SelectedOption | null;
   addedBy: SelectedOption[];
@@ -72,7 +71,6 @@ interface FilterDrawerProps {
   interviewStageOptions: SelectedOption[];
   statusOptions: SelectedOption[];
   gendersOptions: SelectedOption[];
-  workPreferenceOptions: SelectedOption[];
   anyHandOnOffersOptions: SelectedOption[];
   designationOptions: SelectedOption[];
   addedByOptions: SelectedOption[];
@@ -89,7 +87,6 @@ interface FilterDrawerProps {
   onGenderChange: (selectedOption: SelectedOption | null) => void;
   onInterviewStageChange: (selectedOption: SelectedOption | null) => void;
   onStatusChange: (selectedOption: SelectedOption | null) => void;
-  onWorkPreferenceChange: (selectedOption: SelectedOption | null) => void;
   onAnyHandOnOffersChange: (selectedOption: SelectedOption | null) => void;
   onDesignationChange: (selectedOption: SelectedOption | null) => void;
   onAppliedRoleChange: (selectedOption: SelectedOption[]) => void;
@@ -120,7 +117,6 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({
   filterGender,
   filterInterviewStage,
   filterStatus,
-  filterWorkPreference,
   filterAnyHandOnOffers,
   filterDesignation,
   addedBy,
@@ -143,7 +139,6 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({
   interviewStageOptions,
   statusOptions,
   gendersOptions,
-  workPreferenceOptions,
   anyHandOnOffersOptions,
   designationOptions,
   addedByOptions,
@@ -158,7 +153,6 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({
   onGenderChange,
   onInterviewStageChange,
   onStatusChange,
-  onWorkPreferenceChange,
   onAnyHandOnOffersChange,
   onDesignationChange,
   onActiveStatusChange,
@@ -290,17 +284,6 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({
           value={filterStatus}
           handleChange={onStatusChange}
           placeholder="Select status..."
-          className="mb-1"
-        />
-
-        {/* Work Preference Filter */}
-        <BaseSelect
-          label="Work Preference"
-          name="filterWorkPreference"
-          options={workPreferenceOptions}
-          value={filterWorkPreference}
-          handleChange={onWorkPreferenceChange}
-          placeholder="Select work preference..."
           className="mb-1"
         />
 

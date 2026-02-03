@@ -103,7 +103,7 @@ const ClientApplications = () => {
             label:
               `${client.firstName || ""} ${client.lastName || ""}`.trim() ||
               client.email,
-          })),
+          }))
         );
 
         // Fetch vendors
@@ -119,7 +119,7 @@ const ClientApplications = () => {
             label:
               `${vendor.firstName || ""} ${vendor.lastName || ""}`.trim() ||
               vendor.email,
-          })),
+          }))
         );
       } else {
         // For Vendor/Client - use getJobEmailRecipients API for vendors only
@@ -138,7 +138,7 @@ const ClientApplications = () => {
                   vendor.name ||
                   `${vendor.firstName || ""} ${vendor.lastName || ""}`.trim() ||
                   vendor.email,
-              })),
+              }))
             );
           } catch (error) {
             console.error("Failed to fetch vendors:", error);
@@ -157,7 +157,7 @@ const ClientApplications = () => {
         (Array.isArray(jobs) ? jobs : []).map((job: any) => ({
           value: job._id,
           label: `${job.job_id || ""} - ${job.job_subject || ""}`.trim(),
-        })),
+        }))
       );
     } catch (error: any) {
       console.error("Failed to fetch dropdown options:", error);
@@ -186,11 +186,11 @@ const ClientApplications = () => {
       setTotalRecords(
         response?.data?.pagination?.totalCount ||
           response?.data?.pagination?.total ||
-          0,
+          0
       );
     } catch (error: any) {
       toast.error(
-        error?.response?.data?.message || "Failed to fetch applications.",
+        error?.response?.data?.message || "Failed to fetch applications."
       );
     } finally {
       setTableLoader(false);
@@ -351,7 +351,7 @@ const ClientApplications = () => {
         enableColumnFilter: false,
       },
     ],
-    [pagination.pageIndex, pagination.pageSize],
+    [pagination.pageIndex, pagination.pageSize]
   );
 
   return (

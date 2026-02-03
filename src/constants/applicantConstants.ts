@@ -13,7 +13,6 @@ export const COLUMN_CONFIGURATIONS: ColumnConfig[] = [
   { id: "currentCity", header: "City", isVisible: false },
   { id: "gender", header: "Gender", isVisible: false },
   { id: "qualification", header: "Qualification", isVisible: false },
-  { id: "workPreference", header: "Work Preference", isVisible: false },
   { id: "currentPkg", header: "Current Pkg", isVisible: false },
   { id: "expectedPkg", header: "Expected Pkg", isVisible: false },
   { id: "noticePeriod", header: "Notice Period", isVisible: false },
