@@ -73,8 +73,8 @@ const AddEditUser = () => {
     sourceType === "client"
       ? "Add Client"
       : sourceType === "vendor"
-        ? "Add Vendor"
-        : "Add User";
+      ? "Add Vendor"
+      : "Add User";
 
   const fetchRoles = async () => {
     try {
@@ -101,7 +101,7 @@ const AddEditUser = () => {
         .required(RequiredField("Username"))
         .matches(
           /^[A-Za-z0-9]+$/,
-          "Username must only contain letters and numbers",
+          "Username must only contain letters and numbers"
         ),
       email: Yup.string()
         .required(validationMessages.required("Email"))
@@ -122,11 +122,11 @@ const AddEditUser = () => {
       role: Yup.string().required(RequiredField("Role")),
       company_name: Yup.string(),
       company_email: Yup.string().email(
-        validationMessages.format("Company Email"),
+        validationMessages.format("Company Email")
       ),
       company_phone_number: Yup.string().matches(
         /^[1-9][0-9]{9}$/,
-        "Please enter a valid 10-digit phone number. It should not start with 0.",
+        "Please enter a valid 10-digit phone number. It should not start with 0."
       ),
       company_location: Yup.string(),
       company_strength: Yup.string(),
@@ -153,15 +153,15 @@ const AddEditUser = () => {
           .min(8, validationMessages.passwordLength("Password", 8))
           .matches(
             passwordRegex,
-            validationMessages.passwordComplexity("Password"),
+            validationMessages.passwordComplexity("Password")
           ),
         confirmPassword: Yup.string().oneOf(
           [Yup.ref("password")],
-          "Password and confirm password should be same.",
+          "Password and confirm password should be same."
         ),
         whatsapp_number: Yup.string().matches(
           /^[1-9][0-9]{9}$/,
-          "Please enter a valid 10-digit phone number. It should not start with 0.",
+          "Please enter a valid 10-digit phone number. It should not start with 0."
         ),
       });
     } else {
@@ -173,13 +173,13 @@ const AddEditUser = () => {
           .min(8, validationMessages.passwordLength("Password", 8))
           .matches(
             passwordRegex,
-            validationMessages.passwordComplexity("Password"),
+            validationMessages.passwordComplexity("Password")
           ),
         confirmPassword: Yup.string()
           .required(validationMessages.required("Confirm Password"))
           .oneOf(
             [Yup.ref("password")],
-            "Password and confirm password should be same.",
+            "Password and confirm password should be same."
           ),
         whatsapp_number: Yup.string().when("role", {
           is: (role: string) => role === "vendor" || role === "client",
@@ -187,7 +187,7 @@ const AddEditUser = () => {
             schema
               .matches(
                 /^[1-9][0-9]{9}$/,
-                "Please enter a valid 10-digit phone number. It should not start with 0.",
+                "Please enter a valid 10-digit phone number. It should not start with 0."
               )
               .required("WhatsApp number is required."),
           otherwise: (schema) => schema,
@@ -367,7 +367,7 @@ const AddEditUser = () => {
           }
         } catch (error) {
           toast.error(
-            error instanceof Error ? error.message : "Failed to load user data",
+            error instanceof Error ? error.message : "Failed to load user data"
           );
         } finally {
           setLoading(false);
@@ -441,6 +441,7 @@ const AddEditUser = () => {
     navigate(-1);
   };
 
+  console.log("location.state", location.state);
   return (
     <Fragment>
       <div className="pt-1 page-content"></div>
@@ -521,7 +522,7 @@ const AddEditUser = () => {
                             handleChange={(e) => {
                               const value = e.target.value.replace(
                                 /[^A-Za-z\s]/g,
-                                "",
+                                ""
                               );
                               validation.setFieldValue("firstName", value);
                             }}
@@ -549,7 +550,7 @@ const AddEditUser = () => {
                             handleChange={(e) => {
                               const value = e.target.value.replace(
                                 /[^A-Za-z\s]/g,
-                                "",
+                                ""
                               );
                               validation.setFieldValue("lastName", value);
                             }}
@@ -577,11 +578,11 @@ const AddEditUser = () => {
                             options={rolesOptions}
                             placeholder={InputPlaceHolder("Role")}
                             handleChange={(
-                              selectedOption: SelectedOptionRole1,
+                              selectedOption: SelectedOptionRole1
                             ) => {
                               validation.setFieldValue(
                                 "role",
-                                selectedOption?.value || "",
+                                selectedOption?.value || ""
                               );
                               validation.setFieldTouched("role", true);
                             }}
@@ -589,7 +590,7 @@ const AddEditUser = () => {
                             value={
                               dynamicFind(
                                 rolesOptions,
-                                validation.values.role,
+                                validation.values.role
                               ) || ""
                             }
                             touched={validation.touched.role}
@@ -630,14 +631,14 @@ const AddEditUser = () => {
                             handleChange={(selectedOption: SelectedOption) => {
                               validation.setFieldValue(
                                 "isActive",
-                                selectedOption?.value || "",
+                                selectedOption?.value || ""
                               );
                             }}
                             handleBlur={validation.handleBlur}
                             value={
                               dynamicFind(
                                 activeStatusOptions,
-                                validation.values.isActive,
+                                validation.values.isActive
                               ) || ""
                             }
                             touched={validation.touched.isActive}
@@ -734,11 +735,11 @@ const AddEditUser = () => {
                                 handleChange={(e) => {
                                   const value = e.target.value.replace(
                                     /[^A-Za-z0-9\s]/g,
-                                    "",
+                                    ""
                                   );
                                   validation.setFieldValue(
                                     "company_name",
-                                    value,
+                                    value
                                   );
                                 }}
                                 handleBlur={validation.handleBlur}
@@ -788,12 +789,12 @@ const AddEditUser = () => {
                                 handleChange={(e) => {
                                   const rawValue = e.target.value.replace(
                                     /\D/g,
-                                    "",
+                                    ""
                                   );
                                   const sanitizedValue = rawValue.slice(0, 10);
                                   validation.setFieldValue(
                                     "company_phone_number",
-                                    sanitizedValue,
+                                    sanitizedValue
                                   );
                                 }}
                                 handleBlur={validation.handleBlur}
@@ -818,13 +819,13 @@ const AddEditUser = () => {
                                 name="company_location"
                                 type="text"
                                 placeholder={InputPlaceHolder(
-                                  "Company Location",
+                                  "Company Location"
                                 )}
                                 handleChange={(e) => {
                                   const rawValue = e.target.value;
                                   validation.setFieldValue(
                                     "company_location",
-                                    rawValue,
+                                    rawValue
                                   );
                                 }}
                                 handleBlur={validation.handleBlur}
@@ -851,22 +852,22 @@ const AddEditUser = () => {
                                 options={hireResourceOptions}
                                 placeholder={InputPlaceHolder("Type")}
                                 handleChange={(
-                                  selectedOption: SelectedOption,
+                                  selectedOption: SelectedOption
                                 ) => {
                                   validation.setFieldValue(
                                     "hire_resources",
-                                    selectedOption?.value || "",
+                                    selectedOption?.value || ""
                                   );
                                   validation.setFieldTouched(
                                     "hire_resources",
-                                    true,
+                                    true
                                   );
                                 }}
                                 handleBlur={validation.handleBlur}
                                 value={
                                   dynamicFind(
                                     hireResourceOptions,
-                                    validation.values.hire_resources,
+                                    validation.values.hire_resources
                                   ) || ""
                                 }
                                 touched={validation.touched.hire_resources}
@@ -905,22 +906,22 @@ const AddEditUser = () => {
                                 options={companyType}
                                 placeholder={InputPlaceHolder("Type")}
                                 handleChange={(
-                                  selectedOption: SelectedOption,
+                                  selectedOption: SelectedOption
                                 ) => {
                                   validation.setFieldValue(
                                     "company_type",
-                                    selectedOption?.value || "",
+                                    selectedOption?.value || ""
                                   );
                                   validation.setFieldTouched(
                                     "company_type",
-                                    true,
+                                    true
                                   );
                                 }}
                                 handleBlur={validation.handleBlur}
                                 value={
                                   dynamicFind(
                                     companyType,
-                                    validation.values.company_type,
+                                    validation.values.company_type
                                   ) || ""
                                 }
                                 touched={validation.touched.company_type}
@@ -959,17 +960,17 @@ const AddEditUser = () => {
                                 name="company_strength"
                                 type="text"
                                 placeholder={InputPlaceHolder(
-                                  "Company Strength",
+                                  "Company Strength"
                                 )}
                                 handleChange={(e) => {
                                   const rawValue = e.target.value.replace(
                                     /\D/g,
-                                    "",
+                                    ""
                                   );
                                   const sanitizedValue = rawValue.slice(0, 10);
                                   validation.setFieldValue(
                                     "company_strength",
-                                    sanitizedValue,
+                                    sanitizedValue
                                   );
                                 }}
                                 handleBlur={validation.handleBlur}
@@ -992,17 +993,17 @@ const AddEditUser = () => {
                                 name="whatsapp_number"
                                 type="text"
                                 placeholder={InputPlaceHolder(
-                                  "Whatsapp Number",
+                                  "Whatsapp Number"
                                 )}
                                 handleChange={(e) => {
                                   const rawValue = e.target.value.replace(
                                     /\D/g,
-                                    "",
+                                    ""
                                   );
                                   const sanitizedValue = rawValue.slice(0, 10);
                                   validation.setFieldValue(
                                     "whatsapp_number",
-                                    sanitizedValue,
+                                    sanitizedValue
                                   );
                                 }}
                                 handleBlur={validation.handleBlur}
@@ -1027,13 +1028,13 @@ const AddEditUser = () => {
                                 name="company_linkedin_profile"
                                 type="url"
                                 placeholder={InputPlaceHolder(
-                                  "Company LinkedIn URL",
+                                  "Company LinkedIn URL"
                                 )}
                                 handleChange={(e) => {
                                   const rawValue = e.target.value;
                                   validation.setFieldValue(
                                     "company_linkedin_profile",
-                                    rawValue,
+                                    rawValue
                                   );
                                 }}
                                 handleBlur={validation.handleBlur}
@@ -1062,13 +1063,13 @@ const AddEditUser = () => {
                                 name="company_website"
                                 type="url"
                                 placeholder={InputPlaceHolder(
-                                  "Company Website",
+                                  "Company Website"
                                 )}
                                 handleChange={(e) => {
                                   const rawValue = e.target.value;
                                   validation.setFieldValue(
                                     "company_website",
-                                    rawValue,
+                                    rawValue
                                   );
                                 }}
                                 handleBlur={validation.handleBlur}
@@ -1097,7 +1098,7 @@ const AddEditUser = () => {
                                   const rawValue = e.target.value;
                                   validation.setFieldValue(
                                     "vendor_linkedin_profile",
-                                    rawValue,
+                                    rawValue
                                   );
                                 }}
                                 handleBlur={validation.handleBlur}
@@ -1119,7 +1120,11 @@ const AddEditUser = () => {
                       )}
 
                       <div className="flex justify-end gap-4">
-                        <BaseButton color="secondary" onClick={handleNavigate}>
+                        <BaseButton
+                          type="button"
+                          color="secondary"
+                          onClick={handleNavigate}
+                        >
                           Back
                         </BaseButton>
                         <BaseButton

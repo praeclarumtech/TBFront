@@ -20,7 +20,12 @@ export interface Pagination {
 }
 
 export interface Metadata
-  extends timeStamp, timeZone, requestId, path, version, repoVersion {
+  extends timeStamp,
+    timeZone,
+    requestId,
+    path,
+    version,
+    repoVersion {
   languages: Array<string>;
   pagination?: Pagination;
   totalUnSeen?: number;
@@ -82,7 +87,7 @@ export interface BaseButtonProps {
   loader?: boolean;
   className?: string;
   type?: "button" | "submit" | "reset";
-  onClick?: () => void;
+  onClick?: (e?: React.MouseEvent<HTMLButtonElement>) => void;
   id?: string;
   children?: React.ReactNode;
   variant?: string;

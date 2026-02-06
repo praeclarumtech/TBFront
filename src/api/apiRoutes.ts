@@ -43,6 +43,7 @@ export const EXPORT_IMPORT_APPLICANT = "applicants/exportCsv/";
 export const DELETE_MULTIPLE_APPLICANT = "applicants/deleteManyApplicants";
 export const EXISTING_APPLICANT = "applicants/checkApplicant/?";
 export const IMPORT_APPLICANT = "applicants/importCsv";
+export const SAMPLE_IMPORT_APPLICANT = "applicants/downloadSampleApplicantImport";
 export const IMPORT_RESUME = "applicants/upload-resume";
 export const IMPORT_APPLICANT_LIST = "applicants/viewResumeAndCsvApplicant";
 export const UPDATE_APPLICANT_MANY = "applicants/updateManyApplicant";

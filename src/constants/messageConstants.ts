@@ -46,6 +46,9 @@ export const SUCCESS_MESSAGES = {
   VENDOR_UPDATED: "Vendor updated successfully!",
   VENDOR_DELETED: "Vendor deleted successfully!",
 
+  // Client Management
+  CLIENT_UPDATED: "Client updated successfully!",
+
   // Job Management
   JOB_CREATED: "Job created successfully!",
   JOB_UPDATED: "Job updated successfully!",
