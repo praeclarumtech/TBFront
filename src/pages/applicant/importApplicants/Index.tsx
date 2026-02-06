@@ -19,6 +19,7 @@ import {
   updateImportedApplicantsStage,
   updateImportedApplicantsStatus,
   duplicateApplicants,
+  downloadSampleImportApplicant,
 } from "api/applicantApi";
 
 import ViewModal from "../ViewApplicant";
@@ -113,6 +114,7 @@ function ImportApplicant() {
   const [selectedFlag, setSelectedFlag] = useState<boolean | null>(null);
   const [duplicateRecords, setDuplicateRecords] = useState<any>([]);
   const [skillOptions, setSkillOptions] = useState<any[]>([]);
+  const [sampleDownloadLoader, setSampleDownloadLoader] = useState(false);
   const fetchDuplicateData = async () => {
     const params: {
       page: number;
@@ -693,6 +695,36 @@ function ImportApplicant() {
     setShowExportModal(true);
   };
 
+  const handleDownloadSampleImport = async () => {
+    setSampleDownloadLoader(true);
+    try {
+      const blob = await downloadSampleImportApplicant();
+      saveAs(blob, "application_import_sample.xlsx");
+      toastify("Sample file downloaded successfully!", { type: "success" });
+    } catch (error: any) {
+      if (error?.response?.data instanceof Blob) {
+        try {
+          const text = await error.response.data.text();
+          const parsed = JSON.parse(text);
+          toastify(parsed?.message || "Failed to download sample file.", {
+            type: "error",
+          });
+        } catch {
+          toastify("Failed to download sample file.", { type: "error" });
+        }
+      } else {
+        toastify(
+          error?.response?.data?.message ||
+            error?.message ||
+            "Failed to download sample file.",
+          { type: "error" }
+        );
+      }
+    } finally {
+      setSampleDownloadLoader(false);
+    }
+  };
+
   const handleExportOptionChange = (option: string) => {
     setExportOption(option);
     setExportableFields([]);
@@ -1270,6 +1302,24 @@ function ImportApplicant() {
                       >
                         <i className="ri-upload-2-line me-1" />
                         Export
+                      </BaseButton>
+                      <BaseButton
+                        color="secondary"
+                        className="ml-2 btn btn-soft-secondary edit-list"
+                        onClick={handleDownloadSampleImport}
+                        disabled={sampleDownloadLoader}
+                      >
+                        {sampleDownloadLoader ? (
+                          <>
+                            <i className="align-bottom ri-loader-4-line animate-spin me-1" />
+                            Downloading...
+                          </>
+                        ) : (
+                          <>
+                            <i className="align-bottom ri-file-excel-2-line me-1" />
+                            Download Sample
+                          </>
+                        )}
                       </BaseButton>
                       <BaseButton
                         color="primary"

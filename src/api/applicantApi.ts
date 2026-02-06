@@ -12,6 +12,7 @@ import {
   FILTER_APPLICANT,
   VIEW_CITY,
   IMPORT_APPLICANT,
+  SAMPLE_IMPORT_APPLICANT,
   EXPORT_APPLICANT,
   IMPORT_RESUME,
   IMPORT_APPLICANT_LIST,
@@ -430,6 +431,14 @@ export const downloadApplicant = async (data?: object) => {
     },
     responseType: "blob", // This is correct for downloading files
     timeout: 300000,
+  });
+  return response?.data;
+};
+
+export const downloadSampleImportApplicant = async () => {
+  const response = await authServices.get(`${SAMPLE_IMPORT_APPLICANT}`, {
+    responseType: "blob",
+    timeout: 60000,
   });
   return response?.data;
 };

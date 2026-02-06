@@ -13,9 +13,13 @@ const BaseButton = ({
   children,
   sx,
 }: BaseButtonProps) => {
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (type !== "submit" && type !== "reset") {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     if (onClick) {
-      return onClick();
+      return onClick(e);
     }
   };
 
@@ -25,7 +29,7 @@ const BaseButton = ({
       color={color}
       disabled={disabled || loader}
       className={`btn ${color ? `btn-${color}` : ""} ${className}`}
-      type={type}
+      type={type ?? "button"}
       onClick={handleClick}
       style={sx}
     >

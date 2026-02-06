@@ -95,7 +95,7 @@ const UserProfileEdit = () => {
       setrolesOptions(options);
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "An error occurred.",
+        error instanceof Error ? error.message : "An error occurred."
       );
     } finally {
       setLoading(false);
@@ -130,7 +130,7 @@ const UserProfileEdit = () => {
   const sourceType = getSourceType();
 
   const [imagePreview, setImagePreview] = useState<string>(
-    "talent/images/avatar/avatar.png",
+    "talent/images/avatar/avatar.png"
   );
   const navigate = useNavigate();
   const validation = useFormik({
@@ -161,7 +161,7 @@ const UserProfileEdit = () => {
         .required(RequiredField("Username"))
         .matches(
           /^[A-Za-z0-9]+$/,
-          "Username must only contain letters and numbers",
+          "Username must only contain letters and numbers"
         ),
       email: Yup.string()
         .required(validationMessages.required("Email"))
@@ -186,22 +186,22 @@ const UserProfileEdit = () => {
         .min(8, validationMessages.passwordLength("Password", 8))
         .matches(
           passwordRegex,
-          validationMessages.passwordComplexity("Password"),
+          validationMessages.passwordComplexity("Password")
         ),
       confirmPassword: Yup.string()
         .required(validationMessages.required("Confirm Password"))
         .oneOf(
           [Yup.ref("password")],
-          "Password and confirm password should be same.",
+          "Password and confirm password should be same."
         ),
       role: Yup.string().required(RequiredField("Role")),
       company_name: Yup.string(),
       company_email: Yup.string().email(
-        validationMessages.format("Company Email"),
+        validationMessages.format("Company Email")
       ),
       company_phone_number: Yup.string().matches(
         /^[1-9][0-9]{9}$/,
-        "Please enter a valid 10-digit phone number. It should not start with 0.",
+        "Please enter a valid 10-digit phone number. It should not start with 0."
       ),
       company_location: Yup.string(),
       company_strength: Yup.string(),
@@ -223,7 +223,7 @@ const UserProfileEdit = () => {
           schema
             .matches(
               /^[1-9][0-9]{9}$/,
-              "Please enter a valid 10-digit phone number. It should not start with 0.",
+              "Please enter a valid 10-digit phone number. It should not start with 0."
             )
             .required("WhatsApp number is required."),
         otherwise: (schema) => schema.notRequired(),
@@ -311,7 +311,7 @@ const UserProfileEdit = () => {
           setProfileData(response?.data);
         } catch (error) {
           toast.error(
-            error instanceof Error ? error.message : "An error occurred",
+            error instanceof Error ? error.message : "An error occurred"
           );
         } finally {
           setLoading(false);
@@ -358,7 +358,7 @@ const UserProfileEdit = () => {
       setImagePreview(
         profileData.profilePicture
           ? `${appEnv.API_ENDPOINT}/uploads/profile/${profileData.profilePicture}`
-          : "talent/images/avatar/avatar.png",
+          : "talent/images/avatar/avatar.png"
       );
     }
   }, [profileData]);
@@ -405,14 +405,25 @@ const UserProfileEdit = () => {
       const response = await updateProfile(_id, formDataToSend);
 
       if (response) {
-        toast.success(response?.message || "Profile updated successfully.");
-
+        if (response?.success === SUCCESS) {
+        const successMsg =
+          (location.state?.from === "VendorList" ||
+          location.state?.from === "Vendor"
+            ? "Vendor updated successfully."
+            : location.state?.from === "Client"
+            ? "Client updated successfully."
+            : "Profile updated successfully.");
+        toast.success(successMsg);
         setLoading(false);
-
+      }
+      else{
+        toast.error(response?.message);
+      }
+      setLoading(false);
         setImagePreview(
           response?.data?.profilePicture
             ? `${appEnv.API_ENDPOINT}/uploads/profile/${response.data.profilePicture}`
-            : imagePreview,
+            : imagePreview
         );
 
         if (location.state?.from === "VendorList") {
@@ -427,7 +438,7 @@ const UserProfileEdit = () => {
       // if (error && statusCode === 400) {
 
       toast.error(
-        error instanceof Error ? error.message : "An error occurred.",
+        error instanceof Error ? error.message : "An error occurred."
       );
       // }
     } finally {
@@ -515,10 +526,10 @@ const UserProfileEdit = () => {
                       {isEditMode
                         ? "Profile"
                         : sourceType === "client"
-                          ? "Add Client"
-                          : sourceType === "vendor"
-                            ? "Add Vendor"
-                            : "Add User"}
+                        ? "Add Client"
+                        : sourceType === "vendor"
+                        ? "Add Vendor"
+                        : "Add User"}
                     </h3>
 
                     {hasMounted && isEditMode && (
@@ -664,7 +675,7 @@ const UserProfileEdit = () => {
                               handleChange={(e) => {
                                 const value = e.target.value.replace(
                                   /[^A-Za-z\s]/g,
-                                  "",
+                                  ""
                                 );
                                 setFormData({
                                   ...formData,
@@ -691,7 +702,7 @@ const UserProfileEdit = () => {
                               handleChange={(e) => {
                                 const value = e.target.value.replace(
                                   /[^A-Za-z\s]/g,
-                                  "",
+                                  ""
                                 );
                                 setFormData({ ...formData, lastName: value });
                               }}
@@ -716,7 +727,7 @@ const UserProfileEdit = () => {
                               handleChange={(e) => {
                                 const rawValue = e.target.value.replace(
                                   /\D/g,
-                                  "",
+                                  ""
                                 );
                                 const sanitizedValue = rawValue.slice(0, 10);
                                 setFormData({
@@ -743,7 +754,7 @@ const UserProfileEdit = () => {
                               handleChange={(e) => {
                                 const value = e.target.value.replace(
                                   /[^A-Za-z\s]/g,
-                                  "",
+                                  ""
                                 );
                                 setFormData({
                                   ...formData,
@@ -772,7 +783,7 @@ const UserProfileEdit = () => {
                               value={
                                 formData.dateOfBirth
                                   ? moment(formData.dateOfBirth).format(
-                                      "YYYY-MM-DD",
+                                      "YYYY-MM-DD"
                                     )
                                   : ""
                               }
@@ -802,7 +813,7 @@ const UserProfileEdit = () => {
                               //   formData.isActive = selectedOption?.value || "";
                               // }}
                               handleChange={(
-                                selectedOption: SelectedOption,
+                                selectedOption: SelectedOption
                               ) => {
                                 setFormData({
                                   ...formData,
@@ -813,7 +824,7 @@ const UserProfileEdit = () => {
                               value={
                                 dynamicFind(
                                   activeStatusOptions,
-                                  formData?.isActive,
+                                  formData?.isActive
                                 ) || ""
                               }
                               isRequired={false}
@@ -950,7 +961,7 @@ const UserProfileEdit = () => {
                                   name="company_email"
                                   type="email"
                                   placeholder={InputPlaceHolder(
-                                    "Company Email",
+                                    "Company Email"
                                   )}
                                   handleChange={(e) => {
                                     const value = e.target.value;
@@ -979,11 +990,11 @@ const UserProfileEdit = () => {
                                   handleChange={(e) => {
                                     const rawValue = e.target.value.replace(
                                       /\D/g,
-                                      "",
+                                      ""
                                     );
                                     const sanitizedValue = rawValue.slice(
                                       0,
-                                      10,
+                                      10
                                     );
                                     setFormData({
                                       ...formData,
@@ -1006,7 +1017,7 @@ const UserProfileEdit = () => {
                                   name="company_location"
                                   type="text"
                                   placeholder={InputPlaceHolder(
-                                    "Company Location",
+                                    "Company Location"
                                   )}
                                   handleChange={(e) => {
                                     const rawValue = e.target.value;
@@ -1036,7 +1047,7 @@ const UserProfileEdit = () => {
                                   options={hireResourceOptions}
                                   placeholder={InputPlaceHolder("Type")}
                                   handleChange={(
-                                    selectedOption: SelectedOption,
+                                    selectedOption: SelectedOption
                                   ) => {
                                     setFormData({
                                       ...formData,
@@ -1048,7 +1059,7 @@ const UserProfileEdit = () => {
                                   value={
                                     dynamicFind(
                                       hireResourceOptions,
-                                      formData?.hire_resources,
+                                      formData?.hire_resources
                                     ) || ""
                                   }
                                   isRequired={false}
@@ -1085,7 +1096,7 @@ const UserProfileEdit = () => {
                                   options={companyType}
                                   placeholder={InputPlaceHolder("Type")}
                                   handleChange={(
-                                    selectedOption: SelectedOption,
+                                    selectedOption: SelectedOption
                                   ) => {
                                     setFormData({
                                       ...formData,
@@ -1096,7 +1107,7 @@ const UserProfileEdit = () => {
                                   value={
                                     dynamicFind(
                                       companyType,
-                                      formData?.company_type,
+                                      formData?.company_type
                                     ) || ""
                                   }
                                   isRequired={false}
@@ -1133,16 +1144,16 @@ const UserProfileEdit = () => {
                                   name="company_strength"
                                   type="text"
                                   placeholder={InputPlaceHolder(
-                                    "Company Strength",
+                                    "Company Strength"
                                   )}
                                   handleChange={(e) => {
                                     const rawValue = e.target.value.replace(
                                       /\D/g,
-                                      "",
+                                      ""
                                     );
                                     const sanitizedValue = rawValue.slice(
                                       0,
-                                      10,
+                                      10
                                     );
                                     setFormData({
                                       ...formData,
@@ -1167,7 +1178,7 @@ const UserProfileEdit = () => {
                                   name="company_linkedin_profile"
                                   type="url"
                                   placeholder={InputPlaceHolder(
-                                    "Company Linkedin URL",
+                                    "Company Linkedin URL"
                                   )}
                                   handleChange={(e) => {
                                     const rawValue = e.target.value;
@@ -1195,7 +1206,7 @@ const UserProfileEdit = () => {
                                   name="company_website"
                                   type="url"
                                   placeholder={InputPlaceHolder(
-                                    "Company Website",
+                                    "Company Website"
                                   )}
                                   handleChange={(e) => {
                                     const rawValue = e.target.value;
@@ -1219,6 +1230,7 @@ const UserProfileEdit = () => {
                         <div className="flex justify-end gap-4 ">
                           <>
                             <BaseButton
+                              type="button"
                               variant="danger"
                               onClick={handleNavigate}
                             >
@@ -1302,7 +1314,7 @@ const UserProfileEdit = () => {
                               handleChange={(e) => {
                                 const value = e.target.value.replace(
                                   /[^A-Za-z\s]/g,
-                                  "",
+                                  ""
                                 );
                                 validation.setFieldValue("firstName", value);
                               }}
@@ -1330,7 +1342,7 @@ const UserProfileEdit = () => {
                               handleChange={(e) => {
                                 const value = e.target.value.replace(
                                   /[^A-Za-z\s]/g,
-                                  "",
+                                  ""
                                 );
                                 validation.setFieldValue("lastName", value);
                               }}
@@ -1358,18 +1370,18 @@ const UserProfileEdit = () => {
                               options={rolesOptions}
                               placeholder={InputPlaceHolder("Role")}
                               handleChange={(
-                                selectedOption: SelectedOptionRole1,
+                                selectedOption: SelectedOptionRole1
                               ) => {
                                 validation.setFieldValue(
                                   "role",
-                                  selectedOption?.value || "",
+                                  selectedOption?.value || ""
                                 );
                               }}
                               handleBlur={validation.handleBlur}
                               value={
                                 dynamicFind(
                                   rolesOptions,
-                                  validation.values.role,
+                                  validation.values.role
                                 ) || ""
                               }
                               touched={validation.touched.role}
@@ -1408,18 +1420,18 @@ const UserProfileEdit = () => {
                               options={activeStatusOptions}
                               placeholder={InputPlaceHolder("Status")}
                               handleChange={(
-                                selectedOption: SelectedOption,
+                                selectedOption: SelectedOption
                               ) => {
                                 validation.setFieldValue(
                                   "isActive",
-                                  selectedOption?.value || "",
+                                  selectedOption?.value || ""
                                 );
                               }}
                               handleBlur={validation.handleBlur}
                               value={
                                 dynamicFind(
                                   activeStatusOptions,
-                                  validation.values.isActive,
+                                  validation.values.isActive
                                 ) || ""
                               }
                               touched={validation.touched.isActive}
@@ -1463,7 +1475,7 @@ const UserProfileEdit = () => {
 
                                 validation.setFieldValue(
                                   "password",
-                                  newPassword,
+                                  newPassword
                                 );
                               }}
                               handleBlur={validation.handleBlur}
@@ -1519,11 +1531,11 @@ const UserProfileEdit = () => {
                                   handleChange={(e) => {
                                     const value = e.target.value.replace(
                                       /[^A-Za-z0-9\s]/g,
-                                      "",
+                                      ""
                                     );
                                     validation.setFieldValue(
                                       "company_name",
-                                      value,
+                                      value
                                     );
                                   }}
                                   handleBlur={validation.handleBlur}
@@ -1548,7 +1560,7 @@ const UserProfileEdit = () => {
                                   name="company_email"
                                   type="email"
                                   placeholder={InputPlaceHolder(
-                                    "Company Email",
+                                    "Company Email"
                                   )}
                                   handleChange={validation.handleChange}
                                   handleBlur={validation.handleBlur}
@@ -1576,15 +1588,15 @@ const UserProfileEdit = () => {
                                   handleChange={(e) => {
                                     const rawValue = e.target.value.replace(
                                       /\D/g,
-                                      "",
+                                      ""
                                     ); // digits only
                                     const sanitizedValue = rawValue.slice(
                                       0,
-                                      10,
+                                      10
                                     ); // limit to 10 digits
                                     validation.setFieldValue(
                                       "company_phone_number",
-                                      sanitizedValue,
+                                      sanitizedValue
                                     );
                                   }}
                                   handleBlur={validation.handleBlur}
@@ -1609,13 +1621,13 @@ const UserProfileEdit = () => {
                                   name="company_location"
                                   type="text"
                                   placeholder={InputPlaceHolder(
-                                    "Company Location",
+                                    "Company Location"
                                   )}
                                   handleChange={(e) => {
                                     const rawValue = e.target.value;
                                     validation.setFieldValue(
                                       "company_location",
-                                      rawValue,
+                                      rawValue
                                     );
                                   }}
                                   handleBlur={validation.handleBlur}
@@ -1642,22 +1654,22 @@ const UserProfileEdit = () => {
                                   options={hireResourceOptions}
                                   placeholder={InputPlaceHolder("Type")}
                                   handleChange={(
-                                    selectedOption: SelectedOption,
+                                    selectedOption: SelectedOption
                                   ) => {
                                     validation.setFieldValue(
                                       "hire_resources",
-                                      selectedOption?.value || "",
+                                      selectedOption?.value || ""
                                     );
                                     validation.setFieldTouched(
                                       "hire_resources",
-                                      true,
+                                      true
                                     );
                                   }}
                                   handleBlur={validation.handleBlur}
                                   value={
                                     dynamicFind(
                                       hireResourceOptions,
-                                      validation.values.hire_resources,
+                                      validation.values.hire_resources
                                     ) || ""
                                   }
                                   touched={validation.touched.hire_resources}
@@ -1696,22 +1708,22 @@ const UserProfileEdit = () => {
                                   options={companyType}
                                   placeholder={InputPlaceHolder("Type")}
                                   handleChange={(
-                                    selectedOption: SelectedOption,
+                                    selectedOption: SelectedOption
                                   ) => {
                                     validation.setFieldValue(
                                       "company_type",
-                                      selectedOption?.value || "",
+                                      selectedOption?.value || ""
                                     );
                                     validation.setFieldTouched(
                                       "company_type",
-                                      true,
+                                      true
                                     );
                                   }}
                                   handleBlur={validation.handleBlur}
                                   value={
                                     dynamicFind(
                                       companyType,
-                                      validation.values.company_type,
+                                      validation.values.company_type
                                     ) || ""
                                   }
                                   touched={validation.touched.company_type}
@@ -1750,20 +1762,20 @@ const UserProfileEdit = () => {
                                   name="company_strength"
                                   type="text"
                                   placeholder={InputPlaceHolder(
-                                    "Company Strength",
+                                    "Company Strength"
                                   )}
                                   handleChange={(e) => {
                                     const rawValue = e.target.value.replace(
                                       /\D/g,
-                                      "",
+                                      ""
                                     ); // digits only
                                     const sanitizedValue = rawValue.slice(
                                       0,
-                                      10,
+                                      10
                                     ); // limit to 10 digits if you want
                                     validation.setFieldValue(
                                       "company_strength",
-                                      sanitizedValue,
+                                      sanitizedValue
                                     );
                                   }}
                                   handleBlur={validation.handleBlur}
@@ -1786,20 +1798,20 @@ const UserProfileEdit = () => {
                                   name="whatsapp_number"
                                   type="text"
                                   placeholder={InputPlaceHolder(
-                                    "Whatsapp Number",
+                                    "Whatsapp Number"
                                   )}
                                   handleChange={(e) => {
                                     const rawValue = e.target.value.replace(
                                       /\D/g,
-                                      "",
+                                      ""
                                     ); // digits only
                                     const sanitizedValue = rawValue.slice(
                                       0,
-                                      10,
+                                      10
                                     ); // limit to 10 digits
                                     validation.setFieldValue(
                                       "whatsapp_number",
-                                      sanitizedValue,
+                                      sanitizedValue
                                     );
                                   }}
                                   handleBlur={validation.handleBlur}
@@ -1824,13 +1836,13 @@ const UserProfileEdit = () => {
                                   name="company_linkedin_profile"
                                   type="url"
                                   placeholder={InputPlaceHolder(
-                                    "Company LinkedIn URL",
+                                    "Company LinkedIn URL"
                                   )}
                                   handleChange={(e) => {
                                     const rawValue = e.target.value;
                                     validation.setFieldValue(
                                       "company_linkedin_profile",
-                                      rawValue,
+                                      rawValue
                                     );
                                   }}
                                   handleBlur={validation.handleBlur}
@@ -1860,13 +1872,13 @@ const UserProfileEdit = () => {
                                   name="company_website"
                                   type="url"
                                   placeholder={InputPlaceHolder(
-                                    "Company Website",
+                                    "Company Website"
                                   )}
                                   handleChange={(e) => {
                                     const rawValue = e.target.value;
                                     validation.setFieldValue(
                                       "company_website",
-                                      rawValue,
+                                      rawValue
                                     );
                                   }}
                                   handleBlur={validation.handleBlur}
@@ -1895,7 +1907,7 @@ const UserProfileEdit = () => {
                                     const rawValue = e.target.value;
                                     validation.setFieldValue(
                                       "vendor_linkedin_profile",
-                                      rawValue,
+                                      rawValue
                                     );
                                   }}
                                   handleBlur={validation.handleBlur}
@@ -1919,6 +1931,7 @@ const UserProfileEdit = () => {
                         )}
                         <div className="flex justify-end gap-4">
                           <BaseButton
+                            type="button"
                             color="secondary"
                             onClick={handleNavigate}
                           >

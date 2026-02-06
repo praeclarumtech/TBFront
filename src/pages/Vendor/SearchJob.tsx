@@ -19,7 +19,7 @@ import { useNavigate } from "react-router-dom";
 import { viewAllCity } from "api/cityApis";
 import Offcanvas from "react-bootstrap/esm/Offcanvas";
 
-const { SalaryFrequency, workPreferenceType } = appConstants;
+const { SalaryFrequency } = appConstants;
 
 const SearchJob = () => {
   const navigate = useNavigate();
@@ -199,9 +199,9 @@ const SearchJob = () => {
     setFilterSalaryFreq(selectedOption);
   };
 
-  const handleWorkExp = (selectedOption: SelectedOption) => {
-    setWorkPreference(selectedOption);
-  };
+  // const handleWorkExp = (selectedOption: SelectedOption) => {
+  //   setWorkPreference(selectedOption);
+  // };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchAll(event.target.value);
@@ -315,7 +315,7 @@ const SearchJob = () => {
             />
           </div>
 
-          <div>
+          {/* <div>
             <BaseSelect
               label="Work Preference"
               name="work_preference"
@@ -325,7 +325,7 @@ const SearchJob = () => {
               handleChange={handleWorkExp}
               options={workPreferenceType}
             />
-          </div>
+          </div> */}
         </div>
       </div>
 
