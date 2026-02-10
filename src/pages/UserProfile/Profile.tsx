@@ -33,7 +33,7 @@ const getProfileImageUrl = (
     appEnv.API_ENDPOINT?.includes("app.praeclarumtech.com");
 
   if (isProduction && appEnv.PRODUCTION_PROFILE_URL) {
-    return `${appEnv.PRODUCTION_PROFILE_URL}/uploads/${profilePicture}`;
+    return `${appEnv.PRODUCTION_PROFILE_URL}/uploads/profile/${profilePicture}`;
   }
 
   return `${appEnv.API_ENDPOINT}/uploads/profile/${profilePicture}`;

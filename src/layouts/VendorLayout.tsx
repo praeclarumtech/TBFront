@@ -7,10 +7,10 @@ const VendorLayout = () => {
   const isFromEmail = searchParams.get("source") === "email";
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen overflow-x-hidden max-w-full">
       {!isFromEmail && <VendorHeader />}
       <div
-        className={`flex-grow bg-light ${isFromEmail ? "p-0" : "p-6 pt-12"}`}
+        className={`flex-grow bg-light overflow-x-hidden ${isFromEmail ? "p-0" : "p-4 p-md-6 pt-8 pt-md-12"}`}
       >
         <Outlet />
       </div>

@@ -12,6 +12,7 @@ export const viewAllState = async (
     pageSize?: number;
     limit?: number;
     country_id?: string;
+    search?: string;
   } = {}
 ) => {
   const response = await authServices.get(`${VIEW_ALL_STATE}`, { params });

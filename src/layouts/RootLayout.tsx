@@ -25,14 +25,13 @@ const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Reverse margin logic on small screens
+  // On mobile: sidebar overlays, so content always full width (no margin).
+  // On desktop: margin when menu open, no margin when closed.
   const sidebarMargin = isMobile
-    ? showMenu
-      ? "0" // on mobile: menu open → no margin
-      : "250px" // on mobile: menu closed → push content
+    ? "0" // iPhone/mobile: content always full width, sidebar overlays
     : showMenu
-    ? "250px" // on desktop: menu open → margin
-    : "0"; // on desktop: menu closed → no margin
+    ? "250px"
+    : "0";
 
   const contentShiftStyle = {
     marginLeft: sidebarMargin,
@@ -40,7 +39,7 @@ const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
   };
 
   return (
-    <section className="bg-light">
+    <section className="bg-light overflow-x-hidden">
       <div id="db-wrapper" className={`${showMenu ? "" : "toggled"}`}>
         <div className="navbar-vertical navbar" style={{ zIndex: 10 }}>
           <Sidebar showMenu={showMenu} toggleMenu={ToggleMenu} />
@@ -54,15 +53,15 @@ const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
           </div>
 
           <div
-            className="content"
+            className="content content-below-header"
             style={{
-              // ...contentShiftStyle,
-              marginTop: "66px",
               marginBottom: isMobile ? "56px" : "34px",
               overflow: "auto",
               overflowY: "auto",
+              overflowX: "hidden",
               right: 0,
               zIndex: 10,
+              maxWidth: "100%",
             }}
           >
             <AutoLogout />

@@ -5,8 +5,8 @@ import { Container } from "react-bootstrap";
 
 const AuthenticationLayout = () => {
   return (
-    <section className="bg-light">
-      <Container className="d-flex flex-column">
+    <section className="bg-light overflow-x-hidden min-vh-100">
+      <Container className="d-flex flex-column" style={{ maxWidth: "100%" }}>
         <Outlet />
 
         {/* <Link

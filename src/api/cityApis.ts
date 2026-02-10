@@ -13,6 +13,7 @@ export const viewAllCity = async (
     pageSize?: number;
     limit?: number;
     state_id?: string;
+    search?: string;
   } = {}
 ) => {
   const response = await authServices.get(`${VIEW_CITY}`, { params });

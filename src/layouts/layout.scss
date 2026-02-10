@@ -1,5 +1,7 @@
 .appLayout {
   height: 100vh;
+  min-height: 100dvh;
+  min-height: -webkit-fill-available;
 
   .appHeader {
     @apply h-auto bg-white border-b border-gray-200;

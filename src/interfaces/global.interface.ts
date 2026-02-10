@@ -172,12 +172,14 @@ export interface PaginateSelectProps extends BaseSelectProps {
   loadMore?: () => void;
   hasMore?: boolean;
   isLoadingMore?: boolean;
+  onInputChange?: (value: string) => void;
 }
 
 export interface PaginateMultiSelectProps extends MultiSelectProps {
   loadMore?: () => void;
   hasMore?: boolean;
   isLoadingMore?: boolean;
+  onInputChange?: (value: string) => void;
 }
 
 export interface BaseTextareaProps {

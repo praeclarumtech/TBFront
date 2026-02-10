@@ -9,12 +9,17 @@
   width: 100%;
   max-width: 250px;
   padding: 0rem;
+  padding-top: env(safe-area-inset-top, 0);
   background-color: $gray-800;
   border-right: 1px solid $gray-800;
   -webkit-transition: margin 0.25s ease-out;
   -moz-transition: margin 0.25s ease-out;
   -o-transition: margin 0.25s ease-out;
   transition: margin 0.25s ease-out;
+
+  @media (max-width: 767.98px) {
+    z-index: 1050; // Above header so sidebar overlays on iPhone
+  }
 
   .slimScrollDiv {
     height: 100% !important;

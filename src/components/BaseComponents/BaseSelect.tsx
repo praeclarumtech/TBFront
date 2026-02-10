@@ -49,8 +49,8 @@ const BaseSelect = ({
       borderColor: hasError
         ? "#dc3545"
         : state.isFocused
-          ? "#2684FF"
-          : base.borderColor,
+        ? "#2684FF"
+        : base.borderColor,
       boxShadow: state.isFocused ? "0 0 0 1px #2684FF" : base.boxShadow,
       "&:hover": {
         borderColor: hasError ? "#dc3545" : "#2684FF",
@@ -130,8 +130,8 @@ const MultiSelect = ({
       borderColor: hasError
         ? "#dc3545"
         : state.isFocused
-          ? "#2684FF"
-          : base.borderColor,
+        ? "#2684FF"
+        : base.borderColor,
       boxShadow: state.isFocused ? "0 0 0 1px #2684FF" : base.boxShadow,
       "&:hover": {
         borderColor: hasError ? "#dc3545" : "#2684FF",
@@ -238,6 +238,7 @@ const PaginateSelect = ({
   loadMore,
   hasMore = false,
   isLoadingMore = false,
+  onInputChange,
 }: PaginateSelectProps) => {
   const hasError = touched && error;
   const customStyles = {
@@ -259,8 +260,8 @@ const PaginateSelect = ({
       borderColor: hasError
         ? "#dc3545"
         : state.isFocused
-          ? "#2684FF"
-          : base.borderColor,
+        ? "#2684FF"
+        : base.borderColor,
       boxShadow: state.isFocused ? "0 0 0 1px #2684FF" : base.boxShadow,
       "&:hover": {
         borderColor: hasError ? "#dc3545" : "#2684FF",
@@ -289,6 +290,12 @@ const PaginateSelect = ({
         value={value}
         onChange={handleChange}
         onBlur={handleBlur}
+        onInputChange={(inputValue, { action }) => {
+          if (onInputChange && action === "input-change") {
+            onInputChange(inputValue);
+          }
+        }}
+        filterOption={onInputChange ? null : undefined}
         isClearable
         isDisabled={isDisabled}
         menuPlacement="auto"
@@ -323,6 +330,7 @@ const PaginateMultiSelect = ({
   loadMore,
   hasMore = false,
   isLoadingMore = false,
+  onInputChange,
 }: PaginateMultiSelectProps) => {
   const hasError = touched && error;
   const customStyles = {
@@ -345,8 +353,8 @@ const PaginateMultiSelect = ({
       borderColor: hasError
         ? "#dc3545"
         : state.isFocused
-          ? "#2684FF"
-          : base.borderColor,
+        ? "#2684FF"
+        : base.borderColor,
       boxShadow: state.isFocused ? "0 0 0 1px #2684FF" : base.boxShadow,
       "&:hover": {
         borderColor: hasError ? "#dc3545" : "#2684FF",
@@ -390,6 +398,12 @@ const PaginateMultiSelect = ({
         isMulti={isMulti}
         onChange={onChange}
         options={options}
+        onInputChange={(inputValue, { action }) => {
+          if (onInputChange && action === "input-change") {
+            onInputChange(inputValue);
+          }
+        }}
+        filterOption={onInputChange ? null : undefined}
         styles={customStyles}
         name={name}
         onBlur={handleBlur}
