@@ -1,7 +1,11 @@
 // import node module libraries
 import { Fragment, MouseEvent } from "react";
-import { CopyToClipboard } from "react-copy-to-clipboard";
-import SyntaxHighlighter from "react-syntax-highlighter";
+import { CopyToClipboard as CopyToClipboardOriginal } from "react-copy-to-clipboard";
+import SyntaxHighlighterOriginal from "react-syntax-highlighter";
+import type { ComponentType } from "react";
+
+const CopyToClipboard = CopyToClipboardOriginal as unknown as ComponentType<any>;
+const SyntaxHighlighter = SyntaxHighlighterOriginal as unknown as ComponentType<any>;
 import { shadesOfPurple } from "react-syntax-highlighter/dist/esm/styles/hljs";
 
 const HighlightCode = ({ code }: { code: string }) => {

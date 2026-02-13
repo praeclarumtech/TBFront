@@ -10,7 +10,9 @@ import {
   DropdownMenu,
 } from "reactstrap";
 import { Link } from "react-router-dom";
-import Flatpickr from "react-flatpickr";
+import FlatpickrOriginal from "react-flatpickr";
+
+const Flatpickr = FlatpickrOriginal as unknown as React.ComponentType<any>;
 import Select from "react-select";
 
 const ProductsGlobalFilter = () => {
