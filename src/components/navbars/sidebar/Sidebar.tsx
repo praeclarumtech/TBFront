@@ -121,22 +121,22 @@ styleElement.innerHTML = scrollbarStyles;
 document.head.appendChild(styleElement);
 
 // custom heading - darker for visibility on light gray background
-const MenuGroupHeading = ({ title }: { title: string }) => (
-  <div
-    style={{
-      padding: "16px 24px 8px",
-      color: "#495057",
-      fontSize: "12px",
-      fontWeight: "600",
-      textTransform: "uppercase",
-      letterSpacing: "1px",
-    }}
-  >
-    {title}
-  </div>
-);
+// const MenuGroupHeading = ({ title }: { title: string }) => (
+//   <div
+//     style={{
+//       padding: "16px 24px 8px",
+//       color: "#495057",
+//       fontSize: "12px",
+//       fontWeight: "600",
+//       textTransform: "uppercase",
+//       letterSpacing: "1px",
+//     }}
+//   >
+//     {title}
+//   </div>
+// );
 
-const Sidebar: React.FC<SidebarProps> = ({ toggleMenu, isMobile = false }) => {
+const Sidebar: React.FC<SidebarProps> = ({ toggleMenu }) => {
   const location = useLocation();
   const [openKeys, setOpenKeys] = useState<string[]>([]);
   const [modules, setModules] = useState<any[]>([]);

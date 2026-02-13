@@ -112,6 +112,7 @@ const TableContainer = ({
   setPagination,
   loader,
   customPadding,
+  scrollPaddingBottom,
   availableColumns,
   onColumnsChange,
   hideColumnsDropdown = false,
@@ -284,11 +285,13 @@ const TableContainer = ({
       </Row>
 
       <div
-        className={`h-[458px] overflow-auto ${divClass}`}
+        className={`table-scroll-container overflow-auto ${divClass}`}
         style={{
+          height: "458px",
           maxHeight: "500px",
           overflowX: "auto",
           overflowY: "auto",
+          paddingBottom: scrollPaddingBottom || undefined,
         }}
       >
         <Table hover className={tableClass}>
@@ -357,7 +360,11 @@ const TableContainer = ({
                       return (
                         <td
                           key={cell.id}
-                          style={{ padding: customPadding || "0.75rem 1.5rem" }}
+                          style={{
+                            padding: customPadding || "0.75rem 1.5rem",
+                            verticalAlign: "middle",
+                            overflow: "visible",
+                          }}
                         >
                           {flexRender(
                             cell?.column?.columnDef?.cell,

@@ -80,7 +80,7 @@ const Charts = () => {
     credits: { enabled: false },
     tooltip: {
       formatter: function () {
-        const point = this.point as Highcharts.Point;
+        const point = this as unknown as Highcharts.Point;
         return `
           <div style="padding:10px 15px; background:white; border-radius:8px; box-shadow:0px 4px 12px rgba(0,0,0,0.1); font-family:Arial, sans-serif;">
             <div style="font-weight:600; color:#4B5563; font-size:14px; margin-bottom:5px;">${point.name}</div>

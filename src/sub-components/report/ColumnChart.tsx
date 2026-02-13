@@ -89,7 +89,7 @@ const ColumnChart = ({ selectedFilter }: Props) => {
     credits: { enabled: false },
     tooltip: {
       formatter: function () {
-        const point = this.point as Highcharts.Point;
+        const point = this as unknown as Highcharts.Point;
         return `<div style="padding: 8px;color:#212B36;">
               <strong style="color:#624BFF;">${point.name}</strong><br />
               ${point.y} Applicants

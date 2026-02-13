@@ -269,6 +269,7 @@ export interface TableContainerProps {
   searchBoxMarginTop?: any;
   titleMarginTop?: any;
   customPadding?: any;
+  scrollPaddingBottom?: string;
 }
 
 export interface BaseSliderProps {

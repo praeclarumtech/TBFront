@@ -148,6 +148,14 @@
 
 // Global Responsive Styles
 @media (max-width: 768px) {
+  // Table scroll container: viewport-based height on mobile
+  .table-scroll-container {
+    height: auto !important;
+    min-height: 280px !important;
+    max-height: calc(100dvh - 220px) !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
   // Make tables scrollable on mobile (iPhone)
   .table-responsive,
   .table-responsive .overflow-auto {
@@ -160,6 +168,38 @@
 
   table {
     max-width: 100%;
+  }
+
+  // Table cell padding on mobile - ensure Status toggle fits
+  .table-scroll-container .table td {
+    padding: 0.5rem 0.75rem !important;
+    min-height: 44px;
+    vertical-align: middle !important;
+  }
+
+  .table-scroll-container .table th {
+    padding: 0.5rem 0.75rem !important;
+    font-size: 0.8rem;
+  }
+
+  // Ant Design Switch - touch-friendly on mobile
+  .table-scroll-container .ant-switch {
+    min-width: 40px;
+    min-height: 22px;
+  }
+
+  // Pagination - stack and wrap on mobile
+  .pagination.pagination-separated {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .pagination .page-link {
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
 
   // Reduce card padding on mobile

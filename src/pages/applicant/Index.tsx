@@ -713,10 +713,10 @@ const Applicant = () => {
 
                   <div className="col-12 col-md-9">
                     <div className="d-md-none">
-                      <div className="flex gap-2 mb-2">
+                      <div className="d-flex flex-wrap gap-2 mb-2">
                         <input
                           id="search-bar-0"
-                          className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 "
+                          className="flex-1 min-w-0 px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[44px]"
                           placeholder="Search..."
                           onChange={handleSearchChange}
                           value={filters.searchAll}
@@ -725,7 +725,7 @@ const Applicant = () => {
                           <Tooltip.Root>
                             <Tooltip.Trigger asChild>
                               <button
-                                className="px-3 py-2 text-sm bg-green-600 text-white rounded-md hover:bg-green-700"
+                                className="px-3 py-2 text-sm bg-green-600 text-white rounded-md hover:bg-green-700 min-h-[44px] min-w-[44px] flex items-center justify-center"
                                 onClick={() =>
                                   currentRole === "admin"
                                     ? handleNavigate()
@@ -753,7 +753,7 @@ const Applicant = () => {
                             <Tooltip.Root>
                               <Tooltip.Trigger asChild>
                                 <button
-                                  className="px-3 py-2 text-sm bg-orange-600 text-white rounded-md hover:bg-orange-700 whitespace-nowrap"
+                                  className="px-3 py-2 text-sm bg-orange-600 text-white rounded-md hover:bg-orange-700 whitespace-nowrap min-h-[44px] min-w-[44px] flex items-center justify-center"
                                   onClick={resetFiltersWithoutActiveStatus}
                                 >
                                   <i className="ri-refresh-line"></i>
@@ -780,7 +780,7 @@ const Applicant = () => {
                             <Tooltip.Root>
                               <Tooltip.Trigger asChild>
                                 <button
-                                  className="flex-1 px-3 py-2 text-sm bg-red-600 text-white rounded-md hover:bg-red-700"
+                                  className="flex-1 px-3 py-2 text-sm bg-red-600 text-white rounded-md hover:bg-red-700 min-h-[44px] flex items-center justify-center"
                                   onClick={handleDeleteAll}
                                 >
                                   <i className="ri-delete-bin-fill" />
@@ -802,7 +802,7 @@ const Applicant = () => {
                             <Tooltip.Root>
                               <Tooltip.Trigger asChild>
                                 <button
-                                  className="flex-1 px-3 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                                  className="flex-1 px-3 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 min-h-[44px] flex items-center justify-center"
                                   onClick={handleSendEmail}
                                 >
                                   <i className="ri-mail-close-line" />
@@ -829,7 +829,7 @@ const Applicant = () => {
                           <Tooltip.Root>
                             <Tooltip.Trigger asChild>
                               <button
-                                className="px-3 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 whitespace-nowrap"
+                                className="px-3 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 whitespace-nowrap min-h-[44px] min-w-[44px] flex items-center justify-center"
                                 onClick={() => {
                                   if (currentRole === "admin") {
                                     setDrawerOpen(true);
@@ -857,9 +857,9 @@ const Applicant = () => {
 
                           <Tooltip.Root>
                             <Tooltip.Trigger asChild>
-                              <button
-                                className="px-3 py-2 text-sm bg-green-700 text-white rounded-md hover:bg-green-800"
-                                onClick={() =>
+                            <button
+                              className="px-3 py-2 text-sm bg-green-700 text-white rounded-md hover:bg-green-800 min-h-[44px] min-w-[44px] flex items-center justify-center"
+                              onClick={() =>
                                   currentRole === "admin"
                                     ? handleExportModalShow()
                                     : toast.error(
@@ -1196,7 +1196,7 @@ const Applicant = () => {
                     />
                   </div>
                 </div>
-                <div className="pt-0 ">
+                <div className="pt-0">
                   {tableLoader || loading ? (
                     <div className="py-4 text-center">
                       <Skeleton count={1} className="mb-5 min-h-10" />
@@ -1219,8 +1219,9 @@ const Applicant = () => {
                         pagination={pagination}
                         setPagination={setPagination}
                         loader={tableLoader}
-                        customPadding="0.1rem 1.5rem"
-                        rowHeight="6px !important"
+                        customPadding="0.5rem 1.5rem"
+                        rowHeight="10px !important"
+                        scrollPaddingBottom="1rem"
                       />
                     </div>
                   ) : (

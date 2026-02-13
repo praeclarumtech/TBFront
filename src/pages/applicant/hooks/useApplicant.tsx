@@ -699,13 +699,29 @@ function useApplicant({
           const isActive = row.original.isActive || false;
 
           return (
-            <Switch
-              size="small"
-              checked={isActive}
-              onClick={() => handleToggleSwitch(id, isActive)}
-              checkedChildren={<CheckOutlined />}
-              unCheckedChildren={<CloseOutlined />}
-            />
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                minHeight: "24px",
+              }}
+            >
+              <Switch
+                size="small"
+                checked={isActive}
+                onClick={() => handleToggleSwitch(id, isActive)}
+                checkedChildren={
+                  <span style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <CheckOutlined />
+                  </span>
+                }
+                unCheckedChildren={
+                  <span style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <CloseOutlined />
+                  </span>
+                }
+              />
+            </div>
           );
         },
         enableColumnFilter: false,
