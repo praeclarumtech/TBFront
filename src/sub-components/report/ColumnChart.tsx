@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import Chart from "react-apexcharts";
+import Highcharts from "highcharts";
+import HighchartsReact from "highcharts-react-official";
 import { getCityState } from "api/reportApi";
 import Skeleton from "react-loading-skeleton";
 import { useNavigate } from "react-router-dom";
@@ -41,11 +42,9 @@ const ColumnChart = ({ selectedFilter }: Props) => {
   };
 
   const isCity = selectedFilter === "city";
-  const columnWidth = isCity ? "40%" : "55%";
   const containerWidth = Math.max(categories.length * (isCity ? 60 : 90), 600);
 
   const maxValue = Math.max(...dataSeries, 0);
-
   let stepSize = 50;
   if (maxValue > 3000) stepSize = 500;
   else if (maxValue > 1500) stepSize = 250;
@@ -53,99 +52,86 @@ const ColumnChart = ({ selectedFilter }: Props) => {
   else if (maxValue > 500) stepSize = 100;
   else if (maxValue > 200) stepSize = 75;
   const yAxisMax = Math.ceil(maxValue / stepSize) * stepSize;
-  const tickCount = Math.max(5, yAxisMax / stepSize);
 
-  const chartOptions = {
+  const chartData = categories.map((cat, i) => ({
+    name: cat,
+    y: dataSeries[i] ?? 0,
+  }));
+
+  const options: Highcharts.Options = {
     chart: {
+      type: "column",
       height: 350,
-      type: "bar" as const,
-      toolbar: { show: false },
-      events: {
-        dataPointSelection: (_event: any, _chartContext: any, config: any) => {
-          const dataPointIndex = config.dataPointIndex;
-          const clickedLabel = categories[dataPointIndex];
-          if (clickedLabel) {
-            navigate(
-              `/applicants?filter=${encodeURIComponent(
-                clickedLabel
-              )}&type=${selectedFilter}`
-            );
-          }
-        },
-      },
     },
-    plotOptions: {
-      bar: {
-        borderRadius: 10,
-        dataLabels: { position: "top" },
-        horizontal: false,
-        columnWidth,
-      },
-    },
-    dataLabels: {
-      enabled: true,
-      formatter: (val: number) => `${val}`,
-      offsetY: -20,
-      style: {
-        fontSize: "12px",
-        colors: ["#304758"],
-      },
-    },
-    xaxis: {
+    title: { text: undefined },
+    xAxis: {
       categories,
-      position: "bottom",
-      axisBorder: { show: false },
-      axisTicks: { show: false },
       labels: {
-        rotate: 0,
-        style: {
-          fontSize: "11px",
-          whiteSpace: "nowrap",
-          overflow: "visible",
+        style: { fontSize: "11px", color: "#000" },
+        formatter: function () {
+          const val = String(this.value);
+          return val.length > 5 ? val.slice(0, 5) + "..." : val;
         },
-        trim: false,
-        formatter: (val: string) =>
-          val.length > 5 ? val.slice(0, 5) + "..." : val,
-      },
-      tooltip: {
-        enabled: true,
       },
     },
-    yaxis: {
+    yAxis: {
       min: 0,
       max: yAxisMax,
-      tickAmount: tickCount,
-      axisBorder: { show: false },
-      axisTicks: { show: false },
+      title: { text: undefined },
       labels: {
-        show: true,
-        formatter: (val: number) => `${val}`,
+        style: { color: "#000" },
+        formatter: function () {
+          return String(this.value);
+        },
       },
     },
+    legend: { enabled: false },
+    credits: { enabled: false },
     tooltip: {
-      custom: ({ series, seriesIndex, dataPointIndex }: any) => {
-        const fullLabel = categories[dataPointIndex];
-        const value = series[seriesIndex][dataPointIndex];
+      formatter: function () {
+        const point = this.point as Highcharts.Point;
         return `<div style="padding: 8px;color:#212B36;">
-              <strong style="color:#624BFF;">${fullLabel}</strong><br />
-              ${value} Applicants
+              <strong style="color:#624BFF;">${point.name}</strong><br />
+              ${point.y} Applicants
             </div>`;
       },
     },
-    grid: {
-      padding: {
-        bottom: 40,
-      },
+    plotOptions: {
+      column: {
+        borderRadius: 10,
+        dataLabels: {
+          enabled: true,
+          format: "{y}",
+          style: { fontSize: "12px", fontWeight: "bold", color: "#304758" },
+        },
+        pointWidth: isCity ? 40 : 55,
+        point: {
+          events: {
+            click: function () {
+              const clickedLabel = String(this.category);
+              navigate(
+                `/applicants?filter=${encodeURIComponent(
+                  clickedLabel
+                )}&type=${selectedFilter}`
+              );
+            },
+          },
+        },
+      } as Highcharts.PlotColumnOptions,
     },
+    series: [
+      {
+        type: "column",
+        name: "Applicants",
+        data: chartData,
+      },
+    ],
   };
-
-  const series = [{ name: "Applicants", data: dataSeries }];
 
   return loading ? (
     <Skeleton height={350} width="100%" />
   ) : (
     <div>
-      {/* Sticky Title */}
       <div
         style={{
           position: "static",
@@ -160,7 +146,6 @@ const ColumnChart = ({ selectedFilter }: Props) => {
         </h5>
       </div>
 
-      {/* Scrollable Container with Styled Scrollbar */}
       <div
         style={{
           overflowX: "auto",
@@ -170,16 +155,10 @@ const ColumnChart = ({ selectedFilter }: Props) => {
         className="custom-scroll"
       >
         <div style={{ width: containerWidth }}>
-          <Chart
-            options={chartOptions}
-            series={series}
-            type="bar"
-            height={350}
-          />
+          <HighchartsReact highcharts={Highcharts} options={options} />
         </div>
       </div>
 
-      {/* Scrollbar styling */}
       <style>{`
         .custom-scroll::-webkit-scrollbar {
           height: 8px;

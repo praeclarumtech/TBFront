@@ -2,23 +2,33 @@
 
 .navbar-vertical {
   margin-left: -17rem;
-  display: block;
+  display: flex;
+  flex-direction: column;
   position: fixed;
   top: 0;
   bottom: 0;
-  width: 100%;
+  left: 0;
+  width: 250px;
+  min-width: 250px;
   max-width: 250px;
-  padding: 0rem;
+  padding: 0;
   padding-top: env(safe-area-inset-top, 0);
-  background-color: $gray-800;
-  border-right: 1px solid $gray-800;
+  background-color: #000;
+  border-right: 1px solid #2d2d2d;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
   -webkit-transition: margin 0.25s ease-out;
   -moz-transition: margin 0.25s ease-out;
   -o-transition: margin 0.25s ease-out;
   transition: margin 0.25s ease-out;
 
-  @media (max-width: 767.98px) {
-    z-index: 1050; // Above header so sidebar overlays on iPhone
+  @media (max-width: 576px) {
+    z-index: 1050;
+    width: min(250px, 85vw);
+    min-width: min(250px, 85vw);
+    max-width: min(250px, 85vw);
+    border-radius: 0 12px 12px 0;
+    padding-top: calc(5rem + env(safe-area-inset-top, 0));
   }
 
   .slimScrollDiv {
@@ -38,7 +48,7 @@
   //   }
   // }
   .navbar-heading {
-    color: $gray-700;
+    color: rgba(255, 255, 255, 0.6);
     padding: 1rem 1.5rem;
     font-size: 0.75rem;
     text-transform: uppercase;
@@ -51,27 +61,27 @@
         padding: 0.5rem 1.5rem;
         display: flex;
         align-items: center;
-        color: $gray-500;
+        color: rgba(255, 255, 255, 0.85);
         font-weight: 500;
         line-height: 1.8;
         -webkit-transition: all 0.5s;
         white-space: nowrap;
         transition: all 0.5s;
         &:hover {
-          color: $gray-200;
+          color: #fff;
         }
 
         &:hover .nav-icon {
-          color: $gray-200;
+          color: #fff;
           opacity: 1;
         }
 
         &.active {
-          color: $gray-200;
+          color: #fff;
         }
 
         &.active .nav-icon {
-          color: $gray-200;
+          color: #fff;
           opacity: 1;
         }
       }
@@ -107,38 +117,38 @@
     .nav {
       .nav-item {
         .nav-link {
-          color: $gray-500;
+          color: rgba(255, 255, 255, 0.7);
           padding: 0.25rem 3rem;
           &:hover {
-            color: $white;
+            color: #fff;
           }
           &.active {
-            color: $white;
+            color: #fff;
           }
         }
         .nav {
           .nav-item {
             .nav-link {
-              color: $gray-500;
+              color: rgba(255, 255, 255, 0.7);
               padding: 0.25rem 3.5rem;
 
               &:hover {
-                color: $white;
+                color: #fff;
               }
               &.active {
-                color: $white;
+                color: #fff;
               }
             }
             .nav {
               .nav-item {
                 .nav-link {
-                  color: $gray-500;
+                  color: rgba(255, 255, 255, 0.7);
                   padding: 0.25rem 4.2rem;
                   &:hover {
-                    color: $white;
+                    color: #fff;
                   }
                   &.active {
-                    color: $white;
+                    color: #fff;
                   }
                 }
               }
@@ -155,6 +165,109 @@
 }
 
 .logo path {
-  fill: #ffffff;
+  fill: #624bff;
   height: 40px;
+}
+
+/* Sidebar dark theme - close button, logo */
+.sidebar-close-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+  transition: background 0.2s;
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+  }
+}
+
+.sidebar-logo-link {
+  display: flex;
+  align-items: center;
+  padding: 4px 0;
+  overflow: visible;
+}
+.sidebar-logo-link svg,
+.sidebar-logo-svg {
+  max-height: 40px;
+  width: auto;
+  display: block;
+}
+/* Mobile: extra padding for logo visibility */
+@media (max-width: 576px) {
+  .sidebar-header {
+    padding: 16px 20px !important;
+  }
+  .sidebar-logo-link {
+    padding: 8px 0;
+  }
+}
+/* Logo on dark sidebar - ensure visibility */
+.sidebar-light .sidebar-logo-link svg path[fill="#ffffff"],
+.sidebar-light .sidebar-logo-link svg path[fill="#212529"] {
+  fill: #fff;
+}
+
+/* Ant Design Sider - dark theme override */
+.navbar-vertical .ant-layout-sider.sidebar-light {
+  background: #000 !important;
+  flex: 1 1 0;
+  width: 250px !important;
+  min-width: 250px !important;
+  height: 100% !important;
+  max-height: 100vh;
+  max-height: 100dvh;
+}
+.ant-layout-sider.sidebar-light .ant-layout-sider-children {
+  background: #000 !important;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100% !important;
+  max-height: 100vh;
+  max-height: 100dvh;
+}
+
+.ant-layout-sider.sidebar-light .custom-scrollbar {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 576px) {
+  .navbar-vertical .ant-layout-sider.sidebar-light {
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 100% !important;
+    max-height: 100vh;
+    max-height: 100dvh;
+  }
+  .navbar-vertical .ant-layout-sider.sidebar-light .ant-layout-sider-children {
+    height: 100% !important;
+    max-height: 100vh;
+    max-height: 100dvh;
+  }
+  .navbar-vertical .ant-layout-sider.sidebar-light .custom-scrollbar {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch;
+    min-height: 0;
+  }
+}
+.ant-layout-sider.sidebar-light .ant-menu-light {
+  background: transparent !important;
+}
+.sidebar-light .sidebar-header {
+  overflow: visible;
+  flex-shrink: 0;
 }

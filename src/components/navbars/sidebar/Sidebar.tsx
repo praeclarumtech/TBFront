@@ -9,7 +9,7 @@ import {
   PieChartOutlined,
   PlusOutlined,
   InboxOutlined,
-  TeamOutlined,
+  TeamOutlined
 } from "@ant-design/icons";
 import Logosvg from "components/BaseComponents/Logosvg";
 import { navigationGroups, masterRoutes } from "constants/navigationConstants";
@@ -19,67 +19,100 @@ const { Sider } = Layout;
 interface SidebarProps {
   showMenu: boolean;
   toggleMenu: () => void;
+  isMobile?: boolean;
 }
 
-// Custom scrollbar styles
+// Custom scrollbar styles for dark sidebar
 const scrollbarStyles = `
- .custom-scrollbar {
-  overflow-y: hidden;
-  height: 100%;
+.sidebar-light .custom-scrollbar {
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  min-width: 0;
+  min-height: 0;
+  -webkit-overflow-scrolling: touch;
 }
 
-.custom-scrollbar:hover {
-  overflow-y: auto;
+.sidebar-light .sidebar-menu {
+  min-width: max-content;
+  overflow: visible !important;
 }
 
-/* WebKit scrollbar styles */
-.custom-scrollbar::-webkit-scrollbar {
+.sidebar-light .sidebar-menu .ant-menu-item,
+.sidebar-light .sidebar-menu .ant-menu-submenu-title {
+  white-space: nowrap;
+  height: auto !important;
+  min-height: auto !important;
+  line-height: 1.5;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.sidebar-light .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
 }
 
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: #141414; /* same as your bg-dark */
+.sidebar-light .custom-scrollbar::-webkit-scrollbar-track {
+  background: #1a1a1a;
   border-radius: 10px;
 }
 
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #444; /* slightly lighter for visibility */
+.sidebar-light .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #404040;
   border-radius: 10px;
 }
 
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #666; /* slightly lighter on hover */
+.sidebar-light .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
-  .custom-sidebar .ant-menu-item,
-.custom-sidebar .ant-menu-submenu-title {
+
+.sidebar-light .custom-scrollbar::-webkit-scrollbar-corner {
+  background: #1a1a1a;
+  border-radius: 10px;
+}
+
+.sidebar-light .sidebar-menu .ant-menu-item,
+.sidebar-light .sidebar-menu .ant-menu-submenu-title {
+  color: rgba(255, 255, 255, 0.85) !important;
+}
+
+.sidebar-light .sidebar-menu .ant-menu-item a {
+  color: rgba(255, 255, 255, 0.85) !important;
+}
+
+.sidebar-light .sidebar-menu .ant-menu-item-selected {
+  background-color: #624bff !important;
   color: #fff !important;
 }
 
-.custom-sidebar .ant-menu-item a {
+.sidebar-light .sidebar-menu .ant-menu-item-selected a {
   color: #fff !important;
 }
 
-.custom-sidebar .ant-menu-item .anticon,
-.custom-sidebar .ant-menu-submenu-title .anticon {
+.sidebar-light .sidebar-menu .ant-menu-item-selected .anticon {
   color: #fff !important;
 }
 
-.custom-sidebar .ant-menu-submenu-arrow {
-  color: #fff !important;
-}
-
-/* Optional: highlight selected item with a subtle background */
-.custom-sidebar .ant-menu-item-selected {
+.sidebar-light .sidebar-menu .ant-menu-item:hover,
+.sidebar-light .sidebar-menu .ant-menu-submenu-title:hover {
   background-color: rgba(255, 255, 255, 0.1) !important;
 }
 
-/* Optional: hover background for clarity */
-.custom-sidebar .ant-menu-item:hover,
-.custom-sidebar .ant-menu-submenu-title:hover {
-  background-color: rgba(255, 255, 255, 0.05) !important;
+.sidebar-light .sidebar-menu .ant-menu-submenu .ant-menu {
+  background-color: #0d0d0d !important;
 }
-  .custom-sidebar .ant-menu-submenu .ant-menu {
-  background-color: #141414 !important; /* update to your exact bg-dark hex */
+
+.sidebar-light .sidebar-menu .ant-menu-submenu-arrow {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.sidebar-light .sidebar-menu .ant-menu-item .anticon,
+.sidebar-light .sidebar-menu .ant-menu-submenu-title .anticon {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.sidebar-light .sidebar-menu .ant-menu-item-selected .anticon {
+  color: #fff !important;
 }
 `;
 
@@ -87,12 +120,12 @@ const styleElement = document.createElement("style");
 styleElement.innerHTML = scrollbarStyles;
 document.head.appendChild(styleElement);
 
-// custom heading
+// custom heading - darker for visibility on light gray background
 const MenuGroupHeading = ({ title }: { title: string }) => (
   <div
     style={{
       padding: "16px 24px 8px",
-      color: "#8c8c8c",
+      color: "#495057",
       fontSize: "12px",
       fontWeight: "600",
       textTransform: "uppercase",
@@ -103,7 +136,7 @@ const MenuGroupHeading = ({ title }: { title: string }) => (
   </div>
 );
 
-const Sidebar: React.FC<SidebarProps> = ({ toggleMenu }) => {
+const Sidebar: React.FC<SidebarProps> = ({ toggleMenu, isMobile = false }) => {
   const location = useLocation();
   const [openKeys, setOpenKeys] = useState<string[]>([]);
   const [modules, setModules] = useState<any[]>([]);
@@ -163,28 +196,30 @@ const Sidebar: React.FC<SidebarProps> = ({ toggleMenu }) => {
       collapsible
       onCollapse={toggleMenu}
       trigger={null}
-      className="bg-dark"
+      className="sidebar-light"
       width={250}
       style={{
-        height: "100vh",
         position: "sticky",
         top: 0,
         left: 0,
       }}
     >
-      {/* Logo */}
-      <div
-        className="custom-scrollbar mt-3"
-        style={{
-          height: 64,
+      {/* Logo + Close button (mobile) */}
+        <div
+          className="sidebar-header"
+          style={{
+            height: 64,
+          minHeight: 64,
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          padding: "0 16px",
+          padding: "12px 20px",
+          borderBottom: "1px solid #2d2d2d",
+          flexShrink: 0,
         }}
       >
-        <Link to="/dashboard">
-          <Logosvg />
+        <Link to="/dashboard" className="sidebar-logo-link">
+          <Logosvg className="sidebar-logo-svg" />
         </Link>
       </div>
 
@@ -192,15 +227,15 @@ const Sidebar: React.FC<SidebarProps> = ({ toggleMenu }) => {
       <div
         className="custom-scrollbar"
         style={{
-          height: "calc(100vh - 64px)",
-          overflowY: "auto",
+          flex: 1,
+          overflow: "auto",
           paddingBottom: "20px",
         }}
       >
         <Menu
           mode="inline"
-          theme="dark"
-          className="font-semibold bg-dark"
+          theme="light"
+          className="font-semibold sidebar-menu"
           selectedKeys={[location.pathname]}
           openKeys={openKeys}
           onOpenChange={setOpenKeys}
@@ -253,11 +288,6 @@ const Sidebar: React.FC<SidebarProps> = ({ toggleMenu }) => {
                 {hasApplicantPermissions && (
                   <Menu.ItemGroup
                     key="applicants-group"
-                    title={
-                      <MenuGroupHeading
-                        title={navigationGroups.APPLICANTS.title}
-                      />
-                    }
                   >
                     {navigationGroups.APPLICANTS.items
                       .filter((item) => modules.includes(item.permission))
@@ -278,11 +308,6 @@ const Sidebar: React.FC<SidebarProps> = ({ toggleMenu }) => {
                 {hasVendorPermissions && (
                   <Menu.ItemGroup
                     key="vendors-group"
-                    title={
-                      <MenuGroupHeading
-                        title={navigationGroups.VENDORS.title}
-                      />
-                    }
                   >
                     <Menu.SubMenu
                       key="vendor-parent"
@@ -306,9 +331,6 @@ const Sidebar: React.FC<SidebarProps> = ({ toggleMenu }) => {
                 {hasClientPermissions && (
                   <Menu.ItemGroup
                     key="client-group"
-                    title={
-                      <MenuGroupHeading title={navigationGroups.CLIENT.title} />
-                    }
                   >
                     <Menu.SubMenu
                       key="client-parent"
@@ -332,9 +354,6 @@ const Sidebar: React.FC<SidebarProps> = ({ toggleMenu }) => {
                 {hasEmailPermissions && (
                   <Menu.ItemGroup
                     key="email-group"
-                    title={
-                      <MenuGroupHeading title={navigationGroups.EMAIL.title} />
-                    }
                   >
                     {navigationGroups.EMAIL.items
                       .filter((item) => modules.includes(item.permission))
@@ -355,11 +374,6 @@ const Sidebar: React.FC<SidebarProps> = ({ toggleMenu }) => {
                 {hasReportPermissions && (
                   <Menu.ItemGroup
                     key="reports-group"
-                    title={
-                      <MenuGroupHeading
-                        title={navigationGroups.REPORTS.title}
-                      />
-                    }
                   >
                     {navigationGroups.REPORTS.items
                       .filter((item) => modules.includes(item.permission))
@@ -380,11 +394,6 @@ const Sidebar: React.FC<SidebarProps> = ({ toggleMenu }) => {
                 {hasMasterPermissions && (
                   <Menu.ItemGroup
                     key="masters-group"
-                    title={
-                      <MenuGroupHeading
-                        title={navigationGroups.MASTERS.title}
-                      />
-                    }
                   >
                     <Menu.SubMenu
                       key="masters-parent"

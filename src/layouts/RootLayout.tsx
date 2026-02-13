@@ -9,58 +9,75 @@ interface RootLayoutProps {
   children?: React.ReactNode;
 }
 const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
-  const [showMenu, setShowMenu] = useState(true);
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 767); // adjust breakpoint if needed
+  // isMobile: <=576px only - sidebar overlays. Tablet/desktop: content pushes.
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 576);
+  const [showMenu, setShowMenu] = useState(window.innerWidth > 576);
 
   const ToggleMenu = () => {
     setShowMenu(!showMenu);
   };
 
   useEffect(() => {
+    let prevMobile = window.innerWidth <= 576;
     const handleResize = () => {
-      setIsMobile(window.innerWidth <= 767);
+      const mobile = window.innerWidth <= 576;
+      setIsMobile(mobile);
+      if (prevMobile !== mobile) {
+        setShowMenu(!mobile);
+      }
+      prevMobile = mobile;
     };
 
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // On mobile: sidebar overlays, so content always full width (no margin).
-  // On desktop: margin when menu open, no margin when closed.
-  const sidebarMargin = isMobile
-    ? "0" // iPhone/mobile: content always full width, sidebar overlays
-    : showMenu
-    ? "250px"
-    : "0";
+  // When sidebar overlay is open on mobile: lock body scroll so only sidebar scrolls
+  useEffect(() => {
+    const sidebarOverlayOpen = isMobile && showMenu;
+    if (sidebarOverlayOpen) {
+      document.body.style.overflow = "hidden";
+      document.body.style.touchAction = "none";
+    } else {
+      document.body.style.overflow = "";
+      document.body.style.touchAction = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+      document.body.style.touchAction = "";
+    };
+  }, [showMenu, isMobile]);
+
+  // <=576px: overlay (content stays). >576px: push (content shifts when sidebar open).
+  const sidebarMargin = isMobile ? "0" : showMenu ? "250px" : "0";
 
   const contentShiftStyle = {
     marginLeft: sidebarMargin,
     transition: "margin-left 0.3s ease",
   };
 
+  // When sidebar is open on mobile (overlay), prevent main content from scrolling
+  const sidebarOverlayOpen = isMobile && showMenu;
+
   return (
-    <section className="bg-light overflow-x-hidden">
+    <section className={`bg-light root-layout-fixed ${sidebarOverlayOpen ? "sidebar-overlay-open" : ""}`}>
       <div id="db-wrapper" className={`${showMenu ? "" : "toggled"}`}>
-        <div className="navbar-vertical navbar" style={{ zIndex: 10 }}>
-          <Sidebar showMenu={showMenu} toggleMenu={ToggleMenu} />
+        <div className="navbar-vertical navbar">
+          <Sidebar showMenu={showMenu} toggleMenu={ToggleMenu} isMobile={isMobile} />
         </div>
-        <div id="page-content" className="overflow-auto">
+        <div id="page-content" className="page-content-scroll">
           <div
-            className="header fixed-top bg-dark border-bottom-dark"
-            style={{ ...contentShiftStyle, zIndex: 10 }}
+            className="header fixed-top header-dark"
+            style={{ ...contentShiftStyle, zIndex: 1060 }}
           >
-            <Header toggleMenu={ToggleMenu} />
+            <Header toggleMenu={ToggleMenu} showMenu={showMenu} isMobile={isMobile} />
           </div>
 
           <div
             className="content content-below-header"
             style={{
               marginBottom: isMobile ? "56px" : "34px",
-              overflow: "auto",
-              overflowY: "auto",
               overflowX: "hidden",
-              right: 0,
-              zIndex: 10,
               maxWidth: "100%",
             }}
           >
@@ -73,7 +90,7 @@ const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
 
       <div
         className="bg-white footer fixed-bottom border-top"
-        style={{ ...contentShiftStyle, zIndex: 10 }}
+        style={contentShiftStyle}
       >
         <AppFooter isSidebarOpen={showMenu} />
       </div>
