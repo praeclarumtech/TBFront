@@ -29,13 +29,15 @@ import {
 import { ViewAppliedSkills } from "api/skillsApi";
 import { viewAllDesignation } from "api/designation";
 import BaseButton from "components/BaseComponents/BaseButton";
-import { Card } from "antd";
+import { Card, Alert } from "antd";
+import { MailOutlined } from "@ant-design/icons";
 import { viewRoleSkill } from "api/roleApi";
 import uploadCloud from "assets/fonts/feather-icons/icons/upload-cloud.svg";
 import { useLocation } from "react-router-dom";
 import { viewAllCity } from "api/cityApis";
 import { viewAllState } from "api/stateApi";
 import toastify from "utils/toastify";
+import appEnv from "config/appEnv";
 
 const { projectTitle, Modules, communicationOptions } = appConstants;
 
@@ -598,7 +600,7 @@ const ApplyNow = () => {
                   validation.handleSubmit();
                   return false;
                 }}
-                className="p-3"
+                className="p-1"
               >
                 {loading ? (
                   <div className="my-5 d-flex justify-content-center">
@@ -607,7 +609,7 @@ const ApplyNow = () => {
                     </Spinner>
                   </div>
                 ) : (
-                  <Row className="mb-3 g-3">
+                  <Row className="mb-1 g-3">
                     <Col xs={12} sm={6} md={6} lg={3}>
                       <BaseInput
                         label="First Name"
@@ -1303,6 +1305,38 @@ const ApplyNow = () => {
                   </Row>
                 )}
               </form>
+
+              <div className="mt-2    pt-2">
+                <Alert
+                  message={
+                    <span className="d-flex align-items-center gap-2">
+                      <MailOutlined style={{ fontSize: "16px" }} />
+                      <strong>Need Assistance?</strong>
+                    </span>
+                  }
+                  description={
+                    <p className="mb-0 mt-2">
+                      Experiencing technical difficulties or unable to complete
+                      the form? Please send your CV or describe your issue
+                      directly to our careers team at{" "}
+                      <a
+                        href={`mailto:${appEnv.CAREER_EMAIL}`}
+                        className="fw-semibold link-primary"
+                      >
+                        {appEnv.CAREER_EMAIL}
+                      </a>
+                      . We will respond at the earliest.
+                    </p>
+                  }
+                  type="info"
+                  showIcon={false}
+                  className="border-0"
+                  style={{
+                    backgroundColor: "#f0f7ff",
+                    borderLeft: "4px solid var(--bs-primary)",
+                  }}
+                />
+              </div>
             </div>
           </Row>
         </Card>
