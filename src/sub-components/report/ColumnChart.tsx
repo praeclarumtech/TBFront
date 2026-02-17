@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import Chart from "react-apexcharts";
+import { useEffect, useRef, useState } from "react";
+import ApexCharts from "apexcharts";
 import { getCityState } from "api/reportApi";
 import Skeleton from "react-loading-skeleton";
 import { useNavigate } from "react-router-dom";
@@ -14,6 +14,8 @@ const ColumnChart = ({ selectedFilter }: Props) => {
   const [dataSeries, setDataSeries] = useState<number[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  const chartRef = useRef<HTMLDivElement>(null);
+  const chartInstanceRef = useRef<ApexCharts | null>(null);
 
   const navigate = useNavigate();
 
@@ -141,6 +143,22 @@ const ColumnChart = ({ selectedFilter }: Props) => {
 
   const series = [{ name: "Applicants", data: dataSeries }];
 
+  useEffect(() => {
+    if (loading || !chartRef.current || !dataSeries.length) return;
+    const options = {
+      ...chartOptions,
+      chart: { ...chartOptions.chart, type: "bar" },
+      series,
+    };
+    const chart = new ApexCharts(chartRef.current, options);
+    chartInstanceRef.current = chart;
+    chart.render();
+    return () => {
+      chart.destroy();
+      chartInstanceRef.current = null;
+    };
+  }, [loading, dataSeries, categories, selectedFilter]);
+
   return loading ? (
     <Skeleton height={350} width="100%" />
   ) : (
@@ -169,14 +187,7 @@ const ColumnChart = ({ selectedFilter }: Props) => {
         }}
         className="custom-scroll"
       >
-        <div style={{ width: containerWidth }}>
-          <Chart
-            options={chartOptions}
-            series={series}
-            type="bar"
-            height={350}
-          />
-        </div>
+        <div style={{ width: containerWidth }} ref={chartRef} />
       </div>
 
       {/* Scrollbar styling */}

@@ -1,5 +1,11 @@
 import { createRoot } from "react-dom/client";
 import "./styles/theme.scss";
+
+// Fix for react-apexcharts "is not a constructor" - ensure ApexCharts is available
+import ApexCharts from "apexcharts";
+if (typeof window !== "undefined") {
+  (window as any).ApexCharts = ApexCharts;
+}
 import App from "./App";
 import { ToastContainer } from "react-toastify";
 import { store } from "store/store";

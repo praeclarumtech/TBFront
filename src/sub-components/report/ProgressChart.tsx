@@ -1,5 +1,5 @@
-import { Fragment, useEffect, useState } from "react";
-import Chart from "react-apexcharts";
+import { Fragment, useEffect, useRef, useState } from "react";
+import ApexCharts from "apexcharts";
 import { ApexOptions } from "apexcharts";
 import Skeleton from "react-loading-skeleton";
 import { useNavigate } from "react-router-dom";
@@ -8,6 +8,7 @@ import { getTotalApplicants } from "api/dashboardApi";
 const Charts = () => {
   const [statusOfApplication, setStatusOfApplication] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const chartRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -154,6 +155,18 @@ const Charts = () => {
     },
   };
 
+  useEffect(() => {
+    if (isLoading || !chartRef.current || values.length === 0) return;
+    const options: ApexOptions = {
+      ...barChartOptions,
+      chart: { ...barChartOptions.chart, type: "bar" },
+      series: [{ name: "Applications", data: values as number[] }],
+    };
+    const chart = new ApexCharts(chartRef.current, options);
+    chart.render();
+    return () => chart.destroy();
+  }, [isLoading, values, labels]);
+
   return (
     <Fragment>
       <style>
@@ -167,12 +180,7 @@ const Charts = () => {
         {isLoading ? (
           <Skeleton height={300} />
         ) : (
-          <Chart
-            options={barChartOptions}
-            series={[{ name: "Applications", data: values as number[] }]}
-            type="bar"
-            height={350}
-          />
+          <div ref={chartRef} style={{ minHeight: 350 }} />
         )}
       </div>
     </Fragment>

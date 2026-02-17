@@ -334,9 +334,9 @@ const ApplyNow = () => {
     }
   };
 
-  const getApplicant = (id: string | undefined | null) => {
-    if (id !== undefined) {
-      getApplicantDetails(id)
+  const getApplicant = (applicantId: string | undefined | null) => {
+    if (applicantId !== undefined && applicantId != null) {
+      getApplicantDetails(applicantId)
         .then((res: any) => {
           if (res.success) {
             setFormData(res.data);
@@ -351,8 +351,12 @@ const ApplyNow = () => {
     }
   };
 
+  // Defer dropdown data fetches until after first paint so the form appears immediately (fixes slow "load form" on production).
   useEffect(() => {
-    fetchStates(1, false);
+    const t = requestAnimationFrame(() => {
+      fetchStates(1, false);
+    });
+    return () => cancelAnimationFrame(t);
   }, []);
 
   // When formData has initial state and states are loaded, fetch cities for that state
@@ -368,15 +372,22 @@ const ApplyNow = () => {
   }, [formData?.state, states]);
 
   useEffect(() => {
-    getApplicant(id);
     setJobID(jobId);
     setAddedBy("guest");
+    if (id) {
+      setLoading(true);
+      getApplicant(id);
+    }
   }, [id, jobId]);
 
+  // Defer skills/designations/roles so form shell renders first, then options load (improves perceived load time).
   useEffect(() => {
-    fetchSkills();
-    fetchDesignations();
-    fetchRoles();
+    const t = requestAnimationFrame(() => {
+      fetchSkills();
+      fetchDesignations();
+      fetchRoles();
+    });
+    return () => cancelAnimationFrame(t);
   }, []);
 
   const initialValues: any = formData;
