@@ -5,15 +5,11 @@ import {
 } from "@reduxjs/toolkit/query/react";
 import appConstants from "../constants/constant";
 import { ApiResponseError } from "../interfaces/global.interface";
-import { store } from "../store/store";
 import appEnv from "./appEnv";
+import { handleSessionExpiration } from "../api/apiServices";
+import { setAuthData } from "../utils/commonFunctions";
 
-const {
-  ACCESS_TOKEN_ERROR_CODE,
-  REFRESH_TOKEN_ERROR_CODE,
-  ACCESS_TOKEN,
-  ACTION_TYPES,
-} = appConstants;
+const { ACCESS_TOKEN } = appConstants;
 
 const API_BASE_URL = `${appEnv.API_ENDPOINT}/${appEnv.API_SUFFIX}`;
 
@@ -28,6 +24,16 @@ const AppUrl = {
 
 Object.freeze(AppUrl);
 
+// Backend sends renewed token in header (X-New-Token) and/or body (response.data.newToken). Check every response.
+const fetchWithTokenUpdate: typeof fetch = async (input, init) => {
+  const res = await fetch(input, init);
+  const newToken = res.headers.get("X-New-Token") ?? res.headers.get("x-new-token");
+  if (newToken) {
+    setAuthData(newToken);
+  }
+  return res;
+};
+
 const reqHeaders = fetchBaseQuery({
   baseUrl: API_BASE_URL,
   prepareHeaders: (headers) => {
@@ -37,6 +43,7 @@ const reqHeaders = fetchBaseQuery({
     }
     return headers;
   },
+  fetchFn: fetchWithTokenUpdate,
 });
 
 export const baseQuery = async (
@@ -45,19 +52,29 @@ export const baseQuery = async (
   extraOptions: any
 ) => {
   try {
-    const response = (await reqHeaders(args, api, extraOptions)) as {
+    let response = (await reqHeaders(args, api, extraOptions)) as {
       data: any;
       error: ApiResponseError;
     };
-    const errorCode = response?.error?.data?.statusCode;
-    if (
-      errorCode === ACCESS_TOKEN_ERROR_CODE ||
-      errorCode === REFRESH_TOKEN_ERROR_CODE
-    ) {
-      store.dispatch({
-        type: ACTION_TYPES.LOGOUT,
-        payload: response?.error?.data?.message,
-      });
+
+    // Update stored token when backend sends renewal in body (response.data.newToken)
+    const newTokenFromBody =
+      (response?.data as any)?.newToken ??
+      (response?.error?.data as any)?.newToken;
+    if (newTokenFromBody) {
+      setAuthData(newTokenFromBody);
+    }
+
+    // Check for session expired response: { sessionExpired: true, code: "SESSION_EXPIRED", statusCode: 401 }
+    const errorData = (response?.error?.data ?? response?.data) as any;
+    const isSessionExpired =
+      errorData?.sessionExpired === true ||
+      errorData?.code === "SESSION_EXPIRED" ||
+      (errorData?.statusCode === 401 &&
+        errorData?.message?.toLowerCase().includes("session expired"));
+
+    if (isSessionExpired) {
+      handleSessionExpiration();
     }
 
     return response;

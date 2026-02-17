@@ -1,6 +1,6 @@
 import axios from "axios";
 import config from "../config";
-import { logout } from "../utils/commonFunctions";
+import { logout, setAuthData } from "../utils/commonFunctions";
 import { toast } from "react-toastify";
 // import { getItem } from "components/constants/enum";
 const { api } = config;
@@ -10,6 +10,15 @@ const authServices = axios.create({
   baseURL: api.API_URL,
   headers: {
     Accept: "application/json",
+  },
+});
+
+// Plain axios instance for login/refresh API calls (no auth header)
+const authServicesNoAuth = axios.create({
+  baseURL: api.API_URL,
+  headers: {
+    Accept: "application/json",
+    "Content-Type": "application/json",
   },
 });
 
@@ -63,78 +72,64 @@ const isSessionExpired = (response: any): boolean => {
   return false;
 };
 
-// Helper function to handle session expiration
+// Helper function to handle session expiration (when refresh fails or is not available)
 const handleSessionExpiration = () => {
-  // Show toast notification
   toast.error("🔒 Session expired. Please log in again.", {
     toastId: "session-expired",
     closeOnClick: true,
     autoClose: 5000,
   });
 
-  // Call logout to clear all auth data
   logout();
 
-  // Clear session data
   localStorage.clear();
   sessionStorage.clear();
 
-  // Redirect to login (use app base path so it works with basename /talent/)
   const baseUrl = import.meta.env.BASE_URL ?? "/";
   window.location.href = baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`;
 };
 
-authServices.interceptors.response.use(
-  (response) => {
-    // Check for session expiration in successful responses
+// Backend sends renewed token in header (X-New-Token) and/or body (response.data.newToken). Update stored token when present.
+// Check every API response and update stored token when present (sliding session).
+const updateTokenFromResponse = (response: any) => {
+  const fromBody = response?.data?.newToken;
+  const fromHeader =
+    response?.headers?.["x-new-token"] ?? response?.headers?.["X-New-Token"];
+  const newToken = fromBody ?? fromHeader;
+  if (newToken) {
+    setAuthData(newToken);
+  }
+};
+
+const createResponseInterceptor = (_instance: typeof authServices) => {
+  const onSuccess = (response: any) => {
+    updateTokenFromResponse(response);
     if (isSessionExpired(response)) {
       handleSessionExpiration();
       return Promise.reject(new Error("Session expired"));
     }
     return response;
-  },
-  (error) => {
-    // Check for session expiration in error responses
+  };
+  const onError = (error: any) => {
     if (error.response && isSessionExpired(error.response)) {
       handleSessionExpiration();
-      return Promise.reject(error);
     }
-
-    // Handle 401 unauthorized (legacy support)
-    if (error.response?.status === 401) {
-      handleSessionExpiration();
-      return Promise.reject(error);
-    }
-
     return Promise.reject(error);
-  },
-);
+  };
+  return [onSuccess, onError];
+};
+
+const [authOnSuccess, authOnError] = createResponseInterceptor(authServices);
+authServices.interceptors.response.use(authOnSuccess, authOnError);
 
 // Add the same interceptor to authInstanceMultipart
-authInstanceMultipart.interceptors.response.use(
-  (response) => {
-    // Check for session expiration in successful responses
-    if (isSessionExpired(response)) {
-      handleSessionExpiration();
-      return Promise.reject(new Error("Session expired"));
-    }
-    return response;
-  },
-  (error) => {
-    // Check for session expiration in error responses
-    if (error.response && isSessionExpired(error.response)) {
-      handleSessionExpiration();
-      return Promise.reject(error);
-    }
+const [multipartOnSuccess, multipartOnError] =
+  createResponseInterceptor(authInstanceMultipart);
+authInstanceMultipart.interceptors.response.use(multipartOnSuccess, multipartOnError);
 
-    // Handle 401 unauthorized (legacy support)
-    if (error.response?.status === 401) {
-      handleSessionExpiration();
-      return Promise.reject(error);
-    }
-
-    return Promise.reject(error);
-  },
-);
-
-export { authServices, authInstanceMultipart };
+export {
+  authServices,
+  authInstanceMultipart,
+  authServicesNoAuth,
+  handleSessionExpiration,
+};
