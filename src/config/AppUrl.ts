@@ -3,13 +3,10 @@ import {
   FetchArgs,
   fetchBaseQuery,
 } from "@reduxjs/toolkit/query/react";
-import appConstants from "../constants/constant";
 import { ApiResponseError } from "../interfaces/global.interface";
 import appEnv from "./appEnv";
 import { handleSessionExpiration } from "../api/apiServices";
-import { setAuthData } from "../utils/commonFunctions";
-
-const { ACCESS_TOKEN } = appConstants;
+import { setAuthData, ACCESS_TOKEN } from "../utils/commonFunctions";
 
 const API_BASE_URL = `${appEnv.API_ENDPOINT}/${appEnv.API_SUFFIX}`;
 
@@ -24,12 +21,12 @@ const AppUrl = {
 
 Object.freeze(AppUrl);
 
-// Backend sends renewed token in header (X-New-Token) and/or body (response.data.newToken). Check every response.
+// Backend sends renewed token in header (X-New-Token) and/or body (response.data.accessToken). Check every response.
 const fetchWithTokenUpdate: typeof fetch = async (input, init) => {
   const res = await fetch(input, init);
-  const newToken = res.headers.get("X-New-Token") ?? res.headers.get("x-new-token");
-  if (newToken) {
-    setAuthData(newToken);
+  const accessToken = res.headers.get("X-New-Token") ?? res.headers.get("x-new-token");
+  if (accessToken) {
+    setAuthData(accessToken);
   }
   return res;
 };
@@ -57,12 +54,12 @@ export const baseQuery = async (
       error: ApiResponseError;
     };
 
-    // Update stored token when backend sends renewal in body (response.data.newToken)
-    const newTokenFromBody =
-      (response?.data as any)?.newToken ??
-      (response?.error?.data as any)?.newToken;
-    if (newTokenFromBody) {
-      setAuthData(newTokenFromBody);
+    // Update stored token when backend sends renewal in body (response.data.accessToken)
+    const accessTokenFromBody =
+      (response?.data as any)?.accessToken ??
+      (response?.error?.data as any)?.accessToken;
+    if (accessTokenFromBody) {
+      setAuthData(accessTokenFromBody);
     }
 
     // Check for session expired response: { sessionExpired: true, code: "SESSION_EXPIRED", statusCode: 401 }
