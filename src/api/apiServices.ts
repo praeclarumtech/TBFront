@@ -64,7 +64,7 @@ const isSessionExpired = (response: any): boolean => {
   // Option 3: Check status code and message
   if (
     response.status === 401 &&
-    response.data?.message?.includes("Session expired")
+    response.data?.message?.includes("session expired")
   ) {
     return true;
   }
@@ -89,15 +89,15 @@ const handleSessionExpiration = () => {
   window.location.href = baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`;
 };
 
-// Backend sends renewed token in header (X-New-Token) and/or body (response.data.newToken). Update stored token when present.
+// Backend sends renewed token in header (X-New-Token) and/or body (response.data.accessToken). Update stored token when present.
 // Check every API response and update stored token when present (sliding session).
 const updateTokenFromResponse = (response: any) => {
-  const fromBody = response?.data?.newToken;
+  const fromBody = response?.data?.accessToken;
   const fromHeader =
     response?.headers?.["x-new-token"] ?? response?.headers?.["X-New-Token"];
-  const newToken = fromBody ?? fromHeader;
-  if (newToken) {
-    setAuthData(newToken);
+  const accessToken = fromBody ?? fromHeader;
+  if (accessToken) {
+    setAuthData(accessToken);
   }
 };
 
@@ -123,9 +123,13 @@ const [authOnSuccess, authOnError] = createResponseInterceptor(authServices);
 authServices.interceptors.response.use(authOnSuccess, authOnError);
 
 // Add the same interceptor to authInstanceMultipart
-const [multipartOnSuccess, multipartOnError] =
-  createResponseInterceptor(authInstanceMultipart);
-authInstanceMultipart.interceptors.response.use(multipartOnSuccess, multipartOnError);
+const [multipartOnSuccess, multipartOnError] = createResponseInterceptor(
+  authInstanceMultipart,
+);
+authInstanceMultipart.interceptors.response.use(
+  multipartOnSuccess,
+  multipartOnError,
+);
 
 export {
   authServices,
