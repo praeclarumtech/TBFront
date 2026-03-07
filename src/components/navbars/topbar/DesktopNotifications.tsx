@@ -35,7 +35,7 @@ export const DesktopNotifications = () => {
       appEnv.API_ENDPOINT?.includes("app.praeclarumtech.com");
 
     if (isProduction && appEnv.PRODUCTION_PROFILE_URL) {
-      return `${appEnv.PRODUCTION_PROFILE_URL}/uploads/${user?.profilePicture}`;
+      return `${appEnv.PRODUCTION_PROFILE_URL}/uploads/profile/${user?.profilePicture}`;
     }
 
     return `${appEnv.API_ENDPOINT}/uploads/profile/${user?.profilePicture}`;

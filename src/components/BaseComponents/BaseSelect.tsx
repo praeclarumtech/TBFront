@@ -12,6 +12,16 @@ import {
 
 const LOAD_MORE_THROTTLE_MS = 400;
 
+/** Filter options by label/value so dropdown search works reliably (react-select default can fail with custom option shapes). */
+const defaultFilterOption = (option: any, inputValue: string) => {
+  if (!inputValue) return true;
+  const data = option?.data ?? option;
+  const label = (data?.label ?? "").toString().toLowerCase();
+  const value = (data?.value ?? "").toString().toLowerCase();
+  const search = inputValue.toLowerCase();
+  return label.includes(search) || value.includes(search);
+};
+
 const BaseSelect = ({
   label,
   name,
@@ -81,6 +91,8 @@ const BaseSelect = ({
         onBlur={handleBlur}
         isClearable
         isDisabled={isDisabled}
+        isSearchable={true}
+        filterOption={defaultFilterOption}
         menuPlacement="auto"
         styles={customStyles}
         menuPortalTarget={menuPortalTarget}
@@ -176,6 +188,8 @@ const MultiSelect = ({
         onBlur={handleBlur}
         isClearable
         isDisabled={isDisabled}
+        isSearchable={true}
+        filterOption={defaultFilterOption}
         placeholder={placeholder}
       />
       {touched && error && (
@@ -238,6 +252,8 @@ const PaginateSelect = ({
   loadMore,
   hasMore = false,
   isLoadingMore = false,
+  onInputChange,
+  isLoading = false,
 }: PaginateSelectProps) => {
   const hasError = touched && error;
   const customStyles = {
@@ -284,13 +300,17 @@ const PaginateSelect = ({
         className={`${className ? className : "select-border"} ${
           touched && error ? "is-invalid" : ""
         }`}
-        options={options?.length > 0 ? options : []}
+        options={Array.isArray(options) && options.length > 0 ? options : []}
         placeholder={placeholder}
         value={value}
         onChange={handleChange}
         onBlur={handleBlur}
         isClearable
         isDisabled={isDisabled}
+        isSearchable={true}
+        filterOption={onInputChange ? () => true : defaultFilterOption}
+        onInputChange={onInputChange}
+        isLoading={isLoading}
         menuPlacement="auto"
         styles={customStyles}
         menuPortalTarget={menuPortalTarget}
@@ -323,6 +343,8 @@ const PaginateMultiSelect = ({
   loadMore,
   hasMore = false,
   isLoadingMore = false,
+  onInputChange,
+  isLoading = false,
 }: PaginateMultiSelectProps) => {
   const hasError = touched && error;
   const customStyles = {
@@ -389,12 +411,16 @@ const PaginateMultiSelect = ({
         }`}
         isMulti={isMulti}
         onChange={onChange}
-        options={options}
+        options={Array.isArray(options) ? options : []}
         styles={customStyles}
         name={name}
         onBlur={handleBlur}
         isClearable
         isDisabled={isDisabled}
+        isSearchable={true}
+        filterOption={onInputChange ? () => true : defaultFilterOption}
+        onInputChange={onInputChange}
+        isLoading={isLoading}
         placeholder={placeholder}
         components={{ MenuList: PaginateMenuList }}
         {...({ loadMore, hasMore, isLoadingMore } as any)}

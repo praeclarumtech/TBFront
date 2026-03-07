@@ -50,7 +50,12 @@ export const deleteSkill = async (data: { _id: string } = { _id: "" }) => {
 };
 
 export const ViewAppliedSkills = async (
-  params: { page?: number; pageSize?: number; limit?: number } = {}
+  params: {
+    page?: number;
+    pageSize?: number;
+    limit?: number;
+    search?: string;
+  } = {}
 ) => {
   const response = await authServices.get(`${VIEW_ALL_SKILL}`, { params });
   return response?.data;

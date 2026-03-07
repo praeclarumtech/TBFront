@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Row, Col, Container, Spinner } from "react-bootstrap";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useFormik } from "formik";
 import { Fragment } from "react";
 import {
@@ -62,6 +62,12 @@ const ApplyNow = () => {
   const [rolePage, setRolePage] = useState(1);
   const [hasMoreRoles, setHasMoreRoles] = useState(true);
   const [loadingMoreRoles, setLoadingMoreRoles] = useState(false);
+  const [loadingRoles, setLoadingRoles] = useState(false);
+  const [loadingSkills, setLoadingSkills] = useState(false);
+  const [loadingDesignations, setLoadingDesignations] = useState(false);
+  const roleSearchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const skillSearchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const designationSearchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [resumeError, setResumeError] = useState<string>("");
   const [jobID, setJobID] = useState<any>();
@@ -79,20 +85,28 @@ const ApplyNow = () => {
 
   const { id } = useParams();
 
-  const fetchSkills = async (page: number = 1, append: boolean = false) => {
+  const fetchSkills = async (
+    page: number = 1,
+    append: boolean = false,
+    search?: string,
+  ) => {
     try {
       if (append) setLoadingMoreSkills(true);
-      const response = await ViewAppliedSkills({
+      if (search !== undefined && search !== "") setLoadingSkills(true);
+      const params: any = {
         page,
         pageSize: PAGE_SIZE,
         limit: PAGE_SIZE,
-      });
-      const data = response?.data?.data || [];
+      };
+      if (search) params.search = search;
+      const response = await ViewAppliedSkills(params);
+      const rawData = response?.data?.data;
+      const data = Array.isArray(rawData) ? rawData : [];
       const options = data.map((item: any) => ({
         label: item.skills,
         value: item.skills,
       }));
-      if (append) {
+      if (append && !search) {
         setSkillOptions((prev) => {
           const existingLabels = new Set(prev.map((o: any) => o.value));
           const newOptions = options.filter(
@@ -117,6 +131,7 @@ const ApplyNow = () => {
       errorHandle(error);
     } finally {
       if (append) setLoadingMoreSkills(false);
+      if (search !== undefined && search !== "") setLoadingSkills(false);
     }
   };
 
@@ -129,20 +144,25 @@ const ApplyNow = () => {
   const fetchDesignations = async (
     page: number = 1,
     append: boolean = false,
+    search?: string,
   ) => {
     try {
       if (append) setLoadingMoreDesignations(true);
-      const response = await viewAllDesignation({
+      if (search !== undefined && search !== "") setLoadingDesignations(true);
+      const params: any = {
         page,
         pageSize: PAGE_SIZE,
         limit: PAGE_SIZE,
-      });
-      const designationData = response?.data?.data || [];
+      };
+      if (search) params.search = search;
+      const response = await viewAllDesignation(params);
+      const rawDesignation = response?.data?.data;
+      const designationData = Array.isArray(rawDesignation) ? rawDesignation : [];
       const options = designationData.map((item: any) => ({
         label: item.designation,
         value: item.designation,
       }));
-      if (append) {
+      if (append && !search) {
         setDesignationOptions((prev) => {
           const existingLabels = new Set(prev.map((o: any) => o.value));
           const newOptions = options.filter(
@@ -176,6 +196,7 @@ const ApplyNow = () => {
       errorHandle(error);
     } finally {
       if (append) setLoadingMoreDesignations(false);
+      if (search !== undefined && search !== "") setLoadingDesignations(false);
     }
   };
 
@@ -185,20 +206,28 @@ const ApplyNow = () => {
     }
   };
 
-  const fetchRoles = async (page: number = 1, append: boolean = false) => {
+  const fetchRoles = async (
+    page: number = 1,
+    append: boolean = false,
+    search?: string,
+  ) => {
     try {
       if (append) setLoadingMoreRoles(true);
-      const response = await viewRoleSkill({
+      if (search !== undefined && search !== "") setLoadingRoles(true);
+      const params: any = {
         page,
         pageSize: PAGE_SIZE,
         limit: PAGE_SIZE,
-      });
-      const roleData = response?.data?.data || [];
+      };
+      if (search) params.search = search;
+      const response = await viewRoleSkill(params);
+      const rawRole = response?.data?.data;
+      const roleData = Array.isArray(rawRole) ? rawRole : [];
       const options = roleData.map((item: any) => ({
         label: item.appliedRole,
         value: item.appliedRole,
       }));
-      if (append) {
+      if (append && !search) {
         setRoleOptions((prev) => {
           const existingLabels = new Set(prev.map((o: any) => o.value));
           const newOptions = options.filter(
@@ -231,6 +260,7 @@ const ApplyNow = () => {
       errorHandle(error);
     } finally {
       if (append) setLoadingMoreRoles(false);
+      if (search !== undefined && search !== "") setLoadingRoles(false);
     }
   };
 
@@ -248,7 +278,8 @@ const ApplyNow = () => {
         pageSize: PAGE_SIZE,
         limit: PAGE_SIZE,
       });
-      const stateItems = stateData?.data?.item ?? stateData?.item ?? [];
+      const stateItemsRaw = stateData?.data?.item ?? stateData?.item;
+      const stateItems = Array.isArray(stateItemsRaw) ? stateItemsRaw : [];
       const options = stateItems.map(
         (state: { state_name: string; _id: string; country_id: string }) => ({
           label: state.state_name,
@@ -298,7 +329,8 @@ const ApplyNow = () => {
       };
       if (stateId) params.state_id = stateId;
       const cityData = await viewAllCity(params);
-      const cityItems = cityData?.data?.item ?? cityData?.item ?? [];
+      const cityItemsRaw = cityData?.data?.item ?? cityData?.item;
+      const cityItems = Array.isArray(cityItemsRaw) ? cityItemsRaw : [];
       const options = cityItems.map(
         (city: { city_name: string; _id: string; state_id: string }) => ({
           label: city.city_name,
@@ -388,6 +420,15 @@ const ApplyNow = () => {
       fetchRoles();
     });
     return () => cancelAnimationFrame(t);
+  }, []);
+
+  // Cleanup search debounce timeouts on unmount
+  useEffect(() => {
+    return () => {
+      if (roleSearchTimeoutRef.current) clearTimeout(roleSearchTimeoutRef.current);
+      if (skillSearchTimeoutRef.current) clearTimeout(skillSearchTimeoutRef.current);
+      if (designationSearchTimeoutRef.current) clearTimeout(designationSearchTimeoutRef.current);
+    };
   }, []);
 
   const initialValues: any = formData;
@@ -598,6 +639,60 @@ const ApplyNow = () => {
     }
   };
 
+  const SEARCH_DEBOUNCE_MS = 300;
+  const onRoleInputChange = useCallback((value: string) => {
+    if (roleSearchTimeoutRef.current) clearTimeout(roleSearchTimeoutRef.current);
+    roleSearchTimeoutRef.current = setTimeout(() => {
+      fetchRoles(1, false, value.trim() || undefined);
+      roleSearchTimeoutRef.current = null;
+    }, SEARCH_DEBOUNCE_MS);
+  }, []);
+  const onSkillInputChange = useCallback((value: string) => {
+    if (skillSearchTimeoutRef.current) clearTimeout(skillSearchTimeoutRef.current);
+    skillSearchTimeoutRef.current = setTimeout(() => {
+      fetchSkills(1, false, value.trim() || undefined);
+      skillSearchTimeoutRef.current = null;
+    }, SEARCH_DEBOUNCE_MS);
+  }, []);
+  const onDesignationInputChange = useCallback((value: string) => {
+    if (designationSearchTimeoutRef.current) clearTimeout(designationSearchTimeoutRef.current);
+    designationSearchTimeoutRef.current = setTimeout(() => {
+      fetchDesignations(1, false, value.trim() || undefined);
+      designationSearchTimeoutRef.current = null;
+    }, SEARCH_DEBOUNCE_MS);
+  }, []);
+
+  // Ensure selected value is always in options so it displays after search-then-select (options may have been replaced by refetch)
+  const roleOptionsWithSelected = useMemo(() => {
+    const opts = Array.isArray(roleOptions) ? roleOptions : [];
+    const current = validation?.values?.appliedRole;
+    if (!current || typeof current !== "string") return opts;
+    if (opts.some((o: any) => o?.value === current)) return opts;
+    return [{ label: current, value: current }, ...opts];
+  }, [roleOptions, validation?.values?.appliedRole]);
+
+  const designationOptionsWithSelected = useMemo(() => {
+    const opts = Array.isArray(designationOptions) ? designationOptions : [];
+    const current = validation?.values?.currentCompanyDesignation;
+    if (!current || typeof current !== "string") return opts;
+    if (opts.some((o: any) => o?.value === current)) return opts;
+    return [{ label: current, value: current }, ...opts];
+  }, [designationOptions, validation?.values?.currentCompanyDesignation]);
+
+  const skillOptionsWithSelected = useMemo(() => {
+    const opts = Array.isArray(skillOptions) ? skillOptions : [];
+    const selectedValues = Array.isArray(selectedMulti)
+      ? selectedMulti.map((o: any) => o?.value).filter(Boolean)
+      : [];
+    if (selectedValues.length === 0) return opts;
+    const missing = selectedValues.filter(
+      (v: string) => !opts.some((o: any) => o?.value === v),
+    );
+    if (missing.length === 0) return opts;
+    const prepend = missing.map((v: string) => ({ label: v, value: v }));
+    return [...prepend, ...opts];
+  }, [skillOptions, selectedMulti]);
+
   return (
     <Fragment>
       <div className="pt-3 page-content"></div>
@@ -727,7 +822,7 @@ const ApplyNow = () => {
                         value={selectedMulti || []}
                         isMulti={true}
                         onChange={handleMultiSkill}
-                        options={skillOptions}
+                        options={skillOptionsWithSelected}
                         touched={validation.touched.appliedSkills}
                         error={validation.errors.appliedSkills}
                         handleBlur={validation.handleBlur}
@@ -735,6 +830,8 @@ const ApplyNow = () => {
                         loadMore={loadMoreSkills}
                         hasMore={hasMoreSkills}
                         isLoadingMore={loadingMoreSkills}
+                        onInputChange={onSkillInputChange}
+                        isLoading={loadingSkills}
                       />
                     </Col>
                     <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
@@ -757,13 +854,13 @@ const ApplyNow = () => {
                         label="Applied Role"
                         name="appliedRole"
                         className="select-border"
-                        options={roleOptions}
+                        options={roleOptionsWithSelected}
                         placeholder={InputPlaceHolder("Applied Role")}
                         handleChange={handleRoleChange}
                         handleBlur={validation.appliedRole}
                         value={
                           dynamicFind(
-                            roleOptions,
+                            roleOptionsWithSelected,
                             validation.values.appliedRole,
                           ) || ""
                         }
@@ -773,6 +870,8 @@ const ApplyNow = () => {
                         loadMore={loadMoreRoles}
                         hasMore={hasMoreRoles}
                         isLoadingMore={loadingMoreRoles}
+                        onInputChange={onRoleInputChange}
+                        isLoading={loadingRoles}
                       />
                     </Col>
                     <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
@@ -780,7 +879,7 @@ const ApplyNow = () => {
                         label="Current Company Designation"
                         name="currentCompanyDesignation"
                         className="select-border"
-                        options={designationOptions}
+                        options={designationOptionsWithSelected}
                         placeholder={InputPlaceHolder("Degination")}
                         handleChange={(selectedOption: SelectedOption) => {
                           validation.setFieldValue(
@@ -791,7 +890,7 @@ const ApplyNow = () => {
                         handleBlur={validation.currentCompanyDesignation}
                         value={
                           dynamicFind(
-                            designationOptions,
+                            designationOptionsWithSelected,
                             validation.values.currentCompanyDesignation,
                           ) || ""
                         }
@@ -801,6 +900,8 @@ const ApplyNow = () => {
                         loadMore={loadMoreDesignations}
                         hasMore={hasMoreDesignations}
                         isLoadingMore={loadingMoreDesignations}
+                        onInputChange={onDesignationInputChange}
+                        isLoading={loadingDesignations}
                       />
                     </Col>
 
