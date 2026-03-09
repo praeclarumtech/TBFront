@@ -38,7 +38,6 @@ const JobDetailsForm = ({
   onGetCurrentValues,
 }: any) => {
   document.title = Modules.CreateApplicantForm + " | " + projectTitle;
-  document.title = Modules.CreateApplicantForm + " | " + projectTitle;
 
   const [skillOptions, setSkillOptions] = useState<any[]>([]);
   const [selectedMulti, setSelectedMulti] = useState<any>([]);
@@ -396,8 +395,12 @@ const JobDetailsForm = ({
                 </Spinner>
               </div>
             ) : (
-              <Row className="mb-4">
-                <Col xs={12} sm={12} md={12} lg={6} className="mb-3">
+              <Row className="mb-4 g-3">
+                {/* Skills & Experience */}
+                <Col xs={12}>
+                  <h6 className="text-secondary border-bottom pb-2 mb-2">Skills & Experience</h6>
+                </Col>
+                <Col xs={12} sm={12} md={6} lg={6} className="mb-3">
                   <MultiSelect
                     label="Applied Skills"
                     name="appliedSkills"
@@ -412,7 +415,7 @@ const JobDetailsForm = ({
                     isRequired={false}
                   />
                 </Col>
-                <Col xs={12} sm={12} md={6} lg={6} className="mb-3">
+                <Col xs={12} sm={12} md={6} lg={6}>
                   <BaseInput
                     label="Other Skills (Optional)"
                     name="otherSkills"
@@ -426,7 +429,7 @@ const JobDetailsForm = ({
                     passwordToggle={false}
                   />
                 </Col>
-                <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
+                <Col xs={12} sm={6} md={6} lg={3}>
                   <BaseInput
                     label="Total Experience(Year)"
                     name="totalExperience"
@@ -482,7 +485,7 @@ const JobDetailsForm = ({
                     isRequired={false}
                   />
                 </Col>
-                <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
+                <Col xs={12} sm={6} md={6} lg={3}>
                   <BaseInput
                     label="Relevant Experience(Year)"
                     name="relevantSkillExperience"
@@ -545,7 +548,7 @@ const JobDetailsForm = ({
                     isRequired={false}
                   />
                 </Col>
-                <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
+                <Col xs={12} sm={6} md={6} lg={3}>
                   <BaseSelect
                     label="Javascript Rate(out of 10)"
                     name="rating"
@@ -570,7 +573,7 @@ const JobDetailsForm = ({
                     isRequired={false}
                   />
                 </Col>
-                <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
+                <Col xs={12} sm={6} md={6} lg={3}>
                   <BaseSelect
                     label="English Communication(out of 10)"
                     name="communicationSkill"
@@ -595,7 +598,10 @@ const JobDetailsForm = ({
                     isRequired={false}
                   />
                 </Col>
-                <Col xs={12} sm={6} md={6} lg={4} className="mb-3 mb-sm-0">
+                <Col xs={12}>
+                  <h6 className="text-secondary border-bottom pb-2 mb-2 mt-2">Company & Package</h6>
+                </Col>
+                <Col xs={12} sm={6} md={6} lg={4}>
                   <BaseInput
                     label="Current Company"
                     name="currentCompanyName"
@@ -613,7 +619,7 @@ const JobDetailsForm = ({
                     isRequired={false}
                   />
                 </Col>
-                <Col xs={12} sm={6} md={6} lg={4} className="mb-3">
+                <Col xs={12} sm={6} md={6} lg={4}>
                   <BaseSelect
                     label="Current Company Designation"
                     name="currentCompanyDesignation"
@@ -638,7 +644,7 @@ const JobDetailsForm = ({
                     isRequired={true}
                   />
                 </Col>
-                <Col xs={12} sm={4} md={6} lg={4} className="mb-3">
+                <Col xs={12} sm={4} md={6} lg={4}>
                   <BaseInput
                     label="Current Package (LPA)"
                     name="currentPkg"
@@ -696,7 +702,7 @@ const JobDetailsForm = ({
                     isRequired={false}
                   />
                 </Col>
-                <Col xs={12} sm={4} md={6} lg={4} className="mb-3 mb-sm-0">
+                <Col xs={12} sm={4} md={6} lg={4}>
                   <BaseInput
                     label="Expected Package (LPA)"
                     name="expectedPkg"
@@ -754,7 +760,7 @@ const JobDetailsForm = ({
                     isRequired={false}
                   />
                 </Col>
-                <Col xs={12} sm={4} md={6} lg={4} className="mb-3 mb-sm-0">
+                <Col xs={12} sm={4} md={6} lg={4}>
                   <BaseInput
                     label="Negotiation (₹) (Optional)"
                     name="negotiation"
@@ -811,7 +817,7 @@ const JobDetailsForm = ({
                     passwordToggle={false}
                   />
                 </Col>
-                <Col xs={12} sm={6} md={6} lg={4} className="mb-3">
+                <Col xs={12} sm={6} md={6} lg={4}>
                   <BaseInput
                     label="Notice Period (Days)"
                     name="noticePeriod"
@@ -869,7 +875,10 @@ const JobDetailsForm = ({
                     isRequired={false}
                   />
                 </Col>
-                <Col xs={12} sm={6} md={6} lg={4} className="mb-3">
+                <Col xs={12}>
+                  <h6 className="text-secondary border-bottom pb-2 mb-2 mt-2">Role & Interview</h6>
+                </Col>
+                <Col xs={12} sm={6} md={6} lg={4}>
                   <BaseSelect
                     label="Interview Mode"
                     name="interviewMode"
@@ -893,7 +902,7 @@ const JobDetailsForm = ({
                     error={validation.errors.interviewMode}
                   />
                 </Col>
-                <Col xs={12} sm={6} md={6} lg={4} className="mb-3">
+                <Col xs={12} sm={6} md={6} lg={4}>
                   <BaseInput
                     label="Preferred Location(s)"
                     name="preferredLocations"
@@ -917,7 +926,7 @@ const JobDetailsForm = ({
                   />
                 </Col>
 
-                <Col xs={12} sm={6} md={6} lg={4} className="mb-3">
+                <Col xs={12} sm={6} md={6} lg={4}>
                   <BaseSelect
                     label="Applied Role"
                     name="appliedRole"
@@ -937,19 +946,18 @@ const JobDetailsForm = ({
                 </Col>
 
                 {roleSkills.length > 0 && (
-                  <div className="mb-4">
-                    <h5>
+                  <div className="mb-4 mt-3">
+                    <h6 className="text-secondary border-bottom pb-2 mb-2">
                       Technologies for{" "}
                       {
                         roleOptions.find(
                           (opt) => opt.value === validation.values.appliedRole
                         )?.label
                       }
-                      :
-                    </h5>
-                    <Row>
+                    </h6>
+                    <Row className="g-2">
                       {roleSkills.map((skill) => (
-                        <Col key={skill} xs={12} sm={6} md={3} className="mb-3">
+                        <Col key={skill} xs={12} sm={6} md={4} lg={3}>
                           <label>
                             <b>{skill} Exp.(Yrs)</b>
                           </label>
@@ -972,7 +980,10 @@ const JobDetailsForm = ({
                   </div>
                 )}
 
-                <Col xs={12} sm={4} md={4} lg={4} className="mb-3">
+                <Col xs={12}>
+                  <h6 className="text-secondary border-bottom pb-2 mb-2 mt-2">Additional Info & URLs</h6>
+                </Col>
+                <Col xs={12} sm={4} md={4} lg={4}>
                   <BaseSelect
                     label="Any Hand On Offers ?"
                     name="anyHandOnOffers"
@@ -997,7 +1008,7 @@ const JobDetailsForm = ({
                     isRequired={false}
                   />
                 </Col>
-                <Col xs={12} sm={4} md={4} lg={4} className="mb-3">
+                <Col xs={12} sm={4} md={4} lg={4}>
                   <BaseInput
                     label="Referral (Optional)"
                     name="referral"
@@ -1014,7 +1025,7 @@ const JobDetailsForm = ({
                     passwordToggle={false}
                   />
                 </Col>
-                <Col xs={12} sm={4} md={4} lg={4} className="mb-3 mb-sm-0">
+                <Col xs={12} sm={4} md={4} lg={4}>
                   <BaseInput
                     label="Last Follow Up Date (Optional)"
                     name="lastFollowUpDate"
@@ -1030,7 +1041,7 @@ const JobDetailsForm = ({
                     passwordToggle={false}
                   />
                 </Col>
-                <Col xs={12} md={8} lg={4} sm={12} className="mb-3">
+                <Col xs={12} sm={6} md={6} lg={4}>
                   <BaseInput
                     label="Portfolio URL (Optional)"
                     name="portfolioUrl"
@@ -1044,7 +1055,7 @@ const JobDetailsForm = ({
                     passwordToggle={false}
                   />
                 </Col>
-                <Col xs={12} md={6} lg={4} sm={12} className="mb-3">
+                <Col xs={12} sm={6} md={6} lg={4}>
                   <BaseInput
                     label="Resume URL"
                     name="resumeUrl"
@@ -1060,7 +1071,7 @@ const JobDetailsForm = ({
                     isRequired={false}
                   />
                 </Col>
-                <Col xs={12} md={6} lg={4} sm={12} className="mb-3">
+                <Col xs={12} sm={6} md={6} lg={4}>
                   <BaseInput
                     label="Linkedin URL (Optional)"
                     name="linkedinUrl"
@@ -1074,7 +1085,7 @@ const JobDetailsForm = ({
                     passwordToggle={false}
                   />
                 </Col>
-                <Col xs={12} md={6} lg={4} sm={12} className="mb-3">
+                <Col xs={12} sm={6} md={6} lg={4}>
                   <BaseInput
                     label="Git-Hub URL"
                     name="gitHubUrl"
@@ -1090,7 +1101,7 @@ const JobDetailsForm = ({
                     isRequired={false}
                   />
                 </Col>
-                <Col xs={12} md={12} lg={4} sm={12} className="mb-3">
+                <Col xs={12} sm={6} md={6} lg={4}>
                   <BaseInput
                     label="Client CV URL (Optional)"
                     name="clientCvUrl"
@@ -1104,7 +1115,7 @@ const JobDetailsForm = ({
                     passwordToggle={false}
                   />
                 </Col>
-                <Col xs={12} md={12} lg={4} sm={12} className="!mb-3  mb-sm-0">
+                <Col xs={12} sm={6} md={6} lg={4}>
                   <BaseInput
                     label="Practical URL (Optional)"
                     name="practicalUrl"
@@ -1119,17 +1130,13 @@ const JobDetailsForm = ({
                     passwordToggle={false}
                   />
                 </Col>
-                <Col
-                  xs={12}
-                  sm={12}
-                  md={12}
-                  lg={6}
-                  className="!md:mb-3 !mb-3 mb-sm-0"
-                >
+                <Col xs={12}>
+                  <h6 className="text-secondary border-bottom pb-2 mb-2 mt-2">Feedback & Comments</h6>
+                </Col>
+                <Col xs={12} sm={12} md={12} lg={6}>
                   <BaseTextarea
                     label="Client Feedback (Optional)"
                     name="clientFeedback"
-                    className="mb-3"
                     placeholder={InputPlaceHolder("Feedback (Optional)")}
                     handleChange={validation.handleChange}
                     handleBlur={validation.handleBlur}
@@ -1142,13 +1149,7 @@ const JobDetailsForm = ({
                   />
                 </Col>
 
-                <Col
-                  xs={12}
-                  sm={12}
-                  md={12}
-                  lg={6}
-                  className="!md:mb-3 !mb-3  mb-sm-0"
-                >
+                <Col xs={12} sm={12} md={12} lg={6}>
                   <BaseTextarea
                     label="Practical Feedback (Optional)"
                     name="practicalFeedback"
@@ -1163,7 +1164,7 @@ const JobDetailsForm = ({
                     cols={50}
                   />
                 </Col>
-                <Col xs={12} sm={12} md={12} lg={12}>
+                <Col xs={12} className="mb-3">
                   <BaseTextarea
                     label="Comments"
                     name="comment"

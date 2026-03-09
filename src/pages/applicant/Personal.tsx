@@ -137,6 +137,7 @@ const PersonalDetailsForm = ({
   }, [cities, states, country]);
 
   const minDateOfBirth = moment().subtract(60, "years").format("YYYY-MM-DD");
+  const maxDateOfBirth = moment().format("YYYY-MM-DD"); // today – no future dates
   const formattedDateOfBirth = initialValues.dateOfBirth
     ? moment(initialValues.dateOfBirth).format("YYYY-MM-DD")
     : "";
@@ -363,8 +364,11 @@ const PersonalDetailsForm = ({
                   </Spinner>
                 </div>
               ) : (
-                <Row className="mb-3 g-3">
-                  <Col xs={12} md={6} lg={4}>
+                <Row className="mb-4 g-3">
+                  <Col xs={12}>
+                    <h6 className="text-secondary border-bottom pb-2 mb-2">Personal & Contact</h6>
+                  </Col>
+                  <Col xs={12} sm={6} md={6} lg={4}>
                     <BaseInput
                       label="First Name"
                       name="firstName"
@@ -386,8 +390,7 @@ const PersonalDetailsForm = ({
                       isRequired={true}
                     />
                   </Col>
-
-                  <Col xs={12} md={6} lg={4}>
+                  <Col xs={12} sm={6} md={6} lg={4}>
                     <BaseInput
                       label="Middle Name (Optional)"
                       name="middleName"
@@ -408,8 +411,7 @@ const PersonalDetailsForm = ({
                       passwordToggle={false}
                     />
                   </Col>
-
-                  <Col xs={12} md={6} lg={4}>
+                  <Col xs={12} sm={6} md={6} lg={4}>
                     <BaseInput
                       label="Last Name"
                       name="lastName"
@@ -430,8 +432,7 @@ const PersonalDetailsForm = ({
                       isRequired={true}
                     />
                   </Col>
-
-                  <Col xs={12} md={6} lg={4}>
+                  <Col xs={12} sm={6} md={6} lg={4}>
                     <BaseInput
                       label="Email"
                       name="email"
@@ -459,8 +460,7 @@ const PersonalDetailsForm = ({
                       isRequired={true}
                     />
                   </Col>
-
-                  <Col xs={12} md={6} lg={4}>
+                  <Col xs={12} sm={6} md={6} lg={4}>
                     <BaseInput
                       label="Phone Number"
                       name="phoneNumber"
@@ -487,8 +487,7 @@ const PersonalDetailsForm = ({
                       isRequired={true}
                     />
                   </Col>
-
-                  <Col xs={12} md={6} lg={4}>
+                  <Col xs={12} sm={6} md={6} lg={4}>
                     <BaseInput
                       label="Whatsapp Number"
                       name="whatsappNumber"
@@ -518,8 +517,7 @@ const PersonalDetailsForm = ({
                       isRequired={true}
                     />
                   </Col>
-
-                  <Col xs={12} md={6} lg={4}>
+                  <Col xs={12} sm={6} md={6} lg={4}>
                     <BaseInput
                       label="Date Of Birth"
                       name="dateOfBirth"
@@ -533,11 +531,11 @@ const PersonalDetailsForm = ({
                       error={validation.errors.dateOfBirth}
                       passwordToggle={false}
                       min={minDateOfBirth}
+                      max={maxDateOfBirth}
                       isRequired={false}
                     />
                   </Col>
-
-                  <Col xs={12} md={6} lg={4}>
+                  <Col xs={12} sm={6} md={6} lg={4}>
                     <BaseSelect
                       label="Gender"
                       name="gender"
@@ -559,7 +557,7 @@ const PersonalDetailsForm = ({
                       isRequired={false}
                     />
                   </Col>
-                  <Col xs={12} md={6} lg={4}>
+                  <Col xs={12} sm={6} md={6} lg={4}>
                     <BaseSelect
                       label="Marital Status (Optional)"
                       name="maritalStatus"
@@ -583,7 +581,10 @@ const PersonalDetailsForm = ({
                       error={validation.errors.maritalStatus}
                     />
                   </Col>
-                  <Col xs={12} md={6} lg={4}>
+                  <Col xs={12}>
+                    <h6 className="text-secondary border-bottom pb-2 mb-2 mt-2">Location</h6>
+                  </Col>
+                  <Col xs={12} sm={6} md={6} lg={4}>
                     <BaseSelect
                       label="Country"
                       name="country"
@@ -604,8 +605,7 @@ const PersonalDetailsForm = ({
                       isRequired={false}
                     />
                   </Col>
-
-                  <Col xs={12} md={6} lg={4}>
+                  <Col xs={12} sm={6} md={6} lg={4}>
                     <BaseSelect
                       label="State"
                       name="state"
@@ -626,8 +626,7 @@ const PersonalDetailsForm = ({
                       isRequired={false}
                     />
                   </Col>
-
-                  <Col xs={12} md={6} lg={4}>
+                  <Col xs={12} sm={6} md={6} lg={4}>
                     <BaseSelect
                       label="City"
                       name="currentCity"
@@ -653,7 +652,9 @@ const PersonalDetailsForm = ({
                       isRequired={false}
                     />
                   </Col>
-
+                  <Col xs={12}>
+                    <h6 className="text-secondary border-bottom pb-2 mb-2 mt-2">Address</h6>
+                  </Col>
                   <Col xs={12} md={12} lg={12}>
                     <BaseTextarea
                       label="Current Address"

@@ -140,7 +140,10 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues, onGetCurrentVal
                 </div>
               ) : (
                 <Row className="mb-4 g-3">
-                  <Col xs={12} md={6}>
+                  <Col xs={12}>
+                    <h6 className="text-secondary border-bottom pb-2 mb-2">Education Details</h6>
+                  </Col>
+                  <Col xs={12} sm={6} md={6} lg={4}>
                     <BaseSelect
                       label="Qualification"
                       name="qualification"
@@ -177,8 +180,7 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues, onGetCurrentVal
                       }}
                     />
                   </Col>
-
-                  <Col xs={12} md={6}>
+                  <Col xs={12} sm={6} md={6} lg={4}>
                     <BaseInput
                       label="Specialization"
                       name="specialization"
@@ -199,7 +201,7 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues, onGetCurrentVal
                       isRequired={false}
                     />
                   </Col>
-                  <Col xs={12} md={6} lg={4}>
+                  <Col xs={12} sm={6} md={6} lg={4}>
                     <BaseInput
                       label="College Name (Optional)"
                       name="collegeName"
@@ -259,8 +261,7 @@ const EducationalDetailsForm = ({ onNext, onBack, initialValues, onGetCurrentVal
                       }}
                     />
                   </Col>
-
-                  <Col xs={12} md={8} lg={4}>
+                  <Col xs={12} sm={6} md={6} lg={4}>
                     <BaseInput
                       label="CGPA (Optional)"
                       name="cgpa"
