@@ -10,7 +10,6 @@ import { capitalizeWords } from "utils/commonFunctions";
 import "react-quill/dist/quill.snow.css";
 import { UserOutlined, TeamOutlined } from "@ant-design/icons";
 
-
 const OpenJob = () => {
   const { id: _id } = useParams();
   const [searchParams] = useSearchParams();
@@ -51,14 +50,14 @@ const OpenJob = () => {
 
   const handleApplyAsVendor = () => {
     // Navigate to vendor QR form with job info
-    navigate("/vendor/vendor-add-qr-code", { 
-      state: { 
+    navigate("/vendor/vendor-add-qr-code", {
+      state: {
         jobId: formData._id,
         jobInfo: {
           job_id: formData.job_id,
-          job_subject: formData.job_subject
-        }
-      } 
+          job_subject: formData.job_subject,
+        },
+      },
     });
   };
 
@@ -102,37 +101,48 @@ const OpenJob = () => {
     value?: string | number | JSX.Element;
     icon?: JSX.Element;
   }) => (
-    <p className="mb-[0.8rem] whitespace-nowrap">
-      {icon}
-      <strong>{label}:</strong> {value || "-"}
-    </p>
+    <div
+      className="mb-[0.8rem] d-flex align-items-start flex-wrap"
+      style={{ gap: "0.5rem", minWidth: 0 }}
+    >
+      <span className="flex-shrink-0">
+        {icon}
+        <strong>{label}:</strong>
+      </span>
+      <span style={{ wordBreak: "break-word", minWidth: 0 }}>
+        {value || "-"}
+      </span>
+    </div>
   );
 
   if (loading)
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-200">
-        <Skeleton active className="w-[800px]" />
+      <div className="d-flex align-items-center justify-content-center min-h-screen bg-gray-200 p-3">
+        <Skeleton active className="w-100" style={{ maxWidth: 800 }} />
       </div>
     );
   if (!formData) return null;
 
   return (
     <div
-      className={`items-center justify-center p-6 bg-gray-200 d-flex ${
+      className={`d-flex align-items-center justify-content-center bg-gray-200 p-3 p-md-4 p-lg-5 ${
         isFromEmail ? "" : "min-h-screen"
       }`}
     >
-      <Card className="w-[800px]  d-flex justify-content-center flex flex-wrap">
+      <Card
+        className="d-flex justify-content-center flex-wrap w-100"
+        style={{ maxWidth: 800 }}
+      >
         <DetailsCard
           title="Job Details"
           style={{ border: "none", boxShadow: "none" }}
           icon={
             <span style={{ fontSize: "20px", marginBottom: "5px" }}>💼</span>
           }
-          className="w-[800px] "
+          className="w-100"
         >
           <Row gutter={[16, 16]}>
-            <Col span={24}>
+            <Col xs={24} sm={24} md={12}>
               <DetailsRow
                 label="Job ID"
                 value={
@@ -144,7 +154,7 @@ const OpenJob = () => {
                 }
               />
             </Col>
-            <Col span={24}>
+            <Col xs={24} sm={24} md={12}>
               <DetailsRow
                 label="Job Subject"
                 value={
@@ -152,7 +162,6 @@ const OpenJob = () => {
                     <Tag
                       color="magenta"
                       style={{
-                        display: "inline-block",
                         whiteSpace: "normal",
                         wordBreak: "break-word",
                         overflowWrap: "break-word",
@@ -169,105 +178,124 @@ const OpenJob = () => {
                 }
               />
             </Col>
-            <Col span={24}>
+            <Col xs={24} sm={24} md={12}>
               <DetailsRow
                 label="Job Type"
                 value={
-                  <Tag color="geekblue">{capitalizeWords(formData.job_type)}</Tag>
+                  <Tag color="geekblue">
+                    {capitalizeWords(formData.job_type)}
+                  </Tag>
                 }
               />
             </Col>
             {isLoggedIn ? (
               <>
-                <Col span={12}>
+                <Col xs={24} sm={24} md={12}>
                   <DetailsRow
                     label="Minimum Salary"
-                    value={<Tag color="red">{formData.min_salary}</Tag>}
+                    value={
+                      formData?.min_salary != null && formData.min_salary !== "" ? (
+                        <Tag color="red">{formData.min_salary}</Tag>
+                      ) : (
+                        "-"
+                      )
+                    }
                   />
                 </Col>
-                <Col span={12}>
+                <Col xs={24} sm={24} md={12}>
                   <DetailsRow
                     label="Maximum Salary"
-                    value={<Tag color="green">{formData.max_salary}</Tag>}
+                    value={
+                      formData?.max_salary != null && formData.max_salary !== "" ? (
+                        <Tag color="green">{formData.max_salary}</Tag>
+                      ) : (
+                        "-"
+                      )
+                    }
                   />
                 </Col>
               </>
             ) : (
               <></>
             )}
-            <Col span={12}>
+            <Col xs={24} sm={24} md={12}>
               <DetailsRow
                 label="Time Zone"
-                value={<Tag color="red">{formData.time_zone}</Tag>}
+                value={
+                  formData?.time_zone != null && formData.time_zone !== "" ? (
+                    <Tag color="red">{formData.time_zone}</Tag>
+                  ) : (
+                    "-"
+                  )
+                }
               />
             </Col>
-            <Col span={12}>
+            <Col xs={24} sm={24} md={12}>
               <DetailsRow
                 label="Contract Duration"
                 value={<Tag color="gold">{formData.contract_duration}</Tag>}
               />
             </Col>
-            <Col span={12}>
+            <Col xs={24} sm={24} md={12}>
               <DetailsRow
                 label="Start Time"
                 value={<Tag color="cyan">{formData.start_time}</Tag>}
               />
             </Col>
-            <Col span={12}>
+            <Col xs={24} sm={24} md={12}>
               <DetailsRow
                 label="End Time"
                 value={<Tag color="red">{formData.end_time}</Tag>}
               />
             </Col>
-            <Row gutter={[16, 16]}>
-              <Col span={24}>
-                <DetailsRow
-                  label="Job Description"
-                  value={
+            <Col xs={24}>
+              <DetailsRow
+                label="Job Description"
+                value={
+                  <div
+                    className="ql-editor"
+                    style={{
+                      wordBreak: "break-word",
+                      overflowWrap: "break-word",
+                      whiteSpace: "pre-wrap",
+                      width: "100%",
+                    }}
+                    dangerouslySetInnerHTML={{
+                      __html: formData.sub_description || "",
+                    }}
+                  />
+                }
+              />
+            </Col>
+            <Col xs={24}>
+              <DetailsRow
+                label="Job Details"
+                value={
+                  <div style={{ maxWidth: "100%", overflowX: "auto", width: "100%" }}>
                     <div
-                      className="ql-editor"
+                      className="ql-editor prose prose-sm max-w-none"
                       style={{
-                        wordBreak: "break-all",
+                        padding: 0,
                         overflowWrap: "break-word",
-                        whiteSpace: "pre-wrap",
+                        wordWrap: "break-word",
                       }}
                       dangerouslySetInnerHTML={{
-                        __html: formData.sub_description || "",
+                        __html: formData.job_details || "",
                       }}
                     />
-                  }
-                />
-              </Col>
-            </Row>
-            <Row gutter={[16, 16]}>
-              <Col span={24}>
-                <DetailsRow
-                  label="Job Details"
-                  value={
-                    <div style={{ maxWidth: "100%", overflowX: "auto" }}>
-                      <div
-                        className="ql-editor prose prose-sm max-w-none"
-                        style={{
-                          padding: 0,
-                          overflowWrap: "break-word",
-                          wordWrap: "break-word",
-                        }}
-                        dangerouslySetInnerHTML={{
-                          __html: formData.job_details || "",
-                        }}
-                      />
-                    </div>
-                  }
-                />
-              </Col>
-            </Row>
+                  </div>
+                }
+              />
+            </Col>
           </Row>
           {(!isLoggedIn || isFromEmail) && (
             <div
-              className="p-3 mt-4 rounded d-flex align-items-center justify-content-center"
+              className="p-3 mt-4 rounded d-flex align-items-center justify-content-center text-center"
               style={{
                 backgroundColor: "#e7f3ff",
                 border: "1px solid #b3d7ff",
+                flexWrap: "wrap",
+                wordBreak: "break-word",
               }}
             >
               <span style={{ color: "#495057" }}>
@@ -288,20 +316,23 @@ const OpenJob = () => {
             </div>
           )}
 
-          <div className="flex justify-center gap-3 mt-4">
+          <div
+            className="d-flex flex-column flex-sm-row justify-content-center align-items-stretch align-items-sm-center gap-2 gap-sm-3 mt-4"
+            style={{ maxWidth: "100%" }}
+          >
             {!isFromEmail && (
               <>
-                <BaseButton 
-                  color="success" 
+                <BaseButton
+                  color="success"
                   onClick={handleApplyAsCandidate}
-                  className="d-flex align-items-center gap-2"
+                  className="d-flex align-items-center justify-content-center gap-2"
                 >
                   <UserOutlined /> Apply as Candidate
                 </BaseButton>
-                <BaseButton 
-                  color="primary" 
+                <BaseButton
+                  color="primary"
                   onClick={handleApplyAsVendor}
-                  className="d-flex align-items-center gap-2"
+                  className="d-flex align-items-center justify-content-center gap-2"
                 >
                   <TeamOutlined /> Apply as Vendor
                 </BaseButton>

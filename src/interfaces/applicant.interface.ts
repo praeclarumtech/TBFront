@@ -180,7 +180,26 @@ export const jobApplicantSchema = Yup.object({
     ),
   referral: Yup.string(),
   portfolioUrl: Yup.string().url("Please enter a valid portfolio URL."),
-  resumeUrl: Yup.string().url(),
+  resumeUrl: Yup.string()
+    .transform((value) =>
+      value && typeof value === "string" && value.trim() !== ""
+        ? value.replace(/\s/g, "%20")
+        : value,
+    )
+    .test(
+      "valid-resume-url",
+      "Resume URL must be a valid URL.",
+      (value) => {
+        if (!value || (typeof value === "string" && value.trim() === ""))
+          return true;
+        try {
+          new URL(value);
+          return true;
+        } catch {
+          return false;
+        }
+      },
+    ),
   // .required("Resume URL is required.."),
   rating: Yup.number()
     // .required("Rating is required.")
@@ -190,14 +209,26 @@ export const jobApplicantSchema = Yup.object({
 
 export const personalApplicantSchema = Yup.object({
   dateOfBirth: Yup.date()
-    // .required("Date of birth is required.")
     .nullable()
-    .typeError("Please enter a valid date.")
-    .min(
-      new Date(1960, 0, 1),
-      "Year must be between 1960 and the current year.",
+    .transform((value, originalValue) =>
+      originalValue === "" || originalValue == null ? null : value,
     )
-    .max(new Date(), "Date of birth cannot be in the future."),
+    .typeError("Please enter a valid date.")
+    .test(
+      "date-of-birth-range",
+      "Date of birth must be within the last 60 years and cannot be in the future.",
+      (value) => {
+        if (value == null) return true;
+        const date = value instanceof Date ? value : new Date(value);
+        if (isNaN(date.getTime())) return false;
+        const today = new Date();
+        today.setHours(23, 59, 59, 999);
+        const minDate = new Date();
+        minDate.setFullYear(minDate.getFullYear() - 60);
+        minDate.setHours(0, 0, 0, 0);
+        return date >= minDate && date <= today;
+      },
+    ),
   firstName: Yup.string()
     .required("First name is required.")
     .max(15, "First name cannot exceed 15 characters.")
