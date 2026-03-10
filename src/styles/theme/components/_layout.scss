@@ -59,16 +59,6 @@
     transition: margin 0.25s ease-out;
   }
 
-  // Hide scrollbar but keep scroll behavior
-  .hide-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-    &::-webkit-scrollbar {
-      display: none;
-    }
-  }
-
-
 
 
   // Dashboard navbar vertical toggled

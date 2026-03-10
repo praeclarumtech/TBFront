@@ -45,7 +45,7 @@ const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
         <div className="navbar-vertical navbar" style={{ zIndex: 10 }}>
           <Sidebar showMenu={showMenu} toggleMenu={ToggleMenu} />
         </div>
-        <div id="page-content" className="overflow-auto hide-scrollbar">
+        <div id="page-content" className="overflow-auto">
           <div
             className="header fixed-top bg-dark border-bottom-dark"
             style={{ ...contentShiftStyle, zIndex: 10 }}
@@ -54,7 +54,7 @@ const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
           </div>
 
           <div
-            className="content hide-scrollbar"
+            className="content"
             style={{
               // ...contentShiftStyle,
               marginTop: "66px",
