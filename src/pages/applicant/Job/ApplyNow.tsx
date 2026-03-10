@@ -1,6 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Row, Col, Container, Spinner } from "react-bootstrap";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useFormik } from "formik";
 import { Fragment } from "react";
 import {
@@ -65,9 +71,15 @@ const ApplyNow = () => {
   const [loadingRoles, setLoadingRoles] = useState(false);
   const [loadingSkills, setLoadingSkills] = useState(false);
   const [loadingDesignations, setLoadingDesignations] = useState(false);
-  const roleSearchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const skillSearchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const designationSearchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const roleSearchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
+  const skillSearchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
+  const designationSearchTimeoutRef = useRef<ReturnType<
+    typeof setTimeout
+  > | null>(null);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [resumeError, setResumeError] = useState<string>("");
   const [jobID, setJobID] = useState<any>();
@@ -157,7 +169,9 @@ const ApplyNow = () => {
       if (search) params.search = search;
       const response = await viewAllDesignation(params);
       const rawDesignation = response?.data?.data;
-      const designationData = Array.isArray(rawDesignation) ? rawDesignation : [];
+      const designationData = Array.isArray(rawDesignation)
+        ? rawDesignation
+        : [];
       const options = designationData.map((item: any) => ({
         label: item.designation,
         value: item.designation,
@@ -425,9 +439,12 @@ const ApplyNow = () => {
   // Cleanup search debounce timeouts on unmount
   useEffect(() => {
     return () => {
-      if (roleSearchTimeoutRef.current) clearTimeout(roleSearchTimeoutRef.current);
-      if (skillSearchTimeoutRef.current) clearTimeout(skillSearchTimeoutRef.current);
-      if (designationSearchTimeoutRef.current) clearTimeout(designationSearchTimeoutRef.current);
+      if (roleSearchTimeoutRef.current)
+        clearTimeout(roleSearchTimeoutRef.current);
+      if (skillSearchTimeoutRef.current)
+        clearTimeout(skillSearchTimeoutRef.current);
+      if (designationSearchTimeoutRef.current)
+        clearTimeout(designationSearchTimeoutRef.current);
     };
   }, []);
 
@@ -641,21 +658,24 @@ const ApplyNow = () => {
 
   const SEARCH_DEBOUNCE_MS = 300;
   const onRoleInputChange = useCallback((value: string) => {
-    if (roleSearchTimeoutRef.current) clearTimeout(roleSearchTimeoutRef.current);
+    if (roleSearchTimeoutRef.current)
+      clearTimeout(roleSearchTimeoutRef.current);
     roleSearchTimeoutRef.current = setTimeout(() => {
       fetchRoles(1, false, value.trim() || undefined);
       roleSearchTimeoutRef.current = null;
     }, SEARCH_DEBOUNCE_MS);
   }, []);
   const onSkillInputChange = useCallback((value: string) => {
-    if (skillSearchTimeoutRef.current) clearTimeout(skillSearchTimeoutRef.current);
+    if (skillSearchTimeoutRef.current)
+      clearTimeout(skillSearchTimeoutRef.current);
     skillSearchTimeoutRef.current = setTimeout(() => {
       fetchSkills(1, false, value.trim() || undefined);
       skillSearchTimeoutRef.current = null;
     }, SEARCH_DEBOUNCE_MS);
   }, []);
   const onDesignationInputChange = useCallback((value: string) => {
-    if (designationSearchTimeoutRef.current) clearTimeout(designationSearchTimeoutRef.current);
+    if (designationSearchTimeoutRef.current)
+      clearTimeout(designationSearchTimeoutRef.current);
     designationSearchTimeoutRef.current = setTimeout(() => {
       fetchDesignations(1, false, value.trim() || undefined);
       designationSearchTimeoutRef.current = null;
@@ -695,18 +715,36 @@ const ApplyNow = () => {
 
   return (
     <Fragment>
-      <div className="pt-3 page-content"></div>
-      <Container fluid>
-        <Card title="Job Profile">
+      <div className="page-content apply-now-page">
+        <style>{`
+          .apply-now-page { min-height: 100vh; }
+          .apply-now-header-logo { height: 40px; width: auto; object-fit: contain; }
+          .apply-now-form .form-control:focus { border-color: var(--bs-primary); box-shadow: 0 0 0 3px rgba(var(--bs-primary-rgb), 0.15); outline: 0; }
+          .apply-now-card .ant-card-body { padding: 0; }
+          .apply-now-section { border-radius: 8px; border: 1px solid #f0f0f0; margin-bottom: 1.5rem; overflow: hidden; }
+        `}</style>
+        <header className="apply-now-header py-3 border-bottom bg-[#e6f4ff]">
+          <Container>
+            <div className="flex justify-center items-center">
+              <img
+                src={`${import.meta.env.BASE_URL}logo/logo.png`}
+                alt="Talent Box"
+                className="apply-now-header-logo"
+              />
+            </div>
+          </Container>
+        </header>
+
+        <Container className="apply-now-page-container py-4 px-3 px-md-4">
           <Row>
-            <div>
+            <Col xs={12}>
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
                   validation.handleSubmit();
                   return false;
                 }}
-                className="p-1"
+                className="apply-now-form"
               >
                 {loading ? (
                   <div className="my-5 d-flex justify-content-center">
@@ -715,710 +753,771 @@ const ApplyNow = () => {
                     </Spinner>
                   </div>
                 ) : (
-                  <Row className="mb-1 g-3">
-                    <Col xs={12} sm={6} md={6} lg={3}>
-                      <BaseInput
-                        label="First Name"
-                        name="firstName"
-                        type="text"
-                        className="select-border"
-                        placeholder={InputPlaceHolder("First Name")}
-                        handleChange={(e) => {
-                          const value = e.target.value.replace(
-                            /[^A-Za-z\s]/g,
-                            "",
-                          );
-                          validation.setFieldValue("firstName", value);
-                        }}
-                        handleBlur={validation.handleBlur}
-                        value={validation.values.firstName}
-                        touched={validation.touched.firstName}
-                        error={validation.errors.firstName}
-                        passwordToggle={false}
-                        isRequired={true}
-                      />
-                    </Col>
-
-                    <Col xs={12} sm={6} md={6} lg={3}>
-                      <BaseInput
-                        label="Last Name"
-                        name="lastName"
-                        type="text"
-                        placeholder={InputPlaceHolder("Last Name")}
-                        handleChange={(e) => {
-                          const value = e.target.value.replace(
-                            /[^A-Za-z\s]/g,
-                            "",
-                          );
-                          validation.setFieldValue("lastName", value);
-                        }}
-                        handleBlur={validation.handleBlur}
-                        value={validation.values.lastName}
-                        touched={validation.touched.lastName}
-                        error={validation.errors.lastName}
-                        passwordToggle={false}
-                        isRequired={true}
-                      />
-                    </Col>
-
-                    <Col xs={12} sm={6} md={6} lg={3}>
-                      <BaseInput
-                        label="Email"
-                        name="email"
-                        type="text"
-                        className="select-border"
-                        placeholder={InputPlaceHolder("Email")}
-                        handleChange={async (
-                          e: React.ChangeEvent<HTMLInputElement>,
-                        ) => {
-                          const emailValue = e.target.value;
-                          validation.setFieldValue("email", emailValue);
-                        }}
-                        handleBlur={validation.handleBlur}
-                        value={validation.values.email}
-                        touched={validation.touched.email}
-                        error={
-                          validation.errors.email
-                          // || emailError
-                        }
-                        passwordToggle={false}
-                        isRequired={true}
-                      />
-                    </Col>
-
-                    <Col xs={12} sm={6} md={6} lg={3}>
-                      <BaseInput
-                        label="Phone Number"
-                        name="phoneNumber"
-                        type="text"
-                        className="select-border"
-                        placeholder={InputPlaceHolder("Phone Number")}
-                        handleChange={async (
-                          e: React.ChangeEvent<HTMLInputElement>,
-                        ) => {
-                          const rawValue = e.target.value.replace(/\D/g, "");
-                          const sanitizedValue = rawValue.slice(0, 10);
-                          validation.setFieldValue(
-                            "phoneNumber",
-                            sanitizedValue,
-                          );
-                        }}
-                        handleBlur={validation.handleBlur}
-                        value={validation.values.phoneNumber}
-                        touched={validation.touched.phoneNumber}
-                        error={validation.errors.phoneNumber}
-                        passwordToggle={false}
-                        isRequired={true}
-                      />
-                    </Col>
-
-                    {/* Job Details */}
-
-                    <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
-                      <PaginateMultiSelect
-                        label="Applied Skills"
-                        name="appliedSkills"
-                        className="select-border"
-                        value={selectedMulti || []}
-                        isMulti={true}
-                        onChange={handleMultiSkill}
-                        options={skillOptionsWithSelected}
-                        touched={validation.touched.appliedSkills}
-                        error={validation.errors.appliedSkills}
-                        handleBlur={validation.handleBlur}
-                        isRequired={false}
-                        loadMore={loadMoreSkills}
-                        hasMore={hasMoreSkills}
-                        isLoadingMore={loadingMoreSkills}
-                        onInputChange={onSkillInputChange}
-                        isLoading={loadingSkills}
-                      />
-                    </Col>
-                    <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
-                      <BaseInput
-                        label="Other Skills"
-                        name="otherSkills"
-                        type="text"
-                        placeholder={InputPlaceHolder("Other Skills")}
-                        handleChange={validation.handleChange}
-                        handleBlur={validation.handleBlur}
-                        value={validation.values.otherSkills}
-                        touched={validation.touched.otherSkills}
-                        error={validation.errors.otherSkills}
-                        passwordToggle={false}
-                        isRequired={true}
-                      />
-                    </Col>
-                    <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
-                      <PaginateSelect
-                        label="Applied Role"
-                        name="appliedRole"
-                        className="select-border"
-                        options={roleOptionsWithSelected}
-                        placeholder={InputPlaceHolder("Applied Role")}
-                        handleChange={handleRoleChange}
-                        handleBlur={validation.appliedRole}
-                        value={
-                          dynamicFind(
-                            roleOptionsWithSelected,
-                            validation.values.appliedRole,
-                          ) || ""
-                        }
-                        touched={validation.touched.appliedRole}
-                        error={validation.errors.appliedRole}
-                        isRequired={true}
-                        loadMore={loadMoreRoles}
-                        hasMore={hasMoreRoles}
-                        isLoadingMore={loadingMoreRoles}
-                        onInputChange={onRoleInputChange}
-                        isLoading={loadingRoles}
-                      />
-                    </Col>
-                    <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
-                      <PaginateSelect
-                        label="Current Company Designation"
-                        name="currentCompanyDesignation"
-                        className="select-border"
-                        options={designationOptionsWithSelected}
-                        placeholder={InputPlaceHolder("Degination")}
-                        handleChange={(selectedOption: SelectedOption) => {
-                          validation.setFieldValue(
-                            "currentCompanyDesignation",
-                            selectedOption?.label || "",
-                          );
-                        }}
-                        handleBlur={validation.currentCompanyDesignation}
-                        value={
-                          dynamicFind(
-                            designationOptionsWithSelected,
-                            validation.values.currentCompanyDesignation,
-                          ) || ""
-                        }
-                        touched={validation.touched.currentCompanyDesignation}
-                        error={validation.errors.currentCompanyDesignation}
-                        isRequired={true}
-                        loadMore={loadMoreDesignations}
-                        hasMore={hasMoreDesignations}
-                        isLoadingMore={loadingMoreDesignations}
-                        onInputChange={onDesignationInputChange}
-                        isLoading={loadingDesignations}
-                      />
-                    </Col>
-
-                    <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
-                      <BaseInput
-                        label="Total Experience(Year)"
-                        name="totalExperience"
-                        type="text"
-                        placeholder={InputPlaceHolder("Total Experience")}
-                        handleChange={(e) => {
-                          let value = e.target.value;
-                          value = value.replace(/[^0-9.]/g, "");
-
-                          const parts = value.split(".");
-                          if (parts.length > 2) {
-                            value = parts[0] + "." + parts.slice(1).join("");
-                          }
-
-                          if (parts[1]?.length > 2) {
-                            value = parts[0] + "." + parts[1].slice(0, 2);
-                          }
-
-                          const numValue = parseFloat(value);
-
-                          if (
-                            !isNaN(numValue) &&
-                            numValue >= 0 &&
-                            numValue <= 30
-                          ) {
-                            validation.setFieldValue("totalExperience", value);
-                          } else if (value === "" || value === ".") {
-                            validation.setFieldValue("totalExperience", value);
-                          } else if (!value) {
-                            validation.setFieldValue("totalExperience", "");
-                          }
-                        }}
-                        handleBlur={(e) => {
-                          const value = e.target.value;
-
-                          if (value && !isNaN(parseFloat(value))) {
-                            const numValue = parseFloat(value);
-                            if (numValue >= 0 && numValue <= 30) {
-                              validation.setFieldValue(
-                                "totalExperience",
-                                numValue.toFixed(1),
-                              );
-                            } else {
-                              validation.setFieldValue("totalExperience", "");
-                            }
-                          } else {
-                            validation.setFieldValue("totalExperience", "");
-                          }
-                          validation.handleBlur(e);
-                        }}
-                        value={validation.values.totalExperience}
-                        touched={validation.touched.totalExperience}
-                        error={validation.errors.totalExperience}
-                        passwordToggle={false}
-                        isRequired={true}
-                      />
-                    </Col>
-                    <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
-                      <BaseInput
-                        label="Relevant Experience(Year)"
-                        name="relevantSkillExperience"
-                        type="text"
-                        placeholder={InputPlaceHolder(
-                          "Relevant skill experience",
-                        )}
-                        handleChange={(e) => {
-                          let value = e.target.value;
-                          value = value.replace(/[^0-9.]/g, "");
-
-                          const parts = value.split(".");
-                          if (parts.length > 2) {
-                            value = parts[0] + "." + parts.slice(1).join("");
-                          }
-
-                          if (parts[1]?.length > 2) {
-                            value = parts[0] + "." + parts[1].slice(0, 2);
-                          }
-
-                          const numValue = parseFloat(value);
-
-                          if (
-                            !isNaN(numValue) &&
-                            numValue >= 0 &&
-                            numValue <= 30
-                          ) {
-                            validation.setFieldValue(
-                              "relevantSkillExperience",
-                              value,
-                            );
-                          } else if (value === "" || value === ".") {
-                            validation.setFieldValue(
-                              "relevantSkillExperience",
-                              value,
-                            );
-                          } else if (!value) {
-                            validation.setFieldValue(
-                              "relevantSkillExperience",
-                              "",
-                            );
-                          }
-                        }}
-                        handleBlur={(e) => {
-                          const value = e.target.value;
-
-                          if (value && !isNaN(parseFloat(value))) {
-                            const numValue = parseFloat(value);
-                            if (numValue >= 0 && numValue <= 30) {
-                              validation.setFieldValue(
-                                "relevantSkillExperience",
-                                numValue.toFixed(1),
-                              );
-                            } else {
-                              validation.setFieldValue(
-                                "relevantSkillExperience",
-                                "",
-                              );
-                            }
-                          } else {
-                            validation.setFieldValue(
-                              "relevantSkillExperience",
-                              "",
-                            );
-                          }
-                          validation.handleBlur(e);
-                        }}
-                        value={validation.values.relevantSkillExperience}
-                        touched={validation.touched.relevantSkillExperience}
-                        error={validation.errors.relevantSkillExperience}
-                        passwordToggle={false}
-                        isRequired={true}
-                      />
-                    </Col>
-                    <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
-                      <BaseSelect
-                        label="English Communication(out of 10)"
-                        name="communicationSkill"
-                        className="select-border"
-                        options={communicationOptions}
-                        placeholder="Communication Skill"
-                        handleChange={(selectedOption: SelectedOption) => {
-                          validation.setFieldValue(
-                            "communicationSkill",
-                            selectedOption?.value || "",
-                          );
-                        }}
-                        handleBlur={validation.handleBlur}
-                        value={
-                          dynamicFind(
-                            communicationOptions,
-                            String(validation.values.communicationSkill),
-                          ) || ""
-                        }
-                        touched={validation.touched.communicationSkill}
-                        error={validation.errors.communicationSkill}
-                        isRequired={true}
-                      />
-                    </Col>
-                    <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
-                      <BaseInput
-                        label="Current Package (LPA)"
-                        name="currentPkg"
-                        type="text"
-                        placeholder={InputPlaceHolder("Current package")}
-                        handleChange={(e) => {
-                          let value = e.target.value;
-                          value = value.replace(/[^0-9.]/g, "");
-
-                          const parts = value.split(".");
-                          if (parts.length > 2) {
-                            value = parts[0] + "." + parts.slice(1).join("");
-                          }
-
-                          if (parts[1]?.length > 2) {
-                            value = parts[0] + "." + parts[1].slice(0, 2);
-                          }
-
-                          const numValue = parseFloat(value);
-
-                          if (
-                            !isNaN(numValue) &&
-                            numValue >= 0 &&
-                            numValue <= 1000
-                          ) {
-                            validation.setFieldValue("currentPkg", value);
-                          } else if (value === "" || value === ".") {
-                            validation.setFieldValue("currentPkg", value);
-                          } else if (!value) {
-                            validation.setFieldValue("currentPkg", "");
-                          }
-                        }}
-                        handleBlur={(e) => {
-                          const value = e.target.value;
-
-                          if (value && !isNaN(parseFloat(value))) {
-                            const numValue = parseFloat(value);
-                            if (numValue >= 0 && numValue <= 1000) {
-                              validation.setFieldValue(
-                                "currentPkg",
-                                numValue.toFixed(2),
-                              );
-                            } else {
-                              validation.setFieldValue("currentPkg", "");
-                            }
-                          } else {
-                            validation.setFieldValue("currentPkg", "");
-                          }
-                          validation.handleBlur(e);
-                        }}
-                        value={validation.values.currentPkg}
-                        touched={validation.touched.currentPkg}
-                        error={validation.errors.currentPkg}
-                        passwordToggle={false}
-                        isRequired={true}
-                      />
-                    </Col>
-
-                    <Col xs={12} sm={6} md={6} lg={3} className="mb-3 mb-sm-0">
-                      <BaseInput
-                        label="Expected Package (LPA)"
-                        name="expectedPkg"
-                        type="text"
-                        placeholder={InputPlaceHolder("Expected Package")}
-                        handleChange={(e) => {
-                          let value = e.target.value;
-                          value = value.replace(/[^0-9.]/g, "");
-
-                          const parts = value.split(".");
-                          if (parts.length > 2) {
-                            value = parts[0] + "." + parts.slice(1).join("");
-                          }
-
-                          if (parts[1]?.length > 2) {
-                            value = parts[0] + "." + parts[1].slice(0, 2);
-                          }
-
-                          const numValue = parseFloat(value);
-
-                          if (
-                            !isNaN(numValue) &&
-                            numValue >= 0 &&
-                            numValue <= 1000
-                          ) {
-                            validation.setFieldValue("expectedPkg", value);
-                          } else if (value === "" || value === ".") {
-                            validation.setFieldValue("expectedPkg", value);
-                          } else if (!value) {
-                            validation.setFieldValue("expectedPkg", "");
-                          }
-                        }}
-                        handleBlur={(e) => {
-                          const value = e.target.value;
-
-                          if (value && !isNaN(parseFloat(value))) {
-                            const numValue = parseFloat(value);
-                            if (numValue >= 0 && numValue <= 1000) {
-                              validation.setFieldValue(
-                                "expectedPkg",
-                                numValue.toFixed(2),
-                              );
-                            } else {
-                              validation.setFieldValue("expectedPkg", "");
-                            }
-                          } else {
-                            validation.setFieldValue("expectedPkg", "");
-                          }
-                          validation.handleBlur(e);
-                        }}
-                        value={validation.values.expectedPkg}
-                        touched={validation.touched.expectedPkg}
-                        error={validation.errors.expectedPkg}
-                        passwordToggle={false}
-                        isRequired={true}
-                      />
-                    </Col>
-                    <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
-                      <BaseInput
-                        label="Notice Period (Days)"
-                        name="noticePeriod"
-                        type="text"
-                        placeholder={InputPlaceHolder("Notice period")}
-                        handleChange={(e) => {
-                          let value = e.target.value;
-                          value = value.replace(/[^0-9.]/g, "");
-
-                          const parts = value.split(".");
-                          if (parts.length > 2) {
-                            value = parts[0] + "." + parts.slice(1).join("");
-                          }
-
-                          if (parts[1]?.length > 2) {
-                            value = parts[0] + "." + parts[1].slice(0, 2);
-                          }
-
-                          const numValue = parseFloat(value);
-
-                          if (
-                            !isNaN(numValue) &&
-                            numValue >= 0 &&
-                            numValue <= 100
-                          ) {
-                            validation.setFieldValue("noticePeriod", value);
-                          } else if (value === "" || value === ".") {
-                            validation.setFieldValue("noticePeriod", value);
-                          } else if (!value) {
-                            validation.setFieldValue("noticePeriod", "");
-                          }
-                        }}
-                        handleBlur={(e) => {
-                          const value = e.target.value;
-
-                          if (value && !isNaN(parseFloat(value))) {
-                            const numValue = parseFloat(value);
-                            if (numValue >= 0 && numValue <= 100000) {
-                              validation.setFieldValue(
-                                "noticePeriod",
-                                numValue.toFixed(2),
-                              );
-                            } else {
-                              validation.setFieldValue("noticePeriod", "");
-                            }
-                          } else {
-                            validation.setFieldValue("noticePeriod", "");
-                          }
-                          validation.handleBlur(e);
-                        }}
-                        value={validation.values.noticePeriod}
-                        touched={validation.touched.noticePeriod}
-                        error={validation.errors.noticePeriod}
-                        passwordToggle={false}
-                        isRequired={true}
-                      />
-                    </Col>
-                    <Col xs={12} sm={6} md={6} lg={3} className="mb-3">
-                      <BaseInput
-                        label="Linkedin URL (Optional)"
-                        name="linkedinUrl"
-                        type="url"
-                        placeholder={InputPlaceHolder(
-                          "Linkedin URL (Optional)",
-                        )}
-                        handleChange={validation.handleChange}
-                        handleBlur={validation.handleBlur}
-                        value={validation.values.linkedinUrl}
-                        touched={validation.touched.linkedinUrl}
-                        error={validation.errors.linkedinUrl}
-                        passwordToggle={false}
-                      />
-                    </Col>
-                    <Col xs={12} md={6} lg={3}>
-                      <PaginateSelect
-                        label="State"
-                        name="state"
-                        className="select-border"
-                        options={states}
-                        placeholder={InputPlaceHolder("State")}
-                        handleChange={handleStateChange}
-                        handleBlur={validation.handleBlur}
-                        value={
-                          dynamicFind(
-                            states,
-                            validation.values.state,
-                            "location",
-                          ) ||
-                          (validation.values.state
-                            ? {
-                                label: validation.values.state,
-                                value: validation.values.state,
-                              }
-                            : "")
-                        }
-                        touched={validation.touched.state}
-                        error={validation.errors.state}
-                        isRequired={true}
-                        loadMore={loadMoreStates}
-                        hasMore={hasMoreStates}
-                        isLoadingMore={loadingMoreStates}
-                      />
-                    </Col>
-
-                    <Col xs={12} md={6} lg={3}>
-                      <PaginateSelect
-                        label="City"
-                        name="currentCity"
-                        className="select-border"
-                        options={cities}
-                        placeholder={InputPlaceHolder("City")}
-                        handleChange={(selectedOption: SelectedOption) => {
-                          validation.setFieldValue(
-                            "currentCity",
-                            selectedOption?.label || "",
-                          );
-                        }}
-                        handleBlur={validation.handleBlur}
-                        value={
-                          dynamicFind(
-                            cities,
-                            validation.values.currentCity,
-                            "location",
-                          ) ||
-                          (validation.values.currentCity
-                            ? {
-                                label: validation.values.currentCity,
-                                value: validation.values.currentCity,
-                              }
-                            : "")
-                        }
-                        touched={validation.touched.currentCity}
-                        error={validation.errors.currentCity}
-                        isRequired={true}
-                        loadMore={loadMoreCities}
-                        hasMore={hasMoreCities}
-                        isLoadingMore={loadingMoreCities}
-                      />
-                    </Col>
-                    <Col
-                      xs={12}
-                      sm={8}
-                      md={8}
-                      lg={8}
-                      className="d-flex align-items-end"
-                    >
-                      <div className="w-100">
-                        <label
-                          className="font-semibold text-gray-700 form-label"
-                          htmlFor="resume-upload"
-                        >
-                          Resume Upload <span className="text-danger">*</span>
-                        </label>
-                        <div className="d-flex align-items-center position-relative">
-                          <input
-                            id="resume-upload"
-                            type="file"
-                            accept="application/pdf,.doc,.docx"
-                            style={{ display: "none" }}
-                            onChange={(e) => {
-                              if (e.target.files && e.target.files[0]) {
-                                setResumeFile(e.target.files[0]);
-                                setResumeError("");
-                              }
-                            }}
-                          />
-                          <button
-                            type="button"
-                            className="btn btn-outline-primary d-flex align-items-center"
-                            onClick={() =>
-                              document.getElementById("resume-upload")?.click()
-                            }
-                          >
-                            <img
-                              src={uploadCloud}
-                              alt="Upload"
-                              style={{ width: 22, height: 22, marginRight: 8 }}
+                  <>
+                    {/* Section 1: Basic Information + Professional Details */}
+                    <Card className="apply-now-card apply-now-section shadow-sm mb-4">
+                      <div className="p-3">
+                        <h6 className="fw-bold mb-3">Basic Information</h6>
+                        <Row className="mb-4 g-3">
+                          <Col xs={12} sm={6} lg={3}>
+                            <BaseInput
+                              label="First Name"
+                              name="firstName"
+                              type="text"
+                              className="select-border"
+                              placeholder={InputPlaceHolder("First Name")}
+                              handleChange={(e) => {
+                                const value = e.target.value.replace(
+                                  /[^A-Za-z\s]/g,
+                                  "",
+                                );
+                                validation.setFieldValue("firstName", value);
+                              }}
+                              handleBlur={validation.handleBlur}
+                              value={validation.values.firstName}
+                              touched={validation.touched.firstName}
+                              error={validation.errors.firstName}
+                              passwordToggle={false}
+                              isRequired={true}
                             />
-                            {resumeFile ? "Change File" : "Upload Resume"}
-                          </button>
-                          {resumeFile && (
-                            <>
-                              <span
-                                className="ms-2 text-truncate"
-                                style={{ maxWidth: 120 }}
+                          </Col>
+                          <Col xs={12} sm={6} lg={3}>
+                            <BaseInput
+                              label="Last Name"
+                              name="lastName"
+                              type="text"
+                              placeholder={InputPlaceHolder("Last Name")}
+                              handleChange={(e) => {
+                                const value = e.target.value.replace(
+                                  /[^A-Za-z\s]/g,
+                                  "",
+                                );
+                                validation.setFieldValue("lastName", value);
+                              }}
+                              handleBlur={validation.handleBlur}
+                              value={validation.values.lastName}
+                              touched={validation.touched.lastName}
+                              error={validation.errors.lastName}
+                              passwordToggle={false}
+                              isRequired={true}
+                            />
+                          </Col>
+                          <Col xs={12} sm={6} lg={3}>
+                            <BaseInput
+                              label="Email"
+                              name="email"
+                              type="text"
+                              className="select-border"
+                              placeholder={InputPlaceHolder("Email")}
+                              handleChange={async (
+                                e: React.ChangeEvent<HTMLInputElement>,
+                              ) => {
+                                const emailValue = e.target.value;
+                                validation.setFieldValue("email", emailValue);
+                              }}
+                              handleBlur={validation.handleBlur}
+                              value={validation.values.email}
+                              touched={validation.touched.email}
+                              error={
+                                validation.errors.email
+                                // || emailError
+                              }
+                              passwordToggle={false}
+                              isRequired={true}
+                            />
+                          </Col>
+                          <Col xs={12} sm={6} lg={3}>
+                            <BaseInput
+                              label="Phone Number"
+                              name="phoneNumber"
+                              type="text"
+                              className="select-border"
+                              placeholder={InputPlaceHolder("Phone Number")}
+                              handleChange={async (
+                                e: React.ChangeEvent<HTMLInputElement>,
+                              ) => {
+                                const rawValue = e.target.value.replace(
+                                  /\D/g,
+                                  "",
+                                );
+                                const sanitizedValue = rawValue.slice(0, 10);
+                                validation.setFieldValue(
+                                  "phoneNumber",
+                                  sanitizedValue,
+                                );
+                              }}
+                              handleBlur={validation.handleBlur}
+                              value={validation.values.phoneNumber}
+                              touched={validation.touched.phoneNumber}
+                              error={validation.errors.phoneNumber}
+                              passwordToggle={false}
+                              isRequired={true}
+                            />
+                          </Col>
+                        </Row>
+                        <h6 className="fw-bold mb-3 mt-2">
+                          Professional Details
+                        </h6>
+                        <Row className="mb-4 g-3">
+                          <Col xs={12} sm={6} lg={3}>
+                            <PaginateMultiSelect
+                              label="Applied Skills"
+                              name="appliedSkills"
+                              value={selectedMulti || []}
+                              isMulti={true}
+                              onChange={handleMultiSkill}
+                              options={skillOptionsWithSelected}
+                              touched={validation.touched.appliedSkills}
+                              error={validation.errors.appliedSkills}
+                              handleBlur={validation.handleBlur}
+                              isRequired={false}
+                              loadMore={loadMoreSkills}
+                              hasMore={hasMoreSkills}
+                              isLoadingMore={loadingMoreSkills}
+                              onInputChange={onSkillInputChange}
+                              isLoading={loadingSkills}
+                            />
+                          </Col>
+                          <Col xs={12} sm={6} lg={3}>
+                            <BaseInput
+                              label="Other Skills"
+                              name="otherSkills"
+                              type="text"
+                              placeholder={InputPlaceHolder("Other Skills")}
+                              handleChange={validation.handleChange}
+                              handleBlur={validation.handleBlur}
+                              value={validation.values.otherSkills}
+                              touched={validation.touched.otherSkills}
+                              error={validation.errors.otherSkills}
+                              passwordToggle={false}
+                              isRequired={true}
+                            />
+                          </Col>
+                          <Col xs={12} sm={6} lg={3}>
+                            <PaginateSelect
+                              label="Applied Role"
+                              name="appliedRole"
+                              options={roleOptionsWithSelected}
+                              placeholder={InputPlaceHolder("Applied Role")}
+                              handleChange={handleRoleChange}
+                              handleBlur={validation.appliedRole}
+                              value={
+                                dynamicFind(
+                                  roleOptionsWithSelected,
+                                  validation.values.appliedRole,
+                                ) || ""
+                              }
+                              touched={validation.touched.appliedRole}
+                              error={validation.errors.appliedRole}
+                              isRequired={true}
+                              loadMore={loadMoreRoles}
+                              hasMore={hasMoreRoles}
+                              isLoadingMore={loadingMoreRoles}
+                              onInputChange={onRoleInputChange}
+                              isLoading={loadingRoles}
+                            />
+                          </Col>
+                          <Col xs={12} sm={6} lg={3}>
+                            <PaginateSelect
+                              label="Current Company Designation"
+                              name="currentCompanyDesignation"
+                              options={designationOptionsWithSelected}
+                              placeholder={InputPlaceHolder("Degination")}
+                              handleChange={(
+                                selectedOption: SelectedOption,
+                              ) => {
+                                validation.setFieldValue(
+                                  "currentCompanyDesignation",
+                                  selectedOption?.label || "",
+                                );
+                              }}
+                              handleBlur={validation.currentCompanyDesignation}
+                              value={
+                                dynamicFind(
+                                  designationOptionsWithSelected,
+                                  validation.values.currentCompanyDesignation,
+                                ) || ""
+                              }
+                              touched={
+                                validation.touched.currentCompanyDesignation
+                              }
+                              error={
+                                validation.errors.currentCompanyDesignation
+                              }
+                              isRequired={true}
+                              loadMore={loadMoreDesignations}
+                              hasMore={hasMoreDesignations}
+                              isLoadingMore={loadingMoreDesignations}
+                              onInputChange={onDesignationInputChange}
+                              isLoading={loadingDesignations}
+                            />
+                          </Col>
+                          <Col xs={12} sm={6} md={6} lg={3}>
+                            <BaseInput
+                              label="Total Experience(Year)"
+                              name="totalExperience"
+                              type="text"
+                              placeholder={InputPlaceHolder("Total Experience")}
+                              handleChange={(e) => {
+                                let value = e.target.value;
+                                value = value.replace(/[^0-9.]/g, "");
+
+                                const parts = value.split(".");
+                                if (parts.length > 2) {
+                                  value =
+                                    parts[0] + "." + parts.slice(1).join("");
+                                }
+
+                                if (parts[1]?.length > 2) {
+                                  value = parts[0] + "." + parts[1].slice(0, 2);
+                                }
+
+                                const numValue = parseFloat(value);
+
+                                if (
+                                  !isNaN(numValue) &&
+                                  numValue >= 0 &&
+                                  numValue <= 30
+                                ) {
+                                  validation.setFieldValue(
+                                    "totalExperience",
+                                    value,
+                                  );
+                                } else if (value === "" || value === ".") {
+                                  validation.setFieldValue(
+                                    "totalExperience",
+                                    value,
+                                  );
+                                } else if (!value) {
+                                  validation.setFieldValue(
+                                    "totalExperience",
+                                    "",
+                                  );
+                                }
+                              }}
+                              handleBlur={(e) => {
+                                const value = e.target.value;
+
+                                if (value && !isNaN(parseFloat(value))) {
+                                  const numValue = parseFloat(value);
+                                  if (numValue >= 0 && numValue <= 30) {
+                                    validation.setFieldValue(
+                                      "totalExperience",
+                                      numValue.toFixed(1),
+                                    );
+                                  } else {
+                                    validation.setFieldValue(
+                                      "totalExperience",
+                                      "",
+                                    );
+                                  }
+                                } else {
+                                  validation.setFieldValue(
+                                    "totalExperience",
+                                    "",
+                                  );
+                                }
+                                validation.handleBlur(e);
+                              }}
+                              value={validation.values.totalExperience}
+                              touched={validation.touched.totalExperience}
+                              error={validation.errors.totalExperience}
+                              passwordToggle={false}
+                              isRequired={true}
+                            />
+                          </Col>
+                          <Col xs={12} sm={6} lg={3}>
+                            <BaseInput
+                              label="Relevant Experience(Year)"
+                              name="relevantSkillExperience"
+                              type="text"
+                              placeholder={InputPlaceHolder(
+                                "Relevant skill experience",
+                              )}
+                              handleChange={(e) => {
+                                let value = e.target.value;
+                                value = value.replace(/[^0-9.]/g, "");
+
+                                const parts = value.split(".");
+                                if (parts.length > 2) {
+                                  value =
+                                    parts[0] + "." + parts.slice(1).join("");
+                                }
+
+                                if (parts[1]?.length > 2) {
+                                  value = parts[0] + "." + parts[1].slice(0, 2);
+                                }
+
+                                const numValue = parseFloat(value);
+
+                                if (
+                                  !isNaN(numValue) &&
+                                  numValue >= 0 &&
+                                  numValue <= 30
+                                ) {
+                                  validation.setFieldValue(
+                                    "relevantSkillExperience",
+                                    value,
+                                  );
+                                } else if (value === "" || value === ".") {
+                                  validation.setFieldValue(
+                                    "relevantSkillExperience",
+                                    value,
+                                  );
+                                } else if (!value) {
+                                  validation.setFieldValue(
+                                    "relevantSkillExperience",
+                                    "",
+                                  );
+                                }
+                              }}
+                              handleBlur={(e) => {
+                                const value = e.target.value;
+
+                                if (value && !isNaN(parseFloat(value))) {
+                                  const numValue = parseFloat(value);
+                                  if (numValue >= 0 && numValue <= 30) {
+                                    validation.setFieldValue(
+                                      "relevantSkillExperience",
+                                      numValue.toFixed(1),
+                                    );
+                                  } else {
+                                    validation.setFieldValue(
+                                      "relevantSkillExperience",
+                                      "",
+                                    );
+                                  }
+                                } else {
+                                  validation.setFieldValue(
+                                    "relevantSkillExperience",
+                                    "",
+                                  );
+                                }
+                                validation.handleBlur(e);
+                              }}
+                              value={validation.values.relevantSkillExperience}
+                              touched={
+                                validation.touched.relevantSkillExperience
+                              }
+                              error={validation.errors.relevantSkillExperience}
+                              passwordToggle={false}
+                              isRequired={true}
+                            />
+                          </Col>
+                          <Col xs={12} sm={6} lg={3}>
+                            <BaseSelect
+                              label="English Communication (out of 10)"
+                              name="communicationSkill"
+                              options={communicationOptions}
+                              placeholder="Communication Skill"
+                              handleChange={(
+                                selectedOption: SelectedOption,
+                              ) => {
+                                validation.setFieldValue(
+                                  "communicationSkill",
+                                  selectedOption?.value || "",
+                                );
+                              }}
+                              handleBlur={validation.handleBlur}
+                              value={
+                                dynamicFind(
+                                  communicationOptions,
+                                  String(validation.values.communicationSkill),
+                                ) || ""
+                              }
+                              touched={validation.touched.communicationSkill}
+                              error={validation.errors.communicationSkill}
+                              isRequired={true}
+                            />
+                          </Col>
+                          <Col xs={12} sm={6} lg={3}>
+                            <BaseInput
+                              label="Current Package (LPA)"
+                              name="currentPkg"
+                              type="text"
+                              placeholder={InputPlaceHolder("Current package")}
+                              handleChange={(e) => {
+                                let value = e.target.value;
+                                value = value.replace(/[^0-9.]/g, "");
+
+                                const parts = value.split(".");
+                                if (parts.length > 2) {
+                                  value =
+                                    parts[0] + "." + parts.slice(1).join("");
+                                }
+
+                                if (parts[1]?.length > 2) {
+                                  value = parts[0] + "." + parts[1].slice(0, 2);
+                                }
+
+                                const numValue = parseFloat(value);
+
+                                if (
+                                  !isNaN(numValue) &&
+                                  numValue >= 0 &&
+                                  numValue <= 1000
+                                ) {
+                                  validation.setFieldValue("currentPkg", value);
+                                } else if (value === "" || value === ".") {
+                                  validation.setFieldValue("currentPkg", value);
+                                } else if (!value) {
+                                  validation.setFieldValue("currentPkg", "");
+                                }
+                              }}
+                              handleBlur={(e) => {
+                                const value = e.target.value;
+
+                                if (value && !isNaN(parseFloat(value))) {
+                                  const numValue = parseFloat(value);
+                                  if (numValue >= 0 && numValue <= 1000) {
+                                    validation.setFieldValue(
+                                      "currentPkg",
+                                      numValue.toFixed(2),
+                                    );
+                                  } else {
+                                    validation.setFieldValue("currentPkg", "");
+                                  }
+                                } else {
+                                  validation.setFieldValue("currentPkg", "");
+                                }
+                                validation.handleBlur(e);
+                              }}
+                              value={validation.values.currentPkg}
+                              touched={validation.touched.currentPkg}
+                              error={validation.errors.currentPkg}
+                              passwordToggle={false}
+                              isRequired={true}
+                            />
+                          </Col>
+                          <Col xs={12} sm={6} lg={3}>
+                            <BaseInput
+                              label="Expected Package (LPA)"
+                              name="expectedPkg"
+                              type="text"
+                              placeholder={InputPlaceHolder("Expected Package")}
+                              handleChange={(e) => {
+                                let value = e.target.value;
+                                value = value.replace(/[^0-9.]/g, "");
+
+                                const parts = value.split(".");
+                                if (parts.length > 2) {
+                                  value =
+                                    parts[0] + "." + parts.slice(1).join("");
+                                }
+
+                                if (parts[1]?.length > 2) {
+                                  value = parts[0] + "." + parts[1].slice(0, 2);
+                                }
+
+                                const numValue = parseFloat(value);
+
+                                if (
+                                  !isNaN(numValue) &&
+                                  numValue >= 0 &&
+                                  numValue <= 1000
+                                ) {
+                                  validation.setFieldValue(
+                                    "expectedPkg",
+                                    value,
+                                  );
+                                } else if (value === "" || value === ".") {
+                                  validation.setFieldValue(
+                                    "expectedPkg",
+                                    value,
+                                  );
+                                } else if (!value) {
+                                  validation.setFieldValue("expectedPkg", "");
+                                }
+                              }}
+                              handleBlur={(e) => {
+                                const value = e.target.value;
+
+                                if (value && !isNaN(parseFloat(value))) {
+                                  const numValue = parseFloat(value);
+                                  if (numValue >= 0 && numValue <= 1000) {
+                                    validation.setFieldValue(
+                                      "expectedPkg",
+                                      numValue.toFixed(2),
+                                    );
+                                  } else {
+                                    validation.setFieldValue("expectedPkg", "");
+                                  }
+                                } else {
+                                  validation.setFieldValue("expectedPkg", "");
+                                }
+                                validation.handleBlur(e);
+                              }}
+                              value={validation.values.expectedPkg}
+                              touched={validation.touched.expectedPkg}
+                              error={validation.errors.expectedPkg}
+                              passwordToggle={false}
+                              isRequired={true}
+                            />
+                          </Col>
+                          <Col xs={12} sm={6} lg={3}>
+                            <BaseInput
+                              label="Notice Period (Days)"
+                              name="noticePeriod"
+                              type="text"
+                              placeholder={InputPlaceHolder("Notice period")}
+                              handleChange={(e) => {
+                                let value = e.target.value;
+                                value = value.replace(/[^0-9.]/g, "");
+
+                                const parts = value.split(".");
+                                if (parts.length > 2) {
+                                  value =
+                                    parts[0] + "." + parts.slice(1).join("");
+                                }
+
+                                if (parts[1]?.length > 2) {
+                                  value = parts[0] + "." + parts[1].slice(0, 2);
+                                }
+
+                                const numValue = parseFloat(value);
+
+                                if (
+                                  !isNaN(numValue) &&
+                                  numValue >= 0 &&
+                                  numValue <= 100
+                                ) {
+                                  validation.setFieldValue(
+                                    "noticePeriod",
+                                    value,
+                                  );
+                                } else if (value === "" || value === ".") {
+                                  validation.setFieldValue(
+                                    "noticePeriod",
+                                    value,
+                                  );
+                                } else if (!value) {
+                                  validation.setFieldValue("noticePeriod", "");
+                                }
+                              }}
+                              handleBlur={(e) => {
+                                const value = e.target.value;
+
+                                if (value && !isNaN(parseFloat(value))) {
+                                  const numValue = parseFloat(value);
+                                  if (numValue >= 0 && numValue <= 100000) {
+                                    validation.setFieldValue(
+                                      "noticePeriod",
+                                      numValue.toFixed(2),
+                                    );
+                                  } else {
+                                    validation.setFieldValue(
+                                      "noticePeriod",
+                                      "",
+                                    );
+                                  }
+                                } else {
+                                  validation.setFieldValue("noticePeriod", "");
+                                }
+                                validation.handleBlur(e);
+                              }}
+                              value={validation.values.noticePeriod}
+                              touched={validation.touched.noticePeriod}
+                              error={validation.errors.noticePeriod}
+                              passwordToggle={false}
+                              isRequired={true}
+                            />
+                          </Col>
+                          <Col xs={12} sm={6} lg={3}>
+                            <BaseInput
+                              label="Linkedin URL (Optional)"
+                              name="linkedinUrl"
+                              type="url"
+                              placeholder={InputPlaceHolder(
+                                "Linkedin URL (Optional)",
+                              )}
+                              handleChange={validation.handleChange}
+                              handleBlur={validation.handleBlur}
+                              value={validation.values.linkedinUrl}
+                              touched={validation.touched.linkedinUrl}
+                              error={validation.errors.linkedinUrl}
+                              passwordToggle={false}
+                            />
+                          </Col>
+                          <Col xs={12} sm={6} lg={3}>
+                            <PaginateSelect
+                              label="State"
+                              name="state"
+                              className="select-border"
+                              options={states}
+                              placeholder={InputPlaceHolder("State")}
+                              handleChange={handleStateChange}
+                              handleBlur={validation.handleBlur}
+                              value={
+                                dynamicFind(
+                                  states,
+                                  validation.values.state,
+                                  "location",
+                                ) ||
+                                (validation.values.state
+                                  ? {
+                                      label: validation.values.state,
+                                      value: validation.values.state,
+                                    }
+                                  : "")
+                              }
+                              touched={validation.touched.state}
+                              error={validation.errors.state}
+                              isRequired={true}
+                              loadMore={loadMoreStates}
+                              hasMore={hasMoreStates}
+                              isLoadingMore={loadingMoreStates}
+                            />
+                          </Col>
+                          <Col xs={12} sm={6} lg={3}>
+                            <PaginateSelect
+                              label="City"
+                              name="currentCity"
+                              className="select-border"
+                              options={cities}
+                              placeholder={InputPlaceHolder("City")}
+                              handleChange={(
+                                selectedOption: SelectedOption,
+                              ) => {
+                                validation.setFieldValue(
+                                  "currentCity",
+                                  selectedOption?.label || "",
+                                );
+                              }}
+                              handleBlur={validation.handleBlur}
+                              value={
+                                dynamicFind(
+                                  cities,
+                                  validation.values.currentCity,
+                                  "location",
+                                ) ||
+                                (validation.values.currentCity
+                                  ? {
+                                      label: validation.values.currentCity,
+                                      value: validation.values.currentCity,
+                                    }
+                                  : "")
+                              }
+                              touched={validation.touched.currentCity}
+                              error={validation.errors.currentCity}
+                              isRequired={true}
+                              loadMore={loadMoreCities}
+                              hasMore={hasMoreCities}
+                              isLoadingMore={loadingMoreCities}
+                            />
+                          </Col>
+                          <Col
+                            xs={12}
+                            lg={8}
+                            className="d-flex align-items-end"
+                          >
+                            <div className="w-100">
+                              <label
+                                className="font-semibold text-gray-700 form-label"
+                                htmlFor="resume-upload"
                               >
-                                {resumeFile.name}
-                              </span>
-                              <button
-                                type="button"
-                                className="p-0 btn btn-link text-danger ms-2"
-                                style={{ fontSize: 18 }}
-                                onClick={() => {
-                                  setResumeFile(null);
-                                  setResumeError("");
-                                  const input = document.getElementById(
-                                    "resume-upload",
-                                  ) as HTMLInputElement;
-                                  if (input) input.value = "";
-                                }}
-                                title="Remove file"
+                                Resume Upload{" "}
+                                <span className="text-danger">*</span>
+                              </label>
+                              <div className="d-flex align-items-center position-relative">
+                                <input
+                                  id="resume-upload"
+                                  type="file"
+                                  accept="application/pdf,.doc,.docx"
+                                  style={{ display: "none" }}
+                                  onChange={(e) => {
+                                    if (e.target.files && e.target.files[0]) {
+                                      setResumeFile(e.target.files[0]);
+                                      setResumeError("");
+                                    }
+                                  }}
+                                />
+                                <button
+                                  type="button"
+                                  className="btn btn-outline-primary d-flex align-items-center"
+                                  onClick={() =>
+                                    document
+                                      .getElementById("resume-upload")
+                                      ?.click()
+                                  }
+                                >
+                                  <img
+                                    src={uploadCloud}
+                                    alt="Upload"
+                                    style={{
+                                      width: 22,
+                                      height: 22,
+                                      marginRight: 8,
+                                    }}
+                                  />
+                                  {resumeFile ? "Change File" : "Upload Resume"}
+                                </button>
+                                {resumeFile && (
+                                  <>
+                                    <span
+                                      className="ms-2 text-truncate"
+                                      style={{ maxWidth: 120 }}
+                                    >
+                                      {resumeFile.name}
+                                    </span>
+                                    <button
+                                      type="button"
+                                      className="p-0 btn btn-link text-danger ms-2"
+                                      style={{ fontSize: 18 }}
+                                      onClick={() => {
+                                        setResumeFile(null);
+                                        setResumeError("");
+                                        const input = document.getElementById(
+                                          "resume-upload",
+                                        ) as HTMLInputElement;
+                                        if (input) input.value = "";
+                                      }}
+                                      title="Remove file"
+                                    >
+                                      &times;
+                                    </button>
+                                  </>
+                                )}
+                              </div>
+                              <small className="text-muted d-block">
+                                PDF, DOC, DOCX only. Max 5MB.
+                              </small>
+                              {resumeError && (
+                                <small className="text-danger">
+                                  {resumeError}
+                                </small>
+                              )}
+                            </div>
+                          </Col>
+                          <Col xs={12}>
+                            <div className="d-flex justify-content-end mt-3">
+                              <BaseButton
+                                color="primary"
+                                type="submit"
+                                className="px-4 py-2 fw-semibold"
                               >
-                                &times;
-                              </button>
-                            </>
-                          )}
-                        </div>
-                        <small className="text-muted d-block">
-                          PDF, DOC, DOCX only. Max 5MB.
-                        </small>
-                        {resumeError && (
-                          <small className="text-danger">{resumeError}</small>
-                        )}
+                                {buttonloading ? (
+                                  <>
+                                    <Spinner size="sm" className="me-2" />
+                                    {!id ? "Submitting..." : "Updating..."}
+                                  </>
+                                ) : (
+                                  <>
+                                    {!id
+                                      ? "Submit Application"
+                                      : "Update Application"}
+                                  </>
+                                )}
+                              </BaseButton>
+                            </div>
+                          </Col>
+                        </Row>
                       </div>
-                    </Col>
-                    <Col xs={12} sm={4} md={12} lg={12}>
-                      <div className="gap-3 d-flex flex-column flex-md-row justify-content-end align-items-center">
-                        <BaseButton
-                          color="primary"
-                          type="submit"
-                          className="max-w-full d-flex align-items-center justify-content-center"
-                        >
-                          {buttonloading ? (
-                            <>
-                              <Spinner size="sm" className="me-2" />
-                              {!id ? "Submitng..." : "Updating..."}
-                            </>
-                          ) : (
-                            <>{!id ? "Submit" : "Update"}</>
-                          )}
-                        </BaseButton>
-                      </div>
-                    </Col>
-                  </Row>
+                    </Card>
+                  </>
                 )}
               </form>
 
-              <div className="mt-2    pt-2">
+              <div className="mt-2 pt-2">
                 <Alert
                   message={
                     <span className="d-flex align-items-center gap-2">
@@ -1444,15 +1543,24 @@ const ApplyNow = () => {
                   showIcon={false}
                   className="border-0"
                   style={{
-                    backgroundColor: "#f0f7ff",
                     borderLeft: "4px solid var(--bs-primary)",
                   }}
                 />
               </div>
-            </div>
+            </Col>
           </Row>
-        </Card>
-      </Container>
+          <Row className="mt-4 mb-3">
+            <Col xs={12} className="text-center">
+              <p className="mb-0 fw-semibold text-muted small">
+                Powered by {projectTitle}{" "}
+                <small className="text-muted">
+                  © {new Date().getFullYear()} {projectTitle}
+                </small>
+              </p>
+            </Col>
+          </Row>
+        </Container>
+      </div>
     </Fragment>
   );
 };

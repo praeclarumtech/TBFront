@@ -74,6 +74,10 @@ const appConstants = Object.freeze({
       `${fieldName} must be greater than ${parent}.`,
   },
   projectTitle: "Talent Box",
+  /** Company name shown as "Applying for [this name]" on Apply Now form (empty = hide) */
+  applyingToCompanyName: "",
+  /** Company/application logo shown on Apply Now form (e.g. "/images/logo.png" or full URL) */
+  companyLogoUrl: "",
   passwordRegex:
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]+$/,
   emailRegex: /^[^\s@]+@[^\s@]+\.[^\s@]{2,3}(?![^.\s])/,
