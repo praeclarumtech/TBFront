@@ -40,7 +40,7 @@ const AppFooter: React.FC<AppFooterProps> = () => {
             className="text-center d-flex justify-content-center align-items-center"
           >
             <small className="fw-bold d-block fs-6 fs-sm-7">
-              Copyright © {new Date().getFullYear()} - Praeclarum Tech. All rights reserved.
+              Copyright © {new Date().getFullYear()} Talent Box. All rights reserved.
             </small>
           </Col>
         </Row>
