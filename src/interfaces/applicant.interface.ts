@@ -458,4 +458,5 @@ export const QrApplicants = Yup.object({
     .required("Communication rating is required.")
     .min(1, "Rating must be between 1 and 10.")
     .max(10, "Rating must be between 1 and 10."),
+  gender: Yup.string().required("Gender is required."),
 });

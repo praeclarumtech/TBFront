@@ -27,6 +27,7 @@ import {
   updateApplicantQR,
   createApplicantQR,
 } from "../../../api/applicantApi";
+import * as Yup from "yup";
 import {
   SelectedOption,
   QrApplicants,
@@ -45,7 +46,8 @@ import { viewAllState } from "api/stateApi";
 import toastify from "utils/toastify";
 import appEnv from "config/appEnv";
 
-const { projectTitle, Modules, communicationOptions } = appConstants;
+const { projectTitle, Modules, communicationOptions, gendersType } =
+  appConstants;
 
 const ApplyNow = () => {
   const location = useLocation();
@@ -473,8 +475,19 @@ const ApplyNow = () => {
       addedBy: addedBy || "",
       state: initialValues?.state || "",
       currentCity: initialValues?.currentCity || "",
+      gender: initialValues?.gender || "",
     },
-    validationSchema: QrApplicants,
+    validationSchema: useMemo(
+      () =>
+        QrApplicants.shape({
+          gender: Yup.string().required("Gender is required."),
+          currentCity:
+            cities.length > 0
+              ? Yup.string().required("City is required.")
+              : Yup.string().optional().nullable(),
+        }),
+      [cities.length],
+    ),
 
     onSubmit: async (value: any) => {
       setResumeError("");
@@ -493,9 +506,11 @@ const ApplyNow = () => {
         formData.append("phone[phoneNumber]", value.phoneNumber);
         formData.append("phone[whatsappNumber]", value.phoneNumber);
         formData.append("email", value.email);
-        value.appliedSkills.forEach((skill: string) => {
-          formData.append("appliedSkills[]", skill);
-        });
+        (Array.isArray(value.appliedSkills) ? value.appliedSkills : []).forEach(
+          (skill: string) => {
+            formData.append("appliedSkills[]", skill);
+          },
+        );
         formData.append("otherSkills", value.otherSkills);
         formData.append("currentPkg", value.currentPkg);
         formData.append("expectedPkg", value.expectedPkg);
@@ -514,6 +529,7 @@ const ApplyNow = () => {
         );
         formData.append("state", value.state);
         formData.append("currentCity", value.currentCity);
+        formData.append("gender", value.gender || "");
         formData.append("appliedRole", value.appliedRole);
         formData.append("job_id", value.job_id);
         formData.append("addedBy", value.addedBy);
@@ -645,6 +661,7 @@ const ApplyNow = () => {
     const stateId = selectedOption?.value;
     validation.setFieldValue("state", selectedValue);
     validation.setFieldValue("currentCity", "");
+    validation.setFieldError("currentCity", undefined);
     setCities([]);
     setCityPage(1);
     setHasMoreCities(true);
@@ -713,12 +730,19 @@ const ApplyNow = () => {
     return [...prepend, ...opts];
   }, [skillOptions, selectedMulti]);
 
+  // Clear city error when selected state has no cities so form can submit
+  useEffect(() => {
+    if (cities.length === 0 && validation?.setFieldError) {
+      validation.setFieldError("currentCity", undefined);
+    }
+  }, [cities.length]);
+
   return (
     <Fragment>
       <div className="page-content apply-now-page">
         <style>{`
           .apply-now-page { min-height: 100vh; }
-          .apply-now-header-logo { height: 40px; width: auto; object-fit: contain; }
+          .apply-now-header-logo { height: 60px; width: auto; object-fit: contain; }
           .apply-now-form .form-control:focus { border-color: var(--bs-primary); box-shadow: 0 0 0 3px rgba(var(--bs-primary-rgb), 0.15); outline: 0; }
           .apply-now-card .ant-card-body { padding: 0; }
           .apply-now-section { border-radius: 8px; border: 1px solid #f0f0f0; margin-bottom: 1.5rem; overflow: hidden; }
@@ -735,7 +759,7 @@ const ApplyNow = () => {
           </Container>
         </header>
 
-        <Container className="apply-now-page-container py-4 px-3 px-md-4">
+        <Container className="apply-now-page-container py-4 px-2 lg:px-2 md:px-4">
           <Row>
             <Col xs={12}>
               <form
@@ -757,8 +781,7 @@ const ApplyNow = () => {
                     {/* Section 1: Basic Information + Professional Details */}
                     <Card className="apply-now-card apply-now-section shadow-sm mb-4">
                       <div className="p-3">
-                        <h6 className="fw-bold mb-3">Basic Information</h6>
-                        <Row className="mb-4 g-3">
+                        <Row className="mb-2 g-3">
                           <Col xs={12} sm={6} lg={3}>
                             <BaseInput
                               label="First Name"
@@ -854,11 +877,33 @@ const ApplyNow = () => {
                               isRequired={true}
                             />
                           </Col>
-                        </Row>
-                        <h6 className="fw-bold mb-3 mt-2">
-                          Professional Details
-                        </h6>
-                        <Row className="mb-4 g-3">
+                          <Col xs={12} sm={6} lg={3}>
+                            <BaseSelect
+                              label="Gender"
+                              name="gender"
+                              className="select-border"
+                              options={gendersType}
+                              placeholder={InputPlaceHolder("Gender")}
+                              handleChange={(
+                                selectedOption: SelectedOption,
+                              ) => {
+                                validation.setFieldValue(
+                                  "gender",
+                                  selectedOption?.value || "",
+                                );
+                              }}
+                              handleBlur={validation.handleBlur}
+                              value={
+                                dynamicFind(
+                                  gendersType,
+                                  validation.values.gender,
+                                ) || ""
+                              }
+                              touched={validation.touched.gender}
+                              error={validation.errors.gender}
+                              isRequired={true}
+                            />
+                          </Col>
                           <Col xs={12} sm={6} lg={3}>
                             <PaginateMultiSelect
                               label="Applied Skills"
@@ -891,30 +936,6 @@ const ApplyNow = () => {
                               error={validation.errors.otherSkills}
                               passwordToggle={false}
                               isRequired={true}
-                            />
-                          </Col>
-                          <Col xs={12} sm={6} lg={3}>
-                            <PaginateSelect
-                              label="Applied Role"
-                              name="appliedRole"
-                              options={roleOptionsWithSelected}
-                              placeholder={InputPlaceHolder("Applied Role")}
-                              handleChange={handleRoleChange}
-                              handleBlur={validation.appliedRole}
-                              value={
-                                dynamicFind(
-                                  roleOptionsWithSelected,
-                                  validation.values.appliedRole,
-                                ) || ""
-                              }
-                              touched={validation.touched.appliedRole}
-                              error={validation.errors.appliedRole}
-                              isRequired={true}
-                              loadMore={loadMoreRoles}
-                              hasMore={hasMoreRoles}
-                              isLoadingMore={loadingMoreRoles}
-                              onInputChange={onRoleInputChange}
-                              isLoading={loadingRoles}
                             />
                           </Col>
                           <Col xs={12} sm={6} lg={3}>
@@ -952,6 +973,31 @@ const ApplyNow = () => {
                               isLoading={loadingDesignations}
                             />
                           </Col>
+                          <Col xs={12} sm={6} lg={3}>
+                            <PaginateSelect
+                              label="Applied Role"
+                              name="appliedRole"
+                              options={roleOptionsWithSelected}
+                              placeholder={InputPlaceHolder("Applied Role")}
+                              handleChange={handleRoleChange}
+                              handleBlur={validation.appliedRole}
+                              value={
+                                dynamicFind(
+                                  roleOptionsWithSelected,
+                                  validation.values.appliedRole,
+                                ) || ""
+                              }
+                              touched={validation.touched.appliedRole}
+                              error={validation.errors.appliedRole}
+                              isRequired={true}
+                              loadMore={loadMoreRoles}
+                              hasMore={hasMoreRoles}
+                              isLoadingMore={loadingMoreRoles}
+                              onInputChange={onRoleInputChange}
+                              isLoading={loadingRoles}
+                            />
+                          </Col>
+
                           <Col xs={12} sm={6} md={6} lg={3}>
                             <BaseInput
                               label="Total Experience(Year)"
@@ -1399,7 +1445,7 @@ const ApplyNow = () => {
                               }
                               touched={validation.touched.currentCity}
                               error={validation.errors.currentCity}
-                              isRequired={true}
+                              isRequired={cities.length > 0}
                               loadMore={loadMoreCities}
                               hasMore={hasMoreCities}
                               isLoadingMore={loadingMoreCities}
@@ -1489,7 +1535,7 @@ const ApplyNow = () => {
                             </div>
                           </Col>
                           <Col xs={12}>
-                            <div className="d-flex justify-content-end mt-3">
+                            <div className="d-flex justify-content-center justify-content-md-end mt-1">
                               <BaseButton
                                 color="primary"
                                 type="submit"
@@ -1549,7 +1595,7 @@ const ApplyNow = () => {
               </div>
             </Col>
           </Row>
-          <Row className="mt-4 mb-3">
+          <Row className="mt-4 mb-1">
             <Col xs={12} className="text-center">
               <p className="mb-0 fw-semibold text-muted small">
                 Powered by {projectTitle}{" "}
