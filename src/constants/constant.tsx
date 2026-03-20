@@ -384,6 +384,12 @@ const appConstants = Object.freeze({
     { value: "hybrid", label: "Hybrid" },
     { value: "freelancer", label: "Freelancer" },
   ],
+  /** Full-time / freelance / contract (multi-select on apply forms) */
+  employmentWorkPreferenceOptions: [
+    { value: "full-time", label: "Full-time" },
+    { value: "freelance", label: "Freelance" },
+    { value: "contract", label: "Contract" },
+  ],
   noticePeriodType: [
     { value: "30", label: "30" },
     { value: "60", label: "60" },

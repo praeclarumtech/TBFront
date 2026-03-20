@@ -11,6 +11,7 @@ import { useFormik } from "formik";
 import { Fragment } from "react";
 import {
   BaseSelect,
+  MultiSelect,
   PaginateSelect,
   PaginateMultiSelect,
 } from "components/BaseComponents/BaseSelect";
@@ -46,8 +47,33 @@ import { viewAllState } from "api/stateApi";
 import toastify from "utils/toastify";
 import appEnv from "config/appEnv";
 
-const { projectTitle, Modules, communicationOptions, gendersType } =
-  appConstants;
+const {
+  projectTitle,
+  Modules,
+  communicationOptions,
+  gendersType,
+  employmentWorkPreferenceOptions,
+} = appConstants;
+
+const EMPLOYMENT_WORK_PREFERENCE_VALUES = new Set(
+  employmentWorkPreferenceOptions.map((o) => o.value),
+);
+
+function normalizeEmploymentWorkPreference(raw: unknown): string[] {
+  if (Array.isArray(raw)) {
+    return raw.filter(
+      (v): v is string =>
+        typeof v === "string" && EMPLOYMENT_WORK_PREFERENCE_VALUES.has(v),
+    );
+  }
+  if (typeof raw === "string" && raw.trim()) {
+    return raw
+      .split(",")
+      .map((s) => s.trim())
+      .filter((v) => EMPLOYMENT_WORK_PREFERENCE_VALUES.has(v));
+  }
+  return [];
+}
 
 const ApplyNow = () => {
   const location = useLocation();
@@ -462,7 +488,9 @@ const ApplyNow = () => {
       currentPkg: initialValues?.currentPkg || "0",
       expectedPkg: initialValues?.expectedPkg || "0",
       noticePeriod: initialValues?.noticePeriod || "0",
-      workPreference: initialValues?.workPreference || "",
+      workPreference: normalizeEmploymentWorkPreference(
+        initialValues?.workPreference,
+      ),
       appliedSkills: initialValues?.appliedSkills || [],
       otherSkills: initialValues?.otherSkills || "",
       linkedinUrl: initialValues?.linkedinUrl || "",
@@ -485,6 +513,15 @@ const ApplyNow = () => {
             cities.length > 0
               ? Yup.string().required("City is required.")
               : Yup.string().optional().nullable(),
+          workPreference: Yup.array()
+            .of(
+              Yup.string().oneOf(
+                [...EMPLOYMENT_WORK_PREFERENCE_VALUES],
+                "Invalid work preference.",
+              ),
+            )
+            .min(1, "Select at least one work preference.")
+            .required("Work preference is required."),
         }),
       [cities.length],
     ),
@@ -515,7 +552,10 @@ const ApplyNow = () => {
         formData.append("currentPkg", value.currentPkg);
         formData.append("expectedPkg", value.expectedPkg);
         formData.append("noticePeriod", value.noticePeriod);
-        formData.append("workPreference", value.workPreference);
+        const workPrefs = Array.isArray(value.workPreference)
+          ? value.workPreference
+          : [];
+        formData.append("workPreference", workPrefs.join(","));
         formData.append(
           "currentCompanyDesignation",
           value.currentCompanyDesignation,
@@ -646,6 +686,22 @@ const ApplyNow = () => {
     setSelectedMulti(selectedMulti);
   };
 
+  const handleWorkPreferenceChange = (selected: readonly any[] | null) => {
+    const vals =
+      selected?.map((item: { value: string }) => item.value).filter(Boolean) ||
+      [];
+    validation.setFieldValue("workPreference", vals);
+  };
+
+  const workPreferenceMultiValue = useMemo(() => {
+    const vals: string[] = Array.isArray(validation.values.workPreference)
+      ? validation.values.workPreference
+      : [];
+    return employmentWorkPreferenceOptions.filter((o) =>
+      vals.includes(o.value),
+    );
+  }, [validation.values.workPreference]);
+
   const handleRoleChange = async (SelectedOptionRole: any) => {
     if (SelectedOptionRole) {
       const roleId = SelectedOptionRole.value;
@@ -730,10 +786,14 @@ const ApplyNow = () => {
     return [...prepend, ...opts];
   }, [skillOptions, selectedMulti]);
 
-  // Clear city error when selected state has no cities so form can submit
+  // Clear city error when selected state has no cities; re-validate so UI updates
+  const validationRef = useRef(validation);
+  validationRef.current = validation;
   useEffect(() => {
-    if (cities.length === 0 && validation?.setFieldError) {
-      validation.setFieldError("currentCity", undefined);
+    if (cities.length === 0) {
+      const formik = validationRef.current;
+      if (formik?.setFieldError) formik.setFieldError("currentCity", undefined);
+      if (formik?.validateForm) formik.validateForm().then(() => {});
     }
   }, [cities.length]);
 
@@ -1366,6 +1426,29 @@ const ApplyNow = () => {
                               error={validation.errors.noticePeriod}
                               passwordToggle={false}
                               isRequired={true}
+                            />
+                          </Col>
+                          <Col xs={12} sm={6} lg={3}>
+                            <MultiSelect
+                              label="Work preference"
+                              name="workPreference"
+                              className="select-border"
+                              value={workPreferenceMultiValue}
+                              isMulti={true}
+                              onChange={handleWorkPreferenceChange}
+                              options={employmentWorkPreferenceOptions}
+                              touched={validation.touched.workPreference}
+                              error={validation.errors.workPreference}
+                              handleBlur={() =>
+                                validation.setFieldTouched(
+                                  "workPreference",
+                                  true,
+                                )
+                              }
+                              isRequired={true}
+                              placeholder={InputPlaceHolder(
+                                "Select Work Preference",
+                              )}
                             />
                           </Col>
                           <Col xs={12} sm={6} lg={3}>

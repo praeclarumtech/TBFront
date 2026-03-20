@@ -18,7 +18,23 @@ import {
 } from "interfaces/applicant.interface";
 import toastify from "utils/toastify";
 
-const { projectTitle, Modules } = appConstants;
+const { projectTitle, Modules, employmentWorkPreferenceOptions, workPreferenceType } =
+  appConstants;
+
+const WORK_PREFERENCE_LABEL_MAP: Record<string, string> = Object.fromEntries([
+  ...employmentWorkPreferenceOptions.map((o) => [o.value, o.label]),
+  ...workPreferenceType.map((o) => [o.value, o.label]),
+]);
+
+const parseWorkPreferenceTokens = (raw: unknown): string[] => {
+  if (Array.isArray(raw)) {
+    return raw.map((v) => String(v).trim()).filter(Boolean);
+  }
+  if (typeof raw === "string" && raw.trim()) {
+    return raw.split(",").map((s) => s.trim()).filter(Boolean);
+  }
+  return [];
+};
 
 const capitalizeWords = (str?: string) => {
   return (
@@ -453,6 +469,25 @@ const ViewModal: React.FC<ViewModalProps> = ({
                   <DetailsRow
                     label="Notice Period"
                     value={`${formData.noticePeriod || "-"} days`}
+                  />
+                  <DetailsRow
+                    label="Work preference"
+                    value={(() => {
+                      const tokens = parseWorkPreferenceTokens(
+                        formData.workPreference,
+                      );
+                      if (tokens.length === 0) return "-";
+                      return (
+                        <div className="flex flex-wrap gap-2 py-1">
+                          {tokens.map((token) => (
+                            <Tag key={token} color="magenta">
+                              {WORK_PREFERENCE_LABEL_MAP[token] ??
+                                capitalizeWords(token.replace(/-/g, " "))}
+                            </Tag>
+                          ))}
+                        </div>
+                      );
+                    })()}
                   />
                   <DetailsRow
                     label="Applied Role"
