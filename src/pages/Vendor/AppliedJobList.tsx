@@ -37,22 +37,34 @@ const AppliedJobList = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [selectedJob, setSelectedJob] = useState<string[]>([]);
+  const [emptyMessage, setEmptyMessage] = useState<string | null>(null);
 
-  // const [showViewModal, setShowViewModal] = useState<boolean>(false);
   const fetchJob = async () => {
     setIsLoading(true);
+    setEmptyMessage(null);
     try {
       const res = await viewAppliedJob();
 
       if (res?.success) {
-        const allApplications = res?.data?.applications;
+        const allApplications = res?.data?.applications ?? [];
         setJob(allApplications);
         setTotalRecords(allApplications.length);
+        setEmptyMessage(null);
       } else {
-        toast.error(res?.message || "Failed to fetch jobs.");
+        const message = res?.message || "No applied jobs found.";
+        setJob([]);
+        setTotalRecords(0);
+        setEmptyMessage(message);
       }
-    } catch (error) {
-      toast.error("Something went wrong.");
+    } catch (error: any) {
+      const apiMessage =
+        error?.response?.data?.message ||
+        error?.response?.data?.error ||
+        error?.message;
+      const message = apiMessage || "No applied jobs found.";
+      setJob([]);
+      setTotalRecords(0);
+      setEmptyMessage(message);
       console.error(error);
     } finally {
       setIsLoading(false);
@@ -233,7 +245,12 @@ const AppliedJobList = () => {
                               rowHeight="10px !important"
                             />
                           ) : (
-                            <EmptyState />
+                            <EmptyState
+                              message={
+                                emptyMessage ||
+                                "No applied jobs found."
+                              }
+                            />
                           )}
                         </>
                       )}
