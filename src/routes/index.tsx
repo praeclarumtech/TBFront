@@ -13,6 +13,7 @@ import EmailTable from "pages/email/EmailTable";
 import EmailForm from "pages/email/EmailForm";
 import PassingYear from "pages/master/PassingYear";
 import Applicant from "pages/applicant/Index";
+import ViewApplicantPage from "pages/applicant/ViewApplicantPage";
 import EmailVerification from "pages/auth/EmailVerify";
 import UpdatePassword from "pages/auth/UpdatePassword";
 import AddSkill from "pages/master/Skills";
@@ -171,6 +172,10 @@ const RenderRouter: React.FC = () => {
         <Route element={<PrivateRoute component={() => <RootLayout />} />}>
           <Route path={DASHBOARD.path} element={<Dashboard />} />
           <Route path={APPLICANTS.path} element={<Applicant />} />
+          <Route
+            path="applicants/view-applicant/:applicantId"
+            element={<ViewApplicantPage />}
+          />
           <Route path="import-applicants" element={<ImportApplicantTables />} />
           <Route path="job-listing" element={<JobListing />} />
           <Route path="/vendorList" element={<VendorList />} />

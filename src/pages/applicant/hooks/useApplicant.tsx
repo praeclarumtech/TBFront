@@ -32,6 +32,7 @@ import {
 } from "styles/applicantStyles";
 import {
     buildApplicantParams,
+    buildApplicantDetailsFullUrl,
     ChartParams,
     FilterState,
 } from "utils/applicantUtils";
@@ -514,6 +515,42 @@ function useApplicant({
                   >
                     View
                     <Tooltip.Arrow style={{ fill: "#624bff" }} />
+                  </Tooltip.Content>
+                </Tooltip.Portal>
+              </Tooltip.Root>
+
+              <Tooltip.Root>
+                <Tooltip.Trigger asChild>
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-soft-info bg-info"
+                    onClick={() =>
+                      currentRole === "admin"
+                        ? window.open(
+                            buildApplicantDetailsFullUrl(
+                              row.original._id,
+                              "main",
+                            ),
+                            "_blank",
+                            "noopener,noreferrer",
+                          )
+                        : toastify(
+                            "Access denied you do not have permission to access this resource."
+                          , { type: "error" })
+                    }
+                    disabled={!row.original.isActive}
+                  >
+                    <i className="text-white ri-external-link-line" />
+                  </button>
+                </Tooltip.Trigger>
+                <Tooltip.Portal>
+                  <Tooltip.Content
+                    side="bottom"
+                    sideOffset={4}
+                    className="px-2 py-1 text-sm text-white rounded shadow-lg bg-info"
+                  >
+                    Open in new tab
+                    <Tooltip.Arrow style={{ fill: "#0dcaf0" }} />
                   </Tooltip.Content>
                 </Tooltip.Portal>
               </Tooltip.Root>
