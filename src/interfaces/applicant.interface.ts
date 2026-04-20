@@ -6,6 +6,8 @@ export interface ViewModalProps {
   onHide: () => void;
   applicantId?: string;
   source: string;
+  /** When `page`, renders full-page layout (standalone route) instead of a dialog. */
+  variant?: "modal" | "page";
 }
 
 export interface ApplicantDetails {

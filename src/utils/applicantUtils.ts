@@ -291,3 +291,15 @@ export const isAnyFilterApplied = (
 
   return hasFilter || !!hasChartParam;
 };
+
+/** Full URL to standalone applicant details page (respects Vite `base`, e.g. `/talent/`). */
+export function buildApplicantDetailsFullUrl(
+  applicantId: string,
+  source: string = "main",
+): string {
+  const base = (import.meta.env.BASE_URL || "/").replace(/\/?$/, "");
+  const pathname = `${base}/applicants/view-applicant/${encodeURIComponent(applicantId)}`;
+  const url = new URL(pathname, window.location.origin);
+  url.searchParams.set("source", source);
+  return url.href;
+}
