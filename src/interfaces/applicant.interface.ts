@@ -8,6 +8,8 @@ export interface ViewModalProps {
   source: string;
   /** When `page`, renders full-page layout (standalone route) instead of a dialog. */
   variant?: "modal" | "page";
+  /** Full-width layout with job + interview side-by-side (e.g. `?view-applicant=view-applicant`). */
+  wideApplicantView?: boolean;
 }
 
 export interface ApplicantDetails {
