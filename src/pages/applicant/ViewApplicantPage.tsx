@@ -3,12 +3,20 @@ import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import appConstants from "constants/constant";
 import { Badge, Card, Col, Row, Spin, Tag } from "antd";
 import { ApplicantDetails } from "interfaces/applicant.interface";
-import { getApplicantDetails, getImportedApplicantDetails, updateApplicant } from "api/applicantApi";
+import {
+  getApplicantDetails,
+  getImportedApplicantDetails,
+  updateApplicant,
+} from "api/applicantApi";
 import { getApplicantDetailsInVendor } from "api/apiVendor";
 import { errorHandle } from "utils/commonFunctions";
 import { buildApplicantDetailsFullUrl } from "utils/applicantUtils";
 import toastify from "utils/toastify";
-import { ArrowLeftOutlined, CloseOutlined, UserOutlined } from "@ant-design/icons";
+import {
+  ArrowLeftOutlined,
+  CloseOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 import BaseFav from "components/BaseComponents/BaseFav";
 
 const {
@@ -87,7 +95,6 @@ const DetailsCard = ({
 );
 
 const ViewApplicantPage = () => {
-  
   const { applicantId } = useParams<{ applicantId: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -302,7 +309,7 @@ const ViewApplicantPage = () => {
     const educationBlock = (
       <DetailsCard title="Educational Details" icon={<span>🎓</span>}>
         <Row gutter={[16, 16]}>
-          <Col span={12}>
+          <Col span={8}>
             <DetailsRow
               label="Qualification"
               value={
@@ -326,11 +333,7 @@ const ViewApplicantPage = () => {
               }
             />
           </Col>
-          <Col span={12}>
-            <DetailsRow
-              label="Passing Year"
-              value={formData.passingYear?.toString() || "-"}
-            />
+          <Col span={8}>
             <DetailsRow
               label="College Name"
               value={
@@ -353,11 +356,17 @@ const ViewApplicantPage = () => {
               }
             />
           </Col>
+          <Col span={8}>
+            <DetailsRow
+              label="Passing Year"
+              value={formData.passingYear?.toString() || "-"}
+            />
+          </Col>
         </Row>
       </DetailsCard>
     );
 
-    const jobOfferLeftRoleInner = (
+    const jobOfferRoleDetailsSection = (
       <>
         <DetailsRow
           label="Current Company"
@@ -404,11 +413,6 @@ const ViewApplicantPage = () => {
             )
           }
         />
-      </>
-    );
-
-    const jobOfferLeftSkillsInner = (
-      <>
         <DetailsRow
           label="Notice Period"
           value={`${formData.noticePeriod || "-"} days`}
@@ -429,6 +433,32 @@ const ViewApplicantPage = () => {
               </div>
             );
           })()}
+        />
+        <DetailsRow
+          label="Preferred Locations"
+          value={
+            formData.preferredLocations ? (
+              <>
+                {formData.preferredLocations.split(",").map((location) => (
+                  <Tag color="blue" key={location.trim()}>
+                    {location.trim()}
+                  </Tag>
+                ))}
+              </>
+            ) : (
+              "-"
+            )
+          }
+        />
+        <DetailsRow
+          label="Hands-on Offers"
+          value={
+            formData.anyHandOnOffers ? (
+              <Tag color="green">Yes</Tag>
+            ) : (
+              <Tag color="red">No</Tag>
+            )
+          }
         />
         {formData.meta && Object.keys(formData.meta).length > 0 && (
           <DetailsRow
@@ -473,6 +503,12 @@ const ViewApplicantPage = () => {
             )
           }
         />
+       
+      </>
+    );
+
+    const jobOfferProfileDetailsSection = (
+      <>
         <DetailsRow
           label="Other Skills"
           value={
@@ -486,48 +522,6 @@ const ViewApplicantPage = () => {
               </div>
             ) : (
               "-"
-            )
-          }
-        />
-      </>
-    );
-
-    const jobOfferLeftInner = (
-       <Row gutter={[16, 16]}>
-        <Col xs={24} md={12}> 
-        {jobOfferLeftRoleInner}
-        </Col>
-        <Col xs={24} md={12}>
-        {jobOfferLeftSkillsInner}
-        </Col>
-      </Row>
-    );
-
-    const jobOfferRightLinksInner = (
-      <>
-        <DetailsRow
-          label="Preferred Locations"
-          value={
-            formData.preferredLocations ? (
-              <>
-                {formData.preferredLocations.split(",").map((location) => (
-                  <Tag color="blue" key={location.trim()}>
-                    {location.trim()}
-                  </Tag>
-                ))}
-              </>
-            ) : (
-              "-"
-            )
-          }
-        />
-        <DetailsRow
-          label="Hands-on Offers"
-          value={
-            formData.anyHandOnOffers ? (
-              <Tag color="green">Yes</Tag>
-            ) : (
-              <Tag color="red">No</Tag>
             )
           }
         />
@@ -599,11 +593,6 @@ const ViewApplicantPage = () => {
             )
           }
         />
-      </>
-    );
-
-    const jobOfferRightMetricsInner = (
-      <>
         <DetailsRow
           label="Client CV"
           value={
@@ -660,26 +649,16 @@ const ViewApplicantPage = () => {
       </>
     );
 
-    const jobOfferRightInner = (
-      <Row gutter={[16, 16]}>
-        <Col xs={24} md={12}>
-          {jobOfferRightLinksInner}
-        </Col>
-        <Col xs={24} md={12}>
-          {jobOfferRightMetricsInner}
-        </Col>
-      </Row>
-    );
-
-    const jobOfferLeftCard = (
-      <DetailsCard title="Job Offer Details" icon={<span>💼</span>}>
-        {jobOfferLeftInner}
-      </DetailsCard>
-    );
-
     const jobOfferRightCard = (
       <DetailsCard title="Job Offer Details" icon={<span>💼</span>}>
-        {jobOfferRightInner}
+        <Row gutter={[16, 16]}>
+          <Col xs={24} lg={12}>
+            {jobOfferRoleDetailsSection}
+          </Col>
+          <Col xs={24} lg={12}>
+            {jobOfferProfileDetailsSection}
+          </Col>
+        </Row>
       </DetailsCard>
     );
 
@@ -767,14 +746,11 @@ const ViewApplicantPage = () => {
             <div className="space-y-4">
               {personalBlock}
               {educationBlock}
-              {jobOfferLeftCard}
+              {interviewBlock}
             </div>
           </Col>
           <Col xs={24} xl={12}>
-            <div className="space-y-4">
-              {jobOfferRightCard}
-              {interviewBlock}
-            </div>
+            <div className="space-y-4">{jobOfferRightCard}</div>
           </Col>
         </Row>
       </div>
@@ -889,11 +865,9 @@ const ViewApplicantPage = () => {
         onYesClick={() => updateApplicantData(isFav, formData?._id)}
         flag={isFav}
       />
-    
-          <div className="mb-3 border-bottom pb-3">{titleRow}</div>
-          {detailsBlock}
-        
-      
+
+      <div className="mb-3 border-bottom pb-1">{titleRow}</div>
+      {detailsBlock}
     </div>
   );
 };

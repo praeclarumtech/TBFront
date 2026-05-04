@@ -387,11 +387,7 @@ export const QrApplicants = Yup.object({
 
   currentPkg: Yup.string()
     .required("Current package is required.")
-    .matches(/^\d+(\.\d{1,2})?$/, "Please enter a valid current package.")
-    .test("not-zero", "Current package must be greater than 0.", (value) => {
-      const num = parseFloat(value || "0");
-      return num > 0;
-    }),
+    .matches(/^\d+(\.\d{1,2})?$/, "Please enter a valid current package."),
 
   expectedPkg: Yup.string()
     .required("Expected package is required.")
