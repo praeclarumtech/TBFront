@@ -22,6 +22,13 @@ const authServicesNoAuth = axios.create({
   },
 });
 
+const authServicesNoAuthMultipart = axios.create({
+  baseURL: api.API_URL,
+  headers: {
+    Accept: "application/json",
+  },
+});
+
 const authInstanceMultipart = axios.create({
   baseURL: api.API_URL,
   headers: {
@@ -135,5 +142,6 @@ export {
   authServices,
   authInstanceMultipart,
   authServicesNoAuth,
+  authServicesNoAuthMultipart,
   handleSessionExpiration,
 };

@@ -34,7 +34,11 @@ import {
   FILTER_SAVE,
   GET_SAVED_FILTERS,
 } from "./apiRoutes";
-import { authServices } from "./apiServices";
+import {
+  authServices,
+  authServicesNoAuth,
+  authServicesNoAuthMultipart,
+} from "./apiServices";
 
 export const listOfApplicants = async (params: {
   page?: number;
@@ -390,12 +394,13 @@ export const deleteDuplicateApplicants = async (data?: object) => {
 
 export const createApplicantQR = async (data?: object, isFormData = false) => {
   if (isFormData && data instanceof FormData) {
-    const response = await authServices.post(`${CREATE_APPLICANT_QR}`, data, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
+    const response = await authServicesNoAuthMultipart.post(
+      `${CREATE_APPLICANT_QR}`,
+      data
+    );
     return response?.data;
   } else {
-    const response = await authServices.post(`${CREATE_APPLICANT_QR}`, data);
+    const response = await authServicesNoAuth.post(`${CREATE_APPLICANT_QR}`, data);
     return response?.data;
   }
 };
@@ -406,16 +411,13 @@ export const updateApplicantQR = async (
   isFormData = false
 ) => {
   if (isFormData && data instanceof FormData) {
-    const response = await authServices.put(
+    const response = await authServicesNoAuthMultipart.put(
       `${UPDATE_APPLICANT_QR}/${id}`,
-      data,
-      {
-        headers: { "Content-Type": "multipart/form-data" },
-      }
+      data
     );
     return response?.data;
   } else {
-    const response = await authServices.put(
+    const response = await authServicesNoAuth.put(
       `${UPDATE_APPLICANT_QR}/${id}`,
       data
     );
