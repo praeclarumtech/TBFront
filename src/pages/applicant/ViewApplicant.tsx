@@ -54,6 +54,9 @@ const capitalizeWords = (str?: string) => {
   );
 };
 
+const formatPackageValue = (value?: string | number | null) =>
+  value !== null && value !== undefined && value !== "" ? `${value} LPA` : "-";
+
 const DetailsRow = ({
   label,
   value,
@@ -390,7 +393,7 @@ const ViewModal: React.FC<ViewModalProps> = ({
                 label="Current Package"
                 value={
                   <Tag color="green">
-                    {formData.currentPkg ? `${formData.currentPkg} LPA` : "-"}
+                    {formatPackageValue(formData.currentPkg)}
                   </Tag>
                 }
               />
@@ -398,7 +401,7 @@ const ViewModal: React.FC<ViewModalProps> = ({
                 label="Expected Package"
                 value={
                   <Tag color="purple">
-                    {formData.expectedPkg ? `${formData.expectedPkg} LPA` : "-"}
+                    {formatPackageValue(formData.expectedPkg)}
                   </Tag>
                 }
               />
