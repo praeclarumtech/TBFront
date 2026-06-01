@@ -53,6 +53,9 @@ const capitalizeWords = (str?: string) => {
   );
 };
 
+const formatPackageValue = (value?: string | number | null) =>
+  value !== null && value !== undefined && value !== "" ? `${value} LPA` : "-";
+
 const DetailsRow = ({
   label,
   value,
@@ -382,7 +385,7 @@ const ViewApplicantPage = () => {
           label="Current Package"
           value={
             <Tag color="green">
-              {formData.currentPkg ? `${formData.currentPkg} LPA` : "-"}
+              {formatPackageValue(formData.currentPkg)}
             </Tag>
           }
         />
@@ -390,7 +393,7 @@ const ViewApplicantPage = () => {
           label="Expected Package"
           value={
             <Tag color="purple">
-              {formData.expectedPkg ? `${formData.expectedPkg} LPA` : "-"}
+              {formatPackageValue(formData.expectedPkg)}
             </Tag>
           }
         />
