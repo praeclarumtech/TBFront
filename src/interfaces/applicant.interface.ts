@@ -375,7 +375,7 @@ export const QrApplicants = Yup.object({
   // maritalStatus: Yup.string().required("Marital status is required."),
 
   currentCompanyDesignation: Yup.string().required(
-    "Current Company Designation is required.",
+    "Current company designation is required.",
   ),
 
   anyHandOnOffers: Yup.boolean(),
@@ -386,6 +386,7 @@ export const QrApplicants = Yup.object({
   //   .matches(/^[A-Za-z0-9\s&.-]+$/, "Please enter a valid company name."),
 
   currentPkg: Yup.string()
+    .transform((value) => (value === "" || value === "." ? "0" : value))
     .required("Current package is required.")
     .matches(/^\d+(\.\d{1,2})?$/, "Please enter a valid current package."),
 

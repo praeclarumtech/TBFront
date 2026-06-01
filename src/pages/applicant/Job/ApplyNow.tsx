@@ -549,7 +549,10 @@ const ApplyNow = () => {
           },
         );
         formData.append("otherSkills", value.otherSkills);
-        formData.append("currentPkg", value.currentPkg);
+        formData.append(
+          "currentPkg",
+          value.currentPkg && value.currentPkg !== "." ? value.currentPkg : "0",
+        );
         formData.append("expectedPkg", value.expectedPkg);
         formData.append("noticePeriod", value.noticePeriod);
         const workPrefs = Array.isArray(value.workPreference)
@@ -1267,7 +1270,7 @@ const ApplyNow = () => {
                                 } else if (value === "" || value === ".") {
                                   validation.setFieldValue("currentPkg", value);
                                 } else if (!value) {
-                                  validation.setFieldValue("currentPkg", "");
+                                  validation.setFieldValue("currentPkg", "0");
                                 }
                               }}
                               handleBlur={(e) => {
@@ -1281,10 +1284,10 @@ const ApplyNow = () => {
                                       numValue.toFixed(2),
                                     );
                                   } else {
-                                    validation.setFieldValue("currentPkg", "");
+                                    validation.setFieldValue("currentPkg", "0");
                                   }
                                 } else {
-                                  validation.setFieldValue("currentPkg", "");
+                                  validation.setFieldValue("currentPkg", "0");
                                 }
                                 validation.handleBlur(e);
                               }}

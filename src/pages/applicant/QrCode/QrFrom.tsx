@@ -301,7 +301,10 @@ const QrFrom = () => {
           formData.append("appliedSkills[]", skill);
         });
         formData.append("otherSkills", value.otherSkills);
-        formData.append("currentPkg", value.currentPkg);
+        formData.append(
+          "currentPkg",
+          value.currentPkg && value.currentPkg !== "." ? value.currentPkg : "0"
+        );
         formData.append("expectedPkg", value.expectedPkg);
         formData.append("noticePeriod", value.noticePeriod);
         // formData.append("workPreference", value.workPreference);
@@ -988,10 +991,10 @@ const QrFrom = () => {
                                 true
                               );
                             } else {
-                              validation.setFieldValue(e.target.name, "", true);
+                              validation.setFieldValue(e.target.name, "0", true);
                             }
                           } else {
-                            validation.setFieldValue(e.target.name, "", true);
+                            validation.setFieldValue(e.target.name, "0", true);
                           }
 
                           validation.handleBlur(e); // ✅ Mark field as touched
