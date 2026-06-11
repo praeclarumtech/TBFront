@@ -8,7 +8,12 @@ import { Row, Col } from "react-bootstrap";
 import { Box, Drawer, List, Divider, IconButton } from "@mui/material";
 import { Close } from "@mui/icons-material";
 
-import { BaseSelect, MultiSelect } from "components/BaseComponents/BaseSelect";
+import {
+  BaseSelect,
+  MultiSelect,
+  PaginateSelect,
+  PaginateMultiSelect,
+} from "components/BaseComponents/BaseSelect";
 import BaseSlider from "components/BaseComponents/BaseSlider";
 import BaseInput from "components/BaseComponents/BaseInput";
 import BaseButton from "components/BaseComponents/BaseButton";
@@ -76,6 +81,27 @@ interface FilterDrawerProps {
   addedByOptions: SelectedOption[];
   activeStatusOptions: SelectedOption[];
   favoriteOptions: SelectedOption[];
+  loadMoreSkills?: () => void;
+  hasMoreSkills?: boolean;
+  loadingMoreSkills?: boolean;
+  onSkillInputChange?: (value: string) => void;
+  loadingSkills?: boolean;
+  loadMoreAppliedRoles?: () => void;
+  hasMoreRoles?: boolean;
+  loadingMoreRoles?: boolean;
+  onAppliedRoleInputChange?: (value: string) => void;
+  loadingRoles?: boolean;
+  loadMoreCities?: () => void;
+  hasMoreCities?: boolean;
+  loadingMoreCities?: boolean;
+  loadMoreStates?: () => void;
+  hasMoreStates?: boolean;
+  loadingMoreStates?: boolean;
+  loadMoreDesignations?: () => void;
+  hasMoreDesignations?: boolean;
+  loadingMoreDesignations?: boolean;
+  onDesignationInputChange?: (value: string) => void;
+  loadingDesignations?: boolean;
 
   // Handlers
   onAppliedSkillsChange: (selectedOptions: SelectedOption1[]) => void;
@@ -144,6 +170,27 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({
   addedByOptions,
   activeStatusOptions,
   favoriteOptions,
+  loadMoreSkills,
+  hasMoreSkills,
+  loadingMoreSkills,
+  onSkillInputChange,
+  loadingSkills,
+  loadMoreAppliedRoles,
+  hasMoreRoles,
+  loadingMoreRoles,
+  onAppliedRoleInputChange,
+  loadingRoles,
+  loadMoreCities,
+  hasMoreCities,
+  loadingMoreCities,
+  loadMoreStates,
+  hasMoreStates,
+  loadingMoreStates,
+  loadMoreDesignations,
+  hasMoreDesignations,
+  loadingMoreDesignations,
+  onDesignationInputChange,
+  loadingDesignations,
   onAppliedSkillsChange,
   onMultipleSkillsChange,
   onCityChange,
@@ -196,7 +243,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({
 
       <List>
         {/* Applied Skills */}
-        <MultiSelect
+        <PaginateMultiSelect
           label="Applied Skills"
           name="appliedSkills"
           options={skillsOptions}
@@ -205,10 +252,15 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({
           placeholder="Select skills..."
           className="mb-1 select-border"
           isMulti={true}
+          loadMore={loadMoreSkills}
+          hasMore={hasMoreSkills}
+          isLoadingMore={loadingMoreSkills}
+          onInputChange={onSkillInputChange}
+          isLoading={loadingSkills}
         />
 
         {/* Multiple Skills */}
-        <MultiSelect
+        <PaginateMultiSelect
           label="Multiple Skills"
           name="multipleSkills"
           options={skillsOptions}
@@ -217,10 +269,15 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({
           placeholder="Select multiple skills..."
           className="mb-1 select-border"
           isMulti={true}
+          loadMore={loadMoreSkills}
+          hasMore={hasMoreSkills}
+          isLoadingMore={loadingMoreSkills}
+          onInputChange={onSkillInputChange}
+          isLoading={loadingSkills}
         />
 
         {/* Applied Role */}
-        <MultiSelect
+        <PaginateMultiSelect
           label="Applied Role"
           name="appliedRole"
           options={appliedRoleOptions}
@@ -229,10 +286,15 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({
           isMulti={true}
           onChange={onAppliedRoleFilterChange}
           className="mb-1"
+          loadMore={loadMoreAppliedRoles}
+          hasMore={hasMoreRoles}
+          isLoadingMore={loadingMoreRoles}
+          onInputChange={onAppliedRoleInputChange}
+          isLoading={loadingRoles}
         />
 
         {/* City Filter */}
-        <MultiSelect
+        <PaginateMultiSelect
           label="City"
           name="city"
           className="mb-1 select-border"
@@ -241,10 +303,13 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({
           value={filterCity}
           isMulti={true}
           onChange={onCityChange}
+          loadMore={loadMoreCities}
+          hasMore={hasMoreCities}
+          isLoadingMore={loadingMoreCities}
         />
 
         {/* State Filter */}
-        <BaseSelect
+        <PaginateSelect
           label="State"
           name="filterState"
           options={statesOptions}
@@ -252,6 +317,9 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({
           handleChange={onStateChange}
           placeholder="Select state..."
           className="mb-1"
+          loadMore={loadMoreStates}
+          hasMore={hasMoreStates}
+          isLoadingMore={loadingMoreStates}
         />
 
         {/* Gender Filter */}
@@ -299,7 +367,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({
         />
 
         {/* Designation Filter */}
-        <BaseSelect
+        <PaginateSelect
           label="Designation"
           name="filterDesignation"
           options={designationOptions}
@@ -307,6 +375,11 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({
           handleChange={onDesignationChange}
           placeholder="Select designation..."
           className="mb-1"
+          loadMore={loadMoreDesignations}
+          hasMore={hasMoreDesignations}
+          isLoadingMore={loadingMoreDesignations}
+          onInputChange={onDesignationInputChange}
+          isLoading={loadingDesignations}
         />
 
         {/* Added By Filter */}
