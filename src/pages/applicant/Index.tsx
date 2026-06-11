@@ -54,7 +54,6 @@ const {
   statusOptions,
   gendersType,
   anyHandOnOffers,
-  designationType,
   addedByOptions,
   activeStatusOptions,
   favoriteOptions,
@@ -90,8 +89,34 @@ const Applicant = () => {
     resetFilters: resetFiltersHook,
     restoredFromSession,
   } = useApplicantFilters();
-  const { skillOptions, appliedRoleOptions, cities, states } =
-    useApplicantOptions();
+  const {
+    skillOptions,
+    loadMoreSkills,
+    hasMoreSkills,
+    loadingMoreSkills,
+    onSkillInputChange,
+    loadingSkills,
+    appliedRoleOptions,
+    loadMoreAppliedRoles,
+    hasMoreRoles,
+    loadingMoreRoles,
+    onAppliedRoleInputChange,
+    loadingRoles,
+    cities,
+    loadMoreCities,
+    hasMoreCities,
+    loadingMoreCities,
+    states,
+    loadMoreStates,
+    hasMoreStates,
+    loadingMoreStates,
+    designationOptions,
+    loadMoreDesignations,
+    hasMoreDesignations,
+    loadingMoreDesignations,
+    onDesignationInputChange,
+    loadingDesignations,
+  } = useApplicantOptions();
 
   const [pagination, setPagination] = useState({
     pageIndex: 0,
@@ -119,6 +144,119 @@ const Applicant = () => {
   const [exportableFields, setExportableFields] = useState<SelectedOption[]>(
     [],
   );
+
+  const skillOptionsWithSelected = useMemo(() => {
+    const opts = Array.isArray(skillOptions) ? skillOptions : [];
+    const selectedOptions = [
+      ...(Array.isArray(filters.appliedSkills) ? filters.appliedSkills : []),
+      ...(Array.isArray(filters.multipleSkills) ? filters.multipleSkills : []),
+    ];
+    const selectedValues = selectedOptions
+      .map((option: any) => option?.value)
+      .filter(Boolean);
+
+    if (selectedValues.length === 0) return opts;
+
+    const missing = selectedValues.filter(
+      (value: string) => !opts.some((option: any) => option?.value === value),
+    );
+    if (missing.length === 0) return opts;
+
+    return [
+      ...missing.map((value: string, index: number) => ({
+        label: value,
+        value,
+        id: index,
+      })),
+      ...opts,
+    ];
+  }, [filters.appliedSkills, filters.multipleSkills, skillOptions]);
+
+  const appliedRoleOptionsWithSelected = useMemo(() => {
+    const opts = Array.isArray(appliedRoleOptions) ? appliedRoleOptions : [];
+    const selectedValues = (filters.filterAppliedRole || [])
+      .map((option: any) => option?.value)
+      .filter(Boolean);
+
+    if (selectedValues.length === 0) return opts;
+
+    const missing = selectedValues.filter(
+      (value: string) => !opts.some((option: any) => option?.value === value),
+    );
+    if (missing.length === 0) return opts;
+
+    return [
+      ...missing.map((value: string) => ({ label: value, value })),
+      ...opts,
+    ];
+  }, [appliedRoleOptions, filters.filterAppliedRole]);
+
+  const citiesOptionsWithSelected = useMemo(() => {
+    const opts = cities.map((city: any, index: number) => ({
+      label: city.label,
+      value: city.value,
+      id: index,
+    }));
+    const selectedValues = (filters.filterCity || [])
+      .map((option: any) => option?.value)
+      .filter(Boolean);
+
+    if (selectedValues.length === 0) return opts;
+
+    const missing = selectedValues.filter(
+      (value: string) => !opts.some((option: any) => option?.value === value),
+    );
+    if (missing.length === 0) return opts;
+
+    return [
+      ...missing.map((value: string, index: number) => {
+        const selected = filters.filterCity.find(
+          (option: any) => option?.value === value,
+        );
+        return {
+          label: selected?.label || value,
+          value,
+          id: index,
+        };
+      }),
+      ...opts,
+    ];
+  }, [cities, filters.filterCity]);
+
+  const statesOptionsWithSelected = useMemo(() => {
+    const opts = states.map((state) => ({
+      label: state.label,
+      value: state.value,
+    }));
+    const currentValue = filters.filterState?.value;
+
+    if (!currentValue) return opts;
+    if (opts.some((option) => option.value === currentValue)) return opts;
+
+    return [
+      {
+        label: filters.filterState?.label || currentValue,
+        value: currentValue,
+      },
+      ...opts,
+    ];
+  }, [filters.filterState, states]);
+
+  const designationOptionsWithSelected = useMemo(() => {
+    const opts = Array.isArray(designationOptions) ? designationOptions : [];
+    const currentValue = filters.filterDesignation?.value;
+
+    if (!currentValue) return opts;
+    if (opts.some((option) => option.value === currentValue)) return opts;
+
+    return [
+      {
+        label: filters.filterDesignation?.label || currentValue,
+        value: currentValue,
+      },
+      ...opts,
+    ];
+  }, [designationOptions, filters.filterDesignation]);
   const [selectedRecord, setSelectedRecord] = useState<string | null>(null);
   const [dataActive, SetDataActive] = useState(true);
   const [isFav, setIsFav] = useState(false);
@@ -1129,17 +1267,26 @@ const Applicant = () => {
                       filterEngRating={filters.filterEngRating}
                       filterExpectedPkg={filters.filterExpectedPkg}
                       filterCurrentPkg={filters.filterCurrentPkg}
-                      skillsOptions={skillOptions}
-                      citiesOptions={cities.map((city: any) => ({
-                        label: city.label,
-                        value: city.value,
-                        id: city.value,
-                      }))}
-                      appliedRoleOptions={appliedRoleOptions}
-                      statesOptions={states.map((state) => ({
-                        label: state.label,
-                        value: state.value,
-                      }))}
+                      skillsOptions={skillOptionsWithSelected}
+                      loadMoreSkills={loadMoreSkills}
+                      hasMoreSkills={hasMoreSkills}
+                      loadingMoreSkills={loadingMoreSkills}
+                      onSkillInputChange={onSkillInputChange}
+                      loadingSkills={loadingSkills}
+                      citiesOptions={citiesOptionsWithSelected}
+                      loadMoreCities={loadMoreCities}
+                      hasMoreCities={hasMoreCities}
+                      loadingMoreCities={loadingMoreCities}
+                      appliedRoleOptions={appliedRoleOptionsWithSelected}
+                      loadMoreAppliedRoles={loadMoreAppliedRoles}
+                      hasMoreRoles={hasMoreRoles}
+                      loadingMoreRoles={loadingMoreRoles}
+                      onAppliedRoleInputChange={onAppliedRoleInputChange}
+                      loadingRoles={loadingRoles}
+                      statesOptions={statesOptionsWithSelected}
+                      loadMoreStates={loadMoreStates}
+                      hasMoreStates={hasMoreStates}
+                      loadingMoreStates={loadingMoreStates}
                       interviewStageOptions={interviewStageOptions}
                       statusOptions={statusOptions}
                       gendersOptions={gendersType}
@@ -1149,7 +1296,12 @@ const Applicant = () => {
                           value: String(opt.value),
                         }),
                       )}
-                      designationOptions={designationType}
+                      designationOptions={designationOptionsWithSelected}
+                      loadMoreDesignations={loadMoreDesignations}
+                      hasMoreDesignations={hasMoreDesignations}
+                      loadingMoreDesignations={loadingMoreDesignations}
+                      onDesignationInputChange={onDesignationInputChange}
+                      loadingDesignations={loadingDesignations}
                       addedByOptions={addedByOptions}
                       activeStatusOptions={activeStatusOptions}
                       favoriteOptions={favoriteOptions.map((opt: any) => ({
