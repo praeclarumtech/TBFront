@@ -79,6 +79,8 @@ const Applicant = () => {
       designationChart: params.get("designation"),
       piechartType: params.get("piechartType"),
       piechartSelected: params.get("selected"),
+      startDate: params.get("startDate"),
+      endDate: params.get("endDate"),
     };
   }, [location.search]);
 
@@ -89,6 +91,20 @@ const Applicant = () => {
     resetFilters: resetFiltersHook,
     restoredFromSession,
   } = useApplicantFilters();
+
+  // Apply date range from dashboard applied chart URL params into filter state (once)
+  const appliedChartDatesSyncedRef = useRef(false);
+  useEffect(() => {
+    if (appliedChartDatesSyncedRef.current) return;
+    if (!chartParams.startDate && !chartParams.endDate) return;
+    appliedChartDatesSyncedRef.current = true;
+    setFilters((prev) => ({
+      ...prev,
+      startDate: chartParams.startDate || prev.startDate,
+      endDate: chartParams.endDate || prev.endDate,
+    }));
+  }, [chartParams.startDate, chartParams.endDate, setFilters]);
+
   const {
     skillOptions,
     loadMoreSkills,
@@ -425,8 +441,18 @@ const Applicant = () => {
     }));
   };
 
+  const clearChartDateParamsFromUrl = useCallback(() => {
+    const params = new URLSearchParams(location.search);
+    if (!params.has("startDate") && !params.has("endDate")) return;
+    params.delete("startDate");
+    params.delete("endDate");
+    const query = params.toString();
+    navigate(query ? `/applicants?${query}` : "/applicants", { replace: true });
+  }, [location.search, navigate]);
+
   const resetFilters = async () => {
     resetFiltersHook();
+    clearChartDateParamsFromUrl();
     refetchApplicants();
   };
 
@@ -460,6 +486,7 @@ const Applicant = () => {
       filterCurrentPkg: [0, 100],
       searchAll: "",
     });
+    clearChartDateParamsFromUrl();
     refetchApplicants();
   };
 

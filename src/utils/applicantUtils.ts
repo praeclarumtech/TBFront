@@ -41,6 +41,8 @@ export interface ChartParams {
   designationChart?: string | null;
   piechartType?: string | null;
   piechartSelected?: string | null;
+  startDate?: string | null;
+  endDate?: string | null;
 }
 
 /**
@@ -238,6 +240,13 @@ export const buildApplicantParams = (
       if (selectedValue) {
         params.noticePeriod = `${selectedValue}-${selectedValue}`;
       }
+    }
+    // Dashboard applied chart date range (fallback when filter dates not set yet)
+    if (chartParams.startDate && !params.startDate) {
+      params.startDate = chartParams.startDate;
+    }
+    if (chartParams.endDate && !params.endDate) {
+      params.endDate = chartParams.endDate;
     }
   }
 

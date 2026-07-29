@@ -17,6 +17,9 @@ import {
   PersonPlusFill,
 } from "react-bootstrap-icons";
 import ApplicantsDeatils from "sub-components/dashboard/ApplicantsDetails";
+import ApplicantAppliedChart, {
+  ApplicantAppliedChartItem,
+} from "sub-components/dashboard/ApplicantAppliedChart";
 import { getTotalApplicants } from "api/dashboardApi";
 import appConstants from "constants/constant";
 import { useNavigate } from "react-router-dom";
@@ -54,6 +57,9 @@ const Dashboard = () => {
     null,
   );
   const [leavedApplicants, setLeavedApplicants] = useState<number | null>(null);
+  const [applicantAppliedChart, setApplicantAppliedChart] = useState<
+    ApplicantAppliedChartItem[]
+  >([]);
 
   const location = useLocation();
   const applicantIds = location.state?.applicantIds || [];
@@ -83,6 +89,11 @@ const Dashboard = () => {
       setShortListedApplicants(data.data.shortListedApplicants);
       setOnboardedApplicants(data.data.onboardedApplicants);
       setLeavedApplicants(data.data.leavedApplicants);
+      setApplicantAppliedChart(
+        Array.isArray(data.data.applicantAppliedChart)
+          ? data.data.applicantAppliedChart
+          : [],
+      );
     } catch (error) {
       console.error("API Error:", error);
       setError("Failed to load applicants");
@@ -248,6 +259,12 @@ const Dashboard = () => {
           </div>
 
           <Row className="mt-3">
+            <Col xl={12}>
+              <ApplicantAppliedChart
+                data={applicantAppliedChart}
+                isLoading={isLoading}
+              />
+            </Col>
             <Col xl={12}>
               <ApplicantsDeatils
                 setSelectedTechnology={setSelectedTechnology}
