@@ -396,7 +396,8 @@ export const createApplicantQR = async (data?: object, isFormData = false) => {
   if (isFormData && data instanceof FormData) {
     const response = await authServicesNoAuthMultipart.post(
       `${CREATE_APPLICANT_QR}`,
-      data
+      data,
+      { timeout: 300000 },
     );
     return response?.data;
   } else {
@@ -413,7 +414,8 @@ export const updateApplicantQR = async (
   if (isFormData && data instanceof FormData) {
     const response = await authServicesNoAuthMultipart.put(
       `${UPDATE_APPLICANT_QR}/${id}`,
-      data
+      data,
+      { timeout: 300000 },
     );
     return response?.data;
   } else {

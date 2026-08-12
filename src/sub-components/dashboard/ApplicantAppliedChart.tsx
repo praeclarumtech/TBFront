@@ -10,7 +10,7 @@ import {
   Legend,
   ChartOptions,
 } from "chart.js";
-import { Bar, getElementAtEvent } from "react-chartjs-2";
+import { Bar } from "react-chartjs-2";
 import Skeleton from "react-loading-skeleton";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import { useNavigate } from "react-router-dom";
@@ -48,7 +48,15 @@ const toDateParam = (value: string): string => {
   return parsed.toISOString().slice(0, 10);
 };
 
-const BAR_COLORS = ["#36A2EB", "#4BC0C0", "#FFCE56", "#FF9F40"];
+const BAR_COLORS = [
+  "#36A2EB",
+  "#4BC0C0",
+  "#FFCE56",
+  "#FF9F40",
+  "#9966FF",
+  "#C9CBCF",
+  "#FF6384",
+];
 
 const ApplicantAppliedChart = ({
   data,
@@ -67,7 +75,9 @@ const ApplicantAppliedChart = ({
       {
         label: "Applicants Applied",
         data: counts,
-        backgroundColor: BAR_COLORS.slice(0, labels.length),
+        backgroundColor: labels.map(
+          (_, index) => BAR_COLORS[index % BAR_COLORS.length],
+        ),
         borderColor: "#000000",
         borderWidth: 1,
         barThickness: 48,
@@ -82,6 +92,11 @@ const ApplicantAppliedChart = ({
     layout: {
       padding: { top: 28 },
     },
+    // Click anywhere in a column (not only on the short bar)
+    interaction: {
+      mode: "index",
+      intersect: false,
+    },
     plugins: {
       legend: { display: false },
       title: { display: false },
@@ -92,6 +107,11 @@ const ApplicantAppliedChart = ({
         color: "#000",
         font: { weight: "bold" },
         formatter: (value: number) => value.toString(),
+      },
+      tooltip: {
+        callbacks: {
+          footer: () => "Click to view applicants",
+        },
       },
     },
     scales: {
@@ -116,20 +136,11 @@ const ApplicantAppliedChart = ({
     },
   };
 
-  const handleChartClick = (event: any) => {
-    if (!chartRef.current) return;
-
-    const elements = getElementAtEvent(chartRef.current, event);
-    if (elements.length === 0) return;
-
+  const navigateToApplicants = (item: ApplicantAppliedChartItem) => {
     if (role !== "admin") {
       toast.error("You don't have permission to perform this action.");
       return;
     }
-
-    const index = elements[0].index;
-    const item = data[index];
-    if (!item) return;
 
     const startDate = toDateParam(item.from);
     const endDate = toDateParam(item.to);
@@ -138,6 +149,23 @@ const ApplicantAppliedChart = ({
     if (endDate) params.set("endDate", endDate);
 
     navigate(`/applicants?${params.toString()}`);
+  };
+
+  const handleChartClick = (event: any) => {
+    const chart = chartRef.current;
+    if (!chart) return;
+
+    // Index mode + intersect:false → click near label / above short bar still works
+    const elements = chart.getElementsAtEventForMode(
+      event,
+      "index",
+      { intersect: false },
+      true,
+    );
+    if (elements.length === 0) return;
+
+    const item = data[elements[0].index];
+    if (item) navigateToApplicants(item);
   };
 
   return (
@@ -164,6 +192,34 @@ const ApplicantAppliedChart = ({
                 />
               )}
             </div>
+
+            {/* Easy click targets for short bars */}
+            {!isLoading && data.length > 0 && (
+              <div className="d-flex flex-wrap justify-content-center gap-3 mt-3 pt-2 border-top">
+                {data.map((item, index) => (
+                  <button
+                    key={item.key || item.label}
+                    type="button"
+                    className="btn btn-light border text-center px-3 py-2"
+                    style={{ minWidth: 120, cursor: "pointer" }}
+                    title={`View applicants: ${item.label}`}
+                    onClick={() => navigateToApplicants(item)}
+                  >
+                    <div className="fw-bold text-dark">{item.count ?? 0}</div>
+                    <div
+                      className="mx-auto my-1 rounded"
+                      style={{
+                        height: 6,
+                        width: 48,
+                        backgroundColor:
+                          BAR_COLORS[index % BAR_COLORS.length],
+                      }}
+                    />
+                    <div className="small text-muted">{item.label}</div>
+                  </button>
+                ))}
+              </div>
+            )}
           </Card.Body>
         </Card>
       </Col>
