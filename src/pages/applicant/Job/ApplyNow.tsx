@@ -534,6 +534,14 @@ const ApplyNow = () => {
         toastify("Please upload your resume to apply.", { type: "error" });
         return;
       }
+      const MAX_RESUME_BYTES = 5 * 1024 * 1024;
+      if (resumeFile && resumeFile.size > MAX_RESUME_BYTES) {
+        setResumeError("File size must be 5MB or less.");
+        toastify("Resume must be 5MB or less. Please upload a smaller file.", {
+          type: "error",
+        });
+        return;
+      }
       setButtonLoading(true);
 
       try {
@@ -615,11 +623,17 @@ const ApplyNow = () => {
       } catch (error: any) {
         setButtonLoading(false);
         // Handle axios/network errors
-        const message =
-          error?.response?.data?.message ||
-          error?.response?.data?.error ||
-          error?.message ||
-          "Unexpected error.";
+        const isNetworkError =
+          !error?.response &&
+          (error?.code === "ERR_NETWORK" ||
+            error?.message === "Network Error" ||
+            error?.code === "ECONNABORTED");
+        const message = isNetworkError
+          ? "Upload failed due to a poor connection. Please use a smaller resume (under 5MB) and try again on a stable network."
+          : error?.response?.data?.message ||
+            error?.response?.data?.error ||
+            error?.message ||
+            "Unexpected error.";
         const errorMessages = error?.response?.data?.details;
         if (errorMessages && Array.isArray(errorMessages)) {
           errorMessages.forEach((errorMessage: string) => {
@@ -1558,7 +1572,21 @@ const ApplyNow = () => {
                                   style={{ display: "none" }}
                                   onChange={(e) => {
                                     if (e.target.files && e.target.files[0]) {
-                                      setResumeFile(e.target.files[0]);
+                                      const file = e.target.files[0];
+                                      const maxBytes = 5 * 1024 * 1024;
+                                      if (file.size > maxBytes) {
+                                        setResumeFile(null);
+                                        setResumeError(
+                                          "File size must be 5MB or less.",
+                                        );
+                                        toastify(
+                                          "Resume must be 5MB or less.",
+                                          { type: "error" },
+                                        );
+                                        e.target.value = "";
+                                        return;
+                                      }
+                                      setResumeFile(file);
                                       setResumeError("");
                                     }
                                   }}

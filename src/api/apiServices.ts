@@ -27,6 +27,8 @@ const authServicesNoAuthMultipart = axios.create({
   headers: {
     Accept: "application/json",
   },
+  // Resume uploads on mobile can be slow; avoid premature abort
+  timeout: 300000,
 });
 
 const authInstanceMultipart = axios.create({
@@ -34,6 +36,7 @@ const authInstanceMultipart = axios.create({
   headers: {
     "Content-Type": "multipart/form-data",
   },
+  timeout: 300000,
 });
 
 authServices.interceptors.request.use(async (config) => {
