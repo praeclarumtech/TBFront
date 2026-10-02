@@ -361,7 +361,6 @@ const AddDegree = () => {
                                 place="bottom"
                                 variant="error"
                                 content="Delete"
-                                anchorId={`Delete ${selectedDegree.length} Emails`}
                               />
                             </BaseButton>
                           )}

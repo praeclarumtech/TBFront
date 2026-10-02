@@ -153,6 +153,7 @@ const VendorHeader = () => {
   else if (path.includes("/jobs")) selectedKey = "jobs";
   else if (path.includes("/dashboard")) selectedKey = "dashboard";
   else if (path.includes("/login")) selectedKey = "login";
+  else if (path.includes("/application-form")) selectedKey = "training";
   else if (path === "/") selectedKey = "home";
 
   const handleNavigate = (key: string) => {
@@ -202,6 +203,10 @@ const VendorHeader = () => {
 
       case "home":
         navigate("/", { replace: true });
+        break;
+
+      case "training":
+        navigate("/application-form");
         break;
 
       default:
@@ -325,6 +330,17 @@ const VendorHeader = () => {
                 </div>
               )}
             </div>
+
+            <button
+              onClick={() => handleNavigate("training")}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                isActive("training")
+                  ? "bg-primary text-white shadow-md"
+                  : "text-gray-300 hover:text-white hover:bg-gray-800"
+              }`}
+            >
+              Training
+            </button>
 
             {/* Login/Logout */}
             {!isLoggedIn ? (

@@ -401,7 +401,6 @@ const Country = () => {
                               place="bottom"
                               variant="error"
                               content="Delete"
-                              anchorId={`Delete ${selectedcountry.length} Emails`}
                             />
                           </BaseButton>
                         )}
