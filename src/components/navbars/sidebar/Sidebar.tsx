@@ -12,7 +12,11 @@ import {
   TeamOutlined,
 } from "@ant-design/icons";
 import Logosvg from "components/BaseComponents/Logosvg";
-import { navigationGroups, masterRoutes } from "constants/navigationConstants";
+import {
+  navigationGroups,
+  masterRoutes,
+  PermissionKey,
+} from "constants/navigationConstants";
 
 const { Sider } = Layout;
 
@@ -127,7 +131,7 @@ const Sidebar: React.FC<SidebarProps> = ({ toggleMenu }) => {
     const path = location.pathname;
     const vendorPaths = ["/vendorList", "/job-listing", "/appliedJobApplicants", "/vendor/applications"];
     const clientPaths = ["/client", "/job-listingClient", "/appliedJobApplicantsClient", "/client/applications"];
-    const masterPaths = ["/master/skills", "/master/role-skills", "/master/designation", "/master/qualification", "/master/passing-year", "/master/city", "/master/state", "/master/email-template"];
+    const masterPaths = ["/master/skills", "/master/role-skills", "/master/designation", "/master/qualification", "/master/passing-year", "/master/city", "/master/state", "/master/email-template", "/master/training-technologies"];
 
     const newOpenKeys: string[] = [];
     
@@ -219,9 +223,14 @@ const Sidebar: React.FC<SidebarProps> = ({ toggleMenu }) => {
           {/* Check for main modules based on sub-item permissions */}
           {(() => {
             // Check if any applicant sub-items have permissions
+            const canSeeApplicantItem = (permission: string) =>
+              modules.includes(permission) ||
+              (permission === PermissionKey.TRAINING_APPLICATIONS &&
+                modules.includes(PermissionKey.APPLICANTS));
+
             const hasApplicantPermissions =
               navigationGroups.APPLICANTS.items.some((item) =>
-                modules.includes(item.permission)
+                canSeeApplicantItem(item.permission)
               );
 
             // Check if any vendor sub-items have permissions
@@ -243,8 +252,14 @@ const Sidebar: React.FC<SidebarProps> = ({ toggleMenu }) => {
             );
 
             // Check if any master sub-items have permissions
+            const isAdmin = localStorage.getItem("role") === "admin";
+            const canSeeMasterRoute = (permission: string) =>
+              modules.includes(permission) ||
+              (isAdmin &&
+                permission === PermissionKey.MASTER_TRAINING_TECHNOLOGY);
+
             const hasMasterPermissions = masterRoutes.some((route) =>
-              modules.includes(route.permission)
+              canSeeMasterRoute(route.permission)
             );
 
             return (
@@ -260,7 +275,7 @@ const Sidebar: React.FC<SidebarProps> = ({ toggleMenu }) => {
                     }
                   >
                     {navigationGroups.APPLICANTS.items
-                      .filter((item) => modules.includes(item.permission))
+                      .filter((item) => canSeeApplicantItem(item.permission))
                       .map((item) => (
                         <Menu.Item
                           key={item.key}
@@ -392,7 +407,7 @@ const Sidebar: React.FC<SidebarProps> = ({ toggleMenu }) => {
                       title="Masters"
                     >
                       {masterRoutes
-                        .filter((route) => modules.includes(route.permission))
+                        .filter((route) => canSeeMasterRoute(route.permission))
                         .map((route) => (
                           <Menu.Item key={route.key}>
                             <Link to={route.key} onClick={handleCloseMenu}>

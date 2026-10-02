@@ -9,6 +9,7 @@ export const PermissionKey = {
   // Applicants
   APPLICANTS: "applicants",
   APPLICANTS_IMPORT: "applicants_import",
+  TRAINING_APPLICATIONS: "training_applications",
 
   // Clients
   CLIENTS: "clients",
@@ -39,6 +40,7 @@ export const PermissionKey = {
   MASTER_COUNTRY: "master_country",
   MASTER_STATE: "master_state",
   MASTER_CITY: "master_city",
+  MASTER_TRAINING_TECHNOLOGY: "master_training_technology",
 };
 
 // Navigation menu structure for permission assignment
@@ -56,6 +58,10 @@ export const navItems = [
       {
         accessorKey: PermissionKey.APPLICANTS_IMPORT,
         name: "Import Applicants",
+      },
+      {
+        accessorKey: PermissionKey.TRAINING_APPLICATIONS,
+        name: "Training Applications",
       },
     ],
   },
@@ -128,6 +134,10 @@ export const navItems = [
       { accessorKey: PermissionKey.MASTER_COUNTRY, name: "Add Country" },
       { accessorKey: PermissionKey.MASTER_STATE, name: "Add State" },
       { accessorKey: PermissionKey.MASTER_CITY, name: "Add City" },
+      {
+        accessorKey: PermissionKey.MASTER_TRAINING_TECHNOLOGY,
+        name: "Training Technologies",
+      },
     ],
   },
 ];
@@ -179,6 +189,11 @@ export const masterRoutes = [
     label: "Add City",
     permission: PermissionKey.MASTER_CITY,
   },
+  {
+    key: "/master/training-technologies",
+    label: "Training Technologies",
+    permission: PermissionKey.MASTER_TRAINING_TECHNOLOGY,
+  },
 ];
 
 export const navigationGroups = {
@@ -194,6 +209,11 @@ export const navigationGroups = {
         key: "/import-applicants",
         label: "Import Applicants",
         permission: PermissionKey.APPLICANTS_IMPORT,
+      },
+      {
+        key: "/training-applications",
+        label: "Training Applications",
+        permission: PermissionKey.TRAINING_APPLICATIONS,
       },
     ],
   },
