@@ -398,7 +398,6 @@ const AddDesignation = () => {
                                 place="bottom"
                                 variant="error"
                                 content="Delete"
-                                anchorId={`Delete ${selectedDesignation.length} Designations`}
                               />
                             </BaseButton>
                           )}

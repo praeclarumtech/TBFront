@@ -562,7 +562,6 @@ const UpdateSkill = () => {
                               place="bottom"
                               variant="error"
                               content="Delete"
-                              anchorId={`Delete ${selectedSkills.length} Emails`}
                             />
                           </BaseButton>
                         )}

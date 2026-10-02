@@ -439,7 +439,6 @@ const State = () => {
                               place="bottom"
                               variant="error"
                               content="Delete"
-                              anchorId={`Delete ${selectedState.length} Emails`}
                             />
                           </BaseButton>
                         )}

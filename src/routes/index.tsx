@@ -136,7 +136,6 @@ const RenderRouter: React.FC = () => {
             </Suspense>
           }
         />
-        <Route path="/application-form" element={<TrainingForm />} />
         <Route path={APPLICANT_ADD_QR_CODE.path} element={<QrFrom />} />
         <Route path={APPLICANT_EDIT_QR_CODE.path} element={<QrFrom />} />
         <Route path={APPLICANT_SUCCESS.path} element={<SuccessPage />} />
@@ -171,6 +170,7 @@ const RenderRouter: React.FC = () => {
           <Route path={JOB_SEARCH.path} element={<SearchJob />} />
           <Route path={DETAILED_JOB.path} element={<DetailedJob />} />
           <Route path={JOB_OPEN.path} element={<OpenJob />} />
+          <Route path="/application-form" element={<TrainingForm />} />
         </Route>
 
         <Route element={<PrivateRoute component={() => <RootLayout />} />}>

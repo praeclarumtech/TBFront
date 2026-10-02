@@ -306,7 +306,7 @@ const EmailForm = () => {
     const arr = validation.values.email_to
       .split(",")
       .map((e: string) => e.trim())
-      .filter((e) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e));
+      .filter((e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e));
     const showMore = arr.length > 2;
     const displayEmails = showMore
       ? arr.slice(0, 2).join(", ") + ", "
@@ -630,8 +630,12 @@ const EmailForm = () => {
                         handleChange={validation.handleChange}
                         handleBlur={validation.handleBlur}
                         value={validation.values.subject}
-                        error={validation.errors.subject}
-                        touched={validation.touched.subject}
+                        error={
+                          typeof validation.errors.subject === "string"
+                            ? validation.errors.subject
+                            : undefined
+                        }
+                        touched={validation.touched.subject === true}
                       />
                     </div>
 

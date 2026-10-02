@@ -462,7 +462,6 @@ const AddSkill = () => {
                                 place="bottom"
                                 variant="error"
                                 content="Delete"
-                                anchorId={`Delete ${selectedSkills.length} Emails`}
                               />
                             </BaseButton>
 
@@ -475,7 +474,6 @@ const AddSkill = () => {
                                 place="bottom"
                                 variant="error"
                                 content="Delete"
-                                anchorId={`Delete ${selectedSkills.length} Emails`}
                               />
                             </BaseButton>
                           </>

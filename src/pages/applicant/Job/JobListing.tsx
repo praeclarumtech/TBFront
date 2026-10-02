@@ -780,7 +780,6 @@ const JobListing = () => {
                               place="bottom"
                               variant="error"
                               content="Delete"
-                              anchorId={`Delete ${selectedJob.length} Emails`}
                             />
                           </BaseButton>
                         )}

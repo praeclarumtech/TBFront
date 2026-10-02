@@ -1258,7 +1258,6 @@ function ImportApplicant() {
                             <i className="align-bottom ri-delete-bin-fill" />
                           </BaseButton>
                           <ReactTooltip
-                            anchorId="delete-button-tooltip"
                             content="Delete"
                             place="bottom"
                             variant="error"

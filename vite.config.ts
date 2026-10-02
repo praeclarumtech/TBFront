@@ -1,11 +1,11 @@
-import { defineConfig } from "vite";
+import { defineConfig, type Plugin } from "vite";
 import react from "@vitejs/plugin-react";
 import tsconfigPaths from "vite-tsconfig-paths";
 import path from "path";
 
 // tsconfig maps "*" to ./src/*, but vite-tsconfig-paths skips those
 // imports on Windows because include globs use forward slashes.
-function srcStarAlias() {
+function srcStarAlias(): Plugin {
   const srcRoot = path.resolve(__dirname, "src");
   return {
     name: "src-star-alias",
