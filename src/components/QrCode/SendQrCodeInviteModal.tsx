@@ -34,10 +34,11 @@ const SendQrCodeInviteModal = ({
 
   const getRegistrationUrl = (email: string) => {
     const baseUrl = window.location.origin;
+    const base = import.meta.env.BASE_URL.replace(/\/$/, "");
     const path =
       inviteType === "vendor"
-        ? "/talent/vendor/vendor-add-qr-code"
-        : "/talent/client/client-add-qr-code";
+        ? `${base}/vendor/vendor-add-qr-code`
+        : `${base}/client/client-add-qr-code`;
     return `${baseUrl}${path}?email=${encodeURIComponent(email)}`;
   };
 
@@ -366,9 +367,10 @@ const SendQrCodeInviteModal = ({
                 style={{ fontSize: "12px" }}
               >
                 {window.location.origin}
+                {import.meta.env.BASE_URL.replace(/\/$/, "")}
                 {inviteType === "vendor"
-                  ? "/talent/vendor/vendor-add-qr-code"
-                  : "/talent/client/client-add-qr-code"}
+                  ? "/vendor/vendor-add-qr-code"
+                  : "/client/client-add-qr-code"}
               </code>
             </div>
           </div>

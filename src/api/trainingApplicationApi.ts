@@ -18,6 +18,7 @@ export const listTrainingApplications = async (params: {
   technology?: string;
   semester?: string;
   duration?: string;
+  interestedFor?: string;
   gender?: string;
   applicantType?: string;
   state?: string;
@@ -41,6 +42,13 @@ export const updateTrainingApplication = async (id: string, data: object) => {
 
 export const deleteTrainingApplication = async (id: string) => {
   const response = await authServices.delete(`${LIST_PATH}/${id}`);
+  return response?.data;
+};
+
+export const getPublicQualifications = async () => {
+  const response = await authServicesNoAuth.get("degree/public", {
+    params: { page: 1, limit: 1000 },
+  });
   return response?.data;
 };
 

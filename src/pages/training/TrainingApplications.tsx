@@ -18,10 +18,11 @@ import TableContainer from "components/BaseComponents/TableContainer";
 import BaseButton from "components/BaseComponents/BaseButton";
 import BaseInput from "components/BaseComponents/BaseInput";
 import DeleteModal from "components/BaseComponents/DeleteModal";
-import { BaseSelect, MultiSelect } from "components/BaseComponents/BaseSelect";
+import { BaseSelect } from "components/BaseComponents/BaseSelect";
 import {
   deleteTrainingApplication,
   getPublicCities,
+  getPublicQualifications,
   getPublicStates,
   listTrainingApplications,
   updateTrainingApplication,
@@ -32,6 +33,7 @@ import {
   APPLICANT_TYPE_OPTIONS,
   DURATION_OPTIONS,
   GENDER_OPTIONS,
+  INTEREST_OPTIONS,
   SEMESTER_OPTIONS,
   applicantFullName,
   labelFor,
@@ -48,6 +50,7 @@ const emptyFilters = {
   technology: "",
   semester: "",
   duration: "",
+  interestedFor: "",
   gender: "",
   applicantType: "",
   state: "",
@@ -92,6 +95,7 @@ const TrainingApplications = () => {
   const [deleting, setDeleting] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
   const [technologies, setTechnologies] = useState<Option[]>([]);
+  const [qualifications, setQualifications] = useState<Option[]>([]);
   const [states, setStates] = useState<Option[]>([]);
   const [cities, setCities] = useState<Option[]>([]);
   const [pagination, setPagination] = useState({
@@ -121,6 +125,7 @@ const TrainingApplications = () => {
           technology: filters.technology || undefined,
           semester: filters.semester || undefined,
           duration: filters.duration || undefined,
+          interestedFor: filters.interestedFor || undefined,
           gender: filters.gender || undefined,
           applicantType: filters.applicantType || undefined,
           state: filters.state || undefined,
@@ -167,6 +172,18 @@ const TrainingApplications = () => {
       }
     };
     loadOptions();
+    getPublicQualifications()
+      .then((qualificationBody) => {
+        setQualifications(
+          (qualificationBody?.data?.data || [])
+            .map((item: any) => ({
+              label: item.degree,
+              value: item.degree,
+            }))
+            .filter((item: Option) => item.label)
+        );
+      })
+      .catch((error) => console.error(error));
   }, []);
 
   useEffect(() => {
@@ -253,6 +270,12 @@ const TrainingApplications = () => {
         header: "Duration",
         accessorKey: "duration",
         enableColumnFilter: false,
+      },
+      {
+        header: "Interested for",
+        accessorKey: "interestedFor",
+        enableColumnFilter: false,
+        cell: ({ row }: any) => labelFor(INTEREST_OPTIONS, row.original.interestedFor),
       },
       {
         header: "Date",
@@ -408,6 +431,7 @@ const TrainingApplications = () => {
         <EditApplicationModal
           record={editing}
           technologies={technologies}
+          qualifications={qualifications}
           states={states}
           onClose={() => setEditing(null)}
           onSaved={() => {
@@ -495,6 +519,17 @@ const TrainingApplications = () => {
             value={selectValue(DURATION_OPTIONS, filters.duration)}
             handleChange={(option: Option | null) =>
               setFilter("duration", option?.value || "")
+            }
+            className="mb-3"
+          />
+          <BaseSelect
+            label="Interested for"
+            name="interestedFor"
+            placeholder="All"
+            options={INTEREST_OPTIONS}
+            value={selectValue(INTEREST_OPTIONS, filters.interestedFor)}
+            handleChange={(option: Option | null) =>
+              setFilter("interestedFor", option?.value || "")
             }
             className="mb-3"
           />
@@ -633,10 +668,12 @@ const editValidationSchema = Yup.object({
       "Enter a valid email id.",
       (value) => !value || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
     ),
-  technology: Yup.array().of(Yup.string().trim()),
+  technology: Yup.string().trim(),
+  qualification: Yup.string().trim(),
   collegeName: Yup.string().trim(),
   semester: Yup.string().trim(),
   duration: Yup.string().required("Duration is required."),
+  interestedFor: Yup.string().required("Select online, offline, or hybrid."),
   gender: Yup.string().required("Gender is required."),
   applicantType: Yup.string().required("Select student, employee, or other."),
   state: Yup.string().trim().required("State is required."),
@@ -650,7 +687,9 @@ const formFromRecord = (record: any) => ({
   lastName: record?.name?.lastName || "",
   phone: record?.phone || "",
   email: record?.email || "",
-  technology: technologyValues(record?.technology),
+  technology: technologyValues(record?.technology)[0] || "",
+  interestedFor: record?.interestedFor || "",
+  qualification: record?.qualification || "",
   collegeName: record?.collegeName || "",
   semester: record?.semester || "",
   duration: record?.duration || "15 Days",
@@ -664,12 +703,14 @@ const formFromRecord = (record: any) => ({
 const EditApplicationModal = ({
   record,
   technologies,
+  qualifications,
   states,
   onClose,
   onSaved,
 }: {
   record: any;
   technologies: Option[];
+  qualifications: Option[];
   states: Option[];
   onClose: () => void;
   onSaved: () => void;
@@ -695,6 +736,8 @@ const EditApplicationModal = ({
           phone: values.phone.trim(),
           email: values.email.trim(),
           technology: values.technology,
+          interestedFor: values.interestedFor,
+          qualification: values.qualification.trim(),
           collegeName: values.collegeName.trim(),
           semester: values.semester,
           duration: values.duration,
@@ -769,6 +812,18 @@ const EditApplicationModal = ({
     !cities.some((option) => option.value === validation.values.city)
       ? [{ label: validation.values.city, value: validation.values.city }, ...cities]
       : cities;
+
+  const qualificationOptions =
+    validation.values.qualification &&
+    !qualifications.some((option) => option.value === validation.values.qualification)
+      ? [
+          ...qualifications,
+          {
+            label: validation.values.qualification,
+            value: validation.values.qualification,
+          },
+        ]
+      : qualifications;
 
   return (
     <Modal
@@ -898,35 +953,40 @@ const EditApplicationModal = ({
           />
         </div>
         <div className="col-md-6">
-          <div className="training-multi">
-            <style>{`
-              .training-multi [class*="-ValueContainer"] {
-                max-height: none !important;
-                overflow: visible !important;
-              }
-            `}</style>
-            <MultiSelect
-              label="Technologies"
-              name="technology"
-              isMulti
-              placeholder="Select technologies"
-              options={technologies}
-              value={validation.values.technology.map(
-                (item) =>
-                  technologies.find((option) => option.value === item) || {
-                    label: item,
-                    value: item,
+          <BaseSelect
+            label="Technology"
+            name="technology"
+            placeholder="Select a technology"
+            options={technologies}
+            value={
+              selectValue(technologies, validation.values.technology) ||
+              (validation.values.technology
+                ? {
+                    label: validation.values.technology,
+                    value: validation.values.technology,
                   }
-              )}
-              onChange={(selected: Option[] | null) =>
-                validation.setFieldValue(
-                  "technology",
-                  (selected || []).map((option) => option.value)
-                )
-              }
-              handleBlur={() => validation.setFieldTouched("technology", true)}
-            />
-          </div>
+                : null)
+            }
+            handleChange={(option: Option | null) =>
+              validation.setFieldValue("technology", option?.value || "")
+            }
+            handleBlur={() => validation.setFieldTouched("technology", true)}
+          />
+        </div>
+        <div className="col-md-6">
+          <BaseSelect
+            label="Qualification"
+            name="qualification"
+            placeholder="Select qualification"
+            options={qualificationOptions}
+            value={selectValue(qualificationOptions, validation.values.qualification)}
+            handleChange={(option: Option | null) =>
+              validation.setFieldValue("qualification", option?.value || "")
+            }
+            handleBlur={() => validation.setFieldTouched("qualification", true)}
+            menuPortalTarget={typeof document !== "undefined" ? document.body : null}
+            menuPosition="fixed"
+          />
         </div>
         <div className="col-md-6">
           <BaseInput
@@ -966,6 +1026,22 @@ const EditApplicationModal = ({
             handleBlur={() => validation.setFieldTouched("duration", true)}
             touched={!!validation.touched.duration}
             error={fieldError("duration")}
+          />
+        </div>
+        <div className="col-md-6">
+          <BaseSelect
+            label="Interested for"
+            name="interestedFor"
+            isRequired
+            placeholder="Select online, offline, or hybrid"
+            options={INTEREST_OPTIONS}
+            value={selectValue(INTEREST_OPTIONS, validation.values.interestedFor)}
+            handleChange={(option: Option | null) =>
+              validation.setFieldValue("interestedFor", option?.value || "")
+            }
+            handleBlur={() => validation.setFieldTouched("interestedFor", true)}
+            touched={!!validation.touched.interestedFor}
+            error={fieldError("interestedFor")}
           />
         </div>
         <div className="col-md-6">
@@ -1120,8 +1196,12 @@ const ApplicationProfile = ({
         <section>
           <h3>Training</h3>
           <div className="application-profile-grid">
-            <ProfileItem label="Technologies">{technologyText(record.technology)}</ProfileItem>
+            <ProfileItem label="Technology">{technologyText(record.technology)}</ProfileItem>
             <ProfileItem label="Duration">{record.duration || "-"}</ProfileItem>
+            <ProfileItem label="Interested for">
+              {labelFor(INTEREST_OPTIONS, record.interestedFor)}
+            </ProfileItem>
+            <ProfileItem label="Qualification">{record.qualification || "-"}</ProfileItem>
             <ProfileItem label="College">{record.collegeName || "-"}</ProfileItem>
             <ProfileItem label="Semester">{record.semester || "-"}</ProfileItem>
           </div>

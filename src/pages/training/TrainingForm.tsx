@@ -5,10 +5,11 @@ import * as Yup from "yup";
 import { toast } from "react-toastify";
 import { MailOutlined } from "@ant-design/icons";
 import BaseInput from "components/BaseComponents/BaseInput";
-import { BaseSelect, MultiSelect } from "components/BaseComponents/BaseSelect";
+import { BaseSelect } from "components/BaseComponents/BaseSelect";
 import appEnv from "config/appEnv";
 import {
   getPublicCities,
+  getPublicQualifications,
   getPublicStates,
   submitTrainingApplication,
 } from "api/trainingApplicationApi";
@@ -18,6 +19,7 @@ import {
   APPLICANT_TYPE_OPTIONS,
   DURATION_OPTIONS,
   GENDER_OPTIONS,
+  INTEREST_OPTIONS,
   SEMESTER_OPTIONS,
 } from "./options";
 
@@ -31,10 +33,12 @@ const initialValues = {
   lastName: "",
   phone: "",
   email: "",
-  technology: [] as string[],
+  technology: "",
+  qualification: "",
   collegeName: "",
   semester: "",
   duration: "15 Days",
+  interestedFor: "",
   gender: "",
   applicantType: "",
   state: "",
@@ -57,10 +61,12 @@ const validationSchema = Yup.object({
       "Enter a valid email id.",
       (value) => !value || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
     ),
-  technology: Yup.array().of(Yup.string().trim()),
+  technology: Yup.string().trim(),
+  qualification: Yup.string().trim(),
   collegeName: Yup.string().trim(),
   semester: Yup.string().trim(),
   duration: Yup.string().required("Duration is required."),
+  interestedFor: Yup.string().required("Select online, offline, or hybrid."),
   gender: Yup.string().required("Gender is required."),
   applicantType: Yup.string().required("Select student, employee, or other."),
   state: Yup.string().trim().required("State is required."),
@@ -73,6 +79,7 @@ const TrainingForm = () => {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [technologies, setTechnologies] = useState<Option[]>([]);
+  const [qualifications, setQualifications] = useState<Option[]>([]);
   const [states, setStates] = useState<Option[]>([]);
   const [cities, setCities] = useState<Option[]>([]);
   const [cityLoading, setCityLoading] = useState(false);
@@ -94,6 +101,8 @@ const TrainingForm = () => {
           phone: values.phone.trim(),
           email: values.email.trim(),
           technology: values.technology,
+          interestedFor: values.interestedFor,
+          qualification: values.qualification.trim(),
           collegeName: values.collegeName.trim(),
           semester: values.semester,
           duration: values.duration,
@@ -152,6 +161,18 @@ const TrainingForm = () => {
       }
     };
     loadOptions();
+    getPublicQualifications()
+      .then((qualificationBody) => {
+        setQualifications(
+          (qualificationBody?.data?.data || [])
+            .map((item: any) => ({
+              label: item.degree,
+              value: item.degree,
+            }))
+            .filter((item: Option) => item.label)
+        );
+      })
+      .catch((error) => console.error(error));
   }, []);
 
   useEffect(() => {
@@ -320,31 +341,34 @@ const TrainingForm = () => {
               />
             </div>
 
-            <div className="training-field training-multi">
-              <MultiSelect
-                label="Technologies"
+            <div className="training-field">
+              <BaseSelect
+                label="Technology"
                 name="technology"
-                isMulti
-                placeholder="Select technologies"
+                placeholder="Select a technology"
                 options={technologies}
-                value={validation.values.technology.map(
-                  (item) =>
-                    technologies.find((option) => option.value === item) || {
-                      label: item,
-                      value: item,
-                    }
-                )}
-                onChange={(selected: Option[] | null) =>
-                  validation.setFieldValue(
-                    "technology",
-                    (selected || []).map((option) => option.value)
-                  )
+                value={selectValue(technologies, validation.values.technology)}
+                handleChange={(option: Option | null) =>
+                  validation.setFieldValue("technology", option?.value || "")
                 }
                 handleBlur={() => validation.setFieldTouched("technology", true)}
               />
             </div>
           
 
+            <div className="training-field">
+              <BaseSelect
+                label="Qualification"
+                name="qualification"
+                placeholder="Select your qualification"
+                options={qualifications}
+                value={selectValue(qualifications, validation.values.qualification)}
+                handleChange={(option: Option | null) =>
+                  validation.setFieldValue("qualification", option?.value || "")
+                }
+                handleBlur={() => validation.setFieldTouched("qualification", true)}
+              />
+            </div>
             <div className="training-field">
               <BaseInput
                 label="College Name"
@@ -481,6 +505,29 @@ const TrainingForm = () => {
                 <div className="training-error">{fieldError("duration")}</div>
               )}
             </div>
+
+            <div className="training-field training-span-2">
+              <div className="training-label">
+                Interested for <span>*</span>
+              </div>
+              <div className="training-duration">
+                {INTEREST_OPTIONS.map((option) => (
+                  <label key={option.value}>
+                    <input
+                      type="radio"
+                      name="interestedFor"
+                      value={option.value}
+                      checked={validation.values.interestedFor === option.value}
+                      onChange={validation.handleChange}
+                    />
+                    <span>{option.label}</span>
+                  </label>
+                ))}
+              </div>
+              {fieldError("interestedFor") && (
+                <div className="training-error">{fieldError("interestedFor")}</div>
+              )}
+            </div>
           </div>
 
           <div className="training-form-actions">
@@ -556,7 +603,7 @@ const FormStyles = () => (
       border: 1px solid #e5e7eb;
       border-radius: 8px;
       box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
-      overflow: hidden;
+      overflow: visible;
     }
     .training-form-body { padding: 22px 24px 24px; }
     .training-form-grid {

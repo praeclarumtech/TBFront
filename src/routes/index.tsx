@@ -92,7 +92,7 @@ const RenderRouter: React.FC = () => {
   } = routes;
 
   return (
-    <BrowserRouter basename="/talent/">
+    <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, "")}>
       <Routes>
         {/* Default route - redirect to login */}
         <Route path={ROOT.path} element={<SignIn />} />
