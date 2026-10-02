@@ -22,6 +22,12 @@ export const SEMESTER_OPTIONS = Array.from({ length: 8 }, (_, index) => ({
   value: `Semester ${index + 1}`,
 }));
 
+export const INTEREST_OPTIONS = [
+  { label: "Online", value: "online" },
+  { label: "Offline", value: "offline" },
+  { label: "Hybrid", value: "hybrid" },
+];
+
 export const trainingFormPath = "/application-form";
 
 export const publicTrainingFormUrl = () => {

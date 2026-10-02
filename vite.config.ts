@@ -1,4 +1,4 @@
-import { defineConfig, type Plugin } from "vite";
+import { defineConfig, loadEnv, type Plugin } from "vite";
 import react from "@vitejs/plugin-react";
 import tsconfigPaths from "vite-tsconfig-paths";
 import path from "path";
@@ -28,26 +28,32 @@ function srcStarAlias(): Plugin {
 }
 
 // https://vite.dev/config/
-export default defineConfig({
-  plugins: [
-    srcStarAlias(),
-    tsconfigPaths({ projects: ["./tsconfig.app.json"] }),
-    react(),
-  ],
-  base: "/talent/",
-  envPrefix: ["TALENT_", "TB_"],
-  resolve: {
-    alias: {
-      shared: path.resolve(__dirname, "src/shared"),
-      assets: path.resolve(__dirname, "src/assets"),
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), "TB_");
+  const rawBase = (env.TB_BASENAME || "/talent/").trim() || "/talent/";
+  const base = rawBase.endsWith("/") ? rawBase : `${rawBase}/`;
+
+  return {
+    plugins: [
+      srcStarAlias(),
+      tsconfigPaths({ projects: ["./tsconfig.app.json"] }),
+      react(),
+    ],
+    base,
+    envPrefix: ["TALENT_", "TB_"],
+    resolve: {
+      alias: {
+        shared: path.resolve(__dirname, "src/shared"),
+        assets: path.resolve(__dirname, "src/assets"),
+      },
     },
-  },
-  server: {
-    host: true,
-    open: true,
-    port: 5173,
-  },
-  build: {
-    outDir: "dist",
-  },
+    server: {
+      host: true,
+      open: true,
+      port: 5173,
+    },
+    build: {
+      outDir: "dist",
+    },
+  };
 });
