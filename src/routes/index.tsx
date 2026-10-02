@@ -18,6 +18,7 @@ import EmailVerification from "pages/auth/EmailVerify";
 import UpdatePassword from "pages/auth/UpdatePassword";
 import AddSkill from "pages/master/Skills";
 import AddDegree from "pages/master/Degree";
+import TrainingTechnologies from "pages/master/TrainingTechnologies";
 import ImportApplicantTables from "pages/applicant/importApplicants/Index";
 import Profile from "pages/UserProfile/Profile";
 import ChangePassword from "pages/auth/ChangePassword";
@@ -59,6 +60,8 @@ import ClientSuccess from "pages/Client/QrCode/ClientSuccess";
 import EmailCheckApply from "pages/Vendor/EmailCheckApply";
 import ClientApplications from "pages/Client/ClientApplications";
 import VendorApplications from "pages/Vendor/VendorApplications";
+import TrainingForm from "pages/training/TrainingForm";
+import TrainingApplications from "pages/training/TrainingApplications";
 
 const RenderRouter: React.FC = () => {
   const {
@@ -133,6 +136,7 @@ const RenderRouter: React.FC = () => {
             </Suspense>
           }
         />
+        <Route path="/application-form" element={<TrainingForm />} />
         <Route path={APPLICANT_ADD_QR_CODE.path} element={<QrFrom />} />
         <Route path={APPLICANT_EDIT_QR_CODE.path} element={<QrFrom />} />
         <Route path={APPLICANT_SUCCESS.path} element={<SuccessPage />} />
@@ -172,6 +176,10 @@ const RenderRouter: React.FC = () => {
         <Route element={<PrivateRoute component={() => <RootLayout />} />}>
           <Route path={DASHBOARD.path} element={<Dashboard />} />
           <Route path={APPLICANTS.path} element={<Applicant />} />
+          <Route
+            path="/training-applications"
+            element={<TrainingApplications />}
+          />
           <Route
             path="applicants/view-applicant/:applicantId"
             element={<ViewApplicantPage />}
@@ -222,6 +230,7 @@ const RenderRouter: React.FC = () => {
             <Route path="passing-year" element={<PassingYear />} />
             <Route path="skills" element={<AddSkill />} />
             <Route path="degree" element={<AddDegree />} />
+            <Route path="training-technologies" element={<TrainingTechnologies />} />
             <Route path="add-role-skill" element={<UpdateSkill />} />
             <Route path="Find-Fields" element={<FindAndReplace />} />
             <Route path="email-template" element={<AddEmailTemplate />} />

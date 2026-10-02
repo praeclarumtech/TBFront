@@ -181,6 +181,7 @@ const MultiSelect = ({
           touched && error ? "is-invalid" : ""
         }`}
         isMulti={isMulti}
+        closeMenuOnSelect={!isMulti}
         onChange={onChange}
         options={options}
         styles={customStyles}

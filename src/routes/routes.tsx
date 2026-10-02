@@ -12,6 +12,7 @@ import ForgetPassword from "pages/auth/ForgetPassword";
 import EmailVerification from "pages/auth/EmailVerify";
 import UpdatePassword from "pages/auth/UpdatePassword";
 import AddDegree from "pages/master/Degree";
+import TrainingTechnologies from "pages/master/TrainingTechnologies";
 import ImportApplicantTables from "pages/applicant/importApplicants/Index";
 import Profile from "pages/UserProfile/Profile";
 import ChangePassword from "pages/auth/ChangePassword";
@@ -42,6 +43,8 @@ import ManageAppliedList from "pages/Vendor/ManageAppliedList";
 import EmailCheckApply from "pages/Vendor/EmailCheckApply";
 import VendorApplications from "pages/Vendor/VendorApplications";
 import ClientApplications from "pages/Client/ClientApplications";
+import TrainingForm from "pages/training/TrainingForm";
+import TrainingApplications from "pages/training/TrainingApplications";
 
 const routes = {
   ROOT: {
@@ -157,6 +160,16 @@ const routes = {
     element: QrFrom,
   },
 
+  TRAINING_FORM: {
+    title: "Application form",
+    path: "/application-form",
+    element: TrainingForm,
+  },
+  TRAINING_APPLICATIONS: {
+    title: "Training Applications",
+    path: "/training-applications",
+    element: TrainingApplications,
+  },
   APPLICANT_SUCCESS: {
     title: "Success",
     path: "/applicants/qr-code-success",
@@ -272,6 +285,11 @@ const routes = {
         title: "Degrees",
         path: "/master/degree",
         element: AddDegree,
+      },
+      {
+        title: "Training Technologies",
+        path: "/master/training-technologies",
+        element: TrainingTechnologies,
       },
       {
         title: "Add Role And Skill",

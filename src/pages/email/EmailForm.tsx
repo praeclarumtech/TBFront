@@ -43,6 +43,9 @@ const EmailForm = () => {
   const hasMounted = useMounted();
   const navigate = useNavigate();
   const location = useLocation();
+  const initialEmailTo = location.state?.email_to?.trim()
+    ? location.state.email_to
+    : "talentboxhr5@gmail.com";
   const initialEmailBcc = location.state?.email_bcc || "";
 
   const fromPage = location.state?.fromPage || "/email";
@@ -125,10 +128,10 @@ const EmailForm = () => {
   const validation = useFormik({
     initialValues: {
       email_template: "",
-      email_to: "talentboxhr5@gmail.com",
+      email_to: initialEmailTo,
       email_bcc: initialEmailBcc || "",
-      subject: "",
-      description: "",
+      subject: location.state?.subject || "",
+      description: location.state?.description || "",
       sendQrCode: false,
     },
     validationSchema: Yup.object({
@@ -219,6 +222,9 @@ const EmailForm = () => {
               break;
             case "/import-applicants":
               navigate("/import-applicants");
+              break;
+            case "/training-applications":
+              navigate("/training-applications");
               break;
             default:
               navigate("/applicants"); // or any default fallback route
@@ -558,6 +564,9 @@ const EmailForm = () => {
                       break;
                     case "/import-applicants":
                       navigate("/import-applicants");
+                      break;
+                    case "/training-applications":
+                      navigate("/training-applications");
                       break;
                     default:
                       navigate("/email"); // or any default fallback route
